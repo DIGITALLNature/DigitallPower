@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 <#@ import namespace="System.Linq" #>
 <# if(_useClassic)
