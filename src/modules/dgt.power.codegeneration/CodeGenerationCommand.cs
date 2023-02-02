@@ -50,7 +50,6 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", ctx =>
                 {
-                    _connection.Connect();
                     _metadataService.PopulateEntitiesAndSolutions(config);
 
                     if (!config.SuppressDotNet)

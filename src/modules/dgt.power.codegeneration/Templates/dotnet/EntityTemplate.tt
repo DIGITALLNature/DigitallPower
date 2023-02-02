@@ -1,6 +1,15 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 <#@ import namespace="System.Linq" #>
+<# if(_useClassic)
+{ // Start usings for dotnet framework full (classic mode)
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+<# 
+} // End EntityTypeCode
+#>
 using System.ComponentModel;<#= DebuggerNonUserCodeUsing#>
 using System.Runtime.CompilerServices;
 using System.Reflection;
@@ -63,8 +72,21 @@ if(!_suppressEntityTypeCode)
         #endregion
 
         #region Events
+<# if(_useClassic)
+{ // Start PropertyChangedEventHandler for dotnet framework full (classic mode)
+#>
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangingEventHandler PropertyChanging;
+<#
+}
+else 
+{
+#>
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
+<# 
+} // End PropertyChangedEventHandler
+#>
 
         <#= DebuggerNonUserCode(2) #>private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -395,7 +417,19 @@ if(!_suppressRelations)
             if (_trackChanges)
             {
                 var attr = new AttributeCollection();
+<# if(_useClassic)
+{ // Start changedProperties query for dotnet framework full (classic mode)
+#>
+                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+<#
+}
+else 
+{
+#>
                 foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+<# 
+} // End changedProperties query
+#>
                 {
                     attr.Add(attrName,this[attrName]);
                 }

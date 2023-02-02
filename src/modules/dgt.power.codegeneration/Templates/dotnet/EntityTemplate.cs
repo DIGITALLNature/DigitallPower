@@ -17,7 +17,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+    #line 1 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class EntityTemplate : EntityTemplateBase
     {
@@ -27,9 +27,26 @@ namespace dgt.power.codegeneration.Templates.dotnet
         /// </summary>
         public virtual string TransformText()
         {
+            
+            #line 4 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ if(_useClassic)
+{ // Start usings for dotnet framework full (classic mode)
+
+            
+            #line default
+            #line hidden
+            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing System.Linq;\r\n");
+            
+            #line 10 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ 
+} // End EntityTypeCode
+
+            
+            #line default
+            #line hidden
             this.Write("using System.ComponentModel;");
             
-            #line 4 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 13 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCodeUsing));
             
             #line default
@@ -46,21 +63,21 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace ");
             
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 23 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n\t/// <inheritdoc />\r\n\t");
             
-            #line 17 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 26 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(EntityMetadata.Description),1)));
             
             #line default
             #line hidden
             this.Write("\r\n\t[DataContractAttribute()]\r\n\t[EntityLogicalNameAttribute(\"");
             
-            #line 19 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 28 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             
             #line default
@@ -68,7 +85,7 @@ namespace ");
             this.Write("\")]\r\n\t[System.CodeDom.Compiler.GeneratedCode(\"ec4u.automation\", \"1.0.0\")]\r\n\tpubli" +
                     "c partial class ");
             
-            #line 21 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 30 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -76,28 +93,28 @@ namespace ");
             this.Write(" : Entity, INotifyPropertyChanging, INotifyPropertyChanged\r\n    {\r\n\t    #region c" +
                     "tor\r\n\t\t");
             
-            #line 24 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 33 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
             #line hidden
             this.Write("public ");
             
-            #line 24 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 33 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
             this.Write("() : this(false)\r\n        {\r\n        }\r\n\r\n        ");
             
-            #line 28 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 37 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
             #line hidden
             this.Write("public ");
             
-            #line 28 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 37 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -105,14 +122,14 @@ namespace ");
             this.Write("(bool trackChanges = false) : base(EntityLogicalName)\r\n        {\r\n\t\t\t_trackChange" +
                     "s = trackChanges;\r\n        }\r\n\r\n        ");
             
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 42 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
             #line hidden
             this.Write("public ");
             
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 42 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -120,14 +137,14 @@ namespace ");
             this.Write("(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)\r\n        {\r\n\t\t\t" +
                     "_trackChanges = trackChanges;\r\n        }\r\n\r\n        ");
             
-            #line 38 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 47 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
             #line hidden
             this.Write("public ");
             
-            #line 38 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 47 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -136,14 +153,14 @@ namespace ");
                     "gicalName,keyAttributes)\r\n        {\r\n\t\t\t_trackChanges = trackChanges;\r\n        }" +
                     "\r\n\r\n        ");
             
-            #line 43 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 52 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
             #line hidden
             this.Write("public ");
             
-            #line 43 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 52 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -162,14 +179,14 @@ namespace ");
         #region consts
         public const string EntityLogicalName = """);
             
-            #line 55 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 64 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 56 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 65 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressEntityTypeCode)
 { // Start EntityTypeCode
@@ -179,25 +196,54 @@ if(!_suppressEntityTypeCode)
             #line hidden
             this.Write("        public const int EntityTypeCode = ");
             
-            #line 59 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 68 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.ObjectTypeCode));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 60 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 69 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End EntityTypeCode
 
             
             #line default
             #line hidden
-            this.Write("        #endregion\r\n\r\n        #region Events\r\n        public event PropertyChange" +
-                    "dEventHandler? PropertyChanged;\r\n        public event PropertyChangingEventHandl" +
-                    "er? PropertyChanging;\r\n\r\n        ");
+            this.Write("        #endregion\r\n\r\n        #region Events\r\n");
             
-            #line 69 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 75 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ if(_useClassic)
+{ // Start PropertyChangedEventHandler for dotnet framework full (classic mode)
+
+            
+            #line default
+            #line hidden
+            this.Write("        public event PropertyChangedEventHandler PropertyChanged;\r\n        public" +
+                    " event PropertyChangingEventHandler PropertyChanging;\r\n");
+            
+            #line 80 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+
+}
+else 
+{
+
+            
+            #line default
+            #line hidden
+            this.Write("        public event PropertyChangedEventHandler? PropertyChanged;\r\n        publi" +
+                    "c event PropertyChangingEventHandler? PropertyChanging;\r\n");
+            
+            #line 87 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ 
+} // End PropertyChangedEventHandler
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        ");
+            
+            #line 91 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
@@ -213,7 +259,7 @@ if(!_suppressEntityTypeCode)
 
         ");
             
-            #line 78 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 100 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(2)));
             
             #line default
@@ -228,35 +274,35 @@ if(!_suppressEntityTypeCode)
 		#region Attributes
 		[AttributeLogicalNameAttribute(""");
             
-            #line 86 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 108 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.PrimaryIdAttribute));
             
             #line default
             #line hidden
             this.Write("\")]\r\n\t\tpublic new ");
             
-            #line 87 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 109 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Virtual));
             
             #line default
             #line hidden
             this.Write("System.Guid Id\r\n\t\t{\r\n\t\t    ");
             
-            #line 89 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 111 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("get\r\n\t\t\t{\r\n\t\t\t\treturn base.Id;\r\n\t\t\t}\r\n            ");
             
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 115 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("set\r\n\t\t\t{\r\n");
             
-            #line 95 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 117 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  var keyAttribute = EntityMetadata.Attributes.Single(a => a.LogicalName == EntityMetadata.PrimaryIdAttribute);
 if(keyAttribute.IsValidForCreate.GetValueOrDefault())
 {
@@ -266,14 +312,14 @@ if(keyAttribute.IsValidForCreate.GetValueOrDefault())
             #line hidden
             this.Write("\t\t\t\t");
             
-            #line 99 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 121 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(PreventBadToken(CamelCase(keyAttribute.SchemaName))));
             
             #line default
             #line hidden
             this.Write(" = value;\r\n");
             
-            #line 100 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 122 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 }
 else 
@@ -284,7 +330,7 @@ else
             #line hidden
             this.Write("\t\t\t\tbase.Id = value;\t\r\n");
             
-            #line 106 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 128 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 }
 
@@ -293,7 +339,7 @@ else
             #line hidden
             this.Write("\t\t\t}\r\n\t\t}\r\n\r\n");
             
-            #line 112 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 134 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 { 
 		var attrName = Unique(PreventBadToken(CamelCase(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
@@ -303,41 +349,41 @@ else
             #line hidden
             this.Write("\t\t");
             
-            #line 116 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 138 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(attr.Description),2)));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t[AttributeLogicalName(\"");
             
-            #line 117 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 139 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\")]\r\n        public ");
             
-            #line 118 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 140 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Virtual));
             
             #line default
             #line hidden
             
-            #line 118 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 140 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value)));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 118 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 140 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("\r\n        {\r\n");
             
-            #line 120 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 142 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	if(attr.IsValidForRead.HasValue && attr.IsValidForRead.Value)
 	{ // Start Getter
 
@@ -346,14 +392,14 @@ else
             #line hidden
             this.Write("            ");
             
-            #line 123 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 145 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("get\r\n            {\r\n");
             
-            #line 125 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 147 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		if (attr.AttributeType != AttributeTypeCode.PartyList)
 		{ 
@@ -363,21 +409,21 @@ else
             #line hidden
             this.Write("                return GetAttributeValue<");
             
-            #line 129 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 151 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value)));
             
             #line default
             #line hidden
             this.Write(">(\"");
             
-            #line 129 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 151 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\");\r\n");
             
-            #line 130 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 152 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		}
 		else
@@ -388,7 +434,7 @@ else
             #line hidden
             this.Write("\t\t\t\tvar collection = this.GetAttributeValue<EntityCollection>(\"");
             
-            #line 135 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 157 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
@@ -397,7 +443,7 @@ else
                     "s.Select(e => e.ToEntity<ActivityParty>());\r\n\t\t\t\t}\r\n\t\t\t\telse\r\n\t\t\t\t{\r\n\t\t\t\t\treturn" +
                     " null;\r\n\t\t\t\t}\r\n");
             
-            #line 144 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 166 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		} // line 110
 
@@ -406,7 +452,7 @@ else
             #line hidden
             this.Write("            }\r\n");
             
-            #line 148 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 170 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 	} // End Getter
 	if(_editableReadOnlyProperties || (attr.IsValidForUpdate.HasValue && attr.IsValidForUpdate.Value)|| (attr.IsValidForCreate.HasValue && attr.IsValidForCreate.Value))
@@ -417,21 +463,21 @@ else
             #line hidden
             this.Write("            ");
             
-            #line 153 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 175 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("set\r\n            {\r\n                OnPropertyChanging(nameof(");
             
-            #line 155 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 177 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 156 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 178 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		if (attr.AttributeType != AttributeTypeCode.PartyList)
 		{
@@ -441,14 +487,14 @@ else
             #line hidden
             this.Write("                SetAttributeValue(\"");
             
-            #line 160 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 182 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\", value);\r\n");
             
-            #line 161 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 183 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 			if(attr.IsPrimaryId.HasValue && attr.IsPrimaryId.Value)
 			{
@@ -459,7 +505,7 @@ else
             this.Write("\t\t\t\tif (value.HasValue)\r\n\t\t\t\t{\r\n\t\t\t\t\tbase.Id = value.Value;\r\n\t\t\t\t}\r\n\t\t\t\telse\r\n\t\t\t" +
                     "\t{\r\n\t\t\t\t\tbase.Id = System.Guid.Empty;\r\n\t\t\t\t}\r\n");
             
-            #line 173 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 195 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 			}
 		} // line 142
@@ -471,21 +517,21 @@ else
             #line hidden
             this.Write("\t\t\t\tif ((value == null))\r\n\t\t\t\t{\r\n\t\t\t\t\tthis.SetAttributeValue(\"");
             
-            #line 181 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 203 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\", value);\r\n\t\t\t\t}\r\n\t\t\t\telse\r\n\t\t\t\t{\r\n\t\t\t\t\tthis.SetAttributeValue(\"");
             
-            #line 185 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 207 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\", new EntityCollection(new List<Entity>(value)));\r\n\t\t\t\t}\r\n");
             
-            #line 187 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 209 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		} // line 161
 
@@ -494,14 +540,14 @@ else
             #line hidden
             this.Write("                OnPropertyChanged(nameof(");
             
-            #line 190 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 212 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("));\r\n            }\r\n");
             
-            #line 192 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 214 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 	} // End Setter
 
@@ -510,7 +556,7 @@ else
             #line hidden
             this.Write("        }\r\n\r\n");
             
-            #line 197 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 219 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End Attribute loop
 
@@ -519,7 +565,7 @@ else
             #line hidden
             this.Write("\r\n\t\t#endregion\r\n\r\n");
             
-            #line 203 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 225 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressNavigationProperties)
 { // Start NavigationProperties
@@ -529,7 +575,7 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t#region NavigationProperties\r\n");
             
-            #line 208 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 230 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var attr in EntityMetadata.OneToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
 	{ 
 		if(!_configEntities.Contains(attr.ReferencingEntity))
@@ -543,98 +589,98 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t/// <summary>\r\n\t\t/// 1:N ");
             
-            #line 217 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 239 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t/// </summary>\t\r\n\t\t[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute(\"");
             
-            #line 219 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 241 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\")]\r\n\t\tpublic System.Collections.Generic.IEnumerable<");
             
-            #line 220 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 242 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(RetrieveSchemaName(attr.ReferencingEntity))));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 220 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 242 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t{\r\n\t\t\t");
             
-            #line 222 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 244 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("get\r\n\t\t\t{\r\n\t\t\t\treturn this.GetRelatedEntities<");
             
-            #line 224 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 246 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(RetrieveSchemaName(attr.ReferencingEntity))));
             
             #line default
             #line hidden
             this.Write(">(\"");
             
-            #line 224 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 246 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\", null);\r\n\t\t\t}\r\n\t\t\t");
             
-            #line 226 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 248 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCode(3)));
             
             #line default
             #line hidden
             this.Write("set\r\n\t\t\t{\r\n\t\t\t\tthis.OnPropertyChanging(\"");
             
-            #line 228 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 250 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("\");\r\n\t\t\t\tthis.SetRelatedEntities<");
             
-            #line 229 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 251 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(RetrieveSchemaName(attr.ReferencingEntity))));
             
             #line default
             #line hidden
             this.Write(">(\"");
             
-            #line 229 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 251 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\", null, value);\r\n\t\t\t\tthis.OnPropertyChanged(\"");
             
-            #line 230 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 252 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("\");\r\n\t\t\t}\r\n\t\t}\r\n\r\n");
             
-            #line 234 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 256 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("\t\t#endregion\r\n");
             
-            #line 236 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 258 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End NavigationProperties
 
@@ -643,7 +689,7 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\r\n");
             
-            #line 240 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 262 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  if(!_suppressOptions)
 { // Start Options
 
@@ -652,7 +698,7 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t#region Options\r\n\t\tpublic static class Options\r\n\t\t{\r\n");
             
-            #line 246 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 268 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
 	{ 
 		if(optionField.AttributeType == AttributeTypeCode.Picklist) 
@@ -662,14 +708,14 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t\t    public struct ");
             
-            #line 250 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 272 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write("\r\n                {\r\n");
             
-            #line 252 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 274 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
             
@@ -677,28 +723,28 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t\t\t\tpublic const int ");
             
-            #line 254 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 276 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 254 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 276 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 255 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 277 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			} 
             
             #line default
             #line hidden
             this.Write("                }\r\n");
             
-            #line 257 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 279 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  		} else if(optionField.AttributeType == AttributeTypeCode.Virtual)
 		{ 
             
@@ -706,14 +752,14 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("                public struct ");
             
-            #line 259 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 281 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write("\r\n                {\r\n");
             
-            #line 261 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 283 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
             
@@ -721,28 +767,28 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t\t\t\tpublic const int ");
             
-            #line 263 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 285 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 263 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 285 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 264 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 286 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			} 
             
             #line default
             #line hidden
             this.Write("                }\r\n");
             
-            #line 266 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 288 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  		} else  if(optionField.AttributeType == AttributeTypeCode.Status)
 		{ 
             
@@ -750,14 +796,14 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("                public struct ");
             
-            #line 268 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 290 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write("\r\n                {\r\n");
             
-            #line 270 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 292 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
             
@@ -765,28 +811,28 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t\t\t\tpublic const int ");
             
-            #line 272 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 294 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 272 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 294 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 273 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 295 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			} 
             
             #line default
             #line hidden
             this.Write("                }\r\n");
             
-            #line 275 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 297 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  		} else  if(optionField.AttributeType == AttributeTypeCode.State)
 		{ 
             
@@ -794,14 +840,14 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("                public struct ");
             
-            #line 277 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 299 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write("\r\n                {\r\n");
             
-            #line 279 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 301 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
             
@@ -809,28 +855,28 @@ if(!_suppressNavigationProperties)
             #line hidden
             this.Write("\t\t\t\t\tpublic const int ");
             
-            #line 281 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 303 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 281 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 303 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 282 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 304 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  			} 
             
             #line default
             #line hidden
             this.Write("                }\r\n");
             
-            #line 284 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 306 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  		} else {
 var structLabel = Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName);
 var falseLabel = Sanitize(CamelCase(optionField.Options[0].Label));
@@ -847,28 +893,28 @@ if(structLabel.Equals(trueLabel, StringComparison.InvariantCultureIgnoreCase)){
             #line hidden
             this.Write("                public struct ");
             
-            #line 295 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 317 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(structLabel));
             
             #line default
             #line hidden
             this.Write("\r\n                {\r\n                    public const bool ");
             
-            #line 297 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 319 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(falseLabel));
             
             #line default
             #line hidden
             this.Write(" = false;\r\n                    public const bool ");
             
-            #line 298 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 320 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(trueLabel));
             
             #line default
             #line hidden
             this.Write(" = true;\r\n                }\r\n");
             
-            #line 300 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 322 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 		}
 	}
@@ -878,7 +924,7 @@ if(structLabel.Equals(trueLabel, StringComparison.InvariantCultureIgnoreCase)){
             #line hidden
             this.Write("\t\t}\r\n\t\t#endregion\r\n");
             
-            #line 306 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 328 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End Options
 
@@ -887,7 +933,7 @@ if(structLabel.Equals(trueLabel, StringComparison.InvariantCultureIgnoreCase)){
             #line hidden
             this.Write("\r\n");
             
-            #line 310 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 332 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressLogicalNames)
 { // Start LogicalNames
@@ -897,7 +943,7 @@ if(!_suppressLogicalNames)
             #line hidden
             this.Write("\t\t#region LogicalNames\r\n\t\tpublic static class LogicalNames\r\n\t\t{\r\n");
             
-            #line 317 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 339 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var attr in Filter(EntityMetadata.Attributes)) 
 	{ 
             
@@ -905,28 +951,28 @@ if(!_suppressLogicalNames)
             #line hidden
             this.Write("\t\t\t\tpublic const string ");
             
-            #line 319 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 341 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(attr.SchemaName),"L"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 319 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 341 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 320 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 342 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("\t\t}\r\n\t\t#endregion\r\n");
             
-            #line 323 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 345 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End LogicalNames
 
@@ -934,7 +980,7 @@ if(!_suppressLogicalNames)
             #line default
             #line hidden
             
-            #line 326 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 348 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressAlternateKeys && EntityMetadata.Keys.Length > 0)
 { // Start AlternateKeys
@@ -944,7 +990,7 @@ if(!_suppressAlternateKeys && EntityMetadata.Keys.Length > 0)
             #line hidden
             this.Write("\r\n\t\t#region AlternateKeys\r\n\t\tpublic static class AlternateKeys\r\n\t\t{\r\n");
             
-            #line 334 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 356 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var key in EntityMetadata.Keys.OrderBy(key => key.LogicalName).ToList()) 
 	{ 
             
@@ -952,28 +998,28 @@ if(!_suppressAlternateKeys && EntityMetadata.Keys.Length > 0)
             #line hidden
             this.Write("\t\t\t\tpublic const string ");
             
-            #line 336 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 358 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(Sanitize(CamelCase(GetLocalizedLabel(key.DisplayName))),"K"+key.LogicalName)));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 336 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 358 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(MaskDoubleQuote(key.LogicalName)));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 337 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 359 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("\t\t}\r\n\t\t#endregion\r\n");
             
-            #line 340 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 362 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End AlternateKeys
 
@@ -982,7 +1028,7 @@ if(!_suppressAlternateKeys && EntityMetadata.Keys.Length > 0)
             #line hidden
             this.Write("\r\n");
             
-            #line 344 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 366 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressRelations)
 { // Start Relations
@@ -993,7 +1039,7 @@ if(!_suppressRelations)
             this.Write("\t\t#region Relations\r\n        public static class Relations\r\n        {\r\n          " +
                     "  public static class OneToMany\r\n            {\r\n");
             
-            #line 353 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 375 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var attr in EntityMetadata.OneToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
 	{ 
             
@@ -1001,28 +1047,28 @@ if(!_suppressRelations)
             #line hidden
             this.Write("\t\t\t\tpublic const string ");
             
-            #line 355 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 377 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(attr.SchemaName),"ROTM"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 355 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 377 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 356 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 378 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("            }\r\n\r\n            public static class ManyToOne\r\n            {\r\n");
             
-            #line 361 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 383 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var attr in EntityMetadata.ManyToOneRelationships.OrderBy(r => r.SchemaName).ToList()) 
 	{ 
             
@@ -1030,28 +1076,28 @@ if(!_suppressRelations)
             #line hidden
             this.Write("\t\t\t\tpublic const string ");
             
-            #line 363 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 385 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(attr.SchemaName),"RMTO"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 363 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 385 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 364 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 386 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("            }\r\n\r\n            public static class ManyToMany\r\n            {\r\n");
             
-            #line 369 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 391 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	foreach(var attr in EntityMetadata.ManyToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
 	{ 
             
@@ -1059,28 +1105,28 @@ if(!_suppressRelations)
             #line hidden
             this.Write("\t\t\t\tpublic const string ");
             
-            #line 371 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 393 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(attr.SchemaName),"RMTM"+EntityMetadata.LogicalName)));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 371 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 393 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.SchemaName));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 372 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 394 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  	} 
             
             #line default
             #line hidden
             this.Write("            }\r\n        }\r\n\r\n        #endregion\r\n");
             
-            #line 377 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 399 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End Relations
 
@@ -1089,7 +1135,7 @@ if(!_suppressRelations)
             #line hidden
             this.Write("\r\n\t\t#region Methods\r\n\r\n        public static ");
             
-            #line 383 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 405 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -1097,7 +1143,7 @@ if(!_suppressRelations)
             this.Write(" Retrieve(IOrganizationService service, Guid id)\r\n        {\r\n            return R" +
                     "etrieve(service,id, new ColumnSet(true));\r\n        }\r\n\r\n        public static ");
             
-            #line 388 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 410 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -1105,37 +1151,61 @@ if(!_suppressRelations)
             this.Write(" Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)\r\n        {\r" +
                     "\n            return service.Retrieve(\"");
             
-            #line 390 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 412 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\", id, columnSet).ToEntity<");
             
-            #line 390 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 412 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
             this.Write(">();\r\n        }\r\n\r\n        public ");
             
-            #line 393 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 415 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
-            this.Write(@" GetChangedEntity()
-        {
-            if (_trackChanges)
-            {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  ");
+            this.Write(" GetChangedEntity()\r\n        {\r\n            if (_trackChanges)\r\n            {\r\n  " +
+                    "              var attr = new AttributeCollection();\r\n");
             
-            #line 402 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 420 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ if(_useClassic)
+{ // Start changedProperties query for dotnet framework full (classic mode)
+
+            
+            #line default
+            #line hidden
+            this.Write(@"                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+");
+            
+            #line 424 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+
+}
+else 
+{
+
+            
+            #line default
+            #line hidden
+            this.Write(@"                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+");
+            
+            #line 430 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+ 
+} // End changedProperties query
+
+            
+            #line default
+            #line hidden
+            this.Write("                {\r\n                    attr.Add(attrName,this[attrName]);\r\n      " +
+                    "          }\r\n                return new  ");
+            
+            #line 436 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
@@ -1143,7 +1213,7 @@ if(!_suppressRelations)
             this.Write("(Id) {Attributes = attr };\r\n            }\r\n            return this;\r\n        }\r\n " +
                     "       #endregion\r\n\t}\r\n\r\n");
             
-            #line 409 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 443 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
 
 if(!_suppressContext)
 { // Start Context
@@ -1153,28 +1223,28 @@ if(!_suppressContext)
             #line hidden
             this.Write("\t#region Context\r\n\tpublic partial class DataContext\r\n\t{\r\n\t\tpublic IQueryable<");
             
-            #line 416 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 450 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 416 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 450 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
             this.Write("Set\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\treturn CreateQuery<");
             
-            #line 420 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 454 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             
             #line default
             #line hidden
             this.Write(">();\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\t#endregion\r\n");
             
-            #line 425 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
+            #line 459 "C:\Users\raaa\Source\Repos\DigitallPower\src\modules\dgt.power.codegeneration\Templates\dotnet\EntityTemplate.tt"
  
 } // End Context
 

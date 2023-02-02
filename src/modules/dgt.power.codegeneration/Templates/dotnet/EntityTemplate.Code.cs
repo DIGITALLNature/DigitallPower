@@ -18,7 +18,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
         private readonly bool _suppressAlternateKeys;
         private readonly bool _useBaseLanguage;
         private readonly int _systemLanguage;
-        private string DebuggerNonUserCodeUsing => _withDebuggerNonUserCode ? $"{Environment.NewLine} using System.Diagnostics;" : string.Empty;
+        private string DebuggerNonUserCodeUsing => _withDebuggerNonUserCode ? $"{Environment.NewLine}using System.Diagnostics;" : string.Empty;
         private string Virtual => _withVirtual ? "virtual " : string.Empty;
         private readonly bool _suppressLogicalNames;
         private readonly bool _suppressOptions;
