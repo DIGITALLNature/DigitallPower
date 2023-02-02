@@ -187,3 +187,7 @@ indent_size = 2
 end_of_line = lf
 [*.{cmd,bat}]
 end_of_line = crlf
+
+# T4 files
+[*.tt]
+end_of_line = crlf
