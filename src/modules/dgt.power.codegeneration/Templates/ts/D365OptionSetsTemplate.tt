@@ -1,0 +1,15 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+
+// This module contains global option sets which are used in more than one entity!
+export module D365OptionSets {
+<# foreach(var optionSet in OptionSets) { #>
+		export class <#= CamelCase(optionSet.Key) #> {
+			constructor() {
+			}
+<# foreach(var option in optionSet.Value) { #>
+			public static <#= Sanitize(CamelCase(option.Label)) #> = { value: <#= option.Value #> };
+<# } #>
+		}
+<# } #>
+}

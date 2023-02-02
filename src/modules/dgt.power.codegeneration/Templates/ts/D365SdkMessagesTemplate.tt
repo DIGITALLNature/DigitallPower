@@ -1,0 +1,14 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+
+export class D365SdkMessages {
+	constructor() {
+	}
+<# foreach(var sdkMessages in Filter(SdkMessages))
+{ 
+#>
+	public static <#= sdkMessages.Item1 #>: string = "<#= sdkMessages.Item2  #>";
+<#
+}
+#>
+}

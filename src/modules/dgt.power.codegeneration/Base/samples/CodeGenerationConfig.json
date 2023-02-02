@@ -1,0 +1,38 @@
+{
+  "Entities": [
+    "account",
+    "contact"
+  ],
+  "Solutions": [
+    "ec4u_entities"
+  ],
+  "Forms": [],
+  "EntityMask": "ec4u_*",
+  "SuppressDotNet": false,
+  "SuppressTypeScript": false,
+  "SuppressOptions": false,
+  "SuppressLogicalNames": false,
+  "SuppressContext": false,
+  "SuppressActions": false,
+  "SuppressSdkMessages": false,
+  "SuppressRelations": false,
+  "SuppressNavigationProperties": false,
+  "Virtual": false,
+  "UseBaseLanguage": false,
+  "NonDebuggerNonUserCode": false,
+  "EditableReadOnlyProperties": false,
+  "TypingPath": "\"\"../../Typings/Xrm/index.d.ts\"\"",
+  "OnlyFormsFromSolutions": false,
+  "EntityRefFilters": [
+    {
+      "Entity": "account",
+      "Attributes": [
+        "DoNotEMail",
+        "DoNotFax"
+      ],
+      "Optionsets": [
+        "DoNotFax"
+      ]
+    }
+  ]
+}

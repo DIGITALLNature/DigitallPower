@@ -1,0 +1,14 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#"  #>
+<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+using System.Linq;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+
+// ReSharper disable All 
+namespace <#= NameSpace #>
+{
+   	public partial class DataContext : OrganizationServiceContext
+    {
+		public DataContext(IOrganizationService service) : base(service) {}
+	}
+}

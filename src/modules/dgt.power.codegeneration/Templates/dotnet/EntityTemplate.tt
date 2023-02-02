@@ -1,0 +1,428 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+<#@ import namespace="System.Linq" #>
+using System.ComponentModel;<#= DebuggerNonUserCodeUsing#>
+using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Runtime.Serialization;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query; 
+using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+
+// ReSharper disable All
+namespace <#= NameSpace #>
+{
+	/// <inheritdoc />
+	<#= Summary(GetLocalizedLabel(EntityMetadata.Description),1)#>
+	[DataContractAttribute()]
+	[EntityLogicalNameAttribute("<#= EntityMetadata.LogicalName #>")]
+	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	public partial class <#= CamelCase(EntityMetadata.SchemaName) #> : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    {
+	    #region ctor
+		<#= DebuggerNonUserCode(2) #>public <#= CamelCase(EntityMetadata.SchemaName) #>() : this(false)
+        {
+        }
+
+        <#= DebuggerNonUserCode(2) #>public <#= CamelCase(EntityMetadata.SchemaName) #>(bool trackChanges = false) : base(EntityLogicalName)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        <#= DebuggerNonUserCode(2) #>public <#= CamelCase(EntityMetadata.SchemaName) #>(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        <#= DebuggerNonUserCode(2) #>public <#= CamelCase(EntityMetadata.SchemaName) #>(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        <#= DebuggerNonUserCode(2) #>public <#= CamelCase(EntityMetadata.SchemaName) #>(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        {
+			_trackChanges = trackChanges;
+        }
+        #endregion
+
+		#region fields
+        private readonly bool _trackChanges;
+        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        #endregion
+
+        #region consts
+        public const string EntityLogicalName = "<#= EntityMetadata.LogicalName#>";
+<#
+if(!_suppressEntityTypeCode)
+{ // Start EntityTypeCode
+#>        public const int EntityTypeCode = <#= EntityMetadata.ObjectTypeCode#>;
+<# 
+} // End EntityTypeCode
+#>
+        #endregion
+
+        #region Events
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
+
+        <#= DebuggerNonUserCode(2) #>private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (_trackChanges)
+            {
+                _changedProperties.Value.Add(propertyName);
+            }
+        }
+
+        <#= DebuggerNonUserCode(2) #>private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
+        }
+
+        #endregion
+
+		#region Attributes
+		[AttributeLogicalNameAttribute("<#= EntityMetadata.PrimaryIdAttribute #>")]
+		public new <#= Virtual #>System.Guid Id
+		{
+		    <#= DebuggerNonUserCode(3) #>get
+			{
+				return base.Id;
+			}
+            <#= DebuggerNonUserCode(3) #>set
+			{
+<# var keyAttribute = EntityMetadata.Attributes.Single(a => a.LogicalName == EntityMetadata.PrimaryIdAttribute);
+if(keyAttribute.IsValidForCreate.GetValueOrDefault())
+{
+#>
+				<#= PreventBadToken(CamelCase(keyAttribute.SchemaName)) #> = value;
+<#
+}
+else 
+{
+#>
+				base.Id = value;	
+<#
+}
+#>
+			}
+		}
+
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{ 
+		var attrName = Unique(PreventBadToken(CamelCase(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
+#>
+		<#= Summary(GetLocalizedLabel(attr.Description),2) #>
+		[AttributeLogicalName("<#= attr.LogicalName #>")]
+        public <#= Virtual #><#= ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value) #> <#= attrName #>
+        {
+<# 	if(attr.IsValidForRead.HasValue && attr.IsValidForRead.Value)
+	{ // Start Getter
+#>
+            <#=DebuggerNonUserCode(3)#>get
+            {
+<#
+		if (attr.AttributeType != AttributeTypeCode.PartyList)
+		{ 
+#>
+                return GetAttributeValue<<#= ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value)#>>("<#= attr.LogicalName #>");
+<#
+		}
+		else
+		{
+#>
+				var collection = this.GetAttributeValue<EntityCollection>("<#= attr.LogicalName #>");
+				if (collection?.Entities != null)
+				{
+					return collection.Entities.Select(e => e.ToEntity<ActivityParty>());
+				}
+				else
+				{
+					return null;
+				}
+<#
+		} // line 110
+#>
+            }
+<#
+	} // End Getter
+	if(_editableReadOnlyProperties || (attr.IsValidForUpdate.HasValue && attr.IsValidForUpdate.Value)|| (attr.IsValidForCreate.HasValue && attr.IsValidForCreate.Value))
+	{ // Start Setter
+#>
+            <#=DebuggerNonUserCode(3)#>set
+            {
+                OnPropertyChanging(nameof(<#= attrName #>));
+<#
+		if (attr.AttributeType != AttributeTypeCode.PartyList)
+		{
+#>
+                SetAttributeValue("<#= attr.LogicalName #>", value);
+<# 
+			if(attr.IsPrimaryId.HasValue && attr.IsPrimaryId.Value)
+			{
+#>
+				if (value.HasValue)
+				{
+					base.Id = value.Value;
+				}
+				else
+				{
+					base.Id = System.Guid.Empty;
+				}
+<#
+			}
+		} // line 142
+		else
+		{
+#>
+				if ((value == null))
+				{
+					this.SetAttributeValue("<#= attr.LogicalName #>", value);
+				}
+				else
+				{
+					this.SetAttributeValue("<#= attr.LogicalName #>", new EntityCollection(new List<Entity>(value)));
+				}
+<#
+		} // line 161
+#>
+                OnPropertyChanged(nameof(<#= attrName #>));
+            }
+<#
+	} // End Setter
+#>
+        }
+
+<# 
+} // End Attribute loop
+#>
+
+		#endregion
+
+<#
+if(!_suppressNavigationProperties)
+{ // Start NavigationProperties
+#>
+		#region NavigationProperties
+<# 	foreach(var attr in EntityMetadata.OneToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
+	{ 
+		if(!_configEntities.Contains(attr.ReferencingEntity))
+		{
+			continue; // Ignore Navigation Propertys to Entitys not generated
+		}
+		var attrName = Unique(PreventBadToken(CamelCase(attr.SchemaName)),"N"+EntityMetadata.LogicalName);
+#>
+		/// <summary>
+		/// 1:N <#= attr.SchemaName #>
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("<#= attr.SchemaName #>")]
+		public System.Collections.Generic.IEnumerable<<#= CamelCase(RetrieveSchemaName(attr.ReferencingEntity))#>> <#= attrName #>
+		{
+			<#=DebuggerNonUserCode(3)#>get
+			{
+				return this.GetRelatedEntities<<#= CamelCase(RetrieveSchemaName(attr.ReferencingEntity))#>>("<#= attr.SchemaName #>", null);
+			}
+			<#=DebuggerNonUserCode(3)#>set
+			{
+				this.OnPropertyChanging("<#= attrName #>");
+				this.SetRelatedEntities<<#= CamelCase(RetrieveSchemaName(attr.ReferencingEntity))#>>("<#= attr.SchemaName #>", null, value);
+				this.OnPropertyChanged("<#= attrName #>");
+			}
+		}
+
+<# 	} #>
+		#endregion
+<# 
+} // End NavigationProperties
+#>
+
+<# if(!_suppressOptions)
+{ // Start Options
+#>
+		#region Options
+		public static class Options
+		{
+<# 	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
+	{ 
+		if(optionField.AttributeType == AttributeTypeCode.Picklist) 
+		{ #>
+			    public struct <#= Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName) #>
+                {
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+					public const int <#= Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #> = <#= option.Value #>;
+<# 			} #>
+                }
+<# 		} else if(optionField.AttributeType == AttributeTypeCode.Virtual)
+		{ #>
+                public struct <#= Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName) #>
+                {
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+					public const int <#= Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #> = <#= option.Value #>;
+<# 			} #>
+                }
+<# 		} else  if(optionField.AttributeType == AttributeTypeCode.Status)
+		{ #>
+                public struct <#= Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName) #>
+                {
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+					public const int <#= Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #> = <#= option.Value #>;
+<# 			} #>
+                }
+<# 		} else  if(optionField.AttributeType == AttributeTypeCode.State)
+		{ #>
+                public struct <#= Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName) #>
+                {
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+					public const int <#= Unique(Sanitize(CamelCase(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #> = <#= option.Value #>;
+<# 			} #>
+                }
+<# 		} else {
+var structLabel = Unique(CamelCase(optionField.SchemaName),"O"+EntityMetadata.LogicalName);
+var falseLabel = Sanitize(CamelCase(optionField.Options[0].Label));
+var trueLabel = Sanitize(CamelCase(optionField.Options[1].Label));
+if(structLabel.Equals(falseLabel, StringComparison.InvariantCultureIgnoreCase)){
+  falseLabel = falseLabel + "_";
+}
+if(structLabel.Equals(trueLabel, StringComparison.InvariantCultureIgnoreCase)){
+  trueLabel = trueLabel + "_";
+}
+#>
+                public struct <#= structLabel #>
+                {
+                    public const bool <#= falseLabel #> = false;
+                    public const bool <#= trueLabel #> = true;
+                }
+<#
+		}
+	}
+#>
+		}
+		#endregion
+<# 
+} // End Options
+#>
+
+<#
+if(!_suppressLogicalNames)
+{ // Start LogicalNames
+#>
+		#region LogicalNames
+		public static class LogicalNames
+		{
+<# 	foreach(var attr in Filter(EntityMetadata.Attributes)) 
+	{ #>
+				public const string <#= Unique(CamelCase(attr.SchemaName),"L"+EntityMetadata.LogicalName) #> = "<#= attr.LogicalName #>";
+<# 	} #>
+		}
+		#endregion
+<# 
+} // End LogicalNames
+#>
+<#
+if(!_suppressAlternateKeys && EntityMetadata.Keys.Length > 0)
+{ // Start AlternateKeys
+#>
+
+		#region AlternateKeys
+		public static class AlternateKeys
+		{
+<# 	foreach(var key in EntityMetadata.Keys.OrderBy(key => key.LogicalName).ToList()) 
+	{ #>
+				public const string <#= Unique(Sanitize(CamelCase(GetLocalizedLabel(key.DisplayName))),"K"+key.LogicalName) #> = "<#= MaskDoubleQuote(key.LogicalName) #>";
+<# 	} #>
+		}
+		#endregion
+<# 
+} // End AlternateKeys
+#>
+
+<#
+if(!_suppressRelations)
+{ // Start Relations
+#>
+		#region Relations
+        public static class Relations
+        {
+            public static class OneToMany
+            {
+<# 	foreach(var attr in EntityMetadata.OneToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
+	{ #>
+				public const string <#= Unique(CamelCase(attr.SchemaName),"ROTM"+EntityMetadata.LogicalName) #> = "<#= attr.SchemaName #>";
+<# 	} #>
+            }
+
+            public static class ManyToOne
+            {
+<# 	foreach(var attr in EntityMetadata.ManyToOneRelationships.OrderBy(r => r.SchemaName).ToList()) 
+	{ #>
+				public const string <#= Unique(CamelCase(attr.SchemaName),"RMTO"+EntityMetadata.LogicalName) #> = "<#= attr.SchemaName #>";
+<# 	} #>
+            }
+
+            public static class ManyToMany
+            {
+<# 	foreach(var attr in EntityMetadata.ManyToManyRelationships.OrderBy(r => r.SchemaName).ToList()) 
+	{ #>
+				public const string <#= Unique(CamelCase(attr.SchemaName),"RMTM"+EntityMetadata.LogicalName) #> = "<#= attr.SchemaName #>";
+<# 	} #>
+            }
+        }
+
+        #endregion
+<# 
+} // End Relations
+#>
+
+		#region Methods
+
+        public static <#= CamelCase(EntityMetadata.SchemaName) #> Retrieve(IOrganizationService service, Guid id)
+        {
+            return Retrieve(service,id, new ColumnSet(true));
+        }
+
+        public static <#= CamelCase(EntityMetadata.SchemaName) #> Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        {
+            return service.Retrieve("<#= EntityMetadata.LogicalName #>", id, columnSet).ToEntity<<#= CamelCase(EntityMetadata.SchemaName) #>>();
+        }
+
+        public <#= CamelCase(EntityMetadata.SchemaName) #> GetChangedEntity()
+        {
+            if (_trackChanges)
+            {
+                var attr = new AttributeCollection();
+                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+                {
+                    attr.Add(attrName,this[attrName]);
+                }
+                return new  <#= CamelCase(EntityMetadata.SchemaName) #>(Id) {Attributes = attr };
+            }
+            return this;
+        }
+        #endregion
+	}
+
+<#
+if(!_suppressContext)
+{ // Start Context
+#>
+	#region Context
+	public partial class DataContext
+	{
+		public IQueryable<<#= CamelCase(EntityMetadata.SchemaName) #>> <#= CamelCase(EntityMetadata.SchemaName) #>Set
+		{
+			get
+			{
+				return CreateQuery<<#= CamelCase(EntityMetadata.SchemaName) #>>();
+			}
+		}
+	}
+	#endregion
+<# 
+} // End Context
+#>
+}

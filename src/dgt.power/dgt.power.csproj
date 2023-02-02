@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dgtp</ToolCommandName>
+    <PackageOutputPath>../../packages</PackageOutputPath>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>DIGITALL All Nature GmbH</Company>
+    <Copyright>DIGITALL All Nature GmbH</Copyright>
+    <Authors>Marcel Kummerow,Micha Oberstein,Simon Findling</Authors>
+    <Product>Digitall Power CLI for Dataverse</Product>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <SignAssembly>True</SignAssembly>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.26" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\dgt.power.common\dgt.power.common.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.analyzer\dgt.power.analyzer.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.export\dgt.power.export.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.import\dgt.power.import.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.maintenance\dgt.power.maintenance.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.profile\dgt.power.profile.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.push\dgt.power.push.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>dgt.power.integration.tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,2961 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EntityMetadata xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/xrm/2011/Metadata">
+	<MetadataId>fbf2b5e1-1523-41db-9d3e-b81af45bc293</MetadataId>
+	<HasChanged i:nil="true" />
+	<ActivityTypeMask>0</ActivityTypeMask>
+	<Attributes>
+		<AttributeMetadata i:type="BigIntAttributeMetadata">
+			<MetadataId>90ca0f89-e755-4ed1-83ac-3997089d9dbb</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>BigInt</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10000</ColumnNumber>
+			<CreatedOn>2021-06-11T21:41:46.127</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>ce4e270c-8d19-49b4-846f-2ed274ee08a1</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The version number of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>ae425a39-139e-4b8f-9e6f-f8347570647b</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Die Versionsnummer dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>ce4e270c-8d19-49b4-846f-2ed274ee08a1</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The version number of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>76eb3903-bdd0-4d9d-95f0-34e34f8e772e</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Version Number</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>63a1ea50-1d37-4c1f-8d8b-d2fa6407169b</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Versionsnummer</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>76eb3903-bdd0-4d9d-95f0-34e34f8e772e</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Version Number</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>true</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>versionnumber</LogicalName>
+			<ModifiedOn>2022-07-09T10:01:54.2</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>VersionNumber</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>BigIntType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat i:nil="true" />
+			<MaxValue>9223372036854775807</MaxValue>
+			<MinValue>-9223372036854775808</MinValue>
+		</AttributeMetadata>
+		<AttributeMetadata>
+			<MetadataId>19c41fee-4b2d-427a-90c7-5e6f632e78a8</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Uniqueidentifier</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>1</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:31.923</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>3061a888-5fcd-4403-a75a-a3ad1635d9ef</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Unique identifier of the attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>45fcf63b-7815-47ff-9b28-d4f1db8e9716</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Eindeutiger Bezeichner des Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>3061a888-5fcd-4403-a75a-a3ad1635d9ef</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Unique identifier of the attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>a474e19f-0fe0-415f-a5f8-b3d0b346fba2</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribute</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>78fdd0a2-af6b-4772-a922-fbb3ff469817</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribut</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>a474e19f-0fe0-415f-a5f8-b3d0b346fba2</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Attribute</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>true</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>true</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>attributeid</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:31.923</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">SystemRequired</Value>
+			</RequiredLevel>
+			<SchemaName>AttributeId</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>UniqueidentifierType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat></AutoNumberFormat>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>47f30007-6c3b-4413-93d3-ce4a14e7730d</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>6</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:32.19</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>e5364d7f-cfda-4b48-8bcb-b0d0a398d406</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The physical name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>402f76ac-5f73-471b-aa84-88ecadccbe4f</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der physische Name dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>e5364d7f-cfda-4b48-8bcb-b0d0a398d406</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The physical name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>8b4b92cd-2143-4bf4-bc2c-9134aba97e09</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Physical Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>284f03b1-520e-406e-9c83-ed7acb5e84de</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Physischer Name</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>8b4b92cd-2143-4bf4-bc2c-9134aba97e09</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Physical Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>physicalname</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.267</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>PhysicalName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>3a936a39-2cb9-4be1-bdfd-b4fb0ce8b3fd</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>2</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:31.173</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>e76bbd0e-bef0-456b-834b-5c080a22f024</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The name of this Attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>381c49c1-ea43-494b-aa6f-c9c1913bcc67</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der Name dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>e76bbd0e-bef0-456b-834b-5c080a22f024</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The name of this Attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>3801f36b-5765-4ff0-9f93-a52467fc51be</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>e9de24e2-35f1-4b4b-8e4a-0dd16c380abf</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Name</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>3801f36b-5765-4ff0-9f93-a52467fc51be</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>true</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>name</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:31.203</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>Name</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>5.0.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>4a7e66eb-811e-4224-b53c-4accbe4b5343</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>8</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:32.643</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>98459c0e-3864-4bc4-b132-fdf08f6347f3</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The table column name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>7548b62f-0393-4534-b733-43ba34c253b0</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der Tabellenspaltenname dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>98459c0e-3864-4bc4-b132-fdf08f6347f3</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The table column name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>8f9f490d-d519-4dab-8ae4-e88e4e4bda63</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Table Column Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>b56bfcb4-26fe-4573-93b7-b66b9cad9bd8</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Tabellenspaltenname</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>8f9f490d-d519-4dab-8ae4-e88e4e4bda63</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Table Column Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>tablecolumnname</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.72</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>TableColumnName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="DateTimeAttributeMetadata">
+			<MetadataId>3e29df34-703f-467b-ba68-62042d61ff83</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>DateTime</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>5</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:32.877</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>d602e47b-ef9a-4fcd-96b2-8ccbfcfae9a6</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>For internal use only.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>7a459b2c-a39b-4c83-a11e-07b4acee6d64</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Nur zur internen Verwendung.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>d602e47b-ef9a-4fcd-96b2-8ccbfcfae9a6</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>For internal use only.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>0d51994b-d60d-4c59-9612-e21a391d38f4</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Record Overwrite Time</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>8cda9cc8-9443-4413-b867-eaa8a7feed96</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Zeit für Datensatzüberschreibung</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>0d51994b-d60d-4c59-9612-e21a391d38f4</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Record Overwrite Time</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>overwritetime</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.877</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">SystemRequired</Value>
+			</RequiredLevel>
+			<SchemaName>OverwriteTime</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>DateTimeType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>DateOnly</Format>
+			<ImeMode>Inactive</ImeMode>
+			<FormulaDefinition i:nil="true" />
+			<SourceTypeMask>0</SourceTypeMask>
+			<CanChangeDateTimeBehavior xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifybehavior</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</CanChangeDateTimeBehavior>
+			<DateTimeBehavior xmlns:d4p1="http://schemas.microsoft.com/xrm/7.1/Metadata">
+				<Value xmlns="http://schemas.microsoft.com/xrm/2013/Metadata">UserLocal</Value>
+			</DateTimeBehavior>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="PicklistAttributeMetadata">
+			<MetadataId>118e6768-9a09-4868-839e-1201ec8bc8d9</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Picklist</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>3</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:33.19</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>3927c581-0dad-4779-b436-502b537c7670</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>For internal use only.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>a32b1b16-156e-4ec6-8382-b8d207824359</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Nur zur internen Verwendung.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>3927c581-0dad-4779-b436-502b537c7670</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>For internal use only.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>0efecdea-c7ca-43a2-8be5-077ad3379e18</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Component State</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>2592726b-6ac0-42cf-a2cf-97b5ea436777</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Komponentenstatus</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>0efecdea-c7ca-43a2-8be5-077ad3379e18</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Component State</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>componentstate</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:33.19</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">SystemRequired</Value>
+			</RequiredLevel>
+			<SchemaName>ComponentState</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>PicklistType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<DefaultFormValue>-1</DefaultFormValue>
+			<OptionSet>
+				<MetadataId>faece09f-cefc-11de-8150-00155da18b00</MetadataId>
+				<HasChanged i:nil="true" />
+				<Description xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels>
+						<d5p1:LocalizedLabel>
+							<MetadataId>faece0a1-cefc-11de-8150-00155da18b00</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>The state of this component.</d5p1:Label>
+							<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+						<d5p1:LocalizedLabel>
+							<MetadataId>faece0a1-cefc-11de-8150-00155da18b00</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Der Zustand der Komponente.</d5p1:Label>
+							<d5p1:LanguageCode>1031</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+					</d5p1:LocalizedLabels>
+					<d5p1:UserLocalizedLabel>
+						<MetadataId>faece0a1-cefc-11de-8150-00155da18b00</MetadataId>
+						<HasChanged i:nil="true" />
+						<d5p1:IsManaged>true</d5p1:IsManaged>
+						<d5p1:Label>The state of this component.</d5p1:Label>
+						<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+					</d5p1:UserLocalizedLabel>
+				</Description>
+				<DisplayName xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels>
+						<d5p1:LocalizedLabel>
+							<MetadataId>faece0a0-cefc-11de-8150-00155da18b00</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Component State</d5p1:Label>
+							<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+						<d5p1:LocalizedLabel>
+							<MetadataId>faece0a0-cefc-11de-8150-00155da18b00</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Komponentenstatus</d5p1:Label>
+							<d5p1:LanguageCode>1031</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+					</d5p1:LocalizedLabels>
+					<d5p1:UserLocalizedLabel>
+						<MetadataId>faece0a0-cefc-11de-8150-00155da18b00</MetadataId>
+						<HasChanged i:nil="true" />
+						<d5p1:IsManaged>true</d5p1:IsManaged>
+						<d5p1:Label>Component State</d5p1:Label>
+						<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+					</d5p1:UserLocalizedLabel>
+				</DisplayName>
+				<ExternalTypeName i:nil="true" />
+				<IsCustomOptionSet>false</IsCustomOptionSet>
+				<IsCustomizable xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:CanBeChanged>false</d5p1:CanBeChanged>
+					<d5p1:ManagedPropertyLogicalName>iscustomizable</d5p1:ManagedPropertyLogicalName>
+					<d5p1:Value>false</d5p1:Value>
+				</IsCustomizable>
+				<IsGlobal>true</IsGlobal>
+				<IsManaged>true</IsManaged>
+				<Name>componentstate</Name>
+				<OptionSetType>Picklist</OptionSetType>
+				<IntroducedVersion>5.0.0.0</IntroducedVersion>
+				<Options>
+					<OptionMetadata>
+						<MetadataId i:nil="true" />
+						<HasChanged i:nil="true" />
+						<Color i:nil="true" />
+						<Description xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels />
+							<d7p1:UserLocalizedLabel i:nil="true" />
+						</Description>
+						<ExternalValue i:nil="true" />
+						<IsManaged>true</IsManaged>
+						<Label xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a3-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Published</d7p1:Label>
+									<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a3-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Veröffentlicht</d7p1:Label>
+									<d7p1:LanguageCode>1031</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+							</d7p1:LocalizedLabels>
+							<d7p1:UserLocalizedLabel>
+								<MetadataId>faece0a3-cefc-11de-8150-00155da18b00</MetadataId>
+								<HasChanged i:nil="true" />
+								<d7p1:IsManaged>true</d7p1:IsManaged>
+								<d7p1:Label>Published</d7p1:Label>
+								<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+							</d7p1:UserLocalizedLabel>
+						</Label>
+						<Tag i:nil="true" />
+						<Value>0</Value>
+						<ParentValues xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
+					</OptionMetadata>
+					<OptionMetadata>
+						<MetadataId i:nil="true" />
+						<HasChanged i:nil="true" />
+						<Color i:nil="true" />
+						<Description xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels />
+							<d7p1:UserLocalizedLabel i:nil="true" />
+						</Description>
+						<ExternalValue i:nil="true" />
+						<IsManaged>true</IsManaged>
+						<Label xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a5-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Unpublished</d7p1:Label>
+									<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a5-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Unveröffentlicht</d7p1:Label>
+									<d7p1:LanguageCode>1031</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+							</d7p1:LocalizedLabels>
+							<d7p1:UserLocalizedLabel>
+								<MetadataId>faece0a5-cefc-11de-8150-00155da18b00</MetadataId>
+								<HasChanged i:nil="true" />
+								<d7p1:IsManaged>true</d7p1:IsManaged>
+								<d7p1:Label>Unpublished</d7p1:Label>
+								<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+							</d7p1:UserLocalizedLabel>
+						</Label>
+						<Tag i:nil="true" />
+						<Value>1</Value>
+						<ParentValues xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
+					</OptionMetadata>
+					<OptionMetadata>
+						<MetadataId i:nil="true" />
+						<HasChanged i:nil="true" />
+						<Color i:nil="true" />
+						<Description xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels />
+							<d7p1:UserLocalizedLabel i:nil="true" />
+						</Description>
+						<ExternalValue i:nil="true" />
+						<IsManaged>true</IsManaged>
+						<Label xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a7-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Deleted</d7p1:Label>
+									<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+								<d7p1:LocalizedLabel>
+									<MetadataId>faece0a7-cefc-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Gelöscht</d7p1:Label>
+									<d7p1:LanguageCode>1031</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+							</d7p1:LocalizedLabels>
+							<d7p1:UserLocalizedLabel>
+								<MetadataId>faece0a7-cefc-11de-8150-00155da18b00</MetadataId>
+								<HasChanged i:nil="true" />
+								<d7p1:IsManaged>true</d7p1:IsManaged>
+								<d7p1:Label>Deleted</d7p1:Label>
+								<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+							</d7p1:UserLocalizedLabel>
+						</Label>
+						<Tag i:nil="true" />
+						<Value>2</Value>
+						<ParentValues xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
+					</OptionMetadata>
+					<OptionMetadata>
+						<MetadataId i:nil="true" />
+						<HasChanged i:nil="true" />
+						<Color i:nil="true" />
+						<Description xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels />
+							<d7p1:UserLocalizedLabel i:nil="true" />
+						</Description>
+						<ExternalValue i:nil="true" />
+						<IsManaged>true</IsManaged>
+						<Label xmlns:d7p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+							<d7p1:LocalizedLabels>
+								<d7p1:LocalizedLabel>
+									<MetadataId>1f83e0bb-cefd-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Deleted Unpublished</d7p1:Label>
+									<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+								<d7p1:LocalizedLabel>
+									<MetadataId>1f83e0bb-cefd-11de-8150-00155da18b00</MetadataId>
+									<HasChanged i:nil="true" />
+									<d7p1:IsManaged>true</d7p1:IsManaged>
+									<d7p1:Label>Nicht veröffentlicht gelöscht</d7p1:Label>
+									<d7p1:LanguageCode>1031</d7p1:LanguageCode>
+								</d7p1:LocalizedLabel>
+							</d7p1:LocalizedLabels>
+							<d7p1:UserLocalizedLabel>
+								<MetadataId>1f83e0bb-cefd-11de-8150-00155da18b00</MetadataId>
+								<HasChanged i:nil="true" />
+								<d7p1:IsManaged>true</d7p1:IsManaged>
+								<d7p1:Label>Deleted Unpublished</d7p1:Label>
+								<d7p1:LanguageCode>1033</d7p1:LanguageCode>
+							</d7p1:UserLocalizedLabel>
+						</Label>
+						<Tag i:nil="true" />
+						<Value>3</Value>
+						<ParentValues xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
+					</OptionMetadata>
+				</Options>
+				<ParentOptionSetName i:nil="true" />
+			</OptionSet>
+			<ParentEnumAttributeLogicalName i:nil="true" />
+			<FormulaDefinition i:nil="true" />
+			<SourceTypeMask>0</SourceTypeMask>
+			<ChildPicklistLogicalNames xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
+			<ParentPicklistLogicalName i:nil="true" />
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>fe7170e9-853b-4bd1-b58e-2977117c11b0</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:31.97</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>ca199d1a-099a-4aac-acdc-6351d89e744b</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The managed property parent attribute name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>2f551bfd-0de6-471c-a8c1-b2892a2b8d6e</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der übergeordnete Name der verwalteten Eigenschaft dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>ca199d1a-099a-4aac-acdc-6351d89e744b</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The managed property parent attribute name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>12a8627f-f9b2-404e-b116-0a87aa4e3661</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Managed Property Parent Attribute Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>ed81271f-fb7a-4cb9-a295-5eb4913a05c1</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Übergeordneter Attributname für verwaltete Eigenschaft</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>12a8627f-f9b2-404e-b116-0a87aa4e3661</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Managed Property Parent Attribute Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>managedpropertyparentattributename</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.05</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>ManagedPropertyParentAttributeName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>f552d2d5-ac77-4534-af89-8f30e23a36b1</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>9</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:32.893</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>1c26b091-a3cb-4179-a445-cda8b4cb1910</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The external name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>87ca52fe-0aa3-4474-89dc-689afb22d929</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der externe Name dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>1c26b091-a3cb-4179-a445-cda8b4cb1910</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The external name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>3d0e90a1-7592-4ee2-a2f4-a15badc7fe4c</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>External Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>5248060a-fc17-430a-873c-ea1a5ea427ba</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Externer Name</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>3d0e90a1-7592-4ee2-a2f4-a15badc7fe4c</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>External Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>externalname</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.987</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>ExternalName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>89c6f3ad-4aa9-4f5c-9780-c23619801a48</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>11</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:32.423</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>65521598-9219-412c-bf4b-799a8a7e7ba7</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The managed property logical name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>981f25ed-479a-4cb6-9cd1-5eb950683c30</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der logische Name der verwalteten Eigenschaft dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>65521598-9219-412c-bf4b-799a8a7e7ba7</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The managed property logical name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>cd6d2385-492b-4c80-88a0-202a661bfabf</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Managed Property Logical Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>c0143955-95ea-43a7-8f7f-d84544a0623f</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Logischer Name der verwalteten Eigenschaft</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>cd6d2385-492b-4c80-88a0-202a661bfabf</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Managed Property Logical Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>managedpropertylogicalname</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:32.503</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>ManagedPropertyLogicalName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata>
+			<MetadataId>ac94dced-79fb-4194-857b-d477d6ca0024</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf>validforreadapi</AttributeOf>
+			<AttributeType>Virtual</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10004</ColumnNumber>
+			<CreatedOn>2021-10-02T17:05:27.863</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels />
+				<d4p1:UserLocalizedLabel i:nil="true" />
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels />
+				<d4p1:UserLocalizedLabel i:nil="true" />
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>false</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>false</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>validforreadapiname</LogicalName>
+			<ModifiedOn>2021-10-02T17:05:27.863</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>validforreadapiName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>VirtualType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>true</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat i:nil="true" />
+		</AttributeMetadata>
+		<AttributeMetadata>
+			<MetadataId>edde9dc4-dc3e-426c-a50d-4029d2f637ab</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Uniqueidentifier</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10001</ColumnNumber>
+			<CreatedOn>2021-10-02T17:05:27.333</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>acf41a2f-4e93-4bf4-8c14-4424c62c078d</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribute Type Id</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>6baf1eb2-cf9e-4ba9-a138-391bc038067d</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attributtyp-ID</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>acf41a2f-4e93-4bf4-8c14-4424c62c078d</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Attribute Type Id</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>92d136fb-90bb-4b14-862a-44aa8172c538</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribute Type Id</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>1c0d7700-9371-4946-9004-7b093c5eaac8</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attributtyp-ID</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>92d136fb-90bb-4b14-862a-44aa8172c538</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Attribute Type Id</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>attributetypeid</LogicalName>
+			<ModifiedOn>2022-07-09T10:01:54.653</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>AttributeTypeId</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>UniqueidentifierType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat i:nil="true" />
+		</AttributeMetadata>
+		<AttributeMetadata i:type="BooleanAttributeMetadata">
+			<MetadataId>06e74774-ef0a-45eb-8877-9757a022584f</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Boolean</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10003</ColumnNumber>
+			<CreatedOn>2021-10-02T17:05:27.693</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>03b55885-4887-450c-9387-6f35fbf64696</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Valid For Read API</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>5ae06c0b-1ccf-4756-8625-10935e752883</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Gültig für Lese-API</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>03b55885-4887-450c-9387-6f35fbf64696</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Valid For Read API</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>2e14768a-63f0-4a04-b253-29732049b5fc</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Valid For Read API</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>9f9567ac-ae4e-47f6-a4bb-fbe382caa8fd</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Gültig für Lese-API</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>2e14768a-63f0-4a04-b253-29732049b5fc</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Valid For Read API</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>validforreadapi</LogicalName>
+			<ModifiedOn>2022-07-09T10:01:55.183</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>ValidForReadAPI</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>BooleanType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat i:nil="true" />
+			<DefaultValue>false</DefaultValue>
+			<OptionSet>
+				<MetadataId>b55e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+				<HasChanged i:nil="true" />
+				<Description xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels>
+						<d5p1:LocalizedLabel>
+							<MetadataId>b85e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Valid For Read API</d5p1:Label>
+							<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+						<d5p1:LocalizedLabel>
+							<MetadataId>b95e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Gültig für Lese-API</d5p1:Label>
+							<d5p1:LanguageCode>1031</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+					</d5p1:LocalizedLabels>
+					<d5p1:UserLocalizedLabel>
+						<MetadataId>b85e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+						<HasChanged i:nil="true" />
+						<d5p1:IsManaged>true</d5p1:IsManaged>
+						<d5p1:Label>Valid For Read API</d5p1:Label>
+						<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+					</d5p1:UserLocalizedLabel>
+				</Description>
+				<DisplayName xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels>
+						<d5p1:LocalizedLabel>
+							<MetadataId>b65e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Valid For Read API</d5p1:Label>
+							<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+						<d5p1:LocalizedLabel>
+							<MetadataId>b75e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+							<HasChanged i:nil="true" />
+							<d5p1:IsManaged>true</d5p1:IsManaged>
+							<d5p1:Label>Gültig für Lese-API</d5p1:Label>
+							<d5p1:LanguageCode>1031</d5p1:LanguageCode>
+						</d5p1:LocalizedLabel>
+					</d5p1:LocalizedLabels>
+					<d5p1:UserLocalizedLabel>
+						<MetadataId>b65e7bec-a223-ec11-b6e5-000d3ab63f3a</MetadataId>
+						<HasChanged i:nil="true" />
+						<d5p1:IsManaged>true</d5p1:IsManaged>
+						<d5p1:Label>Valid For Read API</d5p1:Label>
+						<d5p1:LanguageCode>1033</d5p1:LanguageCode>
+					</d5p1:UserLocalizedLabel>
+				</DisplayName>
+				<ExternalTypeName i:nil="true" />
+				<IsCustomOptionSet>true</IsCustomOptionSet>
+				<IsCustomizable xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:CanBeChanged>false</d5p1:CanBeChanged>
+					<d5p1:ManagedPropertyLogicalName>iscustomizable</d5p1:ManagedPropertyLogicalName>
+					<d5p1:Value>false</d5p1:Value>
+				</IsCustomizable>
+				<IsGlobal>false</IsGlobal>
+				<IsManaged>true</IsManaged>
+				<Name>_attribute_validforreadapi</Name>
+				<OptionSetType>Boolean</OptionSetType>
+				<IntroducedVersion>9.1.0.0</IntroducedVersion>
+				<FalseOption i:nil="true" />
+				<TrueOption i:nil="true" />
+			</OptionSet>
+			<FormulaDefinition></FormulaDefinition>
+			<SourceTypeMask>0</SourceTypeMask>
+		</AttributeMetadata>
+		<AttributeMetadata i:type="StringAttributeMetadata">
+			<MetadataId>cc529a7a-2aa2-4560-9102-1d3696c71940</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>String</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>7</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:33.203</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>74f77ec8-08dd-422f-8162-fe68ae6721b6</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>The logical name of this attribute.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>2ceeb0c1-9456-4bd6-9928-74c72713df96</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Der logische Name dieses Attributs.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>74f77ec8-08dd-422f-8162-fe68ae6721b6</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>The logical name of this attribute.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>7d8e4bae-104d-45b0-be71-cdfe73c1eab7</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Logical Name</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>a08c0480-e86a-44b4-943b-ae340ad9114d</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Logischer Name</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>7d8e4bae-104d-45b0-be71-cdfe73c1eab7</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Logical Name</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>true</IsValidForCreate>
+			<IsValidForForm>true</IsValidForForm>
+			<IsValidForGrid>true</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>true</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>logicalname</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:33.3</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">true</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">SystemRequired</Value>
+			</RequiredLevel>
+			<SchemaName>LogicalName</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>StringType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType>0</SourceType>
+			<AutoNumberFormat></AutoNumberFormat>
+			<Format>Text</Format>
+			<ImeMode>Auto</ImeMode>
+			<MaxLength>128</MaxLength>
+			<YomiOf i:nil="true" />
+			<FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>Text</d4p1:Value>
+			</FormatName>
+			<FormulaDefinition i:nil="true" />
+			<IsLocalizable>false</IsLocalizable>
+			<SourceTypeMask>0</SourceTypeMask>
+			<DatabaseLength>256</DatabaseLength>
+		</AttributeMetadata>
+		<AttributeMetadata>
+			<MetadataId>376e73d8-dbfd-447e-b6cc-97d1c42b7153</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Uniqueidentifier</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>4</ColumnNumber>
+			<CreatedOn>2021-06-11T21:21:31.953</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>21a0034b-3c50-4628-a08c-be50e57eb054</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Unique identifier of the associated solution.</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>e5efe577-af33-437b-98da-d36012b18eee</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Eindeutiger Bezeichner der zugeordneten Lösung.</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>21a0034b-3c50-4628-a08c-be50e57eb054</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Unique identifier of the associated solution.</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>33dee344-1dc1-465c-89a6-2239264063dc</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Solution</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>4fddd973-d3c8-4b84-84dd-060d609a8d15</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Lösung</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>33dee344-1dc1-465c-89a6-2239264063dc</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Solution</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>solutionid</LogicalName>
+			<ModifiedOn>2021-06-11T21:21:31.953</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">SystemRequired</Value>
+			</RequiredLevel>
+			<SchemaName>SolutionId</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>UniqueidentifierType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat></AutoNumberFormat>
+		</AttributeMetadata>
+		<AttributeMetadata>
+			<MetadataId>da0750bd-194c-4dc1-a7a0-0972540f6a6d</MetadataId>
+			<HasChanged i:nil="true" />
+			<AttributeOf i:nil="true" />
+			<AttributeType>Uniqueidentifier</AttributeType>
+			<CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+			<CanBeSecuredForRead>false</CanBeSecuredForRead>
+			<CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+			<CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</CanModifyAdditionalSettings>
+			<ColumnNumber>10002</ColumnNumber>
+			<CreatedOn>2021-10-02T17:05:27.567</CreatedOn>
+			<DeprecatedVersion i:nil="true" />
+			<Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>36a9d954-fa77-4915-9cc3-1fec7f8a6a5b</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribute Of</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>a75e910f-1960-4551-bad1-90cadc9cfee1</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribut von</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>36a9d954-fa77-4915-9cc3-1fec7f8a6a5b</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Attribute Of</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</Description>
+			<DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:LocalizedLabels>
+					<d4p1:LocalizedLabel>
+						<MetadataId>169bd2f1-b38e-486e-a206-ef5b78745cc4</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribute Of</d4p1:Label>
+						<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+					<d4p1:LocalizedLabel>
+						<MetadataId>528eb9d7-5c42-4de6-b315-6b23cf3ff219</MetadataId>
+						<HasChanged i:nil="true" />
+						<d4p1:IsManaged>true</d4p1:IsManaged>
+						<d4p1:Label>Attribut von</d4p1:Label>
+						<d4p1:LanguageCode>1031</d4p1:LanguageCode>
+					</d4p1:LocalizedLabel>
+				</d4p1:LocalizedLabels>
+				<d4p1:UserLocalizedLabel>
+					<MetadataId>169bd2f1-b38e-486e-a206-ef5b78745cc4</MetadataId>
+					<HasChanged i:nil="true" />
+					<d4p1:IsManaged>true</d4p1:IsManaged>
+					<d4p1:Label>Attribute Of</d4p1:Label>
+					<d4p1:LanguageCode>1033</d4p1:LanguageCode>
+				</d4p1:UserLocalizedLabel>
+			</DisplayName>
+			<EntityLogicalName>attribute</EntityLogicalName>
+			<ExternalName i:nil="true" />
+			<InheritsFrom i:nil="true" />
+			<IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsAuditEnabled>
+			<IsCustomAttribute>false</IsCustomAttribute>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsDataSourceSecret>false</IsDataSourceSecret>
+			<IsFilterable>false</IsFilterable>
+			<IsGlobalFilterEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyglobalfiltersettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsGlobalFilterEnabled>
+			<IsManaged>true</IsManaged>
+			<IsPrimaryId>false</IsPrimaryId>
+			<IsPrimaryName>false</IsPrimaryName>
+			<IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsRenameable>
+			<IsRequiredForForm>false</IsRequiredForForm>
+			<IsRetrievable>false</IsRetrievable>
+			<IsSearchable>false</IsSearchable>
+			<IsSecured>false</IsSecured>
+			<IsSortableEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifyissortablesettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsSortableEnabled>
+			<IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsValidForAdvancedFind>
+			<IsValidForCreate>false</IsValidForCreate>
+			<IsValidForForm>false</IsValidForForm>
+			<IsValidForGrid>false</IsValidForGrid>
+			<IsValidForRead>true</IsValidForRead>
+			<IsValidForUpdate>false</IsValidForUpdate>
+			<IsValidODataAttribute>true</IsValidODataAttribute>
+			<LinkedAttributeId i:nil="true" />
+			<LogicalName>attributeof</LogicalName>
+			<ModifiedOn>2022-07-09T10:01:54.967</ModifiedOn>
+			<RequiredLevel>
+				<CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+				<ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+				<Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+			</RequiredLevel>
+			<SchemaName>AttributeOf</SchemaName>
+			<Settings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+			<AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+				<d4p1:Value>UniqueidentifierType</d4p1:Value>
+			</AttributeTypeName>
+			<IntroducedVersion>9.1.0.0</IntroducedVersion>
+			<IsLogical>false</IsLogical>
+			<SourceType i:nil="true" />
+			<AutoNumberFormat i:nil="true" />
+		</AttributeMetadata>
+	</Attributes>
+	<AutoCreateAccessTeams>false</AutoCreateAccessTeams>
+	<AutoRouteToOwnerQueue>false</AutoRouteToOwnerQueue>
+	<CanBeInCustomEntityAssociation xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canbeincustomentityassociation</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</CanBeInCustomEntityAssociation>
+	<CanBeInManyToMany xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canbeinmanytomany</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</CanBeInManyToMany>
+	<CanBePrimaryEntityInRelationship xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canbeprimaryentityinrelationship</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</CanBePrimaryEntityInRelationship>
+	<CanBeRelatedEntityInRelationship xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canberelatedentityinrelationship</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</CanBeRelatedEntityInRelationship>
+	<CanChangeTrackingBeEnabled xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canchangetrackingbeenabled</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanChangeTrackingBeEnabled>
+	<CanCreateAttributes xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>cancreateattributes</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanCreateAttributes>
+	<CanCreateCharts xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>cancreatecharts</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanCreateCharts>
+	<CanCreateForms xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>cancreateforms</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanCreateForms>
+	<CanCreateViews xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>cancreateviews</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanCreateViews>
+	<CanEnableSyncToExternalSearchIndex xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canenablesynctoexternalsearchindex</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanEnableSyncToExternalSearchIndex>
+	<CanModifyAdditionalSettings xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</CanModifyAdditionalSettings>
+	<CanTriggerWorkflow>false</CanTriggerWorkflow>
+	<ChangeTrackingEnabled>false</ChangeTrackingEnabled>
+	<CreatedOn>2021-06-11T21:21:31.157</CreatedOn>
+	<DataProviderId i:nil="true" />
+	<DataSourceId i:nil="true" />
+	<Description xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:LocalizedLabels />
+		<d2p1:UserLocalizedLabel i:nil="true" />
+	</Description>
+	<DisplayCollectionName xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:LocalizedLabels>
+			<d2p1:LocalizedLabel>
+				<MetadataId>add6d5ad-9c04-4014-b41c-07ccf9972a1b</MetadataId>
+				<HasChanged i:nil="true" />
+				<d2p1:IsManaged>true</d2p1:IsManaged>
+				<d2p1:Label>Attributes</d2p1:Label>
+				<d2p1:LanguageCode>1033</d2p1:LanguageCode>
+			</d2p1:LocalizedLabel>
+			<d2p1:LocalizedLabel>
+				<MetadataId>c545aeb6-3799-4e57-9111-a8a33da0c5f8</MetadataId>
+				<HasChanged i:nil="true" />
+				<d2p1:IsManaged>true</d2p1:IsManaged>
+				<d2p1:Label>Attribute</d2p1:Label>
+				<d2p1:LanguageCode>1031</d2p1:LanguageCode>
+			</d2p1:LocalizedLabel>
+		</d2p1:LocalizedLabels>
+		<d2p1:UserLocalizedLabel>
+			<MetadataId>add6d5ad-9c04-4014-b41c-07ccf9972a1b</MetadataId>
+			<HasChanged i:nil="true" />
+			<d2p1:IsManaged>true</d2p1:IsManaged>
+			<d2p1:Label>Attributes</d2p1:Label>
+			<d2p1:LanguageCode>1033</d2p1:LanguageCode>
+		</d2p1:UserLocalizedLabel>
+	</DisplayCollectionName>
+	<DisplayName xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:LocalizedLabels>
+			<d2p1:LocalizedLabel>
+				<MetadataId>05f62357-0546-4e5b-adda-c494c40b5294</MetadataId>
+				<HasChanged i:nil="true" />
+				<d2p1:IsManaged>true</d2p1:IsManaged>
+				<d2p1:Label>Attribute</d2p1:Label>
+				<d2p1:LanguageCode>1033</d2p1:LanguageCode>
+			</d2p1:LocalizedLabel>
+			<d2p1:LocalizedLabel>
+				<MetadataId>e217c279-d8e4-4f19-ac1f-a68ad828ff1e</MetadataId>
+				<HasChanged i:nil="true" />
+				<d2p1:IsManaged>true</d2p1:IsManaged>
+				<d2p1:Label>Attribut</d2p1:Label>
+				<d2p1:LanguageCode>1031</d2p1:LanguageCode>
+			</d2p1:LocalizedLabel>
+		</d2p1:LocalizedLabels>
+		<d2p1:UserLocalizedLabel>
+			<MetadataId>05f62357-0546-4e5b-adda-c494c40b5294</MetadataId>
+			<HasChanged i:nil="true" />
+			<d2p1:IsManaged>true</d2p1:IsManaged>
+			<d2p1:Label>Attribute</d2p1:Label>
+			<d2p1:LanguageCode>1033</d2p1:LanguageCode>
+		</d2p1:UserLocalizedLabel>
+	</DisplayName>
+	<EnforceStateTransitions>false</EnforceStateTransitions>
+	<ExternalName i:nil="true" />
+	<HasActivities>false</HasActivities>
+	<HasEmailAddresses>false</HasEmailAddresses>
+	<HasFeedback>false</HasFeedback>
+	<HasNotes>false</HasNotes>
+	<IconLargeName i:nil="true" />
+	<IconMediumName i:nil="true" />
+	<IconSmallName i:nil="true" />
+	<IconVectorName i:nil="true" />
+	<IsAIRUpdated>false</IsAIRUpdated>
+	<IsActivity>false</IsActivity>
+	<IsActivityParty>false</IsActivityParty>
+	<IsArchivalEnabled>false</IsArchivalEnabled>
+	<IsAuditEnabled xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifyauditsettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsAuditEnabled>
+	<IsAvailableOffline>false</IsAvailableOffline>
+	<IsBusinessProcessEnabled>false</IsBusinessProcessEnabled>
+	<IsChildEntity>false</IsChildEntity>
+	<IsConnectionsEnabled xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifyconnectionsettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsConnectionsEnabled>
+	<IsCustomEntity>false</IsCustomEntity>
+	<IsCustomizable xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>iscustomizable</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>true</d2p1:Value>
+	</IsCustomizable>
+	<IsDocumentManagementEnabled>false</IsDocumentManagementEnabled>
+	<IsDocumentRecommendationsEnabled>false</IsDocumentRecommendationsEnabled>
+	<IsDuplicateDetectionEnabled xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifyduplicatedetectionsettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsDuplicateDetectionEnabled>
+	<IsEnabledForCharts>false</IsEnabledForCharts>
+	<IsEnabledForTrace>false</IsEnabledForTrace>
+	<IsImportable>false</IsImportable>
+	<IsInteractionCentricEnabled>false</IsInteractionCentricEnabled>
+	<IsIntersect>false</IsIntersect>
+	<IsKnowledgeManagementEnabled>false</IsKnowledgeManagementEnabled>
+	<IsMSTeamsIntegrationEnabled>false</IsMSTeamsIntegrationEnabled>
+	<IsMailMergeEnabled xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifymailmergesettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsMailMergeEnabled>
+	<IsManaged>true</IsManaged>
+	<IsMappable xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>ismappable</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsMappable>
+	<IsOneNoteIntegrationEnabled>false</IsOneNoteIntegrationEnabled>
+	<IsQuickCreateEnabled>false</IsQuickCreateEnabled>
+	<IsReadOnlyInMobileClient xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifymobileclientreadonly</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsReadOnlyInMobileClient>
+	<IsReadingPaneEnabled>true</IsReadingPaneEnabled>
+	<IsRenameable xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>isrenameable</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsRenameable>
+	<IsRetrieveAuditEnabled>false</IsRetrieveAuditEnabled>
+	<IsRetrieveMultipleAuditEnabled>false</IsRetrieveMultipleAuditEnabled>
+	<IsSolutionAware>true</IsSolutionAware>
+	<IsStateModelAware>false</IsStateModelAware>
+	<IsValidForAdvancedFind>false</IsValidForAdvancedFind>
+	<IsValidForQueue xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifyqueuesettings</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsValidForQueue>
+	<IsVisibleInMobile xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifymobilevisibility</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsVisibleInMobile>
+	<IsVisibleInMobileClient xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifymobileclientvisibility</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsVisibleInMobileClient>
+	<LogicalName>attribute</LogicalName>
+	<ManyToManyRelationships />
+	<ManyToOneRelationships />
+	<ModifiedOn>2022-07-09T10:01:55.73</ModifiedOn>
+	<ObjectTypeCode>9808</ObjectTypeCode>
+	<OneToManyRelationships>
+		<OneToManyRelationshipMetadata>
+			<MetadataId>e0bc58fc-fcca-eb11-8235-000d3adc26f4</MetadataId>
+			<HasChanged i:nil="true" />
+			<IsCustomRelationship>true</IsCustomRelationship>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>true</d4p1:Value>
+			</IsCustomizable>
+			<IsManaged>true</IsManaged>
+			<IsValidForAdvancedFind>true</IsValidForAdvancedFind>
+			<SchemaName>attribute_solutioncomponentattrconfig</SchemaName>
+			<SecurityTypes>ParentChild</SecurityTypes>
+			<IntroducedVersion>1.0</IntroducedVersion>
+			<RelationshipType>OneToManyRelationship</RelationshipType>
+			<AssociatedMenuConfiguration>
+				<Behavior>UseCollectionName</Behavior>
+				<Group>Details</Group>
+				<Label xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels />
+					<d5p1:UserLocalizedLabel i:nil="true" />
+				</Label>
+				<Order>10000</Order>
+				<AvailableOffline>true</AvailableOffline>
+				<Icon i:nil="true" />
+				<IsCustomizable>true</IsCustomizable>
+				<MenuId i:nil="true" />
+				<QueryApi i:nil="true" />
+				<ViewId>00000000-0000-0000-0000-000000000000</ViewId>
+			</AssociatedMenuConfiguration>
+			<CascadeConfiguration>
+				<Archive>NoCascade</Archive>
+				<Assign>Cascade</Assign>
+				<Delete>Cascade</Delete>
+				<Merge>NoCascade</Merge>
+				<Reparent>Cascade</Reparent>
+				<Share>Cascade</Share>
+				<Unshare>Cascade</Unshare>
+				<RollupView>NoCascade</RollupView>
+			</CascadeConfiguration>
+			<DenormalizedAttributeName i:nil="true" />
+			<EntityKey i:nil="true" />
+			<IsDenormalizedLookup i:nil="true" />
+			<IsHierarchical>false</IsHierarchical>
+			<IsRelationshipAttributeDenormalized>false</IsRelationshipAttributeDenormalized>
+			<ReferencedAttribute>attributeid</ReferencedAttribute>
+			<ReferencedEntity>attribute</ReferencedEntity>
+			<ReferencedEntityNavigationPropertyName>attribute_solutioncomponentattrconfig</ReferencedEntityNavigationPropertyName>
+			<ReferencingAttribute>attributeid</ReferencingAttribute>
+			<ReferencingEntity>solutioncomponentattributeconfiguration</ReferencingEntity>
+			<ReferencingEntityNavigationPropertyName>AttributeId</ReferencingEntityNavigationPropertyName>
+			<RelationshipAttributes />
+			<RelationshipBehavior>2</RelationshipBehavior>
+		</OneToManyRelationshipMetadata>
+		<OneToManyRelationshipMetadata>
+			<MetadataId>1157f9cf-fdca-eb11-8235-000d3adc26f4</MetadataId>
+			<HasChanged i:nil="true" />
+			<IsCustomRelationship>false</IsCustomRelationship>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsManaged>false</IsManaged>
+			<IsValidForAdvancedFind>false</IsValidForAdvancedFind>
+			<SchemaName>referencingattribute_relationshipattribute</SchemaName>
+			<SecurityTypes>None</SecurityTypes>
+			<IntroducedVersion>1.0.0.2</IntroducedVersion>
+			<RelationshipType>OneToManyRelationship</RelationshipType>
+			<AssociatedMenuConfiguration>
+				<Behavior>UseCollectionName</Behavior>
+				<Group>Details</Group>
+				<Label xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels />
+					<d5p1:UserLocalizedLabel i:nil="true" />
+				</Label>
+				<Order>10000</Order>
+				<AvailableOffline>true</AvailableOffline>
+				<Icon i:nil="true" />
+				<IsCustomizable>false</IsCustomizable>
+				<MenuId i:nil="true" />
+				<QueryApi i:nil="true" />
+				<ViewId>00000000-0000-0000-0000-000000000000</ViewId>
+			</AssociatedMenuConfiguration>
+			<CascadeConfiguration>
+				<Archive>NoCascade</Archive>
+				<Assign>NoCascade</Assign>
+				<Delete>Restrict</Delete>
+				<Merge>NoCascade</Merge>
+				<Reparent>NoCascade</Reparent>
+				<Share>NoCascade</Share>
+				<Unshare>NoCascade</Unshare>
+				<RollupView>NoCascade</RollupView>
+			</CascadeConfiguration>
+			<DenormalizedAttributeName i:nil="true" />
+			<EntityKey i:nil="true" />
+			<IsDenormalizedLookup i:nil="true" />
+			<IsHierarchical>false</IsHierarchical>
+			<IsRelationshipAttributeDenormalized>false</IsRelationshipAttributeDenormalized>
+			<ReferencedAttribute>attributeid</ReferencedAttribute>
+			<ReferencedEntity>attribute</ReferencedEntity>
+			<ReferencedEntityNavigationPropertyName>referencingdattribute_relationshipattribute</ReferencedEntityNavigationPropertyName>
+			<ReferencingAttribute>referencingattributeid</ReferencingAttribute>
+			<ReferencingEntity>relationshipattribute</ReferencingEntity>
+			<ReferencingEntityNavigationPropertyName>referencingattributeid_relationshipattribute</ReferencingEntityNavigationPropertyName>
+			<RelationshipAttributes />
+			<RelationshipBehavior>0</RelationshipBehavior>
+		</OneToManyRelationshipMetadata>
+		<OneToManyRelationshipMetadata>
+			<MetadataId>1657f9cf-fdca-eb11-8235-000d3adc26f4</MetadataId>
+			<HasChanged i:nil="true" />
+			<IsCustomRelationship>false</IsCustomRelationship>
+			<IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+				<d4p1:CanBeChanged>true</d4p1:CanBeChanged>
+				<d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+				<d4p1:Value>false</d4p1:Value>
+			</IsCustomizable>
+			<IsManaged>false</IsManaged>
+			<IsValidForAdvancedFind>false</IsValidForAdvancedFind>
+			<SchemaName>referencedattribute_relationshipattribute</SchemaName>
+			<SecurityTypes>None</SecurityTypes>
+			<IntroducedVersion>1.0.0.2</IntroducedVersion>
+			<RelationshipType>OneToManyRelationship</RelationshipType>
+			<AssociatedMenuConfiguration>
+				<Behavior>UseCollectionName</Behavior>
+				<Group>Details</Group>
+				<Label xmlns:d5p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+					<d5p1:LocalizedLabels />
+					<d5p1:UserLocalizedLabel i:nil="true" />
+				</Label>
+				<Order>10000</Order>
+				<AvailableOffline>true</AvailableOffline>
+				<Icon i:nil="true" />
+				<IsCustomizable>false</IsCustomizable>
+				<MenuId i:nil="true" />
+				<QueryApi i:nil="true" />
+				<ViewId>00000000-0000-0000-0000-000000000000</ViewId>
+			</AssociatedMenuConfiguration>
+			<CascadeConfiguration>
+				<Archive>NoCascade</Archive>
+				<Assign>NoCascade</Assign>
+				<Delete>Restrict</Delete>
+				<Merge>NoCascade</Merge>
+				<Reparent>NoCascade</Reparent>
+				<Share>NoCascade</Share>
+				<Unshare>NoCascade</Unshare>
+				<RollupView>NoCascade</RollupView>
+			</CascadeConfiguration>
+			<DenormalizedAttributeName i:nil="true" />
+			<EntityKey i:nil="true" />
+			<IsDenormalizedLookup i:nil="true" />
+			<IsHierarchical>false</IsHierarchical>
+			<IsRelationshipAttributeDenormalized>false</IsRelationshipAttributeDenormalized>
+			<ReferencedAttribute>attributeid</ReferencedAttribute>
+			<ReferencedEntity>attribute</ReferencedEntity>
+			<ReferencedEntityNavigationPropertyName>referencedattribute_relationshipattribute</ReferencedEntityNavigationPropertyName>
+			<ReferencingAttribute>referencedattributeid</ReferencingAttribute>
+			<ReferencingEntity>relationshipattribute</ReferencingEntity>
+			<ReferencingEntityNavigationPropertyName>referencedattributeid_relationshipattribute</ReferencingEntityNavigationPropertyName>
+			<RelationshipAttributes />
+			<RelationshipBehavior>0</RelationshipBehavior>
+		</OneToManyRelationshipMetadata>
+	</OneToManyRelationships>
+	<OwnerId i:nil="true" />
+	<OwnerIdType>8</OwnerIdType>
+	<OwnershipType>None</OwnershipType>
+	<OwningBusinessUnit i:nil="true" />
+	<PrimaryIdAttribute>attributeid</PrimaryIdAttribute>
+	<PrimaryNameAttribute>name</PrimaryNameAttribute>
+	<Privileges>
+		<SecurityPrivilegeMetadata>
+			<CanBeBasic>false</CanBeBasic>
+			<CanBeDeep>false</CanBeDeep>
+			<CanBeEntityReference>false</CanBeEntityReference>
+			<CanBeGlobal>true</CanBeGlobal>
+			<CanBeLocal>false</CanBeLocal>
+			<CanBeParentEntityReference>false</CanBeParentEntityReference>
+			<Name>prvCreateAttribute</Name>
+			<PrivilegeId>210dfcd8-6b62-423e-aa40-a5a003dedd57</PrivilegeId>
+			<PrivilegeType>Create</PrivilegeType>
+		</SecurityPrivilegeMetadata>
+		<SecurityPrivilegeMetadata>
+			<CanBeBasic>false</CanBeBasic>
+			<CanBeDeep>false</CanBeDeep>
+			<CanBeEntityReference>false</CanBeEntityReference>
+			<CanBeGlobal>true</CanBeGlobal>
+			<CanBeLocal>false</CanBeLocal>
+			<CanBeParentEntityReference>false</CanBeParentEntityReference>
+			<Name>prvReadAttribute</Name>
+			<PrivilegeId>b8caea5d-f379-4295-aa59-38adeb73e853</PrivilegeId>
+			<PrivilegeType>Read</PrivilegeType>
+		</SecurityPrivilegeMetadata>
+		<SecurityPrivilegeMetadata>
+			<CanBeBasic>false</CanBeBasic>
+			<CanBeDeep>false</CanBeDeep>
+			<CanBeEntityReference>false</CanBeEntityReference>
+			<CanBeGlobal>true</CanBeGlobal>
+			<CanBeLocal>false</CanBeLocal>
+			<CanBeParentEntityReference>false</CanBeParentEntityReference>
+			<Name>prvWriteAttribute</Name>
+			<PrivilegeId>6fa055d5-e524-4eed-a48e-8af713f83ff4</PrivilegeId>
+			<PrivilegeType>Write</PrivilegeType>
+		</SecurityPrivilegeMetadata>
+		<SecurityPrivilegeMetadata>
+			<CanBeBasic>false</CanBeBasic>
+			<CanBeDeep>false</CanBeDeep>
+			<CanBeEntityReference>false</CanBeEntityReference>
+			<CanBeGlobal>true</CanBeGlobal>
+			<CanBeLocal>false</CanBeLocal>
+			<CanBeParentEntityReference>false</CanBeParentEntityReference>
+			<Name>prvDeleteAttribute</Name>
+			<PrivilegeId>0b74c137-d835-422d-a170-846e43e64f80</PrivilegeId>
+			<PrivilegeType>Delete</PrivilegeType>
+		</SecurityPrivilegeMetadata>
+		<SecurityPrivilegeMetadata>
+			<CanBeBasic>false</CanBeBasic>
+			<CanBeDeep>false</CanBeDeep>
+			<CanBeEntityReference>false</CanBeEntityReference>
+			<CanBeGlobal>true</CanBeGlobal>
+			<CanBeLocal>false</CanBeLocal>
+			<CanBeParentEntityReference>false</CanBeParentEntityReference>
+			<Name>prvAppendToAttribute</Name>
+			<PrivilegeId>d3bfa7da-d48e-46f7-8613-3cd2f39e6dc7</PrivilegeId>
+			<PrivilegeType>AppendTo</PrivilegeType>
+		</SecurityPrivilegeMetadata>
+	</Privileges>
+	<RecurrenceBaseEntityLogicalName i:nil="true" />
+	<ReportViewName i:nil="true" />
+	<SchemaName>Attribute</SchemaName>
+	<SettingOf i:nil="true" />
+	<Settings xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts" i:nil="true" />
+	<SyncToExternalSearchIndex>false</SyncToExternalSearchIndex>
+	<UsesBusinessDataLabelTable>false</UsesBusinessDataLabelTable>
+	<IntroducedVersion>9.1.0.0</IntroducedVersion>
+	<PrimaryImageAttribute i:nil="true" />
+	<CanChangeHierarchicalRelationship xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>false</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canchangehierarchicalrelationship</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</CanChangeHierarchicalRelationship>
+	<EntityHelpUrl i:nil="true" />
+	<EntityHelpUrlEnabled>false</EntityHelpUrlEnabled>
+	<CollectionSchemaName>Attributes</CollectionSchemaName>
+	<EntityColor i:nil="true" />
+	<ExternalCollectionName i:nil="true" />
+	<IsOptimisticConcurrencyEnabled>false</IsOptimisticConcurrencyEnabled>
+	<Keys xmlns:d2p1="http://schemas.microsoft.com/xrm/7.1/Metadata" />
+	<LogicalCollectionName>attributes</LogicalCollectionName>
+	<DaysSinceRecordLastModified>0</DaysSinceRecordLastModified>
+	<EntitySetName>attributes</EntitySetName>
+	<IsEnabledForExternalChannels>false</IsEnabledForExternalChannels>
+	<IsOfflineInMobileClient xmlns:d2p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+		<d2p1:CanBeChanged>true</d2p1:CanBeChanged>
+		<d2p1:ManagedPropertyLogicalName>canmodifymobileclientoffline</d2p1:ManagedPropertyLogicalName>
+		<d2p1:Value>false</d2p1:Value>
+	</IsOfflineInMobileClient>
+	<IsPrivate>false</IsPrivate>
+	<IsSLAEnabled>false</IsSLAEnabled>
+	<MobileOfflineFilters></MobileOfflineFilters>
+	<IsBPFEntity>false</IsBPFEntity>
+	<IsLogicalEntity>false</IsLogicalEntity>
+</EntityMetadata>

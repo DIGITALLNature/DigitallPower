@@ -1,0 +1,1 @@
+﻿dgtp codegeneration . -c $PSScriptRoot/metadata.config.json

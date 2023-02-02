@@ -1,0 +1,50 @@
+﻿[
+  {
+    "CalendarId": "5d2fc991-a347-4e67-ad8b-6d6c517d510a",
+    "Name": "Update Test",
+    "Type": 2,
+    "CalendarRules": [
+      {
+        "calendarruleid": "0f56b2f4-1b0f-43ab-9575-6309713820dd",
+        "name": "New Year",
+        "start_date": "2020-01-01T00:00:00Z",
+        "duration": 1440,
+        "Description": "Holiday Rule",
+        "Pattern": "FREQ=DAILY;INTERVAL=1;COUNT=1",
+        "Rank": 0,
+        "SubCode": 5,
+        "TimeCode": 2,
+        "TimeZoneCode": -1,
+        "ExtendCode": 2,
+        "IsSimple": false,
+        "EffectiveIntervalEnd": "2020-01-02T00:00:00Z",
+        "EffectiveIntervalStart": "2020-01-01T00:00:00Z",
+        "InnerCalendar": {
+          "CalendarId": "72276660-bd94-4c55-80de-94964a10ab75",
+          "Name": "Customer Service Calendar",
+          "IsVaryByDay": true,
+          "Type": -1,
+          "Description": null,
+          "HolidaySchedule": null,
+          "CalendarRules": []
+        }
+      },
+      {
+        "calendarruleid": "2a17af31-25c6-4c8d-adae-7ac26e3899e8",
+        "name": "Easter Sunday",
+        "start_date": "2020-04-12T00:00:00Z",
+        "duration": 1440,
+        "Description": "Holiday Rule",
+        "Pattern": "FREQ=DAILY;INTERVAL=1;COUNT=1",
+        "Rank": 0,
+        "SubCode": 5,
+        "TimeCode": 2,
+        "TimeZoneCode": -1,
+        "ExtendCode": 2,
+        "IsSimple": false,
+        "EffectiveIntervalEnd": "2020-04-13T00:00:00Z",
+        "EffectiveIntervalStart": "2020-04-12T00:00:00Z"
+      }
+    ]
+  }
+]

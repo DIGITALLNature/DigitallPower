@@ -1,0 +1,50 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+///<reference path="<#= TypingPath #>" />
+
+export module D365<#= CamelCase(EntityMetadata.SchemaName) #>EntityRef {
+	export class Attributes {
+		constructor() {
+		}
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{ 
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
+#>
+		public static <#= attrName #>: string = "<#= attr.LogicalName #>";
+<# 
+} // End Attribute loop
+#>
+	}
+
+	<#= Summary(GetLocalizedLabel(EntityMetadata.Description),1)#>
+	export class EntityRef {
+
+		public static EntitylogicalName: string = "<#= EntityMetadata.LogicalName #>";
+
+	}
+
+<# if(!SuppressOptions)
+{ // Start Options
+#>
+	export module Optionsets {
+<# 	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
+	{
+#>
+		export class <#= Unique(CamelCase(Sanitize(optionField.SchemaName)),"O"+EntityMetadata.LogicalName) #> {
+			constructor() {
+			}
+
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+			public static <#= Unique(CamelCase(Sanitize(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #> = { value: <#= option.Value #> };
+<# 			} #>
+
+		}
+<#	
+	} // End Optionset loop
+#>		  
+	}
+<# 
+} // End Options
+#>
+}

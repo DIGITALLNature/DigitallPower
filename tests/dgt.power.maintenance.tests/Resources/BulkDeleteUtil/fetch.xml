@@ -1,0 +1,8 @@
+﻿<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+    <entity name="queue">
+        <attribute name="name" />
+        <attribute name="emailaddress" />
+        <attribute name="queueid" />
+        <order attribute="name" descending="false" />
+    </entity>
+</fetch>

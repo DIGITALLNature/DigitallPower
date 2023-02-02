@@ -1,0 +1,14 @@
+﻿[
+  {
+    "solution": "customizations",
+    "strict": true,
+    "whitelist": [
+      "testentity",
+      "!ec4u_"
+    ],
+    "blacklist": [
+      "systemuser",
+      "!dgt_"
+    ]
+  }
+]

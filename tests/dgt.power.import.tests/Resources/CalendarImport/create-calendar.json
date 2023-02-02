@@ -1,0 +1,66 @@
+﻿[
+  {
+    "CalendarId": "fa58f1e4-71c6-ea11-a812-000d3aafe1cf",
+    "Name": "Create Test",
+    "Type": 2,
+    "CalendarRules": [
+      {
+        "calendarruleid": "2084f5ea-71c6-ea11-a812-000d3aafe1cf",
+        "name": "New Year",
+        "start_date": "2020-01-01T00:00:00Z",
+        "duration": 1440,
+        "Description": "Holiday Rule",
+        "Pattern": "FREQ=DAILY;INTERVAL=1;COUNT=1",
+        "Rank": 0,
+        "SubCode": 5,
+        "TimeCode": 2,
+        "TimeZoneCode": -1,
+        "ExtendCode": 2,
+        "IsSimple": false,
+        "EffectiveIntervalEnd": "2020-01-02T00:00:00Z",
+        "EffectiveIntervalStart": "2020-01-01T00:00:00Z"
+      },
+      {
+        "calendarruleid": "94966209-72c6-ea11-a812-000d3aafe1cf",
+        "name": "Berchtolds Day",
+        "start_date": "2020-01-02T00:00:00Z",
+        "duration": 1440,
+        "Description": "Holiday Rule",
+        "Pattern": "FREQ=DAILY;INTERVAL=1;COUNT=1",
+        "Rank": 0,
+        "SubCode": 5,
+        "TimeCode": 2,
+        "TimeZoneCode": -1,
+        "ExtendCode": 2,
+        "IsSimple": false,
+        "EffectiveIntervalEnd": "2020-01-03T00:00:00Z",
+        "EffectiveIntervalStart": "2020-01-02T00:00:00Z"
+      },
+      {
+        "calendarruleid": "06109727-72c6-ea11-a812-000d3aafe1cf",
+        "name": "Good Friday",
+        "start_date": "2020-04-10T00:00:00Z",
+        "duration": 1440,
+        "Description": "Holiday Rule",
+        "Pattern": "FREQ=DAILY;INTERVAL=1;COUNT=1",
+        "Rank": 0,
+        "SubCode": 5,
+        "TimeCode": 2,
+        "TimeZoneCode": -1,
+        "ExtendCode": 2,
+        "IsSimple": false,
+        "EffectiveIntervalEnd": "2020-04-11T00:00:00Z",
+        "EffectiveIntervalStart": "2020-04-10T00:00:00Z",
+        "InnerCalendar": {
+          "CalendarId": "72276660-bd94-4c55-80de-94964a10ab75",
+          "Name": "Customer Service Calendar",
+          "IsVaryByDay": true,
+          "Type": -1,
+          "Description": null,
+          "HolidaySchedule": null,
+          "CalendarRules": []
+        }
+      }
+    ]
+  }
+]

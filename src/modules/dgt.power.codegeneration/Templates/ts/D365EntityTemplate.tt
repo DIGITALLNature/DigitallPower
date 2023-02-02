@@ -1,0 +1,113 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+///<reference path="<#= TypingPath #>" />
+
+import { D365Model } from "./model";
+
+export module D365<#= CamelCase(EntityMetadata.SchemaName) #>Entity {
+	export class Attributes {
+		constructor() {
+		}
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{ 
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
+#>
+		public static <#= attrName #>: string = "<#= attr.LogicalName #>";
+<# 
+} // End Attribute loop
+#>
+	}
+
+	<#= Summary(GetLocalizedLabel(EntityMetadata.Description),1)#>
+	export class Entity implements D365Model.Entity {
+
+		public static EntitylogicalName: string = "<#= EntityMetadata.LogicalName #>";
+
+		public FormContext!: Xrm.FormContext;
+
+		constructor(private context?: Xrm.FormContext) {
+			if (this.context) {
+				this.FormContext = this.context;
+			}
+		}
+
+		EntitylogicalName(): string {
+			return Entity.EntitylogicalName;
+		};
+
+		EntityId(): string {
+			return this.FormContext.data.entity.getId().replace("{", "").replace("}", "").trim();
+		};
+
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{ 
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"B"+EntityMetadata.LogicalName);
+		var attrType = TSTypeSet.ConvertType(attr.AttributeType, attr.LogicalName);
+#>
+		<#= Summary(GetLocalizedLabel(attr.Description),2) #>
+		<#= attrName #>: D365Model.EntityField<<#= attrType.Attribute #>, <#= attrType.Control #>> = new D365Model.EntityField<<#= attrType.Attribute #>, <#= attrType.Control #>>(
+			//D365<#= CamelCase(EntityMetadata.SchemaName) #>Entity.Attributes.<#= attrName #>,
+			"<#= attr.LogicalName #>",
+			<#= attrType.XrmEnum #>,
+			() => this._a<<#= attrType.Attribute #>>("<#= attr.LogicalName #>"),
+			(header?: boolean, index?: number) => this._c<<#= attrType.Control #>>("<#= attr.LogicalName #>", header, index),
+			(delegate: (control: <#= attrType.Control #>) => void) => this._f<<#= attrType.Control #>>("<#= attr.LogicalName #>", delegate),
+			(value) => this._v<<#= attrType.Control #>>("<#= attr.LogicalName #>", value),
+			(value) => this._d<<#= attrType.Control #>>("<#= attr.LogicalName #>", value)
+		);
+
+<# 
+} // End Attribute loop
+#>
+		private _a<A extends Xrm.Attributes.Attribute>(attributeName: string): A {
+			return this.FormContext.getAttribute(attributeName);
+		}
+
+		private _c<C extends Xrm.Controls.StandardControl>(attributeName: string, header?: boolean, index?: number): C {
+			var name = attributeName;
+			if (header) {
+				name = "header_process_" + name;
+			}
+			if (index) {
+				name = name + "_" + index;
+			}
+			return this.FormContext.getControl(name);
+		}
+
+		private _v<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => (c as C).setVisible(value));
+		}
+
+		private _d<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => (c as C).setDisabled(value));
+		}
+
+		private _f<C extends Xrm.Controls.StandardControl>(attributeName: string, callback: (control: C) => void) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => callback((c as C)));
+		}
+	}
+
+<# if(!SuppressOptions)
+{ // Start Options
+#>
+	export module Optionsets {
+<# 	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
+	{ 
+#>
+		export class <#= Unique(CamelCase(Sanitize(optionField.SchemaName)),"O"+EntityMetadata.LogicalName) #> implements D365Model.Optionset {
+			constructor() {
+			}
+
+<# 			foreach(var option in optionField.Options)	
+			{ #>
+			public static <#= Unique(CamelCase(Sanitize(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName) #>: D365Model.OptionsetValue = new D365Model.OptionsetValue("<#= Sanitize(option.Label, true, true, true) #>", <#= option.Value #>);
+<# 			} #>
+		}
+<#	
+	} // End Optionset loop
+#>
+	}
+<# 
+} // End Options
+#>
+}

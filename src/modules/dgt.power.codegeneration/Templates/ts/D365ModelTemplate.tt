@@ -1,0 +1,47 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+/// <reference path="<#= TypingPath #>" />
+
+export module D365Model {
+  export interface Entity {
+    EntitylogicalName(): string;
+    EntityId(): string;
+  }
+  export interface Form extends Entity {}
+  export class EntityField<A extends Xrm.Attributes.Attribute, C extends Xrm.Controls.Control> {
+    constructor(
+      public AttributeName: string,
+      public AttributeType: Xrm.Attributes.AttributeType,
+      public Attribute: () => A,
+      public Control: (header?: boolean, index?: number) => C,
+      public Controls: (delegate: (control: C) => void) => void,
+      public Visible: (value: boolean) => void,
+      public Disabled: (value: boolean) => void
+    ) {}
+  }
+  export class FormGrid {
+    constructor(public GridId: string, public Grid: () => Xrm.Controls.Grid, public Control: () => Xrm.Controls.GridControl) {}
+  }
+  export interface Optionset {}
+  export class OptionsetValue implements Xrm.OptionSetValue {
+    constructor(public text: string, public value: number) {}
+  }
+  export class Dto {
+    constructor(public Container: { [key: string]: any }) {}
+  }
+  export abstract class FormTabs {
+    static Tabs: Xrm.Collection.ItemCollection<Xrm.Controls.Tab>;
+    constructor(protected Tabs: Xrm.Collection.ItemCollection<Xrm.Controls.Tab>) {}
+  }
+  export class Tab<S extends D365Model.Sections> {
+    constructor(public Tab: Xrm.Controls.Tab, public Sections: S) {}
+  }
+  export abstract class Sections {
+    constructor(protected Sections: Xrm.Collection.ItemCollection<Xrm.Controls.Section>) {}
+  }
+  export interface BusinessProcessFlowStage {
+    Name: string;
+    Ids: string[];
+  }
+}
+/* eslint-enable */

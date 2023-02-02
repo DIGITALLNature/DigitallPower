@@ -1,0 +1,23 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+// ReSharper disable All
+namespace <#= NameSpace #>
+{
+    /// <summary>
+    /// This class contains global option sets which are used in more than one entity!
+    /// </summary>
+    public sealed class OptionSetValues
+    {
+        private OptionSetValues() {}
+
+<# foreach(var optionSet in OptionSets) { #>
+        public struct <#= CamelCase(optionSet.Key) #>
+        {
+<# foreach(var option in optionSet.Value) { #>
+            public const int <#= Sanitize(CamelCase(option.Label)) #> = <#= option.Value #>;
+<# } #>
+        }
+<# } #>
+    }
+}

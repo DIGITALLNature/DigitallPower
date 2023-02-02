@@ -1,0 +1,59 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+/* eslint-disable */
+///<reference path="<#= TypingPath #>" />
+
+import { D365Model } from "./model";
+
+export module D365<#= Process.Item1 #>BPF {
+    export class Stages {
+        constructor() {
+        }
+<# foreach(var stage in Stages)
+{
+#>
+
+        public static <#= Sanitize(stage.Item1) #> = {
+            Name: "<#= stage.Item2 #>",
+            Ids: [
+<#
+int idx1 = 0;
+foreach(var id in stage.Item3)
+{
+		var csv = (++idx1 == stage.Item3.Count) ? "" : ",";
+#>              "<#= id.ToString("D") #>"<#= csv #>
+<#
+} // End Stage loop
+#>
+            ],
+<#
+int idx2 = 0;
+foreach(var id in stage.Item3)
+{
+		var csv = (++idx2 == stage.Item3.Count) ? "" : ",";
+#>            Id_<#= id.ToString("N") #>: "<#= id.ToString("D") #>"<#= csv #>
+<#
+} // End Stage loop
+#>
+        }
+<#
+} // End Stage loop
+#>
+    }
+    export class Process {
+        constructor() {
+        }
+        public static ProcessName = "<#= Process.Item2 #>";
+        public static ProcessId = "<#= Process.Item3.ToString("D") #>";
+        public static Stages: D365Model.BusinessProcessFlowStage[] = [
+<# int idx3 = 0;
+foreach(var stage in Stages)
+{
+		var csv = (++idx3 == Stages.Count) ? "" : ",";
+#>
+            Stages.<#= Sanitize(stage.Item1) #><#= csv #>
+<#
+} // End Stage loop
+#>
+        ];
+    }
+}

@@ -1,0 +1,8 @@
+﻿{
+  "Entities": [
+    "account",
+    "activitypointer"
+  ],
+  "SuppressTypeScript": true,
+  "SuppressDotNet": true
+}

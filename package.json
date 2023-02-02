@@ -1,0 +1,55 @@
+{
+    "devDependencies": {
+        "@droidsolutions-oss/semantic-release-nuget": "^1.2.0",
+
+        "@semantic-release/changelog": "github:semantic-release/changelog",
+        "@semantic-release/git": "github:semantic-release/git",
+        "semantic-release": "^20.1.0"
+    },
+    "release": {
+        "branches": [
+            "master",
+            {
+                "name": "develop",
+                "prerelease": true
+            }
+        ],
+        "plugins": [
+            "@semantic-release/commit-analyzer",
+            "@semantic-release/release-notes-generator",
+            "@semantic-release/changelog",
+            "@droidsolutions-oss/semantic-release-nuget",
+            [
+                "@semantic-release/git",
+                {
+                    "assets": [
+                        "CHANGELOG.md"
+                    ],
+                    "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+                }
+            ],
+            "@semantic-release/github"
+        ],
+        "projectPath": "src/dgt.power/dgt.power.csproj",
+        "npmPublish": false,
+        "includeSymbols": true,
+        "files": [
+            {
+                "path": [
+                    "Directory.Build.props"
+                ],
+                "type": "xml",
+                "replacements": [
+                    {
+                        "key": "Version",
+                        "value": "${nextRelease.version}"
+                    },
+                    {
+                        "key": "RepositoryCommit",
+                        "value": "${nextRelease.gitHead}"
+                    }
+                ]
+            }
+        ]
+    }
+}

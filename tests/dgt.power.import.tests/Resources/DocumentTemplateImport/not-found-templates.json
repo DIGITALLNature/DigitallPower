@@ -1,0 +1,16 @@
+{
+  "ignore_missing": false,
+  "documenttemplates": [
+    {
+      "documenttemplateid": "9d6916e4-1033-4e03-a0e3-d15a5b133a9a",
+      "name": "Account",
+      "file": "something-missing.docx",
+      "document_type": "MicrosoftWord",
+      "document_status": true,
+      "force_update": false,
+      "description": "New",
+      "language_code": 1033,
+      "associated_entity": "account"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="7.0.2" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.26" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>dgt.power.tests</_Parameter1> <!-- We use the value of AssemblyName to declare the value of the attribute -->
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\models\dgt.power.dataverse\dgt.power.dataverse.csproj" />
+  </ItemGroup>
+
+</Project>

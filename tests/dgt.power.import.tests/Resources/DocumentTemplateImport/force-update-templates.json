@@ -1,0 +1,16 @@
+﻿{
+  "ignore_missing": false,
+  "documenttemplates": [
+    {
+      "documenttemplateid": "ce712e68-2a7e-4d57-966b-a1d695b9a6dd",
+      "name": "AccountExcel",
+      "file": "Accounts.xlsx",
+      "document_type": "MicrosoftExcel",
+      "document_status": true,
+      "force_update": true,
+      "description": "Force Update",
+      "language_code": 1033,
+      "associated_entity": "account"
+    }
+  ]
+}

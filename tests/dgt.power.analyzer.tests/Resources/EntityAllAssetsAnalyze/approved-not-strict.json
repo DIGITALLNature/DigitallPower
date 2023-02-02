@@ -1,0 +1,13 @@
+﻿[
+  {
+    "solution": "customizations",
+    "strict": false,
+    "whitelist": [
+      "queue"
+    ],
+    "blacklist": [
+      "systemuser",
+      "team"
+    ]
+  }
+]

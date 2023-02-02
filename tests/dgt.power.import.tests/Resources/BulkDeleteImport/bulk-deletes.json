@@ -1,0 +1,21 @@
+{
+  "bulk_deletes": [
+    {
+      "name": "Analysis Results Cleanup Job",
+      "recurrence_pattern": "FREQ=DAILY",
+      "recurrence_start_time": "05:34"
+    },
+    {
+      "name": "Old Bulk Delete",
+      "recurrence_pattern": "FREQ=DAILY",
+      "recurrence_start_time": "00:00",
+      "disable": true
+    },
+    {
+      "name": "TestEntity BulkDelete",
+      "recurrence_pattern": "FREQ=DAILY",
+      "recurrence_start_time": "11:05",
+      "FetchXml": "<fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" ><entity name=\"testentity\" ><attribute name=\"name\" /><order attribute=\"name\" descending=\"false\" /></entity></fetch>"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+// ReSharper disable All
+namespace <#= NameSpace #>
+{
+    public sealed class SdkMessageNames
+    {
+        private SdkMessageNames() {}
+
+<# foreach(var sdkMessage in Filter(SdkMessages))
+{
+#>
+        public const string <#= sdkMessage.Item1 #> = "<#= sdkMessage.Item2 #>";
+<#
+}
+#>
+    }
+}

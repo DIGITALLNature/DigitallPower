@@ -1,0 +1,113 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#"  #>
+<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+using System;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+
+// ReSharper disable All
+namespace <#= NameSpace #>
+{ 
+<# foreach(var action in Actions)
+{ 
+#>
+	[RequestProxy("<#= action.LogicalName #>")]
+	public class <#= CamelCase(action.LogicalName) #>Request : OrganizationRequest
+	{
+		public <#= CamelCase(action.LogicalName) #>Request()
+		{
+			RequestName = "<#= action.LogicalName #>";
+		}
+
+		#region consts
+		public const string RequestLogicalName = "<#= action.LogicalName #>";
+		#endregion
+
+<# if(action.InParameters.Count > 0)
+{ 
+#>
+		#region InParameters
+		public struct InParameters
+		{
+<# foreach(var param in action.InParameters)
+{ 
+#>
+			public const string <#= MaskOverrides(CamelCase(param.Name)) #> = "<#= param.UniqueName #>";
+<#
+}
+#>
+		}
+		#endregion
+<#
+}
+#>
+
+<# foreach(var param in action.InParameters)
+{ 
+#>
+		public <#= param.Type #> <#= MaskOverrides(CamelCase(param.Name)) #>
+		{
+			get
+			{
+				if(base.Parameters.Contains("<#= param.UniqueName #>"))
+				{
+					return (<#= param.Type #>)base.Parameters["<#= param.UniqueName #>"];
+				}
+				return default(<#= param.Type #>);
+			}
+			set
+			{
+				base.Parameters["<#= param.UniqueName #>"] = value;
+			}
+		}
+
+<#
+}
+#>		
+	}
+
+	[ResponseProxy("<#= action.LogicalName #>")]
+	public class <#= CamelCase(action.LogicalName) #>Response : OrganizationResponse
+	{
+<# if(action.OutParameters.Count > 0)
+{ 
+#>
+		#region OutParameters
+		public struct OutParameters
+		{
+<# foreach(var param in action.OutParameters)
+{ 
+#>
+			public const string <#= CamelCase(param.Name) #> = "<#= param.UniqueName #>";
+<#
+}
+#>
+		}
+		#endregion
+<#
+}
+#>
+
+<# foreach(var param in action.OutParameters)
+{ 
+#>
+		public <#= param.Type #> <#= CamelCase(param.Name) #>
+		{
+			get
+			{
+				if(base.Results.Contains("<#= param.UniqueName #>"))
+				{
+					return (<#= param.Type #>)base.Results["<#= param.UniqueName #>"];
+				}
+				return default(<#= param.Type #>);
+			}
+		}
+
+<#
+}
+#>
+	}
+
+<#
+}
+#>
+}

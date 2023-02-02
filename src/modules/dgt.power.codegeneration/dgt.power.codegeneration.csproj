@@ -1,0 +1,188 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\ts\D365ServicesTemplate.tt" />
+    <None Remove="Templates\ts\D365UtilsTemplate.tt" />
+    <None Remove="Templates\ts\D365WebApiTemplate.tt" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>dgt.power.codegeneration.tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+    <Content Include="Templates\dotnet\ActionTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ActionTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\dotnet\ContextTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ContextTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\dotnet\EntityTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\dotnet\OptionSetsTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>OptionSetsTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\dotnet\SdkMessagesTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SdkMessagesTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365BusinessProcessFlowTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365BusinessProcessFlowTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365EntityFormTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365EntityFormTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365EntityRefTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365EntityRefTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365EntityTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365EntityTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365ModelTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365ModelTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365ODataTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365ODataTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365OptionSetsTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365OptionSetsTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365SdkMessagesTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365SdkMessagesTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365ServicesTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365ServicesTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365UtilsTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365UtilsTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="Templates\ts\D365WebApiTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365WebApiTemplate.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.26" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.0.26" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
+    <PackageReference Include="System.CodeDom" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Templates\dotnet\ActionTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ActionTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\dotnet\ContextTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContextTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\dotnet\EntityTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EntityTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\dotnet\OptionSetsTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OptionSetsTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\dotnet\SdkMessagesTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SdkMessagesTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365BusinessProcessFlowTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365BusinessProcessFlowTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365EntityFormTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365EntityFormTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365EntityRefTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365EntityRefTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365EntityTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365EntityTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365ModelTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365ModelTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365ODataTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365ODataTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365OptionSetsTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365OptionSetsTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365SdkMessagesTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365SdkMessagesTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365ServicesTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365ServicesTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365UtilsTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365UtilsTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\ts\D365WebApiTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>D365WebApiTemplate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
