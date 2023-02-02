@@ -8,9 +8,6 @@
         "husky": "^8.0.3",
         "semantic-release": "^20.1.0"
     },
-    "engines": {
-        "node": "18.x"
-    },
     "release": {
         "branches": [
             "main",
