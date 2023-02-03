@@ -1,3 +1,17 @@
+# [1.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2023-02-03)
+
+
+### Bug Fixes
+
+* remove markup errors, unused command arguments and make some arguments required ([f20d2f8](https://github.com/DIGITALLNature/DigitallPower/commit/f20d2f8980c8f0338df4312265861a27eb488777))
+* repair invalid command examples ([8e37214](https://github.com/DIGITALLNature/DigitallPower/commit/8e3721483dba65cca40e20f211d1398890597c5f))
+
+
+### Features
+
+* add Attribute ExcludeFromCodeCoverage to Generated Models ([e40a9da](https://github.com/DIGITALLNature/DigitallPower/commit/e40a9da042a66e8d5f3e6d2c99e67319dd42262d))
+* Supress linePragmas for t4 files ([#3](https://github.com/DIGITALLNature/DigitallPower/issues/3)) ([32eb4be](https://github.com/DIGITALLNature/DigitallPower/commit/32eb4beda5c75f4e7a4152c789f2001ed4d9352a))
+
 # [1.0.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2023-02-03)
 
 
