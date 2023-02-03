@@ -114,8 +114,6 @@ public class ProfileManager : IProfileManager
         }
         else
         {
-            // TODO: Add encryption for non windows operating systems
-            AnsiConsole.Write(new Rule("[red]Attention: Currently connection strings will be stored unencrypted on this machine.[/]"));
             protectData = GetDataProtector().Protect(json);
         }
 
@@ -132,8 +130,6 @@ public class ProfileManager : IProfileManager
         }
         else
         {
-            // TODO: Add decrpytion for non windows operating systems
-            AnsiConsole.Write(new Rule("[red]Attention: Currently connection strings will be stored unencrypted on this machine.[/]"));
             unprotectedData = GetDataProtector().Unprotect(protectedMemory);
         }
 
