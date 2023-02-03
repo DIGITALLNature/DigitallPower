@@ -28,6 +28,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
         private readonly string[] _configEntities;
         private readonly string NameSpace;
         private readonly bool _useClassic;
+        private bool HasPrimaryNameAttribute => EntityMetadata.PrimaryNameAttribute != null;
 
         public EntityTemplate(EntityMetadata entity, Func<string, EntityMetadata> retrieveEntityMetadata, CodeGenerationConfig config, int systemLanguage)
         {
