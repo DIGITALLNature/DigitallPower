@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -58,6 +58,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "team";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 9;
         #endregion
 
@@ -1391,6 +1392,11 @@ namespace dgt.power.dataverse
 				public const string TeamMsdyncrmQrcodestyle = "team_msdyncrm_qrcodestyle";
 				public const string TeamMsdyncrmTextstyle = "team_msdyncrm_textstyle";
 				public const string TeamMsdyncrmVideostyle = "team_msdyncrm_videostyle";
+				public const string TeamMsdynmktCatalogeventstatusconfiguration = "team_msdynmkt_catalogeventstatusconfiguration";
+				public const string TeamMsdynmktConfiguration = "team_msdynmkt_configuration";
+				public const string TeamMsdynmktEventmetadata = "team_msdynmkt_eventmetadata";
+				public const string TeamMsdynmktEventparametermetadata = "team_msdynmkt_eventparametermetadata";
+				public const string TeamMsdynmktFeatureconfiguration = "team_msdynmkt_featureconfiguration";
 				public const string TeamMsfpAlertrule = "team_msfp_alertrule";
 				public const string TeamMsfpEmailtemplate = "team_msfp_emailtemplate";
 				public const string TeamMsfpFileresponse = "team_msfp_fileresponse";
@@ -1488,7 +1494,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static Team Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

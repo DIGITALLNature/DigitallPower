@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -58,6 +58,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "systemuser";
+        public const string PrimaryNameAttribute = "fullname";
         public const int EntityTypeCode = 8;
         #endregion
 
@@ -6904,6 +6905,10 @@ namespace dgt.power.dataverse
 				public const string LkMobileOfflineProfileCreatedonbehalfby = "lk_MobileOfflineProfile_createdonbehalfby";
 				public const string LkMobileOfflineProfileModifiedby = "lk_MobileOfflineProfile_modifiedby";
 				public const string LkMobileOfflineProfileModifiedonbehalfby = "lk_MobileOfflineProfile_modifiedonbehalfby";
+				public const string LkMobileofflineprofileextensionCreatedby = "lk_mobileofflineprofileextension_createdby";
+				public const string LkMobileofflineprofileextensionCreatedonbehalfby = "lk_mobileofflineprofileextension_createdonbehalfby";
+				public const string LkMobileofflineprofileextensionModifiedby = "lk_mobileofflineprofileextension_modifiedby";
+				public const string LkMobileofflineprofileextensionModifiedonbehalfby = "lk_mobileofflineprofileextension_modifiedonbehalfby";
 				public const string LkMobileOfflineProfileItemCreatedby = "lk_MobileOfflineProfileItem_createdby";
 				public const string LkMobileofflineprofileitemCreatedonbehalfby = "lk_mobileofflineprofileitem_createdonbehalfby";
 				public const string LkMobileofflineprofileitemModifiedby = "lk_mobileofflineprofileitem_modifiedby";
@@ -8421,6 +8426,34 @@ namespace dgt.power.dataverse
 				public const string LkMsdyncrmVideostyleCreatedonbehalfby = "lk_msdyncrm_videostyle_createdonbehalfby";
 				public const string LkMsdyncrmVideostyleModifiedby = "lk_msdyncrm_videostyle_modifiedby";
 				public const string LkMsdyncrmVideostyleModifiedonbehalfby = "lk_msdyncrm_videostyle_modifiedonbehalfby";
+				public const string LkMsdynmktCatalogeventstatusconfigurationCreatedby = "lk_msdynmkt_catalogeventstatusconfiguration_createdby";
+				public const string LkMsdynmktCatalogeventstatusconfigurationCreatedonbehalfby = "lk_msdynmkt_catalogeventstatusconfiguration_createdonbehalfby";
+				public const string LkMsdynmktCatalogeventstatusconfigurationModifiedby = "lk_msdynmkt_catalogeventstatusconfiguration_modifiedby";
+				public const string LkMsdynmktCatalogeventstatusconfigurationModifiedonbehalfby = "lk_msdynmkt_catalogeventstatusconfiguration_modifiedonbehalfby";
+				public const string LkMsdynmktConfigurationCreatedby = "lk_msdynmkt_configuration_createdby";
+				public const string LkMsdynmktConfigurationCreatedonbehalfby = "lk_msdynmkt_configuration_createdonbehalfby";
+				public const string LkMsdynmktConfigurationModifiedby = "lk_msdynmkt_configuration_modifiedby";
+				public const string LkMsdynmktConfigurationModifiedonbehalfby = "lk_msdynmkt_configuration_modifiedonbehalfby";
+				public const string LkMsdynmktEventmetadataCreatedby = "lk_msdynmkt_eventmetadata_createdby";
+				public const string LkMsdynmktEventmetadataCreatedonbehalfby = "lk_msdynmkt_eventmetadata_createdonbehalfby";
+				public const string LkMsdynmktEventmetadataModifiedby = "lk_msdynmkt_eventmetadata_modifiedby";
+				public const string LkMsdynmktEventmetadataModifiedonbehalfby = "lk_msdynmkt_eventmetadata_modifiedonbehalfby";
+				public const string LkMsdynmktEventmetadataSdkmessageprocessingstepCreatedby = "lk_msdynmkt_eventmetadata_sdkmessageprocessingstep_createdby";
+				public const string LkMsdynmktEventmetadataSdkmessageprocessingstepCreatedonbehalfby = "lk_msdynmkt_eventmetadata_sdkmessageprocessingstep_createdonbehalfby";
+				public const string LkMsdynmktEventmetadataSdkmessageprocessingstepModifiedby = "lk_msdynmkt_eventmetadata_sdkmessageprocessingstep_modifiedby";
+				public const string LkMsdynmktEventmetadataSdkmessageprocessingstepModifiedonbehalfby = "lk_msdynmkt_eventmetadata_sdkmessageprocessingstep_modifiedonbehalfby";
+				public const string LkMsdynmktEventparametermetadataCreatedby = "lk_msdynmkt_eventparametermetadata_createdby";
+				public const string LkMsdynmktEventparametermetadataCreatedonbehalfby = "lk_msdynmkt_eventparametermetadata_createdonbehalfby";
+				public const string LkMsdynmktEventparametermetadataModifiedby = "lk_msdynmkt_eventparametermetadata_modifiedby";
+				public const string LkMsdynmktEventparametermetadataModifiedonbehalfby = "lk_msdynmkt_eventparametermetadata_modifiedonbehalfby";
+				public const string LkMsdynmktFeatureconfigurationCreatedby = "lk_msdynmkt_featureconfiguration_createdby";
+				public const string LkMsdynmktFeatureconfigurationCreatedonbehalfby = "lk_msdynmkt_featureconfiguration_createdonbehalfby";
+				public const string LkMsdynmktFeatureconfigurationModifiedby = "lk_msdynmkt_featureconfiguration_modifiedby";
+				public const string LkMsdynmktFeatureconfigurationModifiedonbehalfby = "lk_msdynmkt_featureconfiguration_modifiedonbehalfby";
+				public const string LkMsdynmktTrackingcontextCreatedby = "lk_msdynmkt_trackingcontext_createdby";
+				public const string LkMsdynmktTrackingcontextCreatedonbehalfby = "lk_msdynmkt_trackingcontext_createdonbehalfby";
+				public const string LkMsdynmktTrackingcontextModifiedby = "lk_msdynmkt_trackingcontext_modifiedby";
+				public const string LkMsdynmktTrackingcontextModifiedonbehalfby = "lk_msdynmkt_trackingcontext_modifiedonbehalfby";
 				public const string LkMsfpAlertruleCreatedby = "lk_msfp_alertrule_createdby";
 				public const string LkMsfpAlertruleCreatedonbehalfby = "lk_msfp_alertrule_createdonbehalfby";
 				public const string LkMsfpAlertruleModifiedby = "lk_msfp_alertrule_modifiedby";
@@ -9601,6 +9634,11 @@ namespace dgt.power.dataverse
 				public const string UserMsdyncrmQrcodestyle = "user_msdyncrm_qrcodestyle";
 				public const string UserMsdyncrmTextstyle = "user_msdyncrm_textstyle";
 				public const string UserMsdyncrmVideostyle = "user_msdyncrm_videostyle";
+				public const string UserMsdynmktCatalogeventstatusconfiguration = "user_msdynmkt_catalogeventstatusconfiguration";
+				public const string UserMsdynmktConfiguration = "user_msdynmkt_configuration";
+				public const string UserMsdynmktEventmetadata = "user_msdynmkt_eventmetadata";
+				public const string UserMsdynmktEventparametermetadata = "user_msdynmkt_eventparametermetadata";
+				public const string UserMsdynmktFeatureconfiguration = "user_msdynmkt_featureconfiguration";
 				public const string UserMsfpAlertrule = "user_msfp_alertrule";
 				public const string UserMsfpEmailtemplate = "user_msfp_emailtemplate";
 				public const string UserMsfpFileresponse = "user_msfp_fileresponse";
@@ -9704,7 +9742,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static SystemUser Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

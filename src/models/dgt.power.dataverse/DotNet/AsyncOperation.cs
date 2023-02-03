@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -58,6 +58,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "asyncoperation";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 4700;
         #endregion
 
@@ -1502,6 +1503,7 @@ namespace dgt.power.dataverse
 				public const string ManagedidentityAsyncOperations = "managedidentity_AsyncOperations";
 				public const string MarketingformdisplayattributesAsyncOperations = "marketingformdisplayattributes_AsyncOperations";
 				public const string MetricAsyncOperations = "metric_AsyncOperations";
+				public const string MobileofflineprofileextensionAsyncOperations = "mobileofflineprofileextension_AsyncOperations";
 				public const string MonthlyFiscalCalendarAsyncOperations = "MonthlyFiscalCalendar_AsyncOperations";
 				public const string MsdynActioncardregardingAsyncOperations = "msdyn_actioncardregarding_AsyncOperations";
 				public const string MsdynActioncardrolesettingAsyncOperations = "msdyn_actioncardrolesetting_AsyncOperations";
@@ -1874,6 +1876,12 @@ namespace dgt.power.dataverse
 				public const string MsdyncrmQrcodestyleAsyncOperations = "msdyncrm_qrcodestyle_AsyncOperations";
 				public const string MsdyncrmTextstyleAsyncOperations = "msdyncrm_textstyle_AsyncOperations";
 				public const string MsdyncrmVideostyleAsyncOperations = "msdyncrm_videostyle_AsyncOperations";
+				public const string MsdynmktCatalogeventstatusconfigurationAsyncOperations = "msdynmkt_catalogeventstatusconfiguration_AsyncOperations";
+				public const string MsdynmktConfigurationAsyncOperations = "msdynmkt_configuration_AsyncOperations";
+				public const string MsdynmktEventmetadataAsyncOperations = "msdynmkt_eventmetadata_AsyncOperations";
+				public const string MsdynmktEventmetadataSdkmessageprocessingstepAsyncOperations = "msdynmkt_eventmetadata_sdkmessageprocessingstep_AsyncOperations";
+				public const string MsdynmktEventparametermetadataAsyncOperations = "msdynmkt_eventparametermetadata_AsyncOperations";
+				public const string MsdynmktFeatureconfigurationAsyncOperations = "msdynmkt_featureconfiguration_AsyncOperations";
 				public const string MsfpAlertAsyncOperations = "msfp_alert_AsyncOperations";
 				public const string MsfpAlertruleAsyncOperations = "msfp_alertrule_AsyncOperations";
 				public const string MsfpEmailtemplateAsyncOperations = "msfp_emailtemplate_AsyncOperations";
@@ -2022,7 +2030,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static AsyncOperation Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

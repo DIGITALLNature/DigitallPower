@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -58,6 +58,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "customapiresponseproperty";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 10023;
         #endregion
 
@@ -793,7 +794,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static CustomAPIResponseProperty Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

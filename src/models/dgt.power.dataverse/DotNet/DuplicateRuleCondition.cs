@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -568,7 +568,6 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
         public static DuplicateRuleCondition Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

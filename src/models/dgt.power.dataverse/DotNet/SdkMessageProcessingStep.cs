@@ -1,5 +1,5 @@
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -58,6 +58,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "sdkmessageprocessingstep";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 4608;
         #endregion
 
@@ -1017,6 +1018,7 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+				public const string MsdynmktSdkmessageprocessingstepEventmetadataSd = "msdynmkt_sdkmessageprocessingstep_eventmetadata_sd";
 				public const string SdkMessageProcessingStepAsyncOperations = "SdkMessageProcessingStep_AsyncOperations";
 				public const string SdkmessageprocessingstepidSdkmessageprocessingstepimage = "sdkmessageprocessingstepid_sdkmessageprocessingstepimage";
 				public const string UserentityinstancedataSdkmessageprocessingstep = "userentityinstancedata_sdkmessageprocessingstep";
@@ -1047,7 +1049,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static SdkMessageProcessingStep Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
