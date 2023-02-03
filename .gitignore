@@ -2,6 +2,7 @@
 *.user
 **/.vs
 **/.vscode
+**/.codecoverage
 **/packages
 **/bin
 **/obj
