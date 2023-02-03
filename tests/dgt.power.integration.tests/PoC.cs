@@ -15,12 +15,9 @@ public class PoC : IntegrationTests
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
 
         var args = "profile create \"INTEGRATIONTEST\"".Split(' ').ToList();
-        args.Add($"\"{Connectionstring}\"");
+        args.Add($"{Connectionstring}");
         var exitCode = entryPoint.Invoke(null, new object[] { args.ToArray() });
-
-        var exitCode2 = entryPoint.Invoke(null, new object[] { Array.Empty<string>() });
-        var exitCode3 = entryPoint.Invoke(null, new object[] { Array.Empty<string>() });
-        Assert.Fail("Should not be reached");
+        Assert.Equal(0,exitCode);
     }
     
 }
