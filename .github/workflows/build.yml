@@ -26,12 +26,12 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Enable Integration Tests
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
+      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
       run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test /p:CollectCoverage=true --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
@@ -39,6 +39,14 @@ jobs:
         name: Linux Tests            
         path: tests/**/test-results.trx
         reporter: dotnet-trx
+    - name: Generate Code Coverage report
+      if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
+      uses: barecheck/code-coverage-action@v1
+      with:
+        barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+        lcov-file: "./lcov.info"
+        send-summary-comment: true
+        show-annotations: "warning"
 
   build-windows:
     name: Build & Test (windows)
@@ -65,7 +73,7 @@ jobs:
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test /p:CollectCoverage=true --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
