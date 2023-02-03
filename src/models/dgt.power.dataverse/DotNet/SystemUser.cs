@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("systemuser")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class SystemUser : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -6904,6 +6906,10 @@ namespace dgt.power.dataverse
 				public const string LkMobileOfflineProfileCreatedonbehalfby = "lk_MobileOfflineProfile_createdonbehalfby";
 				public const string LkMobileOfflineProfileModifiedby = "lk_MobileOfflineProfile_modifiedby";
 				public const string LkMobileOfflineProfileModifiedonbehalfby = "lk_MobileOfflineProfile_modifiedonbehalfby";
+				public const string LkMobileofflineprofileextensionCreatedby = "lk_mobileofflineprofileextension_createdby";
+				public const string LkMobileofflineprofileextensionCreatedonbehalfby = "lk_mobileofflineprofileextension_createdonbehalfby";
+				public const string LkMobileofflineprofileextensionModifiedby = "lk_mobileofflineprofileextension_modifiedby";
+				public const string LkMobileofflineprofileextensionModifiedonbehalfby = "lk_mobileofflineprofileextension_modifiedonbehalfby";
 				public const string LkMobileOfflineProfileItemCreatedby = "lk_MobileOfflineProfileItem_createdby";
 				public const string LkMobileofflineprofileitemCreatedonbehalfby = "lk_mobileofflineprofileitem_createdonbehalfby";
 				public const string LkMobileofflineprofileitemModifiedby = "lk_mobileofflineprofileitem_modifiedby";

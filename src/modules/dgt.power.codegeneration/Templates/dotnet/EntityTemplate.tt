@@ -10,6 +10,7 @@ using System.Linq;
 <# 
 } // End EntityTypeCode
 #>
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;<#= DebuggerNonUserCodeUsing#>
 using System.Runtime.CompilerServices;
 using System.Reflection;
@@ -26,7 +27,8 @@ namespace <#= NameSpace #>
 	<#= Summary(GetLocalizedLabel(EntityMetadata.Description),1)#>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("<#= EntityMetadata.LogicalName #>")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class <#= CamelCase(EntityMetadata.SchemaName) #> : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor

@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("sla")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class SLA : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -1834,6 +1836,7 @@ namespace dgt.power.dataverse
 					public const int MsdynDefExtendedChannelInstance = 10708;
 					public const int MsdynDefExtendedChannelInstanceAccount = 10709;
 					public const int DesktopFlowModule = 10710;
+					public const int MobileOfflineProfileExtension = 10711;
                 }
 			    public struct SLAType
                 {
