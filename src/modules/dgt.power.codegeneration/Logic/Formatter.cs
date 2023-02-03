@@ -5,17 +5,17 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-// TODO: Maybe Use Humanizer?
 public static class Formatter
 {
     public static readonly Regex NewlineRegex = new (@"\r\n|\r|\n", RegexOptions.Compiled);
 
+    // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
     public static string CamelCase(string? phrase)
     {
         return ConvertCaseString(phrase, Case.CamelCase);
     }
 
-    // TODO: there seems to be an error on linux systems where first character is not uppered.
+    // TODO: This method is not really pascal casing. It is actually camel casing.
     public static string PascalCase(string? phrase)
     {
         return ConvertCaseString(phrase, Case.PascalCase);

@@ -15,10 +15,6 @@ public class MaintenanceVerb : BaseProgramSettings
     [DefaultValue("config.json")]
     public string Config { get; init; }
 
-    [CommandArgument(1, "[Tasks]")]
-    [Description("bulkdelete|autonumber")]
-    public string Tasks { get; set; }
-
     [CommandOption("--inline")]
     [Description("Inline data instead of files, only supported for some single tasks!")]
     public string InlineData { get; set; }

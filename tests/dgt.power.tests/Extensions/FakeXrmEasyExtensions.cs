@@ -75,7 +75,7 @@ public static class FakeXrmEasyExtensions
                 return new XrmFakedRelationship
                 {
                     // TODO: FakeXrmEasy sets the relationship name through the IntersectEntity property in the RetrieveRelationshipRequestExecutor therefore setting the property to schema name here.
-                    // see https://github.com/jordimontana82/fake-xrm-easy/blob/master/FakeXrmEasy.Shared/FakeMessageExecutors/RetrieveRelationshipRequestExecutor.cs
+                    // see https://github.com/DynamicsValue/fake-xrm-easy-messages/blob/2x-dev/src/FakeXrmEasy.Messages/FakeMessageExecutors/RetrieveRelationshipRequestExecutor.cs
                     IntersectEntity = relationshipMetadata.SchemaName,
                     RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
                     Entity1LogicalName = oneToManyRelationshipMetadata.ReferencingEntity,

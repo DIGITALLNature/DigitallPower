@@ -10,10 +10,6 @@ namespace dgt.power.import.Base;
 
 public class ImportVerb : BaseProgramSettings
 {
-    [CommandArgument(1, "[Task]")]
-    [Description("Possible tasks: userroles, duplicaterules, teamtemplates, bulkdeletes, savedquerys, queues, documenttemplates, calendars, slaconfigs, outlooktemplates")]
-    public string Task { get; set; }
-
     [CommandOption("--filedir")]
     [Description("Full path to the file dir, e.g.C:\\temp")]
     public string FileDir { get; init; } = string.Empty;
