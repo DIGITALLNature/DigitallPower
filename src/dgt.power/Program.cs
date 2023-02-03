@@ -94,7 +94,7 @@ app.Configure(config =>
             maintenance.AddExample(new[] { "maintenance", "bulkdelete" });
             maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                 .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                .WithExample(new[] { "maintenance", "bulkdelete", "<fetchxml>...</fetchxml" });
+                .WithExample(new[] { "maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml" });
             maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                 .WithDescription("Sets the auto number format for specified columns")
                 .WithExample(new[] { "maintenance", "autonumber", "--config", "./config.json" });
@@ -115,7 +115,7 @@ app.Configure(config =>
     config.AddBranch<ImportVerb>("import", import =>
     {
         import.SetDescription("import specific artifacts in the current Dataverse environment");
-        import.AddExample(new[] { "import", "outlooktemplate", "--filedir", "c:/TargetDir" });
+        import.AddExample(new[] { "import", "outlooktemplates", "--filedir", "c:/TargetDir" });
         import.AddCommand<OutlookTemplateImport>("outlooktemplates");
         import.AddCommand<UserRoleImport>("userroles");
         import.AddCommand<QueueImport>("queues");
