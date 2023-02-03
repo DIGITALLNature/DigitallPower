@@ -36,7 +36,7 @@ jobs:
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
       with:
-        name: Windows Tests            
+        name: Linux Tests            
         path: tests/**/test-results.trx
         reporter: dotnet-trx
 
