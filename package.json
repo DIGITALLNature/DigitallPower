@@ -30,6 +30,7 @@
             ],
             "@semantic-release/github"
         ],
+        "includeSymbols": true,
         "projectPath": "src/dgt.power/dgt.power.csproj",
         "npmPublish": false,
         "usePackageVersion": true
