@@ -26,7 +26,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Enable Integration Tests
-      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
+      if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
       run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
     - name: Run Tests
       env:
@@ -40,10 +40,11 @@ jobs:
         path: tests/**/test-results.trx
         reporter: dotnet-trx
     - name: Generate Code Coverage report
-      if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
+      if: github.event_name == 'pull_request'
       uses: barecheck/code-coverage-action@v1
       with:
         barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+        barecheck-api-key: ${{ secrets.BARECHECK_API_KEY }}
         lcov-file: "./lcov.info"
         send-summary-comment: true
         show-annotations: "warning"
