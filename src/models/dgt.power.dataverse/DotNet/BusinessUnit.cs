@@ -60,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "businessunit";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 10;
         #endregion
 
@@ -2386,6 +2387,11 @@ namespace dgt.power.dataverse
 				public const string BusinessUnitMsdyncrmQrcodestyle = "business_unit_msdyncrm_qrcodestyle";
 				public const string BusinessUnitMsdyncrmTextstyle = "business_unit_msdyncrm_textstyle";
 				public const string BusinessUnitMsdyncrmVideostyle = "business_unit_msdyncrm_videostyle";
+				public const string BusinessUnitMsdynmktCatalogeventstatusconfiguration = "business_unit_msdynmkt_catalogeventstatusconfiguration";
+				public const string BusinessUnitMsdynmktConfiguration = "business_unit_msdynmkt_configuration";
+				public const string BusinessUnitMsdynmktEventmetadata = "business_unit_msdynmkt_eventmetadata";
+				public const string BusinessUnitMsdynmktEventparametermetadata = "business_unit_msdynmkt_eventparametermetadata";
+				public const string BusinessUnitMsdynmktFeatureconfiguration = "business_unit_msdynmkt_featureconfiguration";
 				public const string BusinessUnitMsfpAlertrule = "business_unit_msfp_alertrule";
 				public const string BusinessUnitMsfpEmailtemplate = "business_unit_msfp_emailtemplate";
 				public const string BusinessUnitMsfpFileresponse = "business_unit_msfp_fileresponse";
@@ -2509,7 +2515,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static BusinessUnit Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

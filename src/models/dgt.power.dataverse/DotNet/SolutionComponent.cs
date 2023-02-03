@@ -462,7 +462,6 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
         public static SolutionComponent Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
