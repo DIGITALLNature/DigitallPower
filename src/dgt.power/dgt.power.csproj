@@ -5,11 +5,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dgtp</ToolCommandName>
-    <PackageOutputPath>../../packages</PackageOutputPath>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>DIGITALL All Nature GmbH</Company>
     <Copyright>DIGITALL All Nature GmbH</Copyright>
     <Authors>Marcel Kummerow,Micha Oberstein,Simon Findling</Authors>
