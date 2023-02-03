@@ -31,7 +31,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
  
 } // End EntityTypeCode
 
-            this.Write("using System.ComponentModel;");
+            this.Write("using System.Diagnostics.CodeAnalysis;\r\nusing System.ComponentModel;");
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCodeUsing));
             this.Write(@"
 using System.Runtime.CompilerServices;
@@ -49,8 +49,8 @@ namespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(EntityMetadata.Description),1)));
             this.Write("\r\n\t[DataContractAttribute()]\r\n\t[EntityLogicalNameAttribute(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
-            this.Write("\")]\r\n\t[System.CodeDom.Compiler.GeneratedCode(\"ec4u.automation\", \"1.0.0\")]\r\n\tpubli" +
-                    "c partial class ");
+            this.Write("\")]\r\n\t[System.CodeDom.Compiler.GeneratedCode(\"dgtp\", \"2023\")]\r\n    [ExcludeFromCo" +
+                    "deCoverage]\r\n\tpublic partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             this.Write(" : Entity, INotifyPropertyChanging, INotifyPropertyChanged\r\n    {\r\n\t    #region c" +
                     "tor\r\n\t\t");
@@ -480,7 +480,7 @@ if(!_suppressRelations)
             this.Write(@"                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
 ");
 
-} 
+}
 else 
 {
 
