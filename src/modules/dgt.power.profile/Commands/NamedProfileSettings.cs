@@ -10,7 +10,7 @@ namespace dgt.power.profile.Commands;
 
 public class NamedProfileSettings : ProfileSettings
 {
-    [CommandArgument(0, "[Name]")]
+    [CommandArgument(0, "<Name>")]
     [Description("Name")]
     public string Name { get; init; }
 }

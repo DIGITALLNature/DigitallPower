@@ -19,12 +19,21 @@ using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Spectre.Console.Cli;
+
+var configuration = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("dgtp.json", optional: true)
+                        .AddEnvironmentVariables("dgtp:")
+                        .Build();
 
 var registrations = new ServiceCollection();
 registrations.AddSingleton<ITracer, Tracer>();
+registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<TypescriptCommand, TypescriptCommand>();
 registrations.AddSingleton<MetadataCommand, MetadataCommand>();
@@ -135,5 +144,9 @@ app.Configure(config =>
 #endif
 });
 
+if (args.Length == 0)
+{
+    AnsiConsole.Write(new FigletText("DIGITALL Power").Centered().Color(Color.Blue3));
+}
 
 return app.Run(args);
