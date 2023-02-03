@@ -10,7 +10,7 @@ namespace dgt.power.push.Base;
 
 public class PushVerb : BaseProgramSettings
 {
-    [CommandArgument(1, "[DllFile]")]
+    [CommandArgument(1, "<DllFile>")]
     [Description("Full path to the dll file, e.g. C:\\temp\\plugin.dll")]
     public required string DllFile { get; set; }
 
