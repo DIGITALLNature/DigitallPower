@@ -31,7 +31,7 @@ jobs:
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
