@@ -27,13 +27,13 @@ public class XrmConnection : IXrmConnection
 
         if (_configuration.GetSection("xrm").GetChildren().Any())
         {
-            return ConnectViaEnviroment();
+            return ConnectWithConfiguration();
         }
 
-        return ConnectViaProfile();
+        return ConnectWithProfile();
     }
 
-    private IOrganizationService ConnectViaEnviroment()
+    private IOrganizationService ConnectWithConfiguration()
     {
         var protocol = _configuration.GetValue<SecurityProtocolType>("xrm:securityprotocol");
 
@@ -50,7 +50,7 @@ public class XrmConnection : IXrmConnection
         return connector.GetOrganizationServiceProxy();
     }
 
-    private IOrganizationService ConnectViaProfile()
+    private IOrganizationService ConnectWithProfile()
     {
         Enum.TryParse(_profileManager.CurrentIdentity!.SecurityProtocol, true, out SecurityProtocolType value);
         ServicePointManager.SecurityProtocol = value;
