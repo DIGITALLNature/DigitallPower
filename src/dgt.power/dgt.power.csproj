@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dgtp</ToolCommandName>
-    <Company>DIGITALL All Nature GmbH</Company>
-    <Copyright>DIGITALL All Nature GmbH</Copyright>
+    <Company>DIGITALL Nature GmbH</Company>
+    <Copyright>DIGITALL Nature GmbH</Copyright>
     <Authors>Marcel Kummerow,Micha Oberstein,Simon Findling</Authors>
     <Product>Digitall Power CLI for Dataverse</Product>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
