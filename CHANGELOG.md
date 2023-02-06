@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0...v1.0.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* update company and copyright in csproj ([#15](https://github.com/DIGITALLNature/DigitallPower/issues/15)) ([98cdad3](https://github.com/DIGITALLNature/DigitallPower/commit/98cdad30f09ce1182c45fea931f75b4dc70c8ee4))
+
 # 1.0.0 (2023-02-06)
 
 
