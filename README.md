@@ -26,7 +26,7 @@ The [Wiki](https://github.com/DIGITALLNature/DigitallPower/wiki) contains the do
 
 But every adventure starts with:
 ```dotnetcli
-dotnet tool install -g dgtp
+dotnet tool install -g dgt.power
 ```
 
 
