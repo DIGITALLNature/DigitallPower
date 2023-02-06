@@ -1,3 +1,10 @@
+# [1.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2023-02-06)
+
+
+### Features
+
+* add ToNamedEntityReference() for generated early bound models ([90f3bde](https://github.com/DIGITALLNature/DigitallPower/commit/90f3bde007be02a770f1297611a4ff1dd81491fe)), closes [#5](https://github.com/DIGITALLNature/DigitallPower/issues/5)
+
 # [1.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2023-02-03)
 
 
