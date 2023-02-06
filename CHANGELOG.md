@@ -1,3 +1,12 @@
+# 1.0.0 (2023-02-06)
+
+
+### Features
+
+* Fix classic mode for CodeGeneration ([824ff0a](https://github.com/DIGITALLNature/DigitallPower/commit/824ff0a71ae4098dce2adf718af0b480620498de))
+* Release 1.0.0 ([7fb5b03](https://github.com/DIGITALLNature/DigitallPower/commit/7fb5b03011e0a57ec6f9a565fccf812d4dbae8c1))
+* Supress linePragmas for t4 files ([#3](https://github.com/DIGITALLNature/DigitallPower/issues/3)) ([32eb4be](https://github.com/DIGITALLNature/DigitallPower/commit/32eb4beda5c75f4e7a4152c789f2001ed4d9352a))
+
 # [1.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2023-02-06)
 
 
