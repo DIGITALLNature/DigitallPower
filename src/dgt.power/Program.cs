@@ -19,12 +19,21 @@ using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Spectre.Console.Cli;
+
+var configuration = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("dgtp.json", optional: true)
+                        .AddEnvironmentVariables("dgtp:")
+                        .Build();
 
 var registrations = new ServiceCollection();
 registrations.AddSingleton<ITracer, Tracer>();
+registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<TypescriptCommand, TypescriptCommand>();
 registrations.AddSingleton<MetadataCommand, MetadataCommand>();
@@ -85,7 +94,7 @@ app.Configure(config =>
             maintenance.AddExample(new[] { "maintenance", "bulkdelete" });
             maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                 .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                .WithExample(new[] { "maintenance", "bulkdelete", "<fetchxml>...</fetchxml" });
+                .WithExample(new[] { "maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml" });
             maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                 .WithDescription("Sets the auto number format for specified columns")
                 .WithExample(new[] { "maintenance", "autonumber", "--config", "./config.json" });
@@ -106,7 +115,7 @@ app.Configure(config =>
     config.AddBranch<ImportVerb>("import", import =>
     {
         import.SetDescription("import specific artifacts in the current Dataverse environment");
-        import.AddExample(new[] { "import", "outlooktemplate", "--filedir", "c:/TargetDir" });
+        import.AddExample(new[] { "import", "outlooktemplates", "--filedir", "c:/TargetDir" });
         import.AddCommand<OutlookTemplateImport>("outlooktemplates");
         import.AddCommand<UserRoleImport>("userroles");
         import.AddCommand<QueueImport>("queues");
@@ -135,5 +144,9 @@ app.Configure(config =>
 #endif
 });
 
+if (args.Length == 0)
+{
+    AnsiConsole.Write(new FigletText("DIGITALL Power").Centered().Color(Color.Blue3));
+}
 
 return app.Run(args);

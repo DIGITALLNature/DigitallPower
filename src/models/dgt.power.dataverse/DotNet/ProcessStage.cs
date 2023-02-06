@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("processstage")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class ProcessStage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -58,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "processstage";
+        public const string PrimaryNameAttribute = "stagename";
         public const int EntityTypeCode = 4724;
         #endregion
 
@@ -637,7 +640,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static ProcessStage Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

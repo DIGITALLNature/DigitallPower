@@ -10,10 +10,6 @@ namespace dgt.power.analyzer.Base;
 
 public class AnalyzeVerb : BaseProgramSettings
 {
-    [CommandArgument(1, "[Tasks]")]
-    [Description("entityallassets|noactivelayer|redundantcomponents")]
-    public string Tasks { get; init; }
-
     [CommandOption("--inline")] public string InlineData { get; init; }
 
     [CommandOption("--note-patches")] public bool NotePatch { get; init; }

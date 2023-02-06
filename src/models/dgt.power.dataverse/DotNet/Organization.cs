@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("organization")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class Organization : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -58,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "organization";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 1019;
         #endregion
 
@@ -9444,13 +9447,13 @@ namespace dgt.power.dataverse
 			    public struct FiscalYearFormatPrefix
                 {
 					public const int FY = 1;
-					public const int _empty_ = 2;
+					public const int _Empty = 2;
                 }
 			    public struct FiscalYearFormatSuffix
                 {
 					public const int FY = 1;
 					public const int FiscalYear = 2;
-					public const int _empty_ = 3;
+					public const int _Empty = 3;
                 }
 			    public struct FiscalYearFormatYear
                 {
@@ -10794,6 +10797,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationMailboxTrackingFolder = "Organization_MailboxTrackingFolder";
 				public const string OrganizationMarketingformdisplayattributes = "organization_marketingformdisplayattributes";
 				public const string OrganizationMetric = "organization_metric";
+				public const string OrganizationMobileofflineprofileextension = "organization_mobileofflineprofileextension";
 				public const string OrganizationMsdynAdaptivecardconfiguration = "organization_msdyn_adaptivecardconfiguration";
 				public const string OrganizationMsdynAgentresourceforecasting = "organization_msdyn_agentresourceforecasting";
 				public const string OrganizationMsdynAppinsightsmetadata = "organization_msdyn_appinsightsmetadata";
@@ -10883,6 +10887,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynWallsavedquery = "organization_msdyn_wallsavedquery";
 				public const string OrganizationMsdynWorkflowactionstatus = "organization_msdyn_workflowactionstatus";
 				public const string OrganizationMsdynWorklistviewconfiguration = "organization_msdyn_worklistviewconfiguration";
+				public const string OrganizationMsdynmktEventmetadataSdkmessageprocessingstep = "organization_msdynmkt_eventmetadata_sdkmessageprocessingstep";
 				public const string OrganizationNavigationsetting = "organization_navigationsetting";
 				public const string OrganizationNewprocess = "organization_newprocess";
 				public const string OrganizationOfficegraphdocument = "organization_officegraphdocument";
@@ -11019,7 +11024,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static Organization Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

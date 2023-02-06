@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("customapi")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class CustomAPI : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -58,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "customapi";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 10021;
         #endregion
 
@@ -946,6 +949,7 @@ namespace dgt.power.dataverse
 				public const string CustomapiSyncErrors = "customapi_SyncErrors";
 				public const string CustomapiUserEntityInstanceDatas = "customapi_UserEntityInstanceDatas";
 				public const string MsdynCustomapiMsdynCustomapirulesetconfigurationCustomAPI = "msdyn_customapi_msdyn_customapirulesetconfiguration_CustomAPI";
+				public const string MsdynmktCustomapiEventmetadata = "msdynmkt_customapi_eventmetadata";
             }
 
             public static class ManyToOne
@@ -970,7 +974,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static CustomAPI Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

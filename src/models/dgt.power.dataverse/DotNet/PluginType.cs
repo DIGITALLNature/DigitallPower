@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("plugintype")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class PluginType : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -58,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "plugintype";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 4602;
         #endregion
 
@@ -684,7 +687,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static PluginType Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

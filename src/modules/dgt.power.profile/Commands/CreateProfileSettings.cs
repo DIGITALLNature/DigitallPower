@@ -25,12 +25,12 @@ public class CreateProfileSettings : ProfileSettings
     public bool SkipChecking { get; init; }
 
     [CommandOption("-s|--security-protocol")]
-    [Description("Set specific protocol; [ssl3|tls|tls11|tls12]")]
+    [Description("Set specific protocol; [[ssl3|tls|tls11|tls12]]")]
     [DefaultValue("tls12")]
     public string SecurityProtocol { get; init; }
 
     [CommandOption("-i|--insecure")]
-    [Description("Ignore certificate issues; [true|false]")]
+    [Description("Ignore certificate issues; [[true|false]]")]
     [DefaultValue(false)]
     public bool Insecure { get; init; }
 
@@ -42,7 +42,7 @@ public class CreateProfileSettings : ProfileSettings
             return ValidationResult.Error();
         }
 
-        var validProtocols = new[] { "tls", "tls11", "tls12", "ssl3" };
+        var validProtocols = new[] {"tls", "tls11", "tls12", "ssl3"};
         return !string.IsNullOrWhiteSpace(SecurityProtocol) && validProtocols.Contains(SecurityProtocol)
             ? ValidationResult.Success()
             : ValidationResult.Error();

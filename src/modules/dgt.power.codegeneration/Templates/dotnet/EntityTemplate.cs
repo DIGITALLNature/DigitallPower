@@ -31,7 +31,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
  
 } // End EntityTypeCode
 
-            this.Write("using System.ComponentModel;");
+            this.Write("using System.Diagnostics.CodeAnalysis;\r\nusing System.ComponentModel;");
             this.Write(this.ToStringHelper.ToStringWithCulture(DebuggerNonUserCodeUsing));
             this.Write(@"
 using System.Runtime.CompilerServices;
@@ -49,8 +49,8 @@ namespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(EntityMetadata.Description),1)));
             this.Write("\r\n\t[DataContractAttribute()]\r\n\t[EntityLogicalNameAttribute(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
-            this.Write("\")]\r\n\t[System.CodeDom.Compiler.GeneratedCode(\"ec4u.automation\", \"1.0.0\")]\r\n\tpubli" +
-                    "c partial class ");
+            this.Write("\")]\r\n\t[System.CodeDom.Compiler.GeneratedCode(\"dgtp\", \"2023\")]\r\n    [ExcludeFromCo" +
+                    "deCoverage]\r\n\tpublic partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             this.Write(" : Entity, INotifyPropertyChanging, INotifyPropertyChanged\r\n    {\r\n\t    #region c" +
                     "tor\r\n\t\t");
@@ -92,6 +92,14 @@ namespace ");
         public const string EntityLogicalName = """);
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             this.Write("\";\r\n");
+ if (HasPrimaryNameAttribute)
+{
+
+            this.Write("        public const string PrimaryNameAttribute = \"");
+            this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.PrimaryNameAttribute));
+            this.Write("\";\r\n");
+
+}
 
 if(!_suppressEntityTypeCode)
 { // Start EntityTypeCode
@@ -460,7 +468,27 @@ if(!_suppressRelations)
  
 } // End Relations
 
-            this.Write("\r\n\t\t#region Methods\r\n\r\n        public static ");
+            this.Write("\r\n\t\t#region Methods\r\n");
+ if (HasPrimaryNameAttribute)
+{
+
+            this.Write("        public EntityReference ToNamedEntityReference()\r\n        {\r\n            v" +
+                    "ar reference = ToEntityReference();\r\n");
+ if(_useClassic)
+{
+
+            this.Write("            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);\r\n\r\n" +
+                    "");
+ } else { 
+            this.Write("            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);\r\n");
+
+}
+
+            this.Write("            return reference;\r\n        }\r\n");
+
+} // HasPrimaryNameAttribute end
+
+            this.Write("        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
             this.Write(" Retrieve(IOrganizationService service, Guid id)\r\n        {\r\n            return R" +
                     "etrieve(service,id, new ColumnSet(true));\r\n        }\r\n\r\n        public static ");
@@ -480,7 +508,7 @@ if(!_suppressRelations)
             this.Write(@"                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
 ");
 
-} 
+}
 else 
 {
 

@@ -10,6 +10,7 @@ using System.Linq;
 <# 
 } // End EntityTypeCode
 #>
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;<#= DebuggerNonUserCodeUsing#>
 using System.Runtime.CompilerServices;
 using System.Reflection;
@@ -26,7 +27,8 @@ namespace <#= NameSpace #>
 	<#= Summary(GetLocalizedLabel(EntityMetadata.Description),1)#>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("<#= EntityMetadata.LogicalName #>")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class <#= CamelCase(EntityMetadata.SchemaName) #> : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -62,7 +64,13 @@ namespace <#= NameSpace #>
 
         #region consts
         public const string EntityLogicalName = "<#= EntityMetadata.LogicalName#>";
+<# if (HasPrimaryNameAttribute)
+{
+#>
+        public const string PrimaryNameAttribute = "<#= EntityMetadata.PrimaryNameAttribute#>";
 <#
+}
+
 if(!_suppressEntityTypeCode)
 { // Start EntityTypeCode
 #>        public const int EntityTypeCode = <#= EntityMetadata.ObjectTypeCode#>;
@@ -401,7 +409,27 @@ if(!_suppressRelations)
 #>
 
 		#region Methods
+<# if (HasPrimaryNameAttribute)
+{
+#>
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+<# if(_useClassic)
+{
+#>
+            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
 
+<# } else { #>
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+<#
+}
+#>
+            return reference;
+        }
+<#
+} // HasPrimaryNameAttribute end
+#>
         public static <#= CamelCase(EntityMetadata.SchemaName) #> Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

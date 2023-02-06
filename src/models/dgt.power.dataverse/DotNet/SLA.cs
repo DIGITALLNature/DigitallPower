@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
- using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -17,7 +18,8 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("sla")]
-	[System.CodeDom.Compiler.GeneratedCode("ec4u.automation", "1.0.0")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
 	public partial class SLA : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
@@ -58,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "sla";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 9750;
         #endregion
 
@@ -1834,6 +1837,14 @@ namespace dgt.power.dataverse
 					public const int MsdynDefExtendedChannelInstance = 10708;
 					public const int MsdynDefExtendedChannelInstanceAccount = 10709;
 					public const int DesktopFlowModule = 10710;
+					public const int MobileOfflineProfileExtension = 10711;
+					public const int CatalogEventStatusConfiguration = 10712;
+					public const int Configuration = 10713;
+					public const int Trigger = 10714;
+					public const int TriggersToSdkMessageProcessingSteps = 10715;
+					public const int EventParameterMetadata = 10716;
+					public const int TrackingContext = 10717;
+					public const int MarketingFeatureConfiguration = 10718;
                 }
 			    public struct SLAType
                 {
@@ -2003,7 +2014,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static SLA Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

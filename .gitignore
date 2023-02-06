@@ -2,6 +2,7 @@
 *.user
 **/.vs
 **/.vscode
+**/.codecoverage
 **/packages
 **/bin
 **/obj
@@ -157,6 +158,7 @@ _TeamCity*
 coverage*.json
 coverage*.xml
 coverage*.info
+lcov.info
 
 # Visual Studio code coverage results
 *.coverage

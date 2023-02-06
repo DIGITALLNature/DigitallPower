@@ -1,16 +1,18 @@
 {
     "devDependencies": {
+        "@commitlint/cli": "^17.4.2",
+        "@commitlint/config-conventional": "^17.4.2",
         "@droidsolutions-oss/semantic-release-nuget": "^1.2.0",
-
         "@semantic-release/changelog": "github:semantic-release/changelog",
         "@semantic-release/git": "github:semantic-release/git",
+        "husky": "^8.0.0",
         "semantic-release": "^20.1.0"
     },
     "release": {
         "branches": [
-            "master",
+            "main",
             {
-                "name": "develop",
+                "name": "beta",
                 "prerelease": true
             }
         ],
@@ -22,34 +24,18 @@
             [
                 "@semantic-release/git",
                 {
-                    "assets": [
-                        "CHANGELOG.md"
-                    ],
+                    "assets": ["CHANGELOG.md"],
                     "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
                 }
             ],
             "@semantic-release/github"
         ],
+        "includeSymbols": true,
         "projectPath": "src/dgt.power/dgt.power.csproj",
         "npmPublish": false,
-        "includeSymbols": true,
-        "files": [
-            {
-                "path": [
-                    "Directory.Build.props"
-                ],
-                "type": "xml",
-                "replacements": [
-                    {
-                        "key": "Version",
-                        "value": "${nextRelease.version}"
-                    },
-                    {
-                        "key": "RepositoryCommit",
-                        "value": "${nextRelease.gitHead}"
-                    }
-                ]
-            }
-        ]
+        "usePackageVersion": true
+    },
+    "scripts": {
+        "prepare": "husky install"
     }
 }
