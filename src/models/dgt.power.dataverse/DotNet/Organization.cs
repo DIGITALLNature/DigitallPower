@@ -60,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "organization";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 1019;
         #endregion
 
@@ -10886,6 +10887,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynWallsavedquery = "organization_msdyn_wallsavedquery";
 				public const string OrganizationMsdynWorkflowactionstatus = "organization_msdyn_workflowactionstatus";
 				public const string OrganizationMsdynWorklistviewconfiguration = "organization_msdyn_worklistviewconfiguration";
+				public const string OrganizationMsdynmktEventmetadataSdkmessageprocessingstep = "organization_msdynmkt_eventmetadata_sdkmessageprocessingstep";
 				public const string OrganizationNavigationsetting = "organization_navigationsetting";
 				public const string OrganizationNewprocess = "organization_newprocess";
 				public const string OrganizationOfficegraphdocument = "organization_officegraphdocument";
@@ -11022,7 +11024,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static Organization Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

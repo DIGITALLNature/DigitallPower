@@ -64,7 +64,13 @@ namespace <#= NameSpace #>
 
         #region consts
         public const string EntityLogicalName = "<#= EntityMetadata.LogicalName#>";
+<# if (HasPrimaryNameAttribute)
+{
+#>
+        public const string PrimaryNameAttribute = "<#= EntityMetadata.PrimaryNameAttribute#>";
 <#
+}
+
 if(!_suppressEntityTypeCode)
 { // Start EntityTypeCode
 #>        public const int EntityTypeCode = <#= EntityMetadata.ObjectTypeCode#>;
@@ -403,7 +409,27 @@ if(!_suppressRelations)
 #>
 
 		#region Methods
+<# if (HasPrimaryNameAttribute)
+{
+#>
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+<# if(_useClassic)
+{
+#>
+            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
 
+<# } else { #>
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+<#
+}
+#>
+            return reference;
+        }
+<#
+} // HasPrimaryNameAttribute end
+#>
         public static <#= CamelCase(EntityMetadata.SchemaName) #> Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

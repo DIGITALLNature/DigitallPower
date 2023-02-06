@@ -60,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "duplicaterule";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 4414;
         #endregion
 
@@ -1608,6 +1609,13 @@ namespace dgt.power.dataverse
 					public const int MsdynDefExtendedChannelInstanceAccount = 10709;
 					public const int DesktopFlowModule = 10710;
 					public const int MobileOfflineProfileExtension = 10711;
+					public const int CatalogEventStatusConfiguration = 10712;
+					public const int Configuration = 10713;
+					public const int Trigger = 10714;
+					public const int TriggersToSdkMessageProcessingSteps = 10715;
+					public const int EventParameterMetadata = 10716;
+					public const int TrackingContext = 10717;
+					public const int MarketingFeatureConfiguration = 10718;
                 }
 			    public struct ComponentState
                 {
@@ -2578,6 +2586,13 @@ namespace dgt.power.dataverse
 					public const int MsdynDefExtendedChannelInstanceAccount = 10709;
 					public const int DesktopFlowModule = 10710;
 					public const int MobileOfflineProfileExtension = 10711;
+					public const int CatalogEventStatusConfiguration = 10712;
+					public const int Configuration = 10713;
+					public const int Trigger = 10714;
+					public const int TriggersToSdkMessageProcessingSteps = 10715;
+					public const int EventParameterMetadata = 10716;
+					public const int TrackingContext = 10717;
+					public const int MarketingFeatureConfiguration = 10718;
                 }
                 public struct StateCode
                 {
@@ -2671,7 +2686,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static DuplicateRule Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));

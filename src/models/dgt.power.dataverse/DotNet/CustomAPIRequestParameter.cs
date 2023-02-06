@@ -60,6 +60,7 @@ namespace dgt.power.dataverse
 
         #region consts
         public const string EntityLogicalName = "customapirequestparameter";
+        public const string PrimaryNameAttribute = "name";
         public const int EntityTypeCode = 10022;
         #endregion
 
@@ -798,6 +799,7 @@ namespace dgt.power.dataverse
 				public const string CustomapirequestparameterSyncErrors = "customapirequestparameter_SyncErrors";
 				public const string CustomapirequestparameterUserEntityInstanceDatas = "customapirequestparameter_UserEntityInstanceDatas";
 				public const string MsdynCustomapirequestparameterMsdynCustomapirulesetconfigurationCustomAPIRequestParameter = "msdyn_customapirequestparameter_msdyn_customapirulesetconfiguration_CustomAPIRequestParameter";
+				public const string MsdynmktCustomapirequestparameterEventparameter = "msdynmkt_customapirequestparameter_eventparameter";
             }
 
             public static class ManyToOne
@@ -821,7 +823,12 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Methods
-
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+            return reference;
+        }
         public static CustomAPIRequestParameter Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
