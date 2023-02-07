@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Enable Integration Tests
-      run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -22,8 +19,6 @@ jobs:
         dotnet-version: 7.0.x
 
     - name: Run Tests
-      env:
-        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info --verbosity normal"
 
     - name: ReportGenerator
