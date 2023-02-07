@@ -1,16 +1,14 @@
 name: Build DGTP
 
 on:
-  pull_request:
-    branches: [ "main" ]
+  push:
+    branches:
+    - '!master'
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Build
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -21,6 +19,19 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
-      
+
     - name: Build
       run: dotnet build --no-restore
+      
+    - name: Run Tests
+      env:
+        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: ${{ matrix.os }} Tests            
+        path: tests/**/test-results.trx
+        reporter: dotnet-trx
