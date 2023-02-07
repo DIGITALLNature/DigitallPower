@@ -46,6 +46,11 @@ namespace dgt.power.maintenance.Logic
                             continue;
                         }
 
+                        if (attributeMetadata.LogicalName == "bpf_duration")
+                        {
+                            continue;
+                        }
+
                         if (attributeMetadata.IsCustomizable.Value && attributeMetadata.IsCustomizable.CanBeChanged)
                         {
                             AnsiConsole.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
