@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Security.Principal;
+using dgt.power.common.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -17,20 +19,21 @@ public class XrmConnection : IXrmConnection
     }
 
 
-    // TODO: Shouldn't we handle exceptions with error code?
     public IOrganizationService Connect()
     {
-        if (!_configuration.GetSection("xrm").GetChildren().Any() && _profileManager.CurrentIdentity == null)
-        {
-            throw new InvalidOperationException("Connect is only possible with set Current Identity");
-        }
+        var xrmConfiguration = _configuration.GetSection("xrm").GetChildren().ToList();
 
-        if (_configuration.GetSection("xrm").GetChildren().Any())
+        if (xrmConfiguration.Any())
         {
             return ConnectWithConfiguration();
         }
 
-        return ConnectWithProfile();
+        if (_profileManager.CurrentIdentity != null)
+        {
+            return ConnectWithProfile(_profileManager.CurrentIdentity);
+        }
+
+        throw new MissingConnectionException();
     }
 
     private IOrganizationService ConnectWithConfiguration()
@@ -47,14 +50,21 @@ public class XrmConnection : IXrmConnection
 
         AnsiConsole.MarkupLine($"Connect to given configuration.");
         var connector = new CrmConnector(_configuration.GetValue<string>("xrm:connection"));
-        return connector.GetOrganizationServiceProxy();
+        try
+        {
+            return connector.GetOrganizationServiceProxy();
+        }
+        catch (Exception e)
+        {
+            throw new FailedConnectionException("xrm:connection", e);
+        }
     }
 
-    private IOrganizationService ConnectWithProfile()
+    private IOrganizationService ConnectWithProfile(Identity identity)
     {
-        Enum.TryParse(_profileManager.CurrentIdentity!.SecurityProtocol, true, out SecurityProtocolType value);
+        Enum.TryParse(identity.SecurityProtocol, true, out SecurityProtocolType value);
         ServicePointManager.SecurityProtocol = value;
-        if (_profileManager.CurrentIdentity.Insecure)
+        if (identity.Insecure)
         {
 #pragma warning disable CA5359
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
@@ -62,7 +72,14 @@ public class XrmConnection : IXrmConnection
         }
 
         AnsiConsole.MarkupLine($"Connect to {_profileManager.Current}");
-        var connector = new CrmConnector(_profileManager.CurrentConnectionString);
-        return connector.GetOrganizationServiceProxy();
+        var connector = new CrmConnector(identity.ConnectionString);
+        try
+        {
+            return connector.GetOrganizationServiceProxy();
+        }
+        catch (Exception exception)
+        {
+            throw new FailedConnectionException(_profileManager.Current, exception);
+        }
     }
 }

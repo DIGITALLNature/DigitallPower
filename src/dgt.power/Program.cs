@@ -9,6 +9,9 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
+using dgt.power.common.Commands;
+using dgt.power.common.Exceptions;
+using dgt.power.common.Extensions;
 using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.export.Base;
@@ -26,10 +29,10 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 var configuration = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("dgtp.json", optional: true)
-                        .AddEnvironmentVariables("dgtp:")
-                        .Build();
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("dgtp.json", optional: true)
+    .AddEnvironmentVariables("dgtp:")
+    .Build();
 
 var registrations = new ServiceCollection();
 registrations.AddSingleton<ITracer, Tracer>();
@@ -66,7 +69,7 @@ app.Configure(config =>
     config.AddBranch<ExportVerb>("export", export =>
     {
         export.SetDescription("Exports artifacts from the current Dataverse Environment");
-        export.AddExample(new[] { "export", "bulkdeletes", "--filedir", "c:/TargetDir" });
+        export.AddExample(new[] {"export", "bulkdeletes", "--filedir", "c:/TargetDir"});
         export.AddCommand<TeamTemplateExport>("teamtemplates")
             .WithDescription("Exports the existing teamtemplates from the current environment");
         export.AddCommand<BulkDeleteExport>("bulkdeletes")
@@ -91,13 +94,16 @@ app.Configure(config =>
         maintenance =>
         {
             maintenance.SetDescription("Executes maintenance Tasks against the current Dataverse environment");
-            maintenance.AddExample(new[] { "maintenance", "bulkdelete" });
+            maintenance.AddExample(new[] {"maintenance", "bulkdelete"});
             maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                 .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                .WithExample(new[] { "maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml" });
+                .WithExample(new[] {"maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml"});
             maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                 .WithDescription("Sets the auto number format for specified columns")
-                .WithExample(new[] { "maintenance", "autonumber", "--config", "./config.json" });
+                .WithExample(new[] {"maintenance", "autonumber", "--config", "./config.json"});
+            maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
+                .WithDescription("Prevents all calculated fields from receiving an active layer.")
+                .WithExample(new[] { "maintenance", "protectfields" });
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
@@ -107,7 +113,7 @@ app.Configure(config =>
             .WithDescription("Scans the specified solutions for entities containing with assets");
         analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
             .WithDescription("Scans the specified solutions for components without active layer")
-            .WithExample(new[] { "analyze", "noactivelayer", "--inline", "solution1,solution2" });
+            .WithExample(new[] {"analyze", "noactivelayer", "--inline", "solution1,solution2"});
         analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
             .WithDescription("Scans for components that are in multiple of the specified solutions");
     });
@@ -115,7 +121,7 @@ app.Configure(config =>
     config.AddBranch<ImportVerb>("import", import =>
     {
         import.SetDescription("import specific artifacts in the current Dataverse environment");
-        import.AddExample(new[] { "import", "outlooktemplates", "--filedir", "c:/TargetDir" });
+        import.AddExample(new[] {"import", "outlooktemplates", "--filedir", "c:/TargetDir"});
         import.AddCommand<OutlookTemplateImport>("outlooktemplates");
         import.AddCommand<UserRoleImport>("userroles");
         import.AddCommand<QueueImport>("queues");
@@ -131,13 +137,28 @@ app.Configure(config =>
     config.AddCommand<CodeGenerationCommand>("codegeneration")
         .WithAlias("cg")
         .WithDescription("Generates .cs, .ts and metadata.xml modelfiles for Dataverse")
-        .WithExample(new[] { "codegeneration", "c:/TargetDir", "-c", "genconfig.json" });
+        .WithExample(new[] {"codegeneration", "c:/TargetDir", "-c", "genconfig.json"});
 
     config.AddCommand<PushCommand>("push")
         .WithDescription("Import specific Dataverse Artefacts")
-        .WithExample(new[] { "push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution" });
+        .WithExample(new[] {"push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution"});
 
     config.Settings.ApplicationName = "dgtp";
+
+#if RELEASE
+    config.SetExceptionHandler(exception =>
+    {
+        var errorMessage = exception.Message;
+        if (exception.IsDerivedFrom<AbstractPowerException>())
+        {
+            var innerException = exception.GetInnerException<AbstractPowerException>();
+            errorMessage = innerException!.Message;
+        }
+
+        AnsiConsole.MarkupLine($"[red]{errorMessage}[/]");
+        return (int)ExitCode.Error;
+    });
+#endif
 #if DEBUG
     config.PropagateExceptions();
     config.ValidateExamples();
@@ -148,5 +169,6 @@ if (args.Length == 0)
 {
     AnsiConsole.Write(new FigletText("DIGITALL Power").Centered().Color(Color.Blue3));
 }
+
 
 return app.Run(args);
