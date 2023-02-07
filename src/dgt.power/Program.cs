@@ -101,6 +101,9 @@ app.Configure(config =>
             maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                 .WithDescription("Sets the auto number format for specified columns")
                 .WithExample(new[] {"maintenance", "autonumber", "--config", "./config.json"});
+            maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
+                .WithDescription("Prevents all calculated fields from receiving an active layer.")
+                .WithExample(new[] { "maintenance", "protectfields" });
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
