@@ -72,7 +72,7 @@ public class ProfileManager : IProfileManager
         }
     }
 
-    public Identity CurrentIdentity
+    public Identity? CurrentIdentity
     {
         get
         {
