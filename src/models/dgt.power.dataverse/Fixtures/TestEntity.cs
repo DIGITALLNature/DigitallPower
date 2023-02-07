@@ -281,6 +281,74 @@ public partial class TestEntity : Entity, INotifyPropertyChanging, INotifyProper
             OnPropertyChanged(nameof(StatusCode));
         }
     }
+
+    [AttributeLogicalName("test_number_calc")]
+    public int? TestNumberCalc
+    {
+        [DebuggerNonUserCode]
+        get
+        {
+            return GetAttributeValue<int?>("test_number_calc");
+        }
+        [DebuggerNonUserCode]
+        set
+        {
+            OnPropertyChanging(nameof(TestNumberCalc));
+            SetAttributeValue("test_number_calc", value);
+            OnPropertyChanged(nameof(TestNumberCalc));
+        }
+    }
+
+    [AttributeLogicalName("test_money_calc")]
+    public Money? TestMoneyCalc
+    {
+        [DebuggerNonUserCode]
+        get
+        {
+            return GetAttributeValue<Money?>("test_money_calc");
+        }
+        [DebuggerNonUserCode]
+        set
+        {
+            OnPropertyChanging(nameof(TestMoneyCalc));
+            SetAttributeValue("test_money_calc", value);
+            OnPropertyChanged(nameof(TestMoneyCalc));
+        }
+    }
+
+    [AttributeLogicalName("test_money_base")]
+    public Money? TestMoneyCalcBase
+    {
+        [DebuggerNonUserCode]
+        get
+        {
+            return GetAttributeValue<Money?>("test_money_base");
+        }
+        [DebuggerNonUserCode]
+        set
+        {
+            OnPropertyChanging(nameof(TestMoneyCalcBase));
+            SetAttributeValue("test_money_base", value);
+            OnPropertyChanged(nameof(TestMoneyCalcBase));
+        }
+    }
+
+    [AttributeLogicalName("bpf_duration")]
+    public int? BpfDuration
+    {
+        [DebuggerNonUserCode]
+        get
+        {
+            return GetAttributeValue<int?>("bpf_duration");
+        }
+        [DebuggerNonUserCode]
+        set
+        {
+            OnPropertyChanging(nameof(BpfDuration));
+            SetAttributeValue("bpf_duration", value);
+            OnPropertyChanged(nameof(BpfDuration));
+        }
+    }
     #endregion
 
     #region LogicalNames
@@ -299,6 +367,10 @@ public partial class TestEntity : Entity, INotifyPropertyChanging, INotifyProper
         public const string Description = "description";
         public const string StateCode = "statecode";
         public const string StatusCode = "statuscode";
+        public const string TestNumberCalc = "test_number_calc";
+        public const string TestMoneyCalc = "test_money_calc";
+        public const string TestMoneyCalcBase = "test_money_base";
+        public const string BpfDuration = "bpf_duration";
     }
     #endregion
 }

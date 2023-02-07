@@ -1,3 +1,31 @@
+# [1.1.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.1...v1.1.0) (2023-02-07)
+
+
+### Bug Fixes
+
+* show user friendly error messages when connection fails ([#17](https://github.com/DIGITALLNature/DigitallPower/issues/17)) ([31eaa4a](https://github.com/DIGITALLNature/DigitallPower/commit/31eaa4ac6c827b7184a400f096a16085e7e4c2fa))
+
+
+### Features
+
+* **maintenance:** protect calculated fields ([#16](https://github.com/DIGITALLNature/DigitallPower/issues/16)) ([17370f4](https://github.com/DIGITALLNature/DigitallPower/commit/17370f4a95299f21f985d6d4addde55774322731))
+
+## [1.0.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0...v1.0.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* update company and copyright in csproj ([#15](https://github.com/DIGITALLNature/DigitallPower/issues/15)) ([98cdad3](https://github.com/DIGITALLNature/DigitallPower/commit/98cdad30f09ce1182c45fea931f75b4dc70c8ee4))
+
+# 1.0.0 (2023-02-06)
+
+
+### Features
+
+* Fix classic mode for CodeGeneration ([824ff0a](https://github.com/DIGITALLNature/DigitallPower/commit/824ff0a71ae4098dce2adf718af0b480620498de))
+* Release 1.0.0 ([7fb5b03](https://github.com/DIGITALLNature/DigitallPower/commit/7fb5b03011e0a57ec6f9a565fccf812d4dbae8c1))
+* Supress linePragmas for t4 files ([#3](https://github.com/DIGITALLNature/DigitallPower/issues/3)) ([32eb4be](https://github.com/DIGITALLNature/DigitallPower/commit/32eb4beda5c75f4e7a4152c789f2001ed4d9352a))
+
 # [1.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2023-02-06)
 
 
