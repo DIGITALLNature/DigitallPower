@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.1...v1.1.0) (2023-02-07)
+
+
+### Bug Fixes
+
+* show user friendly error messages when connection fails ([#17](https://github.com/DIGITALLNature/DigitallPower/issues/17)) ([31eaa4a](https://github.com/DIGITALLNature/DigitallPower/commit/31eaa4ac6c827b7184a400f096a16085e7e4c2fa))
+
+
+### Features
+
+* **maintenance:** protect calculated fields ([#16](https://github.com/DIGITALLNature/DigitallPower/issues/16)) ([17370f4](https://github.com/DIGITALLNature/DigitallPower/commit/17370f4a95299f21f985d6d4addde55774322731))
+
 ## [1.0.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.0...v1.0.1) (2023-02-06)
 
 
