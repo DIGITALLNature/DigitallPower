@@ -36,6 +36,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Enable Integration Tests
+      env:
+        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
+      if: env.DGTP_TESTS_INTEGRATION_CONNECTION != null  
       run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
 
     - name: Setup .NET
