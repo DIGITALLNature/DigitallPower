@@ -8,7 +8,7 @@ public class Identities : IIdentities
 
     [JsonPropertyName("Current")] public string Current { get; set; } = string.Empty;
 
-    [JsonIgnore] public Identity CurrentIdentity => IdentityStore[Current];
+    [JsonIgnore] public Identity? CurrentIdentity => IdentityStore.TryGetValue(Current, out var identity) ? identity : null;
 
     [JsonIgnore] public bool IsEmpty => IdentityStore.Count == 0;
 

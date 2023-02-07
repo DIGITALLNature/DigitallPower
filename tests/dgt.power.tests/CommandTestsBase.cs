@@ -115,7 +115,11 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
         var artifactDirectory = ArtifactDirectory.TrimEnd('/');
         if (Directory.Exists(artifactDirectory))
         {
+            // TODO: Sometimes files are still locked here. Find better solution.
+            Thread.Sleep(500);
             Directory.Delete(artifactDirectory, true);
         }
+
+        GC.SuppressFinalize(this);
     }
 }
