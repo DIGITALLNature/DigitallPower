@@ -12,7 +12,6 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 {
     private readonly ITracer _tracer;
     private readonly IConfigResolver _configResolver;
-    private readonly IXrmConnection _connection;
     private readonly DotNetCommand _dotNetCommand;
     private readonly TypescriptCommand _typescriptCommand;
     private readonly MetadataCommand _metadataCommand;
@@ -21,7 +20,6 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
     public CodeGenerationCommand(
         ITracer tracer,
         IConfigResolver configResolver,
-        IXrmConnection connection,
         DotNetCommand dotNetCommand,
         TypescriptCommand typescriptCommand,
         MetadataCommand metadataCommand,
@@ -30,7 +28,6 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
     {
         _tracer = tracer;
         _configResolver = configResolver;
-        _connection = connection;
         _dotNetCommand = dotNetCommand;
         _typescriptCommand = typescriptCommand;
         _metadataCommand = metadataCommand;
