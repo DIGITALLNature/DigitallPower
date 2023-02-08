@@ -30,15 +30,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: build
-    steps:
     - name: Run Tests
-      env:
-        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
       run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings
 
     - name: Test Report
@@ -49,15 +41,8 @@ jobs:
         path: tests/**/test-results.trx
         reporter: dotnet-trx
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: test
-    steps:
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
-      if: matrix.os == 'ubuntu-latest'
       with:
         reports: 'tests/**/coverage.cobertura.xml'
         targetdir: 'coveragereport'
