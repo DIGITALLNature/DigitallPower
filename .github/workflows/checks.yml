@@ -5,12 +5,16 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  check:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-    name: Build (${{ matrix.os }})
+    name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     steps:
     - uses: actions/checkout@v3
 
@@ -33,43 +37,16 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-  test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    name: Test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    permissions:
-      id-token: write
-      contents: read
-      checks: write
-    needs:  build
-    steps:
-    - uses: actions/checkout@v3
-
     - name: Enable Integration Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
       if: env.DGTP_TESTS_INTEGRATION_CONNECTION != null  
       run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-
-    - name: Cache Packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info
 
     - name: Test Report
       uses: dorny/test-reporter@v1
@@ -79,32 +56,9 @@ jobs:
         path: tests/**/test-results.trx
         reporter: dotnet-trx
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    needs:  test
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-
-    - name: Cache Packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
-    - name: Run Tests
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info --verbosity normal
-
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
-      if: success() || failure()   # run this step even if previous step failed
+      if: matrix.os == 'ubuntu-latest'
       with:
         reports: 'tests/**/lcov.info'
         targetdir: 'coveragereport'
@@ -112,7 +66,7 @@ jobs:
 
     - name: Generate Code Coverage report
       uses: barecheck/code-coverage-action@v1
-      if: success() || failure()   # run this step even if previous step failed
+      if: matrix.os == 'ubuntu-latest'
       with:
         barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
         barecheck-api-key: ${{ secrets.BARECHECK_API_KEY }}
