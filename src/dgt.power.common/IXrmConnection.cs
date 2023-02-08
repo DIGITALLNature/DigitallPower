@@ -6,5 +6,5 @@ namespace dgt.power.common;
 
 public interface IXrmConnection
 {
-    IOrganizationService? Connect();
+    IOrganizationService Connect();
 }

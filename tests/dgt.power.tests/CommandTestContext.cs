@@ -5,6 +5,7 @@ using FakeItEasy;
 using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.tests;
@@ -32,8 +33,15 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 
     public bool Execute(TCommandSettings settings)
     {
+        return _command.Execute(GetCommandContext(), settings).GetAwaiter().GetResult() == 0;
+    }
+
+    public ValidationResult Validate(TCommandSettings settings) => _command.Validate(GetCommandContext(), settings);
+
+    private static CommandContext GetCommandContext()
+    {
         var commandContext = new CommandContext(A.Dummy<IRemainingArguments>(), "test", null);
-        return _command.Execute(commandContext, settings).GetAwaiter().GetResult() == 0;
+        return commandContext;
     }
 
     public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>>? query = null) where TEntity : Entity =>

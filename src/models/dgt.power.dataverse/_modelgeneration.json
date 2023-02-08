@@ -41,7 +41,8 @@
         "processstage",
         "customapirequestparameter",
         "customapiresponseproperty",
-        "attribute"
+        "attribute",
+        "ec4u_carrier"
     ],
     "SuppressTypeScript": true,
     "SuppressMetaData": true,

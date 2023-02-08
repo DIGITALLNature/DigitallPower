@@ -36,10 +36,10 @@ namespace dgt.power.maintenance.tests
                 .WithMetaData(BuildTestMetadata())
                 .Build();
 
-            // TODO enrich metadata 
+            // TODO enrich metadata
         }
 
-        private EntityMetadata BuildTestMetadata()
+        private static EntityMetadata BuildTestMetadata()
         {
             var metadata = new EntityMetadata
             {

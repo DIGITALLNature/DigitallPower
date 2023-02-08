@@ -1,5 +1,7 @@
 ﻿using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using dgt.power;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
@@ -12,8 +14,8 @@ using dgt.power.common;
 using dgt.power.common.Commands;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
+using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
-using dgt.power.dataverse;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
@@ -42,6 +44,13 @@ registrations.AddSingleton<TypescriptCommand, TypescriptCommand>();
 registrations.AddSingleton<MetadataCommand, MetadataCommand>();
 registrations.AddSingleton<IProfileManager, ProfileManager>();
 registrations.AddSingleton<ObjectCache, MemoryCache>(_ => MemoryCache.Default);
+registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
+{
+    Converters =
+    {
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    }
+});
 registrations.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForApplication());
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
@@ -49,6 +58,7 @@ registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
 registrations.AddScoped<ITypescriptGenerator, TypescriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetCommand, DotNetCommand>();
+registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
@@ -103,7 +113,11 @@ app.Configure(config =>
                 .WithExample(new[] {"maintenance", "autonumber", "--config", "./config.json"});
             maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
                 .WithDescription("Prevents all calculated fields from receiving an active layer.")
-                .WithExample(new[] { "maintenance", "protectfields" });
+                .WithExample(new[] {"maintenance", "protectfields"});
+            maintenance.AddCommand<ExportCarrierInfo>("carrierinfo")
+                .WithDescription(
+                    "Exports all active carriers from an environment. To see what an carrier is check [link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
+                .WithExample(new[] {"maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json"});
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
