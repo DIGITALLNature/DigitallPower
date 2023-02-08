@@ -47,8 +47,8 @@ jobs:
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
-
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings
+    
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
@@ -56,3 +56,19 @@ jobs:
         name: ${{ matrix.os }} Tests            
         path: tests/**/test-results.trx
         reporter: dotnet-trx
+
+    - name: ReportGenerator
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        reports: 'tests/**/coverage.cobertura.xml'
+        targetdir: 'coveragereport'
+        reporttypes: 'lcov'
+
+    - name: publish coverage report to coveralls.io
+      uses: coverallsapp/github-action@master
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: coveragereport/lcov.info
+    
