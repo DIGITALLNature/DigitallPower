@@ -116,7 +116,7 @@ app.Configure(config =>
                 .WithExample(new[] {"maintenance", "protectfields"});
             maintenance.AddCommand<ExportCarrierInfo>("carrierinfo")
                 .WithDescription(
-                    "Exports all active carriers from an environment. To see what an carrier is check [link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
+                    "Exports all active carriers from an environment to a json file. To see what an carrier is check [link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
                 .WithExample(new[] {"maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json"});
         });
 
