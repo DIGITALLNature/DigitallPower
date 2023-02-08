@@ -5,7 +5,8 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura</Format>
-          <Exclude>dgt.power.dataverse</Exclude>
+          <Exclude>[dgt.power.dataverse]*,[dgt.power.dataverse]*</Exclude>
+          <ExcludeByFile>**/.nuget/*.cs</ExcludeByFile> 
           <SingleHit>false</SingleHit>
           <UseSourceLink>true</UseSourceLink>
           <IncludeTestAssembly>false</IncludeTestAssembly>
