@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common.FileAccess;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
@@ -12,7 +13,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class DocumentTemplateExport : BaseExport
 {
-    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, connection, configResolver, fileService)
     {
     }
 
@@ -31,9 +33,9 @@ public sealed class DocumentTemplateExport : BaseExport
         {
             var idx = args.InlineData.IndexOf("<", StringComparison.InvariantCulture);
             filter = args.InlineData.Substring(idx);
-            foreach (var fragment in args.InlineData.Substring(0, idx).Split(new[] { '|', ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var fragment in args.InlineData.Substring(0, idx).Split(new[] {'|', ',', ';'}, StringSplitOptions.RemoveEmptyEntries))
             {
-                var pair = fragment.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var pair = fragment.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
                 if (pair.Length == 2)
                 {
                     switch (pair[0].ToLowerInvariant())
@@ -62,7 +64,8 @@ public sealed class DocumentTemplateExport : BaseExport
         {
             // ReSharper disable once PossibleInvalidOperationException
             var id = documentTemplate.DocumentTemplateId!.Value;
-            var templateName = $"{documentTemplate.Name}{(documentTemplate.DocumentType!.Value == DocumentTemplate.Options.DocumentType.MicrosoftExcel ? ".xlsx" : ".docx")}";
+            var templateName =
+                $"{documentTemplate.Name}{(documentTemplate.DocumentType!.Value == DocumentTemplate.Options.DocumentType.MicrosoftExcel ? ".xlsx" : ".docx")}";
             var status = !documentTemplate.Status.GetValueOrDefault(false); //inverted logic, don't ask why
             var template = new dto.DocumentTemplate
             {
@@ -77,7 +80,8 @@ public sealed class DocumentTemplateExport : BaseExport
                 ForceUpdate = force
             };
             export.Add(template);
-            Tracer.Log($"Export {HandleExportFile(fileDir, templateName, Convert.FromBase64String(documentTemplate.Content!))} ", TraceEventType.Information);
+            Tracer.Log($"Export {HandleExportFile(fileDir, templateName, Convert.FromBase64String(documentTemplate.Content!))} ",
+                TraceEventType.Information);
         }
 
         var json = GetJson(new DocumentTemplates

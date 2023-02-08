@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using dgt.power.common;
+using dgt.power.common.FileAccess;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
@@ -10,7 +11,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class QueueExport : BaseExport
 {
-    public QueueExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public QueueExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, connection, configResolver, fileService)
     {
     }
 

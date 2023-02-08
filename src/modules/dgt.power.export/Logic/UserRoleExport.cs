@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
@@ -12,7 +13,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport : BaseExport
 {
-    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, connection, configResolver, fileService)
     {
     }
 
@@ -56,7 +58,8 @@ public sealed class UserRoleExport : BaseExport
         var userQuery = new QueryExpression
         {
             EntityName = SystemUser.EntityLogicalName,
-            ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName, SystemUser.LogicalNames.BusinessUnitId),
+            ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName,
+                SystemUser.LogicalNames.BusinessUnitId),
             NoLock = true,
             Criteria = filter,
             Orders =
@@ -72,20 +75,23 @@ public sealed class UserRoleExport : BaseExport
         };
 
         // business unit
-        var buLink = userQuery.AddLink(BusinessUnit.EntityLogicalName, SystemUser.LogicalNames.BusinessUnitId, BusinessUnit.LogicalNames.BusinessUnitId, JoinOperator.Inner);
+        var buLink = userQuery.AddLink(BusinessUnit.EntityLogicalName, SystemUser.LogicalNames.BusinessUnitId,
+            BusinessUnit.LogicalNames.BusinessUnitId, JoinOperator.Inner);
         buLink.Columns.AddColumns(
             BusinessUnit.LogicalNames.Name
         );
         buLink.EntityAlias = "bu";
         // parent business unit
-        var pbuLink = buLink.AddLink(BusinessUnit.EntityLogicalName, BusinessUnit.LogicalNames.ParentBusinessUnitId, BusinessUnit.LogicalNames.BusinessUnitId, JoinOperator.LeftOuter);
+        var pbuLink = buLink.AddLink(BusinessUnit.EntityLogicalName, BusinessUnit.LogicalNames.ParentBusinessUnitId,
+            BusinessUnit.LogicalNames.BusinessUnitId, JoinOperator.LeftOuter);
         pbuLink.Columns.AddColumns(
             BusinessUnit.LogicalNames.Name
         );
         pbuLink.EntityAlias = "pbu";
 
         // security roles
-        var srLink = userQuery.AddLink(SystemUserRoles.EntityLogicalName, SystemUser.LogicalNames.SystemUserId, SystemUserRoles.LogicalNames.SystemUserId, JoinOperator.LeftOuter);
+        var srLink = userQuery.AddLink(SystemUserRoles.EntityLogicalName, SystemUser.LogicalNames.SystemUserId,
+            SystemUserRoles.LogicalNames.SystemUserId, JoinOperator.LeftOuter);
         var roLink = srLink.AddLink(Role.EntityLogicalName, SystemUserRoles.LogicalNames.RoleId, Role.LogicalNames.RoleId, JoinOperator.LeftOuter);
         roLink.Columns.AddColumns(
             Role.LogicalNames.Name
@@ -139,7 +145,8 @@ public sealed class UserRoleExport : BaseExport
         return userRoles.Values.OrderBy(e => e.UserName).ToList();
     }
 
-    private static T? GetAttribute<T>(Entity entity, string attribute) => entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
+    private static T? GetAttribute<T>(Entity entity, string attribute) =>
+        entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
 
     private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
     {

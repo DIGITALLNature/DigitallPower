@@ -19,12 +19,11 @@ public class CodeGenerationCommandTests
     {
         var tracer = new TestTracer(testOutputHelper);
         var configResolver = new ConfigResolver(tracer);
-        var connection = A.Fake<IXrmConnection>();
         var dotNetCommand = A.Fake<DotNetCommand>();
         var typescriptCommand = A.Fake<TypescriptCommand>();
         var metadataCommand = A.Fake<MetadataCommand>();
         var metadataService = A.Fake<IMetadataService>();
-        _command = new CodeGenerationCommand(tracer, configResolver, connection,
+        _command = new CodeGenerationCommand(tracer, configResolver,
             dotNetCommand, typescriptCommand, metadataCommand, metadataService);
     }
 
@@ -36,7 +35,7 @@ public class CodeGenerationCommandTests
                 Config = "Resources/CodeGenerationCommand/config.json"
             }
         ).Should().Be(0);
-    
+
     [Fact]
     public void ShouldFailOnMissingConfiguration() =>
         _command.Execute(new CommandContext(A.Dummy<IRemainingArguments>(), "codegeneration", null),

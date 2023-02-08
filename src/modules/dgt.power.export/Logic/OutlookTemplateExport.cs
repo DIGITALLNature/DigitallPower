@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using dgt.power.common;
+using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
@@ -11,7 +12,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class OutlookTemplateExport : BaseExport
 {
-    public OutlookTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public OutlookTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, connection, configResolver, fileService)
     {
     }
 
