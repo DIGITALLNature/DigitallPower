@@ -47,7 +47,7 @@ jobs:
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=lcov.info
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
 
     - name: Test Report
       uses: dorny/test-reporter@v1
@@ -56,21 +56,3 @@ jobs:
         name: ${{ matrix.os }} Tests            
         path: tests/**/test-results.trx
         reporter: dotnet-trx
-
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
-      if: matrix.os == 'ubuntu-latest'
-      with:
-        reports: 'tests/**/lcov.info'
-        targetdir: 'coveragereport'
-        reporttypes: 'lcov'
-
-    - name: Generate Code Coverage report
-      uses: barecheck/code-coverage-action@v1
-      if: matrix.os == 'ubuntu-latest'
-      with:
-        barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
-        barecheck-api-key: ${{ secrets.BARECHECK_API_KEY }}
-        lcov-file: "./coveragereport/lcov.info"
-        send-summary-comment: true
-        show-annotations: "warning"
