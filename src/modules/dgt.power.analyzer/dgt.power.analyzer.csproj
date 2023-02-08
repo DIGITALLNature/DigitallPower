@@ -17,4 +17,10 @@
     <ProjectReference Include="..\..\models\dgt.power.dto\dgt.power.dto.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>dgt.power.analyzer.tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

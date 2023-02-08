@@ -144,12 +144,16 @@ namespace dgt.power.analyzer.tests
             GetContext()
                 .Execute(new AnalyzeVerb
                 {
-                    InlineData = SolutionUniqueName
+                    InlineData = SolutionUniqueName,
+                    GenerateSummaryFile = true,
+                    GenerateReportFile = true
                 })
                 .Should().BeTrue();
 
             var output = AnsiConsole.ExportText();
-            Assert.EndsWith("mu", output); // TODO
+            Assert.EndsWith("── solution unique name: customizations ──", output);
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv")));
         }
     }
 }

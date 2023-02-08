@@ -25,7 +25,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     }
 
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
-    protected string ResultFolder { get; } = "Analyze";
+    internal  static string ResultFolder { get; } = "Analyze";
 
     protected List<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
