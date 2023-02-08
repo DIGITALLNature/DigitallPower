@@ -2,13 +2,12 @@ name: Build DGTP
 
 on:
   push:
-    branches-ignore:
-      - main
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
     - uses: actions/checkout@v3
 
@@ -32,9 +31,7 @@ jobs:
       run: dotnet build --no-restore
       
     - name: Run Tests
-      env:
-        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings
 
     - name: Test Report
       uses: dorny/test-reporter@v1
@@ -43,3 +40,17 @@ jobs:
         name: ${{ matrix.os }} Tests            
         path: tests/**/test-results.trx
         reporter: dotnet-trx
+
+    - name: ReportGenerator
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
+      with:
+        reports: 'tests/**/coverage.cobertura.xml'
+        targetdir: 'coveragereport'
+        reporttypes: 'lcov'
+
+    - name: publish coverage report to coveralls.io
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: coveragereport/lcov.info
+    
