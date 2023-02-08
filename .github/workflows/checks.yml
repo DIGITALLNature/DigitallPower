@@ -39,6 +39,10 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     name: Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     needs:  build
     steps:
     - uses: actions/checkout@v3
