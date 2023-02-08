@@ -1,15 +1,15 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.Json;
+using CsvHelper;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
+using dgt.power.analyzer.Reports;
 using dgt.power.analyzer.tests.Base;
 using dgt.power.dataverse;
+using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Abstractions;
@@ -151,9 +151,23 @@ namespace dgt.power.analyzer.tests
                 .Should().BeTrue();
 
             var output = AnsiConsole.ExportText();
-            Assert.EndsWith("── solution unique name: customizations ──", output);
-            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
-            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv")));
+            Assert.StartsWith("── solution unique name: customizations ──", output);
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json")));
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv")));
+
+            // Check Summary
+            var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json")));
+            Assert.Equal(1, summary.Anomalies);
+
+            // Check Result
+            using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv"));
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var results = csv.GetRecords<ActiveLayerLine>().ToArray();
+            Assert.Equal(1, results.Length);
+            Assert.Equal("Entity", results[0].Component);
+            Assert.Equal("Test Entity", results[0].Name);
+            Assert.Equal(SolutionUniqueName, results[0].Solution);
+            Assert.Equal(2, results[0].Order);
         }
     }
 }
