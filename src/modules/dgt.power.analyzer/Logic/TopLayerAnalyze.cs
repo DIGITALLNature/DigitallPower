@@ -1,4 +1,4 @@
-﻿using dgt.power.analyzer.Base;
+﻿﻿using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -11,9 +11,9 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class NoActiveLayerAnalyze : BaseAnalyze
+public sealed class TopLayerAnalyze : BaseAnalyze
 {
-    public NoActiveLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public TopLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
     }
 
@@ -28,7 +28,7 @@ public sealed class NoActiveLayerAnalyze : BaseAnalyze
 
         var summary = new AnalyzerSummary
         {
-            Task = "noactivelayer",
+            Task = "toplayer",
             Anomalies = 0
         };
 
@@ -70,8 +70,8 @@ public sealed class NoActiveLayerAnalyze : BaseAnalyze
                             continue;
                         }
 
-                        var first = layers.First();
-                        if (first.MsdynSolutionname != "Active")
+                        var first = GetTopNotActiveLayer(layers);
+                        if (!first.MsdynSolutionname!.ToLowerInvariant().StartsWith(uniqueName.ToLowerInvariant()))
                         {
                             string componentName;
                             if (component.RootSolutionComponentId != null && ((OptionSetValue)component.GetAttributeValue<AliasedValue>($"root.{SolutionComponent.LogicalNames.ComponentType}").Value).Value == SolutionComponent.Options.ComponentType.Entity)
@@ -84,10 +84,10 @@ public sealed class NoActiveLayerAnalyze : BaseAnalyze
                                 componentName = first.MsdynName!;
                             }
 
-                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName, $"{first.MsdynSolutionname}");
+                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName, uniqueName);
                             ctx.Refresh();
 
-                            resultTable.Add(new ActiveLayerLine { Component = first.MsdynSolutioncomponentname, Order = first.MsdynOrder, Name = componentName, Solution = first.MsdynSolutionname });
+                            resultTable.Add(new ActiveLayerLine { Component = first.MsdynSolutioncomponentname, Order = first.MsdynOrder, Name = componentName, Solution = uniqueName });
                             summary.Anomalies++;
                         }
                     }
@@ -96,14 +96,26 @@ public sealed class NoActiveLayerAnalyze : BaseAnalyze
 
         if (args.GenerateSummaryFile)
         {
-            WriteSummaryFile("NoActiveLayer", summary);
+            WriteSummaryFile("TopLayer", summary);
         }
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("NoActiveLayer", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Component).ThenBy(r => r.Name).ThenBy(r => r.Order));
+            WriteReportFile("TopLayer", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Component).ThenBy(r => r.Name).ThenBy(r => r.Order));
         }
 
         return Tracer.End(this, true);
+    }
+
+    private MsdynComponentlayer GetTopNotActiveLayer(List<MsdynComponentlayer> layers)
+    {
+        if (layers.Count == 1)
+        {
+            return layers.Single();
+        }
+
+        var skippedLayers = layers.Skip(1).ToList();
+        var first = skippedLayers.First();
+        return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(skippedLayers) : first;
     }
 }
