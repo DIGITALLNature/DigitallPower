@@ -1,15 +1,15 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.Json;
+using CsvHelper;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
+using dgt.power.analyzer.Reports;
 using dgt.power.analyzer.tests.Base;
 using dgt.power.dataverse;
+using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Abstractions;
@@ -90,6 +90,22 @@ namespace dgt.power.analyzer.tests
                 MsdynOrder = 1,
                 MsdynComponentid = $"{formComponent.ObjectId:B}"
             };
+            var formLayerForeign = new MsdynComponentlayer(Guid.NewGuid())
+            {
+                MsdynName = "Test Formular",
+                MsdynSolutioncomponentname = "SystemForm",
+                MsdynSolutionname = "somebodyelsesolution",
+                MsdynOrder = 2,
+                MsdynComponentid = $"{formComponent.ObjectId:B}"
+            };
+            var formLayerActive = new MsdynComponentlayer(Guid.NewGuid())
+            {
+                MsdynName = "Test Formular",
+                MsdynSolutioncomponentname = "SystemForm",
+                MsdynSolutionname = "Active",
+                MsdynOrder = 3,
+                MsdynComponentid = $"{formComponent.ObjectId:B}"
+            };
             var entityLayer = new MsdynComponentlayer(Guid.NewGuid())
             {
                 MsdynName = "Test Entity",
@@ -98,12 +114,20 @@ namespace dgt.power.analyzer.tests
                 MsdynOrder = 1,
                 MsdynComponentid = $"{entityComponent.ObjectId:B}"
             };
+            var entityLayerPatch = new MsdynComponentlayer(Guid.NewGuid())
+            {
+                MsdynName = "Test Entity",
+                MsdynSolutioncomponentname = "Entity",
+                MsdynSolutionname = SolutionUniqueName+"_Patch", // Should be ignored
+                MsdynOrder = 2,
+                MsdynComponentid = $"{entityComponent.ObjectId:B}"
+            };
             var entityLayerActive = new MsdynComponentlayer(Guid.NewGuid())
             {
                 MsdynName = "Test Entity",
                 MsdynSolutioncomponentname = "Entity",
                 MsdynSolutionname = "Active",
-                MsdynOrder = 2,
+                MsdynOrder = 3,
                 MsdynComponentid = $"{entityComponent.ObjectId:B}"
             };
             return new Entity[]
@@ -111,9 +135,12 @@ namespace dgt.power.analyzer.tests
             solution,
             entityComponent,
             entityLayer,
+            entityLayerPatch,
             entityLayerActive,
             formComponent,
             formLayer,
+            formLayerForeign,
+            formLayerActive,
             new SolutionComponent(Guid.NewGuid())
             {
                 [SolutionComponent.LogicalNames.ComponentType] =
@@ -151,9 +178,23 @@ namespace dgt.power.analyzer.tests
                 .Should().BeTrue();
 
             var output = AnsiConsole.ExportText();
-            Assert.EndsWith("── solution unique name: customizations ──", output);
-            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
-            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv")));
+            Assert.StartsWith("── solution unique name: customizations ──", output);
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "TopLayer-summary.json")));
+            Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "TopLayer-result.csv")));
+
+            // Check Summary
+            var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "TopLayer-summary.json")));
+            Assert.Equal(1, summary.Anomalies);
+
+            // Check Result
+            using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "TopLayer-result.csv"));
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var results = csv.GetRecords<ActiveLayerLine>().ToArray();
+            Assert.Equal(1, results.Length);
+            Assert.Equal("SystemForm", results[0].Component);
+            Assert.Equal("Test Formular (testentity)", results[0].Name);
+            Assert.Equal(SolutionUniqueName, results[0].Solution);
+            Assert.Equal(2, results[0].Order);
         }
     }
 }
