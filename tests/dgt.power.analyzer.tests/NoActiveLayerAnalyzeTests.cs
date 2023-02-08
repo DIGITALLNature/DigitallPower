@@ -1,13 +1,21 @@
-﻿using dgt.power.analyzer.Base;
+﻿using System.Globalization;
+using System.Text.Json;
+using CsvHelper;
+using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
+using dgt.power.analyzer.Reports;
 using dgt.power.analyzer.tests.Base;
 using dgt.power.dataverse;
+using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace dgt.power.analyzer.tests;
 
@@ -129,11 +137,35 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             }).Should().BeFalse();
 
     [Fact]
-    public void ShouldAnalyzeActiveLayer() =>
+    public void ShouldAnalyzeNoActiveLayer()
+    {
+        AnsiConsole.Record();
         GetContext()
             .Execute(new AnalyzeVerb
             {
-                InlineData = SolutionUniqueName
+                InlineData = SolutionUniqueName,
+                GenerateSummaryFile = true,
+                GenerateReportFile = true
             })
             .Should().BeTrue();
+
+        var output = AnsiConsole.ExportText();
+        Assert.StartsWith("── solution unique name: customizations ──", output);
+        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-summary.json")));
+        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-result.csv")));
+
+        // Check Summary
+        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
+        Assert.Equal(1,summary.Anomalies);
+
+        // Check Result
+        using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv"));
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        var results = csv.GetRecords<ActiveLayerLine>().ToArray();
+        Assert.Equal(1,results.Length);
+        Assert.Equal("SystemForm", results[0].Component);
+        Assert.Equal("Test Formular (testentity)", results[0].Name);
+        Assert.Equal(SolutionUniqueName, results[0].Solution);
+        Assert.Equal(1, results[0].Order);
+    }
 }

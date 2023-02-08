@@ -25,7 +25,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     }
 
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
-    protected string ResultFolder { get; } = "Analyze";
+    internal  static string ResultFolder { get; } = "Analyze";
 
     protected List<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
@@ -105,12 +105,48 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
         return components;
     }
+    protected List<MsdynComponentlayer> GetSolutionLayers(SolutionComponent component)
+    {
+        var query = new QueryExpression
+        {
+            EntityName = MsdynComponentlayer.EntityLogicalName,
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                MsdynComponentlayer.LogicalNames.MsdynName,
+                MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname,
+                MsdynComponentlayer.LogicalNames.MsdynSolutionname,
+                MsdynComponentlayer.LogicalNames.MsdynOrder
+            )
+        };
+        var filter = new FilterExpression(LogicalOperator.And);
+        filter.Conditions.Add(
+            new ConditionExpression
+            {
+                AttributeName = MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname,
+                Operator = ConditionOperator.Equal,
+                Values = { ComponentTypeLookup[component.ComponentType!.Value] }
+            }
+        );
+        filter.Conditions.Add(
+            new ConditionExpression
+            {
+                AttributeName = MsdynComponentlayer.LogicalNames.MsdynComponentid,
+                Operator = ConditionOperator.Equal,
+                Values = { $"{component.ObjectId:B}" }
+            }
+        );
+        query.Criteria = filter;
+
+        query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
+        var layers = Connection.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<MsdynComponentlayer>()).ToList();
+        return layers;
+    }
 
     private static Solution GetSolution(DataContext context, string uniqueName)
     {
         var solution = (from su in context.SolutionSet
-            where su.UniqueName == uniqueName
-            select su).Single();
+                        where su.UniqueName == uniqueName
+                        select su).Single();
         return solution;
     }
 

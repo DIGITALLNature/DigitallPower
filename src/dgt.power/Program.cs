@@ -126,10 +126,16 @@ app.Configure(config =>
         analyze.AddCommand<EntityAllAssetsAnalyze>("entityallassets")
             .WithDescription("Scans the specified solutions for entities containing with assets");
         analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
-            .WithDescription("Scans the specified solutions for components without active layer")
-            .WithExample(new[] {"analyze", "noactivelayer", "--inline", "solution1,solution2"});
+            .WithDescription("Scans the specified (unmanaged) solutions for components without active layer")
+            .WithExample(new[] { "analyze", "noactivelayer", "--inline", "solution1,solution2" });
         analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
             .WithDescription("Scans for components that are in multiple of the specified solutions");
+        analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
+            .WithDescription("Scans the specified (managed) solutions for components with active layer")
+            .WithExample(new[] { "analyze", "activelayer", "--inline", "solution1,solution2" });
+        analyze.AddCommand<TopLayerAnalyze>("toplayer")
+            .WithDescription("Scans the specified (managed) solutions for components where solution is not top layer")
+            .WithExample(new[] { "analyze", "toplayer", "--inline", "solution1,solution2" });
     });
 
     config.AddBranch<ImportVerb>("import", import =>

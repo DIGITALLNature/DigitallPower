@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.1.0...v1.2.0) (2023-02-08)
+
+
+### Features
+
+* **analyze:** Layer inspections in analyse module extended by top layer inspections and active layer inspections ([#22](https://github.com/DIGITALLNature/DigitallPower/issues/22)) ([3a37e19](https://github.com/DIGITALLNature/DigitallPower/commit/3a37e199f5709a8e0a4bbb1f60ab73b52f80e8ff))
+
 # [1.1.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.0.1...v1.1.0) (2023-02-07)
 
 
