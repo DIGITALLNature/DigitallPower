@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.2.0...v1.3.0) (2023-02-08)
+
+
+### Features
+
+* **maintenance:** export active carriers to json file ([#25](https://github.com/DIGITALLNature/DigitallPower/issues/25)) ([44f46a4](https://github.com/DIGITALLNature/DigitallPower/commit/44f46a451cef842ec17f1e01aa7ae39e3b4ed38a))
+
 # [1.2.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.1.0...v1.2.0) (2023-02-08)
 
 
