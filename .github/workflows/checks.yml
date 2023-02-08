@@ -15,6 +15,7 @@ jobs:
       id-token: write
       contents: read
       checks: write
+    timeout-minutes: 10
     steps:
     - uses: actions/checkout@v3
 
