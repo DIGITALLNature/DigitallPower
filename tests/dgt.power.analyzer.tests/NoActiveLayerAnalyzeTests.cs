@@ -5,9 +5,11 @@ using dgt.power.dataverse;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
 
 namespace dgt.power.analyzer.tests;
 
@@ -129,11 +131,17 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             }).Should().BeFalse();
 
     [Fact]
-    public void ShouldAnalyzeActiveLayer() =>
+    public void ShouldAnalyzeNoActiveLayer()
+    {
+        AnsiConsole.Record();
         GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = SolutionUniqueName
             })
             .Should().BeTrue();
+
+        var output = AnsiConsole.ExportText();
+        Assert.EndsWith("mu", output);// TODO
+    }
 }
