@@ -26,8 +26,32 @@ namespace dgt.power.codegeneration.Templates.dotnet
             this.Write("using System.Linq;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\n\r\n" +
                     "// ReSharper disable All \r\nnamespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            this.Write("\r\n{\r\n   \tpublic partial class DataContext : OrganizationServiceContext\r\n    {\r\n\t\t" +
-                    "public DataContext(IOrganizationService service) : base(service) {}\r\n\t}\r\n}\r\n");
+            this.Write(@"
+{
+   	public partial class DataContext : OrganizationServiceContext
+    {
+        private readonly bool _noLock;
+
+        public DataContext(IOrganizationService service, bool noLock = true) : base(service)
+        {
+            _noLock = noLock;
+        }
+
+        protected override void OnExecuting(OrganizationRequest request)
+        {
+            if (_noLock)
+            {
+                if (request is RetrieveMultipleRequest retrieveMultipleRequest && retrieveMultipleRequest.Query is QueryExpression queryExpression)
+                {
+                    queryExpression.NoLock = true;
+                }
+            }
+
+            base.OnExecuting(request);
+        }
+	}
+}
+");
             return this.GenerationEnvironment.ToString();
         }
     }
