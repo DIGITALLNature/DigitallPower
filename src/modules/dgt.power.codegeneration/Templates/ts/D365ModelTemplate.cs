@@ -14,24 +14,16 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365ModelTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365ModelTemplate : D365ModelTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n/// <reference path=\"");
-            
-            #line 3 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365ModelTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TypingPath));
-            
-            #line default
-            #line hidden
             this.Write("\" />\r\n\r\nexport module D365Model {\r\n  export interface Entity {\r\n    Entitylogical" +
                     "Name(): string;\r\n    EntityId(): string;\r\n  }\r\n  export interface Form extends E" +
                     "ntity {}\r\n  export class EntityField<A extends Xrm.Attributes.Attribute, C exten" +
@@ -52,13 +44,10 @@ namespace dgt.power.codegeneration.Templates.ts
                     "ab, public Sections: S) {}\r\n  }\r\n  export abstract class Sections {\r\n    constru" +
                     "ctor(protected Sections: Xrm.Collection.ItemCollection<Xrm.Controls.Section>) {}" +
                     "\r\n  }\r\n  export interface BusinessProcessFlowStage {\r\n    Name: string;\r\n    Ids" +
-                    ": string[];\r\n  }\r\n}\r\n/* eslint-enable */");
+                    ": string[];\r\n  }\r\n}\r\n/* eslint-enable */\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

@@ -15,12 +15,9 @@ namespace dgt.power.codegeneration.Templates.dotnet
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class ActionTemplate : ActionTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
@@ -28,313 +25,115 @@ namespace dgt.power.codegeneration.Templates.dotnet
         {
             this.Write("using System;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\n\r\n// Re" +
                     "Sharper disable All\r\nnamespace ");
-            
-            #line 8 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            
-            #line default
-            #line hidden
             this.Write("\r\n{ \r\n");
-            
-            #line 10 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  foreach(var action in Actions)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t[RequestProxy(\"");
-            
-            #line 13 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\")]\r\n\tpublic class ");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(action.LogicalName)));
-            
-            #line default
-            #line hidden
             this.Write("Request : OrganizationRequest\r\n\t{\r\n\t\tpublic ");
-            
-            #line 16 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(action.LogicalName)));
-            
-            #line default
-            #line hidden
             this.Write("Request()\r\n\t\t{\r\n\t\t\tRequestName = \"");
-            
-            #line 18 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n\t\t}\r\n\r\n\t\t#region consts\r\n\t\tpublic const string RequestLogicalName = \"");
-            
-            #line 22 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n\t\t#endregion\r\n\r\n");
-            
-            #line 25 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  if(action.InParameters.Count > 0)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t#region InParameters\r\n\t\tpublic struct InParameters\r\n\t\t{\r\n");
-            
-            #line 31 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  foreach(var param in action.InParameters)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\tpublic const string ");
-            
-            #line 34 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(CamelCase(param.Name))));
-            
-            #line default
-            #line hidden
             this.Write(" = \"");
-            
-            #line 34 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 35 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n\t\t#endregion\r\n");
-            
-            #line 40 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 44 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  foreach(var param in action.InParameters)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic ");
-            
-            #line 47 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(" ");
-            
-            #line 47 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(CamelCase(param.Name))));
-            
-            #line default
-            #line hidden
             this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif(base.Parameters.Contains(\"");
-            
-            #line 51 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\"))\r\n\t\t\t\t{\r\n\t\t\t\t\treturn (");
-            
-            #line 53 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(")base.Parameters[\"");
-            
-            #line 53 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\"];\r\n\t\t\t\t}\r\n\t\t\t\treturn default(");
-            
-            #line 55 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(");\r\n\t\t\t}\r\n\t\t\tset\r\n\t\t\t{\r\n\t\t\t\tbase.Parameters[\"");
-            
-            #line 59 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\"] = value;\r\n\t\t\t}\r\n\t\t}\r\n\r\n");
-            
-            #line 63 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\r\n\t}\r\n\r\n\t[ResponseProxy(\"");
-            
-            #line 68 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\")]\r\n\tpublic class ");
-            
-            #line 69 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(action.LogicalName)));
-            
-            #line default
-            #line hidden
             this.Write("Response : OrganizationResponse\r\n\t{\r\n");
-            
-            #line 71 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  if(action.OutParameters.Count > 0)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t#region OutParameters\r\n\t\tpublic struct OutParameters\r\n\t\t{\r\n");
-            
-            #line 77 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  foreach(var param in action.OutParameters)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\tpublic const string ");
-            
-            #line 80 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(param.Name)));
-            
-            #line default
-            #line hidden
             this.Write(" = \"");
-            
-            #line 80 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 81 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n\t\t#endregion\r\n");
-            
-            #line 86 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 90 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
  foreach(var param in action.OutParameters)
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic ");
-            
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(" ");
-            
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(param.Name)));
-            
-            #line default
-            #line hidden
             this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif(base.Results.Contains(\"");
-            
-            #line 97 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\"))\r\n\t\t\t\t{\r\n\t\t\t\t\treturn (");
-            
-            #line 99 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(")base.Results[\"");
-            
-            #line 99 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
-            
-            #line default
-            #line hidden
             this.Write("\"];\r\n\t\t\t\t}\r\n\t\t\t\treturn default(");
-            
-            #line 101 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
-            
-            #line default
-            #line hidden
             this.Write(");\r\n\t\t\t}\r\n\t\t}\r\n\r\n");
-            
-            #line 105 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\r\n");
-            
-            #line 110 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ActionTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
-            this.Write("}");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

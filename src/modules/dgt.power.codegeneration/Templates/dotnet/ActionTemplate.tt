@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#"  #>
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 using System;
 using Microsoft.Xrm.Sdk;

@@ -14,12 +14,9 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365OptionSetsTemplate : D365OptionSetsTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
@@ -27,61 +24,23 @@ namespace dgt.power.codegeneration.Templates.ts
         {
             this.Write("/* eslint-disable */\r\n\r\n// This module contains global option sets which are used" +
                     " in more than one entity!\r\nexport module D365OptionSets {\r\n");
-            
-            #line 6 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
  foreach(var optionSet in OptionSets) { 
-            
-            #line default
-            #line hidden
             this.Write("\t\texport class ");
-            
-            #line 7 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(optionSet.Key)));
-            
-            #line default
-            #line hidden
             this.Write(" {\r\n\t\t\tconstructor() {\r\n\t\t\t}\r\n");
-            
-            #line 10 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
  foreach(var option in optionSet.Value) { 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\tpublic static ");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(option.Label))));
-            
-            #line default
-            #line hidden
             this.Write(" = { value: ");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
-            
-            #line default
-            #line hidden
             this.Write(" };\r\n");
-            
-            #line 12 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
  } 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365OptionSetsTemplate.tt"
  } 
-            
-            #line default
-            #line hidden
-            this.Write("}");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

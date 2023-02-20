@@ -15,64 +15,33 @@ namespace dgt.power.codegeneration.Templates.dotnet
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class SdkMessagesTemplate : SdkMessagesTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("\r\n// ReSharper disable All\r\nnamespace ");
-            
-            #line 5 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            
-            #line default
-            #line hidden
             this.Write("\r\n{\r\n    public sealed class SdkMessageNames\r\n    {\r\n        private SdkMessageNa" +
                     "mes() {}\r\n\r\n");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
  foreach(var sdkMessage in Filter(SdkMessages))
 {
 
-            
-            #line default
-            #line hidden
             this.Write("        public const string ");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessage.Item1));
-            
-            #line default
-            #line hidden
             this.Write(" = \"");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessage.Item2));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 15 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\SdkMessagesTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
-            this.Write("    }\r\n}");
+            this.Write("    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

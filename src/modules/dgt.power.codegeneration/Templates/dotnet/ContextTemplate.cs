@@ -15,12 +15,9 @@ namespace dgt.power.codegeneration.Templates.dotnet
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ContextTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class ContextTemplate : ContextTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
@@ -28,20 +25,12 @@ namespace dgt.power.codegeneration.Templates.dotnet
         {
             this.Write("using System.Linq;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\n\r\n" +
                     "// ReSharper disable All \r\nnamespace ");
-            
-            #line 8 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\ContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            
-            #line default
-            #line hidden
             this.Write("\r\n{\r\n   \tpublic partial class DataContext : OrganizationServiceContext\r\n    {\r\n\t\t" +
-                    "public DataContext(IOrganizationService service) : base(service) {}\r\n\t}\r\n}");
+                    "public DataContext(IOrganizationService service) : base(service) {}\r\n\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation
