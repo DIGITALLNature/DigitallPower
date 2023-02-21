@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.3.0...v1.4.0) (2023-02-21)
+
+
+### Features
+
+* **codegeneration:** add NoLock interceptor on DataContext ([c0f49d2](https://github.com/DIGITALLNature/DigitallPower/commit/c0f49d21c3da566091ad18eac24b1213fadd8678))
+
 # [1.3.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.2.0...v1.3.0) (2023-02-08)
 
 
