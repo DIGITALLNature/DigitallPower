@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 /* eslint-disable */
 
 export class D365SdkMessages {

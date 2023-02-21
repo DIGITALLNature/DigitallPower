@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#"  #>
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 using System.Linq;
 using Microsoft.Xrm.Sdk;
@@ -9,6 +9,24 @@ namespace <#= NameSpace #>
 {
    	public partial class DataContext : OrganizationServiceContext
     {
-		public DataContext(IOrganizationService service) : base(service) {}
+        private readonly bool _noLock;
+
+        public DataContext(IOrganizationService service, bool noLock = true) : base(service)
+        {
+            _noLock = noLock;
+        }
+
+        protected override void OnExecuting(OrganizationRequest request)
+        {
+            if (_noLock)
+            {
+                if (request is RetrieveMultipleRequest retrieveMultipleRequest && retrieveMultipleRequest.Query is QueryExpression queryExpression)
+                {
+                    queryExpression.NoLock = true;
+                }
+            }
+
+            base.OnExecuting(request);
+        }
 	}
 }

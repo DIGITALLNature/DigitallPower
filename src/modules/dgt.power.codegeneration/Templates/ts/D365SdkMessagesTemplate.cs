@@ -14,56 +14,30 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365SdkMessagesTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365SdkMessagesTemplate : D365SdkMessagesTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n\r\nexport class D365SdkMessages {\r\n\tconstructor() {\r\n\t}\r\n");
-            
-            #line 7 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365SdkMessagesTemplate.tt"
  foreach(var sdkMessages in Filter(SdkMessages))
 { 
 
-            
-            #line default
-            #line hidden
             this.Write("\tpublic static ");
-            
-            #line 10 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365SdkMessagesTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Item1));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 10 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365SdkMessagesTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Item2));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365SdkMessagesTemplate.tt"
 
 }
 
-            
-            #line default
-            #line hidden
-            this.Write("}");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

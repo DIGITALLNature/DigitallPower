@@ -15,82 +15,36 @@ namespace dgt.power.codegeneration.Templates.dotnet
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class OptionSetsTemplate : OptionSetsTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("\r\n// ReSharper disable All\r\nnamespace ");
-            
-            #line 5 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            
-            #line default
-            #line hidden
             this.Write("\r\n{\r\n    /// <summary>\r\n    /// This class contains global option sets which are " +
                     "used in more than one entity!\r\n    /// </summary>\r\n    public sealed class Optio" +
                     "nSetValues\r\n    {\r\n        private OptionSetValues() {}\r\n\r\n");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
  foreach(var optionSet in OptionSets) { 
-            
-            #line default
-            #line hidden
             this.Write("        public struct ");
-            
-            #line 15 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(optionSet.Key)));
-            
-            #line default
-            #line hidden
             this.Write("\r\n        {\r\n");
-            
-            #line 17 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
  foreach(var option in optionSet.Value) { 
-            
-            #line default
-            #line hidden
             this.Write("            public const int ");
-            
-            #line 18 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(option.Label))));
-            
-            #line default
-            #line hidden
             this.Write(" = ");
-            
-            #line 18 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
-            
-            #line default
-            #line hidden
             this.Write(";\r\n");
-            
-            #line 19 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
  } 
-            
-            #line default
-            #line hidden
             this.Write("        }\r\n");
-            
-            #line 21 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\dotnet\OptionSetsTemplate.tt"
  } 
-            
-            #line default
-            #line hidden
-            this.Write("    }\r\n}");
+            this.Write("    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

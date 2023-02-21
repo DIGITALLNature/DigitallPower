@@ -14,157 +14,66 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365EntityRefTemplate : D365EntityRefTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n///<reference path=\"");
-            
-            #line 3 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TypingPath));
-            
-            #line default
-            #line hidden
             this.Write("\" />\r\n\r\nexport module D365");
-            
-            #line 5 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
             this.Write("EntityRef {\r\n\texport class Attributes {\r\n\t\tconstructor() {\r\n\t\t}\r\n");
-            
-            #line 9 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 { 
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic static ");
-            
-            #line 13 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 13 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 14 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  
 } // End Attribute loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\r\n\t");
-            
-            #line 19 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(EntityMetadata.Description),1)));
-            
-            #line default
-            #line hidden
             this.Write("\r\n\texport class EntityRef {\r\n\r\n\t\tpublic static EntitylogicalName: string = \"");
-            
-            #line 22 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n\r\n\t}\r\n\r\n");
-            
-            #line 26 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  if(!SuppressOptions)
 { // Start Options
 
-            
-            #line default
-            #line hidden
             this.Write("\texport module Optionsets {\r\n");
-            
-            #line 30 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
 	{
 
-            
-            #line default
-            #line hidden
             this.Write("\t\texport class ");
-            
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(Sanitize(optionField.SchemaName)),"O"+EntityMetadata.LogicalName)));
-            
-            #line default
-            #line hidden
             this.Write(" {\r\n\t\t\tconstructor() {\r\n\t\t\t}\r\n\r\n");
-            
-            #line 37 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\tpublic static ");
-            
-            #line 39 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(Sanitize(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
-            
-            #line default
-            #line hidden
             this.Write(" = { value: ");
-            
-            #line 39 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
-            
-            #line default
-            #line hidden
             this.Write(" };\r\n");
-            
-            #line 40 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  			} 
-            
-            #line default
-            #line hidden
             this.Write("\r\n\t\t}\r\n");
-            
-            #line 43 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
 	
 	} // End Optionset loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t  \r\n\t}\r\n");
-            
-            #line 47 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityRefTemplate.tt"
  
 } // End Options
 
-            
-            #line default
-            #line hidden
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

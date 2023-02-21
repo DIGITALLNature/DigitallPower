@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 /* eslint-disable */
 
 // This module contains global option sets which are used in more than one entity!

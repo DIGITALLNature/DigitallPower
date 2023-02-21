@@ -14,195 +14,84 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365BusinessProcessFlowTemplate : D365BusinessProcessFlowTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n///<reference path=\"");
-            
-            #line 3 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TypingPath));
-            
-            #line default
-            #line hidden
             this.Write("\" />\r\n\r\nimport { D365Model } from \"./model\";\r\n\r\nexport module D365");
-            
-            #line 7 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Process.Item1));
-            
-            #line default
-            #line hidden
             this.Write("BPF {\r\n    export class Stages {\r\n        constructor() {\r\n        }\r\n");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
  foreach(var stage in Stages)
 {
 
-            
-            #line default
-            #line hidden
             this.Write("\r\n        public static ");
-            
-            #line 15 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(stage.Item1)));
-            
-            #line default
-            #line hidden
             this.Write(" = {\r\n            Name: \"");
-            
-            #line 16 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(stage.Item2));
-            
-            #line default
-            #line hidden
             this.Write("\",\r\n            Ids: [\r\n");
-            
-            #line 18 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 int idx1 = 0;
 foreach(var id in stage.Item3)
 {
 		var csv = (++idx1 == stage.Item3.Count) ? "" : ",";
 
-            
-            #line default
-            #line hidden
             this.Write("              \"");
-            
-            #line 23 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(id.ToString("D")));
-            
-            #line default
-            #line hidden
             this.Write("\"");
-            
-            #line 23 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(csv));
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 24 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 } // End Stage loop
 
-            
-            #line default
-            #line hidden
             this.Write("            ],\r\n");
-            
-            #line 28 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 int idx2 = 0;
 foreach(var id in stage.Item3)
 {
 		var csv = (++idx2 == stage.Item3.Count) ? "" : ",";
 
-            
-            #line default
-            #line hidden
             this.Write("            Id_");
-            
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(id.ToString("N")));
-            
-            #line default
-            #line hidden
             this.Write(": \"");
-            
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(id.ToString("D")));
-            
-            #line default
-            #line hidden
             this.Write("\"");
-            
-            #line 33 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(csv));
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 34 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 } // End Stage loop
 
-            
-            #line default
-            #line hidden
             this.Write("        }\r\n");
-            
-            #line 38 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 } // End Stage loop
 
-            
-            #line default
-            #line hidden
             this.Write("    }\r\n    export class Process {\r\n        constructor() {\r\n        }\r\n        pu" +
                     "blic static ProcessName = \"");
-            
-            #line 45 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Process.Item2));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n        public static ProcessId = \"");
-            
-            #line 46 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Process.Item3.ToString("D")));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n        public static Stages: D365Model.BusinessProcessFlowStage[] = [\r\n");
-            
-            #line 48 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
  int idx3 = 0;
 foreach(var stage in Stages)
 {
 		var csv = (++idx3 == Stages.Count) ? "" : ",";
 
-            
-            #line default
-            #line hidden
             this.Write("            Stages.");
-            
-            #line 53 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(stage.Item1)));
-            
-            #line default
-            #line hidden
-            
-            #line 53 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(csv));
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 54 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365BusinessProcessFlowTemplate.tt"
 
 } // End Stage loop
 
-            
-            #line default
-            #line hidden
-            this.Write("        ];\r\n    }\r\n}");
+            this.Write("        ];\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

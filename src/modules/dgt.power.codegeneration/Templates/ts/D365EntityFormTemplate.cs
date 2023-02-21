@@ -14,177 +14,74 @@ namespace dgt.power.codegeneration.Templates.ts
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class D365EntityFormTemplate : D365EntityFormTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n///<reference path=\"");
-            
-            #line 3 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TypingPath));
-            
-            #line default
-            #line hidden
             this.Write("\" />\r\n\r\nimport { D365Model } from \"./model\";\r\n\r\nexport module D365");
-            
-            #line 7 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 7 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form {\r\n\texport class Attributes {\r\n\t\tconstructor() {\r\n\t\t}\r\n");
-            
-            #line 11 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 { 
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic static ");
-            
-            #line 15 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 15 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 16 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Attribute loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\texport class Tabs {\r\n\t\tconstructor() {\r\n\t\t}\r\n");
-            
-            #line 23 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var tab in FormDetail.Tabs)
 { 
 		var tabName = Unique(CamelCase(Sanitize(tab.Key)),"T"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic static ");
-            
-            #line 27 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 27 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tab.Key));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 28 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Tab loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\texport class Sections {\r\n\t\tconstructor() {\r\n\t\t}\r\n");
-            
-            #line 35 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var section in FlatSections())
 { 
 		var sectionName = Unique(CamelCase(Sanitize(section)),"S"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic static ");
-            
-            #line 39 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sectionName));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 39 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(section));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 40 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Section loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\texport class Grids {\r\n\t\tconstructor() {\r\n\t\t}\r\n");
-            
-            #line 47 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var grid in FormDetail.Grids)
 { 
 		var gridName = Unique(CamelCase(Sanitize(grid)),"X"+grid);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\tpublic static ");
-            
-            #line 51 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(gridName));
-            
-            #line default
-            #line hidden
             this.Write(": string = \"");
-            
-            #line 51 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(grid));
-            
-            #line default
-            #line hidden
             this.Write("\";\r\n");
-            
-            #line 52 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Section loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n\texport class Form implements D365Model.Form {\r\n\r\n\t\tpublic static Entitylogic" +
                     "alName: string = \"");
-            
-            #line 58 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write(@""";
 
 		public FormContext!: Xrm.FormContext;
@@ -214,245 +111,80 @@ namespace dgt.power.codegeneration.Templates.ts
 		};
 
 ");
-            
-            #line 86 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 { 
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"B"+EntityMetadata.LogicalName);
 		var attrType = TSTypeSet.ConvertType(attr.AttributeType, attr.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t");
-            
-            #line 91 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(attr.Description),2)));
-            
-            #line default
-            #line hidden
             this.Write("\r\n\t\t");
-            
-            #line 92 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
-            
-            #line default
-            #line hidden
             this.Write(": D365Model.EntityField<");
-            
-            #line 92 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Attribute));
-            
-            #line default
-            #line hidden
             this.Write(", ");
-            
-            #line 92 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write("> = new D365Model.EntityField<");
-            
-            #line 92 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Attribute));
-            
-            #line default
-            #line hidden
             this.Write(", ");
-            
-            #line 92 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(">(\r\n\t\t\t//D365");
-            
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form.Attributes.");
-            
-            #line 93 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
-            
-            #line default
-            #line hidden
             this.Write(",\r\n\t\t\t\"");
-            
-            #line 94 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\",\r\n\t\t\t");
-            
-            #line 95 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.XrmEnum));
-            
-            #line default
-            #line hidden
             this.Write(",\r\n\t\t\t() => this._a<");
-            
-            #line 96 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Attribute));
-            
-            #line default
-            #line hidden
             this.Write(">(\"");
-            
-            #line 96 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\"),\r\n\t\t\t(header?: boolean, index?: number) => this._c<");
-            
-            #line 97 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(">(\"");
-            
-            #line 97 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\", header, index),\r\n\t\t\t(delegate: (control: ");
-            
-            #line 98 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(") => void) => this._f<");
-            
-            #line 98 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(">(\"");
-            
-            #line 98 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\", delegate),\r\n\t\t\t(value) => this._v<");
-            
-            #line 99 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(">(\"");
-            
-            #line 99 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\", value),\r\n\t\t\t(value) => this._d<");
-            
-            #line 100 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.Control));
-            
-            #line default
-            #line hidden
             this.Write(">(\"");
-            
-            #line 100 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
-            
-            #line default
-            #line hidden
             this.Write("\", value)\r\n\t\t);\r\n\r\n");
-            
-            #line 103 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Attribute loop
 
-            
-            #line default
-            #line hidden
             this.Write("\r\n");
-            
-            #line 107 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var grid in FormDetail.Grids)
 { 
 		var gridName = Unique(CamelCase(Sanitize(grid)),"G"+grid);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t");
-            
-            #line 111 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(gridName));
-            
-            #line default
-            #line hidden
             this.Write(": D365Model.FormGrid = new  D365Model.FormGrid(\r\n\t\t\t//D365");
-            
-            #line 112 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 112 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form.Grids.");
-            
-            #line 112 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(gridName));
-            
-            #line default
-            #line hidden
             this.Write(",\r\n\t\t\t\"");
-            
-            #line 113 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(grid));
-            
-            #line default
-            #line hidden
             this.Write("\",\r\n\t\t\t() => this.FormContext.getControl<Xrm.Controls.GridControl>(\"");
-            
-            #line 114 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(grid));
-            
-            #line default
-            #line hidden
             this.Write("\").getGrid(),\r\n\t\t\t() => this.FormContext.getControl<Xrm.Controls.GridControl>(\"");
-            
-            #line 115 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(grid));
-            
-            #line default
-            #line hidden
             this.Write("\")\r\n\t\t);\r\n\r\n");
-            
-            #line 118 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Attribute loop
 
-            
-            #line default
-            #line hidden
             this.Write(@"		private _a<A extends Xrm.Attributes.Attribute>(attributeName: string): A {
 			return this.FormContext.getAttribute(attributeName);
 		}
@@ -481,243 +213,90 @@ namespace dgt.power.codegeneration.Templates.ts
 		}
 	}
 ");
-            
-            #line 148 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  if(!SuppressOptions)
 { // Start Options
 
-            
-            #line default
-            #line hidden
             this.Write("\texport module Optionsets {\r\n");
-            
-            #line 152 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  	foreach(var optionField in FilterOptions(EntityMetadata.Attributes)) 
 	{ 
 
-            
-            #line default
-            #line hidden
             this.Write("\t\texport class ");
-            
-            #line 155 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(Sanitize(optionField.SchemaName)),"O"+EntityMetadata.LogicalName)));
-            
-            #line default
-            #line hidden
             this.Write(" implements D365Model.Optionset {\r\n\t\t\tconstructor() {\r\n\t\t\t}\r\n\r\n");
-            
-            #line 159 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  			foreach(var option in optionField.Options)	
 			{ 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\tpublic static ");
-            
-            #line 161 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Unique(CamelCase(Sanitize(option.Label)),EntityMetadata.LogicalName+optionField.SchemaName)));
-            
-            #line default
-            #line hidden
             this.Write(": D365Model.OptionsetValue = new D365Model.OptionsetValue(\"");
-            
-            #line 161 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(option.Label, true, true, true)));
-            
-            #line default
-            #line hidden
             this.Write("\", ");
-            
-            #line 161 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
-            
-            #line default
-            #line hidden
             this.Write(");\r\n");
-            
-            #line 162 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  			} 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n");
-            
-            #line 164 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
 	
 	} // End Optionset loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t  \r\n\t}\r\n");
-            
-            #line 168 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Options
 
-            
-            #line default
-            #line hidden
             this.Write("\texport module FormTabs {\r\n\t\texport class Tabs extends D365Model.FormTabs {\r\n");
-            
-            #line 173 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var tab in FormDetail.Tabs)
 { 
 		var tabName = Unique(CamelCase(Sanitize(tab.Key)),"T2"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\t");
-            
-            #line 177 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write(" = new D365Model.Tab<");
-            
-            #line 177 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write("Sections>(\r\n\t\t\t\tthis.Tabs.get(D365");
-            
-            #line 178 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 178 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form.Tabs.");
-            
-            #line 178 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write("),\r\n\t\t\t\tnew ");
-            
-            #line 179 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write("Sections(this.Tabs.get(D365");
-            
-            #line 179 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 179 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form.Tabs.");
-            
-            #line 179 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write(").sections)); \r\n");
-            
-            #line 180 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Tab2 loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n");
-            
-            #line 184 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var tab in FormDetail.Tabs)
 { 
 		var tabName = Unique(CamelCase(Sanitize(tab.Key)),"T3"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\texport class ");
-            
-            #line 188 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            
-            #line default
-            #line hidden
             this.Write("Sections extends D365Model.Sections {\r\n");
-            
-            #line 189 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  foreach(var section in FilterSections(tab.Value))
 { 
 		var sectionName = Unique(CamelCase(Sanitize(section)),"S3"+EntityMetadata.LogicalName);
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t\t");
-            
-            #line 193 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sectionName));
-            
-            #line default
-            #line hidden
             this.Write(": Xrm.Controls.Section = this.Sections.get(D365");
-            
-            #line 193 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(EntityMetadata.SchemaName)));
-            
-            #line default
-            #line hidden
-            
-            #line 193 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(Sanitize(FormName,true))));
-            
-            #line default
-            #line hidden
             this.Write("Form.Sections.");
-            
-            #line 193 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sectionName));
-            
-            #line default
-            #line hidden
             this.Write(");\r\n");
-            
-            #line 194 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Section3 loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t\t}\r\n");
-            
-            #line 198 "C:\Users\raaa\source\repos\DIGITALL\Dynamics Power\src\dgt.power.codegeneration\Templates\ts\D365EntityFormTemplate.tt"
  
 } // End Tab3 loop
 
-            
-            #line default
-            #line hidden
             this.Write("\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation
