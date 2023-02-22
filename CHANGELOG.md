@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.4.0...v1.4.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* add needed usings for context no lock interceptor ([#30](https://github.com/DIGITALLNature/DigitallPower/issues/30)) ([9282cb1](https://github.com/DIGITALLNature/DigitallPower/commit/9282cb149af6bfa05b91508cb14b8c1d5410ff85))
+
 # [1.4.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.3.0...v1.4.0) (2023-02-21)
 
 
