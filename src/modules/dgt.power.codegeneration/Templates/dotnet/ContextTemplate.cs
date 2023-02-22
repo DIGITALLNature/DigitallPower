@@ -23,8 +23,9 @@ namespace dgt.power.codegeneration.Templates.dotnet
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System.Linq;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\n\r\n" +
-                    "// ReSharper disable All \r\nnamespace ");
+            this.Write("using System.Linq;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\nus" +
+                    "ing Microsoft.Xrm.Sdk.Messages;\r\nusing Microsoft.Xrm.Sdk.Query;\r\n\r\n// ReSharper " +
+                    "disable All\r\nnamespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
             this.Write(@"
 {
