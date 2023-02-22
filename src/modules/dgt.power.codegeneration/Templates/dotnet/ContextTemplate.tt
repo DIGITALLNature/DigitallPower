@@ -3,8 +3,10 @@
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
-// ReSharper disable All 
+// ReSharper disable All
 namespace <#= NameSpace #>
 {
    	public partial class DataContext : OrganizationServiceContext
