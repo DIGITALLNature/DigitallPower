@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.4.1...v1.5.0) (2023-02-23)
+
+
+### Bug Fixes
+
+* make dgt.power buildable ([#33](https://github.com/DIGITALLNature/DigitallPower/issues/33)) ([c29e5f8](https://github.com/DIGITALLNature/DigitallPower/commit/c29e5f8ef6ed79a8b5a7ade98a928d4a0570a6e5))
+
+
+### Features
+
+* **maintenance:** add new command solution-version to increment the version of a solution ([#31](https://github.com/DIGITALLNature/DigitallPower/issues/31)) ([a7e61ed](https://github.com/DIGITALLNature/DigitallPower/commit/a7e61edf20dce6c8bc8db5060312fab42aa12901))
+
 ## [1.4.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.4.0...v1.4.1) (2023-02-22)
 
 
