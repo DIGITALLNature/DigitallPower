@@ -30,14 +30,9 @@ internal static class Builder
                 var workflowTypes = assembly.GetTypes().Where(IsWorkflow).ToList();
                 var pluginTypes = assembly.GetTypes().Where(IsPlugin).ToList();
 
-                if (workflowTypes.Any() && pluginTypes.Any())
-                {
-                    throw new AssemblyException("Mixture of Plugins/CustomApi and CodeActivities is not supported by this tool!");
-                }
-
                 foreach (var workflowType in workflowTypes)
                 {
-                    result.Type = AssemblyType.Workflow;
+                    result.Type |= AssemblyType.Workflow;
                     var customAttribute = GetWorkflowRegistration(workflowType);
                     result.WorkflowTypes.Add(new WorkflowType
                     {
@@ -51,7 +46,7 @@ internal static class Builder
 
                 foreach (var pluginType in pluginTypes)
                 {
-                    result.Type = AssemblyType.Plugin;
+                    result.Type |= AssemblyType.Plugin;
 
                     var type = new Model.PluginType
                     {

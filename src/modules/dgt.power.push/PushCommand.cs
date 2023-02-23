@@ -49,12 +49,13 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     crmAssembly = Processor.UpdatePluginAssembly(dllAssembly, crmAssembly, _connection, verb.Solution);
                 }
 
-                if (dllAssembly.Type == AssemblyType.Workflow)
+                if (dllAssembly.Type.HasFlag(AssemblyType.Workflow))
                 {
                     ctx.Status("UpsertAndPurgeWorkflowTypes");
                     Processor.UpsertAndPurgeWorkflowTypes(dllAssembly, crmAssembly, _connection);
                 }
-                else
+
+                if (dllAssembly.Type.HasFlag(AssemblyType.Plugin))
                 {
                     ctx.Status("UpsertAndPurgePluginTypes");
                     crmAssembly = Processor.UpsertAndPurgePluginTypes(dllAssembly, crmAssembly, _connection, verb.Solution);
@@ -63,6 +64,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     ctx.Status("UpsertAndPurgePluginStepImages");
                     Processor.UpsertAndPurgePluginStepImages(dllAssembly, crmAssembly, _connection);
                 }
+
                 ctx.Status("Finishing");
             });
 
