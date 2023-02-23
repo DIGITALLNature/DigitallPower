@@ -3,6 +3,7 @@
 namespace dgt.power.push.Model;
 
 [DataContract]
+[Flags]
 public enum AssemblyType
 {
     [EnumMember]
