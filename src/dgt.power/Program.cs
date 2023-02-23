@@ -11,9 +11,6 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
-using dgt.power.common.Commands;
-using dgt.power.common.Exceptions;
-using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.export.Base;
@@ -118,6 +115,9 @@ app.Configure(config =>
                 .WithDescription(
                     "Exports all active carriers from an environment to a json file. To see what an carrier is check [link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
                 .WithExample(new[] {"maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json"});
+            maintenance.AddCommand<IncrementSolutionVersion>("solution-version")
+                .WithDescription("Increments the solution version by given flag")
+                .WithExample(new[] {"maintenance", "solution-version", "sample_solution", "--minor"});
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
@@ -127,15 +127,15 @@ app.Configure(config =>
             .WithDescription("Scans the specified solutions for entities containing with assets");
         analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
             .WithDescription("Scans the specified (unmanaged) solutions for components without active layer")
-            .WithExample(new[] { "analyze", "noactivelayer", "--inline", "solution1,solution2" });
+            .WithExample(new[] {"analyze", "noactivelayer", "--inline", "solution1,solution2"});
         analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
             .WithDescription("Scans for components that are in multiple of the specified solutions");
         analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
             .WithDescription("Scans the specified (managed) solutions for components with active layer")
-            .WithExample(new[] { "analyze", "activelayer", "--inline", "solution1,solution2" });
+            .WithExample(new[] {"analyze", "activelayer", "--inline", "solution1,solution2"});
         analyze.AddCommand<TopLayerAnalyze>("toplayer")
             .WithDescription("Scans the specified (managed) solutions for components where solution is not top layer")
-            .WithExample(new[] { "analyze", "toplayer", "--inline", "solution1,solution2" });
+            .WithExample(new[] {"analyze", "toplayer", "--inline", "solution1,solution2"});
     });
 
     config.AddBranch<ImportVerb>("import", import =>
