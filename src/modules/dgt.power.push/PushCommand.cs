@@ -43,7 +43,6 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
                 if (verb.DllFile.EndsWith(".nupkg"))
                 {
-                    var x = File.Exists(verb.DllFile);
                     // Dependent Plugin
                     AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
