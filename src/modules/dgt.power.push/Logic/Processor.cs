@@ -48,11 +48,11 @@ internal class Processor
         };
     }
 
-    public Package UpdatePluginPackage(Package packageLocal)
+    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal)
     {
         var package = new PluginPackage
         {
-            PluginPackageId = packageLocal.Id,
+            Id = packageCrmId,
             Content = packageLocal.Content,
             Version = packageLocal.Version
         };
@@ -807,4 +807,14 @@ internal class Processor
     }
 
     #endregion
+
+    public string GetSolutionPrefix(string solution, string defaultValue = "new")
+    {
+        var prefix = (from s in _context.SolutionSet
+            join p in _context.PublisherSet on s.PublisherId.Id equals p.Id
+            where s.UniqueName == solution
+            select p.CustomizationPrefix).SingleOrDefault();
+
+        return prefix ?? defaultValue;
+    }
 }
