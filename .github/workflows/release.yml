@@ -30,8 +30,15 @@ jobs:
             ${{ runner.os }}-nuget-
       - name: Install packages
         run: npm ci --no-fund
+      - name: Materialize Signing Key
+        id: write_sign_key_file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'key.snk'
+          encodedString: ${{ secrets.SIGNING_KEY }} 
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+          AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}
         run: npx semantic-release

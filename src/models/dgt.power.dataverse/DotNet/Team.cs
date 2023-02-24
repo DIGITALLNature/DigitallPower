@@ -840,6 +840,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N team_ec4u_carrier
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_ec4u_carrier")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> TeamEc4uCarrier
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("TeamEc4uCarrier");
+				this.SetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null, value);
+				this.OnPropertyChanged("TeamEc4uCarrier");
+			}
+		}
+
+		/// <summary>
 		/// 1:N team_routingrule
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_routingrule")]
@@ -1073,11 +1093,16 @@ namespace dgt.power.dataverse
 				public const string TeamDuplicateRules = "team_DuplicateRules";
 				public const string TeamDynamicPropertyInstance = "team_DynamicPropertyInstance";
 				public const string TeamEc4uAcquirelegalbasis = "team_ec4u_acquirelegalbasis";
+				public const string TeamEc4uCarrier = "team_ec4u_carrier";
+				public const string TeamEc4uCarrierDependencyCheck = "team_ec4u_carrier_dependency_check";
+				public const string TeamEc4uCarrierMissingDependency = "team_ec4u_carrier_missing_dependency";
 				public const string TeamEc4uGdprProtocol = "team_ec4u_gdpr_protocol";
 				public const string TeamEc4uGdprProtocolDetail = "team_ec4u_gdpr_protocol_detail";
 				public const string TeamEc4uGdprReport = "team_ec4u_gdpr_report";
 				public const string TeamEc4uGdprRequest = "team_ec4u_gdpr_request";
 				public const string TeamEc4uLegalbasis = "team_ec4u_legalbasis";
+				public const string TeamEc4uWorkbench = "team_ec4u_workbench";
+				public const string TeamEc4uWorkbenchHistory = "team_ec4u_workbench_history";
 				public const string TeamEmail = "team_email";
 				public const string TeamEmailTemplates = "team_email_templates";
 				public const string TeamEmailserverprofile = "team_emailserverprofile";
@@ -1306,6 +1331,7 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynPmcalendarversion = "team_msdyn_pmcalendarversion";
 				public const string TeamMsdynPminferredtask = "team_msdyn_pminferredtask";
 				public const string TeamMsdynPmprocessextendedmetadataversion = "team_msdyn_pmprocessextendedmetadataversion";
+				public const string TeamMsdynPmprocesstemplate = "team_msdyn_pmprocesstemplate";
 				public const string TeamMsdynPmprocessusersettings = "team_msdyn_pmprocessusersettings";
 				public const string TeamMsdynPmprocessversion = "team_msdyn_pmprocessversion";
 				public const string TeamMsdynPmrecording = "team_msdyn_pmrecording";
@@ -1334,6 +1360,8 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynRoutingrequest = "team_msdyn_routingrequest";
 				public const string TeamMsdynRulesetdependencymapping = "team_msdyn_rulesetdependencymapping";
 				public const string TeamMsdynSalesinsightssettings = "team_msdyn_salesinsightssettings";
+				public const string TeamMsdynSalesocmessage = "team_msdyn_salesocmessage";
+				public const string TeamMsdynSalesocsmstemplate = "team_msdyn_salesocsmstemplate";
 				public const string TeamMsdynSalesroutingrun = "team_msdyn_salesroutingrun";
 				public const string TeamMsdynSalessuggestion = "team_msdyn_salessuggestion";
 				public const string TeamMsdynSalestag = "team_msdyn_salestag";
@@ -1345,6 +1373,7 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynSequencetargetstep = "team_msdyn_sequencetargetstep";
 				public const string TeamMsdynSequencetemplate = "team_msdyn_sequencetemplate";
 				public const string TeamMsdynServiceconfiguration = "team_msdyn_serviceconfiguration";
+				public const string TeamMsdynServiceoneprovisioningrequest = "team_msdyn_serviceoneprovisioningrequest";
 				public const string TeamMsdynSessiondata = "team_msdyn_sessiondata";
 				public const string TeamMsdynSessionevent = "team_msdyn_sessionevent";
 				public const string TeamMsdynSessionparticipant = "team_msdyn_sessionparticipant";
@@ -1357,6 +1386,9 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynSolutionhealthrule = "team_msdyn_solutionhealthrule";
 				public const string TeamMsdynSolutionhealthruleargument = "team_msdyn_solutionhealthruleargument";
 				public const string TeamMsdynSoundnotificationsetting = "team_msdyn_soundnotificationsetting";
+				public const string TeamMsdynSuggestionassignmentrule = "team_msdyn_suggestionassignmentrule";
+				public const string TeamMsdynSuggestionprincipalobjectaccess = "team_msdyn_suggestionprincipalobjectaccess";
+				public const string TeamMsdynSuggestionsellerpriority = "team_msdyn_suggestionsellerpriority";
 				public const string TeamMsdynSwarm = "team_msdyn_swarm";
 				public const string TeamMsdynSwarmparticipant = "team_msdyn_swarmparticipant";
 				public const string TeamMsdynSwarmparticipantrule = "team_msdyn_swarmparticipantrule";
@@ -1399,6 +1431,18 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynmktEventmetadata = "team_msdynmkt_eventmetadata";
 				public const string TeamMsdynmktEventparametermetadata = "team_msdynmkt_eventparametermetadata";
 				public const string TeamMsdynmktFeatureconfiguration = "team_msdynmkt_featureconfiguration";
+				public const string TeamMsdynmktInfobipchannelinstance = "team_msdynmkt_infobipchannelinstance";
+				public const string TeamMsdynmktInfobipchannelinstanceaccount = "team_msdynmkt_infobipchannelinstanceaccount";
+				public const string TeamMsdynmktLinkmobilitychannelinstance = "team_msdynmkt_linkmobilitychannelinstance";
+				public const string TeamMsdynmktLinkmobilitychannelinstanceaccount = "team_msdynmkt_linkmobilitychannelinstanceaccount";
+				public const string TeamMsdynmktMetadataentityrelationship = "team_msdynmkt_metadataentityrelationship";
+				public const string TeamMsdynmktMetadataitem = "team_msdynmkt_metadataitem";
+				public const string TeamMsdynmktMetadatastorestate = "team_msdynmkt_metadatastorestate";
+				public const string TeamMsdynmktPredefinedplaceholder = "team_msdynmkt_predefinedplaceholder";
+				public const string TeamMsdynmktTelesignchannelinstance = "team_msdynmkt_telesignchannelinstance";
+				public const string TeamMsdynmktTelesignchannelinstanceaccount = "team_msdynmkt_telesignchannelinstanceaccount";
+				public const string TeamMsdynmktTwiliochannelinstance = "team_msdynmkt_twiliochannelinstance";
+				public const string TeamMsdynmktTwiliochannelinstanceaccount = "team_msdynmkt_twiliochannelinstanceaccount";
 				public const string TeamMsfpAlertrule = "team_msfp_alertrule";
 				public const string TeamMsfpEmailtemplate = "team_msfp_emailtemplate";
 				public const string TeamMsfpFileresponse = "team_msfp_fileresponse";

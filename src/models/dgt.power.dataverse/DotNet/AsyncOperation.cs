@@ -1420,6 +1420,9 @@ namespace dgt.power.dataverse
 				public const string DynamicpropertyinstanceAsyncOperations = "dynamicpropertyinstance_AsyncOperations";
 				public const string DynamicpropertyoptionsetitemAsyncOperations = "dynamicpropertyoptionsetitem_AsyncOperations";
 				public const string Ec4uAcquirelegalbasisAsyncOperations = "ec4u_acquirelegalbasis_AsyncOperations";
+				public const string Ec4uCarrierAsyncOperations = "ec4u_carrier_AsyncOperations";
+				public const string Ec4uCarrierDependencyCheckAsyncOperations = "ec4u_carrier_dependency_check_AsyncOperations";
+				public const string Ec4uCarrierMissingDependencyAsyncOperations = "ec4u_carrier_missing_dependency_AsyncOperations";
 				public const string Ec4uGdprBpfCorrectionAsyncOperations = "ec4u_gdpr_bpf_correction_AsyncOperations";
 				public const string Ec4uGdprBpfDeletionAsyncOperations = "ec4u_gdpr_bpf_deletion_AsyncOperations";
 				public const string Ec4uGdprBpfInformationAsyncOperations = "ec4u_gdpr_bpf_information_AsyncOperations";
@@ -1432,6 +1435,8 @@ namespace dgt.power.dataverse
 				public const string Ec4uGdprRequestAsyncOperations = "ec4u_gdpr_request_AsyncOperations";
 				public const string Ec4uLegalbasisAsyncOperations = "ec4u_legalbasis_AsyncOperations";
 				public const string Ec4uLegalbasistypeAsyncOperations = "ec4u_legalbasistype_AsyncOperations";
+				public const string Ec4uWorkbenchAsyncOperations = "ec4u_workbench_AsyncOperations";
+				public const string Ec4uWorkbenchHistoryAsyncOperations = "ec4u_workbench_history_AsyncOperations";
 				public const string EmailAsyncOperations = "Email_AsyncOperations";
 				public const string EmailserverprofileAsyncoperations = "emailserverprofile_asyncoperations";
 				public const string EntitlementAsyncOperations = "entitlement_AsyncOperations";
@@ -1573,6 +1578,7 @@ namespace dgt.power.dataverse
 				public const string MsdynChannelmessagepartAsyncOperations = "msdyn_channelmessagepart_AsyncOperations";
 				public const string MsdynChannelproviderAsyncOperations = "msdyn_channelprovider_AsyncOperations";
 				public const string MsdynCollabgraphresourceAsyncOperations = "msdyn_collabgraphresource_AsyncOperations";
+				public const string MsdynCollabspaceteamassociationAsyncOperations = "msdyn_collabspaceteamassociation_AsyncOperations";
 				public const string MsdynConsumingapplicationAsyncOperations = "msdyn_consumingapplication_AsyncOperations";
 				public const string MsdynContactsuggestionruleAsyncOperations = "msdyn_contactsuggestionrule_AsyncOperations";
 				public const string MsdynContactsuggestionrulesetAsyncOperations = "msdyn_contactsuggestionruleset_AsyncOperations";
@@ -1744,6 +1750,7 @@ namespace dgt.power.dataverse
 				public const string MsdynPmcalendarversionAsyncOperations = "msdyn_pmcalendarversion_AsyncOperations";
 				public const string MsdynPminferredtaskAsyncOperations = "msdyn_pminferredtask_AsyncOperations";
 				public const string MsdynPmprocessextendedmetadataversionAsyncOperations = "msdyn_pmprocessextendedmetadataversion_AsyncOperations";
+				public const string MsdynPmprocesstemplateAsyncOperations = "msdyn_pmprocesstemplate_AsyncOperations";
 				public const string MsdynPmprocessusersettingsAsyncOperations = "msdyn_pmprocessusersettings_AsyncOperations";
 				public const string MsdynPmprocessversionAsyncOperations = "msdyn_pmprocessversion_AsyncOperations";
 				public const string MsdynPmrecordingAsyncOperations = "msdyn_pmrecording_AsyncOperations";
@@ -1786,6 +1793,8 @@ namespace dgt.power.dataverse
 				public const string MsdynSalesaccelerationsettingsAsyncOperations = "msdyn_salesaccelerationsettings_AsyncOperations";
 				public const string MsdynSalesassignmentsettingAsyncOperations = "msdyn_salesassignmentsetting_AsyncOperations";
 				public const string MsdynSalesinsightssettingsAsyncOperations = "msdyn_salesinsightssettings_AsyncOperations";
+				public const string MsdynSalesocmessageAsyncOperations = "msdyn_salesocmessage_AsyncOperations";
+				public const string MsdynSalesocsmstemplateAsyncOperations = "msdyn_salesocsmstemplate_AsyncOperations";
 				public const string MsdynSalesroutingdiagnosticAsyncOperations = "msdyn_salesroutingdiagnostic_AsyncOperations";
 				public const string MsdynSalesroutingrunAsyncOperations = "msdyn_salesroutingrun_AsyncOperations";
 				public const string MsdynSalessuggestionAsyncOperations = "msdyn_salessuggestion_AsyncOperations";
@@ -1803,6 +1812,7 @@ namespace dgt.power.dataverse
 				public const string MsdynSequencetargetstepAsyncOperations = "msdyn_sequencetargetstep_AsyncOperations";
 				public const string MsdynSequencetemplateAsyncOperations = "msdyn_sequencetemplate_AsyncOperations";
 				public const string MsdynServiceconfigurationAsyncOperations = "msdyn_serviceconfiguration_AsyncOperations";
+				public const string MsdynServiceoneprovisioningrequestAsyncOperations = "msdyn_serviceoneprovisioningrequest_AsyncOperations";
 				public const string MsdynSessiondataAsyncOperations = "msdyn_sessiondata_AsyncOperations";
 				public const string MsdynSessioneventAsyncOperations = "msdyn_sessionevent_AsyncOperations";
 				public const string MsdynSessionparticipantAsyncOperations = "msdyn_sessionparticipant_AsyncOperations";
@@ -1820,8 +1830,11 @@ namespace dgt.power.dataverse
 				public const string MsdynSolutionhealthrulesetAsyncOperations = "msdyn_solutionhealthruleset_AsyncOperations";
 				public const string MsdynSoundfileAsyncOperations = "msdyn_soundfile_AsyncOperations";
 				public const string MsdynSoundnotificationsettingAsyncOperations = "msdyn_soundnotificationsetting_AsyncOperations";
+				public const string MsdynSuggestionassignmentruleAsyncOperations = "msdyn_suggestionassignmentrule_AsyncOperations";
 				public const string MsdynSuggestioninteractionAsyncOperations = "msdyn_suggestioninteraction_AsyncOperations";
+				public const string MsdynSuggestionprincipalobjectaccessAsyncOperations = "msdyn_suggestionprincipalobjectaccess_AsyncOperations";
 				public const string MsdynSuggestionrequestpayloadAsyncOperations = "msdyn_suggestionrequestpayload_AsyncOperations";
+				public const string MsdynSuggestionsellerpriorityAsyncOperations = "msdyn_suggestionsellerpriority_AsyncOperations";
 				public const string MsdynSuggestionsmodelsummaryAsyncOperations = "msdyn_suggestionsmodelsummary_AsyncOperations";
 				public const string MsdynSuggestionssettingAsyncOperations = "msdyn_suggestionssetting_AsyncOperations";
 				public const string MsdynSwarmAsyncOperations = "msdyn_swarm_AsyncOperations";
@@ -1884,6 +1897,18 @@ namespace dgt.power.dataverse
 				public const string MsdynmktEventmetadataSdkmessageprocessingstepAsyncOperations = "msdynmkt_eventmetadata_sdkmessageprocessingstep_AsyncOperations";
 				public const string MsdynmktEventparametermetadataAsyncOperations = "msdynmkt_eventparametermetadata_AsyncOperations";
 				public const string MsdynmktFeatureconfigurationAsyncOperations = "msdynmkt_featureconfiguration_AsyncOperations";
+				public const string MsdynmktInfobipchannelinstanceAsyncOperations = "msdynmkt_infobipchannelinstance_AsyncOperations";
+				public const string MsdynmktInfobipchannelinstanceaccountAsyncOperations = "msdynmkt_infobipchannelinstanceaccount_AsyncOperations";
+				public const string MsdynmktLinkmobilitychannelinstanceAsyncOperations = "msdynmkt_linkmobilitychannelinstance_AsyncOperations";
+				public const string MsdynmktLinkmobilitychannelinstanceaccountAsyncOperations = "msdynmkt_linkmobilitychannelinstanceaccount_AsyncOperations";
+				public const string MsdynmktMetadataentityrelationshipAsyncOperations = "msdynmkt_metadataentityrelationship_AsyncOperations";
+				public const string MsdynmktMetadataitemAsyncOperations = "msdynmkt_metadataitem_AsyncOperations";
+				public const string MsdynmktMetadatastorestateAsyncOperations = "msdynmkt_metadatastorestate_AsyncOperations";
+				public const string MsdynmktPredefinedplaceholderAsyncOperations = "msdynmkt_predefinedplaceholder_AsyncOperations";
+				public const string MsdynmktTelesignchannelinstanceAsyncOperations = "msdynmkt_telesignchannelinstance_AsyncOperations";
+				public const string MsdynmktTelesignchannelinstanceaccountAsyncOperations = "msdynmkt_telesignchannelinstanceaccount_AsyncOperations";
+				public const string MsdynmktTwiliochannelinstanceAsyncOperations = "msdynmkt_twiliochannelinstance_AsyncOperations";
+				public const string MsdynmktTwiliochannelinstanceaccountAsyncOperations = "msdynmkt_twiliochannelinstanceaccount_AsyncOperations";
 				public const string MsfpAlertAsyncOperations = "msfp_alert_AsyncOperations";
 				public const string MsfpAlertruleAsyncOperations = "msfp_alertrule_AsyncOperations";
 				public const string MsfpEmailtemplateAsyncOperations = "msfp_emailtemplate_AsyncOperations";

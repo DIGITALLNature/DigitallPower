@@ -1845,6 +1845,31 @@ namespace dgt.power.dataverse
 					public const int EventParameterMetadata = 10716;
 					public const int TrackingContext = 10717;
 					public const int MarketingFeatureConfiguration = 10718;
+					public const int LinkMobilityChannelInstance = 10720;
+					public const int LinkMobilityChannelInstanceAccount = 10721;
+					public const int TeleSignChannelInstance = 10722;
+					public const int TeleSignChannelInstanceAccount = 10723;
+					public const int TwilioChannelInstance = 10724;
+					public const int TwilioChannelInstanceAccount = 10725;
+					public const int PredefinedPlaceholder = 10726;
+					public const int MetadataEntityRelationship = 10727;
+					public const int MetadataItem = 10728;
+					public const int MetadataStoreState = 10729;
+					public const int CollabSpaceTeamAssociation = 10730;
+					public const int SuggestionAssignmentRule = 10731;
+					public const int SuggestionPrincipalObjectAccess = 10732;
+					public const int SuggestionSellerPriority = 10733;
+					public const int ServiceOneProvisioningRequest = 10734;
+					public const int SalesOmnichannelMessage = 10735;
+					public const int TextMessageTemplate = 10736;
+					public const int InfobipChannelInstance = 10737;
+					public const int InfobipChannelInstanceAccount = 10738;
+					public const int PMProcessTemplate = 10739;
+					public const int Carrier = 10740;
+					public const int CarrierDependencyCheck = 10741;
+					public const int CarrierMissingDependency = 10742;
+					public const int Workbench = 10743;
+					public const int WorkbenchHistory = 10744;
                 }
 			    public struct SLAType
                 {
