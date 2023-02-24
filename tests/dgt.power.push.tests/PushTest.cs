@@ -1,6 +1,5 @@
 using dgt.power.push.Base;
 using dgt.power.push.tests.Base;
-using dgt.power.push.tests.sample;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FluentAssertions;
@@ -27,7 +26,7 @@ public class PushTest : PushTestsBase<PushCommand>
         GetContext()
             .Execute(new PushVerb
             {
-                DllFile = typeof(SamplePlugin).Assembly.Location,
+                DllFile = "../../../../../artifacts/SamplePlugin/dgt.power.push.tests.sample.dll",
                 Solution = "TestSolution"
             }).Should().BeTrue();
 
@@ -36,7 +35,7 @@ public class PushTest : PushTestsBase<PushCommand>
         GetContext()
             .Execute(new PushVerb
             {
-                DllFile = "../../../SampleDependentPlugin/dgt.power.push.tests.dependentsample.1.0.0.nupkg",
+                DllFile = "../../../../../artifacts/SamplePlugin/dgt.power.push.tests.sample.1.0.0.nupkg",
                 Solution = "TestSolution"
             }).Should().BeTrue();
 }

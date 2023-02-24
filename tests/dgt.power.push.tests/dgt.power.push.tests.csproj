@@ -8,14 +8,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="SampleDependentPlugin\**" />
-    <Compile Remove="SamplePlugin\**" />
-    <EmbeddedResource Remove="SampleDependentPlugin\**" />
-    <EmbeddedResource Remove="SamplePlugin\**" />
-    <None Remove="SampleDependentPlugin\**" />
-    <None Remove="SamplePlugin\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
@@ -34,12 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\modules\dgt.power.push\dgt.power.push.csproj" />
     <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="dgt.power.push.tests.sample">
-      <HintPath>SamplePlugin\dgt.power.push.tests.sample.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

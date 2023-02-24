@@ -5,7 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
 
-namespace dgt.power.push.tests.dependentsample
+namespace dgt.power.push.tests.sample
 {
     /// <summary>
     /// Base class for all plug-in classes.
