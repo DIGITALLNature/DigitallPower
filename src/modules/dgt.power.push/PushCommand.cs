@@ -43,24 +43,26 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 var modelBuilder = new ModelBuilder(_connection);
                 var processor = new Processor(_connection);
 
+                var solutionPrefix = processor.GetSolutionPrefix(verb.Solution);
+
                 if (verb.DllFile.EndsWith(".nupkg"))
                 {
                     // Dependent Plugin
                     AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
                     var packageLocal = modelBuilder.BuildPackageFromFile(verb.DllFile);
-                    var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version, "dgt");
+                    var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version, solutionPrefix);
 
 
                     if (packageCrm.State == AssemblyState.Create)
                     {
                         ctx.Status("CreatePluginPackage");
-                        packageCrm = processor.CreatePluginPackage(packageLocal, "dgt");
+                        packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix);
                     }
                     else
                     {
                         ctx.Status("UpdatePluginPackage");
-                        packageCrm = processor.UpdatePluginPackage(packageLocal);
+                        packageCrm = processor.UpdatePluginPackage(packageCrm.Id, packageLocal);
                     }
 
                     assemblies = modelBuilder.BuildAssemblyFromPackage(verb.DllFile);
