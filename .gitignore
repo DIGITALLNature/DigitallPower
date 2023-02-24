@@ -414,5 +414,5 @@ FodyWeavers.xsd
 *.private.ps1
 
 # Allow
-!/artifacts/SamplePlugin/dgt.power.push.tests.sample.1.0.0.nupkg
-!/artifacts/SamplePlugin/dgt.power.push.tests.sample.dll
+!/samples/output/dgt.power.push.tests.sample.1.0.0.nupkg
+!/samples/output/dgt.power.push.tests.sample.dll
