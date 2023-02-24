@@ -296,6 +296,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// EnablePluginProfiler
+		/// </summary>
+		[AttributeLogicalName("enablepluginprofiler")]
+        public bool? EnablePluginProfiler
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("enablepluginprofiler");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(EnablePluginProfiler));
+                SetAttributeValue("enablepluginprofiler", value);
+                OnPropertyChanged(nameof(EnablePluginProfiler));
+            }
+        }
+
+		/// <summary>
 		/// Configuration for sending pipeline events to the Event Expander service.
 		/// </summary>
 		[AttributeLogicalName("eventexpander")]
@@ -916,6 +936,11 @@ namespace dgt.power.dataverse
 					public const int Deleted = 2;
 					public const int DeletedUnpublished = 3;
                 }
+                public struct EnablePluginProfiler
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
 			    public struct InvocationSource
                 {
 					public const int Internal = -1;
@@ -981,6 +1006,7 @@ namespace dgt.power.dataverse
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
 				public const string CustomizationLevel = "customizationlevel";
 				public const string Description = "description";
+				public const string EnablePluginProfiler = "enablepluginprofiler";
 				public const string EventExpander = "eventexpander";
 				public const string EventHandler = "eventhandler";
 				public const string EventHandlerTypeCode = "eventhandlertypecode";

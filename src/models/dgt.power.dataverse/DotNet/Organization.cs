@@ -2291,6 +2291,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Indicates whether to Allow email template views in Enhanced Email Template.
+		/// </summary>
+		[AttributeLogicalName("enableemailtemplateviews")]
+        public bool? EnableEmailTemplateViews
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("enableemailtemplateviews");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(EnableEmailTemplateViews));
+                SetAttributeValue("enableemailtemplateviews", value);
+                OnPropertyChanged(nameof(EnableEmailTemplateViews));
+            }
+        }
+
+		/// <summary>
 		/// Indicates whether the creation of flows is within a solution by default for this organization.
 		/// </summary>
 		[AttributeLogicalName("enableflowsinsolutionbydefault")]
@@ -7558,6 +7578,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Indicates whether to Allow select record dialog in Enhanced Email Template.
+		/// </summary>
+		[AttributeLogicalName("skipselectrecorddialog")]
+        public bool? SkipSelectRecordDialog
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("skipselectrecorddialog");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(SkipSelectRecordDialog));
+                SetAttributeValue("skipselectrecorddialog", value);
+                OnPropertyChanged(nameof(SkipSelectRecordDialog));
+            }
+        }
+
+		/// <summary>
 		/// Contains the on hold case status values.
 		/// </summary>
 		[AttributeLogicalName("slapausestates")]
@@ -7754,6 +7794,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(SuppressSLA));
                 SetAttributeValue("suppresssla", value);
                 OnPropertyChanged(nameof(SuppressSLA));
+            }
+        }
+
+		/// <summary>
+		/// Leave empty to use default setting. Set to on/off to enable/disable Admin emails when Solution Checker validation fails.
+		/// </summary>
+		[AttributeLogicalName("suppressvalidationemails")]
+        public bool? SuppressValidationEmails
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("suppressvalidationemails");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(SuppressValidationEmails));
+                SetAttributeValue("suppressvalidationemails", value);
+                OnPropertyChanged(nameof(SuppressValidationEmails));
             }
         }
 
@@ -8758,6 +8818,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N organization_pluginpackage
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_pluginpackage")]
+		public System.Collections.Generic.IEnumerable<PluginPackage> OrganizationPluginpackage
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<PluginPackage>("organization_pluginpackage", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("OrganizationPluginpackage");
+				this.SetRelatedEntities<PluginPackage>("organization_pluginpackage", null, value);
+				this.OnPropertyChanged("OrganizationPluginpackage");
+			}
+		}
+
+		/// <summary>
 		/// 1:N organization_plugintype
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_plugintype")]
@@ -9345,6 +9425,11 @@ namespace dgt.power.dataverse
                     public const bool Yes = true;
                 }
                 public struct EnableCanvasAppsInSolutionsByDefault
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct EnableEmailTemplateViews
                 {
                     public const bool No = false;
                     public const bool Yes = true;
@@ -10140,6 +10225,11 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+                public struct SkipSelectRecordDialog
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct SocialInsightsEnabled
                 {
                     public const bool No = false;
@@ -10156,6 +10246,11 @@ namespace dgt.power.dataverse
                     public const bool Yes = true;
                 }
                 public struct SuppressSLA
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct SuppressValidationEmails
                 {
                     public const bool No = false;
                     public const bool Yes = true;
@@ -10372,6 +10467,7 @@ namespace dgt.power.dataverse
 				public const string EnableBingMapsIntegration = "enablebingmapsintegration";
 				public const string EnableCalendarImportExport = "enablecalendarimportexport";
 				public const string EnableCanvasAppsInSolutionsByDefault = "enablecanvasappsinsolutionsbydefault";
+				public const string EnableEmailTemplateViews = "enableemailtemplateviews";
 				public const string EnableFlowsInSolutionByDefault = "enableflowsinsolutionbydefault";
 				public const string EnableImmersiveSkypeIntegration = "enableimmersiveskypeintegration";
 				public const string EnableIpBasedCookieBinding = "enableipbasedcookiebinding";
@@ -10642,6 +10738,7 @@ namespace dgt.power.dataverse
 				public const string ShowWeekNumber = "showweeknumber";
 				public const string SignupOutlookDownloadFWLink = "signupoutlookdownloadfwlink";
 				public const string SiteMapXml = "sitemapxml";
+				public const string SkipSelectRecordDialog = "skipselectrecorddialog";
 				public const string SlaPauseStates = "slapausestates";
 				public const string SocialInsightsEnabled = "socialinsightsenabled";
 				public const string SocialInsightsInstance = "socialinsightsinstance";
@@ -10652,6 +10749,7 @@ namespace dgt.power.dataverse
 				public const string SQMEnabled = "sqmenabled";
 				public const string SupportUserId = "supportuserid";
 				public const string SuppressSLA = "suppresssla";
+				public const string SuppressValidationEmails = "suppressvalidationemails";
 				public const string SyncBulkOperationBatchSize = "syncbulkoperationbatchsize";
 				public const string SyncBulkOperationMaxLimit = "syncbulkoperationmaxlimit";
 				public const string SyncOptInSelection = "syncoptinselection";

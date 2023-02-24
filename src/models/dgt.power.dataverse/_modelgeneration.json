@@ -33,6 +33,7 @@
         "sdkmessagefilter",
         "sdkmessage",
         "pluginassembly",
+        "pluginpackage",
         "customapi",
         "dependency",
         "account",

@@ -3896,6 +3896,86 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N lk_ec4u_carrier_createdby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdby")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEc4uCarrierCreatedby");
+				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null, value);
+				this.OnPropertyChanged("LkEc4uCarrierCreatedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_ec4u_carrier_createdonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEc4uCarrierCreatedonbehalfby");
+				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkEc4uCarrierCreatedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_ec4u_carrier_modifiedby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedby")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEc4uCarrierModifiedby");
+				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null, value);
+				this.OnPropertyChanged("LkEc4uCarrierModifiedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_ec4u_carrier_modifiedonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEc4uCarrierModifiedonbehalfby");
+				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkEc4uCarrierModifiedonbehalfby");
+			}
+		}
+
+		/// <summary>
 		/// 1:N lk_importjobbase_createdby
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_createdby")]
@@ -4092,6 +4172,86 @@ namespace dgt.power.dataverse
 				this.OnPropertyChanging("LkPluginassemblyModifiedonbehalfby");
 				this.SetRelatedEntities<PluginAssembly>("lk_pluginassembly_modifiedonbehalfby", null, value);
 				this.OnPropertyChanged("LkPluginassemblyModifiedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_pluginpackage_createdby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_createdby")]
+		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageCreatedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<PluginPackage>("lk_pluginpackage_createdby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkPluginpackageCreatedby");
+				this.SetRelatedEntities<PluginPackage>("lk_pluginpackage_createdby", null, value);
+				this.OnPropertyChanged("LkPluginpackageCreatedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_pluginpackage_createdonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageCreatedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<PluginPackage>("lk_pluginpackage_createdonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkPluginpackageCreatedonbehalfby");
+				this.SetRelatedEntities<PluginPackage>("lk_pluginpackage_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkPluginpackageCreatedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_pluginpackage_modifiedby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_modifiedby")]
+		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageModifiedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkPluginpackageModifiedby");
+				this.SetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedby", null, value);
+				this.OnPropertyChanged("LkPluginpackageModifiedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_pluginpackage_modifiedonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageModifiedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkPluginpackageModifiedonbehalfby");
+				this.SetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkPluginpackageModifiedonbehalfby");
 			}
 		}
 
@@ -5636,6 +5796,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N user_ec4u_carrier
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_ec4u_carrier")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> UserEc4uCarrier
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("UserEc4uCarrier");
+				this.SetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null, value);
+				this.OnPropertyChanged("UserEc4uCarrier");
+			}
+		}
+
+		/// <summary>
 		/// 1:N user_parent_user
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_parent_user")]
@@ -6581,6 +6761,18 @@ namespace dgt.power.dataverse
 				public const string LkEc4uAcquirelegalbasisCreatedonbehalfby = "lk_ec4u_acquirelegalbasis_createdonbehalfby";
 				public const string LkEc4uAcquirelegalbasisModifiedby = "lk_ec4u_acquirelegalbasis_modifiedby";
 				public const string LkEc4uAcquirelegalbasisModifiedonbehalfby = "lk_ec4u_acquirelegalbasis_modifiedonbehalfby";
+				public const string LkEc4uCarrierCreatedby = "lk_ec4u_carrier_createdby";
+				public const string LkEc4uCarrierCreatedonbehalfby = "lk_ec4u_carrier_createdonbehalfby";
+				public const string LkEc4uCarrierDependencyCheckCreatedby = "lk_ec4u_carrier_dependency_check_createdby";
+				public const string LkEc4uCarrierDependencyCheckCreatedonbehalfby = "lk_ec4u_carrier_dependency_check_createdonbehalfby";
+				public const string LkEc4uCarrierDependencyCheckModifiedby = "lk_ec4u_carrier_dependency_check_modifiedby";
+				public const string LkEc4uCarrierDependencyCheckModifiedonbehalfby = "lk_ec4u_carrier_dependency_check_modifiedonbehalfby";
+				public const string LkEc4uCarrierMissingDependencyCreatedby = "lk_ec4u_carrier_missing_dependency_createdby";
+				public const string LkEc4uCarrierMissingDependencyCreatedonbehalfby = "lk_ec4u_carrier_missing_dependency_createdonbehalfby";
+				public const string LkEc4uCarrierMissingDependencyModifiedby = "lk_ec4u_carrier_missing_dependency_modifiedby";
+				public const string LkEc4uCarrierMissingDependencyModifiedonbehalfby = "lk_ec4u_carrier_missing_dependency_modifiedonbehalfby";
+				public const string LkEc4uCarrierModifiedby = "lk_ec4u_carrier_modifiedby";
+				public const string LkEc4uCarrierModifiedonbehalfby = "lk_ec4u_carrier_modifiedonbehalfby";
 				public const string LkEc4uGdprBpfCorrectionCreatedby = "lk_ec4u_gdpr_bpf_correction_createdby";
 				public const string LkEc4uGdprBpfCorrectionCreatedonbehalfby = "lk_ec4u_gdpr_bpf_correction_createdonbehalfby";
 				public const string LkEc4uGdprBpfCorrectionModifiedby = "lk_ec4u_gdpr_bpf_correction_modifiedby";
@@ -6629,6 +6821,14 @@ namespace dgt.power.dataverse
 				public const string LkEc4uLegalbasistypeCreatedonbehalfby = "lk_ec4u_legalbasistype_createdonbehalfby";
 				public const string LkEc4uLegalbasistypeModifiedby = "lk_ec4u_legalbasistype_modifiedby";
 				public const string LkEc4uLegalbasistypeModifiedonbehalfby = "lk_ec4u_legalbasistype_modifiedonbehalfby";
+				public const string LkEc4uWorkbenchCreatedby = "lk_ec4u_workbench_createdby";
+				public const string LkEc4uWorkbenchCreatedonbehalfby = "lk_ec4u_workbench_createdonbehalfby";
+				public const string LkEc4uWorkbenchHistoryCreatedby = "lk_ec4u_workbench_history_createdby";
+				public const string LkEc4uWorkbenchHistoryCreatedonbehalfby = "lk_ec4u_workbench_history_createdonbehalfby";
+				public const string LkEc4uWorkbenchHistoryModifiedby = "lk_ec4u_workbench_history_modifiedby";
+				public const string LkEc4uWorkbenchHistoryModifiedonbehalfby = "lk_ec4u_workbench_history_modifiedonbehalfby";
+				public const string LkEc4uWorkbenchModifiedby = "lk_ec4u_workbench_modifiedby";
+				public const string LkEc4uWorkbenchModifiedonbehalfby = "lk_ec4u_workbench_modifiedonbehalfby";
 				public const string LkEmailCreatedby = "lk_email_createdby";
 				public const string LkEmailCreatedonbehalfby = "lk_email_createdonbehalfby";
 				public const string LkEmailModifiedby = "lk_email_modifiedby";
@@ -7192,6 +7392,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynCollabgraphresourceCreatedonbehalfby = "lk_msdyn_collabgraphresource_createdonbehalfby";
 				public const string LkMsdynCollabgraphresourceModifiedby = "lk_msdyn_collabgraphresource_modifiedby";
 				public const string LkMsdynCollabgraphresourceModifiedonbehalfby = "lk_msdyn_collabgraphresource_modifiedonbehalfby";
+				public const string LkMsdynCollabspaceteamassociationCreatedby = "lk_msdyn_collabspaceteamassociation_createdby";
+				public const string LkMsdynCollabspaceteamassociationCreatedonbehalfby = "lk_msdyn_collabspaceteamassociation_createdonbehalfby";
+				public const string LkMsdynCollabspaceteamassociationModifiedby = "lk_msdyn_collabspaceteamassociation_modifiedby";
+				public const string LkMsdynCollabspaceteamassociationModifiedonbehalfby = "lk_msdyn_collabspaceteamassociation_modifiedonbehalfby";
 				public const string LkMsdynConsumingapplicationCreatedby = "lk_msdyn_consumingapplication_createdby";
 				public const string LkMsdynConsumingapplicationCreatedonbehalfby = "lk_msdyn_consumingapplication_createdonbehalfby";
 				public const string LkMsdynConsumingapplicationModifiedby = "lk_msdyn_consumingapplication_modifiedby";
@@ -7888,6 +8092,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPmprocessextendedmetadataversionCreatedonbehalfby = "lk_msdyn_pmprocessextendedmetadataversion_createdonbehalfby";
 				public const string LkMsdynPmprocessextendedmetadataversionModifiedby = "lk_msdyn_pmprocessextendedmetadataversion_modifiedby";
 				public const string LkMsdynPmprocessextendedmetadataversionModifiedonbehalfby = "lk_msdyn_pmprocessextendedmetadataversion_modifiedonbehalfby";
+				public const string LkMsdynPmprocesstemplateCreatedby = "lk_msdyn_pmprocesstemplate_createdby";
+				public const string LkMsdynPmprocesstemplateCreatedonbehalfby = "lk_msdyn_pmprocesstemplate_createdonbehalfby";
+				public const string LkMsdynPmprocesstemplateModifiedby = "lk_msdyn_pmprocesstemplate_modifiedby";
+				public const string LkMsdynPmprocesstemplateModifiedonbehalfby = "lk_msdyn_pmprocesstemplate_modifiedonbehalfby";
 				public const string LkMsdynPmprocessusersettingsCreatedby = "lk_msdyn_pmprocessusersettings_createdby";
 				public const string LkMsdynPmprocessusersettingsCreatedonbehalfby = "lk_msdyn_pmprocessusersettings_createdonbehalfby";
 				public const string LkMsdynPmprocessusersettingsModifiedby = "lk_msdyn_pmprocessusersettings_modifiedby";
@@ -8060,6 +8268,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSalesinsightssettingsCreatedonbehalfby = "lk_msdyn_salesinsightssettings_createdonbehalfby";
 				public const string LkMsdynSalesinsightssettingsModifiedby = "lk_msdyn_salesinsightssettings_modifiedby";
 				public const string LkMsdynSalesinsightssettingsModifiedonbehalfby = "lk_msdyn_salesinsightssettings_modifiedonbehalfby";
+				public const string LkMsdynSalesocmessageCreatedby = "lk_msdyn_salesocmessage_createdby";
+				public const string LkMsdynSalesocmessageCreatedonbehalfby = "lk_msdyn_salesocmessage_createdonbehalfby";
+				public const string LkMsdynSalesocmessageModifiedby = "lk_msdyn_salesocmessage_modifiedby";
+				public const string LkMsdynSalesocmessageModifiedonbehalfby = "lk_msdyn_salesocmessage_modifiedonbehalfby";
+				public const string LkMsdynSalesocsmstemplateCreatedby = "lk_msdyn_salesocsmstemplate_createdby";
+				public const string LkMsdynSalesocsmstemplateCreatedonbehalfby = "lk_msdyn_salesocsmstemplate_createdonbehalfby";
+				public const string LkMsdynSalesocsmstemplateModifiedby = "lk_msdyn_salesocsmstemplate_modifiedby";
+				public const string LkMsdynSalesocsmstemplateModifiedonbehalfby = "lk_msdyn_salesocsmstemplate_modifiedonbehalfby";
 				public const string LkMsdynSalesroutingdiagnosticCreatedby = "lk_msdyn_salesroutingdiagnostic_createdby";
 				public const string LkMsdynSalesroutingdiagnosticCreatedonbehalfby = "lk_msdyn_salesroutingdiagnostic_createdonbehalfby";
 				public const string LkMsdynSalesroutingdiagnosticModifiedby = "lk_msdyn_salesroutingdiagnostic_modifiedby";
@@ -8128,6 +8344,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynServiceconfigurationCreatedonbehalfby = "lk_msdyn_serviceconfiguration_createdonbehalfby";
 				public const string LkMsdynServiceconfigurationModifiedby = "lk_msdyn_serviceconfiguration_modifiedby";
 				public const string LkMsdynServiceconfigurationModifiedonbehalfby = "lk_msdyn_serviceconfiguration_modifiedonbehalfby";
+				public const string LkMsdynServiceoneprovisioningrequestCreatedby = "lk_msdyn_serviceoneprovisioningrequest_createdby";
+				public const string LkMsdynServiceoneprovisioningrequestCreatedonbehalfby = "lk_msdyn_serviceoneprovisioningrequest_createdonbehalfby";
+				public const string LkMsdynServiceoneprovisioningrequestModifiedby = "lk_msdyn_serviceoneprovisioningrequest_modifiedby";
+				public const string LkMsdynServiceoneprovisioningrequestModifiedonbehalfby = "lk_msdyn_serviceoneprovisioningrequest_modifiedonbehalfby";
 				public const string LkMsdynSessiondataCreatedby = "lk_msdyn_sessiondata_createdby";
 				public const string LkMsdynSessiondataCreatedonbehalfby = "lk_msdyn_sessiondata_createdonbehalfby";
 				public const string LkMsdynSessiondataModifiedby = "lk_msdyn_sessiondata_modifiedby";
@@ -8196,14 +8416,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSoundnotificationsettingCreatedonbehalfby = "lk_msdyn_soundnotificationsetting_createdonbehalfby";
 				public const string LkMsdynSoundnotificationsettingModifiedby = "lk_msdyn_soundnotificationsetting_modifiedby";
 				public const string LkMsdynSoundnotificationsettingModifiedonbehalfby = "lk_msdyn_soundnotificationsetting_modifiedonbehalfby";
+				public const string LkMsdynSuggestionassignmentruleCreatedby = "lk_msdyn_suggestionassignmentrule_createdby";
+				public const string LkMsdynSuggestionassignmentruleCreatedonbehalfby = "lk_msdyn_suggestionassignmentrule_createdonbehalfby";
+				public const string LkMsdynSuggestionassignmentruleModifiedby = "lk_msdyn_suggestionassignmentrule_modifiedby";
+				public const string LkMsdynSuggestionassignmentruleModifiedonbehalfby = "lk_msdyn_suggestionassignmentrule_modifiedonbehalfby";
 				public const string LkMsdynSuggestioninteractionCreatedby = "lk_msdyn_suggestioninteraction_createdby";
 				public const string LkMsdynSuggestioninteractionCreatedonbehalfby = "lk_msdyn_suggestioninteraction_createdonbehalfby";
 				public const string LkMsdynSuggestioninteractionModifiedby = "lk_msdyn_suggestioninteraction_modifiedby";
 				public const string LkMsdynSuggestioninteractionModifiedonbehalfby = "lk_msdyn_suggestioninteraction_modifiedonbehalfby";
+				public const string LkMsdynSuggestionprincipalobjectaccessCreatedby = "lk_msdyn_suggestionprincipalobjectaccess_createdby";
+				public const string LkMsdynSuggestionprincipalobjectaccessCreatedonbehalfby = "lk_msdyn_suggestionprincipalobjectaccess_createdonbehalfby";
+				public const string LkMsdynSuggestionprincipalobjectaccessModifiedby = "lk_msdyn_suggestionprincipalobjectaccess_modifiedby";
+				public const string LkMsdynSuggestionprincipalobjectaccessModifiedonbehalfby = "lk_msdyn_suggestionprincipalobjectaccess_modifiedonbehalfby";
 				public const string LkMsdynSuggestionrequestpayloadCreatedby = "lk_msdyn_suggestionrequestpayload_createdby";
 				public const string LkMsdynSuggestionrequestpayloadCreatedonbehalfby = "lk_msdyn_suggestionrequestpayload_createdonbehalfby";
 				public const string LkMsdynSuggestionrequestpayloadModifiedby = "lk_msdyn_suggestionrequestpayload_modifiedby";
 				public const string LkMsdynSuggestionrequestpayloadModifiedonbehalfby = "lk_msdyn_suggestionrequestpayload_modifiedonbehalfby";
+				public const string LkMsdynSuggestionsellerpriorityCreatedby = "lk_msdyn_suggestionsellerpriority_createdby";
+				public const string LkMsdynSuggestionsellerpriorityCreatedonbehalfby = "lk_msdyn_suggestionsellerpriority_createdonbehalfby";
+				public const string LkMsdynSuggestionsellerpriorityModifiedby = "lk_msdyn_suggestionsellerpriority_modifiedby";
+				public const string LkMsdynSuggestionsellerpriorityModifiedonbehalfby = "lk_msdyn_suggestionsellerpriority_modifiedonbehalfby";
 				public const string LkMsdynSuggestionsmodelsummaryCreatedby = "lk_msdyn_suggestionsmodelsummary_createdby";
 				public const string LkMsdynSuggestionsmodelsummaryCreatedonbehalfby = "lk_msdyn_suggestionsmodelsummary_createdonbehalfby";
 				public const string LkMsdynSuggestionsmodelsummaryModifiedby = "lk_msdyn_suggestionsmodelsummary_modifiedby";
@@ -8452,10 +8684,58 @@ namespace dgt.power.dataverse
 				public const string LkMsdynmktFeatureconfigurationCreatedonbehalfby = "lk_msdynmkt_featureconfiguration_createdonbehalfby";
 				public const string LkMsdynmktFeatureconfigurationModifiedby = "lk_msdynmkt_featureconfiguration_modifiedby";
 				public const string LkMsdynmktFeatureconfigurationModifiedonbehalfby = "lk_msdynmkt_featureconfiguration_modifiedonbehalfby";
+				public const string LkMsdynmktInfobipchannelinstanceCreatedby = "lk_msdynmkt_infobipchannelinstance_createdby";
+				public const string LkMsdynmktInfobipchannelinstanceCreatedonbehalfby = "lk_msdynmkt_infobipchannelinstance_createdonbehalfby";
+				public const string LkMsdynmktInfobipchannelinstanceModifiedby = "lk_msdynmkt_infobipchannelinstance_modifiedby";
+				public const string LkMsdynmktInfobipchannelinstanceModifiedonbehalfby = "lk_msdynmkt_infobipchannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktInfobipchannelinstanceaccountCreatedby = "lk_msdynmkt_infobipchannelinstanceaccount_createdby";
+				public const string LkMsdynmktInfobipchannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_infobipchannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktInfobipchannelinstanceaccountModifiedby = "lk_msdynmkt_infobipchannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktInfobipchannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_infobipchannelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceCreatedby = "lk_msdynmkt_linkmobilitychannelinstance_createdby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceCreatedonbehalfby = "lk_msdynmkt_linkmobilitychannelinstance_createdonbehalfby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceModifiedby = "lk_msdynmkt_linkmobilitychannelinstance_modifiedby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceModifiedonbehalfby = "lk_msdynmkt_linkmobilitychannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceaccountCreatedby = "lk_msdynmkt_linkmobilitychannelinstanceaccount_createdby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_linkmobilitychannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceaccountModifiedby = "lk_msdynmkt_linkmobilitychannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktLinkmobilitychannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_linkmobilitychannelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdynmktMetadataentityrelationshipCreatedby = "lk_msdynmkt_metadataentityrelationship_createdby";
+				public const string LkMsdynmktMetadataentityrelationshipCreatedonbehalfby = "lk_msdynmkt_metadataentityrelationship_createdonbehalfby";
+				public const string LkMsdynmktMetadataentityrelationshipModifiedby = "lk_msdynmkt_metadataentityrelationship_modifiedby";
+				public const string LkMsdynmktMetadataentityrelationshipModifiedonbehalfby = "lk_msdynmkt_metadataentityrelationship_modifiedonbehalfby";
+				public const string LkMsdynmktMetadataitemCreatedby = "lk_msdynmkt_metadataitem_createdby";
+				public const string LkMsdynmktMetadataitemCreatedonbehalfby = "lk_msdynmkt_metadataitem_createdonbehalfby";
+				public const string LkMsdynmktMetadataitemModifiedby = "lk_msdynmkt_metadataitem_modifiedby";
+				public const string LkMsdynmktMetadataitemModifiedonbehalfby = "lk_msdynmkt_metadataitem_modifiedonbehalfby";
+				public const string LkMsdynmktMetadatastorestateCreatedby = "lk_msdynmkt_metadatastorestate_createdby";
+				public const string LkMsdynmktMetadatastorestateCreatedonbehalfby = "lk_msdynmkt_metadatastorestate_createdonbehalfby";
+				public const string LkMsdynmktMetadatastorestateModifiedby = "lk_msdynmkt_metadatastorestate_modifiedby";
+				public const string LkMsdynmktMetadatastorestateModifiedonbehalfby = "lk_msdynmkt_metadatastorestate_modifiedonbehalfby";
+				public const string LkMsdynmktPredefinedplaceholderCreatedby = "lk_msdynmkt_predefinedplaceholder_createdby";
+				public const string LkMsdynmktPredefinedplaceholderCreatedonbehalfby = "lk_msdynmkt_predefinedplaceholder_createdonbehalfby";
+				public const string LkMsdynmktPredefinedplaceholderModifiedby = "lk_msdynmkt_predefinedplaceholder_modifiedby";
+				public const string LkMsdynmktPredefinedplaceholderModifiedonbehalfby = "lk_msdynmkt_predefinedplaceholder_modifiedonbehalfby";
+				public const string LkMsdynmktTelesignchannelinstanceCreatedby = "lk_msdynmkt_telesignchannelinstance_createdby";
+				public const string LkMsdynmktTelesignchannelinstanceCreatedonbehalfby = "lk_msdynmkt_telesignchannelinstance_createdonbehalfby";
+				public const string LkMsdynmktTelesignchannelinstanceModifiedby = "lk_msdynmkt_telesignchannelinstance_modifiedby";
+				public const string LkMsdynmktTelesignchannelinstanceModifiedonbehalfby = "lk_msdynmkt_telesignchannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktTelesignchannelinstanceaccountCreatedby = "lk_msdynmkt_telesignchannelinstanceaccount_createdby";
+				public const string LkMsdynmktTelesignchannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_telesignchannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktTelesignchannelinstanceaccountModifiedby = "lk_msdynmkt_telesignchannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktTelesignchannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_telesignchannelinstanceaccount_modifiedonbehalfby";
 				public const string LkMsdynmktTrackingcontextCreatedby = "lk_msdynmkt_trackingcontext_createdby";
 				public const string LkMsdynmktTrackingcontextCreatedonbehalfby = "lk_msdynmkt_trackingcontext_createdonbehalfby";
 				public const string LkMsdynmktTrackingcontextModifiedby = "lk_msdynmkt_trackingcontext_modifiedby";
 				public const string LkMsdynmktTrackingcontextModifiedonbehalfby = "lk_msdynmkt_trackingcontext_modifiedonbehalfby";
+				public const string LkMsdynmktTwiliochannelinstanceCreatedby = "lk_msdynmkt_twiliochannelinstance_createdby";
+				public const string LkMsdynmktTwiliochannelinstanceCreatedonbehalfby = "lk_msdynmkt_twiliochannelinstance_createdonbehalfby";
+				public const string LkMsdynmktTwiliochannelinstanceModifiedby = "lk_msdynmkt_twiliochannelinstance_modifiedby";
+				public const string LkMsdynmktTwiliochannelinstanceModifiedonbehalfby = "lk_msdynmkt_twiliochannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktTwiliochannelinstanceaccountCreatedby = "lk_msdynmkt_twiliochannelinstanceaccount_createdby";
+				public const string LkMsdynmktTwiliochannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_twiliochannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktTwiliochannelinstanceaccountModifiedby = "lk_msdynmkt_twiliochannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktTwiliochannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_twiliochannelinstanceaccount_modifiedonbehalfby";
 				public const string LkMsfpAlertruleCreatedby = "lk_msfp_alertrule_createdby";
 				public const string LkMsfpAlertruleCreatedonbehalfby = "lk_msfp_alertrule_createdonbehalfby";
 				public const string LkMsfpAlertruleModifiedby = "lk_msfp_alertrule_modifiedby";
@@ -9207,6 +9487,7 @@ namespace dgt.power.dataverse
 				public const string MsdynSystemuserMsdynSwarmparticipantUserid = "msdyn_systemuser_msdyn_swarmparticipant_userid";
 				public const string MsdynSystemuserMsdynUnifiedroutingrunAssignedagent = "msdyn_systemuser_msdyn_unifiedroutingrun_assignedagent";
 				public const string MsdynSystemuserOcruleitem = "msdyn_systemuser_ocruleitem";
+				public const string MsdynSystemuserSuggestionprincipalobjectaccessPrincipalid = "msdyn_systemuser_suggestionprincipalobjectaccess_principalid";
 				public const string MsdynSystemuserWallsavedqueryusersettingsUserid = "msdyn_systemuser_wallsavedqueryusersettings_userid";
 				public const string MsfpAlertSystemuserCreatedby = "msfp_alert_systemuser_createdby";
 				public const string MsfpAlertSystemuserCreatedonbehalfby = "msfp_alert_systemuser_createdonbehalfby";
@@ -9327,11 +9608,16 @@ namespace dgt.power.dataverse
 				public const string UserDesktopflowbinary = "user_desktopflowbinary";
 				public const string UserDesktopflowmodule = "user_desktopflowmodule";
 				public const string UserEc4uAcquirelegalbasis = "user_ec4u_acquirelegalbasis";
+				public const string UserEc4uCarrier = "user_ec4u_carrier";
+				public const string UserEc4uCarrierDependencyCheck = "user_ec4u_carrier_dependency_check";
+				public const string UserEc4uCarrierMissingDependency = "user_ec4u_carrier_missing_dependency";
 				public const string UserEc4uGdprProtocol = "user_ec4u_gdpr_protocol";
 				public const string UserEc4uGdprProtocolDetail = "user_ec4u_gdpr_protocol_detail";
 				public const string UserEc4uGdprReport = "user_ec4u_gdpr_report";
 				public const string UserEc4uGdprRequest = "user_ec4u_gdpr_request";
 				public const string UserEc4uLegalbasis = "user_ec4u_legalbasis";
+				public const string UserEc4uWorkbench = "user_ec4u_workbench";
+				public const string UserEc4uWorkbenchHistory = "user_ec4u_workbench_history";
 				public const string UserEmail = "user_email";
 				public const string UserEntitlement = "user_entitlement";
 				public const string UserEntitlementchannel = "user_entitlementchannel";
@@ -9548,6 +9834,7 @@ namespace dgt.power.dataverse
 				public const string UserMsdynPmcalendarversion = "user_msdyn_pmcalendarversion";
 				public const string UserMsdynPminferredtask = "user_msdyn_pminferredtask";
 				public const string UserMsdynPmprocessextendedmetadataversion = "user_msdyn_pmprocessextendedmetadataversion";
+				public const string UserMsdynPmprocesstemplate = "user_msdyn_pmprocesstemplate";
 				public const string UserMsdynPmprocessusersettings = "user_msdyn_pmprocessusersettings";
 				public const string UserMsdynPmprocessversion = "user_msdyn_pmprocessversion";
 				public const string UserMsdynPmrecording = "user_msdyn_pmrecording";
@@ -9576,6 +9863,8 @@ namespace dgt.power.dataverse
 				public const string UserMsdynRoutingrequest = "user_msdyn_routingrequest";
 				public const string UserMsdynRulesetdependencymapping = "user_msdyn_rulesetdependencymapping";
 				public const string UserMsdynSalesinsightssettings = "user_msdyn_salesinsightssettings";
+				public const string UserMsdynSalesocmessage = "user_msdyn_salesocmessage";
+				public const string UserMsdynSalesocsmstemplate = "user_msdyn_salesocsmstemplate";
 				public const string UserMsdynSalesroutingrun = "user_msdyn_salesroutingrun";
 				public const string UserMsdynSalessuggestion = "user_msdyn_salessuggestion";
 				public const string UserMsdynSalestag = "user_msdyn_salestag";
@@ -9587,6 +9876,7 @@ namespace dgt.power.dataverse
 				public const string UserMsdynSequencetargetstep = "user_msdyn_sequencetargetstep";
 				public const string UserMsdynSequencetemplate = "user_msdyn_sequencetemplate";
 				public const string UserMsdynServiceconfiguration = "user_msdyn_serviceconfiguration";
+				public const string UserMsdynServiceoneprovisioningrequest = "user_msdyn_serviceoneprovisioningrequest";
 				public const string UserMsdynSessiondata = "user_msdyn_sessiondata";
 				public const string UserMsdynSessionevent = "user_msdyn_sessionevent";
 				public const string UserMsdynSessionparticipant = "user_msdyn_sessionparticipant";
@@ -9599,6 +9889,9 @@ namespace dgt.power.dataverse
 				public const string UserMsdynSolutionhealthrule = "user_msdyn_solutionhealthrule";
 				public const string UserMsdynSolutionhealthruleargument = "user_msdyn_solutionhealthruleargument";
 				public const string UserMsdynSoundnotificationsetting = "user_msdyn_soundnotificationsetting";
+				public const string UserMsdynSuggestionassignmentrule = "user_msdyn_suggestionassignmentrule";
+				public const string UserMsdynSuggestionprincipalobjectaccess = "user_msdyn_suggestionprincipalobjectaccess";
+				public const string UserMsdynSuggestionsellerpriority = "user_msdyn_suggestionsellerpriority";
 				public const string UserMsdynSwarm = "user_msdyn_swarm";
 				public const string UserMsdynSwarmparticipant = "user_msdyn_swarmparticipant";
 				public const string UserMsdynSwarmparticipantrule = "user_msdyn_swarmparticipantrule";
@@ -9641,6 +9934,18 @@ namespace dgt.power.dataverse
 				public const string UserMsdynmktEventmetadata = "user_msdynmkt_eventmetadata";
 				public const string UserMsdynmktEventparametermetadata = "user_msdynmkt_eventparametermetadata";
 				public const string UserMsdynmktFeatureconfiguration = "user_msdynmkt_featureconfiguration";
+				public const string UserMsdynmktInfobipchannelinstance = "user_msdynmkt_infobipchannelinstance";
+				public const string UserMsdynmktInfobipchannelinstanceaccount = "user_msdynmkt_infobipchannelinstanceaccount";
+				public const string UserMsdynmktLinkmobilitychannelinstance = "user_msdynmkt_linkmobilitychannelinstance";
+				public const string UserMsdynmktLinkmobilitychannelinstanceaccount = "user_msdynmkt_linkmobilitychannelinstanceaccount";
+				public const string UserMsdynmktMetadataentityrelationship = "user_msdynmkt_metadataentityrelationship";
+				public const string UserMsdynmktMetadataitem = "user_msdynmkt_metadataitem";
+				public const string UserMsdynmktMetadatastorestate = "user_msdynmkt_metadatastorestate";
+				public const string UserMsdynmktPredefinedplaceholder = "user_msdynmkt_predefinedplaceholder";
+				public const string UserMsdynmktTelesignchannelinstance = "user_msdynmkt_telesignchannelinstance";
+				public const string UserMsdynmktTelesignchannelinstanceaccount = "user_msdynmkt_telesignchannelinstanceaccount";
+				public const string UserMsdynmktTwiliochannelinstance = "user_msdynmkt_twiliochannelinstance";
+				public const string UserMsdynmktTwiliochannelinstanceaccount = "user_msdynmkt_twiliochannelinstanceaccount";
 				public const string UserMsfpAlertrule = "user_msfp_alertrule";
 				public const string UserMsfpEmailtemplate = "user_msfp_emailtemplate";
 				public const string UserMsfpFileresponse = "user_msfp_fileresponse";

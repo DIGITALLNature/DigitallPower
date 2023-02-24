@@ -59,7 +59,7 @@ namespace dgt.power.dataverse
         #region consts
         public const string EntityLogicalName = "ec4u_carrier";
         public const string PrimaryNameAttribute = "ec4u_car_reference";
-        public const int EntityTypeCode = 10308;
+        public const int EntityTypeCode = 10740;
         #endregion
 
         #region Events

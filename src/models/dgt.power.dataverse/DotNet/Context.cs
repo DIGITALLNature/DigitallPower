@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
-// ReSharper disable All 
+// ReSharper disable All
 namespace dgt.power.dataverse
 {
    	public partial class DataContext : OrganizationServiceContext
@@ -28,5 +28,5 @@ namespace dgt.power.dataverse
 
             base.OnExecuting(request);
         }
-    }
+	}
 }

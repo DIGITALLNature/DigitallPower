@@ -1072,6 +1072,32 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("resourcecontainer")]
+        public string? ResourceContainer
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("resourcecontainer");
+            }
+        }
+
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("resourceid")]
+        public Guid? ResourceId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<Guid?>("resourceid");
+            }
+        }
+
+		/// <summary>
 		/// Specifies the system user account under which a workflow executes.
 		/// </summary>
 		[AttributeLogicalName("runas")]
@@ -1790,6 +1816,8 @@ namespace dgt.power.dataverse
 				public const string ProcessTriggerScope = "processtriggerscope";
 				public const string Rank = "rank";
 				public const string RendererObjectTypeCode = "rendererobjecttypecode";
+				public const string ResourceContainer = "resourcecontainer";
+				public const string ResourceId = "resourceid";
 				public const string RunAs = "runas";
 				public const string SchemaVersion = "schemaversion";
 				public const string Scope = "scope";

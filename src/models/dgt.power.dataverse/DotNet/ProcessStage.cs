@@ -270,6 +270,66 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// The parameter name.
+		/// </summary>
+		[AttributeLogicalName("parametername")]
+        public string? ParameterName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("parametername");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ParameterName));
+                SetAttributeValue("parametername", value);
+                OnPropertyChanged(nameof(ParameterName));
+            }
+        }
+
+		/// <summary>
+		/// The parameter value.
+		/// </summary>
+		[AttributeLogicalName("parametervalue")]
+        public string? ParameterValue
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("parametervalue");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ParameterValue));
+                SetAttributeValue("parametervalue", value);
+                OnPropertyChanged(nameof(ParameterValue));
+            }
+        }
+
+		/// <summary>
+		/// The parent stage for the parameter.
+		/// </summary>
+		[AttributeLogicalName("parentprocessstageid")]
+        public EntityReference? ParentProcessStageId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("parentprocessstageid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ParentProcessStageId));
+                SetAttributeValue("parentprocessstageid", value);
+                OnPropertyChanged(nameof(ParentProcessStageId));
+            }
+        }
+
+		/// <summary>
 		/// Primary entity associated with the stage.
 		/// </summary>
 		[AttributeLogicalName("primaryentitytypecode")]
@@ -403,6 +463,46 @@ namespace dgt.power.dataverse
 				this.OnPropertyChanging("ProcessstageContact");
 				this.SetRelatedEntities<Contact>("processstage_contact", null, value);
 				this.OnPropertyChanged("ProcessstageContact");
+			}
+		}
+
+		/// <summary>
+		/// 1:N processstage_ec4u_carrier
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_ec4u_carrier")]
+		public System.Collections.Generic.IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("ProcessstageEc4uCarrier");
+				this.SetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null, value);
+				this.OnPropertyChanged("ProcessstageEc4uCarrier");
+			}
+		}
+
+		/// <summary>
+		/// 1:N processstage_parentprocessstage
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_parentprocessstage")]
+		public System.Collections.Generic.IEnumerable<ProcessStage> ProcessstageParentprocessstage
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<ProcessStage>("processstage_parentprocessstage", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("ProcessstageParentprocessstage");
+				this.SetRelatedEntities<ProcessStage>("processstage_parentprocessstage", null, value);
+				this.OnPropertyChanged("ProcessstageParentprocessstage");
 			}
 		}
 
@@ -566,6 +666,9 @@ namespace dgt.power.dataverse
 				public const string OperationType = "operationtype";
 				public const string OwnerId = "ownerid";
 				public const string OwningBusinessUnit = "owningbusinessunit";
+				public const string ParameterName = "parametername";
+				public const string ParameterValue = "parametervalue";
+				public const string ParentProcessStageId = "parentprocessstageid";
 				public const string PrimaryEntityTypeCode = "primaryentitytypecode";
 				public const string ProcessId = "processid";
 				public const string StageCategory = "stagecategory";
@@ -601,7 +704,9 @@ namespace dgt.power.dataverse
 				public const string ProcessstageCampaigns = "processstage_campaigns";
 				public const string ProcessstageCompetitors = "processstage_competitors";
 				public const string ProcessstageContact = "processstage_contact";
+				public const string ProcessstageEc4uCarrier = "processstage_ec4u_carrier";
 				public const string ProcessstageEc4uGdprRequest = "processstage_ec4u_gdpr_request";
+				public const string ProcessstageEc4uWorkbench = "processstage_ec4u_workbench";
 				public const string ProcessstageEmails = "processstage_emails";
 				public const string ProcessstageEntitlement = "processstage_Entitlement";
 				public const string ProcessstageFaxes = "processstage_faxes";
@@ -613,6 +718,7 @@ namespace dgt.power.dataverse
 				public const string ProcessstageLists = "processstage_lists";
 				public const string ProcessstageMsdynIotalert = "processstage_msdyn_iotalert";
 				public const string ProcessstageOpportunity = "processstage_opportunity";
+				public const string ProcessstageParentprocessstage = "processstage_parentprocessstage";
 				public const string ProcessstagePhonecalls = "processstage_phonecalls";
 				public const string ProcessstageProcessstageparameter = "processstage_processstageparameter";
 				public const string ProcessstageProductpricelevels = "processstage_productpricelevels";
@@ -630,6 +736,7 @@ namespace dgt.power.dataverse
             public static class ManyToOne
             {
 				public const string ProcessProcessstage = "process_processstage";
+				public const string ProcessstageParentprocessstage = "processstage_parentprocessstage";
             }
 
             public static class ManyToMany
