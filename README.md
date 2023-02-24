@@ -11,6 +11,9 @@
     <a href="https://github.com/DIGITALLNature/DigitallPower/releases" target="_blank">
         <img src="https://img.shields.io/github/tag/DIGITALLNature/DigitallPower.svg" alt="GitHub tag (latest SemVer)">
     </a>
+    <a href="https://www.nuget.org/packages/dgt.power" target="_blank">
+        <img src="https://img.shields.io/nuget/v/dgt.power" alt="Nuget">
+    </a>
     <a href="https://github.com/DIGITALLNature/DigitallPower/graphs/contributors" target="_blank">
         <img src="https://img.shields.io/github/contributors-anon/DIGITALLNature/DigitallPower.svg" alt="GitHub contributors">
     </a>

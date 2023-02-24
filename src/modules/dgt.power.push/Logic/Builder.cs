@@ -1,17 +1,36 @@
-﻿using System.Globalization;
-using D365.Extension.Registration;
+﻿using System.Activities;
+using System.Globalization;
+using System.Reflection;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.push.Model;
+using dgt.registration;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
+using Assembly = dgt.power.push.Model.Assembly;
 using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
 
 internal static class Builder
 {
+    private static readonly string[] s_knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations" };
+    private static readonly string[] s_knownPluginAttributes = { nameof(PluginRegistrationAttribute), nameof(CustomApiRegistrationAttribute), nameof(CustomDataProviderRegistrationAttribute) };
+
+    private static IEnumerable<Type> GetLoadableTypes(System.Reflection.Assembly assembly)
+    {
+        if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+            return e.Types.Where(t => t != null)!;
+        }
+    }
+
     public static Assembly? BuildFromDll(string dllFile, IOrganizationService service)
     {
         var result = default(Assembly);
@@ -27,8 +46,8 @@ internal static class Builder
                     Content = Convert.ToBase64String(File.ReadAllBytes(dllFile))
                 };
 
-                var workflowTypes = assembly.GetTypes().Where(IsWorkflow).ToList();
-                var pluginTypes = assembly.GetTypes().Where(IsPlugin).ToList();
+                var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
+                var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
 
                 foreach (var workflowType in workflowTypes)
                 {
@@ -39,7 +58,7 @@ internal static class Builder
                         Name = customAttribute?.Name ?? workflowType.FullName!,
                         TypeName = workflowType.FullName!,
                         FriendlyName = Guid.NewGuid().ToString("D"),//fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
-                        WorkflowActivityGroupName = (customAttribute?.Group ?? $"{result.Name} ({result.Version})") + (customAttribute != null && customAttribute.IncludeVersion ? $" ({ result.Version })" : null),
+                        WorkflowActivityGroupName = (customAttribute?.Group ?? $"{result.Name} ({result.Version})") + (customAttribute != null && customAttribute.IncludeVersion ? $" ({result.Version})" : null),
                         ParentName = result.Name
                     });
                 }
@@ -56,16 +75,24 @@ internal static class Builder
                         ParentName = result.Name
                     };
 
-                    var customAttributes = pluginType.GetCustomAttributes(false);
-                    foreach (var customAttribute in customAttributes)
+                    if (IsPowerPlugin(pluginType))
                     {
-                        if (customAttribute.GetType().FullName == typeof(CustomApiRegistrationAttribute).FullName)
+                        result.Type |= AssemblyType.PowerPlugin;
+
+                        var customAttributes = pluginType.GetCustomAttributes(false);
+                        foreach (var customAttribute in customAttributes)
                         {
-                            type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
+                            if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace)) continue;
+                            
+                            if (customAttribute.GetType().Name == nameof(CustomApiRegistrationAttribute))
+                            {
+                                type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
+                            }
                         }
+
+                        type.PluginSteps.AddRange(GetPluginSteps(pluginType, service));
                     }
 
-                    type.PluginSteps.AddRange(GetPluginSteps(pluginType, service));
                     result.PluginTypes.Add(type);
                 }
             }
@@ -95,13 +122,6 @@ internal static class Builder
             result.Id = pluginAssembly.PluginAssemblyId!.Value;
 
             var workflowTypes = GetWorkflowTypes(pluginAssembly.ToEntityReference(), service);
-            var pluginTypes = GetPluginTypes(pluginAssembly.ToEntityReference(), service);
-
-            if (workflowTypes.Any() && pluginTypes.Any())
-            {
-                throw new ArgumentException("Mixture of Plugins and CodeActivities is not supported by this tool!");
-            }
-
             foreach (var workflowType in workflowTypes)
             {
                 result.Type = AssemblyType.Workflow;
@@ -117,6 +137,7 @@ internal static class Builder
                 });
             }
 
+            var pluginTypes = GetPluginTypes(pluginAssembly.ToEntityReference(), service);
             foreach (var pluginType in pluginTypes)
             {
                 result.Type = AssemblyType.Plugin;
@@ -263,7 +284,6 @@ internal static class Builder
     {
         return entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
     }
-
     private static List<PluginType> GetWorkflowTypes(EntityReference pluginAssembly, IOrganizationService service)
     {
         using var context = new DataContext(service);
@@ -337,7 +357,8 @@ internal static class Builder
         var customAttributes = pluginType.GetCustomAttributes(false);
         foreach (var customAttribute in customAttributes)
         {
-            if (customAttribute.GetType().FullName != typeof(PluginRegistrationAttribute).FullName) continue;
+            if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace)) continue;
+            if (customAttribute.GetType().Name != nameof(PluginRegistrationAttribute)) continue;
             var messageName = GetValue<string>(customAttribute, "MessageName");
             var primaryEntityName = GetValue<string>(customAttribute, "PrimaryEntityName") ?? "none";
             var secondaryEntityName = GetValue<string>(customAttribute, "SecondaryEntityName") ?? "none";
@@ -471,41 +492,22 @@ internal static class Builder
         return default;
     }
 
-    private static bool IsWorkflow(Type declaredType)
-    {
-        var d365ExtensionCoreExecutor = declaredType.BaseType != null && declaredType.GetBaseTypes().Any(x => x.FullName?.StartsWith("D365.Extension.Core.Executor",StringComparison.Ordinal) == true) && !declaredType.IsAbstract;
-        if (d365ExtensionCoreExecutor)
-        {
-            var customAttributes = declaredType.GetCustomAttributes(false);
-            var isWorkflow = true;
-            foreach (var customAttribute in customAttributes)
-            {
-                if (customAttribute.GetType().FullName == typeof(PluginRegistrationAttribute).FullName || customAttribute.GetType().FullName == typeof(CustomApiRegistrationAttribute).FullName)
-                {
-                    isWorkflow = false;
-                }
-            }
-            d365ExtensionCoreExecutor = isWorkflow;
-        }
-        return d365ExtensionCoreExecutor;
-    }
+    private static bool IsIPluginBased(Type declaredType) => declaredType.GetInterface(typeof(IPlugin).FullName!) != null && !declaredType.IsAbstract;
+    private static bool IsCodeActivityBased(Type declaredType) => declaredType.GetBaseTypes().Any(t => t.FullName == typeof(CodeActivity).FullName) && !declaredType.IsAbstract;
 
-    private static bool IsPlugin(Type declaredType)
+    private static bool IsPowerPlugin(Type declaredType)
     {
-        var d365ExtensionCoreExecutor = declaredType.BaseType != null && declaredType.GetBaseTypes().Any(x => x.FullName?.StartsWith("D365.Extension.Core.Executor",StringComparison.InvariantCulture) == true) && !declaredType.IsAbstract;
-        if (d365ExtensionCoreExecutor)
+        var customAttributes = declaredType.GetCustomAttributes(false);
+        foreach (var customAttribute in customAttributes)
         {
-            var customAttributes = declaredType.GetCustomAttributes(false);
-            var isPlugin = false;
-            foreach (var customAttribute in customAttributes)
+            if (s_knownNamespaces.Contains(customAttribute.GetType().Namespace))
             {
-                if (customAttribute.GetType().FullName == typeof(PluginRegistrationAttribute).FullName || customAttribute.GetType().FullName == typeof(CustomApiRegistrationAttribute).FullName)
+                if (s_knownPluginAttributes.Contains(customAttribute.GetType().Name))
                 {
-                    isPlugin = true;
+                    return true;
                 }
             }
-            d365ExtensionCoreExecutor = isPlugin;
         }
-        return d365ExtensionCoreExecutor;
+        return false;
     }
 }
