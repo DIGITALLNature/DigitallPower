@@ -412,3 +412,6 @@ FodyWeavers.xsd
 
 # private script files
 *.private.ps1
+
+# Allow
+!/tests/dgt.power.push.tests/SampleDependentPlugin/dgt.power.push.tests.dependentsample.1.0.0.nupkg
