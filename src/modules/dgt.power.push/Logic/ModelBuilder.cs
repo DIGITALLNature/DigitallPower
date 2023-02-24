@@ -60,10 +60,10 @@ internal class ModelBuilder
         return result;
     }
 
-    public Package BuildPackageFromCrm(string name, string version, string solutionPrefix)
+    public Package BuildPackageFromCrm(string name, string version)
     {
         var result = new Package();
-        var state = GetPluginPackage($"{solutionPrefix}_{name}", version, out var pluginPackage);
+        var state = GetPluginPackage(name, version, out var pluginPackage);
         result.State = state;
         if (state != AssemblyState.Create)
         {
@@ -77,9 +77,9 @@ internal class ModelBuilder
     }
 
 
-    public List<Assembly?> BuildAssemblyFromPackage(string packageFile)
+    public List<Assembly?> BuildAssemblyFromPackage(Package packageFile)
     {
-        using var inputStream = new FileStream(packageFile, FileMode.Open);
+        using var inputStream = new MemoryStream(Convert.FromBase64String(packageFile.Content!));
         using var reader = new PackageArchiveReader(inputStream);
         var results = new List<Assembly?>();
 
@@ -212,7 +212,7 @@ internal class ModelBuilder
     {
         pluginPackage = default;
         var packages = (from pa in _context.PluginPackageSet
-            where pa.Name == name
+            where pa.Name.EndsWith(name)
             orderby pa.Version
             select pa).ToList();
         if (packages.Count == 0)

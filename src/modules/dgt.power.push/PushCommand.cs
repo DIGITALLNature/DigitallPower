@@ -45,18 +45,23 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
                 var solutionPrefix = processor.GetSolutionPrefix(verb.Solution);
 
+
                 if (verb.DllFile.EndsWith(".nupkg"))
                 {
                     // Dependent Plugin
                     AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
                     var packageLocal = modelBuilder.BuildPackageFromFile(verb.DllFile);
-                    var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version, solutionPrefix);
+                    var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
 
                     if (packageCrm.State == AssemblyState.Create)
                     {
                         ctx.Status("CreatePluginPackage");
+                        if (solutionPrefix == "new")
+                        {
+                            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
+                        }
                         packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix);
                     }
                     else
@@ -65,7 +70,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                         packageCrm = processor.UpdatePluginPackage(packageCrm.Id, packageLocal);
                     }
 
-                    assemblies = modelBuilder.BuildAssemblyFromPackage(verb.DllFile);
+                    assemblies = modelBuilder.BuildAssemblyFromPackage(packageCrm);
                 }
                 else
                 {
