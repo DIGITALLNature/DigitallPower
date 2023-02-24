@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using dgt.power.dataverse;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CA1067
 
@@ -20,32 +22,34 @@ public class PluginType : IEquatable<PluginType>
     [Required]
     public string FriendlyName { get; set; } = null!;
 
-    [IgnoreDataMember]
-    public Guid Id { get; set; }
+    [IgnoreDataMember] public Guid Id { get; set; }
 
-    [IgnoreDataMember]
-    public string TypeCode { get; set; } = dataverse.PluginType.EntityLogicalName;
+    [IgnoreDataMember] public string TypeCode { get; set; } = dataverse.PluginType.EntityLogicalName;
 
-    [IgnoreDataMember]
-    public Guid ParentId { get; set; }
+    [IgnoreDataMember] public Guid ParentId { get; set; }
 
-    [IgnoreDataMember]
-    public string ParentTypeCode { get; set; } = dataverse.PluginAssembly.EntityLogicalName;
+    [IgnoreDataMember] public string ParentTypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 
-    [IgnoreDataMember]
-    public string? ParentName { get; set; }
+    [IgnoreDataMember] public string? ParentName { get; set; }
 
-    [IgnoreDataMember]
-    public string CustomApi { get; set; } = string.Empty;
+    [IgnoreDataMember] public string CustomApi { get; set; } = string.Empty;
 
     [DataMember(Name = "plugin_steps", IsRequired = true)]
     [Required]
-    public List<PluginStep> PluginSteps { get; set; } = new List<PluginStep>();
+    public List<PluginStep> PluginSteps { get; set; } = new();
 
     public bool Equals(PluginType? other)
     {
-        if (null == other) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (null == other)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
         return Name == other.Name &&
                TypeName == other.TypeName &&
                ParentTypeCode == other.ParentTypeCode &&

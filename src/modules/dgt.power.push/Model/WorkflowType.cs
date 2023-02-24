@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using dgt.power.dataverse;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -21,20 +23,15 @@ public class WorkflowType
     [Required]
     public string FriendlyName { get; set; } = null!;
 
-    [IgnoreDataMember]
-    public Guid Id { get; set; }
+    [IgnoreDataMember] public Guid Id { get; set; }
 
-    [IgnoreDataMember]
-    public string TypeCode { get; set; } = dataverse.PluginType.EntityLogicalName;
+    [IgnoreDataMember] public string TypeCode { get; set; } = dataverse.PluginType.EntityLogicalName;
 
-    [IgnoreDataMember]
-    public Guid ParentId { get; set; }
+    [IgnoreDataMember] public Guid ParentId { get; set; }
 
-    [IgnoreDataMember]
-    public string ParentTypeCode { get; set; } = dataverse.PluginAssembly.EntityLogicalName;
+    [IgnoreDataMember] public string ParentTypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 
-    [IgnoreDataMember]
-    public string? ParentName { get; set; }
+    [IgnoreDataMember] public string? ParentName { get; set; }
 
     [DataMember(Name = "workflow_activity_group_name", IsRequired = true)]
     [Required]

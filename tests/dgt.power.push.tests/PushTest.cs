@@ -30,4 +30,13 @@ public class PushTest : PushTestsBase<PushCommand>
                 DllFile = typeof(SamplePlugin).Assembly.Location,
                 Solution = "TestSolution"
             }).Should().BeTrue();
+
+    [Fact]
+    public void ShouldImportDependentSample() =>
+        GetContext()
+            .Execute(new PushVerb
+            {
+                DllFile = "../../../SampleDependentPlugin/dgt.power.push.tests.dependentsample.1.0.0.nupkg",
+                Solution = "TestSolution"
+            }).Should().BeTrue();
 }

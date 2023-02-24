@@ -453,6 +453,45 @@
           "System.Collections.Immutable": "1.7.1"
         }
       },
+      "NuGet.Common": {
+        "type": "Transitive",
+        "resolved": "6.5.0",
+        "contentHash": "u5V3R9FzGHB57bcKhCjKdaaB3m+zzOIp7pXvcCVYa2fnXYUQVEoY7XE+nLKJwJqN6PXzQP9/ztUUSFl9uslNJw==",
+        "dependencies": {
+          "NuGet.Frameworks": "6.5.0"
+        }
+      },
+      "NuGet.Configuration": {
+        "type": "Transitive",
+        "resolved": "6.5.0",
+        "contentHash": "rodANSrSBCV84Go7JlwJjaNtAjfYwZlBdwFWIoiSvtU8HQ/cnXi3r2AL8OxLdkLpS+/FmmU/vftCcKucmhkDaA==",
+        "dependencies": {
+          "NuGet.Common": "6.5.0",
+          "System.Security.Cryptography.ProtectedData": "4.4.0"
+        }
+      },
+      "NuGet.Frameworks": {
+        "type": "Transitive",
+        "resolved": "6.5.0",
+        "contentHash": "QWINE2x3MbTODsWT1Gh71GaGb5icBz4chS8VYvTgsBnsi8esgN6wtHhydd7fvToWECYGq7T4cgBBDiKD/363fg=="
+      },
+      "NuGet.Packaging": {
+        "type": "Transitive",
+        "resolved": "6.5.0",
+        "contentHash": "n02Hqnw0Bz/936pmK/vxT2u3QtC1bgmw0Opm8N4sqdwWs41kHiKeJkudmBYRUZMDzsJIMn6Ub9JopWk7A7MjYQ==",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "NuGet.Configuration": "6.5.0",
+          "NuGet.Versioning": "6.5.0",
+          "System.Security.Cryptography.Cng": "5.0.0",
+          "System.Security.Cryptography.Pkcs": "5.0.0"
+        }
+      },
+      "NuGet.Versioning": {
+        "type": "Transitive",
+        "resolved": "6.5.0",
+        "contentHash": "a2j4bDoSBVagDZ+Q61kAmxs/kY8q16cgNDdZuo867j5ip2F4yInjy1v8Ec9LslbP7QBtMzGDWw7rfBlFt6qofg=="
+      },
       "ReflectionMagic": {
         "type": "Transitive",
         "resolved": "4.1.0",
@@ -1002,6 +1041,14 @@
           "runtime.native.System.Security.Cryptography.OpenSsl": "4.3.2"
         }
       },
+      "System.Security.Cryptography.Cng": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "jIMXsKn94T9JY7PvPq/tMfqa6GAaHpElRDpmG+SuL+D3+sTw2M8VhnibKnN8Tq+4JqbPJ/f+BwtLeDMEnzAvRg==",
+        "dependencies": {
+          "System.Formats.Asn1": "5.0.0"
+        }
+      },
       "System.Security.Cryptography.Encoding": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1347,6 +1394,7 @@
       "dgt.power.push": {
         "type": "Project",
         "dependencies": {
+          "NuGet.Packaging": "[6.5.0, )",
           "UiPath.Workflow": "[6.0.3, )",
           "dgt.power.common": "[1.0.0, )",
           "dgt.registration": "[1.0.0, )"

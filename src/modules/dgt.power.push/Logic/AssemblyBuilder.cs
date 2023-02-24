@@ -8,19 +8,23 @@ using dgt.registration;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
-using Assembly = dgt.power.push.Model.Assembly;
+using Assembly = System.Reflection.Assembly;
 using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal static class Builder
+internal class AssemblyBuilder : BuilderBase
 {
     private static readonly string[] s_knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations" };
     private static readonly string[] s_knownPluginAttributes = { nameof(PluginRegistrationAttribute), nameof(CustomApiRegistrationAttribute), nameof(CustomDataProviderRegistrationAttribute) };
 
-    private static IEnumerable<Type> GetLoadableTypes(System.Reflection.Assembly assembly)
+    private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
     {
-        if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+        if (assembly == null)
+        {
+            throw new ArgumentNullException(nameof(assembly));
+        }
+
         try
         {
             return assembly.GetTypes();
@@ -31,70 +35,38 @@ internal static class Builder
         }
     }
 
-    public static Assembly? BuildFromDll(string dllFile, IOrganizationService service)
+    private static byte[] ReadFully(Stream input)
     {
-        var result = default(Assembly);
+        var buffer = new byte[16 * 1024];
+        using (var ms = new MemoryStream())
+        {
+            int read;
+            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+
+            return ms.ToArray();
+        }
+    }
+
+    public static Model.Assembly BuildFromStream(Stream stream, IOrganizationService service)
+    {
+        var result = default(Model.Assembly);
+        var bytes = ReadFully(stream);
         try
         {
-            var assembly = System.Reflection.Assembly.Load(File.ReadAllBytes(dllFile));
+            var assembly = Assembly.Load(bytes);
             if (assembly.IsFullyTrusted)
             {
-                result = new Assembly
+                result = new Model.Assembly
                 {
                     Name = assembly.GetName().Name!,
                     Version = assembly.GetName().Version!.ToString(),
-                    Content = Convert.ToBase64String(File.ReadAllBytes(dllFile))
+                    Content = Convert.ToBase64String(bytes)
                 };
 
-                var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
-                var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
-
-                foreach (var workflowType in workflowTypes)
-                {
-                    result.Type |= AssemblyType.Workflow;
-                    var customAttribute = GetWorkflowRegistration(workflowType);
-                    result.WorkflowTypes.Add(new WorkflowType
-                    {
-                        Name = customAttribute?.Name ?? workflowType.FullName!,
-                        TypeName = workflowType.FullName!,
-                        FriendlyName = Guid.NewGuid().ToString("D"),//fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
-                        WorkflowActivityGroupName = (customAttribute?.Group ?? $"{result.Name} ({result.Version})") + (customAttribute != null && customAttribute.IncludeVersion ? $" ({result.Version})" : null),
-                        ParentName = result.Name
-                    });
-                }
-
-                foreach (var pluginType in pluginTypes)
-                {
-                    result.Type |= AssemblyType.Plugin;
-
-                    var type = new Model.PluginType
-                    {
-                        Name = pluginType.FullName!,
-                        TypeName = pluginType.FullName!,
-                        FriendlyName = Guid.NewGuid().ToString("D"),//fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
-                        ParentName = result.Name
-                    };
-
-                    if (IsPowerPlugin(pluginType))
-                    {
-                        result.Type |= AssemblyType.PowerPlugin;
-
-                        var customAttributes = pluginType.GetCustomAttributes(false);
-                        foreach (var customAttribute in customAttributes)
-                        {
-                            if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace)) continue;
-                            
-                            if (customAttribute.GetType().Name == nameof(CustomApiRegistrationAttribute))
-                            {
-                                type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
-                            }
-                        }
-
-                        type.PluginSteps.AddRange(GetPluginSteps(pluginType, service));
-                    }
-
-                    result.PluginTypes.Add(type);
-                }
+                ParseAssembly(assembly, service, ref result);
             }
         }
         catch (AssemblyException e)
@@ -106,12 +78,100 @@ internal static class Builder
         {
             AnsiConsole.MarkupLine(e.RootMessage());
         }
+
         return result;
     }
 
-    public static Assembly BuildFromCrm(string name, string version, IOrganizationService service)
+    private static void ParseAssembly(Assembly assembly, IOrganizationService service, ref Model.Assembly result)
     {
-        var result = new Assembly();
+        var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
+        var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
+
+        foreach (var workflowType in workflowTypes)
+        {
+            result.Type |= AssemblyType.Workflow;
+            var customAttribute = GetWorkflowRegistration(workflowType);
+            result.WorkflowTypes.Add(new WorkflowType
+            {
+                Name = customAttribute?.Name ?? workflowType.FullName!,
+                TypeName = workflowType.FullName!,
+                FriendlyName = Guid.NewGuid().ToString("D"), //fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
+                WorkflowActivityGroupName = (customAttribute?.Group ?? $"{result.Name} ({result.Version})") + (customAttribute != null && customAttribute.IncludeVersion ? $" ({result.Version})" : null),
+                ParentName = result.Name
+            });
+        }
+
+        foreach (var pluginType in pluginTypes)
+        {
+            result.Type |= AssemblyType.Plugin;
+
+            var type = new Model.PluginType
+            {
+                Name = pluginType.FullName!,
+                TypeName = pluginType.FullName!,
+                FriendlyName = Guid.NewGuid().ToString("D"), //fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
+                ParentName = result.Name
+            };
+
+            if (IsPowerPlugin(pluginType))
+            {
+                result.Type |= AssemblyType.PowerPlugin;
+
+                var customAttributes = pluginType.GetCustomAttributes(false);
+                foreach (var customAttribute in customAttributes)
+                {
+                    if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace))
+                    {
+                        continue;
+                    }
+
+                    if (customAttribute.GetType().Name == nameof(CustomApiRegistrationAttribute))
+                    {
+                        type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
+                    }
+                }
+
+                type.PluginSteps.AddRange(GetPluginSteps(pluginType, service));
+            }
+
+            result.PluginTypes.Add(type);
+        }
+    }
+
+    public static Model.Assembly? BuildFromDll(string dllFile, IOrganizationService service)
+    {
+        var result = default(Model.Assembly);
+        try
+        {
+            var assembly = Assembly.Load(File.ReadAllBytes(dllFile));
+            if (assembly.IsFullyTrusted)
+            {
+                result = new Model.Assembly
+                {
+                    Name = assembly.GetName().Name!,
+                    Version = assembly.GetName().Version!.ToString(),
+                    Content = Convert.ToBase64String(File.ReadAllBytes(dllFile))
+                };
+
+                ParseAssembly(assembly, service, ref result);
+            }
+        }
+        catch (AssemblyException e)
+        {
+            AnsiConsole.MarkupLine(e.RootMessage());
+            throw;
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLine(e.RootMessage());
+        }
+
+        return result;
+    }
+
+    public static Model.Assembly BuildFromCrm(string name, string version, IOrganizationService service)
+    {
+        var result = new Model.Assembly();
         var state = GetPluginAssembly(name, version, service, out var pluginAssembly);
         result.State = state;
         if (state != AssemblyState.Create)
@@ -156,6 +216,7 @@ internal static class Builder
 
             result.Solutions = GetSolutions(pluginAssembly.ToEntityReference(), service);
         }
+
         return result;
     }
 
@@ -199,7 +260,7 @@ internal static class Builder
             }
             else
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,"    Delete PluginStepImage [bold green]{0} ({1})[/]", e.Name!, e.EntityAlias!);
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "    Delete PluginStepImage [bold green]{0} ({1})[/]", e.Name!, e.EntityAlias!);
                 service.Delete(SdkMessageProcessingStepImage.EntityLogicalName, e.Id);
             }
         });
@@ -249,11 +310,11 @@ internal static class Builder
         messageLink.EntityAlias = "msg";
         pagequery.PageInfo = new PagingInfo
         {
-            Count = 5000,//no further paging
+            Count = 5000, //no further paging
             PageNumber = 1,
             PagingCookie = null
         };
-        var results = service.RetrieveMultiple(pagequery).Entities.Select(e=>e.ToEntity<SdkMessageProcessingStep>());
+        var results = service.RetrieveMultiple(pagequery).Entities.Select(e => e.ToEntity<SdkMessageProcessingStep>());
         foreach (var mps in results)
         {
             var step = new PluginStep
@@ -280,10 +341,8 @@ internal static class Builder
         return steps;
     }
 
-    private static T? GetAttribute<T>(Entity entity, string attribute)
-    {
-        return entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
-    }
+    private static T? GetAttribute<T>(Entity entity, string attribute) => entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
+
     private static List<PluginType> GetWorkflowTypes(EntityReference pluginAssembly, IOrganizationService service)
     {
         using var context = new DataContext(service);
@@ -313,7 +372,7 @@ internal static class Builder
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var assemblies = (from pa in context.PluginAssemblySet
             where pa.SourceType != null
-            where pa.SourceType.Value == PluginAssembly.Options.SourceType.Database
+            where pa.SourceType.Value == PluginAssembly.Options.SourceType.Database || pa.SourceType.Value == PluginAssembly.Options.SourceType.FileStore
             where pa.IsolationMode != null
             where pa.IsolationMode.Value == PluginAssembly.Options.IsolationMode.Sandbox
             where pa.Name == name
@@ -324,29 +383,34 @@ internal static class Builder
         {
             return AssemblyState.Create;
         }
+
+        pluginAssembly = assemblies.Single();
+
+        if (pluginAssembly.PackageId != null)
+        {
+            return AssemblyState.Package;
+        }
+
         var split1 = GetVersion(version);
         var majorMinor1 = $"{split1[0]}.{split1[1]}";
-        foreach (var assembly in assemblies)
+        var split2 = GetVersion(pluginAssembly.Version!);
+        var majorMinor2 = $"{split2[0]}.{split2[1]}";
+        if (majorMinor1.Equals(majorMinor2, StringComparison.Ordinal))
         {
-            pluginAssembly = assembly;
-            var split2 = GetVersion(assembly.Version!);
-            var majorMinor2 = $"{split2[0]}.{split2[1]}";
-            if (majorMinor1.Equals(majorMinor2, StringComparison.Ordinal))
-            {
-                pluginAssembly = assembly;
-                return AssemblyState.Update;
-            }
+            return AssemblyState.Update;
         }
+
         return AssemblyState.Upgrade;
     }
 
     private static string[] GetVersion(string version)
     {
         var result = version.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-        if (result.Length != 4)//major.minor.build.patch
+        if (result.Length != 4) //major.minor.build.patch
         {
             throw new ArgumentException($"Version {version} does not match 'major.minor.build.patch'");
         }
+
         return result;
     }
 
@@ -357,8 +421,16 @@ internal static class Builder
         var customAttributes = pluginType.GetCustomAttributes(false);
         foreach (var customAttribute in customAttributes)
         {
-            if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace)) continue;
-            if (customAttribute.GetType().Name != nameof(PluginRegistrationAttribute)) continue;
+            if (!s_knownNamespaces.Contains(customAttribute.GetType().Namespace))
+            {
+                continue;
+            }
+
+            if (customAttribute.GetType().Name != nameof(PluginRegistrationAttribute))
+            {
+                continue;
+            }
+
             var messageName = GetValue<string>(customAttribute, "MessageName");
             var primaryEntityName = GetValue<string>(customAttribute, "PrimaryEntityName") ?? "none";
             var secondaryEntityName = GetValue<string>(customAttribute, "SecondaryEntityName") ?? "none";
@@ -389,9 +461,11 @@ internal static class Builder
                 {
                     throw new AssemblyException($"Message {messageName} does not fit. Check primary and secondary entity!");
                 }
+
                 step.MessageId = sdk.m.SdkMessageId!.Value;
                 step.MessageFilterId = sdk.mf.SdkMessageFilterId!.Value;
             }
+
             if (GetValue<bool>(customAttribute, "PreEntityImage"))
             {
                 step.PluginStepImages.Add(new PluginStepImage
@@ -403,6 +477,7 @@ internal static class Builder
                     Attributes = GetValue<string[]>(customAttribute, "PreEntityImageAttributes")
                 });
             }
+
             if (GetValue<bool>(customAttribute, "PostEntityImage"))
             {
                 step.PluginStepImages.Add(new PluginStepImage
@@ -414,6 +489,7 @@ internal static class Builder
                     Attributes = GetValue<string[]>(customAttribute, "PostEntityImageAttributes")
                 });
             }
+
             steps.Add(step);
         }
 
@@ -427,7 +503,10 @@ internal static class Builder
             ca.GetType().FullName != null
             && ca.GetType().FullName!.Equals(typeof(WorkflowRegistrationAttribute).FullName, StringComparison.Ordinal));
 
-        if (registration == null) return null;
+        if (registration == null)
+        {
+            return null;
+        }
 
         var mappedRegistration = new WorkflowRegistrationAttribute(
             GetValue<string>(registration, "Name")!,
@@ -438,9 +517,8 @@ internal static class Builder
         return mappedRegistration;
     }
 
-    private static string? Stage(int stage)
-    {
-        return stage switch
+    private static string? Stage(int stage) =>
+        stage switch
         {
             10 => "PreValidation",
             20 => "PreOperation",
@@ -448,22 +526,16 @@ internal static class Builder
             40 => "PostOperation",
             _ => null
         };
-    }
 
-    private static string? Mode(int mode)
-    {
-        return mode switch
+    private static string? Mode(int mode) =>
+        mode switch
         {
             0 => "Synchronous",
             1 => "Asynchronous",
             _ => null
         };
-    }
 
-    private static string GetStepName(PluginStep step)
-    {
-        return $"{step.ParentName}|{(!string.IsNullOrEmpty(step.PrimaryEntityName) ? step.PrimaryEntityName : "entity")}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}|{step.ExecutionOrder}";
-    }
+    private static string GetStepName(PluginStep step) => $"{step.ParentName}|{(!string.IsNullOrEmpty(step.PrimaryEntityName) ? step.PrimaryEntityName : "entity")}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}|{step.ExecutionOrder}";
 
     private static string GetMessagePropertyName(string messageName)
     {
@@ -479,6 +551,7 @@ internal static class Builder
                 messagePropertyName = "EntityMoniker";
                 break;
         }
+
         return messagePropertyName;
     }
 
@@ -489,6 +562,7 @@ internal static class Builder
         {
             return (T?)propertyInfo.GetValue(customAttribute);
         }
+
         return default;
     }
 
@@ -508,6 +582,21 @@ internal static class Builder
                 }
             }
         }
+
         return false;
+    }
+}
+
+internal class BuilderBase
+{
+    internal static string[] GetVersion(string version)
+    {
+        var result = version.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        if (result.Length is < 3 or > 4) //major.minor.build.patch
+        {
+            throw new ArgumentException($"Version {version} does not match 'major.minor.build[.patch]'");
+        }
+
+        return result;
     }
 }

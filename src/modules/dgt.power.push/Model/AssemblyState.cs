@@ -5,12 +5,9 @@ namespace dgt.power.push.Model;
 [DataContract]
 public enum AssemblyState
 {
-    [EnumMember]
-    Undefined,
-    [EnumMember]
-    Create,
-    [EnumMember]
-    Update,
-    [EnumMember]
-    Upgrade
+    [EnumMember] Undefined,
+    [EnumMember] Create,
+    [EnumMember] Update,
+    [EnumMember] Upgrade,
+    [EnumMember] Package
 }
