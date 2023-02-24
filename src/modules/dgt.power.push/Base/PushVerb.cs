@@ -1,6 +1,7 @@
-﻿using dgt.power.common;
+﻿using System.ComponentModel;
+using dgt.power.common;
 using Spectre.Console.Cli;
-using System.ComponentModel;
+
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618

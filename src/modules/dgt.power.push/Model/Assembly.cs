@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using dgt.power.dataverse;
+
 #pragma warning disable CA1067
 
 namespace dgt.power.push.Model;
@@ -24,34 +25,37 @@ public class Assembly : IEquatable<Assembly>
     [Required]
     public int IsolationMode { get; set; } = PluginAssembly.Options.IsolationMode.Sandbox;
 
-    [IgnoreDataMember]
-    public string? Content { get; set; }
+    [IgnoreDataMember] public string? Content { get; set; }
 
     [DataMember(Name = "plugin_types", IsRequired = false, EmitDefaultValue = false)]
-    public List<PluginType> PluginTypes { get; set; } = new List<PluginType>();
+    public List<PluginType> PluginTypes { get; set; } = new();
 
     [DataMember(Name = "workflow_types", IsRequired = false, EmitDefaultValue = false)]
-    public List<WorkflowType> WorkflowTypes { get; set; } = new List<WorkflowType>();
+    public List<WorkflowType> WorkflowTypes { get; set; } = new();
 
     [DataMember(Name = "solutions", IsRequired = false)]
-    public List<string> Solutions { get; set; } = new List<string>();
+    public List<string> Solutions { get; set; } = new();
 
-    [IgnoreDataMember]
-    public Guid Id { get; set; }
+    [IgnoreDataMember] public Guid Id { get; set; }
 
-    [IgnoreDataMember]
-    public string TypeCode { get; set; } = PluginAssembly.EntityLogicalName;
+    [IgnoreDataMember] public string TypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 
-    [IgnoreDataMember]
-    public AssemblyState State { get; set; } = AssemblyState.Undefined;
+    [IgnoreDataMember] public AssemblyState State { get; set; } = AssemblyState.Undefined;
 
-    [IgnoreDataMember]
-    public AssemblyType Type { get; set; } = AssemblyType.Undefined;
+    [IgnoreDataMember] public AssemblyType Type { get; set; } = AssemblyType.Undefined;
 
     public bool Equals(Assembly? other)
     {
-        if (other == null) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
         return Name == other.Name &&
                Version == other.Version &&
                Content == other.Content;
