@@ -40,28 +40,34 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
 
                 List<Assembly?> assemblies;
+                var modelBuilder = new ModelBuilder(_connection);
+                var processor = new Processor(_connection);
 
                 if (verb.DllFile.EndsWith(".nupkg"))
                 {
                     // Dependent Plugin
                     AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
-                    var packageLocal = PackageBuilder.BuildFromFile(verb.DllFile);
-                    var packageCrm = PackageBuilder.BuildFromCrm(packageLocal.Name, packageLocal.Version, "dgt", _connection);
+                    var packageLocal = modelBuilder.BuildPackageFromFile(verb.DllFile);
+                    var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version, "dgt");
 
 
                     if (packageCrm.State == AssemblyState.Create)
                     {
                         ctx.Status("CreatePluginPackage");
-                        packageCrm = Processor.CreatePluginPackage(packageLocal, _connection, "dgt");
+                        packageCrm = processor.CreatePluginPackage(packageLocal, "dgt");
+                    }
+                    else
+                    {
+                        ctx.Status("UpdatePluginPackage");
+                        packageCrm = processor.UpdatePluginPackage(packageLocal);
                     }
 
-
-                    assemblies = PackageBuilder.UnpackPackage(verb.DllFile, _connection);
+                    assemblies = modelBuilder.BuildAssemblyFromPackage(verb.DllFile);
                 }
                 else
                 {
-                    assemblies = new List<Assembly?> { AssemblyBuilder.BuildFromDll(verb.DllFile, _connection) };
+                    assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(verb.DllFile) };
                 }
 
 
@@ -74,42 +80,46 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
                     if (localAssembly.Type == AssemblyType.Undefined)
                     {
-                        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold red]does not contain[/] plugins or workflows - aborting");
+                        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                            "Assembly [bold red]does not contain[/] plugins or workflows - aborting");
                         continue;
                     }
 
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
+                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
                     ctx.Status("BuildFromCrm");
-                    var crmAssembly = AssemblyBuilder.BuildFromCrm(localAssembly.Name, localAssembly.Version, _connection);
+                    var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
 
-                    if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type == AssemblyType.Workflow))
+                    if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade &&
+                                                                      crmAssembly.Type == AssemblyType.Workflow))
                     {
                         ctx.Status("CreatePluginAssembly");
-                        crmAssembly = Processor.CreatePluginAssembly(localAssembly, _connection, verb.Solution);
+                        crmAssembly = processor.CreatePluginAssembly(localAssembly, verb.Solution);
                     }
                     else if (crmAssembly.State != AssemblyState.Package && localAssembly.Equals(crmAssembly))
                     {
                         ctx.Status("UpdatePluginAssembly");
-                        crmAssembly = Processor.UpdatePluginAssembly(localAssembly, crmAssembly, _connection, verb.Solution);
+                        crmAssembly = processor.UpdatePluginAssembly(localAssembly, crmAssembly, verb.Solution);
                     }
 
                     if (localAssembly.Type.HasFlag(AssemblyType.Workflow))
                     {
                         ctx.Status("UpsertAndPurgeWorkflowTypes");
-                        Processor.UpsertAndPurgeWorkflowTypes(localAssembly, crmAssembly, _connection);
+                        processor.UpsertAndPurgeWorkflowTypes(localAssembly, crmAssembly);
                     }
 
                     if (localAssembly.Type.HasFlag(AssemblyType.Plugin))
                     {
                         ctx.Status("UpsertAndPurgePluginTypes");
-                        crmAssembly = Processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly, _connection, verb.Solution);
+                        crmAssembly = processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly, verb.Solution);
 
                         if (localAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
                         {
                             ctx.Status("UpsertAndPurgePluginSteps");
-                            crmAssembly = Processor.UpsertAndPurgePluginSteps(localAssembly, crmAssembly, _connection, verb.Solution);
+                            crmAssembly =
+                                processor.UpsertAndPurgePluginSteps(localAssembly, crmAssembly, verb.Solution);
                             ctx.Status("UpsertAndPurgePluginStepImages");
-                            Processor.UpsertAndPurgePluginStepImages(localAssembly, crmAssembly, _connection);
+                            processor.UpsertAndPurgePluginStepImages(localAssembly, crmAssembly);
                         }
                     }
                 }
