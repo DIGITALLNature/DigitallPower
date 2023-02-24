@@ -6,10 +6,8 @@ namespace dgt.power.push.Model;
 [Flags]
 public enum AssemblyType
 {
-    [EnumMember]
-    Undefined,
-    [EnumMember]
-    Workflow,
-    [EnumMember]
-    Plugin
+    [EnumMember] Undefined = 0,
+    [EnumMember] Workflow =1,
+    [EnumMember] Plugin = 2,
+    [EnumMember] PowerPlugin = 4
 }

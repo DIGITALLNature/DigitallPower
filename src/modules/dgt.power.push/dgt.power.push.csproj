@@ -8,6 +8,11 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="dgt.registration" Version="1.0.0" />
+    <PackageReference Include="UiPath.Workflow" Version="6.0.3" />
+  </ItemGroup>
+
 	<ItemGroup>
     <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>

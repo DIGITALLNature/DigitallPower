@@ -33,12 +33,18 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
                 var dllAssembly = Builder.BuildFromDll(verb.DllFile, _connection);
                 if (dllAssembly == default(Assembly)) return;
+
+                if (dllAssembly.Type == AssemblyType.Undefined)
+                {
+                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold red]does not contain[/] plugins or workflows - aborting");
+                    return;
+                }
+
                 AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", dllAssembly.Name, dllAssembly.Version);
                 ctx.Status("BuildFromCrm");
                 var crmAssembly = Builder.BuildFromCrm(dllAssembly.Name, dllAssembly.Version, _connection);
 
-                if (crmAssembly.State == AssemblyState.Create ||
-                    (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type == AssemblyType.Workflow))
+                if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type == AssemblyType.Workflow))
                 {
                     ctx.Status("CreatePluginAssembly");
                     crmAssembly = Processor.CreatePluginAssembly(dllAssembly, _connection, verb.Solution);
@@ -59,10 +65,14 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 {
                     ctx.Status("UpsertAndPurgePluginTypes");
                     crmAssembly = Processor.UpsertAndPurgePluginTypes(dllAssembly, crmAssembly, _connection, verb.Solution);
-                    ctx.Status("UpsertAndPurgePluginSteps");
-                    crmAssembly = Processor.UpsertAndPurgePluginSteps(dllAssembly, crmAssembly, _connection, verb.Solution);
-                    ctx.Status("UpsertAndPurgePluginStepImages");
-                    Processor.UpsertAndPurgePluginStepImages(dllAssembly, crmAssembly, _connection);
+
+                    if (dllAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
+                    {
+                        ctx.Status("UpsertAndPurgePluginSteps");
+                        crmAssembly = Processor.UpsertAndPurgePluginSteps(dllAssembly, crmAssembly, _connection, verb.Solution);
+                        ctx.Status("UpsertAndPurgePluginStepImages");
+                        Processor.UpsertAndPurgePluginStepImages(dllAssembly, crmAssembly, _connection);
+                    }
                 }
 
                 ctx.Status("Finishing");
