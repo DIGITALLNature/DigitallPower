@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.1...v1.6.2) (2023-03-03)
+
+
+### Bug Fixes
+
+* **push:** corrects incorrect detection of whether the assembly needs to be updated ([fccc5d8](https://github.com/DIGITALLNature/DigitallPower/commit/fccc5d87140120c9e5ac1e37aa994ea72d8d0448))
+
 # [1.6.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.5.0...v1.6.0) (2023-03-03)
 
 
