@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.5.0...v1.6.0) (2023-03-03)
+
+
+### Bug Fixes
+
+* **push:** retrieve SolutionPrefix from Publisher ([2145410](https://github.com/DIGITALLNature/DigitallPower/commit/2145410bff8588d84233f94326a606c2ef5608bf))
+
+
+### Features
+
+* **push:** integration of dgt.registration ([d91c574](https://github.com/DIGITALLNature/DigitallPower/commit/d91c5745f248f27fe408a14d279b82ecf38db639))
+* **push:** support for depdendant Plugins (.nupkg) ([54f6077](https://github.com/DIGITALLNature/DigitallPower/commit/54f6077a3747852f2df7df931f9457c566eec5e5))
+* **push:** warn for new-prefix on missing solution for Packages and ignore prefix on search ([8988f5f](https://github.com/DIGITALLNature/DigitallPower/commit/8988f5f1af220659a8a725f1db1382873db9bac9))
+
 # [1.5.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.4.1...v1.5.0) (2023-02-23)
 
 
