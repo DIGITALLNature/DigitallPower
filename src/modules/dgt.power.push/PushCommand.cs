@@ -97,13 +97,12 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     ctx.Status("BuildFromCrm");
                     var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
 
-                    if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade &&
-                                                                      crmAssembly.Type == AssemblyType.Workflow))
+                    if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type.HasFlag(AssemblyType.Workflow)))
                     {
                         ctx.Status("CreatePluginAssembly");
                         crmAssembly = processor.CreatePluginAssembly(localAssembly, verb.Solution);
                     }
-                    else if (crmAssembly.State != AssemblyState.Package && localAssembly.Equals(crmAssembly))
+                    else if (crmAssembly.State == AssemblyState.Update && !localAssembly.Equals(crmAssembly))
                     {
                         ctx.Status("UpdatePluginAssembly");
                         crmAssembly = processor.UpdatePluginAssembly(localAssembly, crmAssembly, verb.Solution);
