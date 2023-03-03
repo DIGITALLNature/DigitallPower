@@ -178,7 +178,7 @@ app.Configure(config =>
             errorMessage = innerException!.Message;
         }
 
-        AnsiConsole.MarkupLine($"[red]{errorMessage}[/]");
+        AnsiConsole.MarkupLineInterpolated($"[red]{errorMessage}[/]");
         return (int)ExitCode.Error;
     });
 #endif
