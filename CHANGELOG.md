@@ -5,6 +5,13 @@
 
 * **push:** corrects incorrect detection of whether the assembly needs to be updated ([fccc5d8](https://github.com/DIGITALLNature/DigitallPower/commit/fccc5d87140120c9e5ac1e37aa994ea72d8d0448))
 
+## [1.6.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.0...v1.6.1) (2023-03-03)
+
+
+### Bug Fixes
+
+* **main:** escape Errormessage for pretty console print ([d2d0140](https://github.com/DIGITALLNature/DigitallPower/commit/d2d01401fdf22f6f767521ee8224c091ec339e29))
+
 # [1.6.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.5.0...v1.6.0) (2023-03-03)
 
 
