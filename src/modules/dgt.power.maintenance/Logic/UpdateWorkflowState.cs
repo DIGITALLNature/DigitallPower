@@ -27,7 +27,7 @@ public class UpdateWorkflowState : BaseMaintenance
         Tracer.Start(this);
 
         // Inline arguments are not yet supported so throw error if supplied
-        if (string.IsNullOrWhiteSpace(args?.InlineData))
+        if (string.IsNullOrWhiteSpace(args.InlineData))
         {
             throw new NotImplementedException("Inline arguments are not yet supported");
         }
@@ -88,7 +88,7 @@ public class UpdateWorkflowState : BaseMaintenance
         var round = 0;
         var updateResults = flows.ToDictionary(f => f, _ => false);
 
-        int previousFailures = 0, currentFailures = 0;
+        int previousFailures, currentFailures = 0;
         do
         {
             previousFailures = currentFailures;
@@ -105,9 +105,10 @@ public class UpdateWorkflowState : BaseMaintenance
             }
 
             currentFailures = updateResults.Count(r => !r.Value);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         } while (currentFailures > 0 && currentFailures < previousFailures);
 
-        return previousFailures > 0;
+        return currentFailures > 0;
     }
 
     /// <summary>
@@ -134,8 +135,8 @@ public class UpdateWorkflowState : BaseMaintenance
         workflowConfig.Flows?.TryGetValue(flowName, out flowConfig);
 
         var disabled = flowConfig?.Disabled ?? false; // Default to enable flow if nothing is set in config
-        var ownerText = flowConfig?.Owner ?? workflowConfig?.DefaultOwner; // Owner specified on flow level overrides default (empty string also triggers override)
-        var impersonateText = flowConfig?.Impersonate ?? workflowConfig?.DefaultImpersonate; // Impersonate specified on flow level overrides default (empty string also triggers override)
+        var ownerText = flowConfig?.Owner ?? workflowConfig.DefaultOwner; // Owner specified on flow level overrides default (empty string also triggers override)
+        var impersonateText = flowConfig?.Impersonate ?? workflowConfig.DefaultImpersonate; // Impersonate specified on flow level overrides default (empty string also triggers override)
 
         var owner = await ResolveSystemUser(ownerText);
         var impersonate = await ResolveSystemUser(impersonateText);
@@ -219,21 +220,21 @@ public class UpdateWorkflowState : BaseMaintenance
     /// </summary>
     /// <param name="username">Domain name to look for</param>
     /// <returns>Found user or default object if not found</returns>
-    private async Task<SystemUser?> ResolveSystemUser(string? username)
+    private Task<SystemUser?> ResolveSystemUser(string? username)
     {
 
         // If no username is given return default
         if (string.IsNullOrWhiteSpace(username))
         {
             Tracer.Log($"[grey]   > No username given", TraceEventType.Verbose);
-            return default;
+            return Task.FromResult<SystemUser?>(default);
         }
 
         // Check if we seen the username already and if so grab it from the table
         if (!string.IsNullOrWhiteSpace(username) && _userTable.TryGetValue(username, out var user))
         {
             Tracer.Log($"[grey]   > Resolved user '{username.EscapeMarkup()}' ({user.Id})[/]", TraceEventType.Verbose);
-            return user;
+            return Task.FromResult<SystemUser?>(user);
         }
 
         // Check for existing systemuser with domain name
@@ -256,11 +257,11 @@ public class UpdateWorkflowState : BaseMaintenance
         if (user == default)
         {
             Tracer.Log($"[orange3]   > No user found for '{username.EscapeMarkup()}'[/]", TraceEventType.Warning);
-            return default;
+            return Task.FromResult<SystemUser?>(default);
         }
 
         _userTable.TryAdd(username, user);
-        return user;
+        return Task.FromResult<SystemUser?>(user);
     }
 
     /// <summary>
