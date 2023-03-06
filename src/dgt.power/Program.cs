@@ -51,7 +51,7 @@ registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
     }
 });
-registrations.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForApplication());
+registrations.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();

@@ -101,15 +101,15 @@ public sealed class DocumentTemplateImport : BaseImport
         return result;
     }
 
-    private bool SetTemplateStatus(DocumentTemplate createTemplate, bool result, Guid id)
+    private bool SetTemplateStatus(DocumentTemplate template, bool result, Guid id)
     {
-        if ((createTemplate.DocumentStatus ?? false) == Status.Activated) //enable
+        if ((template.DocumentStatus ?? false) == Status.Activated) //enable
         {
             result = Connection.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
                 Status.Activated) & result;
         }
-        else if ((createTemplate.DocumentStatus ?? false) == Status.Draft) //disable
+        else if ((template.DocumentStatus ?? false) == Status.Draft) //disable
         {
             result = Connection.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
@@ -143,8 +143,8 @@ public sealed class DocumentTemplateImport : BaseImport
         Tracer.Log("--->", TraceEventType.Verbose);
         var existingTemplate = templates.Templates.Single(e =>
             (updateTemplate.Name, updateTemplate.DocumentType?.Value) == (e.Name, (int)e.DocumentType));
-        var status = !updateTemplate.Status.GetValueOrDefault(Status.Draft); //inverted logic, don't ask why
-        if (status != existingTemplate.DocumentStatus && status == Status.Draft) //disable
+        var currentStatus = updateTemplate.Status.GetValueOrDefault(Status.Draft);
+        if (currentStatus != existingTemplate.DocumentStatus && currentStatus == Status.Activated) //disable
         {
             Tracer.Log($"disable document template: {updateTemplate.Name}", TraceEventType.Verbose);
             result = Connection.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft) &

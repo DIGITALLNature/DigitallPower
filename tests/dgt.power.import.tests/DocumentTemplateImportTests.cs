@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
+
 #pragma warning disable CS8629
 
 namespace dgt.power.import.tests;
@@ -16,11 +17,6 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
 {
     public DocumentTemplateImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
-    }
-
-    protected override CommandTestContextBuilder<DocumentTemplateImport, ImportVerb> GetBuilder()
-    {
-        return base.GetBuilder();
     }
 
     private (DocumentTemplate accountExcel, DocumentTemplate contactExcel, DocumentTemplate accountWord,
@@ -83,9 +79,9 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
         GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new DocumentTemplates
-                    {
-                        Templates = new List<dto.DocumentTemplate>()
-                    }).Name,
+                {
+                    Templates = new List<dto.DocumentTemplate>()
+                }).Name,
                 FileDir = ArtifactDirectory
             }
         ).Should().BeFalse();
@@ -93,9 +89,9 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     [Fact]
     public void ShouldForceTemplateUpdate()
     {
+        var (existingTemplate, _, _, _) = GetData();
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("force-update-templates.json");
         var forceUpdateTemplate = templateConfiguration.Templates.Single();
-        var (existingTemplate, _, _, _) = GetData();
 
         var context = GetBuilder()
             .WithData(existingTemplate)
@@ -123,9 +119,27 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     [Fact]
     public void ShouldDisableExistingTemplate()
     {
-        var templateConfiguration = GetConfigurationResource<DocumentTemplates>("disable-templates.json");
-        var updateTemplate = templateConfiguration.Templates.Single();
         var (_, _, existingTemplate, _) = GetData();
+        var templateConfiguration = new DocumentTemplates
+        {
+            IgnoreMissing = false,
+            Templates = new List<dto.DocumentTemplate>
+            {
+                new()
+                {
+                    DocumentTemplateId = existingTemplate.Id,
+                    Name = "AccountWord",
+                    File = ResourceDirectory + "/DocumentTemplate/Account.docx",
+                    DocumentType = dto.DocumentTemplate.DocumentTemplateType.MicrosoftWord,
+                    ForceUpdate = false,
+                    Description = "Update",
+                    LanguageCode = 1033,
+                    AssociatedEntityTypeCode = Account.EntityLogicalName,
+                    DocumentStatus = true
+                }
+            }
+        };
+        var updateTemplate = templateConfiguration.Templates.Single();
 
         var context = GetBuilder()
             .WithData(existingTemplate)
@@ -133,8 +147,8 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
 
         context.Execute(new ImportVerb
             {
-                FileName = "disable-templates.json",
-                FileDir = ResourceDirectory
+                FileName = WriteConfigurationArtifact(templateConfiguration).FullName,
+                FileDir = ArtifactDirectory
             }
         ).Should().BeTrue();
 
