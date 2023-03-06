@@ -20,7 +20,7 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
     public ProfileTestsBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
         _services = new TestServiceCollection();
-        _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForApplication());
+        _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
         _services.AddTransient<IProfileManager, ProfileManager>(provider =>
             new ProfileManager(provider.GetRequiredService<IsolatedStorageFile>(), IdentityFileName));
         _serviceProvider = _services.BuildServiceProvider();
