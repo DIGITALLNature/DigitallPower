@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.2...v1.6.3) (2023-03-06)
+
+
+### Bug Fixes
+
+* bugfixes for document template import and profile deletion on tool update ([#38](https://github.com/DIGITALLNature/DigitallPower/issues/38)) ([66d500a](https://github.com/DIGITALLNature/DigitallPower/commit/66d500ab6808710ebb231558c4984b7ebbc6d3e2))
+
 ## [1.6.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.1...v1.6.2) (2023-03-03)
 
 
