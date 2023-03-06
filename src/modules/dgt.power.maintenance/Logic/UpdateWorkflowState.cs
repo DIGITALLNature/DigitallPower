@@ -45,6 +45,11 @@ public class UpdateWorkflowState : BaseMaintenance
         return Tracer.End(this, task.Result);
     }
 
+    /// <summary>
+    /// Take a given workflow config and update corresponding flows
+    /// </summary>
+    /// <param name="workflowConfig">The underlying workflow config</param>
+    /// <returns>True if no errors occured otherwise False</returns>
     private async Task<bool> UpdateWorkflowStates(WorkflowConfig workflowConfig)
     {
         return await AnsiConsole.Progress()
@@ -69,7 +74,14 @@ public class UpdateWorkflowState : BaseMaintenance
             });
     }
 
-    private async Task<bool> UpdateModernFlows(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask progressTask)
+    /// <summary>
+    /// Take a list of given flows and update them so they fit the given config
+    /// </summary>
+    /// <param name="flows">List of modern flows</param>
+    /// <param name="workflowConfig">Workflow Config</param>
+    /// <param name="progressTask">Progress task to report progress to the calling method</param>
+    /// <returns></returns>
+    private async Task<bool> UpdateModernFlows(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask? progressTask)
     {
         // Introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
         // Keep track of failues in a dictionary
@@ -85,10 +97,10 @@ public class UpdateWorkflowState : BaseMaintenance
             // Traverse all workflows that were markes as failures in the last round (initially all are marked as failures)
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
-                if (await TryUpdateModernFlow(workflow, workflowConfig))
+                if (await TryUpdateModernFlow(workflow.Key, workflowConfig))
                 {
                     updateResults[workflow.Key] = true;
-                    progressTask.Increment(1);
+                    progressTask?.Increment(1);
                 }
             }
 
@@ -98,14 +110,20 @@ public class UpdateWorkflowState : BaseMaintenance
         return previousFailures > 0;
     }
 
-    private async Task<bool> TryUpdateModernFlow(KeyValuePair<Workflow,bool> workflow, WorkflowConfig workflowConfig)
+    /// <summary>
+    /// Updates a single flow to fit a given config
+    /// </summary>
+    /// <param name="workflow">Given flow</param>
+    /// <param name="workflowConfig">Workflow config</param>
+    /// <returns></returns>
+    private async Task<bool> TryUpdateModernFlow(Workflow workflow, WorkflowConfig workflowConfig)
     {
-        var flow = workflow.Key;
+        var flow = workflow;
         var flowName = flow.Name;
 
         if (string.IsNullOrWhiteSpace(flowName))
         {
-            Tracer.Log($"[red] - Unable to process flow without name ({workflow.Key.Id})", TraceEventType.Error);
+            Tracer.Log($"[red] - Unable to process flow without name ({workflow.Id})", TraceEventType.Error);
             return false;
         }
 
@@ -196,6 +214,11 @@ public class UpdateWorkflowState : BaseMaintenance
         }
     }
 
+    /// <summary>
+    /// Take a username and look for a systemuser with a corresponding domain name
+    /// </summary>
+    /// <param name="username">Domain name to look for</param>
+    /// <returns>Found user or default object if not found</returns>
     private async Task<SystemUser?> ResolveSystemUser(string? username)
     {
 
