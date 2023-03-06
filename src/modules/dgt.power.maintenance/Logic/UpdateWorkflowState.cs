@@ -56,10 +56,10 @@ public class UpdateWorkflowState : BaseMaintenance
                 updateModernFlowTask.MaxValue = flows.Count;
                 updateModernFlowTask.StartTask();
 
-                await UpdateModernFlows(flows, workflowConfig.Flows, updateModernFlowTask);
+                var result = await UpdateModernFlows(flows, workflowConfig.Flows, updateModernFlowTask);
 
                 updateModernFlowTask.StopTask();
-                return true;
+                return result;
             });
     }
 
