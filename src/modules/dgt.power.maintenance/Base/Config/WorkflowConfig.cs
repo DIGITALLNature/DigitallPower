@@ -10,6 +10,8 @@ public class WorkflowConfig
     [JsonPropertyName("solutionfilter")] public string[]? SolutionFilter { get; set; }
     [JsonPropertyName("publisherfilter")] public string[]? PublisherFilter { get; set; }
     [JsonPropertyName("flows")] public Dictionary<string, FlowConfig>? Flows { get; set; }
+    [JsonPropertyName("owner")] public string? DefaultOwner { get; set; }
+    [JsonPropertyName("impersonate")] public string? DefaultImpersonate { get; set; }
 
     public class FlowConfig
     {

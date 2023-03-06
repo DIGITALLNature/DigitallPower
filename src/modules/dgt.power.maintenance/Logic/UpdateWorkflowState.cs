@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.Reflection;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
@@ -14,7 +15,12 @@ namespace dgt.power.maintenance.Logic;
 
 public class UpdateWorkflowState : BaseMaintenance
 {
-    public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver) { }
+    private readonly Dictionary<string, SystemUser> _userTable;
+
+    public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    {
+        _userTable = new Dictionary<string, SystemUser>();
+    }
 
     protected override bool Invoke(MaintenanceVerb args)
     {
@@ -56,14 +62,14 @@ public class UpdateWorkflowState : BaseMaintenance
                 updateModernFlowTask.MaxValue = flows.Count;
                 updateModernFlowTask.StartTask();
 
-                var result = await UpdateModernFlows(flows, workflowConfig.Flows, updateModernFlowTask);
+                var result = await UpdateModernFlows(flows, workflowConfig, updateModernFlowTask);
 
                 updateModernFlowTask.StopTask();
                 return result;
             });
     }
 
-    private Task<bool> UpdateModernFlows(List<Workflow> flows, IDictionary<string, WorkflowConfig.FlowConfig>? flowConfigs, ProgressTask progressTask)
+    private async Task<bool> UpdateModernFlows(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask progressTask)
     {
         // Introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
         // Keep track of failues in a dictionary
@@ -79,7 +85,7 @@ public class UpdateWorkflowState : BaseMaintenance
             // Traverse all workflows that were markes as failures in the last round (initially all are marked as failures)
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
-                if (TryUpdateModernFlow(workflow, flowConfigs))
+                if (await TryUpdateModernFlow(workflow, workflowConfig))
                 {
                     updateResults[workflow.Key] = true;
                     progressTask.Increment(1);
@@ -89,10 +95,10 @@ public class UpdateWorkflowState : BaseMaintenance
             currentFailures = updateResults.Count(r => !r.Value);
         } while (currentFailures > 0 && currentFailures < previousFailures);
 
-        return Task.FromResult(previousFailures > 0);
+        return previousFailures > 0;
     }
 
-    private bool TryUpdateModernFlow(KeyValuePair<Workflow,bool> workflow, IDictionary<string, WorkflowConfig.FlowConfig>? flowConfigs)
+    private async Task<bool> TryUpdateModernFlow(KeyValuePair<Workflow,bool> workflow, WorkflowConfig workflowConfig)
     {
         var flow = workflow.Key;
         var flowName = flow.Name;
@@ -107,29 +113,42 @@ public class UpdateWorkflowState : BaseMaintenance
 
         // Check if flow has an existing config
         WorkflowConfig.FlowConfig? flowConfig = default;
-        flowConfigs?.TryGetValue(flowName, out flowConfig);
+        workflowConfig.Flows?.TryGetValue(flowName, out flowConfig);
 
         var disabled = flowConfig?.Disabled ?? false; // Default to enable flow if nothing is set in config
+        var ownerText = flowConfig?.Owner ?? workflowConfig?.DefaultOwner; // Owner specified on flow level overrides default (empty string also triggers override)
+        var impersonateText = flowConfig?.Impersonate ?? workflowConfig?.DefaultImpersonate; // Impersonate specified on flow level overrides default (empty string also triggers override)
 
-        // TODO: Extend for owner and impersonate
+        var owner = await ResolveSystemUser(ownerText);
+        var impersonate = await ResolveSystemUser(impersonateText);
 
         // Prepare flow object to update (but only if necessary)
         var updateFlow = new Workflow(flow.Id);
         var updateNeeded = false;
 
-        Tracer.Log($"[grey]   > Desired: disabled={disabled}; Current: disabled={flow.StateCode?.Value != Workflow.Options.StateCode.Activated}[/]", TraceEventType.Verbose);
+        Tracer.Log($"[grey]   > Desired State: disabled={disabled}; Current: disabled={flow.StateCode?.Value != Workflow.Options.StateCode.Activated}[/]", TraceEventType.Verbose);
         switch (disabled)
         {
             // If flow should be disaled but is activated try deactivate it
             case true when flow.StateCode?.Value == Workflow.Options.StateCode.Activated:
                 updateFlow.StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft);
                 updateFlow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft);
+                updateNeeded = true;
                 break;
             // If flow should be enabled but is disabled try activate it
             case false when flow.StateCode?.Value != Workflow.Options.StateCode.Activated:
                 updateFlow.StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated);
                 updateFlow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated);
+                updateNeeded = true;
                 break;
+        }
+
+        flow.FormattedValues.TryGetValue(Workflow.LogicalNames.OwnerId, out var currentOwnerText);
+        Tracer.Log($"[grey]   > Desired Owner: {owner?.Id} ({owner?.FullName.EscapeMarkup()}); Current: {flow.OwnerId?.Id} ({currentOwnerText.EscapeMarkup()})[/]", TraceEventType.Verbose);
+        if (owner?.Id != default && owner.Id != flow.OwnerId?.Id)
+        {
+            updateFlow.OwnerId = owner.ToEntityReference();
+            updateNeeded = true;
         }
 
         if (!updateNeeded)
@@ -141,7 +160,32 @@ public class UpdateWorkflowState : BaseMaintenance
         Tracer.Log($"[grey]   > Update needed. Performing update[/]", TraceEventType.Verbose);
         try
         {
-            Connection.Update(updateFlow);
+            if (impersonate != default)
+            {
+                var callerId = Connection.GetType().GetProperty("CallerId", BindingFlags.Instance | BindingFlags.Public);
+
+                // Check if used service supports impersonation. This should be the case in real scenarios, but might fail with unit tests
+                if (callerId == default)
+                {
+                    Tracer.Log($"[orange3]   > Service '{Connection.GetType().Name}' does not support impersonation. Continuing without[/]", TraceEventType.Warning);
+                    Connection.Update(updateFlow);
+                }
+                else
+                {
+                    Tracer.Log($"[grey]   > Using impersonation of {impersonate.Id}[/]", TraceEventType.Verbose);
+
+                    // Store current callerid and restore it since we want to reuse the connection
+                    var oldCaller = callerId.GetValue(Connection);
+                    callerId.SetValue(Connection, impersonate.Id);
+                    Connection.Update(updateFlow);
+                    callerId.SetValue(Connection, oldCaller);
+                }
+            }
+            else
+            {
+                Connection.Update(updateFlow);
+            }
+
             Tracer.Log($" > Updated flow successfully: [green]'{flow.Name.EscapeMarkup()}'[/]", TraceEventType.Information);
             return true;
         }
@@ -150,6 +194,50 @@ public class UpdateWorkflowState : BaseMaintenance
             Tracer.Log($"[red] > Unable to update flow '{flow.Name.EscapeMarkup()}':[/] [grey]{e.Message}[/]", TraceEventType.Error);
             return false;
         }
+    }
+
+    private async Task<SystemUser?> ResolveSystemUser(string? username)
+    {
+
+        // If no username is given return default
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            Tracer.Log($"[grey]   > No username given", TraceEventType.Verbose);
+            return default;
+        }
+
+        // Check if we seen the username already and if so grab it from the table
+        if (!string.IsNullOrWhiteSpace(username) && _userTable.TryGetValue(username, out var user))
+        {
+            Tracer.Log($"[grey]   > Resolved user '{username.EscapeMarkup()}' ({user.Id})[/]", TraceEventType.Verbose);
+            return user;
+        }
+
+        // Check for existing systemuser with domain name
+        var query = new QueryExpression
+        {
+            EntityName = SystemUser.EntityLogicalName,
+            ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName, SystemUser.LogicalNames.FullName),
+            Distinct = true,
+            NoLock = true,
+            TopCount = 1,
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions = { new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, username) },
+            },
+        };
+
+        user = Connection.RetrieveMultiple(query).Entities.Cast<SystemUser>().SingleOrDefault();
+
+        // If we do not find a user fall return default
+        if (user == default)
+        {
+            Tracer.Log($"[orange3]   > No user found for '{username.EscapeMarkup()}'[/]", TraceEventType.Warning);
+            return default;
+        }
+
+        _userTable.TryAdd(username, user);
+        return user;
     }
 
     /// <summary>
