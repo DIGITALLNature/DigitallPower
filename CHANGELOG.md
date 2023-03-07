@@ -1,3 +1,10 @@
+# [1.8.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.1...v1.8.0-beta.2) (2023-03-07)
+
+
+### Bug Fixes
+
+* **dgt.power:** add version prefix to dgt.power.csproj to be able to replace it ([de33635](https://github.com/DIGITALLNature/DigitallPower/commit/de33635ec8b3171ac5a39b8da1e44eae17e9c3ea))
+
 # [1.8.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.0...v1.8.0-beta.1) (2023-03-07)
 
 
