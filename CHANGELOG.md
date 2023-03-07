@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.3...v1.7.0) (2023-03-07)
+
+
+### Features
+
+* **maintenance:** tool to enable modern flows based on configuration ([#39](https://github.com/DIGITALLNature/DigitallPower/issues/39)) ([e425d70](https://github.com/DIGITALLNature/DigitallPower/commit/e425d7091bf857a131ff62ff7e2d2e562966a97e))
+
 ## [1.6.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.2...v1.6.3) (2023-03-06)
 
 
