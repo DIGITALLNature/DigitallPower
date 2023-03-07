@@ -22,9 +22,30 @@
             "@semantic-release/changelog",
             "@droidsolutions-oss/semantic-release-nuget",
             [
+                "@droidsolutions-oss/semantic-release-update-file",
+                {
+                    "files": [
+                        {
+                            "path": [
+                                "src/dgt.power/dgt.power.csproj"
+                            ],
+                            "type": "xml",
+                            "replacements": [
+                                {
+                                    "key": "VersionPrefix",
+                                    "value": "${nextRelease.version}"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            [
                 "@semantic-release/git",
                 {
-                    "assets": ["CHANGELOG.md"],
+                    "assets": [
+                        "CHANGELOG.md"
+                    ],
                     "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
                 }
             ],
