@@ -121,6 +121,9 @@ app.Configure(config =>
             maintenance.AddCommand<IncrementSolutionVersion>("solution-version")
                 .WithDescription("Increments the solution version by given flag")
                 .WithExample(new[] {"maintenance", "solution-version", "sample_solution", "--minor"});
+            maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
+                .WithDescription("Updates workflows with given configuration")
+                .WithExample(new[] { "maintenance", "workflowstate", "--config", "./config.json" });
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>

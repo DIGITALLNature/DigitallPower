@@ -1,0 +1,7 @@
+﻿{
+    "flows": {
+        "sample": {
+            "invalid": "nested"
+        }
+    }
+}
