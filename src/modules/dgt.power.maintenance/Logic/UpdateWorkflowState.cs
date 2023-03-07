@@ -27,7 +27,7 @@ public class UpdateWorkflowState : BaseMaintenance
         Tracer.Start(this);
 
         // Inline arguments are not yet supported so throw error if supplied
-        if (string.IsNullOrWhiteSpace(args.InlineData))
+        if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
             throw new NotImplementedException("Inline arguments are not yet supported");
         }
@@ -64,7 +64,8 @@ public class UpdateWorkflowState : BaseMaintenance
                 loadModernFlowTask.StopTask();
 
                 // Go through found flows and update state and owner
-                updateModernFlowTask.MaxValue = flows.Count;
+                updateModernFlowTask.MaxValue = flows.Count + 1;
+                updateModernFlowTask.Increment(1);
                 updateModernFlowTask.StartTask();
 
                 var result = await UpdateModernFlows(flows, workflowConfig, updateModernFlowTask);
@@ -84,7 +85,7 @@ public class UpdateWorkflowState : BaseMaintenance
     private async Task<bool> UpdateModernFlows(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask? progressTask)
     {
         // Introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
-        // Keep track of failues in a dictionary
+        // Keep track of failures in a dictionary
         var round = 0;
         var updateResults = flows.ToDictionary(f => f, _ => false);
 
@@ -92,9 +93,9 @@ public class UpdateWorkflowState : BaseMaintenance
         do
         {
             previousFailures = currentFailures;
-            Tracer.Log($"Updating Flows - Round {round} ({previousFailures} failures)", TraceEventType.Information);
+            Tracer.Log($"Updating Flows - Round {round++} ({previousFailures} failures)", TraceEventType.Information);
 
-            // Traverse all workflows that were markes as failures in the last round (initially all are marked as failures)
+            // Traverse all workflows that were marked as failures in the last round (initially all are marked as failures)
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
                 if (await TryUpdateModernFlow(workflow.Key, workflowConfig))
@@ -108,7 +109,7 @@ public class UpdateWorkflowState : BaseMaintenance
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         } while (currentFailures > 0 && currentFailures < previousFailures);
 
-        return currentFailures > 0;
+        return currentFailures <= 0;
     }
 
     /// <summary>
@@ -124,11 +125,11 @@ public class UpdateWorkflowState : BaseMaintenance
 
         if (string.IsNullOrWhiteSpace(flowName))
         {
-            Tracer.Log($"[red] - Unable to process flow without name ({workflow.Id})", TraceEventType.Error);
+            Tracer.Log($"[red] - Unable to process flow without name ({workflow.Id})[/]", TraceEventType.Error);
             return false;
         }
 
-        Tracer.Log($"[grey] - Checking flow '{flowName.EscapeMarkup()}'", TraceEventType.Verbose);
+        Tracer.Log($"[grey] - Checking flow '{flowName.EscapeMarkup()}'[/]", TraceEventType.Verbose);
 
         // Check if flow has an existing config
         WorkflowConfig.FlowConfig? flowConfig = default;
@@ -148,7 +149,7 @@ public class UpdateWorkflowState : BaseMaintenance
         Tracer.Log($"[grey]   > Desired State: disabled={disabled}; Current: disabled={flow.StateCode?.Value != Workflow.Options.StateCode.Activated}[/]", TraceEventType.Verbose);
         switch (disabled)
         {
-            // If flow should be disaled but is activated try deactivate it
+            // If flow should be disabled but is activated try deactivate it
             case true when flow.StateCode?.Value == Workflow.Options.StateCode.Activated:
                 updateFlow.StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft);
                 updateFlow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft);
@@ -193,7 +194,7 @@ public class UpdateWorkflowState : BaseMaintenance
                 {
                     Tracer.Log($"[grey]   > Using impersonation of {impersonate.Id}[/]", TraceEventType.Verbose);
 
-                    // Store current callerid and restore it since we want to reuse the connection
+                    // Store current caller id and restore it since we want to reuse the connection
                     var oldCaller = callerId.GetValue(Connection);
                     callerId.SetValue(Connection, impersonate.Id);
                     Connection.Update(updateFlow);
@@ -222,13 +223,13 @@ public class UpdateWorkflowState : BaseMaintenance
     /// <returns>Found user or default object if not found</returns>
     private Task<SystemUser?> ResolveSystemUser(string? username)
     {
-
         // If no username is given return default
         if (string.IsNullOrWhiteSpace(username))
         {
-            Tracer.Log($"[grey]   > No username given", TraceEventType.Verbose);
+            Tracer.Log("[grey]   > No username given[/]", TraceEventType.Verbose);
             return Task.FromResult<SystemUser?>(default);
         }
+        Tracer.Log($"[grey]   > Trying to resolve '{username}'[/]", TraceEventType.Verbose);
 
         // Check if we seen the username already and if so grab it from the table
         if (!string.IsNullOrWhiteSpace(username) && _userTable.TryGetValue(username, out var user))
@@ -307,7 +308,7 @@ public class UpdateWorkflowState : BaseMaintenance
                 foreach (var solution in solutions)
                 {
                     Tracer.Log($"[grey] -> Adding solution condition '{solution.EscapeMarkup()}'[/]", TraceEventType.Verbose);
-                    // Add condition to link filter with unique comparison wich allows fetch xml patterns (%)
+                    // Add condition to link filter with unique comparison which allows fetch xml patterns (%)
                     linkFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
                 }
             }
@@ -315,7 +316,7 @@ public class UpdateWorkflowState : BaseMaintenance
             // Add publisher filters if any exist
             if (publishers?.Any() == true)
             {
-                var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Publisher.LogicalNames.PublisherId, Solution.LogicalNames.PublisherId, JoinOperator.LeftOuter);
+                var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.LeftOuter);
                 publisherLink.EntityAlias = "publisher";
 
                 foreach (var publisher in publishers)
