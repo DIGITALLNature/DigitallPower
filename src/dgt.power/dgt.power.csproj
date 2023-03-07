@@ -11,6 +11,7 @@
     <Copyright>DIGITALL Nature GmbH</Copyright>
     <Authors>Marcel Kummerow,Micha Oberstein,Simon Findling</Authors>
     <Product>Digitall Power CLI for Dataverse</Product>
+    <VersionPrefix>1.8.0</VersionPrefix>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DIGITALLNature/DigitallPower</PackageProjectUrl>
