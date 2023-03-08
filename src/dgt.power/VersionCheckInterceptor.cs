@@ -29,6 +29,12 @@ public class VersionCheckInterceptor : ICommandInterceptor
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
+        if (CheckForBuildAgent())
+        {
+            AnsiConsole.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
+            return;
+        }
+
         var localPackageData = _isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
 
         var today = DateTime.Today;
@@ -39,6 +45,18 @@ public class VersionCheckInterceptor : ICommandInterceptor
             localPackageData.LastUpdateCheckOn = today;
             WriteLastUpdateCheck(localPackageData);
         }
+    }
+
+    private bool CheckForBuildAgent()
+    {
+        var isAgent = false;
+
+        // Azure DevOps
+        isAgent |= Environment.GetEnvironmentVariable("BUILD_BUILDURI") != null;
+        // GitHub
+        isAgent |= Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null;
+
+        return isAgent;
     }
 
     private void CheckForNewVersion()
