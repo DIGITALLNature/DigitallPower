@@ -1,0 +1,34 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>DIGITALL Nature GmbH</Company>
+    <Copyright>Copyright (c) DIGITALL Nature GmbH 2023</Copyright>
+    <Authors>Marcel Kummerow,Micha Oberstein,Simon Findling</Authors>
+    <Product>Digitall Power CLI for Dataverse</Product>
+    <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/DIGITALLNature/DigitallPower</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageLicenseFile>Licence.md</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>https://github.com/DIGITALLNature/DigitallPower/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Licence.md" Pack="true" PackagePath=""/>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
+    <None Include="$(MSBuildThisFileDirectory)CHANGELOG.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
