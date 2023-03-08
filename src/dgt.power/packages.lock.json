@@ -71,6 +71,15 @@
           "Microsoft.SourceLink.Common": "1.1.1"
         }
       },
+      "NuGet.Protocol": {
+        "type": "Direct",
+        "requested": "[6.5.0, )",
+        "resolved": "6.5.0",
+        "contentHash": "CXDvu2mZga3qDAGvXTt6QTdpPZ5qNjpjZK2g7lU0MjamE3Eyi3dkN/GSr5QIyupcuCeOM8XHiNHRag6IF63Aqw==",
+        "dependencies": {
+          "NuGet.Packaging": "6.5.0"
+        }
+      },
       "Spectre.Console.Cli": {
         "type": "Direct",
         "requested": "[0.46.0, )",
