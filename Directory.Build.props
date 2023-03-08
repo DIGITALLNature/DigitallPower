@@ -12,6 +12,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>https://github.com/DIGITALLNature/DigitallPower/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
