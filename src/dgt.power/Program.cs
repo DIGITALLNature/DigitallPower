@@ -27,6 +27,8 @@ using dgt.power.push;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -37,6 +39,11 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var registrations = new ServiceCollection();
+registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
+    .GetCoreV3("https://api.nuget.org/v3/index.json")
+    .GetResource<PackageMetadataResource>()
+);
+registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<ITracer, Tracer>();
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
@@ -66,6 +73,8 @@ var app = new CommandApp(registrar);
 
 app.Configure(config =>
 {
+    var versionCheckInterceptor = registrations.BuildServiceProvider().GetRequiredService<VersionCheckInterceptor>();
+    config.SetInterceptor(versionCheckInterceptor);
     config.AddBranch<ProfileSettings>("profile", profile =>
     {
         profile.SetDescription("Handles Authentication");
@@ -123,7 +132,7 @@ app.Configure(config =>
                 .WithExample(new[] {"maintenance", "solution-version", "sample_solution", "--minor"});
             maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
                 .WithDescription("Updates workflows with given configuration")
-                .WithExample(new[] { "maintenance", "workflowstate", "--config", "./config.json" });
+                .WithExample(new[] {"maintenance", "workflowstate", "--config", "./config.json"});
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
