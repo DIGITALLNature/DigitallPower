@@ -1,3 +1,10 @@
+# [1.8.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.3...v1.8.0-beta.4) (2023-03-08)
+
+
+### Features
+
+* **dgt.power:** skip version check on build agents ([6e1c87d](https://github.com/DIGITALLNature/DigitallPower/commit/6e1c87d7015451c73498da21b1d1b4beff41c924))
+
 # [1.8.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.2...v1.8.0-beta.3) (2023-03-08)
 
 
