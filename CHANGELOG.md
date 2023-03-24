@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.0...v1.7.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* **codegeneration:** handled when bit options are named the same ([#42](https://github.com/DIGITALLNature/DigitallPower/issues/42)) ([0b6aa25](https://github.com/DIGITALLNature/DigitallPower/commit/0b6aa2587a1b78e954bf75c04684820fa17d0ac5))
+
 # [1.7.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.6.3...v1.7.0) (2023-03-07)
 
 
