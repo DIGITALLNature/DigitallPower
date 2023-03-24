@@ -380,6 +380,10 @@ if(structLabel.Equals(falseLabel, StringComparison.InvariantCultureIgnoreCase)){
 if(structLabel.Equals(trueLabel, StringComparison.InvariantCultureIgnoreCase)){
   trueLabel = trueLabel + "_";
 }
+if(trueLabel.Equals(falseLabel, StringComparison.InvariantCultureIgnoreCase)){
+ trueLabel = trueLabel + "_true";
+ falseLabel = falseLabel + "_false";
+}
 
             this.Write("                public struct ");
             this.Write(this.ToStringHelper.ToStringWithCulture(structLabel));
@@ -559,7 +563,7 @@ if(!_suppressContext)
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {
