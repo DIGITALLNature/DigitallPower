@@ -27,9 +27,9 @@
       },
       "Microsoft.PowerPlatform.Dataverse.Client": {
         "type": "Direct",
-        "requested": "[1.0.26, )",
-        "resolved": "1.0.26",
-        "contentHash": "bCTPIM1XI1n+D1OVwjDiWPPQip2TurYlBcJ3onV5nCFXID8cAsRlGf6GVq740kszGwxoO6rML3ooQwHAah8AtA==",
+        "requested": "[1.0.39, )",
+        "resolved": "1.0.39",
+        "contentHash": "YkAseH+rwyj+QGGi32Zs58Z97+xdOPL/rjCua29g8lzL3ZfSBKnzSHr1QVCNeYvZht3F9EDmDK2oikHJREb0/w==",
         "dependencies": {
           "Microsoft.Extensions.Caching.Memory": "3.1.8",
           "Microsoft.Extensions.DependencyInjection": "3.1.8",
@@ -42,6 +42,7 @@
           "Newtonsoft.Json": "13.0.1",
           "System.Collections": "4.3.0",
           "System.Configuration.ConfigurationManager": "4.7.0",
+          "System.Drawing.Common": "5.0.3",
           "System.Globalization": "4.3.0",
           "System.Linq": "4.3.0",
           "System.Linq.Expressions": "4.3.0",
@@ -54,11 +55,10 @@
           "System.Runtime.Serialization.Xml": "4.3.0",
           "System.Security.Cryptography.Algorithms": "4.3.1",
           "System.Security.Cryptography.ProtectedData": "4.7.0",
+          "System.Security.Cryptography.Xml": "6.0.1",
           "System.Security.Permissions": "5.0.0",
-          "System.ServiceModel.Duplex": "4.9.0",
-          "System.ServiceModel.Http": "4.9.0",
-          "System.ServiceModel.Primitives": "4.9.0",
-          "System.Text.Json": "6.0.2"
+          "System.ServiceModel.Http": "4.10.0",
+          "System.Text.Json": "6.0.7"
         }
       },
       "Microsoft.SourceLink.GitHub": {
@@ -109,34 +109,34 @@
       },
       "Microsoft.AspNetCore.Cryptography.Internal": {
         "type": "Transitive",
-        "resolved": "7.0.2",
-        "contentHash": "Vvg3U7+6AmSTYHBKJc1ksbTVDwDs5C4ShJiS6IK8lTMM25a1fdZIZZ8zIr5qGoRgxI87wXJLNYElMCxJbTXb4A=="
+        "resolved": "7.0.4",
+        "contentHash": "DmdKVBQCY34nO9pm1CijbT+AZc8tndD1uGXLUySaznl63i+xTe4PB0Gl5hQY+XMdEpjGN1ShER1ULYuAnOl6Fw=="
       },
       "Microsoft.AspNetCore.DataProtection": {
         "type": "Transitive",
-        "resolved": "7.0.2",
-        "contentHash": "TZhrD/LksA+amLCpHi3MBO5slMiTr3x5RUY4XemcgD6NmOzNFgSe4bBqgpB0aYfI8c6hElrhapevhuyDnPEi8w==",
+        "resolved": "7.0.4",
+        "contentHash": "Al30Iak4d469xpa90w0otzv7zj893K0+YbZe/ot4hnah82MSaHkaVw5rPi5csPlQKsc6Iwznw/bH56tI1u61zg==",
         "dependencies": {
-          "Microsoft.AspNetCore.Cryptography.Internal": "7.0.2",
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "7.0.2",
+          "Microsoft.AspNetCore.Cryptography.Internal": "7.0.4",
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "7.0.4",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "7.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
-          "Microsoft.Extensions.Options": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.1",
           "System.Security.Cryptography.Xml": "7.0.1"
         }
       },
       "Microsoft.AspNetCore.DataProtection.Abstractions": {
         "type": "Transitive",
-        "resolved": "7.0.2",
-        "contentHash": "fG7yxz9hFPcgOpSXmZbGk0VFFXpXwoXMGBwPa/d98GhpZNnBmHJv/PRb4VPK4rEqqd8wkUq1OAnzmHNO76BpOA=="
+        "resolved": "7.0.4",
+        "contentHash": "LrTtzEkC28PBGDpohPtMOf26a8Sg5yvQyEtlG7z2YB93qloK2u8sqG6BDzj0rBiz/mpyVlkc8Nj36IJCvqWtPg=="
       },
       "Microsoft.AspNetCore.DataProtection.Extensions": {
         "type": "Transitive",
-        "resolved": "7.0.2",
-        "contentHash": "q/UWVsc/sAYLUirSBPn4Emwo+u98RThbTlJM4ItDhZk7/jnXbuXpiJTkv1hpTdH2N9/rGOVQCT7hKBwjoc0rFA==",
+        "resolved": "7.0.4",
+        "contentHash": "hj6SGI+MrscJW4WwhwLDt78y+YucRRiGJBkTyEvZfQBGwCPOIIGxFMoAYD7O9HZPQI4EwodLQJdHwgDQ3zrCPg==",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection": "7.0.2",
+          "Microsoft.AspNetCore.DataProtection": "7.0.4",
           "Microsoft.Extensions.DependencyInjection": "7.0.0"
         }
       },
@@ -344,8 +344,8 @@
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "lP1yBnTTU42cKpMozuafbvNtQ7QcBjr/CcK3bYOGEMH55Fjt+iecXjT6chR7vbgCMqy3PG3aNQSZgo/EuY/9qQ==",
+        "resolved": "7.0.1",
+        "contentHash": "pZRDYdN1FpepOIfHU62QoBQ6zdAoTvnjxFfqAzEd9Jhb2dfhA5i6jeTdgGgcgTWFRC7oT0+3XrbQu4LjvgX1Nw==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
           "Microsoft.Extensions.Primitives": "7.0.0"
@@ -409,8 +409,8 @@
       },
       "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": {
         "type": "Transitive",
-        "resolved": "1.0.26",
-        "contentHash": "dLQ7ZUiFk0/ttMffysFnYnFr1my1CsejeQlUDrk6OAS3RSiw4snnKZJU6XATDaxp7LqWGRzkDxBzgpLwRb6sKA==",
+        "resolved": "1.0.39",
+        "contentHash": "bianlcOpItlN9X5/7hn2fwm0i36wbuEe6iX4ply8gV6jgkzdxi0Hoh7iZkek1zYqNihIv0xCOjt+86ybnmkLxg==",
         "dependencies": {
           "Microsoft.PowerPlatform.Dataverse.Client": "1.0.0"
         }
@@ -675,8 +675,8 @@
       },
       "System.Drawing.Common": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "SztFwAnpfKC8+sEKXAFxCBWhKQaEd97EiOL7oZJZP56zbqnLpmxACWA8aGseaUExciuEAUuR9dY8f7HkTRAdnw==",
+        "resolved": "5.0.3",
+        "contentHash": "rEQZuslijqdsO0pkJn7LtGBaMc//YVA8de0meGihkg9oLPaN+w+/Pb5d71lgp0YjPoKgBKNMvdq0IPnoW4PEng==",
         "dependencies": {
           "Microsoft.Win32.SystemEvents": "5.0.0"
         }
@@ -828,8 +828,8 @@
       },
       "System.Private.ServiceModel": {
         "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "d3RjkrtpjUQ63PzFmm/SZ4aOXeJNP+8YW5QeP0lCJy8iX4xlHdlNLWTF9sRn9SmrFTK757kQXT9Op/R4l858uw==",
+        "resolved": "4.10.0",
+        "contentHash": "dB4hD50X7FaCCPoMJ+TShvSVXEHWBD/GKEd494N4a3V+avJmNFmKK7bM40J1zsj+QWt66DG2YkwWlRf/OHx8zw==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
           "Microsoft.Extensions.ObjectPool": "5.0.10",
@@ -1126,30 +1126,21 @@
         "resolved": "5.0.0",
         "contentHash": "t0MGLukB5WAVU9bO3MGzvlGnyJPgUlcwerXn1kzBRjwLKixT96XV0Uza41W49gVd8zEMFu9vQEFlv0IOrytICA=="
       },
-      "System.ServiceModel.Duplex": {
-        "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "Yb8MFiJxBBtm2JnfS/5SxYzm2HqkEmHu5xeaVIHXy83sNpty9wc30JifH2xgda821D6nr1UctbwbdZqN4LBUKQ==",
-        "dependencies": {
-          "System.Private.ServiceModel": "4.9.0",
-          "System.ServiceModel.Primitives": "4.9.0"
-        }
-      },
       "System.ServiceModel.Http": {
         "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "Z+s3RkLNzJ31fDXAjqXdXp67FqsNG4V3Md3r7FOrzMkHmg61gY8faEfTFPBLxU9tax1HPWt6IHVAquXBKySJaw==",
+        "resolved": "4.10.0",
+        "contentHash": "/PbmNSEwTQ7Vizor3F/Zp8bzR6L9YZNGIwGr1Tyc//ZZuAYDhiwiMbNpX3EnPZM63qD2bJmR/FWH9S5Ffp8K6g==",
         "dependencies": {
-          "System.Private.ServiceModel": "4.9.0",
-          "System.ServiceModel.Primitives": "4.9.0"
+          "System.Private.ServiceModel": "4.10.0",
+          "System.ServiceModel.Primitives": "4.10.0"
         }
       },
       "System.ServiceModel.Primitives": {
         "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "LTFPVdS8Nf76xg/wRZkDa+2Q+GnjTOmwkTlwuoetwX37mAfYnGkf7p8ydhpDwVmomNljpUOhUUGxfjQyd5YcOg==",
+        "resolved": "4.10.0",
+        "contentHash": "BtrvvpgU2HolcC0tUf1g+n4Fk5kLhfbIBgRibcGe7TDHXcy6zTfkyXxR88rl2tO4KEPLkJXxWf/HW/LJmsI0Ew==",
         "dependencies": {
-          "System.Private.ServiceModel": "4.9.0"
+          "System.Private.ServiceModel": "4.10.0"
         }
       },
       "System.Text.Encoding": {
@@ -1347,8 +1338,8 @@
       "dgt.power.codegeneration": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.26, )",
-          "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.0.26, )",
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.39, )",
+          "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.0.39, )",
           "Spectre.Console.Cli": "[0.46.0, )",
           "System.CodeDom": "[7.0.0, )",
           "dgt.power.common": "[1.0.0, )"
@@ -1357,9 +1348,9 @@
       "dgt.power.common": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection": "[7.0.2, )",
-          "Microsoft.AspNetCore.DataProtection.Extensions": "[7.0.2, )",
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.26, )",
+          "Microsoft.AspNetCore.DataProtection": "[7.0.4, )",
+          "Microsoft.AspNetCore.DataProtection.Extensions": "[7.0.4, )",
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.39, )",
           "Spectre.Console.Cli": "[0.46.0, )",
           "dgt.power.dataverse": "[1.0.0, )"
         }
@@ -1367,7 +1358,7 @@
       "dgt.power.dataverse": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.26, )"
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.0.39, )"
         }
       },
       "dgt.power.dto": {
