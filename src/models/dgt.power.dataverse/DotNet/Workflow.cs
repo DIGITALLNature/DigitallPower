@@ -164,6 +164,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Billing context this flow is in.
+		/// </summary>
+		[AttributeLogicalName("billingcontext")]
+        public string? BillingContext
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("billingcontext");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(BillingContext));
+                SetAttributeValue("billingcontext", value);
+                OnPropertyChanged(nameof(BillingContext));
+            }
+        }
+
+		/// <summary>
 		/// Business Process Type.
 		/// </summary>
 		[AttributeLogicalName("businessprocesstype")]
@@ -1764,6 +1784,7 @@ namespace dgt.power.dataverse
 				public const string WorkflowId = "workflowid";
 				public const string ActiveWorkflowId = "activeworkflowid";
 				public const string AsyncAutoDelete = "asyncautodelete";
+				public const string BillingContext = "billingcontext";
 				public const string BusinessProcessType = "businessprocesstype";
 				public const string Category = "category";
 				public const string ClientData = "clientdata";

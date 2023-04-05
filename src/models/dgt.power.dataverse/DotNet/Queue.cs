@@ -571,6 +571,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Define overflow rules for work items after it enters queue
+		/// </summary>
+		[AttributeLogicalName("msdyn_inqueueoverflowrulesetid")]
+        public EntityReference? MsdynInqueueoverflowrulesetid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_inqueueoverflowrulesetid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynInqueueoverflowrulesetid));
+                SetAttributeValue("msdyn_inqueueoverflowrulesetid", value);
+                OnPropertyChanged(nameof(MsdynInqueueoverflowrulesetid));
+            }
+        }
+
+		/// <summary>
 		/// Shows whether the queue is set as default or not.
 		/// </summary>
 		[AttributeLogicalName("msdyn_isdefaultqueue")]
@@ -647,6 +667,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynOperatinghourid));
                 SetAttributeValue("msdyn_operatinghourid", value);
                 OnPropertyChanged(nameof(MsdynOperatinghourid));
+            }
+        }
+
+		/// <summary>
+		/// Define overflow rules for work items before it enters queue
+		/// </summary>
+		[AttributeLogicalName("msdyn_prequeueoverflowrulesetid")]
+        public EntityReference? MsdynPrequeueoverflowrulesetid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_prequeueoverflowrulesetid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPrequeueoverflowrulesetid));
+                SetAttributeValue("msdyn_prequeueoverflowrulesetid", value);
+                OnPropertyChanged(nameof(MsdynPrequeueoverflowrulesetid));
             }
         }
 
@@ -1147,6 +1187,7 @@ namespace dgt.power.dataverse
 					public const int OmnichannelAssignment = 192350000;
 					public const int RoundRobin = 192350001;
 					public const int CustomAssignmentConfiguration = 192350002;
+					public const int LongestIdle = 192350003;
                 }
                 public struct MsdynIsdefaultqueue
                 {
@@ -1222,10 +1263,12 @@ namespace dgt.power.dataverse
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
 				public const string MsdynAssignmentinputcontractid = "msdyn_assignmentinputcontractid";
 				public const string MsdynAssignmentstrategy = "msdyn_assignmentstrategy";
+				public const string MsdynInqueueoverflowrulesetid = "msdyn_inqueueoverflowrulesetid";
 				public const string MsdynIsdefaultqueue = "msdyn_isdefaultqueue";
 				public const string MsdynIsomnichannelqueue = "msdyn_isomnichannelqueue";
 				public const string MsdynMaxqueuesize = "msdyn_maxqueuesize";
 				public const string MsdynOperatinghourid = "msdyn_operatinghourid";
+				public const string MsdynPrequeueoverflowrulesetid = "msdyn_prequeueoverflowrulesetid";
 				public const string MsdynPriority = "msdyn_priority";
 				public const string MsdynQueuetype = "msdyn_queuetype";
 				public const string MsdynUniquename = "msdyn_uniquename";
@@ -1300,8 +1343,10 @@ namespace dgt.power.dataverse
 				public const string LkQueueQueueMemberCount = "lk_queue_QueueMemberCount";
 				public const string LkQueuebaseCreatedby = "lk_queuebase_createdby";
 				public const string LkQueuebaseModifiedby = "lk_queuebase_modifiedby";
+				public const string MsdynDecisionrulesetQueueMsdynInqueueoverflowrulesetid = "msdyn_decisionruleset_queue_msdyn_inqueueoverflowrulesetid";
 				public const string MsdynMsdynOperatinghourQueue = "msdyn_msdyn_operatinghour_queue";
 				public const string MsdynQueueDecisioncontractid = "msdyn_queue_decisioncontractid";
+				public const string MsdynQueueDecisionrulesetId = "msdyn_queue_decisionrulesetId";
 				public const string OrganizationQueues = "organization_queues";
 				public const string OwnerQueues = "owner_queues";
 				public const string QueueDefaultmailboxMailbox = "queue_defaultmailbox_mailbox";
