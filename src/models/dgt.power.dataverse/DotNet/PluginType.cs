@@ -429,6 +429,24 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("plugintypeexportkey")]
+        public string? PluginTypeExportKey
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("plugintypeexportkey");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(PluginTypeExportKey));
+                SetAttributeValue("plugintypeexportkey", value);
+                OnPropertyChanged(nameof(PluginTypeExportKey));
+            }
+        }
+
 		/// <summary>
 		/// Unique identifier of the plug-in type.
 		/// </summary>
@@ -646,6 +664,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationId = "organizationid";
 				public const string OverwriteTime = "overwritetime";
 				public const string PluginAssemblyId = "pluginassemblyid";
+				public const string PluginTypeExportKey = "plugintypeexportkey";
 				public const string PluginTypeIdUnique = "plugintypeidunique";
 				public const string PublicKeyToken = "publickeytoken";
 				public const string SolutionId = "solutionid";

@@ -1994,6 +1994,24 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("msdyn_accountkpiid")]
+        public EntityReference? MsdynAccountkpiid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_accountkpiid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynAccountkpiid));
+                SetAttributeValue("msdyn_accountkpiid", value);
+                OnPropertyChanged(nameof(MsdynAccountkpiid));
+            }
+        }
+
 		/// <summary>
 		/// Describes whether account is opted out or not
 		/// </summary>
@@ -3511,6 +3529,7 @@ namespace dgt.power.dataverse
 				public const string ModifiedByExternalParty = "modifiedbyexternalparty";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+				public const string MsdynAccountkpiid = "msdyn_accountkpiid";
 				public const string MsdynGdproptout = "msdyn_gdproptout";
 				public const string MsdynSalesaccelerationinsightid = "msdyn_salesaccelerationinsightid";
 				public const string MsdynSegmentid = "msdyn_segmentid";
@@ -3640,11 +3659,16 @@ namespace dgt.power.dataverse
 				public const string InvoiceCustomerAccounts = "invoice_customer_accounts";
 				public const string LeadCustomerAccounts = "lead_customer_accounts";
 				public const string LeadParentAccount = "lead_parent_account";
+				public const string MsdynAccountDailyaccountkpiitemEntityid = "msdyn_account_dailyaccountkpiitem_entityid";
+				public const string MsdynAccountMsdynAccountkpiitemAccountid = "msdyn_account_msdyn_accountkpiitem_accountid";
 				public const string MsdynAccountMsdynAicontactsuggestionSourcerecord = "msdyn_account_msdyn_aicontactsuggestion_sourcerecord";
 				public const string MsdynAccountMsdynCustomerassetAccount = "msdyn_account_msdyn_customerasset_Account";
 				public const string MsdynAccountMsdynIotdeviceAccount = "msdyn_account_msdyn_iotdevice_Account";
 				public const string MsdynAccountMsdynLiveconversationCustomer = "msdyn_account_msdyn_liveconversation_Customer";
+				public const string MsdynAccountMsdynMostcontactedRegardingObjectId = "msdyn_account_msdyn_mostcontacted_regardingObjectId";
+				public const string MsdynAccountMsdynMostcontactedbyRegardingObjectId = "msdyn_account_msdyn_mostcontactedby_regardingObjectId";
 				public const string MsdynAccountMsdynOcliveworkitemCustomer = "msdyn_account_msdyn_ocliveworkitem_Customer";
+				public const string MsdynMsdynPreferredagentAccountMsdynRecordId = "msdyn_msdyn_preferredagent_account_msdyn_recordId";
 				public const string MsdynPlaybookinstanceAccount = "msdyn_playbookinstance_account";
 				public const string MsdynSabackupdiagnosticAccountMsdynTarget = "msdyn_sabackupdiagnostic_account_msdyn_target";
 				public const string MsdynSalesaccelerationinsightsAccount = "msdyn_salesaccelerationinsights_account";
@@ -3681,6 +3705,7 @@ namespace dgt.power.dataverse
 				public const string LkExternalpartyAccountModifiedby = "lk_externalparty_account_modifiedby";
 				public const string ManualslaAccount = "manualsla_account";
 				public const string MsdynInsightsidSalesaccelerationinsights = "msdyn_insightsid_salesaccelerationinsights";
+				public const string MsdynMsdynAccountkpiitemAccountAccountkpiid = "msdyn_msdyn_accountkpiitem_account_accountkpiid";
 				public const string MsdynMsdynSegmentAccount = "msdyn_msdyn_segment_account";
 				public const string OwnerAccounts = "owner_accounts";
 				public const string PriceLevelAccounts = "price_level_accounts";
