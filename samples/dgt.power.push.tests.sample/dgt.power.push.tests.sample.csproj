@@ -19,8 +19,6 @@
   <PropertyGroup>
     <PackageId>dgt.power.push.tests.sample</PackageId>
     <Version>$(FileVersion)</Version>
-    <Authors>ma_km</Authors>
-    <Company>MyCompany</Company>
     <Description>This is a sample nuget package which contains a Dataverse plugin and its runtime dependencies like Newtonsoft.Json</Description>
   </PropertyGroup>
 

@@ -8,7 +8,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="$(Configuration) != 'Release'">
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>dgt.power.export.tests</_Parameter1>
 		</AssemblyAttribute>

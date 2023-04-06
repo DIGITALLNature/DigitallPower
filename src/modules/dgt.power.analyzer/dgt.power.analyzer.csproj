@@ -17,7 +17,7 @@
     <ProjectReference Include="..\..\models\dgt.power.dto\dgt.power.dto.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(Configuration) != 'Release'">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>dgt.power.analyzer.tests</_Parameter1>
     </AssemblyAttribute>

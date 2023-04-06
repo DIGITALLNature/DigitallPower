@@ -31,7 +31,7 @@ jobs:
       run: dotnet build --no-restore
       
     - name: Run Tests
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings --blame-hang-timeout 3m
 
     - name: Test Report
       uses: dorny/test-reporter@v1

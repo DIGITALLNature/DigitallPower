@@ -15,9 +15,9 @@
     <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(Configuration) != 'Release'">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-    <_Parameter1>dgt.power.tests</_Parameter1> <!-- We use the value of AssemblyName to declare the value of the attribute -->
+    <_Parameter1>dgt.power.tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 

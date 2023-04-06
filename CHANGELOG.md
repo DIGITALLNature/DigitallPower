@@ -1,5 +1,52 @@
-## [1.7.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.0...v1.7.1) (2023-03-24)
+# [1.8.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0-beta.1) (2023-04-06)
 
+
+### Bug Fixes
+
+* **dgt.power:** add version prefix to dgt.power.csproj to be able to replace it ([e45294f](https://github.com/DIGITALLNature/DigitallPower/commit/e45294fd735b3d82c5fcd0245b9edfb19220fd74))
+* **dgt.power:** install semantic-version-release-update-file module ([f5f12c0](https://github.com/DIGITALLNature/DigitallPower/commit/f5f12c0eeaf0a582dbb4fc57b6347a6a2a384dd7))
+
+
+### Features
+
+* **dgt.power:** check if a new version is available on nuget at startup ([ba92822](https://github.com/DIGITALLNature/DigitallPower/commit/ba928222bf0b3fade2a72fcae827ea52cb0dbc87))
+* **dgt.power:** skip version check on build agents ([7ae89af](https://github.com/DIGITALLNature/DigitallPower/commit/7ae89afe1fd1457d042af4e815080b22c3f7917f))
+* **dgt.power:** update assembly version with semantic release ([8ecc02f](https://github.com/DIGITALLNature/DigitallPower/commit/8ecc02f108e57f6ca8b512ebcae7437f6cf979cc))
+
+# [1.8.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.3...v1.8.0-beta.4) (2023-03-08)
+
+
+### Features
+
+* **dgt.power:** skip version check on build agents ([6e1c87d](https://github.com/DIGITALLNature/DigitallPower/commit/6e1c87d7015451c73498da21b1d1b4beff41c924))
+
+# [1.8.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.2...v1.8.0-beta.3) (2023-03-08)
+
+
+### Features
+
+* **dgt.power:** check if a new version is available on nuget at startup ([fec7634](https://github.com/DIGITALLNature/DigitallPower/commit/fec7634ffc92077f13b703a31a23efc2d55bb234))
+
+# [1.8.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.1...v1.8.0-beta.2) (2023-03-07)
+
+
+### Bug Fixes
+
+* **dgt.power:** add version prefix to dgt.power.csproj to be able to replace it ([de33635](https://github.com/DIGITALLNature/DigitallPower/commit/de33635ec8b3171ac5a39b8da1e44eae17e9c3ea))
+
+# [1.8.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.0...v1.8.0-beta.1) (2023-03-07)
+
+
+### Bug Fixes
+
+* **dgt.power:** install semantic-version-release-update-file module ([153a89c](https://github.com/DIGITALLNature/DigitallPower/commit/)
+
+### Features
+
+* **dgt.power:** update assembly version with semantic release ([257bc99](https://github.com/DIGITALLNature/DigitallPower/commit/257bc99c51c4be1fc2db9ec4e4d2e944d9b7da04))
+
+
+## [1.7.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.0...v1.7.1) (2023-03-24)
 
 ### Bug Fixes
 

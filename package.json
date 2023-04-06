@@ -3,6 +3,7 @@
         "@commitlint/cli": "^17.4.2",
         "@commitlint/config-conventional": "^17.4.2",
         "@droidsolutions-oss/semantic-release-nuget": "^1.2.0",
+        "@droidsolutions-oss/semantic-release-update-file": "^1.3.0",
         "@semantic-release/changelog": "github:semantic-release/changelog",
         "@semantic-release/git": "github:semantic-release/git",
         "husky": "^8.0.0",
@@ -22,9 +23,30 @@
             "@semantic-release/changelog",
             "@droidsolutions-oss/semantic-release-nuget",
             [
+                "@droidsolutions-oss/semantic-release-update-file",
+                {
+                    "files": [
+                        {
+                            "path": [
+                                "src/dgt.power/dgt.power.csproj"
+                            ],
+                            "type": "xml",
+                            "replacements": [
+                                {
+                                    "key": "VersionPrefix",
+                                    "value": "${nextRelease.version}"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            [
                 "@semantic-release/git",
                 {
-                    "assets": ["CHANGELOG.md"],
+                    "assets": [
+                        "CHANGELOG.md"
+                    ],
                     "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
                 }
             ],
