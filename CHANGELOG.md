@@ -1,3 +1,18 @@
+# [1.8.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0-beta.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* **dgt.power:** add version prefix to dgt.power.csproj to be able to replace it ([e45294f](https://github.com/DIGITALLNature/DigitallPower/commit/e45294fd735b3d82c5fcd0245b9edfb19220fd74))
+* **dgt.power:** install semantic-version-release-update-file module ([f5f12c0](https://github.com/DIGITALLNature/DigitallPower/commit/f5f12c0eeaf0a582dbb4fc57b6347a6a2a384dd7))
+
+
+### Features
+
+* **dgt.power:** check if a new version is available on nuget at startup ([ba92822](https://github.com/DIGITALLNature/DigitallPower/commit/ba928222bf0b3fade2a72fcae827ea52cb0dbc87))
+* **dgt.power:** skip version check on build agents ([7ae89af](https://github.com/DIGITALLNature/DigitallPower/commit/7ae89afe1fd1457d042af4e815080b22c3f7917f))
+* **dgt.power:** update assembly version with semantic release ([8ecc02f](https://github.com/DIGITALLNature/DigitallPower/commit/8ecc02f108e57f6ca8b512ebcae7437f6cf979cc))
+
 # [1.8.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0-beta.3...v1.8.0-beta.4) (2023-03-08)
 
 
