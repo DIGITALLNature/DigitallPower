@@ -157,7 +157,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         ctx.Status("Check Settings");
 
         processor.LoadSolution(settings.Solution, out bool isDefault);
-        if (settings.DeleteObsolete && !isDefault)
+        if (settings.DeleteObsolete && isDefault)
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Delete Obsolete [bold red]without[/] proper solution set - aborting");
             return;

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
+using Microsoft.Xrm.Sdk;
 using NuGet.Packaging;
 using Spectre.Console;
 
@@ -23,6 +24,14 @@ internal record Webresources
         DisplayName =  Path.GetFileName(path);
         Content = Convert.ToBase64String(content);
         Hash = Convert.ToHexString(SHA256.HashData(content));
+    }
+
+    public Webresources(int type, string name, Guid xrmId)
+    {
+        Type = type;
+        Name = name;
+        XrmId = xrmId;
+        State = WebresourceState.Delete;
     }
 
     public string Content { get; }

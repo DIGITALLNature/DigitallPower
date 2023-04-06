@@ -28,8 +28,9 @@ internal class WebresourcesProcessor
     };
 
     private readonly DataContext _context;
-    private string solutionPrefix;
-    private List<Webresources> files;
+    private string _solutionPrefix;
+    private List<Webresources> _files;
+    private Guid? _solutionId;
 
     public WebresourcesProcessor(IOrganizationService connection)
     {
@@ -49,9 +50,9 @@ internal class WebresourcesProcessor
                     Files = Directory.EnumerateFiles(folderInfo, pattern.FilePattern, SearchOption.AllDirectories)
                 });
 
-        files = (from @group in groups from file in @group.Files select new Webresources(@group.Type, file, folderInfo, solutionPrefix)).ToList();
+        _files = (from @group in groups from file in @group.Files select new Webresources(@group.Type, file, folderInfo, _solutionPrefix)).ToList();
 
-        foreach (var webresource in files)
+        foreach (var webresource in _files)
         {
             CheckStatus(webresource);
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Found webresource [bold green]{0} ({1})[/] <{2}>", webresource.DisplayName, webresource.Name, webresource.State);
@@ -72,30 +73,36 @@ internal class WebresourcesProcessor
         resource.XrmId = existing.Id;
     }
 
-    private string GetSolutionPrefix(string solution, string defaultValue = "new")
+    private Guid? GetSolution(string solution, out string prefix)
     {
-        var prefix = (from s in _context.SolutionSet
+        var solutionDetails = (from s in _context.SolutionSet
             join p in _context.PublisherSet on s.PublisherId.Id equals p.Id
             where s.UniqueName == solution
-            select p.CustomizationPrefix).SingleOrDefault();
+            select new {s.SolutionId, p.CustomizationPrefix}).SingleOrDefault();
 
-        return prefix ?? defaultValue;
+        if (solutionDetails == null)
+        {
+            AnsiConsole.WriteLine(CultureInfo.InvariantCulture,"Solution {0} [Red]not found[/]!", solution);
+        }
+
+        prefix = solutionDetails?.CustomizationPrefix ?? "new";
+        return solutionDetails.SolutionId;
     }
 
     public void LoadSolution(string solution, out bool defaultSolution)
     {
-        solutionPrefix = "new";
+        _solutionPrefix = "new";
         if (!string.IsNullOrWhiteSpace(solution))
         {
-            solutionPrefix = GetSolutionPrefix(solution);
+            _solutionId = GetSolution(solution, out _solutionPrefix);
         }
 
-        defaultSolution =  solutionPrefix == "new";
+        defaultSolution = !_solutionId.HasValue;
     }
 
     public void UpsertResources()
     {
-        foreach (var resource in files.Where(f => f.State == WebresourceState.Create))
+        foreach (var resource in _files.Where(f => f.State == WebresourceState.Create))
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Create WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
             var id = _connection.Create(new WebResource
@@ -109,7 +116,7 @@ internal class WebresourcesProcessor
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "    => {0}", id);
         }
 
-        foreach (var resource in files.Where(f => f.State == WebresourceState.Update))
+        foreach (var resource in _files.Where(f => f.State == WebresourceState.Update))
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
             _connection.Update(new WebResource
@@ -119,17 +126,32 @@ internal class WebresourcesProcessor
                 Description = $"Upserted with DGTP: {resource.Hash}",
             });
         }
-
-
     }
 
     public void DiscoverObsoleteWebresources()
     {
-        throw new NotImplementedException();
+        var webresourcesInSolution = from wr in _context.WebResourceSet
+            join sc in _context.SolutionComponentSet on wr.WebResourceId equals sc.ObjectId
+            where sc.SolutionId.Id == _solutionId
+            where wr.IsManaged == false
+            select new { wr.WebResourceId, wr.WebResourceType, wr.Name };
+
+        foreach (var wris in webresourcesInSolution)
+        {
+            if (_files.SingleOrDefault(f => f.Type == wris.WebResourceType.Value && f.Name == wris.Name) == null)
+            {
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,"Found obsolete: [Green]{0}[/] <{1}>",wris.Name,wris.WebResourceType);
+                _files.Add(new Webresources(wris.WebResourceType.Value, wris.Name, wris.WebResourceId.Value));
+            }
+        }
     }
 
     public void DeleteResources()
     {
-        throw new NotImplementedException();
+        foreach (var resource in _files.Where(f => f.State == WebresourceState.Delete))
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,"Delete obsolete: [Red]{0}[/] <{1}>",resource.Name,resource.Type);
+            _connection.Delete(WebResource.EntityLogicalName, resource.XrmId);
+        }
     }
 }
