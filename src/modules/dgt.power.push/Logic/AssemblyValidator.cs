@@ -3,7 +3,7 @@ using dgt.power.push.Model;
 
 namespace dgt.power.push.Logic;
 
-internal static class Validator
+internal static class AssemblyValidator
 {
     public static void ValidateImage(string step, string message, int stage, int imageType)
     {

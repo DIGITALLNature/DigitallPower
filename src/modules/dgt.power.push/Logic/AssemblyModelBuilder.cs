@@ -10,12 +10,11 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using NuGet.Packaging;
 using Spectre.Console;
-using Assembly = dgt.power.push.Model.Assembly;
 using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class ModelBuilder
+internal class AssemblyModelBuilder
 {
     private readonly DataContext _context;
 
@@ -29,7 +28,7 @@ internal class ModelBuilder
 
     private readonly IOrganizationService _service;
 
-    public ModelBuilder(IOrganizationService service)
+    public AssemblyModelBuilder(IOrganizationService service)
     {
         _service = service;
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
@@ -77,11 +76,11 @@ internal class ModelBuilder
     }
 
 
-    public List<Assembly?> BuildAssemblyFromPackage(Package packageFile)
+    public List<Model.Assembly?> BuildAssemblyFromPackage(Package packageFile)
     {
         using var inputStream = new MemoryStream(Convert.FromBase64String(packageFile.Content!));
         using var reader = new PackageArchiveReader(inputStream);
-        var results = new List<Assembly?>();
+        var results = new List<Model.Assembly?>();
 
         foreach (var file in reader.GetFiles().Where(f => !f.Contains("/System.") && f.EndsWith(".dll")))
         {
@@ -92,16 +91,16 @@ internal class ModelBuilder
         return results;
     }
 
-    public Assembly BuildAssemblyFromStream(Stream stream)
+    public Model.Assembly BuildAssemblyFromStream(Stream stream)
     {
-        var result = default(Assembly);
+        var result = default(Model.Assembly);
         var bytes = ReadFully(stream);
         try
         {
             var assembly = System.Reflection.Assembly.Load(bytes);
             if (assembly.IsFullyTrusted)
             {
-                result = new Assembly
+                result = new Model.Assembly
                 {
                     Name = assembly.GetName().Name!,
                     Version = assembly.GetName().Version!.ToString(),
@@ -124,15 +123,15 @@ internal class ModelBuilder
         return result;
     }
 
-    public Assembly? BuildAssemblyFromDll(string dllFile)
+    public Model.Assembly? BuildAssemblyFromDll(string dllFile)
     {
-        var result = default(Assembly);
+        var result = default(Model.Assembly);
         try
         {
             var assembly = System.Reflection.Assembly.Load(File.ReadAllBytes(dllFile));
             if (assembly.IsFullyTrusted)
             {
-                result = new Assembly
+                result = new Model.Assembly
                 {
                     Name = assembly.GetName().Name!,
                     Version = assembly.GetName().Version!.ToString(),
@@ -155,9 +154,9 @@ internal class ModelBuilder
         return result;
     }
 
-    public Assembly BuildAssemblyFromCrm(string name, string version)
+    public Model.Assembly BuildAssemblyFromCrm(string name, string version)
     {
-        var result = new Assembly();
+        var result = new Model.Assembly();
         var state = GetPluginAssembly(name, version, out var pluginAssembly);
         result.State = state;
         if (state != AssemblyState.Create)
@@ -242,7 +241,7 @@ internal class ModelBuilder
 
     #region Assembly
 
-    private void ParseAssembly(System.Reflection.Assembly assembly, ref Assembly result)
+    private void ParseAssembly(System.Reflection.Assembly assembly, ref Model.Assembly result)
     {
         var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
         var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
