@@ -11,11 +11,15 @@ namespace dgt.power.push.Base;
 
 public class PushVerb : BaseProgramSettings
 {
-    [CommandArgument(1, "<DllFile>")]
-    [Description("Full path to the dll file, e.g. C:\\temp\\plugin.dll")]
-    public required string DllFile { get; set; }
+    [CommandArgument(1, "<FileOrFolder>")]
+    [Description("Full path to the dll file, e.g. C:\\temp\\plugin.dll or to folder for webressources")]
+    public required string Target { get; set; }
 
     [CommandOption("--solution")]
-    [Description("Add assembly to Solution; default: none")]
+    [Description("Add assembly to Solution; default: none; mandatory for webressources")]
     public string Solution { get; set; }
+
+    [CommandOption("--delete-obsolete")]
+    [Description("Delete obsolete unmanaged webressources in solution; dangerous!")]
+    public bool DeleteObsolete { get; set; }
 }
