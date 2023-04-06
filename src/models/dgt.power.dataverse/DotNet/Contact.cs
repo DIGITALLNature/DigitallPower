@@ -3054,6 +3054,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Maps to contact KPI records
+		/// </summary>
+		[AttributeLogicalName("msdyn_contactkpiid")]
+        public EntityReference? MsdynContactkpiid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_contactkpiid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynContactkpiid));
+                SetAttributeValue("msdyn_contactkpiid", value);
+                OnPropertyChanged(nameof(MsdynContactkpiid));
+            }
+        }
+
+		/// <summary>
 		/// Describes whether contact is opted out or not
 		/// </summary>
 		[AttributeLogicalName("msdyn_gdproptout")]
@@ -4497,6 +4517,7 @@ namespace dgt.power.dataverse
 				public const string ModifiedByExternalParty = "modifiedbyexternalparty";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+				public const string MsdynContactkpiid = "msdyn_contactkpiid";
 				public const string MsdynGdproptout = "msdyn_gdproptout";
 				public const string MsdynOrgchangestatus = "msdyn_orgchangestatus";
 				public const string MsdynSegmentid = "msdyn_segmentid";
@@ -4624,9 +4645,14 @@ namespace dgt.power.dataverse
 				public const string LeadParentContact = "lead_parent_contact";
 				public const string LkContactFeedbackCreatedby = "lk_contact_feedback_createdby";
 				public const string LkContactFeedbackCreatedonbehalfby = "lk_contact_feedback_createdonbehalfby";
+				public const string MsdynContactDailycontactkpiitemEntityid = "msdyn_contact_dailycontactkpiitem_entityid";
+				public const string MsdynContactMsdynContactkpiitemContactid = "msdyn_contact_msdyn_contactkpiitem_contactid";
 				public const string MsdynContactMsdynLiveconversationCustomer = "msdyn_contact_msdyn_liveconversation_Customer";
+				public const string MsdynContactMsdynMostcontactedRegardingObjectId = "msdyn_contact_msdyn_mostcontacted_regardingObjectId";
+				public const string MsdynContactMsdynMostcontactedbyRegardingObjectId = "msdyn_contact_msdyn_mostcontactedby_regardingObjectId";
 				public const string MsdynContactMsdynOcliveworkitemCustomer = "msdyn_contact_msdyn_ocliveworkitem_Customer";
 				public const string MsdynContactMsdynSalessuggestion = "msdyn_contact_msdyn_salessuggestion";
+				public const string MsdynMsdynPreferredagentContactMsdynRecordId = "msdyn_msdyn_preferredagent_contact_msdyn_recordId";
 				public const string MsdynMsdynTaggedrecordContactMsdynDynamicsrecordid = "msdyn_msdyn_taggedrecord_contact_msdyn_dynamicsrecordid";
 				public const string MsdynPlaybookinstanceContact = "msdyn_playbookinstance_contact";
 				public const string MsdynSabackupdiagnosticContactMsdynTarget = "msdyn_sabackupdiagnostic_contact_msdyn_target";
@@ -4662,6 +4688,7 @@ namespace dgt.power.dataverse
 				public const string LkExternalpartyContactCreatedby = "lk_externalparty_contact_createdby";
 				public const string LkExternalpartyContactModifiedby = "lk_externalparty_contact_modifiedby";
 				public const string ManualslaContact = "manualsla_contact";
+				public const string MsdynMsdynContactkpiitemContactContactkpiid = "msdyn_msdyn_contactkpiitem_contact_contactkpiid";
 				public const string MsdynMsdynSegmentContact = "msdyn_msdyn_segment_contact";
 				public const string OwnerContacts = "owner_contacts";
 				public const string PriceLevelContacts = "price_level_contacts";

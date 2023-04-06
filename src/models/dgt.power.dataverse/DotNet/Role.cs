@@ -614,6 +614,7 @@ namespace dgt.power.dataverse
 				public const string MsdynRoleMsdynPersonasecurityrolemapping = "msdyn_role_msdyn_personasecurityrolemapping";
 				public const string RoleAsyncOperations = "Role_AsyncOperations";
 				public const string RoleBulkDeleteFailures = "Role_BulkDeleteFailures";
+				public const string RoleMsdynAppprofilerolemapping = "role_msdyn_appprofilerolemapping";
 				public const string RoleParentRole = "role_parent_role";
 				public const string RoleParentRootRole = "role_parent_root_role";
 				public const string RoleSyncErrors = "Role_SyncErrors";
