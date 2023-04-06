@@ -15,9 +15,9 @@
     <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(Configuration) != 'Release'">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-    <_Parameter1>dgt.power.tests</_Parameter1> <!-- We use the value of AssemblyName to declare the value of the attribute -->
+    <_Parameter1>dgt.power.tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100dd58806217d8819acb3b578e6db06a61f7622022a88ce2d405b94b26a78b191880b92719a99150cc55536f52e929eb02c26c18ccb06ff92f06987471a8cd37a8ba58996497f983028d582836e28a7c7aa04909baca865c7546d7dd9a78938cb1212bd122e60d90a1a851f79960dfb094bf709373072721b0bad7e31f76d52fd0</_Parameter1> <!-- We use the value of AssemblyName to declare the value of the attribute -->
     </AssemblyAttribute>
   </ItemGroup>
 
