@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0) (2023-04-06)
+
+
+### Features
+
+* **dgt.power:** check if a new version is available on nuget at startup ([81df0c3](https://github.com/DIGITALLNature/DigitallPower/commit/81df0c36385a482fa497054d4d832126dc781bf1))
+
 # [1.8.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0-beta.1) (2023-04-06)
 
 
