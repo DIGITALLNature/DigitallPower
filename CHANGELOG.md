@@ -1,3 +1,10 @@
+# [1.9.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0...v1.9.0-beta.1) (2023-04-06)
+
+
+### Features
+
+* **push:** upload and sync of webressources ([#46](https://github.com/DIGITALLNature/DigitallPower/issues/46)) ([f59f90e](https://github.com/DIGITALLNature/DigitallPower/commit/f59f90e92b910ce6dd183feef7aafb9c301998fe))
+
 # [1.8.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0) (2023-04-06)
 
 
