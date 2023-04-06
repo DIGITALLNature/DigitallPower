@@ -8,7 +8,6 @@
     <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DIGITALLNature/DigitallPower</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageLicenseFile>Licence.md</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>https://github.com/DIGITALLNature/DigitallPower/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
