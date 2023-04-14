@@ -88,7 +88,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             else
             {
                 ctx.Status("UpdatePluginPackage");
-                packageCrm = processor.UpdatePluginPackage(packageCrm.Id, packageLocal);
+                packageCrm = processor.UpdatePluginPackage(packageCrm.Id, packageLocal,settings.Publish);
             }
 
             assemblies = modelBuilder.BuildAssemblyFromPackage(packageCrm);
@@ -125,7 +125,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             else if (crmAssembly.State == AssemblyState.Update && !localAssembly.Equals(crmAssembly))
             {
                 ctx.Status("UpdatePluginAssembly");
-                crmAssembly = processor.UpdatePluginAssembly(localAssembly, crmAssembly, settings.Solution);
+                crmAssembly = processor.UpdatePluginAssembly(localAssembly, crmAssembly, settings.Solution,settings.Publish);
             }
 
             if (localAssembly.Type.HasFlag(AssemblyType.Workflow))
@@ -167,7 +167,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         processor.DiscoverWebresources(settings.Target);
 
         ctx.Status("Upsert Webresources");
-        processor.UpsertResources();
+        processor.UpsertResources(settings.Publish);
 
         if (settings.DeleteObsolete)
         {

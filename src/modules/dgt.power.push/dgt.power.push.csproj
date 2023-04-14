@@ -14,7 +14,7 @@
     <PackageReference Include="UiPath.Workflow" Version="6.0.3" />
   </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>
 
