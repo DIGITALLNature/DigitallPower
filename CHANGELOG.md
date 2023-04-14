@@ -1,3 +1,10 @@
+# [1.9.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2023-04-14)
+
+
+### Features
+
+* **push:** allow Publish after creation of an element ([662d787](https://github.com/DIGITALLNature/DigitallPower/commit/662d7871b6a2d3587260cf65bd4b4bdb24babd26))
+
 # [1.9.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0...v1.9.0-beta.1) (2023-04-06)
 
 
