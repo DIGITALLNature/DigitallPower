@@ -1,3 +1,10 @@
+# [1.9.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.2...v1.9.0-beta.3) (2023-04-14)
+
+
+### Bug Fixes
+
+* **maintain): fix(maintainance:** repaired resilience at workflowstate ([d60e9da](https://github.com/DIGITALLNature/DigitallPower/commit/d60e9dac012d2a732cb228463a6b2ae110d62abc))
+
 # [1.9.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2023-04-14)
 
 
