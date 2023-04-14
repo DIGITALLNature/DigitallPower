@@ -48,7 +48,7 @@ internal class AssemblyProcessor
         };
     }
 
-    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal)
+    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal, bool publish)
     {
         var package = new PluginPackage
         {
@@ -60,7 +60,16 @@ internal class AssemblyProcessor
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
        _service.Update(package);
 
-        return new Package
+       if (publish)
+       {
+           AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+           _service.Execute(new PublishXmlRequest
+           {
+               ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrmId}</pluginpackage></pluginpackages></importexportxml>"
+           });
+       }
+
+       return new Package
         {
             Name = package.Name,
             Version = package.Version,
@@ -102,7 +111,7 @@ internal class AssemblyProcessor
         };
     }
 
-    public Model.Assembly UpdatePluginAssembly(Model.Assembly dll, Model.Assembly crm, string solution)
+    public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution, bool publish)
     {
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
             crm.Name, crm.Version, dll.Version);
@@ -117,6 +126,16 @@ internal class AssemblyProcessor
             Content = dll.Content
         };
         _service.Update(pluginAssembly);
+
+        if (publish)
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
+            _service.Execute(new PublishXmlRequest
+            {
+                ParameterXml = $"<importexportxml><pluginassemblies><pluginassembly>{crm.Id}</pluginassembly></pluginassemblies></importexportxml>"
+            });
+        }
+
         if (!string.IsNullOrWhiteSpace(solution) && !crm.Solutions.Contains(solution))
         {
             AddPluginAssemblyToSolution(pluginAssembly, solution);
@@ -156,8 +175,7 @@ internal class AssemblyProcessor
                 AnsiConsole.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
-                ex.RootException());
+            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name, ex.RootException());
         }
     }
 

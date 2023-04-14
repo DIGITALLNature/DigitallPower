@@ -1,6 +1,8 @@
 using System.Globalization;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.push.Model;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Spectre.Console;
@@ -13,24 +15,25 @@ internal class WebresourcesProcessor
 
     private readonly List<WebresourcesPattern> _knownWebresourcesPattern = new()
     {
-        new(WebResource.Options.WebResourceType.Webpage_HTML_, "*.html"),
-        new(WebResource.Options.WebResourceType.StyleSheet_CSS_, "*.css"),
-        new(WebResource.Options.WebResourceType.Script_JScript_, "*.js"),
-        new(WebResource.Options.WebResourceType.Data_XML_, "*.xml"),
-        new(WebResource.Options.WebResourceType.PNGFormat, "*.png"),
-        new(WebResource.Options.WebResourceType.JPGFormat, "*.jpg"),
-        new(WebResource.Options.WebResourceType.GIFFormat, "*.gif"),
-        new(WebResource.Options.WebResourceType.Silverlight_XAP_, "*.xap"),
-        new(WebResource.Options.WebResourceType.StyleSheet_XSL_, "*.xsl"),
-        new(WebResource.Options.WebResourceType.ICOFormat, "*.ico"),
-        new(WebResource.Options.WebResourceType.VectorFormat_SVG_, "*.svg"),
-        new(WebResource.Options.WebResourceType.String_RESX_, "*.resx")
+        new WebresourcesPattern(WebResource.Options.WebResourceType.Webpage_HTML_, "*.html"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheet_CSS_, "*.css"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.Script_JScript_, "*.js"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.Data_XML_, "*.xml"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.PNGFormat, "*.png"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.JPGFormat, "*.jpg"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.GIFFormat, "*.gif"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.Silverlight_XAP_, "*.xap"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheet_XSL_, "*.xsl"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.ICOFormat, "*.ico"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.VectorFormat_SVG_, "*.svg"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.String_RESX_, "*.resx")
     };
 
     private readonly DataContext _context;
     private string _solutionPrefix;
     private List<Webresources> _files;
     private Guid? _solutionId;
+    private string? _solutionName;
 
     public WebresourcesProcessor(IOrganizationService connection)
     {
@@ -61,7 +64,7 @@ internal class WebresourcesProcessor
 
     private void CheckStatus(Webresources resource)
     {
-        var existing = _context.WebResourceSet.Where(wr => wr.WebResourceType!.Value == resource.Type && wr.Name == resource.Name).Select(wr => new {wr.Id, wr.Content}).SingleOrDefault();
+        var existing = _context.WebResourceSet.Where(wr => wr.WebResourceType!.Value == resource.Type && wr.Name == resource.Name).Select(wr => new { wr.Id, wr.Content }).SingleOrDefault();
 
         if (existing == null)
         {
@@ -78,11 +81,11 @@ internal class WebresourcesProcessor
         var solutionDetails = (from s in _context.SolutionSet
             join p in _context.PublisherSet on s.PublisherId.Id equals p.Id
             where s.UniqueName == solution
-            select new {s.SolutionId, p.CustomizationPrefix}).SingleOrDefault();
+            select new { s.SolutionId, p.CustomizationPrefix }).SingleOrDefault();
 
         if (solutionDetails == null)
         {
-            AnsiConsole.WriteLine(CultureInfo.InvariantCulture,"Solution {0} [Red]not found[/]!", solution);
+            AnsiConsole.WriteLine(CultureInfo.InvariantCulture, "Solution {0} [Red]not found[/]!", solution);
         }
 
         prefix = solutionDetails?.CustomizationPrefix ?? "new";
@@ -95,12 +98,13 @@ internal class WebresourcesProcessor
         if (!string.IsNullOrWhiteSpace(solution))
         {
             _solutionId = GetSolution(solution, out _solutionPrefix);
+            _solutionName = solution;
         }
 
         defaultSolution = !_solutionId.HasValue;
     }
 
-    public void UpsertResources()
+    public void UpsertResources(bool publish)
     {
         foreach (var resource in _files.Where(f => f.State == WebresourceState.Create))
         {
@@ -114,6 +118,11 @@ internal class WebresourcesProcessor
                 WebResourceType = new OptionSetValue(resource.Type)
             });
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "    => {0}", id);
+
+            if (_solutionId.HasValue)
+            {
+                AddResourceToSolution(id, resource.Name);
+            }
         }
 
         foreach (var resource in _files.Where(f => f.State == WebresourceState.Update))
@@ -123,8 +132,49 @@ internal class WebresourcesProcessor
             {
                 Id = resource.XrmId,
                 Content = resource.Content,
-                Description = $"Upserted with DGTP: {resource.Hash}",
+                Description = $"Upserted with DGTP: {resource.Hash}"
             });
+
+            if (publish)
+            {
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
+                _connection.Execute(new PublishXmlRequest
+                {
+                    ParameterXml = $"<importexportxml><webresources><webresource>{resource.XrmId}</webresource></webresources></importexportxml>"
+                });
+            }
+        }
+    }
+
+    private void AddResourceToSolution(Guid resourceId, string resourceName)
+    {
+        // Web Resource = 61
+        var addReq = new AddSolutionComponentRequest
+        {
+            AddRequiredComponents = false,
+            ComponentType = 61,
+            ComponentId = resourceId,
+            SolutionUniqueName = _solutionName
+        };
+
+        try
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add WebResource [green]{0}[/] to Solution [bold]{1}[/]", resourceName, _solutionName);
+            _connection.Execute(addReq);
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                _connection.Delete(WebResource.EntityLogicalName, resourceId);
+            }
+            catch (Exception rb)
+            {
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                AnsiConsole.WriteException(rb.RootException());
+            }
+
+            throw new Exception($"The WebResource Registration was aborted. WebResource: {resourceName}", ex.RootException());
         }
     }
 
@@ -140,7 +190,7 @@ internal class WebresourcesProcessor
         {
             if (_files.SingleOrDefault(f => f.Type == wris.WebResourceType.Value && f.Name == wris.Name) == null)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,"Found obsolete: [Green]{0}[/] <{1}>",wris.Name,wris.WebResourceType);
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Found obsolete: [Green]{0}[/] <{1}>", wris.Name, wris.WebResourceType);
                 _files.Add(new Webresources(wris.WebResourceType.Value, wris.Name, wris.WebResourceId.Value));
             }
         }
@@ -150,7 +200,7 @@ internal class WebresourcesProcessor
     {
         foreach (var resource in _files.Where(f => f.State == WebresourceState.Delete))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,"Delete obsolete: [Red]{0}[/] <{1}>",resource.Name,resource.Type);
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Delete obsolete: [Red]{0}[/] <{1}>", resource.Name, resource.Type);
             _connection.Delete(WebResource.EntityLogicalName, resource.XrmId);
         }
     }
