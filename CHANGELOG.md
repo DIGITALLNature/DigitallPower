@@ -1,3 +1,10 @@
+# [1.9.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.3...v1.9.0-beta.4) (2023-05-05)
+
+
+### Bug Fixes
+
+* **codegeneration:** incorrect parameters for CustomAPIs ([0518d5a](https://github.com/DIGITALLNature/DigitallPower/commit/0518d5a3679aeaed7a1c9713dba15ac45f4a4d10))
+
 # [1.9.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.2...v1.9.0-beta.3) (2023-04-14)
 
 
