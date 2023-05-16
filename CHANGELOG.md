@@ -1,3 +1,10 @@
+# [1.9.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2023-05-16)
+
+
+### Bug Fixes
+
+* **codegeneration:** sanitize parameternames in actions ([9920124](https://github.com/DIGITALLNature/DigitallPower/commit/992012488e5e933a279787eee08fcbe81e035476))
+
 # [1.9.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.3...v1.9.0-beta.4) (2023-05-05)
 
 
