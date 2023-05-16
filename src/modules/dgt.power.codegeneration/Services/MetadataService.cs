@@ -248,6 +248,20 @@ public class MetadataService : IMetadataService
         {
             var ia = new WfAction((string)((AliasedValue)customApi[$"msg.{SdkMessage.LogicalNames.Name}"]).Value);
 
+            var target = customApi.GetAttributeValue<string>(CustomAPI.LogicalNames.BoundEntityLogicalName);
+            if (!string.IsNullOrWhiteSpace(target))
+            {
+                ia.InParameters.Add(
+                    new WfParameter
+                    {
+                        Name = "Target",
+                        UniqueName = "Target",
+                        Description = "bound Target",
+                        Entityname = target,
+                        Type = nameof(EntityReference)
+                    });
+            }
+
             var inquery = new QueryExpression(CustomAPIRequestParameter.EntityLogicalName)
             {
                 NoLock = true,
@@ -277,7 +291,7 @@ public class MetadataService : IMetadataService
                     {
                         Name = (string)inparam["name"],
                         UniqueName = (string)inparam["uniquename"],
-                        Description = (string)inparam["description"],
+                        Description = inparam.GetAttributeValue<string>("description"),
                         Entityname = "",
                         Type = type
                     });
@@ -313,7 +327,7 @@ public class MetadataService : IMetadataService
                     {
                         Name = (string)outparam["name"],
                         UniqueName = (string)outparam["uniquename"],
-                        Description = (string)outparam["description"],
+                        Description = outparam.GetAttributeValue<string>("description"),
                         Entityname = "",
                         Type = type
                     });

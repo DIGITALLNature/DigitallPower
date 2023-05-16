@@ -26,7 +26,7 @@ public class PushTest : PushTestsBase<PushCommand>
         GetContext()
             .Execute(new PushVerb
             {
-                DllFile = "../../../../../samples/output/dgt.power.push.tests.sample.dll",
+                Target= "../../../../../samples/output/dgt.power.push.tests.sample.dll",
                 Solution = "TestSolution"
             }).Should().BeTrue();
 
@@ -35,7 +35,7 @@ public class PushTest : PushTestsBase<PushCommand>
         GetContext()
             .Execute(new PushVerb
             {
-                DllFile = "../../../../../samples/output/dgt.power.push.tests.sample.1.0.0.nupkg",
+                Target = "../../../../../samples/output/dgt.power.push.tests.sample.1.0.0.nupkg",
                 Solution = "TestSolution"
             }).Should().BeTrue();
 }

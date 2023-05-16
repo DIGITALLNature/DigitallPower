@@ -43,7 +43,8 @@
         "customapirequestparameter",
         "customapiresponseproperty",
         "attribute",
-        "ec4u_carrier"
+        "ec4u_carrier",
+        "webresource"
     ],
     "SuppressTypeScript": true,
     "SuppressMetaData": true,

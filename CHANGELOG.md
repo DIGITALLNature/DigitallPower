@@ -1,3 +1,45 @@
+# [1.9.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.5...v1.9.0-beta.6) (2023-05-16)
+
+
+### Features
+
+* **codegeneration:** changed attribute filter to IsValidODataAttribute ([5012ead](https://github.com/DIGITALLNature/DigitallPower/commit/5012ead4827e0af256e39ff0b4dcc08024008fa7))
+
+# [1.9.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2023-05-16)
+
+
+### Bug Fixes
+
+* **codegeneration:** sanitize parameternames in actions ([9920124](https://github.com/DIGITALLNature/DigitallPower/commit/992012488e5e933a279787eee08fcbe81e035476))
+
+# [1.9.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.3...v1.9.0-beta.4) (2023-05-05)
+
+
+### Bug Fixes
+
+* **codegeneration:** incorrect parameters for CustomAPIs ([0518d5a](https://github.com/DIGITALLNature/DigitallPower/commit/0518d5a3679aeaed7a1c9713dba15ac45f4a4d10))
+
+# [1.9.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.2...v1.9.0-beta.3) (2023-04-14)
+
+
+### Bug Fixes
+
+* **maintain): fix(maintainance:** repaired resilience at workflowstate ([d60e9da](https://github.com/DIGITALLNature/DigitallPower/commit/d60e9dac012d2a732cb228463a6b2ae110d62abc))
+
+# [1.9.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2023-04-14)
+
+
+### Features
+
+* **push:** allow Publish after creation of an element ([662d787](https://github.com/DIGITALLNature/DigitallPower/commit/662d7871b6a2d3587260cf65bd4b4bdb24babd26))
+
+# [1.9.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.8.0...v1.9.0-beta.1) (2023-04-06)
+
+
+### Features
+
+* **push:** upload and sync of webressources ([#46](https://github.com/DIGITALLNature/DigitallPower/issues/46)) ([f59f90e](https://github.com/DIGITALLNature/DigitallPower/commit/f59f90e92b910ce6dd183feef7aafb9c301998fe))
+
 # [1.8.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.7.1...v1.8.0) (2023-04-06)
 
 

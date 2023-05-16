@@ -597,6 +597,26 @@ namespace dgt.power.dataverse
             }
         }
 
+		/// <summary>
+		/// Unique identifier for powerfxrule associated with Custom API.
+		/// </summary>
+		[AttributeLogicalName("powerfxruleid")]
+        public EntityReference? PowerfxRuleId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("powerfxruleid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(PowerfxRuleId));
+                SetAttributeValue("powerfxruleid", value);
+                OnPropertyChanged(nameof(PowerfxRuleId));
+            }
+        }
+
 		
 		[AttributeLogicalName("sdkmessageid")]
         public EntityReference? SdkMessageId
@@ -914,6 +934,7 @@ namespace dgt.power.dataverse
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
 				public const string PluginTypeId = "plugintypeid";
+				public const string PowerfxRuleId = "powerfxruleid";
 				public const string SdkMessageId = "sdkmessageid";
 				public const string SolutionId = "solutionid";
 				public const string Statecode = "statecode";
@@ -961,6 +982,7 @@ namespace dgt.power.dataverse
 				public const string LkCustomapiModifiedonbehalfby = "lk_customapi_modifiedonbehalfby";
 				public const string OwnerCustomapi = "owner_customapi";
 				public const string PlugintypeCustomapi = "plugintype_customapi";
+				public const string PowerfxruleCustomapi = "powerfxrule_customapi";
 				public const string SdkmessageCustomapi = "sdkmessage_customapi";
 				public const string TeamCustomapi = "team_customapi";
 				public const string UserCustomapi = "user_customapi";

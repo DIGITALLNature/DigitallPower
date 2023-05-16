@@ -31,7 +31,7 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
-          
+
     - name: Restore dependencies
       run: dotnet restore --locked-mode
 
@@ -41,24 +41,24 @@ jobs:
     - name: Enable Integration Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      if: env.DGTP_TESTS_INTEGRATION_CONNECTION != null  
+      if: env.DGTP_TESTS_INTEGRATION_CONNECTION != null
       run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
 
     - name: Run Tests
       env:
         DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
       run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings --blame-hang-timeout 3m
-    
+
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
       with:
-        name: ${{ matrix.os }} Tests            
+        name: ${{ matrix.os }} Tests
         path: tests/**/test-results.trx
         reporter: dotnet-trx
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.16
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19
       if: matrix.os == 'ubuntu-latest'
       with:
         reports: 'tests/**/coverage.cobertura.xml'
@@ -71,4 +71,3 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: coveragereport/lcov.info
-    

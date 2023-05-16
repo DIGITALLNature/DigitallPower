@@ -436,6 +436,46 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Information that specifies the range of IP addresses that are in allowed list for generating the SAS URIs.
+		/// </summary>
+		[AttributeLogicalName("allowediprangeforstorageaccesssignatures")]
+        public string? AllowedIpRangeForStorageAccessSignatures
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("allowediprangeforstorageaccesssignatures");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AllowedIpRangeForStorageAccessSignatures));
+                SetAttributeValue("allowediprangeforstorageaccesssignatures", value);
+                OnPropertyChanged(nameof(AllowedIpRangeForStorageAccessSignatures));
+            }
+        }
+
+		/// <summary>
+		/// Allow upload or download of certain mime types.
+		/// </summary>
+		[AttributeLogicalName("allowedmimetypes")]
+        public string? AllowedMimeTypes
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("allowedmimetypes");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AllowedMimeTypes));
+                SetAttributeValue("allowedmimetypes", value);
+                OnPropertyChanged(nameof(AllowedMimeTypes));
+            }
+        }
+
+		/// <summary>
 		/// Indicates whether auditing of changes to entity is allowed when no attributes have changed.
 		/// </summary>
 		[AttributeLogicalName("allowentityonlyaudit")]
@@ -1038,6 +1078,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(BlockedAttachments));
                 SetAttributeValue("blockedattachments", value);
                 OnPropertyChanged(nameof(BlockedAttachments));
+            }
+        }
+
+		/// <summary>
+		/// Prevent upload or download of certain mime types that are considered dangerous.
+		/// </summary>
+		[AttributeLogicalName("blockedmimetypes")]
+        public string? BlockedMimeTypes
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("blockedmimetypes");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(BlockedMimeTypes));
+                SetAttributeValue("blockedmimetypes", value);
+                OnPropertyChanged(nameof(BlockedMimeTypes));
             }
         }
 
@@ -2391,6 +2451,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Information that specifies whether IP based SAS URI generation rule is enabled
+		/// </summary>
+		[AttributeLogicalName("enableipbasedstorageaccesssignaturerule")]
+        public bool? EnableIpBasedStorageAccessSignatureRule
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("enableipbasedstorageaccesssignaturerule");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(EnableIpBasedStorageAccessSignatureRule));
+                SetAttributeValue("enableipbasedstorageaccesssignaturerule", value);
+                OnPropertyChanged(nameof(EnableIpBasedStorageAccessSignatureRule));
+            }
+        }
+
+		/// <summary>
 		/// Indicates whether the user has enabled or disabled Live Persona Card feature in UCI.
 		/// </summary>
 		[AttributeLogicalName("enablelivepersonacarduci")]
@@ -3559,6 +3639,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// IP Based SAS mode.
+		/// </summary>
+		[AttributeLogicalName("ipbasedstorageaccesssignaturemode")]
+        public OptionSetValue? IpBasedStorageAccessSignatureMode
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("ipbasedstorageaccesssignaturemode");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(IpBasedStorageAccessSignatureMode));
+                SetAttributeValue("ipbasedstorageaccesssignaturemode", value);
+                OnPropertyChanged(nameof(IpBasedStorageAccessSignatureMode));
+            }
+        }
+
+		/// <summary>
 		/// Indicates whether the feature Action Card should be enabled for the organization.
 		/// </summary>
 		[AttributeLogicalName("isactioncardenabled")]
@@ -3768,6 +3868,24 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(IsAutoSaveEnabled));
                 SetAttributeValue("isautosaveenabled", value);
                 OnPropertyChanged(nameof(IsAutoSaveEnabled));
+            }
+        }
+
+		
+		[AttributeLogicalName("isbasecardstaticfielddataenabled")]
+        public bool? IsBaseCardStaticFieldDataEnabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("isbasecardstaticfielddataenabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(IsBaseCardStaticFieldDataEnabled));
+                SetAttributeValue("isbasecardstaticfielddataenabled", value);
+                OnPropertyChanged(nameof(IsBaseCardStaticFieldDataEnabled));
             }
         }
 
@@ -6578,6 +6696,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Indicates whether bot for makers is enabled.
+		/// </summary>
+		[AttributeLogicalName("powerappsmakerbotenabled")]
+        public bool? PowerAppsMakerBotEnabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("powerappsmakerbotenabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(PowerAppsMakerBotEnabled));
+                SetAttributeValue("powerappsmakerbotenabled", value);
+                OnPropertyChanged(nameof(PowerAppsMakerBotEnabled));
+            }
+        }
+
+		/// <summary>
 		/// Indicates whether cross region operations are allowed for the organization
 		/// </summary>
 		[AttributeLogicalName("powerbiallowcrossregionoperations")]
@@ -6974,6 +7112,46 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(ReferenceSiteMapXml));
                 SetAttributeValue("referencesitemapxml", value);
                 OnPropertyChanged(nameof(ReferenceSiteMapXml));
+            }
+        }
+
+		/// <summary>
+		/// Current orgnization release cadence value
+		/// </summary>
+		[AttributeLogicalName("releasecadence")]
+        public int? ReleaseCadence
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("releasecadence");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ReleaseCadence));
+                SetAttributeValue("releasecadence", value);
+                OnPropertyChanged(nameof(ReleaseCadence));
+            }
+        }
+
+		/// <summary>
+		/// Model app refresh channel
+		/// </summary>
+		[AttributeLogicalName("releasechannel")]
+        public OptionSetValue? ReleaseChannel
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("releasechannel");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ReleaseChannel));
+                SetAttributeValue("releasechannel", value);
+                OnPropertyChanged(nameof(ReleaseChannel));
             }
         }
 
@@ -9157,6 +9335,26 @@ namespace dgt.power.dataverse
 			}
 		}
 
+		/// <summary>
+		/// 1:N webresource_organization
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("webresource_organization")]
+		public System.Collections.Generic.IEnumerable<WebResource> WebresourceOrganization
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<WebResource>("webresource_organization", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("WebresourceOrganization");
+				this.SetRelatedEntities<WebResource>("webresource_organization", null, value);
+				this.OnPropertyChanged("WebresourceOrganization");
+			}
+		}
+
 		#endregion
 
 		#region Options
@@ -9454,6 +9652,11 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+                public struct EnableIpBasedStorageAccessSignatureRule
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct EnableLivePersonaCardUCI
                 {
                     public const bool No = false;
@@ -9607,6 +9810,13 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+			    public struct IpBasedStorageAccessSignatureMode
+                {
+					public const int IPBindingOnly = 0;
+					public const int IPFirewallOnly = 1;
+					public const int IPBindingAndIPFirewall = 2;
+					public const int IPBindingOrIPFirewall = 3;
+                }
                 public struct IsActionCardEnabled
                 {
                     public const bool No = false;
@@ -9658,6 +9868,11 @@ namespace dgt.power.dataverse
                     public const bool Yes = true;
                 }
                 public struct IsAutoSaveEnabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct IsBaseCardStaticFieldDataEnabled
                 {
                     public const bool No = false;
                     public const bool Yes = true;
@@ -10089,6 +10304,11 @@ namespace dgt.power.dataverse
 					public const int Exception = 1;
 					public const int All = 2;
                 }
+                public struct PowerAppsMakerBotEnabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct PowerBIAllowCrossRegionOperations
                 {
                     public const bool No = false;
@@ -10128,6 +10348,11 @@ namespace dgt.power.dataverse
                 {
                     public const bool No = false;
                     public const bool Yes = true;
+                }
+			    public struct ReleaseChannel
+                {
+					public const int SemiAnnualChannel = 0;
+					public const int MonthlyChannel = 1;
                 }
                 public struct RelevanceSearchEnabledByPlatform
                 {
@@ -10371,6 +10596,8 @@ namespace dgt.power.dataverse
 				public const string AllowAutoUnsubscribeAcknowledgement = "allowautounsubscribeacknowledgement";
 				public const string AllowClientMessageBarAd = "allowclientmessagebarad";
 				public const string AllowedIpRangeForFirewall = "allowediprangeforfirewall";
+				public const string AllowedIpRangeForStorageAccessSignatures = "allowediprangeforstorageaccesssignatures";
+				public const string AllowedMimeTypes = "allowedmimetypes";
 				public const string AllowEntityOnlyAudit = "allowentityonlyaudit";
 				public const string AllowLeadingWildcardsInGridSearch = "allowleadingwildcardsingridsearch";
 				public const string AllowLeadingWildcardsInQuickFind = "allowleadingwildcardsinquickfind";
@@ -10402,6 +10629,7 @@ namespace dgt.power.dataverse
 				public const string BaseCurrencySymbol = "basecurrencysymbol";
 				public const string BingMapsApiKey = "bingmapsapikey";
 				public const string BlockedAttachments = "blockedattachments";
+				public const string BlockedMimeTypes = "blockedmimetypes";
 				public const string BoundDashboardDefaultCardExpanded = "bounddashboarddefaultcardexpanded";
 				public const string BulkOperationPrefix = "bulkoperationprefix";
 				public const string BusinessCardOptions = "businesscardoptions";
@@ -10472,6 +10700,7 @@ namespace dgt.power.dataverse
 				public const string EnableImmersiveSkypeIntegration = "enableimmersiveskypeintegration";
 				public const string EnableIpBasedCookieBinding = "enableipbasedcookiebinding";
 				public const string EnableIpBasedFirewallRule = "enableipbasedfirewallrule";
+				public const string EnableIpBasedStorageAccessSignatureRule = "enableipbasedstorageaccesssignaturerule";
 				public const string EnableLivePersonaCardUCI = "enablelivepersonacarduci";
 				public const string EnableLivePersonCardIntegrationInOffice = "enablelivepersoncardintegrationinoffice";
 				public const string EnableLPAuthoring = "enablelpauthoring";
@@ -10532,6 +10761,7 @@ namespace dgt.power.dataverse
 				public const string InitialVersion = "initialversion";
 				public const string IntegrationUserId = "integrationuserid";
 				public const string InvoicePrefix = "invoiceprefix";
+				public const string IpBasedStorageAccessSignatureMode = "ipbasedstorageaccesssignaturemode";
 				public const string IsActionCardEnabled = "isactioncardenabled";
 				public const string IsActionSupportFeatureEnabled = "isactionsupportfeatureenabled";
 				public const string IsActivityAnalysisEnabled = "isactivityanalysisenabled";
@@ -10543,6 +10773,7 @@ namespace dgt.power.dataverse
 				public const string IsAutoDataCaptureEnabled = "isautodatacaptureenabled";
 				public const string IsAutoDataCaptureV2Enabled = "isautodatacapturev2enabled";
 				public const string IsAutoSaveEnabled = "isautosaveenabled";
+				public const string IsBaseCardStaticFieldDataEnabled = "isbasecardstaticfielddataenabled";
 				public const string IsBasicGeospatialIntegrationEnabled = "isbasicgeospatialintegrationenabled";
 				public const string IsBPFEntityCustomizationFeatureEnabled = "isbpfentitycustomizationfeatureenabled";
 				public const string IsCollaborationExperienceEnabled = "iscollaborationexperienceenabled";
@@ -10688,6 +10919,7 @@ namespace dgt.power.dataverse
 				public const string PluginTraceLogSetting = "plugintracelogsetting";
 				public const string PMDesignator = "pmdesignator";
 				public const string PostMessageWhitelistDomains = "postmessagewhitelistdomains";
+				public const string PowerAppsMakerBotEnabled = "powerappsmakerbotenabled";
 				public const string PowerBIAllowCrossRegionOperations = "powerbiallowcrossregionoperations";
 				public const string PowerBIAutomaticPermissionsAssignment = "powerbiautomaticpermissionsassignment";
 				public const string PowerBIComponentsCreate = "powerbicomponentscreate";
@@ -10708,6 +10940,8 @@ namespace dgt.power.dataverse
 				public const string RecurrenceExpansionJobBatchSize = "recurrenceexpansionjobbatchsize";
 				public const string RecurrenceExpansionSynchCreateMax = "recurrenceexpansionsynchcreatemax";
 				public const string ReferenceSiteMapXml = "referencesitemapxml";
+				public const string ReleaseCadence = "releasecadence";
+				public const string ReleaseChannel = "releasechannel";
 				public const string ReleaseWaveName = "releasewavename";
 				public const string RelevanceSearchEnabledByPlatform = "relevancesearchenabledbyplatform";
 				public const string RelevanceSearchModifiedOn = "relevancesearchmodifiedon";
@@ -10875,6 +11109,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationEntitydataprovider = "organization_entitydataprovider";
 				public const string OrganizationEntitydatasource = "organization_entitydatasource";
 				public const string OrganizationEntitymap = "organization_entitymap";
+				public const string OrganizationEntityrecordfilter = "organization_entityrecordfilter";
 				public const string OrganizationEquipment = "organization_equipment";
 				public const string OrganizationExpanderevent = "organization_expanderevent";
 				public const string OrganizationExpiredprocess = "organization_expiredprocess";
@@ -10896,6 +11131,9 @@ namespace dgt.power.dataverse
 				public const string OrganizationMarketingformdisplayattributes = "organization_marketingformdisplayattributes";
 				public const string OrganizationMetric = "organization_metric";
 				public const string OrganizationMobileofflineprofileextension = "organization_mobileofflineprofileextension";
+				public const string OrganizationMsdynAccountkpiitem = "organization_msdyn_accountkpiitem";
+				public const string OrganizationMsdynActivityanalysiscleanupstate = "organization_msdyn_activityanalysiscleanupstate";
+				public const string OrganizationMsdynActivityanalysisconfig = "organization_msdyn_activityanalysisconfig";
 				public const string OrganizationMsdynAdaptivecardconfiguration = "organization_msdyn_adaptivecardconfiguration";
 				public const string OrganizationMsdynAgentresourceforecasting = "organization_msdyn_agentresourceforecasting";
 				public const string OrganizationMsdynAppinsightsmetadata = "organization_msdyn_appinsightsmetadata";
@@ -10908,7 +11146,15 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynCasetopicsetting = "organization_msdyn_casetopicsetting";
 				public const string OrganizationMsdynCasetopicsummary = "organization_msdyn_casetopicsummary";
 				public const string OrganizationMsdynChannelcapability = "organization_msdyn_channelcapability";
+				public const string OrganizationMsdynCiprovider = "organization_msdyn_ciprovider";
+				public const string OrganizationMsdynConsoleapplicationtype = "organization_msdyn_consoleapplicationtype";
+				public const string OrganizationMsdynConsoleappparameterdefinition = "organization_msdyn_consoleappparameterdefinition";
+				public const string OrganizationMsdynContactkpiitem = "organization_msdyn_contactkpiitem";
 				public const string OrganizationMsdynCustomeremailcommunication = "organization_msdyn_customeremailcommunication";
+				public const string OrganizationMsdynDailyaccountkpiitem = "organization_msdyn_dailyaccountkpiitem";
+				public const string OrganizationMsdynDailycontactkpiitem = "organization_msdyn_dailycontactkpiitem";
+				public const string OrganizationMsdynDailyleadkpiitem = "organization_msdyn_dailyleadkpiitem";
+				public const string OrganizationMsdynDailyopportunitykpiitem = "organization_msdyn_dailyopportunitykpiitem";
 				public const string OrganizationMsdynDataanalyticsreportCsrmanager = "organization_msdyn_dataanalyticsreport_csrmanager";
 				public const string OrganizationMsdynDataanalyticsreportForecast = "organization_msdyn_dataanalyticsreport_forecast";
 				public const string OrganizationMsdynDataanalyticsreportKsinsights = "organization_msdyn_dataanalyticsreport_ksinsights";
@@ -10916,6 +11162,8 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynDatabaseversion = "organization_msdyn_databaseversion";
 				public const string OrganizationMsdynDatahygienesettinginfo = "organization_msdyn_datahygienesettinginfo";
 				public const string OrganizationMsdynDatainsightsandanalyticsfeature = "organization_msdyn_datainsightsandanalyticsfeature";
+				public const string OrganizationMsdynDigitalsellingactivetask = "organization_msdyn_digitalsellingactivetask";
+				public const string OrganizationMsdynDigitalsellingcompletedtask = "organization_msdyn_digitalsellingcompletedtask";
 				public const string OrganizationMsdynDistributedlock = "organization_msdyn_distributedlock";
 				public const string OrganizationMsdynDuplicatedetectionpluginrun = "organization_msdyn_duplicatedetectionpluginrun";
 				public const string OrganizationMsdynFederatedarticleincident = "organization_msdyn_federatedarticleincident";
@@ -10929,15 +11177,20 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynKbenrichment = "organization_msdyn_kbenrichment";
 				public const string OrganizationMsdynKbkeywordsdescsuggestionsetting = "organization_msdyn_kbkeywordsdescsuggestionsetting";
 				public const string OrganizationMsdynKmpersonalizationsetting = "organization_msdyn_kmpersonalizationsetting";
+				public const string OrganizationMsdynKnowledgeconfiguration = "organization_msdyn_knowledgeconfiguration";
 				public const string OrganizationMsdynLeadhygienesetting = "organization_msdyn_leadhygienesetting";
+				public const string OrganizationMsdynLeadkpiitem = "organization_msdyn_leadkpiitem";
 				public const string OrganizationMsdynLinkedentityattributevalidity = "organization_msdyn_linkedentityattributevalidity";
 				public const string OrganizationMsdynMaskingrule = "organization_msdyn_maskingrule";
+				public const string OrganizationMsdynMostcontacted = "organization_msdyn_mostcontacted";
+				public const string OrganizationMsdynMostcontactedby = "organization_msdyn_mostcontactedby";
 				public const string OrganizationMsdynOcchannelconfiguration = "organization_msdyn_occhannelconfiguration";
 				public const string OrganizationMsdynOcchannelstateconfiguration = "organization_msdyn_occhannelstateconfiguration";
 				public const string OrganizationMsdynOclocalizationdata = "organization_msdyn_oclocalizationdata";
 				public const string OrganizationMsdynOcsystemmessage = "organization_msdyn_ocsystemmessage";
 				public const string OrganizationMsdynOctag = "organization_msdyn_octag";
 				public const string OrganizationMsdynOmnichannelconfiguration = "organization_msdyn_omnichannelconfiguration";
+				public const string OrganizationMsdynOpportunitykpiitem = "organization_msdyn_opportunitykpiitem";
 				public const string OrganizationMsdynPaneconfiguration = "organization_msdyn_paneconfiguration";
 				public const string OrganizationMsdynPanetabconfiguration = "organization_msdyn_panetabconfiguration";
 				public const string OrganizationMsdynPanetoolconfiguration = "organization_msdyn_panetoolconfiguration";
@@ -10964,6 +11217,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynSentimentanalysis = "organization_msdyn_sentimentanalysis";
 				public const string OrganizationMsdynShareasconfiguration = "organization_msdyn_shareasconfiguration";
 				public const string OrganizationMsdynSikeyvalueconfig = "organization_msdyn_sikeyvalueconfig";
+				public const string OrganizationMsdynSimilarentitiesfeatureimportance = "organization_msdyn_similarentitiesfeatureimportance";
 				public const string OrganizationMsdynSmartassistconfig = "organization_msdyn_smartassistconfig";
 				public const string OrganizationMsdynSolutionhealthruleset = "organization_msdyn_solutionhealthruleset";
 				public const string OrganizationMsdynSoundfile = "organization_msdyn_soundfile";
@@ -10983,10 +11237,32 @@ namespace dgt.power.dataverse
 				public const string OrganizationMsdynVivaentitysetting = "organization_msdyn_vivaentitysetting";
 				public const string OrganizationMsdynVivaorgsetting = "organization_msdyn_vivaorgsetting";
 				public const string OrganizationMsdynWallsavedquery = "organization_msdyn_wallsavedquery";
+				public const string OrganizationMsdynWkwcolleaguesforcompany = "organization_msdyn_wkwcolleaguesforcompany";
+				public const string OrganizationMsdynWkwcolleaguesforcontact = "organization_msdyn_wkwcolleaguesforcontact";
 				public const string OrganizationMsdynWorkflowactionstatus = "organization_msdyn_workflowactionstatus";
 				public const string OrganizationMsdynWorklistviewconfiguration = "organization_msdyn_worklistviewconfiguration";
 				public const string OrganizationMsdynmktEventmetadataSdkmessageprocessingstep = "organization_msdynmkt_eventmetadata_sdkmessageprocessingstep";
 				public const string OrganizationNavigationsetting = "organization_navigationsetting";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4c = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450ed = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25db = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7";
+				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0e = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e";
 				public const string OrganizationNewprocess = "organization_newprocess";
 				public const string OrganizationOfficegraphdocument = "organization_officegraphdocument";
 				public const string OrganizationOpportunitysalesprocess = "organization_opportunitysalesprocess";
@@ -11016,6 +11292,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationQueueitems = "organization_queueitems";
 				public const string OrganizationQueues = "organization_queues";
 				public const string OrganizationRecommendeddocument = "organization_recommendeddocument";
+				public const string OrganizationRecordfilter = "organization_recordfilter";
 				public const string OrganizationRelationshipRoles = "organization_relationship_roles";
 				public const string OrganizationRelationshipattribute = "organization_relationshipattribute";
 				public const string OrganizationResourceGroups = "organization_resource_groups";

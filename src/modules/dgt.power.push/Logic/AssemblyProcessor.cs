@@ -11,12 +11,12 @@ using PluginType = dgt.power.push.Model.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class Processor
+internal class AssemblyProcessor
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
 
-    public Processor(IOrganizationService service)
+    public AssemblyProcessor(IOrganizationService service)
     {
         _service = service;
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
@@ -48,7 +48,7 @@ internal class Processor
         };
     }
 
-    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal)
+    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal, bool publish)
     {
         var package = new PluginPackage
         {
@@ -60,7 +60,16 @@ internal class Processor
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
        _service.Update(package);
 
-        return new Package
+       if (publish)
+       {
+           AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+           _service.Execute(new PublishXmlRequest
+           {
+               ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrmId}</pluginpackage></pluginpackages></importexportxml>"
+           });
+       }
+
+       return new Package
         {
             Name = package.Name,
             Version = package.Version,
@@ -73,7 +82,7 @@ internal class Processor
 
     #region PluginAssembly
 
-    public Assembly CreatePluginAssembly(Assembly dll, string solution)
+    public Model.Assembly CreatePluginAssembly(Model.Assembly dll, string solution)
     {
         var pluginAssembly = new PluginAssembly
         {
@@ -93,7 +102,7 @@ internal class Processor
             AddPluginAssemblyToSolution(pluginAssembly, solution);
         }
 
-        return new Assembly
+        return new Model.Assembly
         {
             Name = pluginAssembly.Name,
             Version = dll.Version,
@@ -102,11 +111,11 @@ internal class Processor
         };
     }
 
-    public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution)
+    public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution, bool publish)
     {
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
             crm.Name, crm.Version, dll.Version);
-        //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly" 
+        //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly"
         foreach (var oldType in crm.PluginTypes.ToList().Where(t => dll.PluginTypes.All(d => d.TypeName != t.TypeName)))
         {
             crm.PluginTypes.Remove(DeletePluginType(oldType));
@@ -117,6 +126,16 @@ internal class Processor
             Content = dll.Content
         };
         _service.Update(pluginAssembly);
+
+        if (publish)
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
+            _service.Execute(new PublishXmlRequest
+            {
+                ParameterXml = $"<importexportxml><pluginassemblies><pluginassembly>{crm.Id}</pluginassembly></pluginassemblies></importexportxml>"
+            });
+        }
+
         if (!string.IsNullOrWhiteSpace(solution) && !crm.Solutions.Contains(solution))
         {
             AddPluginAssemblyToSolution(pluginAssembly, solution);
@@ -156,8 +175,7 @@ internal class Processor
                 AnsiConsole.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
-                ex.RootException());
+            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name, ex.RootException());
         }
     }
 
@@ -165,7 +183,7 @@ internal class Processor
 
     #region PluginType
 
-    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm, string solution)
+    public Model.Assembly UpsertAndPurgePluginTypes(Model.Assembly dll, Model.Assembly crm, string solution)
     {
         // Update
         foreach (var updateType in dll.PluginTypes.Where(t => crm.PluginTypes.Contains(t)))
@@ -183,7 +201,7 @@ internal class Processor
         return crm;
     }
 
-    private PluginType CreatePluginType(Assembly crm, PluginType pluginType, string solution)
+    private PluginType CreatePluginType(Model.Assembly crm, PluginType pluginType, string solution)
     {
         var type = new dataverse.PluginType
         {
@@ -332,7 +350,7 @@ internal class Processor
         }
     }
 
-    public Assembly UpsertAndPurgeWorkflowTypes(Assembly dll, Assembly crm)
+    public Model.Assembly UpsertAndPurgeWorkflowTypes(Model.Assembly dll, Model.Assembly crm)
     {
         // New
         foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.All(t => t.TypeName != d.TypeName)))
@@ -350,7 +368,7 @@ internal class Processor
         return crm;
     }
 
-    private WorkflowType CreateWorkflowType(Assembly crm, WorkflowType workflowType)
+    private WorkflowType CreateWorkflowType(Model.Assembly crm, WorkflowType workflowType)
     {
         var type = new dataverse.PluginType
         {
@@ -391,7 +409,7 @@ internal class Processor
 
     #region PluginStep
 
-    public Assembly UpsertAndPurgePluginSteps(Assembly dll, Assembly crm, string solution)
+    public Model.Assembly UpsertAndPurgePluginSteps(Model.Assembly dll, Model.Assembly crm, string solution)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {
@@ -445,7 +463,7 @@ internal class Processor
         };
 
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
-        Validator.Validate(step);
+        AssemblyValidator.Validate(step);
 
         if (!Guid.Empty.Equals(pluginStep.MessageFilterId))
         {
@@ -643,7 +661,7 @@ internal class Processor
         }
 
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
-        Validator.Validate(updatedStep);
+        AssemblyValidator.Validate(updatedStep);
 
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
         _service.Update(updatedStep);
@@ -654,7 +672,7 @@ internal class Processor
 
     #region PluginStepImage
 
-    public Assembly UpsertAndPurgePluginStepImages(Assembly dll, Assembly crm)
+    public Model.Assembly UpsertAndPurgePluginStepImages(Model.Assembly dll, Model.Assembly crm)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {
@@ -710,7 +728,7 @@ internal class Processor
         };
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
             "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name, pluginStepImage.ParentName!);
-        Validator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
+        AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
         AnsiConsole.Markup("   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
             pluginStepImage.ParentName!);
         image.Id = _service.Create(image);
@@ -797,7 +815,7 @@ internal class Processor
 
         AnsiConsole.Markup("   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
-        Validator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
+        AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
             updatedStepImage.ImageType!.Value);
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
             "   Update PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,

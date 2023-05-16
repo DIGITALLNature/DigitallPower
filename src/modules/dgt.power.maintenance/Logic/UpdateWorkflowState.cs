@@ -89,7 +89,7 @@ public class UpdateWorkflowState : BaseMaintenance
         var round = 0;
         var updateResults = flows.ToDictionary(f => f, _ => false);
 
-        int previousFailures, currentFailures = 0;
+        int previousFailures, currentFailures = updateResults.Count;
         do
         {
             previousFailures = currentFailures;

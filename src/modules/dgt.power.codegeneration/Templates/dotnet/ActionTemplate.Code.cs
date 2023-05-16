@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 
 namespace dgt.power.codegeneration.Templates.dotnet
@@ -29,6 +30,11 @@ namespace dgt.power.codegeneration.Templates.dotnet
         internal string MaskOverrides(string phrase)
         {
             return ProtectedNames.Contains(phrase) ? $"{phrase}Parameter" : phrase;
+        }
+
+        private static string Sanitize(string value)
+        {
+            return Formatter.Sanitize(value);
         }
 
         private static string ConvertCaseString(string phrase, Case cases)

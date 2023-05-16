@@ -6,9 +6,9 @@ using Microsoft.Xrm.Sdk.Client;
 
 // ReSharper disable All
 namespace <#= NameSpace #>
-{ 
+{
 <# foreach(var action in Actions)
-{ 
+{
 #>
 	[RequestProxy("<#= action.LogicalName #>")]
 	public class <#= CamelCase(action.LogicalName) #>Request : OrganizationRequest
@@ -23,15 +23,15 @@ namespace <#= NameSpace #>
 		#endregion
 
 <# if(action.InParameters.Count > 0)
-{ 
+{
 #>
 		#region InParameters
 		public struct InParameters
 		{
 <# foreach(var param in action.InParameters)
-{ 
+{
 #>
-			public const string <#= MaskOverrides(CamelCase(param.Name)) #> = "<#= param.UniqueName #>";
+			public const string <#= MaskOverrides(Sanitize(CamelCase(param.Name))) #> = "<#= param.UniqueName #>";
 <#
 }
 #>
@@ -42,9 +42,9 @@ namespace <#= NameSpace #>
 #>
 
 <# foreach(var param in action.InParameters)
-{ 
+{
 #>
-		public <#= param.Type #> <#= MaskOverrides(CamelCase(param.Name)) #>
+		public <#= param.Type #> <#= MaskOverrides(Sanitize(CamelCase(param.Name))) #>
 		{
 			get
 			{
@@ -62,22 +62,22 @@ namespace <#= NameSpace #>
 
 <#
 }
-#>		
+#>
 	}
 
 	[ResponseProxy("<#= action.LogicalName #>")]
 	public class <#= CamelCase(action.LogicalName) #>Response : OrganizationResponse
 	{
 <# if(action.OutParameters.Count > 0)
-{ 
+{
 #>
 		#region OutParameters
 		public struct OutParameters
 		{
 <# foreach(var param in action.OutParameters)
-{ 
+{
 #>
-			public const string <#= CamelCase(param.Name) #> = "<#= param.UniqueName #>";
+			public const string <#= Sanitize(CamelCase(param.Name)) #> = "<#= param.UniqueName #>";
 <#
 }
 #>
@@ -88,9 +88,9 @@ namespace <#= NameSpace #>
 #>
 
 <# foreach(var param in action.OutParameters)
-{ 
+{
 #>
-		public <#= param.Type #> <#= CamelCase(param.Name) #>
+		public <#= param.Type #> <#= Sanitize(CamelCase(param.Name)) #>
 		{
 			get
 			{

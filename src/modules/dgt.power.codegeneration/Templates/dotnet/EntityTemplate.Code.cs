@@ -197,10 +197,10 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
         private static IEnumerable<AttributeMetadata> Filter(AttributeMetadata[] attributes)
         {
-            return attributes.OrderByDescending(a => a.IsPrimaryId).ThenBy(a => a.LogicalName).Where(
-                a => a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true &&
-                     (a.AttributeOf == null ||
-                      a.AttributeOf == "entityimageid") /*&& a.AttributeType != AttributeTypeCode.Virtual*/);
+            return attributes
+                .OrderByDescending(a => a.IsPrimaryId)
+                .ThenBy(a => a.LogicalName)
+                .Where(a => a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true && a.IsValidODataAttribute);
         }
 
         private IEnumerable<OptionField> FilterOptions(AttributeMetadata[] attributes)
