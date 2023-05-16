@@ -1,3 +1,10 @@
+# [1.9.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.5...v1.9.0-beta.6) (2023-05-16)
+
+
+### Features
+
+* **codegeneration:** changed attribute filter to IsValidODataAttribute ([5012ead](https://github.com/DIGITALLNature/DigitallPower/commit/5012ead4827e0af256e39ff0b4dcc08024008fa7))
+
 # [1.9.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2023-05-16)
 
 
