@@ -26,9 +26,9 @@ namespace dgt.power.codegeneration.Templates.dotnet
             this.Write("using System;\r\nusing Microsoft.Xrm.Sdk;\r\nusing Microsoft.Xrm.Sdk.Client;\r\n\r\n// Re" +
                     "Sharper disable All\r\nnamespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            this.Write("\r\n{ \r\n");
+            this.Write("\r\n{\r\n");
  foreach(var action in Actions)
-{ 
+{
 
             this.Write("\t[RequestProxy(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
@@ -42,14 +42,14 @@ namespace dgt.power.codegeneration.Templates.dotnet
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
             this.Write("\";\r\n\t\t#endregion\r\n\r\n");
  if(action.InParameters.Count > 0)
-{ 
+{
 
             this.Write("\t\t#region InParameters\r\n\t\tpublic struct InParameters\r\n\t\t{\r\n");
  foreach(var param in action.InParameters)
-{ 
+{
 
             this.Write("\t\t\tpublic const string ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(CamelCase(param.Name))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(Sanitize(CamelCase(param.Name)))));
             this.Write(" = \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
             this.Write("\";\r\n");
@@ -62,12 +62,12 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
             this.Write("\r\n");
  foreach(var param in action.InParameters)
-{ 
+{
 
             this.Write("\t\tpublic ");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
             this.Write(" ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(CamelCase(param.Name))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(MaskOverrides(Sanitize(CamelCase(param.Name)))));
             this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif(base.Parameters.Contains(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
             this.Write("\"))\r\n\t\t\t\t{\r\n\t\t\t\t\treturn (");
@@ -82,20 +82,20 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
 }
 
-            this.Write("\t\t\r\n\t}\r\n\r\n\t[ResponseProxy(\"");
+            this.Write("\t}\r\n\r\n\t[ResponseProxy(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(action.LogicalName));
             this.Write("\")]\r\n\tpublic class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(action.LogicalName)));
             this.Write("Response : OrganizationResponse\r\n\t{\r\n");
  if(action.OutParameters.Count > 0)
-{ 
+{
 
             this.Write("\t\t#region OutParameters\r\n\t\tpublic struct OutParameters\r\n\t\t{\r\n");
  foreach(var param in action.OutParameters)
-{ 
+{
 
             this.Write("\t\t\tpublic const string ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(param.Name)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(param.Name))));
             this.Write(" = \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
             this.Write("\";\r\n");
@@ -108,12 +108,12 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
             this.Write("\r\n");
  foreach(var param in action.OutParameters)
-{ 
+{
 
             this.Write("\t\tpublic ");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Type));
             this.Write(" ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(param.Name)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(param.Name))));
             this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif(base.Results.Contains(\"");
             this.Write(this.ToStringHelper.ToStringWithCulture(param.UniqueName));
             this.Write("\"))\r\n\t\t\t\t{\r\n\t\t\t\t\treturn (");
@@ -153,7 +153,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {
