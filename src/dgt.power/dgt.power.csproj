@@ -21,6 +21,10 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <PackageOutputPath>../../packages</PackageOutputPath>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <Version>1.0.0-local</Version>
+    <InformationalVersion>1.0.0-local</InformationalVersion>
+    <RepositoryCommit>local</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
