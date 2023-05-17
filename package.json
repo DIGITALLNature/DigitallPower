@@ -26,7 +26,7 @@
                     "files": [
                         {
                             "path": [
-                                "src/dgt.power/dgt.power.csproj"
+                                "Directory.Build.props"
                             ],
                             "type": "xml",
                             "replacements": [
@@ -52,7 +52,8 @@
                 "@semantic-release/git",
                 {
                     "assets": [
-                        "CHANGELOG.md"
+                        "CHANGELOG.md",
+                        "Directory.Build.props"
                     ],
                     "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
                 }
