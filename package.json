@@ -35,6 +35,14 @@
                                 {
                                     "key": "VersionPrefix",
                                     "value": "${nextRelease.version}"
+                                },
+                                {
+                                    "key": "InformationalVersion",
+                                    "value": "${nextRelease.version}"
+                                },
+                                {
+                                    "key": "RepositoryCommit",
+                                    "value": "${nextRelease.gitHead}"
                                 }
                             ]
                         }
