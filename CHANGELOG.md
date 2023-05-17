@@ -1,3 +1,10 @@
+## [1.9.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.1...v1.9.1-beta.2) (2023-05-17)
+
+
+### Bug Fixes
+
+* **general:**  correct local file versions ([751a840](https://github.com/DIGITALLNature/DigitallPower/commit/751a840b4ef84297f02e4de3c6e6d5f077dcde79))
+
 ## [1.9.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0...v1.9.1-beta.1) (2023-05-17)
 
 
