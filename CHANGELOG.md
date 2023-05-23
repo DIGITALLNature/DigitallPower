@@ -1,3 +1,10 @@
+# [1.10.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.3...v1.10.0-beta.1) (2023-05-23)
+
+
+### Features
+
+* **Push:** dependant assembly push with proper metadata inspection ([4220072](https://github.com/DIGITALLNature/DigitallPower/commit/42200727eff53b3278cfebac3eeb88ffe52b06e4))
+
 ## [1.9.1-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.2...v1.9.1-beta.3) (2023-05-17)
 
 
