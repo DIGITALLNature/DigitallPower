@@ -1,3 +1,10 @@
+## [1.9.1-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.2...v1.9.1-beta.3) (2023-05-17)
+
+
+### Bug Fixes
+
+* **general:** versioning of all dgtp artifacts ([f51f609](https://github.com/DIGITALLNature/DigitallPower/commit/f51f609927113ebacfbef420a2ba37526880fd3b))
+
 ## [1.9.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.1...v1.9.1-beta.2) (2023-05-17)
 
 
