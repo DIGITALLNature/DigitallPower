@@ -1,14 +1,16 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.push.Base;
 using dgt.power.push.Logic;
 using dgt.power.push.Model;
 using Microsoft.Xrm.Sdk;
-using NuGet.Packaging;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Assembly = dgt.power.push.Model.Assembly;
 
 namespace dgt.power.push;
 
@@ -95,7 +97,9 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         }
         else
         {
-            assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(settings.Target) };
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll")));
+            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(settings.Target,loadContext) };
         }
 
 
@@ -108,7 +112,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
             if (localAssembly.Type == AssemblyType.Undefined)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold red]does not contain[/] plugins or workflows - aborting");
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] plugins or workflows - aborting", localAssembly.Name, localAssembly.Version);
                 continue;
             }
 

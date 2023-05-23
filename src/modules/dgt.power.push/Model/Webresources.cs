@@ -1,8 +1,4 @@
-using System.Globalization;
 using System.Security.Cryptography;
-using Microsoft.Xrm.Sdk;
-using NuGet.Packaging;
-using Spectre.Console;
 
 namespace dgt.power.push.Model;
 
