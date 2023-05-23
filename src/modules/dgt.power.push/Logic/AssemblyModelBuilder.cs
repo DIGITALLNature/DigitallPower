@@ -1,6 +1,7 @@
 ﻿using System.Activities;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.push.Model;
@@ -10,6 +11,7 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using NuGet.Packaging;
 using Spectre.Console;
+using Assembly = dgt.power.push.Model.Assembly;
 using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
@@ -18,7 +20,7 @@ internal class AssemblyModelBuilder
 {
     private readonly DataContext _context;
 
-    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations" };
+    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration" };
 
     private readonly string[] _knownPluginAttributes =
     {
@@ -53,7 +55,7 @@ internal class AssemblyModelBuilder
         }
         catch (Exception e)
         {
-            AnsiConsole.MarkupLine(e.RootMessage());
+            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
         }
 
         return result;
@@ -82,53 +84,44 @@ internal class AssemblyModelBuilder
         using var reader = new PackageArchiveReader(inputStream);
         var results = new List<Model.Assembly?>();
 
-        foreach (var file in reader.GetFiles().Where(f => !f.Contains("/System.") && f.EndsWith(".dll")))
+        var tempPath = Path.Combine(Path.GetTempPath(), "dgtp.push", packageFile.Id.ToString("N"));
+        try
         {
-            var filestream = reader.GetStream(file);
-            results.Add(BuildAssemblyFromStream(filestream));
+            Directory.CreateDirectory(tempPath);
+
+            var files = reader.GetFiles().Where(f => !f.Contains("/System.") && !f.Contains("/Microsoft")  && f.EndsWith(".dll")).ToList();
+
+            foreach (var file in files)
+            {
+                var filestream = reader.GetStream(file);
+                using var tempFile = new FileStream(Path.Combine(tempPath,Path.GetFileName(file)), FileMode.Create, FileAccess.Write);
+                filestream.CopyTo(tempFile);
+            }
+
+
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
+            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+
+            foreach (var nugetDlls in Directory.GetFiles(tempPath, "*.dll"))
+            {
+                results.Add(BuildAssemblyFromDll(nugetDlls,loadContext));
+            }
+        }
+        finally
+        {
+            Directory.Delete(tempPath,true);
         }
 
         return results;
     }
 
-    public Model.Assembly BuildAssemblyFromStream(Stream stream)
-    {
-        var result = default(Model.Assembly);
-        var bytes = ReadFully(stream);
-        try
-        {
-            var assembly = System.Reflection.Assembly.Load(bytes);
-            if (assembly.IsFullyTrusted)
-            {
-                result = new Model.Assembly
-                {
-                    Name = assembly.GetName().Name!,
-                    Version = assembly.GetName().Version!.ToString(),
-                    Content = Convert.ToBase64String(bytes)
-                };
-
-                ParseAssembly(assembly, ref result);
-            }
-        }
-        catch (AssemblyException e)
-        {
-            AnsiConsole.MarkupLine(e.RootMessage());
-            throw;
-        }
-        catch (Exception e)
-        {
-            AnsiConsole.MarkupLine(e.RootMessage());
-        }
-
-        return result;
-    }
-
-    public Model.Assembly? BuildAssemblyFromDll(string dllFile)
+    public Assembly? BuildAssemblyFromDll(string dllFile, MetadataLoadContext? metadataLoadContext)
     {
         var result = default(Model.Assembly);
         try
         {
-            var assembly = System.Reflection.Assembly.Load(File.ReadAllBytes(dllFile));
+            System.Reflection.Assembly assembly = metadataLoadContext.LoadFromAssemblyPath(dllFile);
+
             if (assembly.IsFullyTrusted)
             {
                 result = new Model.Assembly
@@ -143,12 +136,12 @@ internal class AssemblyModelBuilder
         }
         catch (AssemblyException e)
         {
-            AnsiConsole.MarkupLine(e.RootMessage());
+            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
             throw;
         }
         catch (Exception e)
         {
-            AnsiConsole.MarkupLine(e.RootMessage());
+            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
         }
 
         return result;
@@ -283,15 +276,15 @@ internal class AssemblyModelBuilder
             {
                 result.Type |= AssemblyType.PowerPlugin;
 
-                var customAttributes = pluginType.GetCustomAttributes(false);
+                var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType); // TODO
                 foreach (var customAttribute in customAttributes)
                 {
-                    if (!_knownNamespaces.Contains(customAttribute.GetType().Namespace))
+                    if (!_knownNamespaces.Contains(customAttribute.AttributeType.Namespace))
                     {
                         continue;
                     }
 
-                    if (customAttribute.GetType().Name == nameof(CustomApiRegistrationAttribute))
+                    if (customAttribute.AttributeType.Name == nameof(CustomApiRegistrationAttribute))
                     {
                         type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
                     }
@@ -514,30 +507,30 @@ internal class AssemblyModelBuilder
     {
         var steps = new List<PluginStep>();
 
-        var customAttributes = pluginType.GetCustomAttributes(false);
+        var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!_knownNamespaces.Contains(customAttribute.GetType().Namespace))
+            if (!_knownNamespaces.Contains(customAttribute.AttributeType.Namespace))
             {
                 continue;
             }
 
-            if (customAttribute.GetType().Name != nameof(PluginRegistrationAttribute))
+            if (customAttribute.AttributeType.Name != nameof(PluginRegistrationAttribute))
             {
                 continue;
             }
 
-            var messageName = GetValue<string>(customAttribute, "MessageName");
+            var messageName = GetValue<string>(customAttribute, "messageName");
             var primaryEntityName = GetValue<string>(customAttribute, "PrimaryEntityName") ?? "none";
             var secondaryEntityName = GetValue<string>(customAttribute, "SecondaryEntityName") ?? "none";
             var step = new PluginStep
             {
-                Mode = GetValue<int>(customAttribute, "Mode"),
+                Mode = GetValue<int>(customAttribute, "mode"),
                 MessageName = messageName!,
-                Stage = GetValue<int>(customAttribute, "Stage"),
+                Stage = GetValue<int>(customAttribute, "stage"),
                 PrimaryEntityName = primaryEntityName,
                 SecondaryEntityName = secondaryEntityName,
-                FilterAttributes = GetValue<string[]>(customAttribute, "FilterAttributes"),
+                FilterAttributes = GetArrayValues(customAttribute, "FilterAttributes"),
                 ExecutionOrder = GetValue<int>(customAttribute, "ExecutionOrder"),
                 ParentName = pluginType.FullName!,
                 Configuration = GetValue<string>(customAttribute, "Configuration")
@@ -569,7 +562,7 @@ internal class AssemblyModelBuilder
                     EntityAlias = "PreImage",
                     ImageType = SdkMessageProcessingStepImage.Options.ImageType.PreImage,
                     MessagePropertyName = GetMessagePropertyName(step.MessageName),
-                    Attributes = GetValue<string[]>(customAttribute, "PreEntityImageAttributes")
+                    Attributes = GetArrayValues(customAttribute, "PreEntityImageAttributes")
                 });
             }
 
@@ -581,7 +574,7 @@ internal class AssemblyModelBuilder
                     EntityAlias = "PostImage",
                     ImageType = SdkMessageProcessingStepImage.Options.ImageType.PostImage,
                     MessagePropertyName = GetMessagePropertyName(step.MessageName),
-                    Attributes = GetValue<string[]>(customAttribute, "PostEntityImageAttributes")
+                    Attributes = GetArrayValues(customAttribute, "PostEntityImageAttributes")
                 });
             }
 
@@ -594,10 +587,10 @@ internal class AssemblyModelBuilder
 
     private static WorkflowRegistrationAttribute? GetWorkflowRegistration(Type workflowType)
     {
-        var customAttributes = workflowType.GetCustomAttributes(false);
+        var customAttributes = CustomAttributeData.GetCustomAttributes(workflowType);
         var registration = customAttributes.FirstOrDefault(ca =>
-            ca.GetType().FullName != null
-            && ca.GetType().FullName!.Equals(typeof(WorkflowRegistrationAttribute).FullName, StringComparison.Ordinal));
+            ca.AttributeType.FullName != null
+            && ca.AttributeType.FullName!.Equals(typeof(WorkflowRegistrationAttribute).FullName, StringComparison.Ordinal));
 
         if (registration == null)
         {
@@ -665,12 +658,12 @@ internal class AssemblyModelBuilder
 
     private bool IsPowerPlugin(Type declaredType)
     {
-        var customAttributes = declaredType.GetCustomAttributes(false);
+        var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         foreach (var customAttribute in customAttributes)
         {
-            if (_knownNamespaces.Contains(customAttribute.GetType().Namespace))
+            if (_knownNamespaces.Contains(customAttribute.AttributeType.Namespace))
             {
-                if (_knownPluginAttributes.Contains(customAttribute.GetType().Name))
+                if (_knownPluginAttributes.Contains(customAttribute.AttributeType.Name))
                 {
                     return true;
                 }
@@ -684,12 +677,44 @@ internal class AssemblyModelBuilder
 
     #region Support
 
-    private static T? GetValue<T>(object customAttribute, string property)
+    private static string[] GetArrayValues(CustomAttributeData customAttribute, string property)
     {
-        var propertyInfo = customAttribute.GetType().GetProperty(property);
-        if (propertyInfo != null)
+        if (customAttribute.NamedArguments.Any(a => a.MemberName == property))
         {
-            return (T?)propertyInfo.GetValue(customAttribute);
+            var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);
+            var valuesRaw = (IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value;
+            var result = valuesRaw.Select(x => x.Value as string).ToArray();
+
+            return result;
+        }
+
+        return default;
+    }
+
+    private static T? GetValue<T>(CustomAttributeData customAttribute, string property)
+    {
+        if (typeof(T).IsArray)
+        {
+            throw new ArgumentOutOfRangeException(nameof(property), "can not be a Array");
+        }
+
+        if (customAttribute.NamedArguments.Any(a => a.MemberName == property))
+        {
+            var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);
+            if (propertyInfo.TypedValue.Value is T value){
+                return value;
+            }
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.TypedValue.ArgumentType.Name)})[/]");
+        }
+
+        var ctorPosition = customAttribute.Constructor.GetParameters().SingleOrDefault(c => c.Name == property)?.Position;
+        if (ctorPosition.HasValue)
+        {
+            var propertyInfo = customAttribute.ConstructorArguments[ctorPosition.Value];
+            if (propertyInfo.Value is T value){
+                return value;
+            }
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.ArgumentType.Name)})[/]");
         }
 
         return default;
