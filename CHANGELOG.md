@@ -1,3 +1,10 @@
+# [1.10.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.0-beta.1...v1.10.0-beta.2) (2023-06-23)
+
+
+### Bug Fixes
+
+* **codegeneration:** generate invalid odatattributes as well ([#51](https://github.com/DIGITALLNature/DigitallPower/issues/51)) ([8363f7d](https://github.com/DIGITALLNature/DigitallPower/commit/8363f7d559f832f1d1b5b3487356805e68560fa1))
+
 # [1.10.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.1-beta.3...v1.10.0-beta.1) (2023-05-23)
 
 
