@@ -1,3 +1,18 @@
+# [1.10.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0...v1.10.0) (2023-06-23)
+
+
+### Bug Fixes
+
+* **codegeneration:** generate invalid odatattributes as well ([#51](https://github.com/DIGITALLNature/DigitallPower/issues/51)) ([6606a85](https://github.com/DIGITALLNature/DigitallPower/commit/6606a85b436e1ac7d9d7ed9c47a4ed6c6d9797c9))
+* **general:**  correct local file versions ([116ab1d](https://github.com/DIGITALLNature/DigitallPower/commit/116ab1d1cec3cc25945c1e4bc6370ddddbeb15a2))
+* **general:** correct --version cli output ([e3641b2](https://github.com/DIGITALLNature/DigitallPower/commit/e3641b276cd79c31f406f13b97f1df5a681ba5da))
+* **general:** versioning of all dgtp artifacts ([97b4fe1](https://github.com/DIGITALLNature/DigitallPower/commit/97b4fe14883636d0fc9ef176bfe1d94af24c8766))
+
+
+### Features
+
+* **Push:** dependant assembly push with proper metadata inspection ([f78ef19](https://github.com/DIGITALLNature/DigitallPower/commit/f78ef1937917131a61238af831d25dac6f70dc75))
+
 # [1.10.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.0-beta.1...v1.10.0-beta.2) (2023-06-23)
 
 
