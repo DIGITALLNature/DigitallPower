@@ -16,7 +16,7 @@ internal record Webresources
         var content = File.ReadAllBytes(path);
 
         Type = type;
-        Name = $"{solutionPrefix}_/{Path.GetRelativePath(folderPath, path)}";
+        Name = $"{solutionPrefix}_/{Path.GetRelativePath(folderPath, path).Replace('\\', '/')}";
         DisplayName =  Path.GetFileName(path);
         Content = Convert.ToBase64String(content);
         Hash = Convert.ToHexString(SHA256.HashData(content));
