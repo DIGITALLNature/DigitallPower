@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.0...v1.10.1) (2023-06-26)
+
+
+### Bug Fixes
+
+* **push:** replace backslash in webresources ([#55](https://github.com/DIGITALLNature/DigitallPower/issues/55)) ([fc5166c](https://github.com/DIGITALLNature/DigitallPower/commit/fc5166c9ce5957e27877e901579036b51f691464))
+
 # [1.10.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.9.0...v1.10.0) (2023-06-23)
 
 
