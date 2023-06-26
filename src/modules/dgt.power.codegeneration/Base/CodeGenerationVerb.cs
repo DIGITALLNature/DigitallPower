@@ -11,7 +11,7 @@ namespace dgt.power.codegeneration.Base;
 public class CodeGenerationVerb : BaseProgramSettings
 {
     [CommandArgument(1, "[TargetDirectory]")]
-    [Description("Full path to the directory where die generated Model classes will be saved")]
+    [Description("Full path to the directory where the generated model classes will be saved")]
     [DefaultValue(".")]
     public string TargetDirectory { get; init; }
 
