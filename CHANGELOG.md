@@ -1,3 +1,10 @@
+# [1.11.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.1...v1.11.0-beta.1) (2023-06-27)
+
+
+### Features
+
+* **push:** add option to add plugin packages to solution ([#57](https://github.com/DIGITALLNature/DigitallPower/issues/57)) ([c230c0e](https://github.com/DIGITALLNature/DigitallPower/commit/c230c0ea18e6a5fc59d8e91153ebfa59696e19b7))
+
 ## [1.10.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.0...v1.10.1) (2023-06-26)
 
 
