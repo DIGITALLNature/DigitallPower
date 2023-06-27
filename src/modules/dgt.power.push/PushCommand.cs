@@ -83,12 +83,12 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
                 }
 
-                packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix);
+                packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix, settings.Solution);
             }
             else
             {
                 ctx.Status("UpdatePluginPackage");
-                packageCrm = processor.UpdatePluginPackage(packageCrm.Id, packageLocal,settings.Publish);
+                packageCrm = processor.UpdatePluginPackage(packageCrm, packageLocal, settings.Publish, settings.Solution);
             }
 
             assemblies = modelBuilder.BuildAssemblyFromPackage(packageCrm);
