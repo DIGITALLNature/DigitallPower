@@ -17,6 +17,9 @@ public class Package : IEquatable<Package>
     [Required]
     public string Version { get; set; } = null!;
 
+    [DataMember(Name = "solutions", IsRequired = false)]
+    public List<string> Solutions { get; set; } = new();
+
     [IgnoreDataMember] public string? Content { get; set; }
 
     [IgnoreDataMember] public AssemblyState State { get; set; } = AssemblyState.Undefined;
