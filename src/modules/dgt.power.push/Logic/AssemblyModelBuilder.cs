@@ -72,6 +72,8 @@ internal class AssemblyModelBuilder
             result.Version = pluginPackage.Version!;
             result.Content = pluginPackage.Content!;
             result.Id = pluginPackage.PluginPackageId!.Value;
+
+            result.Solutions = GetSolutions(pluginPackage.ToEntityReference());
         }
 
         return result;
