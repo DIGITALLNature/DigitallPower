@@ -106,13 +106,13 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 continue;
             }
 
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
+
             if (localAssembly.Type == AssemblyType.Undefined)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold red]does not contain[/] plugins or workflows - aborting");
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Assembly [bold red]does not contain[/] plugins or workflows - skipping");
                 continue;
             }
-
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
 
             ctx.Status("BuildFromCrm");
             var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
