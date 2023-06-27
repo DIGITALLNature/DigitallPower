@@ -25,7 +25,7 @@ internal class AssemblyProcessor
 
     #region PluginPackage
 
-    public Package CreatePluginPackage(Package packageLocal, string solutionPrefix)
+    public Package CreatePluginPackage(Package packageLocal, string solutionPrefix, string solution)
     {
         var package = new PluginPackage
         {
@@ -39,6 +39,11 @@ internal class AssemblyProcessor
         package.Id = _service.Create(package);
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
 
+       if (!string.IsNullOrWhiteSpace(solution))
+       {
+           AddPluginPackageToSolution(package, solution);
+       }
+
         return new Package
         {
             Name = package.Name,
@@ -48,11 +53,11 @@ internal class AssemblyProcessor
         };
     }
 
-    public Package UpdatePluginPackage(Guid packageCrmId, Package packageLocal, bool publish)
+    public Package UpdatePluginPackage(Package packageCrm, Package packageLocal, bool publish, string solution)
     {
         var package = new PluginPackage
         {
-            Id = packageCrmId,
+            Id = packageCrm.Id,
             Content = packageLocal.Content,
             Version = packageLocal.Version
         };
@@ -65,8 +70,13 @@ internal class AssemblyProcessor
            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
            _service.Execute(new PublishXmlRequest
            {
-               ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrmId}</pluginpackage></pluginpackages></importexportxml>"
+               ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrm.Id}</pluginpackage></pluginpackages></importexportxml>"
            });
+       }
+
+       if (!string.IsNullOrWhiteSpace(solution) && !packageCrm.Solutions.Contains(solution))
+       {
+           AddPluginPackageToSolution(package, solution);
        }
 
        return new Package
@@ -76,6 +86,39 @@ internal class AssemblyProcessor
             Content = package.Content,
             Id = package.Id
         };
+    }
+
+    private void AddPluginPackageToSolution(PluginPackage pluginPackage, string solution)
+    {
+        // Plugin package = 10119
+        var addReq = new AddSolutionComponentRequest
+        {
+            AddRequiredComponents = false,
+            ComponentType = 10119,
+            ComponentId = pluginPackage.Id,
+            SolutionUniqueName = solution
+        };
+
+        try
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
+                pluginPackage.Name!, solution);
+            _service.Execute(addReq);
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                _service.Delete(PluginAssembly.EntityLogicalName, pluginPackage.Id);
+            }
+            catch (Exception rb)
+            {
+                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                AnsiConsole.WriteException(rb.RootException());
+            }
+
+            throw new Exception("The Plugin Registration was aborted. Package: " + pluginPackage.Name, ex.RootException());
+        }
     }
 
     #endregion
