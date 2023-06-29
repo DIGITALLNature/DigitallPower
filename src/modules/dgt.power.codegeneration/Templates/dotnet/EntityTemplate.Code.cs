@@ -200,7 +200,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
             return attributes
                 .OrderByDescending(a => a.IsPrimaryId)
                 .ThenBy(a => a.LogicalName)
-                .Where(a => (a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true) && a.AttributeOf == default);
+                .Where(a => (a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true) && (a.AttributeOf == default || a.IsValidODataAttribute));
         }
 
         private IEnumerable<OptionField> FilterOptions(AttributeMetadata[] attributes)
