@@ -1,3 +1,10 @@
+# [1.11.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.11.0-beta.1...v1.11.0-beta.2) (2023-06-29)
+
+
+### Bug Fixes
+
+* **codegeneration:** generate odatattributes as well (again) ([#58](https://github.com/DIGITALLNature/DigitallPower/issues/58)) ([037b8a6](https://github.com/DIGITALLNature/DigitallPower/commit/037b8a68098ad09f0e8e29f1f946a9f8017f2013)), closes [#55](https://github.com/DIGITALLNature/DigitallPower/issues/55) [#55](https://github.com/DIGITALLNature/DigitallPower/issues/55)
+
 # [1.11.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.1...v1.11.0-beta.1) (2023-06-27)
 
 
