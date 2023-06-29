@@ -1,3 +1,15 @@
+# [1.11.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.1...v1.11.0) (2023-06-29)
+
+
+### Bug Fixes
+
+* **codegeneration:** generate odatattributes as well (again) ([#58](https://github.com/DIGITALLNature/DigitallPower/issues/58)) ([4b8653c](https://github.com/DIGITALLNature/DigitallPower/commit/4b8653c9bcc931c33ab610dede4cb9a436b61e40)), closes [#55](https://github.com/DIGITALLNature/DigitallPower/issues/55) [#55](https://github.com/DIGITALLNature/DigitallPower/issues/55)
+
+
+### Features
+
+* **push:** add option to add plugin packages to solution ([#57](https://github.com/DIGITALLNature/DigitallPower/issues/57)) ([076b680](https://github.com/DIGITALLNature/DigitallPower/commit/076b680411443141919d815005f00df2abf79c3e))
+
 # [1.11.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.11.0-beta.1...v1.11.0-beta.2) (2023-06-29)
 
 
