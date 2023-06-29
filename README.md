@@ -5,9 +5,6 @@
     <a href="LICENSE" target="_blank">
         <img src="https://img.shields.io/github/license/DIGITALLNature/DigitallPower.svg" alt="GitHub license">
     </a>
-    <a href='https://coveralls.io/github/DIGITALLNature/DigitallPower?branch=main'>
-        <img src='https://coveralls.io/repos/github/DIGITALLNature/DigitallPower/badge.svg?branch=main' alt='Coverage Status' />
-    </a>
     <a href="https://github.com/DIGITALLNature/DigitallPower/releases" target="_blank">
         <img src="https://img.shields.io/github/tag/DIGITALLNature/DigitallPower.svg" alt="GitHub tag (latest SemVer)">
     </a>
