@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.11.0...v1.12.0) (2023-07-10)
+
+
+### Features
+
+* **maintenane:** support DGT Solution concept in ExportCarrierInfo ([#60](https://github.com/DIGITALLNature/DigitallPower/issues/60)) ([98b7fd1](https://github.com/DIGITALLNature/DigitallPower/commit/98b7fd1cef28cd4560ae9f70408325a636fe4346))
+
 # [1.11.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.10.1...v1.11.0) (2023-06-29)
 
 
