@@ -19,7 +19,7 @@ namespace dgt.power.maintenance.Logic;
 
 public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 {
-    public const string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' isn't installed in the current environment.";
+    public const string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
     private readonly IFileService _fileService;
 
     public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService) : base(
@@ -30,35 +30,68 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
     public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
     {
-        var isSuccessful = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulEc4u = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = Ec4uCarrier.EntityLogicalName
         }, out _);
 
+        var isSuccessfulDgt= OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = DgtCarrier.EntityLogicalName
+        }, out _);
 
-        return isSuccessful
+        return (isSuccessfulEc4u || isSuccessfulDgt)
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
     public override ExitCode Execute(CarrierInfoSettings settings)
     {
-        var carriers = DataContext.Ec4uCarrierSet
-            .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
-            .OrderBy(x => x.Ec4uCarTransportOrderNo)
-            .Select(x => new Ec4uCarrier
-            {
-                Id = x.Id,
-                Ec4uCarrierId = x.Ec4uCarrierId,
-                Ec4uCarReference = x.Ec4uCarReference,
-                Ec4uCarSolutionversion = x.Ec4uCarSolutionversion,
-                Ec4uCarSolutionid = x.Ec4uCarSolutionid,
-                Ec4uCarSolutionuniquename = x.Ec4uCarSolutionuniquename,
-                Ec4uCarSolutionfriendlyname = x.Ec4uCarSolutionfriendlyname,
-                Ec4uCarTransportOrderNo = x.Ec4uCarTransportOrderNo
-            })
-            .ToList();
+        var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = Ec4uCarrier.EntityLogicalName
+        }, out _);
+
+        List<Ec4uCarrier> carriers;
+        if (isSuccessfulOld)
+        {
+            carriers = DataContext.Ec4uCarrierSet
+                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
+                .OrderBy(x => x.Ec4uCarTransportOrderNo)
+                .Select(x => new Ec4uCarrier
+                {
+                    Id = x.Id,
+                    Ec4uCarrierId = x.Ec4uCarrierId,
+                    Ec4uCarReference = x.Ec4uCarReference,
+                    Ec4uCarSolutionversion = x.Ec4uCarSolutionversion,
+                    Ec4uCarSolutionid = x.Ec4uCarSolutionid,
+                    Ec4uCarSolutionuniquename = x.Ec4uCarSolutionuniquename,
+                    Ec4uCarSolutionfriendlyname = x.Ec4uCarSolutionfriendlyname,
+                    Ec4uCarTransportOrderNo = x.Ec4uCarTransportOrderNo
+                })
+                .ToList();
+        }
+        else
+        {
+            carriers = DataContext.DgtCarrierSet
+                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
+                .OrderBy(x => x.DgtTransportOrderNo)
+                .Select(x => new Ec4uCarrier
+                {
+                    Id = x.Id,
+                    Ec4uCarrierId = x.DgtCarrierId,
+                    Ec4uCarReference = x.DgtReference,
+                    Ec4uCarSolutionversion = x.DgtSolutionversion,
+                    Ec4uCarSolutionid = x.DgtSolutionid,
+                    Ec4uCarSolutionuniquename = x.DgtSolutionuniquename,
+                    Ec4uCarSolutionfriendlyname = x.DgtSolutionfriendlyname,
+                    Ec4uCarTransportOrderNo = x.DgtTransportOrderNo
+                })
+                .ToList();
+        }
 
         if (!carriers.Any())
         {
