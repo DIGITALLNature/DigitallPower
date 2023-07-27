@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.0...v1.12.1) (2023-07-27)
+
+
+### Bug Fixes
+
+* **UpdateWorkflowState:** add EscapeMarkup in  Logging ([#61](https://github.com/DIGITALLNature/DigitallPower/issues/61)) ([299ca8e](https://github.com/DIGITALLNature/DigitallPower/commit/299ca8ed48e63319e7b52d51de564b4d00090685))
+
 # [1.12.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.11.0...v1.12.0) (2023-07-10)
 
 
