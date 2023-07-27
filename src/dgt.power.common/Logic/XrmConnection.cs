@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Net;
-using System.Security.Principal;
 using dgt.power.common.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;

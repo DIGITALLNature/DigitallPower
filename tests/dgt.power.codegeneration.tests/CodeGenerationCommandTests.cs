@@ -4,7 +4,6 @@
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common;
 using dgt.power.common.Logic;
 using dgt.power.tests;
 using FakeItEasy;

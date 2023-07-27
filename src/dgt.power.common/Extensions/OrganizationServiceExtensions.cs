@@ -13,12 +13,15 @@ namespace dgt.power.common.Extensions;
 public static class OrganizationServiceExtensions
 {
     public static IEnumerable<TEntity> RetrieveMultiple<TEntity>(this IOrganizationService service, QueryBase query)
-        where TEntity : Entity =>
-        service.RetrieveMultiple(query)
-            ?.Entities
-            ?.Select(x => x.ToEntity<TEntity>())
-            .ToList()
-        ?? Enumerable.Empty<TEntity>();
+        where TEntity : Entity
+    {
+        Debug.Assert(service != null, nameof(service) + " != null");
+        return service.RetrieveMultiple(query)
+                   ?.Entities
+                   ?.Select(x => x.ToEntity<TEntity>())
+                   .ToList()
+               ?? Enumerable.Empty<TEntity>();
+    }
 
     public static TEntity Retrieve<TEntity>(this IOrganizationService service, EntityReference entityReference, ColumnSet columns)
         where TEntity : Entity =>

@@ -9,7 +9,6 @@ using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;

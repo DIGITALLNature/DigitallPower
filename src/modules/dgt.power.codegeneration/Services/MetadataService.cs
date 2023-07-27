@@ -10,7 +10,6 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
-using dgt.power.common;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;

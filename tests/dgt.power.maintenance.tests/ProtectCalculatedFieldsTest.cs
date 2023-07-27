@@ -1,11 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
@@ -17,7 +12,6 @@ using Microsoft.Xrm.Sdk.Metadata;
 using dgt.power.dataverse;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
-using static dgt.power.dataverse.PluginAssembly.Options;
 
 namespace dgt.power.maintenance.tests
 {
