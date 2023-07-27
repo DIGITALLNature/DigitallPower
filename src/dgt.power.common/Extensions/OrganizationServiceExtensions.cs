@@ -12,38 +12,24 @@ namespace dgt.power.common.Extensions;
 
 public static class OrganizationServiceExtensions
 {
-    public static IEnumerable<TEntity> RetrieveMultiple<TEntity>(this IOrganizationService service, QueryBase query)
-        where TEntity : Entity
+#pragma warning disable S3242
+    public static bool TryAssign(this IOrganizationService service, EntityReference record, SystemUser owner)
+#pragma warning restore S3242
     {
-        Debug.Assert(service != null, nameof(service) + " != null");
-        return service.RetrieveMultiple(query)
-                   ?.Entities
-                   ?.Select(x => x.ToEntity<TEntity>())
-                   .ToList()
-               ?? Enumerable.Empty<TEntity>();
-    }
+        ArgumentNullException.ThrowIfNull(record);
+        ArgumentNullException.ThrowIfNull(owner);
 
-    public static TEntity Retrieve<TEntity>(this IOrganizationService service, EntityReference entityReference, ColumnSet columns)
-        where TEntity : Entity =>
-        service.Retrieve<TEntity>(entityReference.LogicalName, entityReference.Id, columns);
-
-    public static TEntity Retrieve<TEntity>(this IOrganizationService service, string logicalName, Guid id, ColumnSet columns)
-        where TEntity : Entity =>
-        service.Retrieve(logicalName, id, columns).ToEntity<TEntity>();
-
-    public static bool TryAssign(this IOrganizationService service, EntityReference record, SystemUser Owner)
-    {
         try
         {
             service.Execute(new AssignRequest
             {
                 Target = record,
-                Assignee = Owner.ToEntityReference()
+                Assignee = owner.ToEntityReference()
             });
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"assign failed {record.Id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"assign failed {record.Id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -52,6 +38,8 @@ public static class OrganizationServiceExtensions
 
     public static bool TrySetState(this IOrganizationService service, EntityReference reference, int state, int status)
     {
+        ArgumentNullException.ThrowIfNull(reference);
+
         try
         {
             service.Update(new Entity(reference.LogicalName, reference.Id)
@@ -59,30 +47,33 @@ public static class OrganizationServiceExtensions
                 ["statecode"] = new OptionSetValue(state),
                 ["statuscode"] = new OptionSetValue(status)
             });
-            AnsiConsole.Console.Log($"state set; state:{state}, status:{status}", TraceEventType.Verbose);
+            LogToConsole($"state set; state:{state}, status:{status}", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"set state failed {reference.Id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"set state failed {reference.Id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
         return true;
     }
 
-    public static bool TrySetStateDocumentTemplate(this IOrganizationService service, EntityReference reference, bool status)
+    public static bool TrySetStateDocumentTemplate(this IOrganizationService service, EntityReference reference,
+        bool status)
     {
+        ArgumentNullException.ThrowIfNull(reference);
+
         try
         {
             service.Update(new DocumentTemplate(reference.Id)
             {
                 Status = status
             });
-            AnsiConsole.Console.Log($"state set; status:{status}", TraceEventType.Verbose);
+            LogToConsole($"state set; status:{status}", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"set state failed {reference.Id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"set state failed {reference.Id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -91,15 +82,18 @@ public static class OrganizationServiceExtensions
 
     public static bool TryCreate(this IOrganizationService service, Entity entity, out Guid id)
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+        ArgumentNullException.ThrowIfNull(entity);
+
         id = Guid.Empty;
         try
         {
             id = service.Create(entity);
-            AnsiConsole.Console.Log("created", TraceEventType.Verbose);
+            LogToConsole("created", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"create failed {entity.LogicalName}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"create failed {entity.LogicalName}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -108,14 +102,17 @@ public static class OrganizationServiceExtensions
 
     public static bool TryUpdate(this IOrganizationService service, Entity entity)
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+        ArgumentNullException.ThrowIfNull(entity);
+
         try
         {
             service.Update(entity);
-            AnsiConsole.Console.Log("updated", TraceEventType.Verbose);
+            LogToConsole("updated", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"update failed {entity.Id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"update failed {entity.Id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -124,14 +121,16 @@ public static class OrganizationServiceExtensions
 
     public static bool TryDelete(this IOrganizationService service, string name, Guid id)
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+
         try
         {
             service.Delete(name, id);
-            AnsiConsole.Console.Log("deleted", TraceEventType.Verbose);
+            LogToConsole("deleted", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"delete failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"delete failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -141,31 +140,36 @@ public static class OrganizationServiceExtensions
     public static bool TryAssociate(this IOrganizationService service, string name, Guid id, Relationship relationship,
         EntityReferenceCollection references)
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+
         try
         {
             service.Associate(name, id, relationship, references);
-            AnsiConsole.Console.Log("associated", TraceEventType.Verbose);
+            LogToConsole("associated", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"associate failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"associate failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
         return true;
     }
 
-    public static bool TryDisassociate(this IOrganizationService service, string name, Guid id, Relationship relationship,
+    public static bool TryDisassociate(this IOrganizationService service, string name, Guid id,
+        Relationship relationship,
         EntityReferenceCollection references)
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+
         try
         {
             service.Disassociate(name, id, relationship, references);
-            AnsiConsole.Console.Log("disassociated", TraceEventType.Verbose);
+            LogToConsole("disassociated", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"disassociate failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"disassociate failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
@@ -175,41 +179,46 @@ public static class OrganizationServiceExtensions
     public static bool TryExecute<TR, TO>(this IOrganizationService service, TR request, out TO response)
         where TR : OrganizationRequest where TO : OrganizationResponse
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+        ArgumentNullException.ThrowIfNull(request);
+
         response = default!;
         try
         {
             response = (TO)service.Execute(request);
-            AnsiConsole.Console.Log($"executed {request.RequestName}", TraceEventType.Verbose);
+            LogToConsole($"executed {request.RequestName}", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"execute failed {request.RequestName}: {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"execute failed {request.RequestName}: {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
         return true;
     }
 
-    public static bool TryRetrieve<T>(this IOrganizationService service, string entityName, Guid entityId, ColumnSet columns, out T entity)
+    public static bool TryRetrieve<T>(this IOrganizationService service, string entityName, Guid entityId,
+        ColumnSet columns, out T entity)
         where T : Entity
     {
+        Debug.Assert(service != null, nameof(service) + " != null");
+
+
         entity = default!;
         try
         {
             entity = service.Retrieve(entityName, entityId, columns).ToEntity<T>();
-            AnsiConsole.Console.Log("retrieved", TraceEventType.Verbose);
+            LogToConsole("retrieved", TraceEventType.Verbose);
         }
         catch (Exception e)
         {
-            AnsiConsole.Console.Log($"retrieve failed {entityName}({entityId:D}): {e.RootMessage()}", TraceEventType.Error);
+            LogToConsole($"retrieve failed {entityName}({entityId:D}): {e.RootMessage()}", TraceEventType.Error);
             return false;
         }
 
         return true;
     }
 
-    public static TO Execute<TR, TO>(this IOrganizationService service, TR request)
-        where TR : OrganizationRequest
-        where TO : OrganizationResponse =>
-        (TO)service.Execute(request);
+    private static void LogToConsole(string message, TraceEventType type) =>
+        AnsiConsole.Console.MarkupLine($"[underline red]{type}:[/]  {message}");
 }
