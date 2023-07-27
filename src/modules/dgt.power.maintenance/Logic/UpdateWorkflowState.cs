@@ -187,7 +187,7 @@ public class UpdateWorkflowState : BaseMaintenance
                 // Check if used service supports impersonation. This should be the case in real scenarios, but might fail with unit tests
                 if (callerId == default)
                 {
-                    Tracer.Log($"[orange3]   > Service '{Connection.GetType().Name}' does not support impersonation. Continuing without[/]", TraceEventType.Warning);
+                    Tracer.Log($"[orange3]   > Service '{Connection.GetType().Name.EscapeMarkup()}' does not support impersonation. Continuing without[/]", TraceEventType.Warning);
                     Connection.Update(updateFlow);
                 }
                 else
@@ -211,7 +211,7 @@ public class UpdateWorkflowState : BaseMaintenance
         }
         catch (Exception e)
         {
-            Tracer.Log($"[red] > Unable to update flow '{flow.Name.EscapeMarkup()}':[/] [grey]{e.Message}[/]", TraceEventType.Error);
+            Tracer.Log($"[red] > Unable to update flow '{flow.Name.EscapeMarkup()}':[/] [grey]{e.Message.EscapeMarkup()}[/]", TraceEventType.Error);
             return false;
         }
     }
@@ -229,7 +229,7 @@ public class UpdateWorkflowState : BaseMaintenance
             Tracer.Log("[grey]   > No username given[/]", TraceEventType.Verbose);
             return Task.FromResult<SystemUser?>(default);
         }
-        Tracer.Log($"[grey]   > Trying to resolve '{username}'[/]", TraceEventType.Verbose);
+        Tracer.Log($"[grey]   > Trying to resolve '{username.EscapeMarkup()}'[/]", TraceEventType.Verbose);
 
         // Check if we seen the username already and if so grab it from the table
         if (!string.IsNullOrWhiteSpace(username) && _userTable.TryGetValue(username, out var user))
