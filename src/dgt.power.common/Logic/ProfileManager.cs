@@ -1,4 +1,7 @@
-﻿using System.IO.IsolatedStorage;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.IO.IsolatedStorage;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;

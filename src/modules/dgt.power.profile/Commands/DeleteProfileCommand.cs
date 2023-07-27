@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using Spectre.Console;
 using Spectre.Console.Cli;

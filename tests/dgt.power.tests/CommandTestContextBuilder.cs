@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using dgt.power.common;
 using dgt.power.dataverse;

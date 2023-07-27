@@ -1,4 +1,7 @@
-﻿using dgt.power.profile.Commands;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
 

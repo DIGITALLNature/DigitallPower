@@ -1,4 +1,7 @@
-﻿using System.ServiceModel;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.ServiceModel;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;

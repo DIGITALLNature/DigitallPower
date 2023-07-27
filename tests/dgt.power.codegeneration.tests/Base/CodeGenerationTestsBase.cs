@@ -1,4 +1,7 @@
-﻿using System.Runtime.Caching;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Runtime.Caching;
 using System.Runtime.Serialization;
 using System.Xml;
 using dgt.power.codegeneration.Base;

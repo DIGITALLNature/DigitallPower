@@ -1,4 +1,7 @@
-﻿using dgt.power.dataverse;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.dataverse;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;

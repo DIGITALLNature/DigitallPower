@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Net;
 using System.Security.Principal;
 using dgt.power.common.Exceptions;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +47,9 @@ public class XrmConnection : IXrmConnection
         if (_configuration.GetValue<bool>("xrm:insecure"))
         {
 #pragma warning disable CA5359
+#pragma warning disable S4830
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+#pragma warning restore S4830
 #pragma warning restore CA5359
         }
 
@@ -67,7 +72,9 @@ public class XrmConnection : IXrmConnection
         if (identity.Insecure)
         {
 #pragma warning disable CA5359
+#pragma warning disable S4830
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+#pragma warning restore S4830
 #pragma warning restore CA5359
         }
 

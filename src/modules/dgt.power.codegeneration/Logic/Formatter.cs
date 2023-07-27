@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Xrm.Sdk;
