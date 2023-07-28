@@ -15,7 +15,11 @@ public class ProfileManager : IProfileManager
     private readonly IsolatedStorageFile _storage;
     private Identities _identities = new();
 
-    public ProfileManager(IsolatedStorageFile storage, string identityFileName = "identities.dat")
+    public ProfileManager(IsolatedStorageFile storage) : this(storage, "identities.dat")
+    {
+    }
+
+    public ProfileManager(IsolatedStorageFile storage, string identityFileName)
     {
         _storage = storage;
         _identityFileName = identityFileName;
@@ -141,7 +145,7 @@ public class ProfileManager : IProfileManager
 
     private static IDataProtector GetDataProtector()
     {
-        var applicationName = "dgtp";
+        const string applicationName = "dgtp";
         var protectionProvider = DataProtectionProvider.Create(applicationName);
         var protector = protectionProvider.CreateProtector($"{applicationName}-Identity");
         return protector;
@@ -149,6 +153,8 @@ public class ProfileManager : IProfileManager
 
     private static class ProfileEnv
     {
+        #pragma warning disable S109
         public static byte[] Seed { get; } = { 22, 4, 19, 8, 6 };
+        #pragma warning restore S109
     }
 }

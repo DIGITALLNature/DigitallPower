@@ -46,7 +46,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
         }
     }
 
-    private bool CheckForBuildAgent()
+    private static bool CheckForBuildAgent()
     {
         var isAgent = false;
 
@@ -95,7 +95,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
         return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
     }
 
-    private class LastUpdateCheck
+    private sealed class LastUpdateCheck
     {
         [JsonPropertyName("update-last-checked-on")]
         public DateTime LastUpdateCheckOn { get; set; } = DateTime.MinValue;
