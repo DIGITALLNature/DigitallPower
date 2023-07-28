@@ -19,14 +19,12 @@ namespace dgt.power.push;
 
 public class PushCommand : Command<PushVerb>, IPowerLogic
 {
-    private readonly IConfigResolver _configResolver;
     private readonly IOrganizationService _connection;
     private readonly ITracer _tracer;
 
     public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection)
     {
         _tracer = tracer;
-        _configResolver = configResolver;
         _connection = connection;
     }
 
@@ -41,7 +39,9 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             {
                 // ReSharper disable once ObjectCreationAsStatement - Justification:  Set Earlybound Resolution fixed
 #pragma warning disable CA1806
+#pragma warning disable S1848
                 new DataContext(_connection);
+#pragma warning restore S1848
 #pragma warning restore CA1806
 
 

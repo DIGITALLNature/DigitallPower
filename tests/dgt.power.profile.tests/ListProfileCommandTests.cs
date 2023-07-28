@@ -19,9 +19,9 @@ public class ListProfileCommandTests : ProfileTestsBase<ListProfileCommand, Prof
     [Fact]
     public void ShouldListProfiles()
     {
-        const string identity1 = "first";
+        const string identity1 = "FIRST";
         AddIdentity(identity1, "connection");
-        const string identity2 = "second";
+        const string identity2 = "SECOND";
         AddIdentity(identity2, "connection");
 
         AnsiConsole.Record();

@@ -22,10 +22,10 @@ public class SelectProfileCommandTests : ProfileTestsBase<SelectProfileCommand, 
     public void ShouldSetProfileAsCurrentOnSelection()
     {
         AnsiConsole.Record();
-        const string identity = "some identity";
+        const string identity = "SOME IDENTITY";
         const string connectionString = "con";
         AddIdentity(identity, connectionString);
-        AddIdentity("something different", "something");
+        AddIdentity("SOMETHING DIFFERENT", "something");
         GetIdentities().CurrentIdentity.Should().NotBe(identity);
         GetIdentities().CurrentConnectionString.Should().NotBe(connectionString);
 
