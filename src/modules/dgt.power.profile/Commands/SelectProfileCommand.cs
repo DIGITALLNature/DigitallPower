@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using Spectre.Console;
@@ -18,14 +19,16 @@ public class SelectProfileCommand : Command<NamedProfileSettings>
 
     public override int Execute([NotNull] CommandContext context, [NotNull] NamedProfileSettings settings)
     {
+        Debug.Assert(settings != null, nameof(settings) + " != null");
+
         var identities = _profileManager.GetIdentities();
-        if (!identities.Keys.Contains(settings.Name.ToLowerInvariant()))
+        if (!identities.Keys.Contains(settings.Name.ToUpperInvariant()))
         {
             AnsiConsole.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
             return -1;
         }
 
-        identities.SetCurrent(settings.Name.ToLowerInvariant());
+        identities.SetCurrent(settings.Name.ToUpperInvariant());
         _profileManager.Save();
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] set.");

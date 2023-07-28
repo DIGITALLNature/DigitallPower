@@ -54,6 +54,13 @@ public class ProfileManager : IProfileManager
             AnsiConsole.WriteException(e);
         }
 
+        // TODO Remove 2024 - Mitigation of changed Key-Format
+        if (_identities != null)
+        {
+            _identities.IdentityStore =
+                _identities.IdentityStore.ToDictionary(k => k.Key.ToUpperInvariant(), v => v.Value);
+        }
+
         return _identities ??= new Identities();
     }
 

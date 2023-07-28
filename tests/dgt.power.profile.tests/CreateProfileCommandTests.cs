@@ -22,7 +22,7 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
     {
         var settings = new CreateProfileSettings
         {
-            Name = "test",
+            Name = "TEST",
             ConnectionString = @"AuthType=OAuth;
   Username=jsmith@contoso.onmicrosoft.com;
   Password=passcode;
@@ -45,7 +45,7 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
 
         var settings = new CreateProfileSettings
         {
-            Name = "test",
+            Name = "TEST",
             ConnectionString = @"AuthType=OAuth;
   Username=jsmith@contoso.onmicrosoft.com;
   Password=passcode;

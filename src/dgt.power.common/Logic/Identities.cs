@@ -24,15 +24,7 @@ public class Identities : IIdentities
 
     public void Upsert(string key, Identity identity)
     {
-        if (IdentityStore.ContainsKey(key))
-        {
-            IdentityStore[key] = identity;
-        }
-        else
-        {
-            IdentityStore.Add(key, identity);
-        }
-
+        IdentityStore[key] = identity;
         Current = key;
     }
 
