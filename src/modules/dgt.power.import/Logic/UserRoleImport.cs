@@ -21,6 +21,7 @@ public sealed class UserRoleImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
@@ -109,7 +110,7 @@ public sealed class UserRoleImport : BaseImport
                     TraceEventType.Information);
                 result = Connection.TryAssociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
-                    new EntityReferenceCollection(missingRoles)) & result;
+                    new EntityReferenceCollection(missingRoles)) && result;
             }
 
             var spareRoles = (from role in assignedRoles
@@ -122,7 +123,7 @@ public sealed class UserRoleImport : BaseImport
                     TraceEventType.Information);
                 result = Connection.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
-                    new EntityReferenceCollection(spareRoles)) & result;
+                    new EntityReferenceCollection(spareRoles)) && result;
             }
         }
 

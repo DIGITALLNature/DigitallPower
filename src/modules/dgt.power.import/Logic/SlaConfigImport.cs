@@ -20,6 +20,7 @@ public class SlaConfigImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
@@ -71,8 +72,8 @@ public class SlaConfigImport : BaseImport
 
                 var slatoUpdate = new SLA
                 {
-                    Id = sla.SlaId ?? default,
-                    BusinessHoursId = sla.BusinessHours == default ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? default)
+                    Id = sla.SlaId ?? Guid.Empty,
+                    BusinessHoursId = sla.BusinessHours == default ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? Guid.Empty)
                 };
 
                 if (systemuser != default(SystemUser))

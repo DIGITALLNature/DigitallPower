@@ -22,6 +22,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
@@ -43,13 +44,13 @@ public sealed class RoutingRuleConfigImport : BaseImport
 
         foreach (var rule in rules)
         {
-            result = HandleRoutingRule(args, context, rule, result);
+            result = HandleRoutingRule(args, context, rule) && result;
         }
 
         return Tracer.End(this, result);
     }
 
-    private bool HandleRoutingRule(ImportVerb args, DataContext context, RoutingRuleConfig rule, bool result)
+    private bool HandleRoutingRule(ImportVerb args, DataContext context, RoutingRuleConfig rule)
     {
         var ruleInTarget = context.RoutingRuleSet.SingleOrDefault(rr => rr.Id == rule.RoutingRuleId);
 
@@ -60,9 +61,10 @@ public sealed class RoutingRuleConfigImport : BaseImport
         if (ruleInTarget == null)
         {
             Tracer.Log($"Routing Rule {rule.Name}({rule.RoutingRuleId:D}) does not exist", TraceEventType.Warning);
-            return result & false;
+            return false;
         }
 
+        var result = true;
         var ruleItemsInTarget = context.RoutingRuleItemSet
             .Where(rri =>
                 rri.RoutingRuleId != null && rri.RoutingRuleId.Id == rule.RoutingRuleId)
@@ -85,14 +87,14 @@ public sealed class RoutingRuleConfigImport : BaseImport
 
             if (systemUser?.DomainName != owner)
             {
-                result &= AssignRule(ruleInTarget, owner, ref isDeactivatedToUpdate);
+                result = AssignRule(ruleInTarget, owner, ref isDeactivatedToUpdate) && result;
             }
         }
 
         foreach (var item in rule.RoutingRuleItems)
         {
-            result = HandleRoutingRuleItem(context, rule, result, ruleItemsInTarget, item, ruleInTarget,
-                ref isDeactivatedToUpdate);
+            result = HandleRoutingRuleItem(context, rule, ruleItemsInTarget, item, ruleInTarget,
+                ref isDeactivatedToUpdate) && result;
         }
 
 
@@ -116,7 +118,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
         return result;
     }
 
-    private bool HandleRoutingRuleItem(DataContext context, RoutingRuleConfig rule, bool result,
+    private bool HandleRoutingRuleItem(DataContext context, RoutingRuleConfig rule,
         IQueryable<RoutingRuleItem> ruleItemsInTarget, dto.RoutingRuleItem item, RoutingRule ruleInTarget,
         ref bool isDeactivatedToUpdate)
     {
@@ -128,18 +130,19 @@ public sealed class RoutingRuleConfigImport : BaseImport
             Tracer.Log(
                 $"Routing Rule  {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) does not exist",
                 TraceEventType.Warning);
-            return false & result;
+            return false;
         }
 
+        var result = true;
         if (item.MsdynRouteto == RoutingRuleItem.Options.MsdynRouteto.Queue)
         {
             if (item.RoutedQueueId != ruleItemInTarget.RoutedQueueId?.Id ||
                 item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
             {
-                result &= UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
                     {
                         RoutedQueueId = new EntityReference(Queue.EntityLogicalName,
-                            item.RoutedQueueId ?? default),
+                            item.RoutedQueueId ?? Guid.Empty),
                         MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.Queue),
                         AssignObjectId = null
                     }, ruleInTarget,
@@ -164,7 +167,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
                 if (systemuser.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result &= UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                    result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
                         {
                             AssignObjectId = systemuser.ToEntityReference(),
                             MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
@@ -189,7 +192,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
                 if (team.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result &= UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                    result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
                         {
                             AssignObjectId = team.ToEntityReference(),
                             MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
