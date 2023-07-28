@@ -25,6 +25,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
 
     protected override bool Invoke(AnalyzeVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         var result = true;
         Tracer.Start(this);
 

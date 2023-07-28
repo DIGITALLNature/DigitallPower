@@ -19,10 +19,10 @@ public class EntityAllAssets
     //regex
     [JsonPropertyName("whitelist")]
     [JsonRequired]
-    public List<string> WhiteList { get; init; } = new();
+    public IList<string> WhiteList { get; init; } = new List<string>();
 
     //regex
     [JsonPropertyName("blacklist")]
     [JsonRequired]
-    public List<string> BlackList { get; init; } = new();
+    public IList<string> BlackList { get; init; } = new List<string>();
 }

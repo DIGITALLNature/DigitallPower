@@ -235,12 +235,13 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
 
         pagequery.PageInfo = new PagingInfo
         {
-            Count = 5000,
+            Count = PageSize,
             PageNumber = 1,
             PagingCookie = null
         };
         var components = new List<SolutionComponent>();
-        while (true)
+        var moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = Connection.RetrieveMultiple(pagequery);
@@ -250,10 +251,8 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
                 pagequery.PageInfo.PageNumber++;
                 pagequery.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         return components;
