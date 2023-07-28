@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
@@ -23,6 +24,8 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void PrepareDirectory(CodeGenerationVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+
         if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder)))
         {
             Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder));
@@ -42,6 +45,9 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateBoilerPlate(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         CreateTemplateFile(new D365ModelTemplate(config.TypingPath), Typescript.Model, args);
         // Temp Solution
         CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), Typescript.Services, args);
@@ -52,6 +58,9 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
     {
+        Debug.Assert(template != null, nameof(template) + " != null");
+        Debug.Assert(args != null, nameof(args) + " != null");
+
         var path = Path.Combine(args.TargetDirectory, args.Folder, "TypeScript", $"{name}.ts");
 
         using var file = File.CreateText(path);
@@ -63,6 +72,9 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         foreach (var entity in config.Entities)
         {
             var metadata = _metadataService
@@ -84,6 +96,9 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateEntityRefs(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         foreach (var entity in config.Entities)
         {
             var metadata =
@@ -105,6 +120,9 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         foreach (var entity in config.Entities)
         {
             var metadata =
@@ -118,8 +136,9 @@ public class TypescriptGenerator : ITypescriptGenerator
             foreach (var formDetail in forms)
             {
                 var form =
-                    $"{metadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true)
-                        .Replace(' ', '_')}.{Typescript.Form}";
+                    $"{metadata.LogicalName}.{
+                        Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')
+                    }.{Typescript.Form}";
                 var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
                 if (config.Forms.Any())
                 {
@@ -154,7 +173,14 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (config.SuppressSdkMessages) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.SuppressSdkMessages)
+        {
+            return;
+        }
+
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
             $"{Typescript.SdkMessageNames}.ts");
@@ -168,7 +194,14 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (!config.GlobalOptionSets.Any()) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (!config.GlobalOptionSets.Any())
+        {
+            return;
+        }
+
         var optionSets = _metadataService.RetrieveOptionSets(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
             $"{Typescript.OptionSetValues}.ts");
@@ -182,7 +215,14 @@ public class TypescriptGenerator : ITypescriptGenerator
 
     public void GenerateBusinessProcessFlows(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (!config.BusinessProcessFlows.Any()) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (!config.BusinessProcessFlows.Any())
+        {
+            return;
+        }
+
         var bpfs = _metadataService.RetrieveBusinessProcessFlows(config);
         foreach (var bpf in bpfs)
         {

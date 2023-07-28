@@ -51,7 +51,11 @@ public static class Formatter
             }
         }
 
-        if (leadingUnderscore) sb.Insert(0, "_");
+        if (leadingUnderscore)
+        {
+            sb.Insert(0, "_");
+        }
+
         return sb.ToString();
     }
 

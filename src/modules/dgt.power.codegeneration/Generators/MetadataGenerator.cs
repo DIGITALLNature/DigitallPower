@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
@@ -23,6 +24,8 @@ public class MetadataGenerator : IMetadataGenerator
 
     public void PrepareDirectory(CodeGenerationVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+
         if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder)))
         {
             Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder));
@@ -43,6 +46,8 @@ public class MetadataGenerator : IMetadataGenerator
 
     public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
 
         foreach (var entity in config.Entities)
         {

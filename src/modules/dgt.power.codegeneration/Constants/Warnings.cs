@@ -3,8 +3,8 @@
 
 namespace dgt.power.codegeneration.Constants;
 
-public struct Warnings
+public static class Warnings
 {
-    public const string TsExtensionDeprecation =
+    public static string TsExtensionDeprecation =>
         "Warning: some Forms end with '.ts', please remove the '.ts' in your config! It's deprecated!";
 }

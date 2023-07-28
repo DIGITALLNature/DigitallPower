@@ -21,7 +21,7 @@ public class CodeGenerationVerb : BaseProgramSettings
     [CommandOption("-f|--folder")]
     [Description("Define an alternate name for the model folder. The default will be 'Model'")]
     [DefaultValue(Folders.Model)]
-    public string Folder { get; init; } = Folders.Model;
+    public string Folder { get; init; } = Folders.Model ;
 
     [CommandOption("-c|--config")]
     [Description("Full path to the config file, e.g. C:\\temp\\config.json")]

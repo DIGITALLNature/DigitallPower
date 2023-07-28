@@ -3,10 +3,12 @@
 
 namespace dgt.power.codegeneration.Constants;
 
-public struct Folders
+public static class Folders
 {
+#pragma warning disable S2339
     public const string Model = "Model";
-    public const string Typescript = "TypeScript";
-    public const string Metadata = "MetaData";
-    public const string DotNet = "DotNet";
+#pragma warning restore S2339
+    public static string Typescript => "TypeScript";
+    public static string Metadata => "MetaData";
+    public static string DotNet => "DotNet";
 }

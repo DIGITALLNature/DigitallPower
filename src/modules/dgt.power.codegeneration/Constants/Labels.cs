@@ -3,8 +3,8 @@
 
 namespace dgt.power.codegeneration.Constants;
 
-public struct Labels
+public static class Labels
 {
-    public const string DefaultTrue = "Yes";
-    public const string DefaultFalse = "No";
+    public static string DefaultTrue => "Yes";
+    public static string DefaultFalse => "No";
 }
