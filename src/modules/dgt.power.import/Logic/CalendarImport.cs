@@ -25,7 +25,7 @@ public sealed class CalendarImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<Calendars>(args.FileDir, fileName, out var calendars))
+        if (!ConfigResolver.TryGetConfigFile<Calendars>(args.FileDir, fileName, out var calendars))
         {
             return Tracer.NotConfigured(this);
         }

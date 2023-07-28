@@ -22,7 +22,7 @@ public class MetadataCommand : PowerLogic<CodeGenerationVerb>
 
     protected override bool Invoke(CodeGenerationVerb settings)
     {
-        if (!ConfigResolver.GetConfigFile<CodeGenerationConfig>(settings.Config, out var config))
+        if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(settings.Config, out var config))
         {
             return Tracer.End(this, false);
         }

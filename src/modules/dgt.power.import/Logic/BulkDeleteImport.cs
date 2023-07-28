@@ -27,7 +27,7 @@ public sealed class BulkDeleteImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "bulkdelete.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<BulkDeletes>(args.FileDir, fileName, out var bulkDeletes))
+        if (!ConfigResolver.TryGetConfigFile<BulkDeletes>(args.FileDir, fileName, out var bulkDeletes))
         {
             return Tracer.NotConfigured(this);
         }

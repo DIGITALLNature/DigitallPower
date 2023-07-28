@@ -29,7 +29,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
         Tracer.Start(this);
 
         //read config
-        if (!ConfigResolver.GetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
+        if (!ConfigResolver.TryGetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
         {
             return Tracer.End(this, false);
         }

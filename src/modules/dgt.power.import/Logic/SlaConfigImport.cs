@@ -24,7 +24,7 @@ public class SlaConfigImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<SlaConfigs>(args.FileDir, fileName, out var slaConfigs))
+        if (!ConfigResolver.TryGetConfigFile<SlaConfigs>(args.FileDir, fileName, out var slaConfigs))
         {
             return Tracer.NotConfigured(this);
         }

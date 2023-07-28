@@ -25,7 +25,7 @@ public sealed class QueueImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
+        if (!ConfigResolver.TryGetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
         {
             return Tracer.NotConfigured(this);
         }

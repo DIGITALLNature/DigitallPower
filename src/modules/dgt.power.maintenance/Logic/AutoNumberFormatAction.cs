@@ -22,7 +22,7 @@ public sealed class AutoNumberFormatAction : BaseMaintenance
     {
         Tracer.Start(this);
         //read config
-        if (!ConfigResolver.GetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
+        if (!ConfigResolver.TryGetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
         {
             return Tracer.End(this, false);
         }

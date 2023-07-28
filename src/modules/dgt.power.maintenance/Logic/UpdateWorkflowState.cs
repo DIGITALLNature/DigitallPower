@@ -33,7 +33,7 @@ public class UpdateWorkflowState : BaseMaintenance
         }
 
         // Check if required config is available
-        if (!ConfigResolver.GetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
+        if (!ConfigResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
         {
             return Tracer.End(this, false);
         }

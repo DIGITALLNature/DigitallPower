@@ -20,7 +20,7 @@ public class DotNetCommand : PowerLogic<CodeGenerationVerb>
 
     protected override bool Invoke(CodeGenerationVerb args)
     {
-        if (!ConfigResolver.GetConfigFile<CodeGenerationConfig>(args.Config, out var config))
+        if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))
         {
             return Tracer.End(this, false);
         }

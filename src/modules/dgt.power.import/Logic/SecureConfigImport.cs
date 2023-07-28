@@ -26,7 +26,7 @@ public sealed class SecureConfigImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "secureconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
+        if (!ConfigResolver.TryGetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
             string.IsNullOrWhiteSpace(args.InlineData))
         {
             return Tracer.NotConfigured(this);

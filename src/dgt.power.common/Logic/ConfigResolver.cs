@@ -22,11 +22,11 @@ public class ConfigResolver : IConfigResolver
 
     public ConfigResolver(ITracer tracer) => _tracer = tracer;
 
-    public bool GetConfigFile<TC>(string fileDir, string file, out TC config) where TC : new() => ConfigFromFileCached(Path.Combine(fileDir, file), out config);
+    public bool TryGetConfigFile<TC>(string fileDir, string file, out TC config) where TC : class, new() => ConfigFromFileCached(Path.Combine(fileDir, file), out config);
 
-    public bool GetConfigFile<TC>(string file, out TC config) where TC : new() => ConfigFromFileCached(file, out config);
+    public bool TryGetConfigFile<TC>(string file, out TC config) where TC : class, new() => ConfigFromFileCached(file, out config);
 
-    public bool ConfigFromFile<T>(string file, [NotNull] out T obj) where T : new()
+    public bool TryConfigFromFile<T>(string file, [NotNull] out T obj) where T : new()
     {
         if (string.IsNullOrWhiteSpace(file))
         {
@@ -48,7 +48,7 @@ public class ConfigResolver : IConfigResolver
         }
     }
 
-    private bool ConfigFromFileCached<TC>(string file, out TC config) where TC : new()
+    private bool ConfigFromFileCached<TC>(string file, out TC config) where TC : class, new()
     {
         if (MemoryCache.Default.Contains($"cfg-{file}"))
         {
@@ -60,7 +60,7 @@ public class ConfigResolver : IConfigResolver
             }
         }
 
-        var result = ConfigFromFile(file, out config);
+        var result = TryConfigFromFile(file, out config);
         if (result)
         {
             MemoryCache.Default.Add($"cfg-{file}", config, new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) });

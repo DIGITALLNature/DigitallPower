@@ -29,7 +29,7 @@ public sealed class OutlookTemplateImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
+        if (!ConfigResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
         {
             return Tracer.NotConfigured(this);
         }

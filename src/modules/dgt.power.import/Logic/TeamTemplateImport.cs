@@ -25,7 +25,7 @@ public sealed class TeamTemplateImport : BaseImport
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
-        if (!ConfigResolver.GetConfigFile<TeamTemplates>(args.FileDir, fileName, out var templates))
+        if (!ConfigResolver.TryGetConfigFile<TeamTemplates>(args.FileDir, fileName, out var templates))
         {
             return Tracer.NotConfigured(this);
         }

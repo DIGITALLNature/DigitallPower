@@ -33,7 +33,7 @@ public sealed class DocumentTemplateImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "documenttemplate.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
+        if (!ConfigResolver.TryGetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
         {
             return Tracer.NotConfigured(this);
         }

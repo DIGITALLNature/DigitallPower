@@ -26,7 +26,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<RoutingRuleConfigs>(args.FileDir, fileName, out var rules))
+        if (!ConfigResolver.TryGetConfigFile<RoutingRuleConfigs>(args.FileDir, fileName, out var rules))
         {
             return Tracer.NotConfigured(this);
         }
