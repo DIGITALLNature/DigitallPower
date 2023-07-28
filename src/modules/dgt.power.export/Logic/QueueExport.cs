@@ -21,6 +21,7 @@ public sealed class QueueExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         var fileDir = args.FileDir;
@@ -61,7 +62,8 @@ public sealed class QueueExport : BaseExport
             PagingCookie = null
         };
         IList<Queue> queues = new List<Queue>();
-        while (true)
+        var moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = Connection.RetrieveMultiple(query);
@@ -77,11 +79,8 @@ public sealed class QueueExport : BaseExport
                 // Set the paging cookie to the paging cookie returned from current results.
                 query.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                // If no more records are in the result nodes, exit the loop.
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         var export = new Queues

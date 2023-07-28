@@ -22,6 +22,7 @@ public sealed class OutlookTemplateExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         var fileDir = args.FileDir;

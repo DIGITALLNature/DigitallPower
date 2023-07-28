@@ -22,6 +22,7 @@ public sealed class CalendarExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         var fileDir = args.FileDir;
@@ -72,7 +73,7 @@ public sealed class CalendarExport : BaseExport
             return export;
         }
 
-        if (calendarRules.Any(cr => cr.Description is "Weekly Rec Rule" or "Weekly Sub Rule"))
+        if (calendarRules.Exists(cr => cr.Description is "Weekly Rec Rule" or "Weekly Sub Rule"))
         {
             export.IsVaryByDay = true;
             return export;

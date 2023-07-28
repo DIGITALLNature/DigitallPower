@@ -21,6 +21,7 @@ public sealed class RoutingRuleConfigExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
 
@@ -44,7 +45,7 @@ public sealed class RoutingRuleConfigExport : BaseExport
                     export.Add(new RoutingRuleConfig
                         {
                             Name = rule.Name!,
-                            RoutingRuleId = rule.RoutingRuleId ?? default,
+                            RoutingRuleId = rule.RoutingRuleId ?? Guid.Empty,
                             Active = rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active,
                             RoutingRuleItems = GetRuleItems(context, rule)
                         }
@@ -64,7 +65,7 @@ public sealed class RoutingRuleConfigExport : BaseExport
             .Select(rri => new RoutingRuleItem
                 {
                     Name = rri.Name!,
-                    RoutingRuleItemId = rri.RoutingRuleItemId ?? default,
+                    RoutingRuleItemId = rri.RoutingRuleItemId ?? Guid.Empty,
                     RoutingRuleId = rri.RoutingRuleId!.Id,
                     MsdynRouteto = rri.MsdynRouteto != null ? rri.MsdynRouteto.Value :
                         rri.RoutedQueueId != null ? dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue :

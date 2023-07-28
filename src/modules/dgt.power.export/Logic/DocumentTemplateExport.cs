@@ -23,6 +23,7 @@ public sealed class DocumentTemplateExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         var fileDir = args.FileDir;
@@ -41,14 +42,16 @@ public sealed class DocumentTemplateExport : BaseExport
                 var pair = fragment.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
                 if (pair.Length == 2)
                 {
-                    switch (pair[0].ToLowerInvariant())
+                    switch (pair[0].ToUpperInvariant())
                     {
-                        case "force":
+                        case "FORCE":
                             force = bool.Parse(pair[1]);
                             break;
-                        case "missing":
+                        case "MISSING":
                             missing = bool.Parse(pair[1]);
                             break;
+                        default:
+                            throw new InvalidOperationException($"Command {pair[0].ToUpperInvariant()} in InlineData is unknown");
                     }
                 }
             }
