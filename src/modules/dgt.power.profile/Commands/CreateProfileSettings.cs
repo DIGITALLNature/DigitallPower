@@ -22,6 +22,11 @@ public class CreateProfileSettings : ProfileSettings
     [Description("ConnectionString")]
     public string ConnectionString { get; init; }
 
+    [CommandOption("--msal")]
+    [Description("Tokenbased Authentication (with MSAL)")]
+    [DefaultValue(false)]
+    public bool TokenBased { get; init; }
+
     [CommandOption("--skipcheck")]
     [Description("Skip testing of the connection")]
     [DefaultValue(false)]
