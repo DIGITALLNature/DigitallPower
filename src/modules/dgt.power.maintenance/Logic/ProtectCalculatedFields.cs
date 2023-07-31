@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
@@ -18,6 +19,7 @@ namespace dgt.power.maintenance.Logic
 
         protected override bool Invoke(MaintenanceVerb args)
         {
+            Debug.Assert(args != null, nameof(args) + " != null");
             Tracer.Start(this);
             var updated = 0;
 
@@ -34,7 +36,7 @@ namespace dgt.power.maintenance.Logic
                         EntityFilters = EntityFilters.Attributes
                     };
                     var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
-                    var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false); // 1 - Calculated attribute;
+                    var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false);
 
                     foreach (var attributeMetadata in attributeMetadatas)
                     {

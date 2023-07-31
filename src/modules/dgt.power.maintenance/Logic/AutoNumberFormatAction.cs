@@ -20,6 +20,7 @@ public sealed class AutoNumberFormatAction : BaseMaintenance
 
     protected override bool Invoke(MaintenanceVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         //read config
         if (!ConfigResolver.TryGetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
@@ -37,7 +38,7 @@ public sealed class AutoNumberFormatAction : BaseMaintenance
         var result = true;
         foreach (var autoNumberFormat in autoNumberFormats)
         {
-            result = Process(autoNumberFormat) & result;
+            result = Process(autoNumberFormat) && result;
         }
 
         return Tracer.End(this, result);

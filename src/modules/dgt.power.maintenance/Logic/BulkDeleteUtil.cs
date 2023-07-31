@@ -22,6 +22,7 @@ public sealed class BulkDeleteUtil : BaseMaintenance
 
     protected override bool Invoke(MaintenanceVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.common.Commands;
@@ -19,7 +20,7 @@ namespace dgt.power.maintenance.Logic;
 
 public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 {
-    public const string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
+    public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
     private readonly IFileService _fileService;
 
     public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService) : base(
@@ -49,6 +50,8 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
     public override ExitCode Execute(CarrierInfoSettings settings)
     {
+        Debug.Assert(settings != null, nameof(settings) + " != null");
+
         var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
@@ -112,7 +115,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         return ExitCode.Success;
     }
 
-    private bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
+    private static bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
     {
         return tuple.Solution != null;
     }
@@ -128,7 +131,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
     };
 
 
-    private bool IsCarrierValid(Ec4uCarrier carrier)
+    private static bool IsCarrierValid(Ec4uCarrier carrier)
     {
         if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid, out _))
         {
