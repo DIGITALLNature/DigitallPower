@@ -32,12 +32,9 @@ public class FileService : IFileService
         var directoryName = Path.GetDirectoryName(fileName) ?? "";
         var directory = Path.Combine(fileDirectory, directoryName);
 
-        if (!string.IsNullOrWhiteSpace(directory))
+        if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
         {
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            Directory.CreateDirectory(directory);
         }
 
         fileName = Path.GetFileName(fileName);

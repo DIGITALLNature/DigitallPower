@@ -1,4 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -80,7 +83,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     {
         var filePath = GetResourcePath(fileName);
         var isLoaded = GetContext().ConfigResolver
-            .ConfigFromFile<TResource>(filePath, out var resource);
+            .TryConfigFromFile<TResource>(filePath, out var resource);
 
         return isLoaded
             ? resource
@@ -103,7 +106,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     private TResource GetConfigurationFile<TResource>(string fileName, string filePath) where TResource : new()
     {
         var isLoaded = GetContext().ConfigResolver
-            .ConfigFromFile<TResource>(filePath, out var resource);
+            .TryConfigFromFile<TResource>(filePath, out var resource);
 
         return isLoaded
             ? resource

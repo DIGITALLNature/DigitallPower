@@ -1,4 +1,7 @@
-﻿using System.Runtime.Caching;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Runtime.Caching;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -7,7 +10,6 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
-using dgt.power.common;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;

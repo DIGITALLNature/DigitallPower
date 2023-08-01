@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 using CsvHelper;
@@ -6,12 +10,16 @@ using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.analyzer.Base;
 
+#pragma warning disable S1200
 public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 {
+    protected const int PageSize = 5000;
+
     protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
@@ -27,7 +35,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
     internal  static string ResultFolder { get; } = "Analyze";
 
-    protected List<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
+    protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
         var solution = GetSolution(context, uniqueName);
 
@@ -62,7 +70,12 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
         pagequery.Criteria = pagefilter;
 
-        var rootLink = pagequery.AddLink(SolutionComponent.EntityLogicalName, SolutionComponent.LogicalNames.RootSolutionComponentId, SolutionComponent.LogicalNames.SolutionComponentId, JoinOperator.LeftOuter);
+        var rootLink = pagequery.AddLink(
+            SolutionComponent.EntityLogicalName,
+            SolutionComponent.LogicalNames.RootSolutionComponentId,
+            SolutionComponent.LogicalNames.SolutionComponentId,
+            JoinOperator.LeftOuter
+            );
         rootLink.Columns.AddColumns(SolutionComponent.LogicalNames.ComponentType, SolutionComponent.LogicalNames.ObjectId);
         rootLink.EntityAlias = "root";
 
@@ -82,12 +95,13 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
         pagequery.PageInfo = new PagingInfo
         {
-            Count = 5000,
+            Count = PageSize,
             PageNumber = 1,
             PagingCookie = null
         };
         var components = new List<SolutionComponent>();
-        while (true)
+        var moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = Connection.RetrieveMultiple(pagequery);
@@ -97,16 +111,16 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
                 pagequery.PageInfo.PageNumber++;
                 pagequery.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         return components;
     }
-    protected List<MsdynComponentlayer> GetSolutionLayers(SolutionComponent component)
+    protected IList<MsdynComponentlayer> GetSolutionLayers(SolutionComponent component)
     {
+        Debug.Assert(component != null, nameof(component) + " != null");
+
         var query = new QueryExpression
         {
             EntityName = MsdynComponentlayer.EntityLogicalName,
@@ -150,7 +164,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         return solution;
     }
 
-    protected void WriteSummaryFile(string name, AnalyzerSummary summary)
+    protected static void WriteSummaryFile(string name, AnalyzerSummary summary)
     {
         var content = JsonSerializer.SerializeToUtf8Bytes(summary);
 
@@ -175,7 +189,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         }
     }
 
-    protected void WriteReportFile<T>(string name, T resultTable) where T : IEnumerable
+    protected static void WriteReportFile<T>(string name, T resultTable) where T : IEnumerable
     {
         if (!Directory.Exists(ResultFolder))
         {
@@ -199,5 +213,27 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         {
             File.Move(work, file);
         }
+    }
+
+
+    protected static string GetComponentName(SolutionComponent component, IEnumerable<EntityMetadata> entities, MsdynComponentlayer first)
+    {
+        string componentName;
+        if (component.RootSolutionComponentId != null &&
+            ((OptionSetValue)component
+                .GetAttributeValue<AliasedValue>($"root.{SolutionComponent.LogicalNames.ComponentType}").Value).Value ==
+            SolutionComponent.Options.ComponentType.Entity)
+        {
+            var entity = entities.Single(e =>
+                e.MetadataId == (Guid?)component
+                    .GetAttributeValue<AliasedValue>($"root.{SolutionComponent.LogicalNames.ObjectId}").Value);
+            componentName = $"{first.MsdynName} ({entity.LogicalName})";
+        }
+        else
+        {
+            componentName = first.MsdynName!;
+        }
+
+        return componentName;
     }
 }

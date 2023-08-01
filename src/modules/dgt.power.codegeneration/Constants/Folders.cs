@@ -1,9 +1,14 @@
-﻿namespace dgt.power.codegeneration.Constants;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-public struct Folders
+namespace dgt.power.codegeneration.Constants;
+
+public static class Folders
 {
+#pragma warning disable S2339
     public const string Model = "Model";
-    public const string Typescript = "TypeScript";
-    public const string Metadata = "MetaData";
-    public const string DotNet = "DotNet";
+#pragma warning restore S2339
+    public static string Typescript => "TypeScript";
+    public static string Metadata => "MetaData";
+    public static string DotNet => "DotNet";
 }

@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -26,11 +29,12 @@ public sealed class DocumentTemplateImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "documenttemplate.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
+        if (!ConfigResolver.TryGetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
         {
             return Tracer.NotConfigured(this);
         }
@@ -53,31 +57,31 @@ public sealed class DocumentTemplateImport : BaseImport
         //find document template which need to be disabled (missing)
         Tracer.Log("disable check", TraceEventType.Information);
         foreach (var deleteTemplate in documentTemplates.Where(e =>
-                     templates.Templates.All(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
+                     templates.Templates.TrueForAll(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
         {
-            result = DisableTemplate(templates, deleteTemplate, result);
+            result = DisableTemplate(templates, deleteTemplate) && result;
         }
 
         //find queues need to be updated
         Tracer.Log("update check", TraceEventType.Information);
         foreach (var updateTemplate in documentTemplates.Where(e =>
-                     templates.Templates.Any(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
+                     templates.Templates.Exists(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
         {
-            result = UpdateTemplate(args, templates, updateTemplate, result);
+            result = UpdateTemplate(args, templates, updateTemplate) && result;
         }
 
         //find bulk deletes which need to be created
         Tracer.Log("create check", TraceEventType.Information);
         foreach (var createTemplate in templates.Templates.Where(e =>
-                     documentTemplates.All(c => (c.Name, c.DocumentType?.Value) != (e.Name, (int)e.DocumentType))))
+                     documentTemplates.TrueForAll(c => (c.Name, c.DocumentType?.Value) != (e.Name, (int)e.DocumentType))))
         {
-            result = CreateTemplate(args, createTemplate, result);
+            result = CreateTemplate(args, createTemplate)&& result;
         }
 
         return Tracer.End(this, result);
     }
 
-    private bool CreateTemplate(ImportVerb args, DocumentTemplate createTemplate, bool result)
+    private bool CreateTemplate(ImportVerb args, DocumentTemplate createTemplate)
     {
         Tracer.Log("--->", TraceEventType.Verbose);
         var name = createTemplate.Name.Trim().Replace(".xlsx", "").Replace(".docx", "");
@@ -95,39 +99,38 @@ public sealed class DocumentTemplateImport : BaseImport
             Content = GetContent(args, createTemplate.File, createTemplate.DocumentType,
                 createTemplate.AssociatedEntityTypeCode)
         };
-        result = Connection.TryCreate(template, out var id) & result;
-        result = SetTemplateStatus(createTemplate, result, id);
-
-        return result;
+        var result = Connection.TryCreate(template, out var id);
+        return SetTemplateStatus(createTemplate, id) && result;
     }
 
-    private bool SetTemplateStatus(DocumentTemplate template, bool result, Guid id)
+    private bool SetTemplateStatus(DocumentTemplate template, Guid id)
     {
+        var result = true;
         if ((template.DocumentStatus ?? false) == Status.Activated) //enable
         {
             result = Connection.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
-                Status.Activated) & result;
+                Status.Activated);
         }
         else if ((template.DocumentStatus ?? false) == Status.Draft) //disable
         {
             result = Connection.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
-                Status.Draft) & result;
+                Status.Draft);
         }
 
         return result;
     }
 
-    private bool DisableTemplate(DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate, bool result)
+    private bool DisableTemplate(DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate)
     {
         Tracer.Log("--->", TraceEventType.Verbose);
+        var result = true;
         if (!templates.IgnoreMissing ?? false)
         {
             //disable document template
             Tracer.Log($"disable document template: {deleteTemplate.Name}", TraceEventType.Verbose);
-            result = Connection.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft) &
-                     result;
+            result = Connection.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft);
         }
         else
         {
@@ -137,8 +140,7 @@ public sealed class DocumentTemplateImport : BaseImport
         return result;
     }
 
-    private bool UpdateTemplate(ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate,
-        bool result)
+    private bool UpdateTemplate(ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate)
     {
         Tracer.Log("--->", TraceEventType.Verbose);
         var existingTemplate = templates.Templates.Single(e =>
@@ -147,18 +149,15 @@ public sealed class DocumentTemplateImport : BaseImport
         if (currentStatus != existingTemplate.DocumentStatus && currentStatus == Status.Activated) //disable
         {
             Tracer.Log($"disable document template: {updateTemplate.Name}", TraceEventType.Verbose);
-            result = Connection.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft) &
-                     result;
-            return result;
+            return Connection.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft);
         }
 
+        var result = true;
         if (existingTemplate.ForceUpdate ?? false)
         {
             Tracer.Log($"update document template: {updateTemplate.Name}", TraceEventType.Verbose);
             //delete old
-            result =
-                Connection.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id) &
-                result;
+            result = Connection.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id);
 
             //create
             var template = new dataverse.DocumentTemplate
@@ -173,7 +172,7 @@ public sealed class DocumentTemplateImport : BaseImport
                 Content = GetContent(args, existingTemplate.File, existingTemplate.DocumentType,
                     existingTemplate.AssociatedEntityTypeCode)
             };
-            result = Connection.TryCreate(template, out var id) & result;
+            result = Connection.TryCreate(template, out var id) && result;
             updateTemplate.Id = id;
         }
         else
@@ -185,13 +184,11 @@ public sealed class DocumentTemplateImport : BaseImport
                 {
                     Description = existingTemplate.Description
                 };
-                result = Connection.TryUpdate(template) & result;
+                result = Connection.TryUpdate(template);
             }
         }
 
-        result = SetTemplateStatus(existingTemplate, result, updateTemplate.Id);
-
-        return result;
+        return SetTemplateStatus(existingTemplate, updateTemplate.Id) && result;
     }
 
     private int GetEntityTypeCode(string entity)

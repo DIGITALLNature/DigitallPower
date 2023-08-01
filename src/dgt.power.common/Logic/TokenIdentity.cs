@@ -1,8 +1,9 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-namespace dgt.power.push.Model;
+namespace dgt.power.common.Logic;
 
-internal record WebresourcesPattern(int Type, string FilePattern)
+public class TokenIdentity : Identity
 {
+    public required string Token { get; set; }
 }

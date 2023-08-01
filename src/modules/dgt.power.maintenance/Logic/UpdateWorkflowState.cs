@@ -24,22 +24,23 @@ public class UpdateWorkflowState : BaseMaintenance
 
     protected override bool Invoke(MaintenanceVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         // Inline arguments are not yet supported so throw error if supplied
         if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
-            throw new NotImplementedException("Inline arguments are not yet supported");
+            throw new NotSupportedException("Inline arguments are not yet supported");
         }
 
         // Check if required config is available
-        if (!ConfigResolver.GetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
+        if (!ConfigResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
         {
             return Tracer.End(this, false);
         }
 
         // Do the actual work
-        var task = UpdateWorkflowStates(workflowConfig);
+        var task = UpdateWorkflowStatesAsync(workflowConfig);
         task.Wait();
 
         return Tracer.End(this, task.Result);
@@ -50,7 +51,7 @@ public class UpdateWorkflowState : BaseMaintenance
     /// </summary>
     /// <param name="workflowConfig">The underlying workflow config</param>
     /// <returns>True if no errors occured otherwise False</returns>
-    private async Task<bool> UpdateWorkflowStates(WorkflowConfig workflowConfig)
+    private async Task<bool> UpdateWorkflowStatesAsync(WorkflowConfig workflowConfig)
     {
         return await AnsiConsole.Progress()
             .StartAsync(async ctx =>
@@ -59,7 +60,7 @@ public class UpdateWorkflowState : BaseMaintenance
                 var updateModernFlowTask = ctx.AddTask("Update modern flows", false);
 
                 // Load modern flows
-                var flows = await LoadModernFlows(workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
+                var flows = await LoadModernFlowsAsync(workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
                 loadModernFlowTask.Value = loadModernFlowTask.MaxValue;
                 loadModernFlowTask.StopTask();
 
@@ -68,7 +69,7 @@ public class UpdateWorkflowState : BaseMaintenance
                 updateModernFlowTask.Increment(1);
                 updateModernFlowTask.StartTask();
 
-                var result = await UpdateModernFlows(flows, workflowConfig, updateModernFlowTask);
+                var result = await UpdateModernFlowsAsync(flows, workflowConfig, updateModernFlowTask);
 
                 updateModernFlowTask.StopTask();
                 return result;
@@ -82,7 +83,7 @@ public class UpdateWorkflowState : BaseMaintenance
     /// <param name="workflowConfig">Workflow Config</param>
     /// <param name="progressTask">Progress task to report progress to the calling method</param>
     /// <returns></returns>
-    private async Task<bool> UpdateModernFlows(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask? progressTask)
+    private async Task<bool> UpdateModernFlowsAsync(List<Workflow> flows, WorkflowConfig workflowConfig, ProgressTask? progressTask)
     {
         // Introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
         // Keep track of failures in a dictionary
@@ -98,7 +99,7 @@ public class UpdateWorkflowState : BaseMaintenance
             // Traverse all workflows that were marked as failures in the last round (initially all are marked as failures)
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
-                if (await TryUpdateModernFlow(workflow.Key, workflowConfig))
+                if (await TryUpdateModernFlowAsync(workflow.Key, workflowConfig))
                 {
                     updateResults[workflow.Key] = true;
                     progressTask?.Increment(1);
@@ -118,7 +119,7 @@ public class UpdateWorkflowState : BaseMaintenance
     /// <param name="workflow">Given flow</param>
     /// <param name="workflowConfig">Workflow config</param>
     /// <returns></returns>
-    private async Task<bool> TryUpdateModernFlow(Workflow workflow, WorkflowConfig workflowConfig)
+    private async Task<bool> TryUpdateModernFlowAsync(Workflow workflow, WorkflowConfig workflowConfig)
     {
         var flow = workflow;
         var flowName = flow.Name;
@@ -139,8 +140,8 @@ public class UpdateWorkflowState : BaseMaintenance
         var ownerText = flowConfig?.Owner ?? workflowConfig.DefaultOwner; // Owner specified on flow level overrides default (empty string also triggers override)
         var impersonateText = flowConfig?.Impersonate ?? workflowConfig.DefaultImpersonate; // Impersonate specified on flow level overrides default (empty string also triggers override)
 
-        var owner = await ResolveSystemUser(ownerText);
-        var impersonate = await ResolveSystemUser(impersonateText);
+        var owner = await ResolveSystemUserAsync(ownerText);
+        var impersonate = await ResolveSystemUserAsync(impersonateText);
 
         // Prepare flow object to update (but only if necessary)
         var updateFlow = new Workflow(flow.Id);
@@ -221,7 +222,7 @@ public class UpdateWorkflowState : BaseMaintenance
     /// </summary>
     /// <param name="username">Domain name to look for</param>
     /// <returns>Found user or default object if not found</returns>
-    private Task<SystemUser?> ResolveSystemUser(string? username)
+    private Task<SystemUser?> ResolveSystemUserAsync(string? username)
     {
         // If no username is given return default
         if (string.IsNullOrWhiteSpace(username))
@@ -232,7 +233,7 @@ public class UpdateWorkflowState : BaseMaintenance
         Tracer.Log($"[grey]   > Trying to resolve '{username.EscapeMarkup()}'[/]", TraceEventType.Verbose);
 
         // Check if we seen the username already and if so grab it from the table
-        if (!string.IsNullOrWhiteSpace(username) && _userTable.TryGetValue(username, out var user))
+        if (_userTable.TryGetValue(username, out var user))
         {
             Tracer.Log($"[grey]   > Resolved user '{username.EscapeMarkup()}' ({user.Id})[/]", TraceEventType.Verbose);
             return Task.FromResult<SystemUser?>(user);
@@ -274,7 +275,7 @@ public class UpdateWorkflowState : BaseMaintenance
     /// <param name="solutions">List of uniquenames for solutions to consider</param>
     /// <param name="publishers">List of publishers of solutions to consider</param>
     /// <returns></returns>
-    private Task<List<Workflow>> LoadModernFlows(string[]? solutions, string[]? publishers)
+    private Task<List<Workflow>> LoadModernFlowsAsync(string[]? solutions, string[]? publishers)
     {
         // Prepare query expression to load modern flows
         var query = new QueryExpression(Workflow.EntityLogicalName);

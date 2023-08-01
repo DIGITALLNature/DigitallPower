@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Linq.Expressions;
 using dgt.power.common;
 using dgt.power.dataverse;
 using FakeItEasy;

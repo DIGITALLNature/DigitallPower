@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
@@ -19,11 +22,12 @@ public sealed class SecureConfigImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "secureconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
+        if (!ConfigResolver.TryGetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
             string.IsNullOrWhiteSpace(args.InlineData))
         {
             return Tracer.NotConfigured(this);

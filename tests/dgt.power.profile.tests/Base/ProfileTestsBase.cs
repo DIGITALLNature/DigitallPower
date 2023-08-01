@@ -1,4 +1,7 @@
-﻿using System.IO.IsolatedStorage;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.IO.IsolatedStorage;
 using dgt.power.common;
 using dgt.power.common.Logic;
 using dgt.power.tests;

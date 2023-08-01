@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.ComponentModel;
 using dgt.power.profile.Base;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -18,6 +21,11 @@ public class CreateProfileSettings : ProfileSettings
     [CommandArgument(1, "<ConnectionString>")]
     [Description("ConnectionString")]
     public string ConnectionString { get; init; }
+
+    [CommandOption("--msal")]
+    [Description("Tokenbased Authentication (with MSAL)")]
+    [DefaultValue(false)]
+    public bool TokenBased { get; init; }
 
     [CommandOption("--skipcheck")]
     [Description("Skip testing of the connection")]

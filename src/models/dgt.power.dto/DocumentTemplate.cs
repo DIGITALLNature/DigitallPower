@@ -1,4 +1,7 @@
-﻿#pragma warning disable CS8618
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+#pragma warning disable CS8618
 using System.Text.Json.Serialization;
 
 namespace dgt.power.dto;

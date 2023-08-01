@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -19,6 +22,7 @@ public sealed class BulkDeleteUtil : BaseMaintenance
 
     protected override bool Invoke(MaintenanceVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))

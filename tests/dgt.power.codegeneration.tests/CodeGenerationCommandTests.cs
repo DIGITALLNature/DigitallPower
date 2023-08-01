@@ -1,7 +1,9 @@
-﻿using dgt.power.codegeneration.Base;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common;
 using dgt.power.common.Logic;
 using dgt.power.tests;
 using FakeItEasy;

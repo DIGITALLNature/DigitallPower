@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Globalization;
 using System.Text;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
@@ -232,12 +235,13 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
 
         pagequery.PageInfo = new PagingInfo
         {
-            Count = 5000,
+            Count = PageSize,
             PageNumber = 1,
             PagingCookie = null
         };
         var components = new List<SolutionComponent>();
-        while (true)
+        var moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = Connection.RetrieveMultiple(pagequery);
@@ -247,10 +251,8 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
                 pagequery.PageInfo.PageNumber++;
                 pagequery.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         return components;

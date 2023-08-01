@@ -1,4 +1,8 @@
-﻿﻿using dgt.power.analyzer.Base;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
+using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -6,8 +10,7 @@ using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console;
+ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
@@ -19,6 +22,7 @@ public sealed class TopLayerAnalyze : BaseAnalyze
 
     protected override bool Invoke(AnalyzeVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -71,19 +75,9 @@ public sealed class TopLayerAnalyze : BaseAnalyze
                         }
 
                         var first = GetTopNotActiveLayer(layers);
-                        if (!first.MsdynSolutionname!.ToLowerInvariant().StartsWith(uniqueName.ToLowerInvariant()))
+                        if (!first.MsdynSolutionname!.ToUpperInvariant().StartsWith(uniqueName.ToUpperInvariant(),StringComparison.Ordinal))
                         {
-                            string componentName;
-                            if (component.RootSolutionComponentId != null && ((OptionSetValue)component.GetAttributeValue<AliasedValue>($"root.{SolutionComponent.LogicalNames.ComponentType}").Value).Value == SolutionComponent.Options.ComponentType.Entity)
-                            {
-                                var entity = entities.Single(e => e.MetadataId == (Guid?)component.GetAttributeValue<AliasedValue>($"root.{SolutionComponent.LogicalNames.ObjectId}").Value);
-                                componentName = $"{first.MsdynName} ({entity.LogicalName})";
-                            }
-                            else
-                            {
-                                componentName = first.MsdynName!;
-                            }
-
+                            var componentName = GetComponentName(component, entities, first);
                             table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName, uniqueName);
                             ctx.Refresh();
 
@@ -107,7 +101,7 @@ public sealed class TopLayerAnalyze : BaseAnalyze
         return Tracer.End(this, true);
     }
 
-    private MsdynComponentlayer GetTopNotActiveLayer(List<MsdynComponentlayer> layers)
+    private MsdynComponentlayer GetTopNotActiveLayer(ICollection<MsdynComponentlayer> layers)
     {
         if (layers.Count == 1)
         {
@@ -115,7 +109,7 @@ public sealed class TopLayerAnalyze : BaseAnalyze
         }
 
         var skippedLayers = layers.Skip(1).ToList();
-        var first = skippedLayers.First();
+        var first = skippedLayers[0];
         return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(skippedLayers) : first;
     }
 }

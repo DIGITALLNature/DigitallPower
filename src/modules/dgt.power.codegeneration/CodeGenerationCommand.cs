@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
@@ -37,7 +40,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
     public override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb)
     {
         _tracer.Start(this);
-        if (!_configResolver.GetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
+        if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
         {
             return _tracer.End(this, false) ? 0 : -1;
         }

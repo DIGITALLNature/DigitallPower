@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Globalization;
 using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NuGet.Common;
-using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -44,7 +46,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
         }
     }
 
-    private bool CheckForBuildAgent()
+    private static bool CheckForBuildAgent()
     {
         var isAgent = false;
 
@@ -93,7 +95,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
         return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
     }
 
-    private class LastUpdateCheck
+    private sealed class LastUpdateCheck
     {
         [JsonPropertyName("update-last-checked-on")]
         public DateTime LastUpdateCheckOn { get; set; } = DateTime.MinValue;

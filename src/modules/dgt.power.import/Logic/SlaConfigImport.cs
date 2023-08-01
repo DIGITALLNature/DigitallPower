@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -17,11 +20,12 @@ public class SlaConfigImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<SlaConfigs>(args.FileDir, fileName, out var slaConfigs))
+        if (!ConfigResolver.TryGetConfigFile<SlaConfigs>(args.FileDir, fileName, out var slaConfigs))
         {
             return Tracer.NotConfigured(this);
         }
@@ -68,8 +72,8 @@ public class SlaConfigImport : BaseImport
 
                 var slatoUpdate = new SLA
                 {
-                    Id = sla.SlaId ?? default,
-                    BusinessHoursId = sla.BusinessHours == default ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? default)
+                    Id = sla.SlaId ?? Guid.Empty,
+                    BusinessHoursId = sla.BusinessHours == default ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? Guid.Empty)
                 };
 
                 if (systemuser != default(SystemUser))

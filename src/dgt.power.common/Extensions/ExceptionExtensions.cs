@@ -1,4 +1,7 @@
-﻿namespace dgt.power.common.Extensions;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+namespace dgt.power.common.Extensions;
 
 public static class ExceptionExtensions
 {
@@ -22,19 +25,5 @@ public static class ExceptionExtensions
         }
 
         return rootException.Message;
-    }
-
-    public static bool IsDerivedFrom<TException>(this Exception exception)
-        where TException : Exception
-    {
-        return exception.GetType().IsAssignableTo(typeof(TException))
-               || (exception.InnerException?.IsDerivedFrom<TException>() ?? false);
-    }
-
-    public static TException? GetInnerException<TException>(this Exception exception) where TException : Exception
-    {
-        return exception.GetType().IsAssignableTo(typeof(TException))
-            ? (TException)exception
-            : exception.InnerException?.GetInnerException<TException>() ?? null;
     }
 }

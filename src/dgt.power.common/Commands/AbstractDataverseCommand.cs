@@ -1,4 +1,7 @@
-﻿using dgt.power.dataverse;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.common.Commands;
@@ -16,7 +19,20 @@ public abstract class AbstractDataverseCommand<TCommandSettings> : AbstractPower
 
     public void Dispose()
     {
-        DataContext.Dispose();
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if(disposing)
+        {
+            DataContext.Dispose();
+        }
+    }
+
+    ~AbstractDataverseCommand()
+    {
+        Dispose(false);
     }
 }

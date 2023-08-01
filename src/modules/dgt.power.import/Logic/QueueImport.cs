@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -18,11 +21,12 @@ public sealed class QueueImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
+        if (!ConfigResolver.TryGetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
         {
             return Tracer.NotConfigured(this);
         }
@@ -51,7 +55,7 @@ public sealed class QueueImport : BaseImport
         Tracer.Log("update check", TraceEventType.Information);
         foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Any(e => e.Id == c.QueueId)))
         {
-            result = UpdateQueue(queues, updateQueue, alternativeOwner, result);
+            result = UpdateQueue(queues, updateQueue, alternativeOwner) && result;
         }
 
         //find queues which need to be created
@@ -66,12 +70,9 @@ public sealed class QueueImport : BaseImport
                 continue;
             }
 
-            if (alternativeOwner != null)
+            if (alternativeOwner != null && !Connection.TryAssign(new EntityReference(dataverse.Queue.EntityLogicalName, id), alternativeOwner))
             {
-                if (!Connection.TryAssign(new EntityReference(dataverse.Queue.EntityLogicalName, id), alternativeOwner))
-                {
-                    result = false;
-                }
+                result = false;
             }
         }
 
@@ -105,7 +106,7 @@ public sealed class QueueImport : BaseImport
         //result = XrmWorker.Delete(tracer, service, Model.Queue.EntityLogicalName, deleteQueue.Id, dryRun) & result;
     }
 
-    private bool UpdateQueue(IList<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner, bool result)
+    private bool UpdateQueue(IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
     {
         Tracer.Log("--->", TraceEventType.Verbose);
         var existingQueue = queues.Single(e => e.Id == updateQueue.QueueId);
@@ -120,6 +121,7 @@ public sealed class QueueImport : BaseImport
         }
 
         var unchangedRule = Unchanged(existingQueue, updateQueue);
+        var result = true;
 
         if (unchangedRule)
         {
@@ -137,7 +139,7 @@ public sealed class QueueImport : BaseImport
                 IncomingEmailDeliveryMethod = new OptionSetValue((int)updateQueue.IncomingEmailDelivery),
                 OutgoingEmailDeliveryMethod = new OptionSetValue((int)updateQueue.OutgoingEmailDelivery),
                 Description = updateQueue.Description
-            }) & result;
+            });
         }
 
         return result;
@@ -194,7 +196,8 @@ public sealed class QueueImport : BaseImport
             PagingCookie = null
         };
         IList<dataverse.Queue> queues = new List<dataverse.Queue>();
-        while (true)
+        var moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = Connection.RetrieveMultiple(query);
@@ -210,11 +213,8 @@ public sealed class QueueImport : BaseImport
                 // Set the paging cookie to the paging cookie returned from current results.
                 query.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                // If no more records are in the result nodes, exit the loop.
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         return queues;

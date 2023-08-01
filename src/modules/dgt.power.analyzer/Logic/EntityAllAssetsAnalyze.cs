@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Base.Config;
@@ -22,11 +25,12 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
 
     protected override bool Invoke(AnalyzeVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         var result = true;
         Tracer.Start(this);
 
         //read config
-        if (!ConfigResolver.GetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
+        if (!ConfigResolver.TryGetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
         {
             return Tracer.End(this, false);
         }

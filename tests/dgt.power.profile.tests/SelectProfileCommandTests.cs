@@ -1,4 +1,7 @@
-﻿using dgt.power.profile.Commands;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
 using Spectre.Console;
@@ -19,10 +22,10 @@ public class SelectProfileCommandTests : ProfileTestsBase<SelectProfileCommand, 
     public void ShouldSetProfileAsCurrentOnSelection()
     {
         AnsiConsole.Record();
-        const string identity = "some identity";
+        const string identity = "SOME IDENTITY";
         const string connectionString = "con";
         AddIdentity(identity, connectionString);
-        AddIdentity("something different", "something");
+        AddIdentity("SOMETHING DIFFERENT", "something");
         GetIdentities().CurrentIdentity.Should().NotBe(identity);
         GetIdentities().CurrentConnectionString.Should().NotBe(connectionString);
 

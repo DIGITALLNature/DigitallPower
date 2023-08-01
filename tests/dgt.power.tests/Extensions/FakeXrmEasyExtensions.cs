@@ -1,4 +1,7 @@
-﻿using FakeXrmEasy.Abstractions;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
 

@@ -1,4 +1,7 @@
-﻿using System.ServiceModel;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.ServiceModel;
 using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
@@ -19,7 +22,7 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
     {
         var settings = new CreateProfileSettings
         {
-            Name = "test",
+            Name = "TEST",
             ConnectionString = @"AuthType=OAuth;
   Username=jsmith@contoso.onmicrosoft.com;
   Password=passcode;
@@ -42,7 +45,7 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
 
         var settings = new CreateProfileSettings
         {
-            Name = "test",
+            Name = "TEST",
             ConnectionString = @"AuthType=OAuth;
   Username=jsmith@contoso.onmicrosoft.com;
   Password=passcode;
