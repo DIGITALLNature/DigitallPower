@@ -10,6 +10,8 @@ namespace dgt.power.common;
 
 public abstract class PowerLogic<TConfig> : Command<TConfig>, IPowerLogic where TConfig : BaseProgramSettings
 {
+    protected const int PageSize = 5000;
+
     protected PowerLogic(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver)
     {
         Tracer = tracer;
