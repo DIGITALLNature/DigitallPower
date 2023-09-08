@@ -18,8 +18,6 @@ namespace dgt.power.analyzer.Base;
 #pragma warning disable S1200
 public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 {
-    protected const int PageSize = 5000;
-
     protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);

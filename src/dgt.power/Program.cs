@@ -134,6 +134,9 @@ app.Configure(config =>
             maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
                 .WithDescription("Updates workflows with given configuration")
                 .WithExample("maintenance", "workflowstate", "--config", "./config.json");
+            maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
+                .WithDescription("Removes solution components that are already existing")
+                .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
