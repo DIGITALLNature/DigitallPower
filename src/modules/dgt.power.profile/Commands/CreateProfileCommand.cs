@@ -4,6 +4,8 @@
 using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Commands;
+using dgt.power.common.Exceptions;
+using dgt.power.common.Extensions;
 using dgt.power.common.Logic;
 using Spectre.Console;
 
@@ -55,7 +57,15 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
 
         if (!settings.SkipChecking)
         {
-            _connection.Connect();
+            try
+            {
+                _connection.Connect();
+            }
+            catch (FailedConnectionException fc)
+            {
+                AnsiConsole.WriteLine(fc.RootMessage());
+                throw;
+            }
         }
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");

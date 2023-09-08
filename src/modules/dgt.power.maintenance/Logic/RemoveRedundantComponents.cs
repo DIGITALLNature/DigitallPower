@@ -45,7 +45,13 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         var entities = response.EntityMetadata.ToList();
 
         using var context = new DataContext(Connection);
-        var sourceComponents = GetSolutionComponents(context, args.SourceSolution).Select(s => s.ObjectId);
+        var sourceComponents = new HashSet<Guid?>();
+        foreach (var sourceSolution in args.SourceSolutions.Split(','))
+        {
+            AnsiConsole.WriteLine($"Fetch components for source {sourceSolution}");
+            sourceComponents.UnionWith(GetSolutionComponents(context, sourceSolution).Select(s => s.ObjectId));
+        }
+        AnsiConsole.WriteLine($"Fetch components for target {args.TargetSolution}");
         var targetComponents = GetSolutionComponents(context, args.TargetSolution);
 
         foreach (var component in targetComponents.IntersectBy(sourceComponents,o => o.ObjectId).OrderByDescending(o => o.ComponentType.Value))
@@ -83,7 +89,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                 typeColumn = component.ComponentType.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            AnsiConsole.WriteLine($"{component.ObjectId:D} <{typeColumn}> {nameColumn}");
+            AnsiConsole.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
             if (!args.DryRun)
             {
                 Connection.Execute(new RemoveSolutionComponentRequest
