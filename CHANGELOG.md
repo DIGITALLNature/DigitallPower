@@ -1,3 +1,10 @@
+# [1.13.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.1...v1.13.0-beta.1) (2023-09-08)
+
+
+### Features
+
+* **Maintenance:** option to remove redundant components in a solution compared with multiple sources solutions ([cecfac4](https://github.com/DIGITALLNature/DigitallPower/commit/cecfac46ccca2439e9a0bb0844c5fb07efce18dd))
+
 ## [1.12.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.0...v1.12.1) (2023-07-27)
 
 
