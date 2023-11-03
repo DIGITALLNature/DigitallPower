@@ -60,7 +60,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId!.Value);
                 AnsiConsole.WriteLine($"Found entity {entity.LogicalName} - ignore");
-
+                continue;
             }
 
             var nameColumn = new StringBuilder();
