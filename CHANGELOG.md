@@ -1,3 +1,10 @@
+# [1.13.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.1...v1.13.0-beta.2) (2023-11-03)
+
+
+### Features
+
+* **maintenance:** add FilterPowerFxPluginSteps ([c32fe26](https://github.com/DIGITALLNature/DigitallPower/commit/c32fe269ebc913fd3f74103656439842fb659cdb))
+
 # [1.13.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.1...v1.13.0-beta.1) (2023-09-08)
 
 
