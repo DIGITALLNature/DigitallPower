@@ -140,6 +140,10 @@ app.Configure(config =>
             maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
                 .WithDescription("Removes solution components that are already existing")
                 .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
+            maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
+                .WithDescription("Add Messagefiltering for PowerFx Plugins")
+                .WithExample("maintenance","filterfxplugins","--config", "./config.json");
+
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
