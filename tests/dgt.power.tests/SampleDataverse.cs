@@ -382,7 +382,7 @@ public class SampleDataverse
 
     internal readonly SdkMessageProcessingStep Step2 = new SdkMessageProcessingStep(Guid.NewGuid())
     {
-        Name = "D365.extension.Plugin.Step2",
+        Name = "Digitall.APower.Plugin.Step2",
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled)},
@@ -392,7 +392,7 @@ public class SampleDataverse
 
     internal readonly SdkMessageProcessingStep Step3 = new SdkMessageProcessingStep(Guid.NewGuid())
     {
-        Name = "D365.extension.Plugin.Step3",
+        Name = "Digitall.APower.Plugin.Step3",
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled)},
@@ -402,7 +402,7 @@ public class SampleDataverse
 
     internal readonly SdkMessageProcessingStep Step4 = new SdkMessageProcessingStep(Guid.NewGuid())
     {
-        Name = "D365.extension.Plugin.Step4",
+        Name = "Digitall.APower.Plugin.Step4",
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled)},

@@ -26,7 +26,7 @@ public class CodeGenerationConfig
         _forms = new HashSet<string>();
     }
 
-    public string NameSpace { get; init; } = "D365.Extension.Model";
+    public string NameSpace { get; init; } = "Digitall.APower.Model";
 
     public ICollection<string> Entities
     {
