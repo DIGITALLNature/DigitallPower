@@ -1,3 +1,10 @@
+# [1.13.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.2...v1.13.0-beta.3) (2023-11-23)
+
+
+### Features
+
+* change namespace to Digitall.APower [#66](https://github.com/DIGITALLNature/DigitallPower/issues/66) ([#68](https://github.com/DIGITALLNature/DigitallPower/issues/68)) ([6e33c4e](https://github.com/DIGITALLNature/DigitallPower/commit/6e33c4e929fc8c5d721ca6c6d721908897fa1359))
+
 # [1.13.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.1...v1.13.0-beta.2) (2023-11-03)
 
 
