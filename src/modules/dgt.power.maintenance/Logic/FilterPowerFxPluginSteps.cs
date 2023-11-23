@@ -2,8 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
@@ -32,16 +30,6 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
             throw new NotSupportedException("Inline arguments are not yet supported");
         }
 
-        // var xx = new PowerFxPluginsConfigs();
-        // xx.Add(new PowerFxPluginsConfig{Name = "Test", FilterAttributes = new []{"fullname","lastname"}, Message = PowerFxPluginsConfig.MessageType.Update});
-        // JsonSerializerOptions options = new JsonSerializerOptions{
-        //     Converters ={
-        //         new JsonStringEnumConverter( JsonNamingPolicy.CamelCase)
-        //     },
-        //
-        // };
-        // var t = JsonSerializer.Serialize(xx,options);
-        // Check if required config is available
         if (!ConfigResolver.TryGetConfigFile<PowerFxPluginsConfigs>(args.Config, out var powerfxpluginConfig))
         {
             return Tracer.End(this, false);
@@ -68,6 +56,7 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
 
                     ctx.Status($"Update {config.Name}");
                     Connection.Update(step);
+                    AnsiConsole.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
                 ctx.Status("Finishing");
