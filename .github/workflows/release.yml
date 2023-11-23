@@ -18,9 +18,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: actions/setup-dotnet@v3.0.3
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "7.0.x"
+          dotnet-version: "8.0.x"
       - name: Cache Packages
         uses: actions/cache@v3
         with:
@@ -35,7 +35,7 @@ jobs:
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'key.snk'
-          encodedString: ${{ secrets.SIGNING_KEY }} 
+          encodedString: ${{ secrets.SIGNING_KEY }}
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
