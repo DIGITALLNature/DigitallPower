@@ -37,7 +37,7 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
                     ConnectionString = settings.ConnectionString,
                     Insecure = settings.Insecure,
                     SecurityProtocol = settings.SecurityProtocol,
-                    Token = "-test-"
+                    Token = null
                 });
         }
         else

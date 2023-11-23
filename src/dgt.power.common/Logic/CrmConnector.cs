@@ -11,13 +11,13 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal class CrmConnector
+internal class CrmConnector: IConnector
 {
     private readonly string _connectionString;
 
     internal CrmConnector(string connectionString) => _connectionString = connectionString;
 
-    internal IOrganizationService GetOrganizationServiceProxy()
+    public IOrganizationService GetOrganizationServiceProxy()
     {
         if (!Regex.IsMatch(_connectionString, "SkipDiscovery=True", RegexOptions.IgnoreCase))
         {
@@ -31,17 +31,7 @@ internal class CrmConnector
 
         var serviceClient = new ServiceClient(_connectionString);
 
-        var service = GetOrganizationService(serviceClient);
-
-        CheckWhoAmI(service);
-
-        return service;
-    }
-
-    private static void CheckWhoAmI(IOrganizationService service)
-    {
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+        return GetOrganizationService(serviceClient);
     }
 
     private static IOrganizationService GetOrganizationService(ServiceClient serviceClient)

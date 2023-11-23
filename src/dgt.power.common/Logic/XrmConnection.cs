@@ -3,6 +3,7 @@
 
 using System.Net;
 using dgt.power.common.Exceptions;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -77,15 +78,35 @@ public class XrmConnection : IXrmConnection
 #pragma warning restore CA5359
         }
 
-        AnsiConsole.MarkupLine($"Connect to {_profileManager.Current}");
-        var connector = new CrmConnector(identity.ConnectionString);
-        try
+        IConnector connector;
+        if (_profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
-            return connector.GetOrganizationServiceProxy();
+            AnsiConsole.MarkupLine($"Connect to {_profileManager.Current} via MSAL connection");
+            connector = new TokenConnector(tokenIdentity,_profileManager);
         }
-        catch (Exception exception)
+        else
         {
-            throw new FailedConnectionException(_profileManager.Current, exception);
+            AnsiConsole.MarkupLine($"Connect to {_profileManager.Current} via classic connection");
+            connector = new CrmConnector(identity.ConnectionString);
         }
+
+            try
+            {
+                var service=  connector.GetOrganizationServiceProxy();
+                CheckWhoAmI(service);
+                return service;
+
+            }
+            catch (Exception exception)
+            {
+                throw new FailedConnectionException(_profileManager.Current, exception);
+            }
+
+    }
+
+    private static void CheckWhoAmI(IOrganizationService service)
+    {
+        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
+        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 }
