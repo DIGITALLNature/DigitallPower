@@ -11,50 +11,50 @@ internal class TokenConnector : IConnector
 {
     private readonly TokenIdentity _identity;
     private readonly IProfileManager _profileManager;
-    private readonly IPublicClientApplication application;
+    private readonly IPublicClientApplication _application;
     private             IAccount account;
-    private         string[] scopes;
-    private         Uri uri;
+    private readonly string[] _scopes;
+    private readonly Uri _uri;
 
-    public TokenConnector(TokenIdentity identity, IProfileManager profileManager)
+    internal TokenConnector(TokenIdentity identity, IProfileManager profileManager)
     {
         _identity = identity;
         _profileManager = profileManager;
-        application = PublicClientApplicationBuilder
+        _application = PublicClientApplicationBuilder
                     .Create("51f81489-12ee-4a9e-aaae-a2591f45987d")
                     .WithRedirectUri("http://localhost")
                     .Build();
 
-        application.UserTokenCache.SetBeforeAccess(BeforeAccessNotification);
-        application.UserTokenCache.SetAfterAccess(AfterAccessNotification);
+        _application.UserTokenCache.SetBeforeAccess(BeforeAccessNotification);
+        _application.UserTokenCache.SetAfterAccess(AfterAccessNotification);
 
-        uri = new Uri(identity.ConnectionString);
-        scopes = new [] { $"{uri.Scheme}{Uri.SchemeDelimiter}{uri.Authority}/.default" };
+        _uri = new Uri(identity.ConnectionString);
+        _scopes = new [] { $"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default" };
     }
 
     public IOrganizationService GetOrganizationServiceProxy()
     {
         if (!string.IsNullOrWhiteSpace(_identity.Username))
         {
-            account = application.GetAccountAsync(_identity.Username).Result;
+            account = _application.GetAccountAsync(_identity.Username).Result;
         }
 
-        return new ServiceClient(uri, GetToken);
+        return new ServiceClient(_uri, GetTokenAsync);
     }
 
-    public async Task<string> GetToken(string instanceUri)
+    public async Task<string> GetTokenAsync(string instanceUri)
     {
 
         try
         {
-            var silent = await application.AcquireTokenSilent(scopes, account)
+            var silent = await _application.AcquireTokenSilent(_scopes, account)
                 .ExecuteAsync();
 
             return silent.AccessToken;
         }
         catch (MsalUiRequiredException ex)
         {
-            var interactive = await application.AcquireTokenInteractive(scopes)
+            var interactive = await _application.AcquireTokenInteractive(_scopes)
                 .WithClaims(ex.Claims)
                 .ExecuteAsync();
 

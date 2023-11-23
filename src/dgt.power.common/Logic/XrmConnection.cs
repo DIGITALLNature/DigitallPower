@@ -12,8 +12,8 @@ namespace dgt.power.common.Logic;
 
 public class XrmConnection : IXrmConnection
 {
-    private readonly IProfileManager _profileManager;
     private readonly IConfiguration _configuration;
+    private readonly IProfileManager _profileManager;
 
     public XrmConnection(IProfileManager profileManager, IConfiguration configuration)
     {
@@ -53,7 +53,7 @@ public class XrmConnection : IXrmConnection
 #pragma warning restore CA5359
         }
 
-        AnsiConsole.MarkupLine($"Connect to given configuration.");
+        AnsiConsole.MarkupLine("Connect to given configuration.");
         var connector = new CrmConnector(_configuration.GetValue<string>("xrm:connection"));
         try
         {
@@ -82,7 +82,7 @@ public class XrmConnection : IXrmConnection
         if (_profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
             AnsiConsole.MarkupLine($"Connect to {_profileManager.Current} via MSAL connection");
-            connector = new TokenConnector(tokenIdentity,_profileManager);
+            connector = new TokenConnector(tokenIdentity, _profileManager);
         }
         else
         {
@@ -90,18 +90,16 @@ public class XrmConnection : IXrmConnection
             connector = new CrmConnector(identity.ConnectionString);
         }
 
-            try
-            {
-                var service=  connector.GetOrganizationServiceProxy();
-                CheckWhoAmI(service);
-                return service;
-
-            }
-            catch (Exception exception)
-            {
-                throw new FailedConnectionException(_profileManager.Current, exception);
-            }
-
+        try
+        {
+            var service = connector.GetOrganizationServiceProxy();
+            CheckWhoAmI(service);
+            return service;
+        }
+        catch (Exception exception)
+        {
+            throw new FailedConnectionException(_profileManager.Current, exception);
+        }
     }
 
     private static void CheckWhoAmI(IOrganizationService service)
