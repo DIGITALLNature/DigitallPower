@@ -23,7 +23,7 @@ internal class AssemblyModelBuilder
 {
     private readonly DataContext _context;
 
-    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration" };
+    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration", "Digitall.APower.Registration" };
 
     private readonly string[] _knownPluginAttributes =
     {
