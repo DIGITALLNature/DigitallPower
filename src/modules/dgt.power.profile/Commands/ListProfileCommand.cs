@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.profile.Base;
 using Spectre.Console;
 using Spectre.Console.Cli;

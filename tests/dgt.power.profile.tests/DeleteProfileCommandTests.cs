@@ -22,6 +22,6 @@ public class DeleteProfileCommandTests : ProfileTestsBase<DeleteProfileCommand, 
 
         GetContext().Execute(settings).Should().Succeed();
 
-        GetIdentities().Keys.Should().NotContain(settings.Name);
+        GetIdentities().Infos.Should().BeEmpty();
     }
 }
