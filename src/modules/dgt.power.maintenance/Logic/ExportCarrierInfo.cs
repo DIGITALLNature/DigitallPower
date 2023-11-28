@@ -30,70 +30,72 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
     public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
     {
-        var isSuccessfulEc4u = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
-        {
-            EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4uCarrier.EntityLogicalName
-        }, out _);
-
-        var isSuccessfulDgt= OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        return (isSuccessfulEc4u || isSuccessfulDgt)
+        var isSuccessfulEc4u = !isSuccessfulDgt && OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = Ec4uCarrier.EntityLogicalName
+        }, out _);
+
+        return (isSuccessfulDgt || isSuccessfulEc4u)
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
     public override ExitCode Execute(CarrierInfoSettings settings)
     {
-        var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4uCarrier.EntityLogicalName
+            LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        List<Ec4uCarrier> carriers;
-        if (isSuccessfulOld)
+        List<DgtCarrier> carriers;
+        if (isSuccessfulDgt)
         {
-            carriers = DataContext.Ec4uCarrierSet
-                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
-                .OrderBy(x => x.Ec4uCarTransportOrderNo)
-                .Select(x => new Ec4uCarrier
+            carriers = DataContext.DgtCarrierSet
+                .Where(x => x.Statecode!.Value == DgtCarrier.Options.Statecode.Active)
+                .OrderBy(x => x.DgtTransportOrderNo)
+                .Select(x => new DgtCarrier
                 {
                     Id = x.Id,
-                    Ec4uCarrierId = x.Ec4uCarrierId,
-                    Ec4uCarReference = x.Ec4uCarReference,
-                    Ec4uCarSolutionversion = x.Ec4uCarSolutionversion,
-                    Ec4uCarSolutionid = x.Ec4uCarSolutionid,
-                    Ec4uCarSolutionuniquename = x.Ec4uCarSolutionuniquename,
-                    Ec4uCarSolutionfriendlyname = x.Ec4uCarSolutionfriendlyname,
-                    Ec4uCarTransportOrderNo = x.Ec4uCarTransportOrderNo
+                    DgtCarrierId = x.DgtCarrierId,
+                    DgtReference = x.DgtReference,
+                    DgtSolutionversion = x.DgtSolutionversion,
+                    DgtSolutionid = x.DgtSolutionid,
+                    DgtSolutionuniquename = x.DgtSolutionuniquename,
+                    DgtSolutionfriendlyname = x.DgtSolutionfriendlyname,
+                    DgtTransportOrderNo = x.DgtTransportOrderNo
                 })
                 .ToList();
         }
         else
         {
-            carriers = DataContext.DgtCarrierSet
+#pragma warning disable CS8601 // Possible null reference assignment.
+            carriers = DataContext.Ec4uCarrierSet
                 .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
-                .OrderBy(x => x.DgtTransportOrderNo)
-                .Select(x => new Ec4uCarrier
+                .OrderBy(x => x.Ec4uCarTransportOrderNo)
+                .Select(x => new DgtCarrier
                 {
                     Id = x.Id,
-                    Ec4uCarrierId = x.DgtCarrierId,
-                    Ec4uCarReference = x.DgtReference,
-                    Ec4uCarSolutionversion = x.DgtSolutionversion,
-                    Ec4uCarSolutionid = x.DgtSolutionid,
-                    Ec4uCarSolutionuniquename = x.DgtSolutionuniquename,
-                    Ec4uCarSolutionfriendlyname = x.DgtSolutionfriendlyname,
-                    Ec4uCarTransportOrderNo = x.DgtTransportOrderNo
+                    DgtCarrierId = x.Ec4uCarrierId,
+                    DgtReference = x.Ec4uCarReference,
+                    DgtSolutionversion = x.Ec4uCarSolutionversion,
+                    DgtSolutionid = x.Ec4uCarSolutionid,
+                    DgtSolutionuniquename = x.Ec4uCarSolutionuniquename,
+                    DgtSolutionfriendlyname = x.Ec4uCarSolutionfriendlyname,
+                    DgtTransportOrderNo = x.Ec4uCarTransportOrderNo
                 })
                 .ToList();
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
-        if (!carriers.Any())
+        if (carriers.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No active carrier[/]");
             return ExitCode.Error;
@@ -112,34 +114,34 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         return ExitCode.Success;
     }
 
-    private bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
+    private bool SolutionIsNotNull((Solution? Solution, DgtCarrier Carrier) tuple)
     {
         return tuple.Solution != null;
     }
 
-    private static Carrier ToCarrierInfo((Solution? Solution, Ec4uCarrier Carrier) tuple) => new()
+    private static Carrier ToCarrierInfo((Solution? Solution, DgtCarrier Carrier) tuple) => new()
     {
         UniqueName = tuple.Solution!.UniqueName!,
         FriendlyName = tuple.Solution.FriendlyName!,
         SolutionId = tuple.Solution.Id,
         CarrierId = tuple.Carrier.Id,
-        Order = tuple.Carrier.Ec4uCarTransportOrderNo!.Value,
+        Order = tuple.Carrier.DgtTransportOrderNo!.Value,
         Version = tuple.Solution.Version!
     };
 
 
-    private bool IsCarrierValid(Ec4uCarrier carrier)
+    private bool IsCarrierValid(DgtCarrier carrier)
     {
-        if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid, out _))
+        if (!string.IsNullOrWhiteSpace(carrier.DgtSolutionid) && Guid.TryParse(carrier.DgtSolutionid, out _))
         {
             return true;
         }
 
-        AnsiConsole.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
+        AnsiConsole.MarkupLine($"[yellow]Solution '{carrier.DgtSolutionuniquename}' has invalid solutionid '{carrier.DgtSolutionid}'[/]");
         return false;
     }
 
-    private (Solution? Solution, Ec4uCarrier Carrier) GetSolution((Guid SolutionId, Ec4uCarrier Order) tuple)
+    private (Solution? Solution, DgtCarrier Carrier) GetSolution((Guid SolutionId, DgtCarrier Order) tuple)
     {
         var solution = DataContext.SolutionSet.Where(x => x.Id == tuple.SolutionId)
             .Select(x => new Solution
@@ -154,7 +156,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
         if (solution != null)
         {
-            AnsiConsole.MarkupLine($"found carrier solution [green]{solution.UniqueName}[/]");
+            AnsiConsole.MarkupLine($"Found carrier solution [green]{solution.UniqueName}[/]");
         }
         else
         {
@@ -164,9 +166,9 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         return (solution, tuple.Order);
     }
 
-    private static (Guid SolutionId, Ec4uCarrier Carrier) ExtractIdAndOrder(Ec4uCarrier carrier)
+    private static (Guid SolutionId, DgtCarrier Carrier) ExtractIdAndOrder(DgtCarrier carrier)
     {
-        carrier.Ec4uCarTransportOrderNo ??= -1;
-        return (Guid.Parse(carrier.Ec4uCarSolutionid!), carrier);
+        carrier.DgtTransportOrderNo ??= -1;
+        return (Guid.Parse(carrier.DgtSolutionid!), carrier);
     }
 }

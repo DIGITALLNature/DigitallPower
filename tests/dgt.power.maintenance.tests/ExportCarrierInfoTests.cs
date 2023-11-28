@@ -64,14 +64,14 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             FriendlyName = "Solution A",
             Version = "1.0.0.1"
         };
-        var activeCarrier1 = new Ec4uCarrier(Guid.NewGuid())
+        var activeCarrier1 = new DgtCarrier(Guid.NewGuid())
         {
-            Ec4uCarSolutionuniquename = carrierSolution1.UniqueName,
-            Ec4uCarSolutionfriendlyname = carrierSolution1.FriendlyName,
-            Ec4uCarSolutionversion = carrierSolution1.Version,
-            Ec4uCarSolutionid = carrierSolution1.Id.ToString(),
-            Statecode = new OptionSetValue(Ec4uCarrier.Options.Statecode.Active),
-            Ec4uCarTransportOrderNo = 1,
+            DgtSolutionuniquename = carrierSolution1.UniqueName,
+            DgtSolutionfriendlyname = carrierSolution1.FriendlyName,
+            DgtSolutionversion = carrierSolution1.Version,
+            DgtSolutionid = carrierSolution1.Id.ToString(),
+            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
+            DgtTransportOrderNo = 1,
         };
         var carrierSolution2 = new Solution(Guid.NewGuid())
         {
@@ -79,14 +79,14 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             FriendlyName = "Solution B",
             Version = "1.0.1.1"
         };
-        var activeCarrier2 = new Ec4uCarrier(Guid.NewGuid())
+        var activeCarrier2 = new DgtCarrier(Guid.NewGuid())
         {
-            Ec4uCarSolutionuniquename = carrierSolution2.UniqueName,
-            Ec4uCarSolutionfriendlyname = carrierSolution2.FriendlyName,
-            Ec4uCarSolutionversion = carrierSolution2.Version,
-            Ec4uCarSolutionid = carrierSolution2.Id.ToString(),
-            Statecode = new OptionSetValue(Ec4uCarrier.Options.Statecode.Active),
-            Ec4uCarTransportOrderNo = 2,
+            DgtSolutionuniquename = carrierSolution2.UniqueName,
+            DgtSolutionfriendlyname = carrierSolution2.FriendlyName,
+            DgtSolutionversion = carrierSolution2.Version,
+            DgtSolutionid = carrierSolution2.Id.ToString(),
+            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
+            DgtTransportOrderNo = 2,
         };
         var context = GetBuilder()
             .WithData(activeCarrier1)
