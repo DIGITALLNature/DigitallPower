@@ -20,12 +20,14 @@ namespace dgt.power.push;
 public class PushCommand : Command<PushVerb>, IPowerLogic
 {
     private readonly IOrganizationService _connection;
+    private readonly WebresourcesProcessor _webresourcesProcessor;
     private readonly ITracer _tracer;
 
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection)
+    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor)
     {
         _tracer = tracer;
         _connection = connection;
+        _webresourcesProcessor = webresourcesProcessor;
     }
 
     public override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings)
@@ -159,29 +161,10 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
     private void ProcessWebresourcesFolder(PushVerb settings, StatusContext ctx)
     {
-        var processor = new WebresourcesProcessor(_connection);
+        var statusCallback = (string status) => {
+            ctx.Status(status);
+        };
 
-        ctx.Status("Check Settings");
-
-        processor.LoadSolution(settings.Solution, out bool isDefault);
-        if (settings.DeleteObsolete && isDefault)
-        {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Delete Obsolete [bold red]without[/] proper solution set - aborting");
-            return;
-        }
-
-        ctx.Status("Discover Webresources");
-        processor.DiscoverWebresources(settings.Target);
-
-        ctx.Status("Upsert Webresources");
-        processor.UpsertResources(settings.Publish);
-
-        if (settings.DeleteObsolete)
-        {
-            processor.DiscoverObsoleteWebresources();
-            ctx.Status("Delete Webresources");
-            processor.DeleteResources();
-        }
+        _webresourcesProcessor.Process(settings, statusCallback);
     }
-
 }

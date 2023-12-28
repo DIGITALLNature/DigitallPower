@@ -27,6 +27,7 @@ using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using dgt.power.push.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
@@ -70,6 +71,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetCommand, DotNetCommand>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
+registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
