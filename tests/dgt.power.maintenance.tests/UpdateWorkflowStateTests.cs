@@ -5,12 +5,13 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
+using dgt.power.tests;
 using dgt.power.tests.Extensions;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests;
 
-public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState>
+public class UpdateWorkflowStateTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
 {
     public UpdateWorkflowStateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
 
@@ -19,7 +20,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
     [InlineData("missing.json")]
     public void InvalidConfigPathsShouldFail(string config) =>
         GetBuilder().Build()
-            .Execute(new MaintenanceVerb
+            .Execute(new UpdateWorkflowState.Settings
             {
                 Config = GetResourcePath(config)
             }).Should().BeFalse();
@@ -29,7 +30,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
     [InlineData("simple.json")]
     public void ValidConfigShouldSucceed(string config) =>
         GetBuilder().Build()
-            .Execute(new MaintenanceVerb
+            .Execute(new UpdateWorkflowState.Settings
             {
                 Config = GetResourcePath(config)
             }).Should().BeTrue();
@@ -68,7 +69,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        context.Execute(new MaintenanceVerb
+        context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("empty.json"),
         }).Should().Succeed();
@@ -119,7 +120,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        context.Execute(new MaintenanceVerb
+        context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("deactivate.json"),
         }).Should().Succeed();
@@ -223,7 +224,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
             .WithData(currentToDefaultSpecifiedFlow)
             .Build();
 
-        context.Execute(new MaintenanceVerb
+        context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("owner.json"),
         }).Should().Succeed();
@@ -301,7 +302,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
             .WithData(otherComponent)
             .Build();
 
-        context.Execute(new MaintenanceVerb
+        context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
         }).Should().Succeed();
@@ -383,7 +384,7 @@ public class UpdateWorkflowStateTests : MaintenanceTestsBase<UpdateWorkflowState
             .WithData(otherComponent)
             .Build();
 
-        context.Execute(new MaintenanceVerb
+        context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
         }).Should().Succeed();

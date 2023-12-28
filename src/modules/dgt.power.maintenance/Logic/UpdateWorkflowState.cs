@@ -1,20 +1,29 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using dgt.power.common;
 using dgt.power.dataverse;
-using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 
-public class UpdateWorkflowState : BaseMaintenance
+public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
 {
+    public class Settings : BaseProgramSettings
+    {
+        [CommandOption("-c|--config")]
+        [Description("Full path to the config file, e.g. C:\\temp\\config.json")]
+        [DefaultValue("config.json")]
+        public required string Config { get; init; }
+    }
+
     private readonly Dictionary<string, SystemUser> _userTable;
 
     public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
@@ -22,16 +31,10 @@ public class UpdateWorkflowState : BaseMaintenance
         _userTable = new Dictionary<string, SystemUser>();
     }
 
-    protected override bool Invoke(MaintenanceVerb args)
+    protected override bool Invoke(UpdateWorkflowState.Settings args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
-
-        // Inline arguments are not yet supported so throw error if supplied
-        if (!string.IsNullOrWhiteSpace(args.InlineData))
-        {
-            throw new NotSupportedException("Inline arguments are not yet supported");
-        }
 
         // Check if required config is available
         if (!ConfigResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
