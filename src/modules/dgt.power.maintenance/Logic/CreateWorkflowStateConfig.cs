@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common;
@@ -80,28 +81,38 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         await AnsiConsole.Progress()
             .StartAsync(async ctx => {
                 var loadModernFlowTask = ctx.AddTask("Loading modern flows").IsIndeterminate();
-                var prepareConfigTask = ctx.AddTask("Preparing config", false);
+                var loadActionTask = ctx.AddTask("Loading actions", false).IsIndeterminate();
+                var prepareConfigTask = ctx.AddTask("Preparing config", false).IsIndeterminate();
 
-                // Load modern flows
-                var flows = await LoadModernFlowsAsync(solutions, publishers);
+                // Load flows (modern, classic)
+                var flows = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.ModernFlow, Workflow.Options.Category.Workflow_);
                 loadModernFlowTask.Value = loadModernFlowTask.MaxValue;
                 loadModernFlowTask.StopTask();
 
-                // Group flows by owner and select max occurence as default owner
-                var groupedFlows = flows.GroupBy(f => f.OwnerId!.Id).ToList();
+                // Load actions
+                var actions = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.Action, Workflow.Options.Category.BusinessProcessFlow);
+                loadActionTask.Value = loadActionTask.MaxValue;
+                loadActionTask.StopTask();
+
+                // Group all workflows by owner and select max occurence as default owner
+                var groupedFlows = flows
+                    .Concat(actions)
+                    .GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? await ResolveSystemUserAsync(defaultOwnerId.Value) : null;
 
                 // Prepare config
-                prepareConfigTask.MaxValue = groupedFlows.Count + 1;
                 prepareConfigTask.StartTask();
 
                 var config = new WorkflowConfig{
                     DefaultOwner = defaultOwner,
                     Flows = [],
+                    Actions = [],
                     SolutionFilter = solutions,
                     PublisherFilter = publishers,
                 };
+
+                // Collect modern flow config
                 foreach(var flow in flows.OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
@@ -114,8 +125,21 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                             Owner = owner,
                         });
                     }
+                }
 
-                    prepareConfigTask.Increment(1);
+                // Collect action config
+                foreach(var action in actions.OrderBy(w => w.UniqueName))
+                {
+                    var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
+                    var owner = action.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(action.OwnerId!.Id) : null;
+
+                    if (disabled || owner != default)
+                    {
+                        config.Actions.Add(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig{
+                            Disabled = disabled,
+                            Owner = owner,
+                        });
+                    }
                 }
 
                 // Write config to file
@@ -162,15 +186,16 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     }
 
     /// <summary>
-    /// Load and return modern flows that are included by any of the filters
+    /// Load and return workflows that are included by any of the filters
     /// Comparisons are done with the fetch xml like filter so wildcards (%) are possible to be used
-    /// The result includes any flow that is in any solution with a given name or publisher regardless whether the solution is unmanged
-    /// or the flow is included in multiple (e.g. temp solutions) where only one fits
+    /// The result includes any workflow that is in any solution with a given name or publisher regardless whether the solution is unmanged
+    /// or the workflow is included in multiple (e.g. temp solutions) where only one fits
     /// </summary>
+    /// <param name="category">Category of the workflows to load</param>"
     /// <param name="solutions">List of uniquenames for solutions to consider</param>
     /// <param name="publishers">List of publishers of solutions to consider</param>
     /// <returns></returns>
-    private Task<List<Workflow>> LoadModernFlowsAsync(string[]? solutions, string[]? publishers)
+    private Task<List<Workflow>> LoadWorkflows(string[]? solutions, string[]? publishers, params int[] category)
     {
         // Prepare query expression to load modern flows
         var query = new QueryExpression(Workflow.EntityLogicalName);
@@ -185,7 +210,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         var filter = new FilterExpression();
         query.Criteria.AddFilter(filter);
         filter.AddCondition(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition);
-        filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.ModernFlow);
+        filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.In, category.Select(c => (object)c).ToArray());
 
         // If either solution or publisher filter exist add them
         if (solutions?.Length > 0 || publishers?.Length > 0)
@@ -224,7 +249,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         }
 
         var workflows = Connection.RetrieveMultiple(query);
-        Tracer.Log($"Found {workflows.Entities.Count} modern flows", TraceEventType.Verbose);
+        var categories = string.Join(",", category.Order());
+        Tracer.Log($"Found {workflows.Entities.Count} workflows for categories {categories}", TraceEventType.Verbose);
 
         // Check if we have reached the limit of query expressions
         // Assumption is that there is only a slim chance we ever hit that limit so pagination is not worth it here
