@@ -3,7 +3,6 @@
 
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common;
@@ -236,6 +235,11 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         return domainname;
     }
 
+    /// <summary>
+    /// Resolve a given table id to a table name
+    /// </summary>
+    /// <param name="tableId">Table id to resolve</param>
+    /// <returns>Table name</returns>
     private async Task<string> ResolveTableName(Guid tableId)
     {
         var orgServiceAsync = Connection as IOrganizationServiceAsync;
@@ -251,6 +255,16 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         return ((RetrieveEntityResponse)metadataResponse).EntityMetadata.LogicalName;
     }
 
+    /// <summary>
+    /// Load and return workflows that are included by any of the filters
+    /// Comparisons are done with the fetch xml like filter so wildcards (%) are possible to be used
+    /// The result includes any workflow that is in any solution with a given name or publisher regardless whether the solution is unmanged
+    /// or the workflow is included in multiple (e.g. temp solutions) where only one fits
+    /// </summary>
+    /// <param name="category">Category of the workflows to load</param>"
+    /// <param name="solutions">List of uniquenames for solutions to consider</param>
+    /// <param name="publishers">List of publishers of solutions to consider</param>
+    /// <returns>List of workflows found</returns>
     private Task<List<Workflow>> LoadWorkflows(string[]? solutions, string[]? publishers, params int[] category)
     {
         // Prepare query expression to load workflows
@@ -318,6 +332,11 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         return Task.FromResult(workflows.Entities.Cast<Workflow>().ToList());
     }
 
+    /// <summary>
+    /// Load and return workflows that belong to a given table
+    /// </summary>
+    /// <param name="tables">List of table names to consider</param>
+    /// <returns>List of workflows with found business rules</returns>
     private Task<List<Workflow>> LoadIndirectBusinessRules(string[] tables)
     {
         // Prepare query expression to load workflows
@@ -350,15 +369,15 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     }
 
     /// <summary>
-    /// Load and return workflows that are included by any of the filters
+    /// Load and return all tables that have all components included with a given filter
     /// Comparisons are done with the fetch xml like filter so wildcards (%) are possible to be used
-    /// The result includes any workflow that is in any solution with a given name or publisher regardless whether the solution is unmanged
-    /// or the workflow is included in multiple (e.g. temp solutions) where only one fits
     /// </summary>
-    /// <param name="category">Category of the workflows to load</param>"
     /// <param name="solutions">List of uniquenames for solutions to consider</param>
     /// <param name="publishers">List of publishers of solutions to consider</param>
-    /// <returns></returns>
+    /// <returns>List of table ids</returns>
+    /// <remarks>
+    /// Return may contain duplicate table ids if found in multiple solutions
+    /// </remarks>
     private Task<List<Guid>> LoadFullTables(string[]? solutions, string[]? publishers, params int[] category)
     {
         var query = new QueryExpression(SolutionComponent.EntityLogicalName);
