@@ -11,6 +11,7 @@ public class WorkflowConfig
     [JsonPropertyName("publisherfilter")] public string[]? PublisherFilter { get; set; }
     [JsonPropertyName("flows")] public Dictionary<string, FlowConfig>? Flows { get; set; }
     [JsonPropertyName("actions")] public Dictionary<string, BaseWorkflowConfig>? Actions { get; set; }
+    [JsonPropertyName("businessrules")] public Dictionary<string, BaseWorkflowConfig[]>? BusinessRules { get; set; }
     [JsonPropertyName("owner")] public string? DefaultOwner { get; set; }
     [JsonPropertyName("impersonate")] public string? DefaultImpersonate { get; set; }
 

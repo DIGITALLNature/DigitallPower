@@ -79,9 +79,11 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile)
     {
         await AnsiConsole.Progress()
-            .StartAsync(async ctx => {
+            .StartAsync(async ctx =>
+            {
                 var loadModernFlowTask = ctx.AddTask("Loading modern flows").IsIndeterminate();
                 var loadActionTask = ctx.AddTask("Loading actions", false).IsIndeterminate();
+                var loadBusinessRulesTask = ctx.AddTask("Loading business rules", false).IsIndeterminate();
                 var prepareConfigTask = ctx.AddTask("Preparing config", false).IsIndeterminate();
 
                 // Load flows (modern, classic)
@@ -94,9 +96,15 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 loadActionTask.Value = loadActionTask.MaxValue;
                 loadActionTask.StopTask();
 
+                // Load direct business rules
+                var businessRules = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.BusinessRule);
+                loadBusinessRulesTask.Value = loadBusinessRulesTask.MaxValue;
+                loadBusinessRulesTask.StopTask();
+
                 // Group all workflows by owner and select max occurence as default owner
                 var groupedFlows = flows
                     .Concat(actions)
+                    .Concat(businessRules)
                     .GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? await ResolveSystemUserAsync(defaultOwnerId.Value) : null;
@@ -104,23 +112,26 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 // Prepare config
                 prepareConfigTask.StartTask();
 
-                var config = new WorkflowConfig{
+                var config = new WorkflowConfig
+                {
                     DefaultOwner = defaultOwner,
                     Flows = [],
                     Actions = [],
+                    BusinessRules = [],
                     SolutionFilter = solutions,
                     PublisherFilter = publishers,
                 };
 
                 // Collect modern flow config
-                foreach(var flow in flows.OrderBy(f => f.Name))
+                foreach (var flow in flows.OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(flow.OwnerId!.Id) : null;
 
                     if (disabled || owner != default)
                     {
-                        config.Flows.Add(flow.Name!, new WorkflowConfig.FlowConfig{
+                        config.Flows.Add(flow.Name!, new WorkflowConfig.FlowConfig
+                        {
                             Disabled = disabled,
                             Owner = owner,
                         });
@@ -128,18 +139,32 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 }
 
                 // Collect action config
-                foreach(var action in actions.OrderBy(w => w.UniqueName))
+                foreach (var action in actions.OrderBy(w => w.UniqueName))
                 {
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = action.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(action.OwnerId!.Id) : null;
 
                     if (disabled || owner != default)
                     {
-                        config.Actions.Add(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig{
+                        config.Actions.Add(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
+                        {
                             Disabled = disabled,
                             Owner = owner,
                         });
                     }
+                }
+
+                // Collect business rule config
+                var businessRuleTables = businessRules.GroupBy(b => b.PrimaryEntity).ToList();
+                foreach (var table in businessRuleTables.OrderBy(t => t.Key))
+                {
+                    var rules = table.OrderBy(r => r.Name).Select(r => new WorkflowConfig.BaseWorkflowConfig
+                    {
+                        Disabled = r.StateCode?.Value != Workflow.Options.StateCode.Activated,
+                        Owner = r.OwnerId?.Id != defaultOwnerId ? ResolveSystemUserAsync(r.OwnerId!.Id).Result : null,
+                    }).ToArray();
+
+                    config.BusinessRules.Add(table.Key!, rules);
                 }
 
                 // Write config to file
