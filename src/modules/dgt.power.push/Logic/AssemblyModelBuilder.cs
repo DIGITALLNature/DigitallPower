@@ -105,7 +105,7 @@ internal class AssemblyModelBuilder
 
 
             var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
-            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
 
             foreach (var nugetDlls in Directory.GetFiles(tempPath, "*.dll"))
             {
