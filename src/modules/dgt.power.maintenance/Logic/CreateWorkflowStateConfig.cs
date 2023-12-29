@@ -175,15 +175,23 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 var businessRuleTables = businessRules.GroupBy(b => b.PrimaryEntity).ToList();
                 foreach (var table in businessRuleTables.OrderBy(t => t.Key))
                 {
-                    var rules = table
-                        .OrderBy(r => r.Name)
-                        .ToDictionary(r => r.Name!, r => new WorkflowConfig.BaseWorkflowConfig
-                        {
-                            Disabled = r.StateCode?.Value != Workflow.Options.StateCode.Activated,
-                            Owner = r.OwnerId?.Id != defaultOwnerId ? ResolveSystemUserAsync(r.OwnerId!.Id).Result : null,
-                        });
+                    var tableEntries = new Dictionary<string, WorkflowConfig.BaseWorkflowConfig>();
+                    foreach(var rule in table)
+                    {
+                        var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
+                        var owner = rule.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(rule.OwnerId!.Id) : null;
 
-                    config.BusinessRules.Add(table.Key!, rules);
+                        if (disabled || owner != default)
+                        {
+                            tableEntries.Add(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
+                            {
+                                Disabled = disabled,
+                                Owner = owner,
+                            });
+                        }
+                    }
+
+                    config.BusinessRules.Add(table.Key!, tableEntries);
                 }
 
                 // Write config to file
