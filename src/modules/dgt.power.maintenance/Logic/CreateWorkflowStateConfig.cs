@@ -106,10 +106,13 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(flow.OwnerId!.Id) : null;
 
-                    config.Flows.Add(flow.Name!, new WorkflowConfig.FlowConfig{
-                        Disabled = disabled,
-                        Owner = owner,
-                    });
+                    if (disabled || owner != default)
+                    {
+                        config.Flows.Add(flow.Name!, new WorkflowConfig.FlowConfig{
+                            Disabled = disabled,
+                            Owner = owner,
+                        });
+                    }
 
                     prepareConfigTask.Increment(1);
                 }
