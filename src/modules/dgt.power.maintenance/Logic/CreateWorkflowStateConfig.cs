@@ -4,6 +4,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
@@ -44,7 +45,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
     {
         _userTable = new Dictionary<Guid, string>();
-        _jsonSerializerOptions = jsonSerializerOptions;
+        _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     }
 
     protected override bool Invoke(Settings args)
@@ -101,7 +102,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     SolutionFilter = solutions,
                     PublisherFilter = publishers,
                 };
-                foreach(var flow in flows)
+                foreach(var flow in flows.OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(flow.OwnerId!.Id) : null;
