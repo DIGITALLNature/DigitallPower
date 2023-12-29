@@ -138,6 +138,10 @@ app.Configure(config =>
             maintenance.AddCommand<IncrementSolutionVersion>("solution-version")
                 .WithDescription("Increments the solution version by given flag")
                 .WithExample("maintenance", "solution-version", "sample_solution", "--minor");
+            maintenance.AddCommand<CreateWorkflowStateConfig>("createworkflowstate")
+                .WithDescription("Creates a workflowstate configuration file")
+                .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--solutions", "solution1,solution2")
+                .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--publishers", "publisher1,publisher2");
             maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
                 .WithDescription("Updates workflows with given configuration")
                 .WithExample("maintenance", "workflowstate", "--config", "./config.json");
