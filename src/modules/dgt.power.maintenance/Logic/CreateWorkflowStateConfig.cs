@@ -178,7 +178,6 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         if (string.IsNullOrWhiteSpace(domainname))
         {
             Tracer.Log($"[orange3]Flow owner '{systemUser.FullName}' ({userId}) has no domain name![/]", TraceEventType.Warning);
-            return null;
         }
 
         _userTable.TryAdd(userId, domainname!);
