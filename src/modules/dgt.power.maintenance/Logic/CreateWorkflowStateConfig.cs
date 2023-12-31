@@ -82,62 +82,35 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         await AnsiConsole.Progress()
             .StartAsync(async ctx =>
             {
-                var loadModernFlowTask = ctx.AddTask("Loading modern flows").IsIndeterminate();
-                var loadActionTask = ctx.AddTask("Loading actions", false);
-                var loadBusinessRulesTask = ctx.AddTask("Loading direct business rules", false);
-                var loadIndirectBusinessRulesTask = ctx.AddTask("Loading indirect business rules", false);
                 var prepareConfigTask = ctx.AddTask("Preparing config", false);
 
-                // Load flows (modern, classic)
-                var flows = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.ModernFlow, Workflow.Options.Category.Workflow_);
-                loadModernFlowTask.Value = loadModernFlowTask.MaxValue;
-                loadModernFlowTask.StopTask();
-
-                // Load actions
-                loadActionTask.IsIndeterminate().StartTask();
-                var actions = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.Action, Workflow.Options.Category.BusinessProcessFlow);
-                loadActionTask.Value = loadActionTask.MaxValue;
-                loadActionTask.StopTask();
-
-                // Load direct business rules
-                loadBusinessRulesTask.IsIndeterminate().StartTask();
-                var businessRules = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.BusinessRule);
-                loadBusinessRulesTask.Value = loadBusinessRulesTask.MaxValue;
-                loadBusinessRulesTask.StopTask();
-
-                // Load indirect business rules
-                loadIndirectBusinessRulesTask.IsIndeterminate().StartTask();
-                var tables = (await LoadFullTables(solutions, publishers)).Distinct().ToList();
-
-                loadIndirectBusinessRulesTask.Description("Resolving table names");
-                loadIndirectBusinessRulesTask.MaxValue = tables.Count + 1;
-
-                var tableNames = tables.Select(async t =>
+                Dictionary<string, ProgressTask> progressTasks = new();
+                WorkflowStateManager.TaskStatusCallback progress = (taskName, message, current, max) =>
                 {
-                    var tableName = await ResolveTableName(t);
-                    loadIndirectBusinessRulesTask.Increment(1);
-                    return tableName;
-                }).ToList();
-                await Task.WhenAll(tableNames);
+                    if (!progressTasks.TryGetValue(taskName, out var progressTask))
+                    {
+                        progressTask = ctx.AddTask($"{taskName.EscapeMarkup()} [grey]({message.EscapeMarkup()})[/]");
+                        progressTasks.Add(taskName, progressTask);
+                    }
 
-                loadIndirectBusinessRulesTask.Description("Loading indirect business rules");
-                loadIndirectBusinessRulesTask.IsIndeterminate();
+                    progressTask.Description($"{taskName.EscapeMarkup()} [grey]({message.EscapeMarkup()})[/]");
+                    progressTask.Value(current);
+                    progressTask.IsIndeterminate(max > 0);
+                    progressTask.MaxValue(max > 0 ? max.Value : 100);
 
-                var indirectBusinessRules = await LoadIndirectBusinessRules(tableNames.Select(t => t.Result!).Where(t => !string.IsNullOrWhiteSpace(t)).ToArray());
-                businessRules.AddRange(indirectBusinessRules);
+                    ctx.Refresh();
+                };
 
-                loadIndirectBusinessRulesTask.Value = loadIndirectBusinessRulesTask.MaxValue;
-                loadIndirectBusinessRulesTask.StopTask();
+                var workflowStateManager = new WorkflowStateManager((IOrganizationServiceAsync2)Connection, solutions ?? [], publishers ?? [], Tracer, progress);
 
-                // Group all workflows by owner and select max occurence as default owner
-                var groupedFlows = flows
-                    .Concat(actions)
-                    .Concat(businessRules)
-                    .GroupBy(f => f.OwnerId!.Id).ToList();
+                var workflows = await workflowStateManager.LoadAllWorkflows();
+
+                // group all workflows by owner and select max occurence as default owner
+                var groupedFlows = workflows.GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? await ResolveSystemUserAsync(defaultOwnerId.Value) : null;
 
-                // Prepare config
+                // prepare config
                 prepareConfigTask.IsIndeterminate().StartTask();
 
                 var config = new WorkflowConfig
@@ -150,8 +123,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     PublisherFilter = publishers,
                 };
 
-                // Collect modern flow config
-                foreach (var flow in flows.OrderBy(f => f.Name))
+                // collect modern flow and legacy workflow configs (both identified by name)
+                foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow_).OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(flow.OwnerId!.Id) : null;
@@ -166,8 +139,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     }
                 }
 
-                // Collect action config
-                foreach (var action in actions.OrderBy(w => w.UniqueName))
+                // collect action and business process flow configs (both identified by unique name)
+                foreach (var action in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.Action || w.Category!.Value == Workflow.Options.Category.BusinessProcessFlow).OrderBy(w => w.UniqueName))
                 {
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = action.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(action.OwnerId!.Id) : null;
@@ -182,8 +155,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     }
                 }
 
-                // Collect business rule config
-                var businessRuleTables = businessRules.GroupBy(b => b.PrimaryEntity).ToList();
+                // collect business rule configs
+                var businessRuleTables = workflows.Where(w => w.Category!.Value == Workflow.Options.Category.BusinessRule).GroupBy(b => b.PrimaryEntity).ToList();
                 foreach (var table in businessRuleTables.OrderBy(t => t.Key))
                 {
                     var tableEntries = new Dictionary<string, WorkflowConfig.BaseWorkflowConfig>();
@@ -240,220 +213,10 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
 
         if (string.IsNullOrWhiteSpace(domainname))
         {
-            Tracer.Log($"[orange3]Flow owner '{systemUser.FullName}' ({userId}) has no domain name![/]", TraceEventType.Warning);
+            Tracer.Log($"Flow owner '{systemUser.FullName}' ({userId}) has no domain name!", TraceEventType.Warning);
         }
 
         _userTable.TryAdd(userId, domainname!);
         return domainname;
-    }
-
-    /// <summary>
-    /// Resolve a given table id to a table name
-    /// </summary>
-    /// <param name="tableId">Table id to resolve</param>
-    /// <returns>Table name</returns>
-    private async Task<string?> ResolveTableName(Guid tableId)
-    {
-        var orgServiceAsync = Connection as IOrganizationServiceAsync;
-
-        var metadataRequest = new RetrieveEntityRequest
-        {
-            RetrieveAsIfPublished = true,
-            MetadataId = tableId,
-            EntityFilters = EntityFilters.Entity,
-        };
-
-        try
-        {
-            var metadataResponse = await orgServiceAsync!.ExecuteAsync(metadataRequest);
-
-            return ((RetrieveEntityResponse)metadataResponse).EntityMetadata.LogicalName;
-        }
-        catch (Exception e)
-        {
-            Tracer.Log($"Failed to resolve table name for id '{tableId}' with error '{e.Message}'", TraceEventType.Warning);
-            return default;
-        }
-    }
-
-    /// <summary>
-    /// Load and return workflows that are included by any of the filters
-    /// Comparisons are done with the fetch xml like filter so wildcards (%) are possible to be used
-    /// The result includes any workflow that is in any solution with a given name or publisher regardless whether the solution is unmanged
-    /// or the workflow is included in multiple (e.g. temp solutions) where only one fits
-    /// </summary>
-    /// <param name="category">Category of the workflows to load</param>"
-    /// <param name="solutions">List of uniquenames for solutions to consider</param>
-    /// <param name="publishers">List of publishers of solutions to consider</param>
-    /// <returns>List of workflows found</returns>
-    private Task<List<Workflow>> LoadWorkflows(string[]? solutions, string[]? publishers, params int[] category)
-    {
-        // Prepare query expression to load workflows
-        var query = new QueryExpression(Workflow.EntityLogicalName);
-        query.ColumnSet.AddColumns(Workflow.LogicalNames.Category,
-            Workflow.LogicalNames.StatusCode,
-            Workflow.LogicalNames.Name,
-            Workflow.LogicalNames.UniqueName,
-            Workflow.LogicalNames.StateCode,
-            Workflow.LogicalNames.PrimaryEntity,
-            Workflow.LogicalNames.OwnerId);
-
-        var filter = new FilterExpression();
-        query.Criteria.AddFilter(filter);
-        filter.AddCondition(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition);
-        filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.In, category.Select(c => (object)c).ToArray());
-
-        // If either solution or publisher filter exist add them
-        if (solutions?.Length > 0 || publishers?.Length > 0)
-        {
-            // Prepare solution link and filter (this is needed for solutions and publisher)
-            var linkFilter = new FilterExpression(LogicalOperator.Or);
-            filter.AddFilter(linkFilter);
-
-            var componentLink = query.AddLink(SolutionComponent.EntityLogicalName, Workflow.LogicalNames.WorkflowId, SolutionComponent.LogicalNames.ObjectId);
-            var solutionLink = componentLink.AddLink(Solution.EntityLogicalName, SolutionComponent.LogicalNames.SolutionId, Solution.LogicalNames.SolutionId);
-            solutionLink.EntityAlias = "solution";
-
-            // Add solution filters if any exist
-            if (solutions?.Length > 0)
-            {
-                foreach (var solution in solutions)
-                {
-                    Tracer.Log($"[grey] {Emoji.Known.RightArrow} Adding solution condition '{solution.EscapeMarkup()}'[/]", TraceEventType.Verbose);
-                    // Add condition to link filter with unique comparison which allows fetch xml patterns (%)
-                    linkFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
-                }
-            }
-
-            // Add publisher filters if any exist
-            if (publishers?.Length > 0)
-            {
-                var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.LeftOuter);
-                publisherLink.EntityAlias = "publisher";
-
-                foreach (var publisher in publishers)
-                {
-                    Tracer.Log($"[grey] {Emoji.Known.RightArrow} Adding publisher name condition '{publisher.EscapeMarkup()}'[/]", TraceEventType.Verbose);
-                    linkFilter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
-                }
-            }
-        }
-
-        var workflows = Connection.RetrieveMultiple(query);
-        var categories = string.Join(",", category.Order());
-        Tracer.Log($"Found {workflows.Entities.Count} workflows for categories {categories}", TraceEventType.Verbose);
-
-        // Check if we have reached the limit of query expressions
-        // Assumption is that there is only a slim chance we ever hit that limit so pagination is not worth it here
-        if (workflows.Entities.Count == 5000)
-        {
-            Tracer.Log("Found workflows that correspond to the max limit of query expressions. Possibly not all modern flows were found.", TraceEventType.Warning);
-        }
-
-        return Task.FromResult(workflows.Entities.Cast<Workflow>().ToList());
-    }
-
-    /// <summary>
-    /// Load and return workflows that belong to a given table
-    /// </summary>
-    /// <param name="tables">List of table names to consider</param>
-    /// <returns>List of workflows with found business rules</returns>
-    private Task<List<Workflow>> LoadIndirectBusinessRules(string[] tables)
-    {
-        // Prepare query expression to load workflows
-        var query = new QueryExpression(Workflow.EntityLogicalName);
-        query.ColumnSet.AddColumns(Workflow.LogicalNames.Category,
-            Workflow.LogicalNames.StatusCode,
-            Workflow.LogicalNames.Name,
-            Workflow.LogicalNames.UniqueName,
-            Workflow.LogicalNames.StateCode,
-            Workflow.LogicalNames.PrimaryEntity,
-            Workflow.LogicalNames.OwnerId);
-
-        var filter = new FilterExpression();
-        query.Criteria.AddFilter(filter);
-        filter.AddCondition(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition);
-        filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessRule);
-        filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tables.Select(t => (object)t).ToArray());
-
-        var workflows = Connection.RetrieveMultiple(query);
-        Tracer.Log($"Found {workflows.Entities.Count} indirect business rules", TraceEventType.Verbose);
-
-        // Check if we have reached the limit of query expressions
-        // Assumption is that there is only a slim chance we ever hit that limit so pagination is not worth it here
-        if (workflows.Entities.Count == 5000)
-        {
-            Tracer.Log("Found workflows that correspond to the max limit of query expressions. Possibly not all indirect business rules were found.", TraceEventType.Warning);
-        }
-
-        return Task.FromResult(workflows.Entities.Cast<Workflow>().ToList());
-    }
-
-    /// <summary>
-    /// Load and return all tables that have all components included with a given filter
-    /// Comparisons are done with the fetch xml like filter so wildcards (%) are possible to be used
-    /// </summary>
-    /// <param name="solutions">List of uniquenames for solutions to consider</param>
-    /// <param name="publishers">List of publishers of solutions to consider</param>
-    /// <returns>List of table ids</returns>
-    /// <remarks>
-    /// Return may contain duplicate table ids if found in multiple solutions
-    /// </remarks>
-    private Task<List<Guid>> LoadFullTables(string[]? solutions, string[]? publishers, params int[] category)
-    {
-        var query = new QueryExpression(SolutionComponent.EntityLogicalName);
-        query.ColumnSet.AddColumns(SolutionComponent.LogicalNames.ObjectId);
-
-        var filter = new FilterExpression();
-        query.Criteria.AddFilter(filter);
-        filter.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.Entity);
-        filter.AddCondition(SolutionComponent.LogicalNames.RootComponentBehavior, ConditionOperator.Equal, SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents);
-
-        // If either solution or publisher filter exist add them
-        if (solutions?.Length > 0 || publishers?.Length > 0)
-        {
-            // Prepare solution filter (this is needed for solutions and publisher)
-            var solutionFilter = new FilterExpression(LogicalOperator.Or);
-            filter.AddFilter(solutionFilter);
-
-            var solutionLink = query.AddLink(Solution.EntityLogicalName, SolutionComponent.LogicalNames.SolutionId, Solution.LogicalNames.SolutionId);
-            solutionLink.EntityAlias = "solution";
-
-            // Add solution filters if any exist
-            if (solutions?.Length > 0)
-            {
-                foreach (var solution in solutions)
-                {
-                    Tracer.Log($"[grey] {Emoji.Known.RightArrow} Adding solution condition '{solution.EscapeMarkup()}'[/]", TraceEventType.Verbose);
-                    // Add condition to link filter with unique comparison which allows fetch xml patterns (%)
-                    solutionFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
-                }
-            }
-
-            // Add publisher filters if any exist
-            if (publishers?.Length > 0)
-            {
-                var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.LeftOuter);
-                publisherLink.EntityAlias = "publisher";
-
-                foreach (var publisher in publishers)
-                {
-                    Tracer.Log($"[grey] {Emoji.Known.RightArrow} Adding publisher name condition '{publisher.EscapeMarkup()}'[/]", TraceEventType.Verbose);
-                    solutionFilter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
-                }
-            }
-        }
-
-        var solutionComponents = Connection.RetrieveMultiple(query);
-        Tracer.Log($"Found {solutionComponents.Entities.Count} tables with all components included", TraceEventType.Verbose);
-
-        // Check if we have reached the limit of query expressions
-        // Assumption is that there is only a slim chance we ever hit that limit so pagination is not worth it here
-        if (solutionComponents.Entities.Count == 5000)
-        {
-            Tracer.Log("Found workflows that correspond to the max limit of query expressions. Possibly not all tables were found.", TraceEventType.Warning);
-        }
-
-        return Task.FromResult(solutionComponents.Entities.Cast<SolutionComponent>().Select(t => t.ObjectId!.Value).ToList());
     }
 }

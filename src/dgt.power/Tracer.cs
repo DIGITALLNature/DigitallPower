@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using Spectre.Console;
@@ -10,7 +11,7 @@ namespace dgt.power;
 
 internal sealed class Tracer : ITracer
 {
-    public void Log(string message, TraceEventType type) => AnsiConsole.MarkupLine($"[underline red]{type}:[/]  {message}");
+    public void Log(string message, TraceEventType type) => AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[underline red]{type}:[/]  {message}");
 
     public void Start<T>(T action) where T : IPowerLogic => AnsiConsole.Write(new Rule($"[lime]{action.GetType().Name} - Start[/]"));
 
