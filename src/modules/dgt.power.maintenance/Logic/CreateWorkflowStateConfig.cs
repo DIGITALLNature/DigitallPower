@@ -83,10 +83,10 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
             .StartAsync(async ctx =>
             {
                 var loadModernFlowTask = ctx.AddTask("Loading modern flows").IsIndeterminate();
-                var loadActionTask = ctx.AddTask("Loading actions", false).IsIndeterminate();
-                var loadBusinessRulesTask = ctx.AddTask("Loading direct business rules", false).IsIndeterminate();
-                var loadIndirectBusinessRulesTask = ctx.AddTask("Loading indirect business rules", false).IsIndeterminate();
-                var prepareConfigTask = ctx.AddTask("Preparing config", false).IsIndeterminate();
+                var loadActionTask = ctx.AddTask("Loading actions", false);
+                var loadBusinessRulesTask = ctx.AddTask("Loading direct business rules", false);
+                var loadIndirectBusinessRulesTask = ctx.AddTask("Loading indirect business rules", false);
+                var prepareConfigTask = ctx.AddTask("Preparing config", false);
 
                 // Load flows (modern, classic)
                 var flows = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.ModernFlow, Workflow.Options.Category.Workflow_);
@@ -94,24 +94,36 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 loadModernFlowTask.StopTask();
 
                 // Load actions
-                loadActionTask.StartTask();
+                loadActionTask.IsIndeterminate().StartTask();
                 var actions = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.Action, Workflow.Options.Category.BusinessProcessFlow);
                 loadActionTask.Value = loadActionTask.MaxValue;
                 loadActionTask.StopTask();
 
                 // Load direct business rules
-                loadBusinessRulesTask.StartTask();
+                loadBusinessRulesTask.IsIndeterminate().StartTask();
                 var businessRules = await LoadWorkflows(solutions, publishers, Workflow.Options.Category.BusinessRule);
                 loadBusinessRulesTask.Value = loadBusinessRulesTask.MaxValue;
                 loadBusinessRulesTask.StopTask();
 
                 // Load indirect business rules
-                loadIndirectBusinessRulesTask.StartTask();
-                var tables = await LoadFullTables(solutions, publishers);
-                var tableNames = tables.Distinct().Select(async t => await ResolveTableName(t)).ToList();
+                loadIndirectBusinessRulesTask.IsIndeterminate().StartTask();
+                var tables = (await LoadFullTables(solutions, publishers)).Distinct().ToList();
+
+                loadIndirectBusinessRulesTask.Description("Resolving table names");
+                loadIndirectBusinessRulesTask.MaxValue = tables.Count + 1;
+
+                var tableNames = tables.Select(async t =>
+                {
+                    var tableName = await ResolveTableName(t);
+                    loadIndirectBusinessRulesTask.Increment(1);
+                    return tableName;
+                }).ToList();
                 await Task.WhenAll(tableNames);
 
-                var indirectBusinessRules = await LoadIndirectBusinessRules(tableNames.Select(t => t.Result).ToArray());
+                loadIndirectBusinessRulesTask.Description("Loading indirect business rules");
+                loadIndirectBusinessRulesTask.IsIndeterminate();
+
+                var indirectBusinessRules = await LoadIndirectBusinessRules(tableNames.Select(t => t.Result!).Where(t => !string.IsNullOrWhiteSpace(t)).ToArray());
                 businessRules.AddRange(indirectBusinessRules);
 
                 loadIndirectBusinessRulesTask.Value = loadIndirectBusinessRulesTask.MaxValue;
@@ -126,7 +138,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 var defaultOwner = defaultOwnerId != null ? await ResolveSystemUserAsync(defaultOwnerId.Value) : null;
 
                 // Prepare config
-                prepareConfigTask.StartTask();
+                prepareConfigTask.IsIndeterminate().StartTask();
 
                 var config = new WorkflowConfig
                 {
@@ -146,7 +158,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
 
                     if (disabled || owner != default)
                     {
-                        config.Flows.Add(flow.Name!, new WorkflowConfig.FlowConfig
+                        config.Flows.TryAdd(flow.Name!, new WorkflowConfig.FlowConfig
                         {
                             Disabled = disabled,
                             Owner = owner,
@@ -162,7 +174,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
 
                     if (disabled || owner != default)
                     {
-                        config.Actions.Add(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
+                        config.Actions.TryAdd(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
                         {
                             Disabled = disabled,
                             Owner = owner,
@@ -175,14 +187,14 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 foreach (var table in businessRuleTables.OrderBy(t => t.Key))
                 {
                     var tableEntries = new Dictionary<string, WorkflowConfig.BaseWorkflowConfig>();
-                    foreach(var rule in table)
+                    foreach (var rule in table)
                     {
                         var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
                         var owner = rule.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(rule.OwnerId!.Id) : null;
 
                         if (disabled || owner != default)
                         {
-                            tableEntries.Add(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
+                            tableEntries.TryAdd(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
                             {
                                 Disabled = disabled,
                                 Owner = owner,
@@ -240,7 +252,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     /// </summary>
     /// <param name="tableId">Table id to resolve</param>
     /// <returns>Table name</returns>
-    private async Task<string> ResolveTableName(Guid tableId)
+    private async Task<string?> ResolveTableName(Guid tableId)
     {
         var orgServiceAsync = Connection as IOrganizationServiceAsync;
 
@@ -248,11 +260,20 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         {
             RetrieveAsIfPublished = true,
             MetadataId = tableId,
-            EntityFilters = EntityFilters.Entity
+            EntityFilters = EntityFilters.Entity,
         };
-        var metadataResponse = await orgServiceAsync!.ExecuteAsync(metadataRequest);
 
-        return ((RetrieveEntityResponse)metadataResponse).EntityMetadata.LogicalName;
+        try
+        {
+            var metadataResponse = await orgServiceAsync!.ExecuteAsync(metadataRequest);
+
+            return ((RetrieveEntityResponse)metadataResponse).EntityMetadata.LogicalName;
+        }
+        catch (Exception e)
+        {
+            Tracer.Log($"Failed to resolve table name for id '{tableId}' with error '{e.Message}'", TraceEventType.Warning);
+            return default;
+        }
     }
 
     /// <summary>
