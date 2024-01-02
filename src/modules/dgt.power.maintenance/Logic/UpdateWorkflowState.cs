@@ -23,13 +23,20 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         [Description("Full path to the config file, e.g. C:\\temp\\config.json")]
         [DefaultValue("config.json")]
         public required string Config { get; init; }
+
+        [CommandOption("--tablereport")]
+        [Description("Print a table report to the console after the config file has been created")]
+        [DefaultValue(true)]
+        public bool TableReport { get; init; }
     }
 
     private readonly Dictionary<string, SystemUser> _userTable;
+    private readonly WorkflowStateTracker _workflowStateTracker;
 
     public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         _userTable = new Dictionary<string, SystemUser>();
+        _workflowStateTracker = new WorkflowStateTracker();
     }
 
     protected override bool Invoke(Settings args)
@@ -52,6 +59,12 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         // Do the actual work
         var task = UpdateWorkflowStatesAsync(workflowConfig, workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
         task.Wait();
+
+        // Print table report if requested
+        if (args.TableReport)
+        {
+            _workflowStateTracker.WriteToConsole();
+        }
 
         return Tracer.End(this, task.Result);
     }
@@ -87,6 +100,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
 
                 Tracer.Log("Loading all workflows", TraceEventType.Information);
                 var workflows = await workflowStateManager.LoadAllWorkflows();
+                _workflowStateTracker.AddWorkflows(workflows);
 
                 Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
 
@@ -196,8 +210,12 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         var desiredOwnerDomainName = baseWorkflowConfig?.Owner ?? workflowConfig.DefaultOwner; // owner specified on workflow level overrides default (empty string also triggers override)
         var desiredImpersonate = (baseWorkflowConfig as WorkflowConfig.FlowConfig)?.Impersonate ?? workflowConfig.DefaultImpersonate; // impersonate specified on workflow level overrides default (empty string also triggers override)
 
+        _workflowStateTracker.TrackDisabled(workflow, desiredDisabled);
+
         var desiredOwner = await ResolveSystemUserAsync(desiredOwnerDomainName);
         var desiredImpersonateUser = await ResolveSystemUserAsync(desiredImpersonate);
+
+        _workflowStateTracker.TrackOwner(workflow, desiredOwner);
 
         // prepare workflow object to update (but only if necessary)
         var updateWorkflow = new Workflow(workflow.Id);
@@ -229,6 +247,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
 
             // reset current disabled value to reflect the change
             currentDisabled = true;
+            _workflowStateTracker.TrackDisabled(workflow, desiredDisabled, true);
         }
 
         switch (desiredDisabled)
@@ -270,6 +289,9 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): performing update", TraceEventType.Information);
         var updateRequest = new UpdateRequest { Target = updateWorkflow };
         Connection.Execute(updateRequest);
+
+        _workflowStateTracker.TrackDisabled(workflow, desiredDisabled, desiredDisabled);
+        _workflowStateTracker.TrackOwner(workflow, desiredOwner, desiredOwner);
 
         return true;
     }

@@ -39,13 +39,20 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         [CommandOption("-p|--publishers")]
         [Description("Comma separated list of publisher names to consider. Wildcards (%) are allowed")]
         public string? Publishers { get; set; }
+
+        [CommandOption("--tablereport")]
+        [Description("Print a table report to the console after the config file has been created")]
+        [DefaultValue(true)]
+        public bool TableReport { get; init; }
     }
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly WorkflowStateTracker _workflowStateTracker;
 
     public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
     {
         _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+        _workflowStateTracker = new WorkflowStateTracker();
     }
 
     protected override bool Invoke(Settings args)
@@ -71,6 +78,12 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         // Do the actual work
         var task = CollectWorkflowStates(solutions, publishers, args.Config);
         task.Wait();
+
+        // Print table report if requested
+        if (args.TableReport)
+        {
+            _workflowStateTracker.WriteToConsole();
+        }
 
         return Tracer.End(this, true);
     }
@@ -101,6 +114,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
 
                 Tracer.Log("Loading all workflows", TraceEventType.Information);
                 var workflows = await workflowStateManager.LoadAllWorkflows();
+                _workflowStateTracker.AddWorkflows(workflows);
 
                 Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
 
