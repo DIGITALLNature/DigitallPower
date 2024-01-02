@@ -140,7 +140,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         tracer?.Log($"Loading workflows indirectly: resolved {tableNames.Count} tables with potential business rules", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "loading business rules", tableIds.Length, tableIds.Length + 1);
 
-        var workflows = await LoadBusinessRules(tableNames.ToArray());
+        var workflows = tableNames.Count > 0 ? await LoadBusinessRules(tableNames.ToArray()) : [];
 
         tracer?.Log($"Loading workflows indirectly: {workflows.Length} business rules loaded", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "loaded", tableIds.Length + 1, tableIds.Length + 1);

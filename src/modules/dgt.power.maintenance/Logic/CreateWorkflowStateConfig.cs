@@ -41,12 +41,10 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         public string? Publishers { get; set; }
     }
 
-    private readonly Dictionary<Guid, string> _userTable;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
     {
-        _userTable = new Dictionary<Guid, string>();
         _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     }
 
@@ -82,8 +80,6 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         await AnsiConsole.Progress()
             .StartAsync(async ctx =>
             {
-                var prepareConfigTask = ctx.AddTask("Preparing config", false);
-
                 Dictionary<string, ProgressTask> progressTasks = new();
                 WorkflowStateManager.TaskStatusCallback progress = (taskName, message, current, max) =>
                 {
@@ -94,23 +90,29 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     }
 
                     progressTask.Description($"{taskName.EscapeMarkup()} [grey]({message.EscapeMarkup()})[/]");
-                    progressTask.Value(current);
                     progressTask.IsIndeterminate(max > 0);
                     progressTask.MaxValue(max > 0 ? max.Value : 100);
+                    progressTask.Value(current);
 
                     ctx.Refresh();
                 };
 
                 var workflowStateManager = new WorkflowStateManager((IOrganizationServiceAsync2)Connection, solutions ?? [], publishers ?? [], Tracer, progress);
 
+                Tracer.Log("Loading all workflows", TraceEventType.Information);
                 var workflows = await workflowStateManager.LoadAllWorkflows();
+
+                Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
 
                 // group all workflows by owner and select max occurence as default owner
                 var groupedFlows = workflows.GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
-                var defaultOwner = defaultOwnerId != null ? await ResolveSystemUserAsync(defaultOwnerId.Value) : null;
+                var defaultOwner = defaultOwnerId != null ? workflows.First(w => w.OwnerId!.Id == defaultOwnerId).GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
+
+                Tracer.Log($"Default owner will be '{defaultOwner}' ({defaultOwnerId})", TraceEventType.Information);
 
                 // prepare config
+                var prepareConfigTask = ctx.AddTask("Preparing config", false);
                 prepareConfigTask.IsIndeterminate().StartTask();
 
                 var config = new WorkflowConfig
@@ -127,7 +129,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow_).OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
-                    var owner = flow.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(flow.OwnerId!.Id) : null;
+                    var owner = flow.OwnerId?.Id != defaultOwnerId ? flow.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
                     if (disabled || owner != default)
                     {
@@ -143,7 +145,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 foreach (var action in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.Action || w.Category!.Value == Workflow.Options.Category.BusinessProcessFlow).OrderBy(w => w.UniqueName))
                 {
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
-                    var owner = action.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(action.OwnerId!.Id) : null;
+                    var owner = action.OwnerId?.Id != defaultOwnerId ? action.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
                     if (disabled || owner != default)
                     {
@@ -163,7 +165,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     foreach (var rule in table)
                     {
                         var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
-                        var owner = rule.OwnerId?.Id != defaultOwnerId ? await ResolveSystemUserAsync(rule.OwnerId!.Id) : null;
+                        var owner = rule.OwnerId?.Id != defaultOwnerId ? rule.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
                         if (disabled || owner != default)
                         {
@@ -179,7 +181,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 }
 
                 // Write config to file
-                AnsiConsole.MarkupLine($"Writing config to [blue]{configFile.EscapeMarkup()}[/]");
+                Tracer.Log($"Writing config to {configFile}", TraceEventType.Verbose);
 
                 using var fileStream = new FileStream(configFile, FileMode.Create, FileAccess.Write, FileShare.None);
                 await JsonSerializer.SerializeAsync(fileStream, config, _jsonSerializerOptions);
@@ -187,36 +189,5 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 prepareConfigTask.Value = prepareConfigTask.MaxValue;
                 prepareConfigTask.StopTask();
             });
-    }
-
-    /// <summary>
-    /// Resolve a given user id to a domain name
-    /// </summary>
-    /// <param name="userId">User id to resolve</param>
-    /// <returns>Domain name of the user</returns>
-    /// <remarks>
-    /// This method caches the results in a dictionary to avoid multiple calls to the server
-    /// </remarks>
-    private async Task<string?> ResolveSystemUserAsync(Guid userId)
-    {
-        // Check if we seen the user already and if so grab it from the table
-        if (_userTable.TryGetValue(userId, out var domainname))
-        {
-            return domainname;
-        }
-
-        // Retrieve user by id
-        var orgServiceAsync = Connection as IOrganizationServiceAsync;
-        var user = await orgServiceAsync!.RetrieveAsync(SystemUser.EntityLogicalName, userId, new ColumnSet(SystemUser.LogicalNames.DomainName, SystemUser.LogicalNames.FullName));
-        var systemUser = user.ToEntity<SystemUser>();
-        domainname = user.ToEntity<SystemUser>().DomainName;
-
-        if (string.IsNullOrWhiteSpace(domainname))
-        {
-            Tracer.Log($"Flow owner '{systemUser.FullName}' ({userId}) has no domain name!", TraceEventType.Warning);
-        }
-
-        _userTable.TryAdd(userId, domainname!);
-        return domainname;
     }
 }
