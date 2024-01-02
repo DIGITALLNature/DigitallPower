@@ -14,9 +14,6 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
-using dgt.power.common.Commands;
-using dgt.power.common.Exceptions;
-using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.export.Base;
@@ -93,7 +90,7 @@ app.Configure(config =>
     config.AddBranch<ExportVerb>("export", export =>
     {
         export.SetDescription("Exports artifacts from the current Dataverse Environment");
-        export.AddExample(new[] {"export", "bulkdeletes", "--filedir", "c:/TargetDir"});
+        export.AddExample("export", "bulkdeletes", "--filedir", "c:/TargetDir");
         export.AddCommand<TeamTemplateExport>("teamtemplates")
             .WithDescription("Exports the existing teamtemplates from the current environment");
         export.AddCommand<BulkDeleteExport>("bulkdeletes")
@@ -118,7 +115,7 @@ app.Configure(config =>
         maintenance =>
         {
             maintenance.SetDescription("Executes maintenance Tasks against the current Dataverse environment");
-            maintenance.AddExample(new[] {"maintenance", "bulkdelete"});
+            maintenance.AddExample("maintenance", "bulkdelete");
             maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                 .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
                 .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml");
@@ -169,7 +166,7 @@ app.Configure(config =>
     config.AddBranch<ImportVerb>("import", import =>
     {
         import.SetDescription("import specific artifacts in the current Dataverse environment");
-        import.AddExample(new[] {"import", "outlooktemplates", "--filedir", "c:/TargetDir"});
+        import.AddExample("import", "outlooktemplates", "--filedir", "c:/TargetDir");
         import.AddCommand<OutlookTemplateImport>("outlooktemplates");
         import.AddCommand<UserRoleImport>("userroles");
         import.AddCommand<QueueImport>("queues");

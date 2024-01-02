@@ -30,13 +30,14 @@ internal record Webresources
 
     public Webresources(int type, string name, WebresourceState webresourceState, Guid xrmId) : this(type, name, name, null, null, webresourceState, xrmId) { }
 
-    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, Dictionary<string, string>? fileMapping = default)
+    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default)
     {
         var content = File.ReadAllBytes(localFilePath);
         var hash = Convert.ToHexString(SHA256.HashData(content));
         var relativePath = Path.GetRelativePath(localFolderPath, localFilePath).Replace('\\', '/');
 
-        string name, displayName;
+        string name;
+        string displayName;
 
         if (fileMapping?.ContainsKey(relativePath) == true)
         {

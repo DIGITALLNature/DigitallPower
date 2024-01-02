@@ -1,10 +1,8 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Activities;
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.push.Base;
 using dgt.power.push.Model;
@@ -109,7 +107,7 @@ public class WebresourcesProcessor : IDisposable
         return (solutionDetails.CustomizationPrefix, solutionDetails.SolutionId!.Value);
     }
 
-    private Webresources[] DiscoverWebresources(string folder, string solutionPrefix, Dictionary<string, string>? fileMapping)
+    private Webresources[] DiscoverWebresources(string folder, string solutionPrefix, IDictionary<string, string> fileMapping)
     {
         var folderInfo = Path.GetFullPath(folder);
 
@@ -244,7 +242,15 @@ public class WebresourcesProcessor : IDisposable
 
     public void Dispose()
     {
-        _context.Dispose();
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _context.Dispose();
+        }
     }
 }
