@@ -29,4 +29,8 @@ public class PushVerb : BaseProgramSettings
     [CommandOption("--publish")]
     [Description("Publish changed objects")]
     public bool Publish { get; set; }
+
+    [CommandOption("--config")]
+    [Description("Configuration file for webressources mapping")]
+    public string Config { get; set; }
 }
