@@ -1,3 +1,10 @@
+# [2.0.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2024-01-02)
+
+
+### Features
+
+* **maintenance:** check for dgt carrier first ([fb5135c](https://github.com/DIGITALLNature/DigitallPower/commit/fb5135cc815c9d502ed006ad457e16173a3db8d9))
+
 # [2.0.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.3...v2.0.0-beta.1) (2024-01-02)
 
 
