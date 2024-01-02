@@ -1,3 +1,17 @@
+# [2.0.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.3...v2.0.0-beta.1) (2024-01-02)
+
+
+### Features
+
+* **push:** allow mapping to push webresources ([4d6666d](https://github.com/DIGITALLNature/DigitallPower/commit/4d6666d258948de0711200f62490638af3f8405a))
+
+
+### BREAKING CHANGES
+
+* **push:** no longer tries to delete the webresource if adding to solution fails
+
+Co-Authored-By: Micha Oberstein <Moberstein@users.noreply.github.com>
+
 # [1.13.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v1.13.0-beta.2...v1.13.0-beta.3) (2023-11-23)
 
 
