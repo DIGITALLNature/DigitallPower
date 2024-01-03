@@ -14,6 +14,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.analyzer.tests;
 
+[Collection("Serial_Analyzer_Tests")]
 public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnalyze>
 {
     public EntityAllAssetsAnalyzeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
@@ -145,7 +146,7 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
             accountComponent,
             testEntityComponent,
             teamComponent,
-            queueComponent, 
+            queueComponent,
             contactComponent
         };
     }
