@@ -66,8 +66,8 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
 
         [DebuggerNonUserCode]
 		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
