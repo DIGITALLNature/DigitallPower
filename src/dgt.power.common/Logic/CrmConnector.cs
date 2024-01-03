@@ -3,21 +3,19 @@
 
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.PowerPlatform.Dataverse.Client.Utils;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal class CrmConnector
+internal class CrmConnector: IConnector
 {
     private readonly string _connectionString;
 
     internal CrmConnector(string connectionString) => _connectionString = connectionString;
 
-    internal IOrganizationService GetOrganizationServiceProxy()
+    public IOrganizationServiceAsync2 GetOrganizationServiceProxy()
     {
         if (!Regex.IsMatch(_connectionString, "SkipDiscovery=True", RegexOptions.IgnoreCase))
         {
@@ -31,20 +29,10 @@ internal class CrmConnector
 
         var serviceClient = new ServiceClient(_connectionString);
 
-        var service = GetOrganizationService(serviceClient);
-
-        CheckWhoAmI(service);
-
-        return service;
+        return GetOrganizationService(serviceClient);
     }
 
-    private static void CheckWhoAmI(IOrganizationService service)
-    {
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
-    }
-
-    private static IOrganizationService GetOrganizationService(ServiceClient serviceClient)
+    private static IOrganizationServiceAsync2 GetOrganizationService(ServiceClient serviceClient)
     {
         if (!serviceClient.IsReady)
         {

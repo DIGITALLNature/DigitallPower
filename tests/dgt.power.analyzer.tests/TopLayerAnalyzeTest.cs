@@ -20,6 +20,7 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.tests
 {
+    [Collection("Serial_Analyzer_Tests")]
     public class TopLayerAnalyzeTest : AnalyzeTestsBase<TopLayerAnalyze>
     {
         private const string SolutionUniqueName = "customizations";

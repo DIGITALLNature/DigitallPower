@@ -3,6 +3,7 @@
 
 using System.Net;
 using dgt.power.common.Exceptions;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -11,8 +12,8 @@ namespace dgt.power.common.Logic;
 
 public class XrmConnection : IXrmConnection
 {
-    private readonly IProfileManager _profileManager;
     private readonly IConfiguration _configuration;
+    private readonly IProfileManager _profileManager;
 
     public XrmConnection(IProfileManager profileManager, IConfiguration configuration)
     {
@@ -25,7 +26,7 @@ public class XrmConnection : IXrmConnection
     {
         var xrmConfiguration = _configuration.GetSection("xrm").GetChildren().ToList();
 
-        if (xrmConfiguration.Any())
+        if (xrmConfiguration.Count != 0)
         {
             return ConnectWithConfiguration();
         }
@@ -52,7 +53,7 @@ public class XrmConnection : IXrmConnection
 #pragma warning restore CA5359
         }
 
-        AnsiConsole.MarkupLine($"Connect to given configuration.");
+        AnsiConsole.MarkupLine("Connect to given configuration.");
         var connector = new CrmConnector(_configuration.GetValue<string>("xrm:connection"));
         try
         {
@@ -77,15 +78,33 @@ public class XrmConnection : IXrmConnection
 #pragma warning restore CA5359
         }
 
-        AnsiConsole.MarkupLine($"Connect to {_profileManager.Current}");
-        var connector = new CrmConnector(identity.ConnectionString);
+        IConnector connector;
+        if (_profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
+        {
+            AnsiConsole.MarkupLine($"Connect to {_profileManager.Current} via MSAL connection");
+            connector = new TokenConnector(tokenIdentity, _profileManager);
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"Connect to {_profileManager.Current} via classic connection");
+            connector = new CrmConnector(identity.ConnectionString);
+        }
+
         try
         {
-            return connector.GetOrganizationServiceProxy();
+            var service = connector.GetOrganizationServiceProxy();
+            CheckWhoAmI(service);
+            return service;
         }
         catch (Exception exception)
         {
             throw new FailedConnectionException(_profileManager.Current, exception);
         }
+    }
+
+    private static void CheckWhoAmI(IOrganizationService service)
+    {
+        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
+        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 }
