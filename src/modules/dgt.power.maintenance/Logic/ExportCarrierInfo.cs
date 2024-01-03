@@ -59,7 +59,13 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             LogicalName = Ec4uCarrier.EntityLogicalName
         }, out _);
 
-        List<Ec4uCarrier> carriers;
+        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = DgtCarrier.EntityLogicalName
+        }, out _);
+
+        List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
         if (isSuccessfulOld)
         {
             carriers = DataContext.Ec4uCarrierSet
@@ -78,7 +84,8 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
                 })
                 .ToList();
         }
-        else
+
+        if(isSuccessfulDgt)
         {
             carriers = DataContext.DgtCarrierSet
                 .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
