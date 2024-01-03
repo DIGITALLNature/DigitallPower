@@ -3,7 +3,6 @@
 
 using Microsoft.Identity.Client;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.common.Logic;
 
@@ -12,7 +11,7 @@ internal class TokenConnector : IConnector
     private readonly TokenIdentity _identity;
     private readonly IProfileManager _profileManager;
     private readonly IPublicClientApplication _application;
-    private             IAccount account;
+    private          IAccount _account;
     private readonly string[] _scopes;
     private readonly Uri _uri;
 
@@ -32,11 +31,11 @@ internal class TokenConnector : IConnector
         _scopes = new [] { $"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default" };
     }
 
-    public IOrganizationService GetOrganizationServiceProxy()
+    public IOrganizationServiceAsync2 GetOrganizationServiceProxy()
     {
         if (!string.IsNullOrWhiteSpace(_identity.Username))
         {
-            account = _application.GetAccountAsync(_identity.Username).Result;
+            _account = _application.GetAccountAsync(_identity.Username).Result;
         }
 
         return new ServiceClient(_uri, GetTokenAsync);
@@ -47,7 +46,7 @@ internal class TokenConnector : IConnector
 
         try
         {
-            var silent = await _application.AcquireTokenSilent(_scopes, account)
+            var silent = await _application.AcquireTokenSilent(_scopes, _account)
                 .ExecuteAsync();
 
             return silent.AccessToken;
@@ -59,7 +58,7 @@ internal class TokenConnector : IConnector
                 .ExecuteAsync();
 
             _identity.Username = interactive.Account.Username;
-            account = interactive.Account;
+            _account = interactive.Account;
             _profileManager.Save();
 
             return interactive.AccessToken;

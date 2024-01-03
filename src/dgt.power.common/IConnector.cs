@@ -1,11 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.common;
 
 public interface IConnector
 {
-    IOrganizationService GetOrganizationServiceProxy();
+    IOrganizationServiceAsync2 GetOrganizationServiceProxy();
 }
