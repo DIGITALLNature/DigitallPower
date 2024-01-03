@@ -21,8 +21,6 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
     public async Task<Workflow[]> LoadAllWorkflows()
     {
-        Debug.Assert(solutions?.Length > 0 || publishers?.Length > 0);
-
         taskStatusCallback?.Invoke("Loading all workflows", "preparing tasks", -1);
         tracer?.Log("Loading all workflows: starting tasks", TraceEventType.Verbose);
 
@@ -69,30 +67,33 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         var linkFilter = new FilterExpression(LogicalOperator.Or);
         filter.AddFilter(linkFilter);
 
-        // add link entity workflow -> solution component -> solution to enable filters on solution
-        var componentLink = query.AddLink(SolutionComponent.EntityLogicalName, Workflow.LogicalNames.WorkflowId, SolutionComponent.LogicalNames.ObjectId);
-        var solutionLink = componentLink.AddLink(Solution.EntityLogicalName, SolutionComponent.LogicalNames.SolutionId, Solution.LogicalNames.SolutionId);
-        solutionLink.EntityAlias = "solution";
-
-        // add filter for solutions (uniquename like 'name')
-        // the like operator allows for % wildcards to be used
-        foreach (var solution in solutions)
+        if (solutions.Length > 0)
         {
-            tracer?.Log($"Loading workflows in solution: adding filter for solution '{solution}'", TraceEventType.Verbose);
-            linkFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
-        }
+            // add link entity workflow -> solution component -> solution to enable filters on solution
+            var componentLink = query.AddLink(SolutionComponent.EntityLogicalName, Workflow.LogicalNames.WorkflowId, SolutionComponent.LogicalNames.ObjectId);
+            var solutionLink = componentLink.AddLink(Solution.EntityLogicalName, SolutionComponent.LogicalNames.SolutionId, Solution.LogicalNames.SolutionId);
+            solutionLink.EntityAlias = "solution";
 
-        // add filter for publishers (publisherid like 'name') if any are specified
-        if (publishers.Length > 0)
-        {
-            // add link entity from solution -> publisher
-            var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.LeftOuter);
-            publisherLink.EntityAlias = "publisher";
-
-            foreach (var publisher in publishers)
+            // add filter for solutions (uniquename like 'name')
+            // the like operator allows for % wildcards to be used
+            foreach (var solution in solutions)
             {
-                tracer?.Log($"Loading workflows in solution: adding filter for publisher '{publisher}'", TraceEventType.Verbose);
-                linkFilter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
+                tracer?.Log($"Loading workflows in solution: adding filter for solution '{solution}'", TraceEventType.Verbose);
+                linkFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
+            }
+
+            // add filter for publishers (publisherid like 'name') if any are specified
+            if (publishers.Length > 0)
+            {
+                // add link entity from solution -> publisher
+                var publisherLink = solutionLink.AddLink(Publisher.EntityLogicalName, Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.LeftOuter);
+                publisherLink.EntityAlias = "publisher";
+
+                foreach (var publisher in publishers)
+                {
+                    tracer?.Log($"Loading workflows in solution: adding filter for publisher '{publisher}'", TraceEventType.Verbose);
+                    linkFilter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
+                }
             }
         }
 
@@ -119,7 +120,8 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         var index = 0;
         List<string> tableNames = [];
-        await Parallel.ForEachAsync(tableIds, async (tableId, _) => {
+        await Parallel.ForEachAsync(tableIds, async (tableId, _) =>
+        {
             tracer?.Log($"Loading workflows indirectly {tableId}: resolving table name", TraceEventType.Verbose);
             var tableName = await GetTableNameFromMetadata(tableId);
 

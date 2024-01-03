@@ -66,12 +66,6 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
             throw new InvalidOperationException($"Output file '{args.Config}' already exists. Use --overwrite flag to overwrite the existng file");
         }
 
-        // Ensure at least one filter option is set
-        if (string.IsNullOrWhiteSpace(args.Solutions) && string.IsNullOrWhiteSpace(args.Publishers))
-        {
-            throw new InvalidOperationException("At least one of the filter options --solutions or --publishers must be set");
-        }
-
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');
 

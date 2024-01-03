@@ -50,12 +50,6 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
             return Tracer.End(this, false);
         }
 
-        // Ensure at least one filter option is set
-        if (workflowConfig.SolutionFilter?.Length <= 0 && workflowConfig.PublisherFilter?.Length <= 0)
-        {
-            throw new InvalidOperationException("At least one of the filter options --solutions or --publishers must be set");
-        }
-
         // Do the actual work
         var task = UpdateWorkflowStatesAsync(workflowConfig, workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
         task.Wait();

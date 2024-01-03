@@ -74,7 +74,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         }
 
         var command = _serviceCollection
-            .AddScoped<IOrganizationService>(_ => fakedContext.GetOrganizationService())
+            .AddScoped<IOrganizationService>(_ => fakedContext.GetAsyncOrganizationService2())
             .AddSingleton<TCommand>()
             .BuildServiceProvider()
             .GetRequiredService<TCommand>();
