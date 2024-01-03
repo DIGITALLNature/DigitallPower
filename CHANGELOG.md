@@ -1,3 +1,10 @@
+# [2.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2024-01-03)
+
+
+### Bug Fixes
+
+* **maintenance:** correct handling if both carrier-solutions are present ([bbc7b7d](https://github.com/DIGITALLNature/DigitallPower/commit/bbc7b7d3b7b38750d5f214f22238b896d1c896bf))
+
 # [2.0.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2024-01-02)
 
 
