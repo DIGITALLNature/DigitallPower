@@ -1,3 +1,10 @@
+# [2.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2024-01-03)
+
+
+### Features
+
+* **profile:** add option to do token based authentication ([c1bdd87](https://github.com/DIGITALLNature/DigitallPower/commit/c1bdd87185453e0bed4c3e3cc143856e6d639332))
+
 # [2.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2024-01-03)
 
 
