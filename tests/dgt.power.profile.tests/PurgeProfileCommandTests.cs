@@ -19,10 +19,10 @@ public class PurgeProfileCommandTests : ProfileTestsBase<PurgeProfileCommand, Pr
     public void ShouldPurgeAllProfiles()
     {
         AddIdentity("some", "some");
-        GetIdentities().Keys.Should().HaveCount(1);
+        GetIdentities().Infos.Should().HaveCount(1);
 
         GetContext().Execute(new ProfileSettings()).Should().Succeed();
 
-        GetIdentities().Keys.Should().BeEmpty();
+        GetIdentities().Infos.Should().BeEmpty();
     }
 }

@@ -6,4 +6,5 @@ namespace dgt.power.common.Logic;
 public class TokenIdentity : Identity
 {
     public required string Token { get; set; }
+    public string? Username { get; set; }
 }

@@ -12,6 +12,7 @@ using FakeXrmEasy.Extensions;
 
 namespace dgt.power.analyzer.tests;
 
+[Collection("Serial_Analyzer_Tests")]
 public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponentsAnalyze>
 {
     private const string SolutionUniqueName = "customizations";

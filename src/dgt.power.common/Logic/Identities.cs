@@ -38,7 +38,7 @@ public class Identities : IIdentities
         }
     }
 
-    [JsonIgnore] public IEnumerable<string> Keys => IdentityStore.Keys;
+    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key,i.Value is TokenIdentity?  "Token" : "Classic"));
 
     public void SetCurrent(string key)
     {
@@ -49,4 +49,6 @@ public class Identities : IIdentities
 
         Current = key;
     }
+
+    public bool Contains(string key) => IdentityStore.ContainsKey(key);
 }

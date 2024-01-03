@@ -28,7 +28,6 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
         var identities = _profileManager.GetIdentities();
-#if DEBUG
         if (settings.TokenBased)
         {
             identities.Upsert(settings.Name.ToUpperInvariant(),
@@ -37,12 +36,11 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
                     ConnectionString = settings.ConnectionString,
                     Insecure = settings.Insecure,
                     SecurityProtocol = settings.SecurityProtocol,
-                    Token = "-test-"
+                    Token = null
                 });
         }
         else
         {
-#endif
             identities.Upsert(settings.Name.ToUpperInvariant(),
                 new Identity
                 {
@@ -50,9 +48,8 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
                     Insecure = settings.Insecure,
                     SecurityProtocol = settings.SecurityProtocol
                 });
-#if DEBUG
         }
-#endif
+        
         _profileManager.Save();
 
         if (!settings.SkipChecking)

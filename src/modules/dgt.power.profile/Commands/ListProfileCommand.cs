@@ -24,14 +24,14 @@ public class ListProfileCommand : Command<ProfileSettings>
 
         var grid = new Grid();
         // Add columns
-        grid.AddColumn().AddColumn().AddColumn().AddColumn();
+        grid.AddColumn().AddColumn().AddColumn().AddColumn().AddColumn();
 
         // Add header row
-        grid.AddRow("Current", "Name", "Protocol", "Insecure");
+        grid.AddRow("Current", "Name", "Type", "Protocol", "Insecure");
 
-        foreach (var identity in identities.Keys)
+        foreach (var identity in identities.Infos)
         {
-            grid.AddRow(identity == _profileManager.Current ? "*" : string.Empty, identity, _profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
+            grid.AddRow(identity.Name == _profileManager.Current ? "*" : string.Empty, identity.Name , identity.Type , _profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
                 _profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
         }
 

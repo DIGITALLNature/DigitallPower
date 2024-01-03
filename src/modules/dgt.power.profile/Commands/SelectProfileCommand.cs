@@ -22,7 +22,7 @@ public class SelectProfileCommand : Command<NamedProfileSettings>
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
         var identities = _profileManager.GetIdentities();
-        if (!identities.Keys.Contains(settings.Name.ToUpperInvariant()))
+        if (!identities.Contains(settings.Name.ToUpperInvariant()))
         {
             AnsiConsole.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
             return -1;
