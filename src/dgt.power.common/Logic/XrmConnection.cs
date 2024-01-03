@@ -26,7 +26,7 @@ public class XrmConnection : IXrmConnection
     {
         var xrmConfiguration = _configuration.GetSection("xrm").GetChildren().ToList();
 
-        if (xrmConfiguration.Any())
+        if (xrmConfiguration.Count != 0)
         {
             return ConnectWithConfiguration();
         }
