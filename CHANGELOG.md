@@ -1,3 +1,10 @@
+# [2.0.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2024-01-03)
+
+
+### Bug Fixes
+
+* **push-package:** dispose to not block file ([#73](https://github.com/DIGITALLNature/DigitallPower/issues/73)) ([5ed2993](https://github.com/DIGITALLNature/DigitallPower/commit/5ed2993da4823e6aa284f2dbce854fd92d940c5b))
+
 # [2.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2024-01-03)
 
 
