@@ -35,18 +35,25 @@ namespace dgt.power.maintenance.Logic
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(args.Solution);
 
-            await AnsiConsole.Status()
-                .StartAsync("Loading sdk steps", async ctx =>
+            var sdkSteps = await AnsiConsole.Status()
+                .StartAsync("Loading sdk steps", async _ => await RetrieveSdkSteps(args.Solution));
+
+            var table = new Table()
+                .AddColumn("Plugin Type")
+                .AddColumn("Step Name")
+                .AddColumn("Status")
+                .AddColumn("Step Id");
+
+            await AnsiConsole.Live(table)
+                .StartAsync(async ctx =>
                 {
-                    var sdkSteps = await RetrieveSdkSteps(args.Solution);
+                    var orderedSdkSteps = sdkSteps
+                        .OrderBy(s => s.PluginTypeId?.Id)
+                        .ThenBy(s => s.Name)
+                        .ToArray();
 
-                    var table = new Table()
-                        .AddColumn("Plugin Type")
-                        .AddColumn("Step Name")
-                        .AddColumn("Status")
-                        .AddColumn("Step Id");
-
-                    foreach (var sdkStep in sdkSteps.OrderBy(s => s.PluginTypeId?.Id).ThenBy(s => s.Name))
+                    var rowCount = 0;
+                    await Parallel.ForEachAsync(orderedSdkSteps, async (sdkStep, _) =>
                     {
                         var pluginType = sdkStep.PluginTypeId?.Id.ToString() ?? string.Empty;
                         var stepName = sdkStep.Name.EscapeMarkup();
@@ -54,17 +61,43 @@ namespace dgt.power.maintenance.Logic
 
                         var status = (sdkStep.StateCode?.Value, args.Disabled) switch
                         {
-                            (SdkMessageProcessingStep.Options.StateCode.Enabled, false)=> "[green]Enabled[/]",
-                            (SdkMessageProcessingStep.Options.StateCode.Enabled, true)=> "[red]Enabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Enabled, false) => "[green]Enabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Enabled, true) => "[red]Enabled[/]",
                             (SdkMessageProcessingStep.Options.StateCode.Disabled, false) => "[red]Disabled[/]",
                             (SdkMessageProcessingStep.Options.StateCode.Disabled, true) => "[grey]Disabled[/]",
                             _ => "[red]Unknown[/]",
                         };
 
                         table.AddRow(pluginType, stepName, status, stepId);
-                    }
+                        var rowIndex = rowCount++;
+                        ctx.Refresh();
 
-                    AnsiConsole.Write(table);
+                        var desiredStateValue = args.Disabled
+                            ? SdkMessageProcessingStep.Options.StateCode.Disabled
+                            : SdkMessageProcessingStep.Options.StateCode.Enabled;
+
+                        if (sdkStep.StateCode?.Value != desiredStateValue)
+                        {
+                            var updateRequest = new UpdateRequest
+                            {
+                                Target = new SdkMessageProcessingStep(sdkStep.Id)
+                                {
+                                    StateCode = new OptionSetValue(desiredStateValue),
+                                },
+                            };
+                            await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(updateRequest);
+
+                            status = desiredStateValue switch
+                            {
+                                SdkMessageProcessingStep.Options.StateCode.Disabled => "[grey]Disabled[/]",
+                                SdkMessageProcessingStep.Options.StateCode.Enabled => "[green]Enabled[/]",
+                                _ => "[red]Unknown[/]",
+                            };
+
+                            table.UpdateCell(rowIndex, 2, status);
+                            ctx.Refresh();
+                        }
+                    });
                 });
 
             return true;
