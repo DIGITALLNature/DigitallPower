@@ -27,6 +27,11 @@ namespace dgt.power.maintenance.Logic
             [Description("true if steps should be disabled, false otherwise")]
             [DefaultValue(false)]
             public bool Disabled { get; set; }
+
+            [CommandOption("--dry-run")]
+            [Description("do not perform any updates")]
+            [DefaultValue(false)]
+            public bool DryRun { get; set; }
         }
 
         protected override bool Invoke(Settings args) => InvokeAsync(args).GetAwaiter().GetResult();
@@ -76,7 +81,7 @@ namespace dgt.power.maintenance.Logic
                             ? SdkMessageProcessingStep.Options.StateCode.Disabled
                             : SdkMessageProcessingStep.Options.StateCode.Enabled;
 
-                        if (sdkStep.StateCode?.Value != desiredStateValue)
+                        if (!args.DryRun && sdkStep.StateCode?.Value != desiredStateValue)
                         {
                             var updateRequest = new UpdateRequest
                             {
