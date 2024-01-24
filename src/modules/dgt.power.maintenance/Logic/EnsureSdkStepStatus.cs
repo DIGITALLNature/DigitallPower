@@ -87,12 +87,9 @@ namespace dgt.power.maintenance.Logic
                             };
                             await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(updateRequest);
 
-                            status = desiredStateValue switch
-                            {
-                                SdkMessageProcessingStep.Options.StateCode.Disabled => "[grey]Disabled[/]",
-                                SdkMessageProcessingStep.Options.StateCode.Enabled => "[green]Enabled[/]",
-                                _ => "[red]Unknown[/]",
-                            };
+                            status = desiredStateValue == SdkMessageProcessingStep.Options.StateCode.Disabled
+                                ? "[grey]Disabled[/]"
+                                : "[green]Enabled[/]";
 
                             table.UpdateCell(rowIndex, 2, status);
                             ctx.Refresh();
