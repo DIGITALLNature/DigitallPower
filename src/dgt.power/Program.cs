@@ -147,7 +147,9 @@ app.Configure(config =>
             maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                 .WithDescription("Add Messagefiltering for PowerFx Plugins")
                 .WithExample("maintenance","filterfxplugins","--config", "./config.json");
-            maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps");
+            maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
+                .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
+                .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
 
         });
 
