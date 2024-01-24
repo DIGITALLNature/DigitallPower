@@ -22,6 +22,11 @@ namespace dgt.power.maintenance.Logic
             [Description("unique name of the solution to work on")]
             [DefaultValue("assemblies")]
             public string? Solution { get; set; }
+
+            [CommandOption("-d|--disabled")]
+            [Description("true if steps should be disabled, false otherwise")]
+            [DefaultValue(false)]
+            public bool Disabled { get; set; }
         }
 
         protected override bool Invoke(Settings args) => InvokeAsync(args).GetAwaiter().GetResult();
@@ -47,10 +52,12 @@ namespace dgt.power.maintenance.Logic
                         var stepName = sdkStep.Name.EscapeMarkup();
                         var stepId = sdkStep.Id.ToString();
 
-                        var status = sdkStep.StateCode?.Value switch
+                        var status = (sdkStep.StateCode?.Value, args.Disabled) switch
                         {
-                            SdkMessageProcessingStep.Options.StateCode.Enabled => "[green]Enabled[/]",
-                            SdkMessageProcessingStep.Options.StateCode.Disabled => "[grey]Disabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Enabled, false)=> "[green]Enabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Enabled, true)=> "[red]Enabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Disabled, false) => "[red]Disabled[/]",
+                            (SdkMessageProcessingStep.Options.StateCode.Disabled, true) => "[grey]Disabled[/]",
                             _ => "[red]Unknown[/]",
                         };
 
