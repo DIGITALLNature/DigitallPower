@@ -67,7 +67,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         var linkFilter = new FilterExpression(LogicalOperator.Or);
         filter.AddFilter(linkFilter);
 
-        if (solutions.Length > 0)
+        if (solutions.Length > 0 || publishers.Length > 0)
         {
             // add link entity workflow -> solution component -> solution to enable filters on solution
             var componentLink = query.AddLink(SolutionComponent.EntityLogicalName, Workflow.LogicalNames.WorkflowId, SolutionComponent.LogicalNames.ObjectId);

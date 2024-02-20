@@ -5,6 +5,7 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Logic;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
+using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests;
@@ -302,7 +303,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
         otherFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
     }
 
-    [Theory(Skip = "Probably broken with fakexrmeasy")]
+    [Theory]
     [InlineData("filter-publisher.json", Workflow.Options.Category.Workflow_)]
     [InlineData("filter-publisher.json", Workflow.Options.Category.ModernFlow)]
     [InlineData("filter-publisher-pattern.json", Workflow.Options.Category.Workflow_)]
@@ -350,7 +351,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
         {
             Attributes = new AttributeCollection
             {
-                { SolutionComponent.LogicalNames.SolutionId, matchingSolution.Id },
+                { SolutionComponent.LogicalNames.SolutionId, matchingSolution.ToEntityReference() },
                 { SolutionComponent.LogicalNames.ObjectId, flowInMatchingSolution.Id },
             },
         };
@@ -358,7 +359,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
         {
             Attributes = new AttributeCollection
             {
-                { SolutionComponent.LogicalNames.SolutionId, otherSolution.Id },
+                { SolutionComponent.LogicalNames.SolutionId, otherSolution.ToEntityReference() },
                 { SolutionComponent.LogicalNames.ObjectId, flowInOtherSolution.Id },
             },
         };
@@ -370,6 +371,8 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(flowInOtherSolution)
             .WithData(matchingComponent)
             .WithData(otherComponent)
+            .WithData(matchingPublisher)
+            .WithData(otherPublisher)
             .Build();
 
         context.Execute(new UpdateWorkflowState.Settings
