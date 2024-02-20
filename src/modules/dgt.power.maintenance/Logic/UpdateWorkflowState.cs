@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
@@ -282,7 +283,39 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
 
         Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): performing update", TraceEventType.Information);
         var updateRequest = new UpdateRequest { Target = updateWorkflow };
-        Connection.Execute(updateRequest);
+
+        if (desiredImpersonateUser != default)
+        {
+            var callerId = Connection.GetType().GetProperty("CallerId", BindingFlags.Instance | BindingFlags.Public);
+
+            // Check if used service supports impersonation. This should be the case in real scenarios, but might fail with unit tests
+            if (callerId == default)
+            {
+                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Service '{Connection.GetType().Name.EscapeMarkup()}' does not support impersonation. Continuing without", TraceEventType.Warning);
+                Connection.Execute(updateRequest);
+            }
+            else
+            {
+                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Using impersonation of {desiredImpersonateUser.Id}", TraceEventType.Verbose);
+
+                // Store current caller id and restore it since we want to reuse the connection
+                var oldCaller = callerId.GetValue(Connection);
+                callerId.SetValue(Connection, desiredImpersonateUser.Id);
+
+                try
+                {
+                    Connection.Execute(updateRequest);
+                }
+                finally
+                {
+                    callerId.SetValue(Connection, oldCaller);
+                }
+            }
+        }
+        else
+        {
+            Connection.Execute(updateRequest);
+        }
 
         _workflowStateTracker.TrackDisabled(workflow, desiredDisabled, desiredDisabled);
         _workflowStateTracker.TrackOwner(workflow, desiredOwner, desiredOwner);
