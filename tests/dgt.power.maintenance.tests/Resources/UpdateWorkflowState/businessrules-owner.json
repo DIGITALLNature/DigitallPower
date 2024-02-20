@@ -1,0 +1,19 @@
+﻿{
+    "owner": "default@owner.com",
+    "businessrules": {
+        "test-table": {
+            "Current -> Flow": {
+                "owner": "flow@owner.com"
+            },
+            "Current -> Current (specified)":  {
+                "owner": ""
+            },
+            "Current -> Current (fallback)": {
+                "owner": "missing@owner.com"
+            },
+            "Current -> Default (specified)":  {
+                "owner": null
+            }
+        }
+    }
+}
