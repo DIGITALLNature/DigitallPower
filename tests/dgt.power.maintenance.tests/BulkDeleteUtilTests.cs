@@ -31,11 +31,11 @@ public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
     [InlineData("")]
     [InlineData("       ")]
     [InlineData(null)]
-    public void ShouldSkipIfInlineDataIsNullOrWhitespace(string inlineData) =>
+    public void ShouldSkipIfInlineDataIsNullOrWhitespace(string? inlineData) =>
         GetContext()
             .Execute(new MaintenanceVerb
                 {
-                    InlineData = inlineData
+                    InlineData = inlineData!
                 }
             ).Should().BeTrue();
 
