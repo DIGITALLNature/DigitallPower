@@ -1,3 +1,10 @@
+# [2.0.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2024-02-27)
+
+
+### Features
+
+* **workflowstate:** include other workflow categories and introduce config generator ([50260a1](https://github.com/DIGITALLNature/DigitallPower/commit/50260a187ddcc7463d6ffaa1b4293928f8aca8b3))
+
 # [2.0.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2024-01-03)
 
 
