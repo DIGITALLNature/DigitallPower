@@ -10,6 +10,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
@@ -17,9 +18,12 @@ namespace dgt.power.import.Logic;
 
 public sealed class OutlookTemplateImport : BaseImport
 {
-    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
+    private readonly int _sleepTime;
+
+    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(
         tracer, connection, configResolver)
     {
+        _sleepTime = configuration.GetValue<int>("pollrate");
     }
 
     protected override bool Invoke(ImportVerb args)
@@ -109,9 +113,9 @@ public sealed class OutlookTemplateImport : BaseImport
                 {
                     IsDefault = false
                 }) && result;
-                Thread.Sleep(5000);
+                Thread.Sleep(_sleepTime);
                 result = Connection.TryDelete(SavedQuery.EntityLogicalName, savedQuery.Id) && result;
-                Thread.Sleep(5000);
+                Thread.Sleep(_sleepTime);
                 result = Connection.TryCreate(new SavedQuery
                 {
                     FetchXml = update,

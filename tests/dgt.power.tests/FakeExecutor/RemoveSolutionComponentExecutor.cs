@@ -23,7 +23,7 @@ public class RemoveSolutionComponentExecutor : IFakeMessageExecutor
     public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
     {
         //var typed = (RemoveSolutionComponentRequest)request;
-        Thread.Sleep(2000);
+        Thread.Sleep(TestFixtures.FakeCallDurations);
         return new RemoveSolutionComponentResponse();
     }
 }

@@ -14,7 +14,7 @@ public class BulkDeleteExecutor : IFakeMessageExecutor
     private static readonly Random Random = new Random(12345);
 
     public int ExpectedStatusCode { get; set; } = AsyncOperation.Options.StatusCode.Succeeded;
-    
+
     public bool CanExecute(OrganizationRequest request)
     {
         return request is BulkDeleteRequest;
@@ -41,7 +41,7 @@ public class BulkDeleteExecutor : IFakeMessageExecutor
 
         Task.Run(() =>
         {
-            Thread.Sleep(Random.Next(500, 2000));
+            Thread.Sleep(TestFixtures.FakeCallDurations);
             ctx.GetOrganizationService().Update(new AsyncOperation
             {
                 Id = asyncOperationId,

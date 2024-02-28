@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.tests.Extensions;
+using FakeXrmEasy;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
@@ -14,6 +15,7 @@ using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -73,9 +75,19 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
                 .AddSingleton<ITestOutputHelper>(_ => _testOutputHelper);
         }
 
+        var defaultConfiguration = new Dictionary<string, string?>
+        {
+            {"pollrate", TestFixtures.FakeCallDurations.ToString()}
+        };
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(defaultConfiguration)
+            .Build();
+
         var command = _serviceCollection
             .AddScoped<IOrganizationService>(_ => fakedContext.GetAsyncOrganizationService2())
             .AddSingleton<TCommand>()
+            .AddSingleton<IConfiguration>(configuration)
             .BuildServiceProvider()
             .GetRequiredService<TCommand>();
 

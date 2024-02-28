@@ -7,6 +7,7 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -14,10 +15,11 @@ namespace dgt.power.maintenance.Logic;
 
 public sealed class BulkDeleteUtil : BaseMaintenance
 {
-    private readonly int _sleepTime = 10000;
+    private readonly int _sleepTime;
 
-    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(tracer, connection, configResolver)
     {
+        _sleepTime = configuration.GetValue<int>("pollrate");
     }
 
     protected override bool Invoke(MaintenanceVerb args)

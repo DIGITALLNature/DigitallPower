@@ -38,8 +38,14 @@ using NuGet.Protocol.Core.Types;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
+var defaultConfiguration = new Dictionary<string, string?>
+{
+    {"pollrate", "5000"}
+};
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
+    .AddInMemoryCollection(defaultConfiguration)
     .AddJsonFile("dgtp.json", optional: true)
     .AddEnvironmentVariables("dgtp:")
     .Build();
