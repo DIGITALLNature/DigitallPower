@@ -27,9 +27,9 @@
       },
       "Microsoft.PowerPlatform.Dataverse.Client": {
         "type": "Direct",
-        "requested": "[1.1.16, )",
-        "resolved": "1.1.16",
-        "contentHash": "zrkb4MIwynYE+lBF1Y4ljyYWwQvXIvDgviSZ2r1TY9P9a3UmEGLWp/jJFbOt+3v4Uw4fXcL4Yed8HRfc/GOnQQ==",
+        "requested": "[1.1.17, )",
+        "resolved": "1.1.17",
+        "contentHash": "gSgD7N52EATY0PkNIbBtqZeG0FDGK11X1x8nBnPclfykw73bvqyfortjNIwAGcj0esMqk8DSieuRCVi47hg9qQ==",
         "dependencies": {
           "Microsoft.Extensions.Caching.Memory": "3.1.8",
           "Microsoft.Extensions.DependencyInjection": "3.1.8",
@@ -72,11 +72,11 @@
       },
       "NuGet.Protocol": {
         "type": "Direct",
-        "requested": "[6.8.0, )",
-        "resolved": "6.8.0",
-        "contentHash": "Nfvij7QlEevDbuRCXkhCrHk1oJN+mYkmeVzNvS9hxNTmwdtHqB+zhUIMFBlbye3MUicgc4bbtLAwoF+EKjUvcg==",
+        "requested": "[6.9.1, )",
+        "resolved": "6.9.1",
+        "contentHash": "h3bdjqUY4jvwM02D/7QM4FR8x/bbf4Pyjrc1Etw7an2OrWKPUSx0vJPdapKzioxIw7GXl/aVUM/DCeIc3S9brA==",
         "dependencies": {
-          "NuGet.Packaging": "6.8.0"
+          "NuGet.Packaging": "6.9.1"
         }
       },
       "Spectre.Console.Cli": {
@@ -90,8 +90,11 @@
       },
       "CsvHelper": {
         "type": "Transitive",
-        "resolved": "30.0.1",
-        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+        "resolved": "31.0.0",
+        "contentHash": "PypRJq7AugnCJjq6Zu5EqFDTfRv7Gh+MtSH2T/kwiGmg1UHAflq4cE8j3uMkvXSxaayVtcwi+8hC0w+30YzzWA==",
+        "dependencies": {
+          "System.Linq.Async": "4.0.0"
+        }
       },
       "dgt.registration": {
         "type": "Transitive",
@@ -100,50 +103,50 @@
       },
       "DocumentFormat.OpenXml": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "o2xu17+4VOT4gKwpEcL5UBNYWrP1HQGkfe+K+LHvq5/07UjpzoGMBQzWMhGimzgL1Q2lEPYAp7JgBNZWTcfGKw==",
+        "resolved": "3.0.1",
+        "contentHash": "DCK1cwFUJ1FGGyYyo++HWl9H1RkqMWIu+FGOLRy6E4L4y0/HIhlJ7N/n1HKboFfOwKn1cMBRxt1RCuDbIEy5YQ==",
         "dependencies": {
-          "DocumentFormat.OpenXml.Framework": "3.0.0"
+          "DocumentFormat.OpenXml.Framework": "3.0.1"
         }
       },
       "DocumentFormat.OpenXml.Framework": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "kWjZuwFsdbbKA5U3o2X6tQn0yI9gr2Oy4CHWvbc5eHRUcbl5FUi1Si44I3SW3CxyK/3AcMiC4/99wjBVLOk54A==",
+        "resolved": "3.0.1",
+        "contentHash": "ifyI7OW7sggz7LQMIAD2aUsY/zVUON9QaHrpZ4MK33iVMeHlTG4uhUE2aLWb31nry+LCs2ALDAwf8OfUJGjgBg==",
         "dependencies": {
           "System.IO.Packaging": "8.0.0"
         }
       },
       "Microsoft.AspNetCore.Cryptography.Internal": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "buuMMCTxFcVkOkEftb2OafYxrveNGre9KJF4Oi1DkR4rxIj6oLam7Wq3g0Fp9hNVpJteKEPiupsxYnPrD/oUGA=="
+        "resolved": "8.0.2",
+        "contentHash": "eZecZwgDIIK3QdtDHE2ndH1Yw/Mbo/b4HpyB135eZsIWYVr4dyO4vYa6s/IRIaWEMUdPNT2qU8mILF0MwDl+FQ=="
       },
       "Microsoft.AspNetCore.DataProtection": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "XNeup9/wVm9orvynhmhRHh1GOHbboXoCyz0jp+LcNcHWYyMEEJyZKSpyh3TNKgM9sBMIDwrj8aSVPm81GGjzNQ==",
+        "resolved": "8.0.2",
+        "contentHash": "B88wloAsIyDElrqze3tYHhSnwDN9WVc6lOef61uM+HrPmE9GHbgVqf10DF6FRmZnOexGotgdb4U9PGakGpJ54g==",
         "dependencies": {
-          "Microsoft.AspNetCore.Cryptography.Internal": "8.0.0",
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "8.0.0",
+          "Microsoft.AspNetCore.Cryptography.Internal": "8.0.2",
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "8.0.2",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Options": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.2",
           "System.Security.Cryptography.Xml": "8.0.0"
         }
       },
       "Microsoft.AspNetCore.DataProtection.Abstractions": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "ObNtj57DXbIIVAhNSKA6/c1/EaW35Dct480dzZ9NPXZ2fw3Z5FS/xiKKC7+1R2PBwt2Vw7a2Amu1tNvBKwyFNQ=="
+        "resolved": "8.0.2",
+        "contentHash": "gJt/M6N8JAgdcEip5GC2F59MIyyuhAeY/ZCLtT9CQ8XH8F+k4vPjItvqXNKKFGCpYG7bD64aItQ/062tVOVy7w=="
       },
       "Microsoft.AspNetCore.DataProtection.Extensions": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "sM9DdpjghpDTZU0Eq+L2f5LT+D4nDfnGpZQ1nIvFLYC4EIhd0VJeO5JI/i+5uWsKVs+QMrH+vRXwTKUUHYRPRw==",
+        "resolved": "8.0.2",
+        "contentHash": "V6kTruwsHX0XIe8FPcUlRQCAn8nbxXpBEHBkP1DUOfPqmM3cuvtcWkrCCQY+BzzhuCAVVvLl/R3uJFGCLuBXnw==",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection": "8.0.0",
+          "Microsoft.AspNetCore.DataProtection": "8.0.2",
           "Microsoft.Extensions.DependencyInjection": "8.0.0"
         }
       },
@@ -366,8 +369,8 @@
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "JOVOfqpnqlVLUzINQ2fox8evY2SKLYJ3BV8QDe/Jyp21u1T7r45x/R/5QdteURMR5r01GxeJSBBUOCOyaNXA3g==",
+        "resolved": "8.0.2",
+        "contentHash": "dWGKvhFybsaZpGmzkGCbNNwBD1rVlWzrZKANLW/CcbFJpCEceMCGzT7zZwHOGBCbwM0SzBuceMj5HN1LKV1QqA==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Primitives": "8.0.0"
@@ -440,8 +443,8 @@
       },
       "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": {
         "type": "Transitive",
-        "resolved": "1.1.16",
-        "contentHash": "jWxbIE2Fx8yuRSTtskc/xU31O7jqkCmnT6ea8COOv2U3zBVxe5IljVoFoXTiqwVEg/Rd3OLemkYCt6rr+Xl9ww==",
+        "resolved": "1.1.17",
+        "contentHash": "lIM5eP7j8NdL6gs2v+kev+oAfi7iolSls+esY1XHu6iZWwtsDgC2mSgAfbnZbtd2So5poleu0NU9u4WuNA74Dg==",
         "dependencies": {
           "Microsoft.PowerPlatform.Dataverse.Client": "1.0.0"
         }
@@ -495,41 +498,41 @@
       },
       "NuGet.Common": {
         "type": "Transitive",
-        "resolved": "6.8.0",
-        "contentHash": "voNZyM5L5s0CCDPU//vXKQke0M8y6kGvG+0Ll6gc/xV7Jh1C3/5OhHRzvekxBS6a9DO/lsFhTZtyCkL6n9lHEw==",
+        "resolved": "6.9.1",
+        "contentHash": "FbuWZBjQ1NJXBDqCwSddN2yvw3Plq3sTCIh0nc66Hu8jrNr+BOaxlKZv78jvJ+pSy8BvurYOdF9sl9KoORjrtg==",
         "dependencies": {
-          "NuGet.Frameworks": "6.8.0"
+          "NuGet.Frameworks": "6.9.1"
         }
       },
       "NuGet.Configuration": {
         "type": "Transitive",
-        "resolved": "6.8.0",
-        "contentHash": "FFEoY1L9G+C74HfSYt6epHTIuS5xJ8D+d9LZ5nnqhujMoBlQgHphaCTfRlul+e/bNIkAp1fDObzsGlPmu3CKAg==",
+        "resolved": "6.9.1",
+        "contentHash": "GM06pcUzWdNsizeGciqCjAhryfI1F/rQPETLDF+8pDRgzVpA+wKAR01/4aFU+IXzugnQ9LqOb5YyCRuR1OVZiQ==",
         "dependencies": {
-          "NuGet.Common": "6.8.0",
+          "NuGet.Common": "6.9.1",
           "System.Security.Cryptography.ProtectedData": "4.4.0"
         }
       },
       "NuGet.Frameworks": {
         "type": "Transitive",
-        "resolved": "6.8.0",
-        "contentHash": "cN9NyahKgYYScioH4CKn+TYj1eSODxd0RECFnQt6ZmzT6z7PfXlbYpVzbiPsxNgY23iNDMOVkSmOqNZyYxNlQA=="
+        "resolved": "6.9.1",
+        "contentHash": "DaKh3lenPUvzGccPkbI97BIvA27z+/UsL3ankfoZlX/4vBVDK5N1sheFTQ+GuJf+IgSzsJz/A21SPUpQLHwUtA=="
       },
       "NuGet.Packaging": {
         "type": "Transitive",
-        "resolved": "6.8.0",
-        "contentHash": "lyDnMCAWtoHNsNKGexIl6yHtyxuvn2j3rpKMrYYf86KwTV+JVY9eFIixNdwEPjBXBzWHQGpDKj9Im8v02t9AQQ==",
+        "resolved": "6.9.1",
+        "contentHash": "6FyasOxKInCELJ+pGy8f17ub9st6ofFeNcBNTo7CRiPJlxyhJfKGKNpfe3HHYwvnZhc3Vdfr0kSR+f1BVGDuTA==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3",
-          "NuGet.Configuration": "6.8.0",
-          "NuGet.Versioning": "6.8.0",
+          "NuGet.Configuration": "6.9.1",
+          "NuGet.Versioning": "6.9.1",
           "System.Security.Cryptography.Pkcs": "6.0.4"
         }
       },
       "NuGet.Versioning": {
         "type": "Transitive",
-        "resolved": "6.8.0",
-        "contentHash": "WBu15cdv1lqKkPKXDQOEmEzwKemwrczKYlc2jtuZgRYiZ8TG8F4QzPYiE0Q9eVIpMSk8Aky7mUephf19HjBPOw=="
+        "resolved": "6.9.1",
+        "contentHash": "ypnSvEtpNGo48bAWn95J1oHChycCXcevFSbn53fqzLxlXFSZP7dawu8p/7mHAfGufZQSV2sBpW80XQGIfXO8kQ=="
       },
       "ReflectionMagic": {
         "type": "Transitive",
@@ -791,6 +794,11 @@
           "System.Runtime": "4.3.0",
           "System.Runtime.Extensions": "4.3.0"
         }
+      },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "4.0.0",
+        "contentHash": "WbiYEedFZeM+psmMyoCt1AKbZppAZg8Eq1ZTQ+521fGNeXqlgJj0tZYV5n1LsKRO5osQuitYxGNuzPTy3213sg=="
       },
       "System.Linq.Expressions": {
         "type": "Transitive",
@@ -1378,35 +1386,35 @@
       "dgt.power.analyzer": {
         "type": "Project",
         "dependencies": {
-          "CsvHelper": "[30.0.1, )",
-          "dgt.power.common": "[2.0.0-beta.2, )",
-          "dgt.power.dto": "[2.0.0-beta.2, )"
+          "CsvHelper": "[31.0.0, )",
+          "dgt.power.common": "[2.0.0-beta.6, )",
+          "dgt.power.dto": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.codegeneration": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.16, )",
-          "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.1.16, )",
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.17, )",
+          "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.1.17, )",
           "Spectre.Console.Cli": "[0.48.0, )",
           "System.CodeDom": "[8.0.0, )",
-          "dgt.power.common": "[2.0.0-beta.2, )"
+          "dgt.power.common": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.common": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection": "[8.0.0, )",
-          "Microsoft.AspNetCore.DataProtection.Extensions": "[8.0.0, )",
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.16, )",
+          "Microsoft.AspNetCore.DataProtection": "[8.0.2, )",
+          "Microsoft.AspNetCore.DataProtection.Extensions": "[8.0.2, )",
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.17, )",
           "Spectre.Console.Cli": "[0.48.0, )",
-          "dgt.power.dataverse": "[2.0.0-beta.2, )"
+          "dgt.power.dataverse": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.dataverse": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.16, )"
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.17, )"
         }
       },
       "dgt.power.dto": {
@@ -1415,37 +1423,37 @@
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.2, )",
-          "dgt.power.dto": "[2.0.0-beta.2, )"
+          "dgt.power.common": "[2.0.0-beta.6, )",
+          "dgt.power.dto": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
-          "DocumentFormat.OpenXml": "[3.0.0, )",
-          "dgt.power.common": "[2.0.0-beta.2, )",
-          "dgt.power.dto": "[2.0.0-beta.2, )"
+          "DocumentFormat.OpenXml": "[3.0.1, )",
+          "dgt.power.common": "[2.0.0-beta.6, )",
+          "dgt.power.dto": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.2, )"
+          "dgt.power.common": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.2, )"
+          "dgt.power.common": "[2.0.0-beta.6, )"
         }
       },
       "dgt.power.push": {
         "type": "Project",
         "dependencies": {
-          "NuGet.Packaging": "[6.8.0, )",
+          "NuGet.Packaging": "[6.9.1, )",
           "System.Reflection.MetadataLoadContext": "[8.0.0, )",
           "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[2.0.0-beta.2, )",
+          "dgt.power.common": "[2.0.0-beta.6, )",
           "dgt.registration": "[1.0.0, )"
         }
       }
