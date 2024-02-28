@@ -1,3 +1,10 @@
+# [2.0.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.6...v2.0.0-beta.7) (2024-02-28)
+
+
+### Features
+
+* waiting time for dataverse operations is now configurable ([5228d7e](https://github.com/DIGITALLNature/DigitallPower/commit/5228d7e244eb18ae0a9cf749f99aa3c248093bd8))
+
 # [2.0.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2024-02-27)
 
 
