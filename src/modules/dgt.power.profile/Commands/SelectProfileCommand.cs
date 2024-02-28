@@ -21,7 +21,7 @@ public class SelectProfileCommand : Command<NamedProfileSettings>
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.GetIdentities();
+        var identities = _profileManager.LoadIdentities();
         if (!identities.Contains(settings.Name.ToUpperInvariant()))
         {
             AnsiConsole.MarkupLine($"[Red]Identity {settings.Name} not found![/]");

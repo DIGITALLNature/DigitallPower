@@ -5,11 +5,9 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.common;
 
-public sealed class TypeResolver : ITypeResolver, IDisposable
+public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver, IDisposable
 {
-    private readonly IServiceProvider _provider;
-
-    public TypeResolver(IServiceProvider provider) => _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+    private readonly IServiceProvider _provider = provider ?? throw new ArgumentNullException(nameof(provider));
 
     public void Dispose()
     {

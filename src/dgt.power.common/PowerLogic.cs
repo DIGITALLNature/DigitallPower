@@ -8,23 +8,21 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.common;
 
-public abstract class PowerLogic<TConfig> : Command<TConfig>, IPowerLogic where TConfig : BaseProgramSettings
+public abstract class PowerLogic<TConfig>(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver)
+    : Command<TConfig>, IPowerLogic
+    where TConfig : BaseProgramSettings
 {
     protected const int PageSize = 5000;
 
-    protected PowerLogic(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver)
-    {
-        Tracer = tracer;
-        Connection = connection;
-        ConfigResolver = configResolver;
-    }
+    protected IConfigResolver ConfigResolver { get; } = configResolver;
 
-    protected IConfigResolver ConfigResolver { get; }
+    protected IOrganizationService Connection { get; } = connection;
+    protected ITracer Tracer { get; } = tracer;
 
-    protected IOrganizationService Connection { get; }
-    protected ITracer Tracer { get; }
-
-    public override int Execute([NotNull] CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
+    public override int Execute(CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
 
     private bool Execute(TConfig args)
     {

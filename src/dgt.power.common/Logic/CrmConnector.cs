@@ -15,7 +15,7 @@ internal class CrmConnector: IConnector
 
     internal CrmConnector(string connectionString) => _connectionString = connectionString;
 
-    public IOrganizationServiceAsync2 GetOrganizationServiceProxy()
+    public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
     {
         if (!Regex.IsMatch(_connectionString, "SkipDiscovery=True", RegexOptions.IgnoreCase))
         {

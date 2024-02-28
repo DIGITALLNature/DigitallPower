@@ -25,7 +25,7 @@ public class ProfileManager : IProfileManager
         _identityFileName = identityFileName;
     }
 
-    public IIdentities GetIdentities()
+    public IIdentities LoadIdentities()
     {
         if (!_identities.IsEmpty)
         {
@@ -54,7 +54,7 @@ public class ProfileManager : IProfileManager
             AnsiConsole.WriteException(e);
         }
 
-        // TODO Remove 2024 - Mitigation of changed Key-Format
+        // TODO Remove 2025 - Mitigation of changed Key-Format
         if (_identities != null)
         {
             _identities.IdentityStore =
@@ -79,7 +79,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.Current;
@@ -92,7 +92,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.CurrentIdentity;
@@ -105,7 +105,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.CurrentConnectionString;

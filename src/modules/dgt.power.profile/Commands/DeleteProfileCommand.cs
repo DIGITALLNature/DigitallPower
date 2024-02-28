@@ -19,7 +19,7 @@ public class DeleteProfileCommand : Command<NamedProfileSettings>
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.GetIdentities();
+        var identities = _profileManager.LoadIdentities();
         identities.Remove(settings.Name.ToUpperInvariant());
         _profileManager.Save();
 

@@ -31,7 +31,7 @@ internal class TokenConnector : IConnector
         _scopes = new [] { $"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default" };
     }
 
-    public IOrganizationServiceAsync2 GetOrganizationServiceProxy()
+    public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
     {
         if (!string.IsNullOrWhiteSpace(_identity.Username))
         {

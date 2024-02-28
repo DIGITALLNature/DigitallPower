@@ -20,7 +20,7 @@ public class ListProfileCommand : Command<ProfileSettings>
 
     public override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings)
     {
-        var identities = _profileManager.GetIdentities();
+        var identities = _profileManager.LoadIdentities();
 
         var grid = new Grid();
         // Add columns

@@ -27,7 +27,7 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.GetIdentities();
+        var identities = _profileManager.LoadIdentities();
         if (settings.TokenBased)
         {
             identities.Upsert(settings.Name.ToUpperInvariant(),

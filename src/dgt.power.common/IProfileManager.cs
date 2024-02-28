@@ -10,7 +10,7 @@ public interface IProfileManager
     string Current { get; }
     Identity? CurrentIdentity { get; }
     string CurrentConnectionString { get; }
-    IIdentities GetIdentities();
+    IIdentities LoadIdentities();
     void Save();
     void Purge();
 }
