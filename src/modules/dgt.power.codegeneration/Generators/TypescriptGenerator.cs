@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates.ts;
+using dgt.power.codegeneration.Templates.tsl;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using static dgt.power.codegeneration.Constants.FileNames;
@@ -16,44 +17,57 @@ namespace dgt.power.codegeneration.Generators;
 public class TypescriptGenerator : ITypescriptGenerator
 {
     private readonly IMetadataService _metadataService;
+    private TypescriptGeneratorVersion _generatorVersion;
 
     public TypescriptGenerator(IMetadataService metadataService)
     {
         _metadataService = metadataService;
     }
 
+    /// <summary>
+    /// Prepares the directory for code generation.
+    /// </summary>
+    /// <param name="args">The code generation arguments.</param>
     public void PrepareDirectory(CodeGenerationVerb args)
     {
+        // Ensure that the arguments are not null
         Debug.Assert(args != null, nameof(args) + " != null");
 
-        if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder)))
+        // Create the main folder if it doesn't exist
+        var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
+        if (!Directory.Exists(mainFolderPath))
         {
-            Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder));
+            Directory.CreateDirectory(mainFolderPath);
         }
 
-        if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript)))
+        // Create the Typescript folder if it doesn't exist
+        var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
+        if (!Directory.Exists(typescriptFolderPath))
         {
-            Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript));
+            Directory.CreateDirectory(typescriptFolderPath);
         }
         else
         {
-            Directory.GetFiles(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript), $"*.ts")
-                .ToList()
-                .ForEach(File.Delete);
+            // Delete all .ts files in the Typescript folder
+            var typescriptFiles = Directory.GetFiles(typescriptFolderPath, "*.ts");
+            foreach (var file in typescriptFiles)
+            {
+                File.Delete(file);
+            }
         }
     }
 
-    public void GenerateBoilerPlate(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        CreateTemplateFile(new D365ModelTemplate(config.TypingPath), Typescript.Model, args);
-        // Temp Solution
-        CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), Typescript.Services, args);
-        CreateTemplateFile(new D365WebApiTemplate(config.TypingPath), Typescript.Webapi, args);
-        CreateTemplateFile(new D365UtilsTemplate(config.TypingPath), Typescript.Utils, args);
-        CreateTemplateFile(new D365ODataTemplate(config.TypingPath), Typescript.Odata, args);
+
+            CreateTemplateFile(new D365ModelTemplate(config.TypingPath), Typescript.Model, args);
+            CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), Typescript.Services, args);
+            CreateTemplateFile(new D365WebApiTemplate(config.TypingPath), Typescript.Webapi, args);
+            CreateTemplateFile(new D365UtilsTemplate(config.TypingPath), Typescript.Utils, args);
+            CreateTemplateFile(new D365ODataTemplate(config.TypingPath), Typescript.Odata, args);
     }
 
     public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
@@ -61,10 +75,10 @@ public class TypescriptGenerator : ITypescriptGenerator
         Debug.Assert(template != null, nameof(template) + " != null");
         Debug.Assert(args != null, nameof(args) + " != null");
 
-        var path = Path.Combine(args.TargetDirectory, args.Folder, "TypeScript", $"{name}.ts");
+        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
 
         using var file = File.CreateText(path);
-        AnsiConsole.MarkupLine($"Creating File: {path}");
+        AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
         var content = template.GenerateTemplate();
 
         file.Write(content);
@@ -77,24 +91,24 @@ public class TypescriptGenerator : ITypescriptGenerator
 
         foreach (var entity in config.Entities)
         {
-            var metadata = _metadataService
-                .RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata =
+                _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
-            var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-                $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.ts");
+            ITemplate template;
+            if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+            {
+                template = new D365EntityTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+            }
+            else
+            {
+                template = new EntityLightTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
 
-            using var file = File.CreateText(fileName);
-            AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-            var content =
-                new D365EntityTemplate(config.TypingPath, metadata, config,
-                        _metadataService.RetrieveOrganizationLanguage())
-                    .TransformText();
-
-            file.Write(content);
+            }
+            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
         }
     }
 
-    public void GenerateEntityRefs(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -118,7 +132,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         }
     }
 
-    public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntityFormsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -213,7 +227,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         file.Write(content);
     }
 
-    public void GenerateBusinessProcessFlows(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -237,4 +251,6 @@ public class TypescriptGenerator : ITypescriptGenerator
             file.Write(content);
         }
     }
+
+    public void GeneratorVersion(TypescriptGeneratorVersion generatorVersion) => _generatorVersion = generatorVersion;
 }

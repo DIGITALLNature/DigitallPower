@@ -1,0 +1,60 @@
+<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
+/* eslint-disable */
+///<reference path="<#= TypingPath #>" />
+
+// Entity <#= EntityMetadata.SchemaName #> FormContext
+export interface <#= EntityMetadata.SchemaName #>FormContext extends Xrm.FormContext {
+    getAttribute(): Xrm.Attributes.Attribute[];
+    getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
+    getAttribute(attributeName: string): Xrm.Attributes.Attribute;
+    getAttribute(index: number): Xrm.Attributes.Attribute;
+
+    getControl(): Xrm.Controls.Control[];
+    getControl<T extends Xrm.Controls.Control>(controlName: string): T;
+    getControl(controlName: string): Xrm.Controls.Control;
+    getControl(index: number): Xrm.Controls.Control;
+
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{
+		var attrType = GetTypeScriptTypes(attr);
+#>
+    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    getAttribute(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedAttributeType#>;
+    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    getControl(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedControlType#>;
+<#
+} // End Attribute loop
+#>
+}
+
+// Entity <#= EntityMetadata.SchemaName #>
+export const <#= EntityMetadata.SchemaName #>Metadata = {
+  typeName: "mscrm.<#= EntityMetadata.LogicalName #>",
+  logicalName: "<#= EntityMetadata.LogicalName #>",
+  collectionName: "<#= EntityMetadata.LogicalCollectionName #>",
+  primaryIdAttribute: "<#= EntityMetadata.PrimaryIdAttribute #>",
+  attributeTypes: {
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"M"+EntityMetadata.LogicalName);
+		var attrType = GetTypeScriptTypes(attr);
+#>
+    <#= attrName #>: "<#= attrType.DefinitelyType#>",
+<#
+} // End Attribute loop
+#>
+  }
+};
+
+// Attribute constants
+export const enum <#= EntityMetadata.SchemaName #>Attributes {
+<# foreach(var attr in Filter(EntityMetadata.Attributes))
+{
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
+#>
+    <#= attrName #>= "<#= attr.LogicalName#>",
+<#
+} // End Attribute loop
+#>
+}
+
