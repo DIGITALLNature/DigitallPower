@@ -70,40 +70,63 @@ public class TypescriptGenerator : ITypescriptGenerator
             CreateTemplateFile(new D365ODataTemplate(config.TypingPath), Typescript.Odata, args);
     }
 
+    /// <summary>
+    /// Creates a template file using the provided template, name, and code generation arguments.
+    /// </summary>
+    /// <param name="template">The template to use for generating the file content.</param>
+    /// <param name="name">The name of the file to be created.</param>
+    /// <param name="args">The code generation arguments, including the target directory and folder.</param>
     public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
     {
+        // Ensure that the template and args are not null
         Debug.Assert(template != null, nameof(template) + " != null");
         Debug.Assert(args != null, nameof(args) + " != null");
 
+        // Combine the target directory, folder, and file name to create the full path
         var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
 
+        // Create a text file at the specified path
         using var file = File.CreateText(path);
+        // Print a message indicating the file creation
         AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
+        // Generate the content using the provided template
         var content = template.GenerateTemplate();
 
+        // Write the generated content to the file
         file.Write(content);
     }
 
+    /// <summary>
+    /// Generates TypeScript entities based on the provided code generation arguments and configuration.
+    /// </summary>
+    /// <param name="args">The code generation arguments.</param>
+    /// <param name="config">The code generation configuration.</param>
     public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
         {
-            var metadata =
-                _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            // Retrieve the metadata for the entity
+            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
+            // Determine the template to use based on the TypeScript generator version
             ITemplate template;
             if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
             {
+                // Use the D365EntityTemplate for the full TypeScript generator version
                 template = new D365EntityTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
             }
             else
             {
+                // Use the EntityLightTemplate for other TypeScript generator versions
                 template = new EntityLightTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
-
             }
+
+            // Create the template file
             CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
         }
     }
