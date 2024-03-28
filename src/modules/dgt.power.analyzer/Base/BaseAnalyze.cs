@@ -33,10 +33,29 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
     internal  static string ResultFolder { get; } = "Analyze";
 
+    /// <summary>
+    /// Retrieves the solution components for a given solution.
+    /// </summary>
+    /// <param name="context">The data context.</param>
+    /// <param name="uniqueName">The unique name of the solution.</param>
+    /// <returns>A list of solution components.</returns>
     protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
+        // Get the solution using the provided unique name
         var solution = GetSolution(context, uniqueName);
 
+        // Retrieve the solution components using the solution ID
+        return GetSolutionComponents(solution.Id);
+    }
+
+    /// <summary>
+    /// Retrieves solution components based on the provided solution Id.
+    /// </summary>
+    /// <param name="solutionId">The Id of the solution to retrieve components for.</param>
+    /// <returns>A list of SolutionComponent objects.</returns>
+    protected IList<SolutionComponent> GetSolutionComponents(Guid solutionId)
+    {
+        // Create query expression to retrieve solution components
         var pagequery = new QueryExpression
         {
             EntityName = SolutionComponent.EntityLogicalName,
@@ -50,16 +69,19 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
                 SolutionComponent.LogicalNames.SolutionId
             )
         };
+
+        // Create filter expression based on solution Id
         var pagefilter = new FilterExpression(LogicalOperator.And);
         pagefilter.Conditions.Add(
             new ConditionExpression
             {
                 AttributeName = SolutionComponent.LogicalNames.SolutionId,
                 Operator = ConditionOperator.Equal,
-                Values = { solution.Id }
+                Values = { solutionId }
             }
         );
 
+        // Add component type filter conditions
         var componentTypeFilter = pagefilter.AddFilter(LogicalOperator.Or);
         foreach (var key in ComponentTypeLookup.Keys)
         {
@@ -68,6 +90,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
         pagequery.Criteria = pagefilter;
 
+        // Add link to root solution component
         var rootLink = pagequery.AddLink(
             SolutionComponent.EntityLogicalName,
             SolutionComponent.LogicalNames.RootSolutionComponentId,
@@ -77,26 +100,31 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         rootLink.Columns.AddColumns(SolutionComponent.LogicalNames.ComponentType, SolutionComponent.LogicalNames.ObjectId);
         rootLink.EntityAlias = "root";
 
+        // Add link to attribute entity
         var attributeLink = pagequery.AddLink("attribute", "objectid", "attributeid", JoinOperator.LeftOuter);
         attributeLink.Columns.AddColumn("logicalname");
         attributeLink.EntityAlias = "attr";
 
+        // Add link to workflow entity
         var workflowLink = pagequery.AddLink("workflow", "objectid", "workflowid", JoinOperator.LeftOuter);
         workflowLink.Columns.AddColumn("name");
         workflowLink.EntityAlias = "workflow";
 
+        // Add ordering by component type
         pagequery.Orders.Add(new OrderExpression
         {
             AttributeName = SolutionComponent.LogicalNames.ComponentType,
             OrderType = OrderType.Ascending
         });
 
+        // Set paging information
         pagequery.PageInfo = new PagingInfo
         {
             Count = PageSize,
             PageNumber = 1,
             PagingCookie = null
         };
+
         var components = new List<SolutionComponent>();
         var moreRecords = true;
         while (moreRecords)
@@ -115,6 +143,30 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
         return components;
     }
+
+    /// <summary>
+    /// This method retrieves the top layer that is not active from a list of component layers.
+    /// If there is only one layer, it is returned.
+    /// If the first layer is active, it recursively calls itself with the remaining layers.
+    /// </summary>
+    /// <param name="layers">The list of component layers to search through.</param>
+    /// <returns>The top component layer that is not active.</returns>
+    protected static MsdynComponentlayer GetTopNotActiveLayer(IList<MsdynComponentlayer> layers)
+    {
+        // If there is only one layer, return it
+        if (layers.Count == 1)
+        {
+            return layers.Single();
+        }
+
+        // Get the first layer
+        var first = layers[0];
+
+        // If the first layer is active, recursively call this method with the remaining layers
+        // Otherwise, return the first layer
+        return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(layers.Skip(1).ToList()) : first;
+    }
+
     protected IList<MsdynComponentlayer> GetSolutionLayers(SolutionComponent component)
     {
         Debug.Assert(component != null, nameof(component) + " != null");
@@ -154,7 +206,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         return layers;
     }
 
-    private static Solution GetSolution(DataContext context, string uniqueName)
+    protected static Solution GetSolution(DataContext context, string uniqueName)
     {
         var solution = (from su in context.SolutionSet
                         where su.UniqueName == uniqueName
