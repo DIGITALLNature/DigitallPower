@@ -6,6 +6,7 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
 using dgt.power.codegeneration.Templates.tsl;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -17,7 +18,6 @@ namespace dgt.power.codegeneration.Generators;
 public class TypescriptGenerator : ITypescriptGenerator
 {
     private readonly IMetadataService _metadataService;
-    private TypescriptGeneratorVersion _generatorVersion;
 
     public TypescriptGenerator(IMetadataService metadataService)
     {
@@ -208,46 +208,78 @@ public class TypescriptGenerator : ITypescriptGenerator
         }
     }
 
+    /// <summary>
+    /// Generates SDK messages for code generation.
+    /// </summary>
+    /// <param name="args">The code generation verb arguments.</param>
+    /// <param name="config">The code generation configuration.</param>
     public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Check if the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        // Check if SDK messages should be suppressed
         if (config.SuppressSdkMessages)
         {
             return;
         }
 
+        // Retrieve SDK message names from the metadata service
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
-        var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-            $"{Typescript.SdkMessageNames}.ts");
 
-        using var file = File.CreateText(fileName);
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-        var content = new D365SdkMessagesTemplate(sdkMessages, config).TransformText();
+        // Determine the template to use based on the TypeScript generator version
+        ITemplate template;
+        if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+        {
+            // Use the D365EntityTemplate for the full TypeScript generator version
+            template = new D365SdkMessagesTemplate(sdkMessages, config);
+        }
+        else
+        {
+            // Use the EntityLightTemplate for other TypeScript generator versions
+            template = new SdkMessagesLightTemplate(sdkMessages, config);
+        }
 
-        file.Write(content);
+        // Create the template file
+        CreateTemplateFile(template, $"{Typescript.SdkMessageNames}", args);
     }
 
+    /// <summary>
+    /// Generates option sets based on the provided arguments and configuration
+    /// </summary>
+    /// <param name="args">The code generation verb</param>
+    /// <param name="config">The code generation configuration</param>
     public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.GlobalOptionSets.Any())
+        // Check if there are global option sets
+        if (config.GlobalOptionSets.Count == 0)
         {
             return;
         }
 
+        // Retrieve option sets from the metadata service
         var optionSets = _metadataService.RetrieveOptionSets(config);
-        var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-            $"{Typescript.OptionSetValues}.ts");
 
-        using var file = File.CreateText(fileName);
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-        var content = new D365OptionSetsTemplate(optionSets, config).TransformText();
+        // Determine the template to use based on the TypeScript generator version
+        ITemplate template;
+        if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+        {
+            // Use the D365EntityTemplate for the full TypeScript generator version
+            template = new D365OptionSetsTemplate(optionSets, config);
+        }
+        else
+        {
+            // Use the EntityLightTemplate for other TypeScript generator versions
+            template = new OptionSetsLightTemplate(optionSets, config);
+        }
 
-        file.Write(content);
+        // Create the template file
+        CreateTemplateFile(template, $"{Typescript.OptionSetValues}", args);
     }
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
@@ -274,6 +306,4 @@ public class TypescriptGenerator : ITypescriptGenerator
             file.Write(content);
         }
     }
-
-    public void GeneratorVersion(TypescriptGeneratorVersion generatorVersion) => _generatorVersion = generatorVersion;
 }

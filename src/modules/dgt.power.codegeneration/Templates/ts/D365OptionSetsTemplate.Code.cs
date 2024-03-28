@@ -6,7 +6,7 @@ using dgt.power.codegeneration.Logic;
 
 namespace dgt.power.codegeneration.Templates.ts
 {
-    public partial class D365OptionSetsTemplate
+    public partial class D365OptionSetsTemplate : ITemplate
     {
         private readonly SortedDictionary<string, List<Option>> OptionSets;
         private readonly CodeGenerationConfig _cfg;
@@ -26,5 +26,7 @@ namespace dgt.power.codegeneration.Templates.ts
         {
             return Formatter.Sanitize(value);
         }
+
+        public string GenerateTemplate() => TransformText();
     }
 }

@@ -1,4 +1,5 @@
 <#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
+<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 /* eslint-disable */
 ///<reference path="<#= TypingPath #>" />
 
@@ -46,15 +47,35 @@ export const <#= EntityMetadata.SchemaName #>Metadata = {
   }
 };
 
-// Attribute constants
+// <#= EntityMetadata.SchemaName #> Attribute constants
 export const enum <#= EntityMetadata.SchemaName #>Attributes {
 <# foreach(var attr in Filter(EntityMetadata.Attributes))
 {
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
 #>
-    <#= attrName #>= "<#= attr.LogicalName#>",
+    <#= attrName #> = "<#= attr.LogicalName#>",
 <#
 } // End Attribute loop
 #>
 }
+
+
+<# foreach(var attr in Filter(EntityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
+{
+    var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"PL"+EntityMetadata.LogicalName);
+		var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
+#>
+// Enum <#= attrName #>
+export const enum <#= attrName #>Code {
+    <# foreach(var option in options)
+        {
+    #>
+    <#= Sanitize(CamelCase(GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
+    <#
+    } // End Option loop
+    #>
+}
+<#
+} // End Attribute loop
+#>
 
