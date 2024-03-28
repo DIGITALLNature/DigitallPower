@@ -1,3 +1,10 @@
+# [2.0.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.7...v2.0.0-beta.8) (2024-03-28)
+
+
+### Features
+
+* **analyze:** add redundantpatches check ([#80](https://github.com/DIGITALLNature/DigitallPower/issues/80)) ([a13d169](https://github.com/DIGITALLNature/DigitallPower/commit/a13d169206c8ab1a883541a4926cc48ce69e77e4))
+
 # [2.0.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.6...v2.0.0-beta.7) (2024-02-28)
 
 
