@@ -100,16 +100,4 @@ public sealed class TopLayerAnalyze : BaseAnalyze
 
         return Tracer.End(this, true);
     }
-
-    private MsdynComponentlayer GetTopNotActiveLayer(ICollection<MsdynComponentlayer> layers)
-    {
-        if (layers.Count == 1)
-        {
-            return layers.Single();
-        }
-
-        var skippedLayers = layers.Skip(1).ToList();
-        var first = skippedLayers[0];
-        return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(skippedLayers) : first;
-    }
 }

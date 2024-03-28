@@ -173,6 +173,8 @@ app.Configure(config =>
             .WithExample("analyze", "noactivelayer", "--inline", "solution1,solution2");
         analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
             .WithDescription("Scans for components that are in multiple of the specified solutions");
+        analyze.AddCommand<RedundantPatchAnalyze>("redundantpatches")
+            .WithDescription("Scans for patch solutions that are not longer needed because all contained elements are not top-layer anymore");
         analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
             .WithDescription("Scans the specified (managed) solutions for components with active layer")
             .WithExample("analyze", "activelayer", "--inline", "solution1,solution2");

@@ -66,9 +66,14 @@ public sealed class ActiveLayerAnalyze : BaseAnalyze
 
                     ctx.Refresh();
 
-                    foreach (var component in components)
+                    for (var index = 0; index < components.Count; index++)
                     {
+                        var component = components[index];
+
+                        table.AddRow(component.ObjectId.ToString(), $"{index}/{components.Count}", "", "Checking");
+                        ctx.Refresh();
                         var layers = GetSolutionLayers(component);
+                        table.RemoveRow(table.Rows.Count - 1);
                         if (!layers.Any())
                         {
                             continue;
@@ -78,12 +83,18 @@ public sealed class ActiveLayerAnalyze : BaseAnalyze
                         if (first.MsdynSolutionname == "Active")
                         {
                             var componentName = GetComponentName(component, entities, first);
-                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName, uniqueName);
-                            ctx.Refresh();
+                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName,
+                                uniqueName);
 
-                            resultTable.Add(new ActiveLayerLine { Component = first.MsdynSolutioncomponentname, Order = first.MsdynOrder, Name = componentName, Solution = uniqueName });
+                            resultTable.Add(new ActiveLayerLine
+                            {
+                                Component = first.MsdynSolutioncomponentname, Order = first.MsdynOrder,
+                                Name = componentName, Solution = uniqueName
+                            });
                             summary.Anomalies++;
                         }
+
+                        ctx.Refresh();
                     }
                 });
         }
