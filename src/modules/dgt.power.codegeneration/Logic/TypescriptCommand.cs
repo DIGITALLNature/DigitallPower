@@ -29,7 +29,6 @@ public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
 
         _generator.PrepareDirectory(args);
         _generator.GenerateEntities(args, config);
-        _generator.GenerateSdkMessages(args, config);
         _generator.GenerateOptionSets(args, config);
 
         if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
@@ -38,6 +37,7 @@ public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
             _generator.GenerateEntityRefsFull(args, config);
             _generator.GenerateEntityFormsFull(args, config);
             _generator.GenerateBusinessProcessFlowsFull(args, config);
+            _generator.GenerateSdkMessages(args, config);
         }
 
 

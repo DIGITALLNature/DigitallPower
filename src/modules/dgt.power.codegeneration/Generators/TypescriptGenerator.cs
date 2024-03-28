@@ -229,17 +229,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
 
         // Determine the template to use based on the TypeScript generator version
-        ITemplate template;
-        if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
-        {
-            // Use the D365EntityTemplate for the full TypeScript generator version
-            template = new D365SdkMessagesTemplate(sdkMessages, config);
-        }
-        else
-        {
-            // Use the EntityLightTemplate for other TypeScript generator versions
-            template = new SdkMessagesLightTemplate(sdkMessages, config);
-        }
+        ITemplate template = new D365SdkMessagesTemplate(sdkMessages, config);
 
         // Create the template file
         CreateTemplateFile(template, $"{Typescript.SdkMessageNames}", args);
