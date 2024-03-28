@@ -1,2 +1,18 @@
 <#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
-<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+/* eslint-disable */
+///<reference path="<#= typingPath #>" />
+
+// Enum account_account_accountcategorycode
+export const enum account_account_accountcategorycode {
+  PreferredCustomer = 1,
+  Standard = 2,
+}
+
+// This module contains global option sets which are used in more than one entity!
+<# foreach(var optionSet in optionSets) { #>
+export const enum <#= CamelCase(optionSet.Key) #> {
+<# foreach(var option in optionSet.Value) { #>
+    <#= Sanitize(CamelCase(option.Label)) #> = { value: <#= option.Value #> },
+<# }#>
+}
+<#} #>
