@@ -91,6 +91,18 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
     </Content>
+    <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\FunctionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\OptionSetsLightTemplate.tt" />
+    <Content Include="Templates\tsl\OptionSetsLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>OptionSetsLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
+    <Content Include="Templates\tsl\SdkMessagesLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SdkMessagesLightTemplate.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -197,6 +209,16 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EntityLightTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\OptionSetsLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OptionSetsLightTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\SdkMessagesLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SdkMessagesLightTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

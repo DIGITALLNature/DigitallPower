@@ -9,6 +9,7 @@
 // ------------------------------------------------------------------------------
 namespace dgt.power.codegeneration.Templates.tsl
 {
+    using Microsoft.Xrm.Sdk.Metadata;
     using System;
     
     /// <summary>
@@ -27,28 +28,28 @@ namespace dgt.power.codegeneration.Templates.tsl
         {
             this.Write("/* eslint-disable */\n///<reference path=\"");
             
-            #line 3 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 4 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TypingPath));
             
             #line default
             #line hidden
             this.Write("\" />\n\n// Entity ");
             
-            #line 5 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 6 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
             
             #line default
             #line hidden
             this.Write(" FormContext\nexport interface ");
             
-            #line 6 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 7 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
             
             #line default
             #line hidden
             this.Write("FormContext extends Xrm.FormContext {\n    getAttribute(): Xrm.Attributes.Attribute[];\n    getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\n    getAttribute(attributeName: string): Xrm.Attributes.Attribute;\n    getAttribute(index: number): Xrm.Attributes.Attribute;\n\n    getControl(): Xrm.Controls.Control[];\n    getControl<T extends Xrm.Controls.Control>(controlName: string): T;\n    getControl(controlName: string): Xrm.Controls.Control;\n    getControl(index: number): Xrm.Controls.Control;\n\n");
             
-            #line 17 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 18 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 {
 		var attrType = GetTypeScriptTypes(attr);
@@ -58,49 +59,49 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("    ");
             
-            #line 21 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 22 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(attr.Description),1)));
             
             #line default
             #line hidden
             this.Write("\n    getAttribute(name: '");
             
-            #line 22 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 23 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("'): ");
             
-            #line 22 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 23 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
             
             #line default
             #line hidden
             this.Write(";\n    ");
             
-            #line 23 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 24 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Summary(GetLocalizedLabel(attr.Description),1)));
             
             #line default
             #line hidden
             this.Write("\n    getControl(name: '");
             
-            #line 24 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 25 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("'): ");
             
-            #line 24 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 25 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 25 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 26 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
 
 } // End Attribute loop
 
@@ -109,49 +110,49 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("}\n\n// Entity ");
             
-            #line 30 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 31 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
             
             #line default
             #line hidden
             this.Write("\nexport const ");
             
-            #line 31 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 32 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
             
             #line default
             #line hidden
             this.Write("Metadata = {\n  typeName: \"mscrm.");
             
-            #line 32 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 33 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\n  logicalName: \"");
             
-            #line 33 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 34 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\n  collectionName: \"");
             
-            #line 34 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 35 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.LogicalCollectionName));
             
             #line default
             #line hidden
             this.Write("\",\n  primaryIdAttribute: \"");
             
-            #line 35 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 36 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.PrimaryIdAttribute));
             
             #line default
             #line hidden
             this.Write("\",\n  attributeTypes: {\n");
             
-            #line 37 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 38 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 {
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"M"+EntityMetadata.LogicalName);
@@ -162,37 +163,44 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("    ");
             
-            #line 42 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 43 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write(": \"");
             
-            #line 42 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 43 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyType));
             
             #line default
             #line hidden
             this.Write("\",\n");
             
-            #line 43 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 44 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
 
 } // End Attribute loop
 
             
             #line default
             #line hidden
-            this.Write("  }\n};\n\n// Attribute constants\nexport const enum ");
+            this.Write("  }\n};\n\n// ");
             
             #line 50 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
             
             #line default
             #line hidden
-            this.Write("Attributes {\n");
+            this.Write(" Attribute constants\nexport const enum ");
             
             #line 51 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(EntityMetadata.SchemaName));
+            
+            #line default
+            #line hidden
+            this.Write("Attributes {\n");
+            
+            #line 52 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
  foreach(var attr in Filter(EntityMetadata.Attributes))
 {
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+EntityMetadata.LogicalName);
@@ -202,28 +210,94 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("    ");
             
-            #line 55 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 56 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
-            this.Write("= \"");
+            this.Write(" = \"");
             
-            #line 55 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 56 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\n");
             
-            #line 56 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            #line 57 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
 
 } // End Attribute loop
 
             
             #line default
             #line hidden
-            this.Write("}\n\n");
+            this.Write("}\n\n\n");
+            
+            #line 63 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+ foreach(var attr in Filter(EntityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
+{
+    var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"PL"+EntityMetadata.LogicalName);
+		var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
+
+            
+            #line default
+            #line hidden
+            this.Write("// Enum ");
+            
+            #line 68 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
+            
+            #line default
+            #line hidden
+            this.Write("\nexport const enum ");
+            
+            #line 69 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
+            
+            #line default
+            #line hidden
+            this.Write("Code {\n    ");
+            
+            #line 70 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+ foreach(var option in options)
+        {
+    
+            
+            #line default
+            #line hidden
+            this.Write("    ");
+            
+            #line 73 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(GetLocalizedLabel(option.Label)))));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 73 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
+            
+            #line default
+            #line hidden
+            this.Write(",\n    ");
+            
+            #line 74 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+
+    } // End Option loop
+    
+            
+            #line default
+            #line hidden
+            this.Write("}\n");
+            
+            #line 78 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/EntityLightTemplate.tt"
+
+} // End Attribute loop
+
+            
+            #line default
+            #line hidden
+            this.Write("\n");
             return this.GenerationEnvironment.ToString();
         }
     }
