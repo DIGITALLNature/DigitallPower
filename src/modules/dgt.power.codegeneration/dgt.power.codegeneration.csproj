@@ -99,10 +99,6 @@
       <LastGenOutput>OptionSetsLightTemplate.cs</LastGenOutput>
     </Content>
     <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
-    <Content Include="Templates\tsl\SdkMessagesLightTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SdkMessagesLightTemplate.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -214,11 +210,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OptionSetsLightTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\tsl\SdkMessagesLightTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SdkMessagesLightTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
