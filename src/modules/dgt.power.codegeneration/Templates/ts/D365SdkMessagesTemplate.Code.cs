@@ -5,7 +5,7 @@ using dgt.power.codegeneration.Base;
 
 namespace dgt.power.codegeneration.Templates.ts
 {
-    public partial class D365SdkMessagesTemplate
+    public partial class D365SdkMessagesTemplate : ITemplate
     {
         private readonly IEnumerable<Tuple<string, string>> SdkMessages;
         private readonly CodeGenerationConfig _cfg;
@@ -24,5 +24,7 @@ namespace dgt.power.codegeneration.Templates.ts
             }
             return sdkMessages;
         }
+
+        public string GenerateTemplate() => TransformText();
     }
 }

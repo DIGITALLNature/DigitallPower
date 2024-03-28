@@ -1,0 +1,81 @@
+<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
+<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+/* eslint-disable */
+///<reference path="<#= typingPath #>" />
+
+// Entity <#= entityMetadata.SchemaName #> FormContext
+export interface <#= entityMetadata.SchemaName #>FormContext extends Xrm.FormContext {
+    getAttribute(): Xrm.Attributes.Attribute[];
+    getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
+    getAttribute(attributeName: string): Xrm.Attributes.Attribute;
+    getAttribute(index: number): Xrm.Attributes.Attribute;
+
+    getControl(): Xrm.Controls.Control[];
+    getControl<T extends Xrm.Controls.Control>(controlName: string): T;
+    getControl(controlName: string): Xrm.Controls.Control;
+    getControl(index: number): Xrm.Controls.Control;
+
+<# foreach(var attr in Filter(entityMetadata.Attributes))
+{
+		var attrType = GetTypeScriptTypes(attr);
+#>
+    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    getAttribute(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedAttributeType#>;
+    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    getControl(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedControlType#>;
+<#
+} // End Attribute loop
+#>
+}
+
+// Entity <#= entityMetadata.SchemaName #>
+export const <#= entityMetadata.SchemaName #>Metadata = {
+  typeName: "mscrm.<#= entityMetadata.LogicalName #>",
+  logicalName: "<#= entityMetadata.LogicalName #>",
+  collectionName: "<#= entityMetadata.LogicalCollectionName #>",
+  primaryIdAttribute: "<#= entityMetadata.PrimaryIdAttribute #>",
+  attributeTypes: {
+<# foreach(var attr in Filter(entityMetadata.Attributes))
+{
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
+		var attrType = GetTypeScriptTypes(attr);
+#>
+    <#= attrName #>: "<#= attrType.DefinitelyType#>",
+<#
+} // End Attribute loop
+#>
+  }
+};
+
+// <#= entityMetadata.SchemaName #> Attribute constants
+export const enum <#= entityMetadata.SchemaName #>Attributes {
+<# foreach(var attr in Filter(entityMetadata.Attributes))
+{
+		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
+#>
+    <#= attrName #> = "<#= attr.LogicalName#>",
+<#
+} // End Attribute loop
+#>
+}
+
+
+<# foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
+{
+    var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
+		var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
+#>
+// Enum <#= attrName #>
+export const enum <#= attrName #>Code {
+    <# foreach(var option in options)
+        {
+    #>
+    <#= Sanitize(CamelCase(GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
+    <#
+    } // End Option loop
+    #>
+}
+<#
+} // End Attribute loop
+#>
+

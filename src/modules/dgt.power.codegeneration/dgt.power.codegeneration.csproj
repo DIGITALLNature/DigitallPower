@@ -86,6 +86,19 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365WebApiTemplate.cs</LastGenOutput>
     </Content>
+    <None Remove="Templates\tsl\EntityLightTemplate.tt" />
+    <Content Include="Templates\tsl\EntityLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\FunctionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\OptionSetsLightTemplate.tt" />
+    <Content Include="Templates\tsl\OptionSetsLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>OptionSetsLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -187,6 +200,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>D365WebApiTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\EntityLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityLightTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\OptionSetsLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OptionSetsLightTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

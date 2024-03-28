@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.ts
 {
-    public partial class D365EntityTemplate
+    public partial class D365EntityTemplate : ITemplate
     {
         private readonly Dictionary<string, List<string>> _usedTokens = new();
         private readonly string TypingPath;
@@ -106,5 +106,7 @@ namespace dgt.power.codegeneration.Templates.ts
                    $"{Environment.NewLine}" +
                    $"{new string('\t', indent)}*/";
         }
+
+        public string GenerateTemplate() => TransformText();
     }
 }

@@ -6,7 +6,9 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
+using dgt.power.codegeneration.Templates.tsl;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using static dgt.power.codegeneration.Constants.FileNames;
@@ -22,79 +24,114 @@ public class TypescriptGenerator : ITypescriptGenerator
         _metadataService = metadataService;
     }
 
+    /// <summary>
+    /// Prepares the directory for code generation.
+    /// </summary>
+    /// <param name="args">The code generation arguments.</param>
     public void PrepareDirectory(CodeGenerationVerb args)
     {
+        // Ensure that the arguments are not null
         Debug.Assert(args != null, nameof(args) + " != null");
 
-        if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder)))
+        // Create the main folder if it doesn't exist
+        var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
+        if (!Directory.Exists(mainFolderPath))
         {
-            Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder));
+            Directory.CreateDirectory(mainFolderPath);
         }
 
-        if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript)))
+        // Create the Typescript folder if it doesn't exist
+        var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
+        if (!Directory.Exists(typescriptFolderPath))
         {
-            Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript));
+            Directory.CreateDirectory(typescriptFolderPath);
         }
         else
         {
-            Directory.GetFiles(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript), $"*.ts")
-                .ToList()
-                .ForEach(File.Delete);
+            // Delete all .ts files in the Typescript folder
+            var typescriptFiles = Directory.GetFiles(typescriptFolderPath, "*.ts");
+            foreach (var file in typescriptFiles)
+            {
+                File.Delete(file);
+            }
         }
     }
 
-    public void GenerateBoilerPlate(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        CreateTemplateFile(new D365ModelTemplate(config.TypingPath), Typescript.Model, args);
-        // Temp Solution
-        CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), Typescript.Services, args);
-        CreateTemplateFile(new D365WebApiTemplate(config.TypingPath), Typescript.Webapi, args);
-        CreateTemplateFile(new D365UtilsTemplate(config.TypingPath), Typescript.Utils, args);
-        CreateTemplateFile(new D365ODataTemplate(config.TypingPath), Typescript.Odata, args);
+
+            CreateTemplateFile(new D365ModelTemplate(config.TypingPath), Typescript.Model, args);
+            CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), Typescript.Services, args);
+            CreateTemplateFile(new D365WebApiTemplate(config.TypingPath), Typescript.Webapi, args);
+            CreateTemplateFile(new D365UtilsTemplate(config.TypingPath), Typescript.Utils, args);
+            CreateTemplateFile(new D365ODataTemplate(config.TypingPath), Typescript.Odata, args);
     }
 
+    /// <summary>
+    /// Creates a template file using the provided template, name, and code generation arguments.
+    /// </summary>
+    /// <param name="template">The template to use for generating the file content.</param>
+    /// <param name="name">The name of the file to be created.</param>
+    /// <param name="args">The code generation arguments, including the target directory and folder.</param>
     public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
     {
+        // Ensure that the template and args are not null
         Debug.Assert(template != null, nameof(template) + " != null");
         Debug.Assert(args != null, nameof(args) + " != null");
 
-        var path = Path.Combine(args.TargetDirectory, args.Folder, "TypeScript", $"{name}.ts");
+        // Combine the target directory, folder, and file name to create the full path
+        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
 
+        // Create a text file at the specified path
         using var file = File.CreateText(path);
-        AnsiConsole.MarkupLine($"Creating File: {path}");
+        // Print a message indicating the file creation
+        AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
+        // Generate the content using the provided template
         var content = template.GenerateTemplate();
 
+        // Write the generated content to the file
         file.Write(content);
     }
 
+    /// <summary>
+    /// Generates TypeScript entities based on the provided code generation arguments and configuration.
+    /// </summary>
+    /// <param name="args">The code generation arguments.</param>
+    /// <param name="config">The code generation configuration.</param>
     public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
         {
-            var metadata = _metadataService
-                .RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            // Retrieve the metadata for the entity
+            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
-            var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-                $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.ts");
+            // Determine the template to use based on the TypeScript generator version
+            ITemplate template;
+            if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+            {
+                // Use the D365EntityTemplate for the full TypeScript generator version
+                template = new D365EntityTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+            }
+            else
+            {
+                // Use the EntityLightTemplate for other TypeScript generator versions
+                template = new EntityLightTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+            }
 
-            using var file = File.CreateText(fileName);
-            AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-            var content =
-                new D365EntityTemplate(config.TypingPath, metadata, config,
-                        _metadataService.RetrieveOrganizationLanguage())
-                    .TransformText();
-
-            file.Write(content);
+            // Create the template file
+            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
         }
     }
 
-    public void GenerateEntityRefs(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -118,7 +155,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         }
     }
 
-    public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntityFormsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -171,49 +208,71 @@ public class TypescriptGenerator : ITypescriptGenerator
         }
     }
 
+    /// <summary>
+    /// Generates SDK messages for code generation.
+    /// </summary>
+    /// <param name="args">The code generation verb arguments.</param>
+    /// <param name="config">The code generation configuration.</param>
     public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Check if the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        // Check if SDK messages should be suppressed
         if (config.SuppressSdkMessages)
         {
             return;
         }
 
+        // Retrieve SDK message names from the metadata service
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
-        var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-            $"{Typescript.SdkMessageNames}.ts");
 
-        using var file = File.CreateText(fileName);
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-        var content = new D365SdkMessagesTemplate(sdkMessages, config).TransformText();
+        // Determine the template to use based on the TypeScript generator version
+        ITemplate template = new D365SdkMessagesTemplate(sdkMessages, config);
 
-        file.Write(content);
+        // Create the template file
+        CreateTemplateFile(template, $"{Typescript.SdkMessageNames}", args);
     }
 
+    /// <summary>
+    /// Generates option sets based on the provided arguments and configuration
+    /// </summary>
+    /// <param name="args">The code generation verb</param>
+    /// <param name="config">The code generation configuration</param>
     public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.GlobalOptionSets.Any())
+        // Check if there are global option sets
+        if (config.GlobalOptionSets.Count == 0)
         {
             return;
         }
 
+        // Retrieve option sets from the metadata service
         var optionSets = _metadataService.RetrieveOptionSets(config);
-        var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-            $"{Typescript.OptionSetValues}.ts");
 
-        using var file = File.CreateText(fileName);
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-        var content = new D365OptionSetsTemplate(optionSets, config).TransformText();
+        // Determine the template to use based on the TypeScript generator version
+        ITemplate template;
+        if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+        {
+            // Use the D365EntityTemplate for the full TypeScript generator version
+            template = new D365OptionSetsTemplate(optionSets, config);
+        }
+        else
+        {
+            // Use the EntityLightTemplate for other TypeScript generator versions
+            template = new OptionSetsLightTemplate(optionSets, config.TypingPath);
+        }
 
-        file.Write(content);
+        // Create the template file
+        CreateTemplateFile(template, $"{Typescript.OptionSetValues}", args);
     }
 
-    public void GenerateBusinessProcessFlows(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
