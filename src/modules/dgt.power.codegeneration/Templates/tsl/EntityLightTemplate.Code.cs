@@ -9,21 +9,10 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl;
 
-public partial class EntityLightTemplate : ITemplate
+public partial class EntityLightTemplate(string typingPath, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) : ITemplate
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
-    private readonly string TypingPath;
-    private readonly EntityMetadata EntityMetadata;
-    private readonly bool _useBaseLanguage;
-    private readonly int _systemLanguage;
-
-    public EntityLightTemplate(string typingPath, EntityMetadata entity, CodeGenerationConfig cfg, int systemLanguage)
-    {
-        TypingPath = typingPath;
-        EntityMetadata = entity;
-        _useBaseLanguage = cfg.UseBaseLanguage;
-        _systemLanguage = systemLanguage;
-    }
+    private readonly bool _useBaseLanguage = cfg.UseBaseLanguage;
 
     private static string Summary(string description, int indent)
     {
@@ -38,10 +27,7 @@ public partial class EntityLightTemplate : ITemplate
                $"{Environment.NewLine}" +
                $"{new string('\t', indent)}/// </summary>";
     }
-    private string GetLocalizedLabel(Label label)
-    {
-        return Formatter.GetLocalizedLabel(label, _useBaseLanguage, _systemLanguage);
-    }
+    private string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, _useBaseLanguage, systemLanguage);
 
     private TypeScriptType GetTypeScriptTypes(AttributeMetadata attr)
     {
@@ -134,26 +120,22 @@ public partial class EntityLightTemplate : ITemplate
         return filter.OrderBy(a => a.LogicalName);
     }
 
-    private static string CamelCase(string phrase)
-    {
-        return Formatter.CamelCase(phrase);
-    }
+    private static string CamelCase(string phrase) => Formatter.CamelCase(phrase);
+
 
     private string Unique(string value, string scope)
     {
         if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
 
-        if (_usedTokens[scope].Contains(value) || value == $"{CamelCase(EntityMetadata.SchemaName)}")
+        if (_usedTokens[scope].Contains(value) || value == $"{CamelCase(entityMetadata.SchemaName)}")
             return Unique(value + "_", scope);
 
         _usedTokens[scope].Add(value);
         return value;
     }
 
-    private static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false)
-    {
-        return Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
-    }
+    private static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false) =>  Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
+
     public string GenerateTemplate() => TransformText();
 
     internal struct TypeScriptType(string definitelyTypedAttributeType, string definitelyTypedControlType, string definitelyType)
