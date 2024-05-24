@@ -211,7 +211,7 @@ app.Configure(config =>
     config.Settings.ApplicationName = "dgtp";
 
 #if RELEASE
-    config.SetExceptionHandler(exception =>
+    config.SetExceptionHandler((exception, _) =>
     {
         var errorMessage = exception.Message;
         if (exception.IsDerivedFrom<AbstractPowerException>())
