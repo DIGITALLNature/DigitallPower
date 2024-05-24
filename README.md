@@ -14,10 +14,11 @@
     <a href="https://github.com/DIGITALLNature/DigitallPower/graphs/contributors" target="_blank">
         <img src="https://img.shields.io/github/contributors-anon/DIGITALLNature/DigitallPower.svg" alt="GitHub contributors">
     </a>
+    [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DIGITALLNature_DigitallPower&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DIGITALLNature_DigitallPower)
 </p>
 <br/>
 
-# Introduction 
+# Introduction
 DIGITALLPOWER - the dotnet tool for the PowerPlatform from DIGITALL. A swiss army knife for all ALM issues where PAC still has weaknesses.
 
 Currently focusing on the requirements of DIGITALL in the development, deployment and operation of PowerPlatform solutions.
