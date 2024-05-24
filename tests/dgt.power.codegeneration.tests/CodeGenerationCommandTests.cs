@@ -31,7 +31,7 @@ public class CodeGenerationCommandTests
 
     [Fact]
     public void ShouldExecuteALlCommands() =>
-        _command.Execute(new CommandContext(A.Dummy<IRemainingArguments>(), "codegeneration", null),
+        _command.Execute(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
             new CodeGenerationVerb
             {
                 Config = "Resources/CodeGenerationCommand/config.json"
@@ -40,7 +40,7 @@ public class CodeGenerationCommandTests
 
     [Fact]
     public void ShouldFailOnMissingConfiguration() =>
-        _command.Execute(new CommandContext(A.Dummy<IRemainingArguments>(), "codegeneration", null),
+        _command.Execute(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
             new CodeGenerationVerb
             {
                 Config = "missing.json"

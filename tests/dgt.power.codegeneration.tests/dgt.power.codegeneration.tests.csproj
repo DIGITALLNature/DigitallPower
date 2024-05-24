@@ -18,9 +18,9 @@
     <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
     <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
     <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.4.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="xunit" Version="2.7.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageReference Include="xunit" Version="2.8.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
