@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Linq.Expressions;
 using dgt.power.common;
 using dgt.power.dataverse;
 using FakeItEasy;
@@ -40,7 +43,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 
     private static CommandContext GetCommandContext()
     {
-        var commandContext = new CommandContext(A.Dummy<IRemainingArguments>(), "test", null);
+        var commandContext = new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "test", null);
         return commandContext;
     }
 

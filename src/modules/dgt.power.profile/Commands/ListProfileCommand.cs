@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.profile.Base;
 using Spectre.Console;
@@ -17,18 +20,18 @@ public class ListProfileCommand : Command<ProfileSettings>
 
     public override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings)
     {
-        var identities = _profileManager.GetIdentities();
+        var identities = _profileManager.LoadIdentities();
 
         var grid = new Grid();
         // Add columns
-        grid.AddColumn().AddColumn().AddColumn().AddColumn();
+        grid.AddColumn().AddColumn().AddColumn().AddColumn().AddColumn();
 
         // Add header row
-        grid.AddRow("Current", "Name", "Protocol", "Insecure");
+        grid.AddRow("Current", "Name", "Type", "Protocol", "Insecure");
 
-        foreach (var identity in identities.Keys)
+        foreach (var identity in identities.Infos)
         {
-            grid.AddRow(identity == _profileManager.Current ? "*" : string.Empty, identity, _profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
+            grid.AddRow(identity.Name == _profileManager.Current ? "*" : string.Empty, identity.Name , identity.Type , _profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
                 _profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
         }
 

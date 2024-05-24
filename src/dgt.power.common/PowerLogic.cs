@@ -1,25 +1,28 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Cli;
 
 namespace dgt.power.common;
 
-public abstract class PowerLogic<TConfig> : Command<TConfig>, IPowerLogic where TConfig : BaseProgramSettings
+public abstract class PowerLogic<TConfig>(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver)
+    : Command<TConfig>, IPowerLogic
+    where TConfig : BaseProgramSettings
 {
-    protected PowerLogic(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver)
-    {
-        Tracer = tracer;
-        Connection = connection;
-        ConfigResolver = configResolver;
-    }
+    protected const int PageSize = 5000;
 
-    protected IConfigResolver ConfigResolver { get; }
+    protected IConfigResolver ConfigResolver { get; } = configResolver;
 
-    protected IOrganizationService Connection { get; }
-    protected ITracer Tracer { get; }
+    protected IOrganizationService Connection { get; } = connection;
+    protected ITracer Tracer { get; } = tracer;
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
+    public override int Execute(CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
 
     private bool Execute(TConfig args)
     {

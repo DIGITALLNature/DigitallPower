@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.maintenance.Base;
@@ -17,9 +20,10 @@ public sealed class AutoNumberFormatAction : BaseMaintenance
 
     protected override bool Invoke(MaintenanceVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         //read config
-        if (!ConfigResolver.GetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
+        if (!ConfigResolver.TryGetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
         {
             return Tracer.End(this, false);
         }
@@ -34,7 +38,7 @@ public sealed class AutoNumberFormatAction : BaseMaintenance
         var result = true;
         foreach (var autoNumberFormat in autoNumberFormats)
         {
-            result = Process(autoNumberFormat) & result;
+            result = Process(autoNumberFormat) && result;
         }
 
         return Tracer.End(this, result);

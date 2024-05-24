@@ -1,4 +1,7 @@
-﻿using FakeXrmEasy.Abstractions;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
@@ -20,7 +23,7 @@ public class RemoveSolutionComponentExecutor : IFakeMessageExecutor
     public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
     {
         //var typed = (RemoveSolutionComponentRequest)request;
-        Thread.Sleep(2000);
+        Thread.Sleep(TestFixtures.FakeCallDurations);
         return new RemoveSolutionComponentResponse();
     }
 }

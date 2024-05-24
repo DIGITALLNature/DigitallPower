@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Globalization;
 using System.Text.Json;
 using CsvHelper;
 using dgt.power.analyzer.Base;
@@ -10,15 +13,14 @@ using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Abstractions;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
-using Spectre.Console.Testing;
 
 namespace dgt.power.analyzer.tests;
 
+[Collection("Serial_Analyzer_Tests")]
 public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
 {
     private const string SolutionUniqueName = "customizations";

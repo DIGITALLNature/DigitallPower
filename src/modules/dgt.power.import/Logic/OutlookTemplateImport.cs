@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using System.Xml.Linq;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -8,6 +10,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
@@ -15,18 +18,22 @@ namespace dgt.power.import.Logic;
 
 public sealed class OutlookTemplateImport : BaseImport
 {
-    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
+    private readonly int _sleepTime;
+
+    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(
         tracer, connection, configResolver)
     {
+        _sleepTime = configuration.GetValue<int>("pollrate");
     }
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
 
-        if (!ConfigResolver.GetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
+        if (!ConfigResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
         {
             return Tracer.NotConfigured(this);
         }
@@ -47,7 +54,7 @@ public sealed class OutlookTemplateImport : BaseImport
                 result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
-                }) & result;
+                }) && result;
             }
 
             if (!queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == false)
@@ -56,7 +63,7 @@ public sealed class OutlookTemplateImport : BaseImport
                 result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = true
-                }) & result;
+                }) && result;
             }
         }
 
@@ -68,16 +75,16 @@ public sealed class OutlookTemplateImport : BaseImport
 
         foreach (var outlookTemplate in queries.OutlookTemplates)
         {
-            result = UpsertOutlookTemplate(savedQueries, outlookTemplate, result);
+            result = UpsertOutlookTemplate(savedQueries, outlookTemplate) && result;
         }
 
         return Tracer.End(this, result);
     }
 
-    private bool UpsertOutlookTemplate(List<SavedQuery> savedQueries,
-        OutlookTemplate outlookTemplate, bool result)
+    private bool UpsertOutlookTemplate(List<SavedQuery> savedQueries, OutlookTemplate outlookTemplate)
     {
-        var savedQuery = savedQueries.FirstOrDefault(e => e.Name == outlookTemplate.Name);
+        var result = true;
+        var savedQuery = savedQueries.Find(e => e.Name == outlookTemplate.Name);
         if (savedQuery == null)
         {
             Tracer.Log($"Create OutlookTemplate {outlookTemplate.Name}", TraceEventType.Information);
@@ -90,7 +97,7 @@ public sealed class OutlookTemplateImport : BaseImport
                 ReturnedTypeCode = outlookTemplate.Entity,
                 Name = outlookTemplate.Name,
                 Description = $"{outlookTemplate.Description} ({DateTime.UtcNow:yyyy-MM-dd HH:mm:ss})"
-            }, out _) & result;
+            }, out _);
         }
         else
         {
@@ -105,11 +112,10 @@ public sealed class OutlookTemplateImport : BaseImport
                 result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
-                }) & result;
-                Thread.Sleep(30000);
-                result = Connection.TryDelete(SavedQuery.EntityLogicalName, savedQuery.Id) &
-                         result;
-                Thread.Sleep(30000);
+                }) && result;
+                Thread.Sleep(_sleepTime);
+                result = Connection.TryDelete(SavedQuery.EntityLogicalName, savedQuery.Id) && result;
+                Thread.Sleep(_sleepTime);
                 result = Connection.TryCreate(new SavedQuery
                 {
                     FetchXml = update,
@@ -119,7 +125,7 @@ public sealed class OutlookTemplateImport : BaseImport
                     ReturnedTypeCode = outlookTemplate.Entity,
                     Name = outlookTemplate.Name,
                     Description = $"{outlookTemplate.Description} ({DateTime.UtcNow:yyyy-MM-dd HH:mm:ss})"
-                }, out _) & result;
+                }, out _) && result;
             }
             else
             {
@@ -159,7 +165,7 @@ public sealed class OutlookTemplateImport : BaseImport
                     return false;
                 }
 
-                if (attr.Value.ToLower(CultureInfo.InvariantCulture) != secondary.Attribute(attr.Name.LocalName)?.Value.ToLower(CultureInfo.InvariantCulture))
+                if (attr.Value.ToUpperInvariant() != secondary.Attribute(attr.Name.LocalName)?.Value.ToUpperInvariant())
                 {
                     return false;
                 }
@@ -181,7 +187,7 @@ public sealed class OutlookTemplateImport : BaseImport
             {
                 var primaryElement = primary.Elements().Skip(i).Take(1).Single();
                 var secondaryElement = secondary.Elements().Skip(i).Take(1).Single();
-                if (XmlCompare(primaryElement, secondaryElement) == false)
+                if (!XmlCompare(primaryElement, secondaryElement))
                 {
                     return false;
                 }

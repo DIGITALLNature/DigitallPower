@@ -1,4 +1,7 @@
-﻿using dgt.power.analyzer.Logic;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.analyzer.Logic;
 using dgt.power.analyzer.tests.Base;
 using dgt.power.analyzer.Base;
 using dgt.power.dataverse;
@@ -9,6 +12,7 @@ using FakeXrmEasy.Extensions;
 
 namespace dgt.power.analyzer.tests;
 
+[Collection("Serial_Analyzer_Tests")]
 public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponentsAnalyze>
 {
     private const string SolutionUniqueName = "customizations";

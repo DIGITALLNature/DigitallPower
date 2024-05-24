@@ -45,8 +45,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.profile.tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.profile", "src\modules\dgt.power.profile\dgt.power.profile.csproj", "{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.integration.tests", "tests\dgt.power.integration.tests\dgt.power.integration.tests.csproj", "{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.push.tests", "tests\dgt.power.push.tests\dgt.power.push.tests.csproj", "{5DA38430-4E0B-47F8-AD02-44E02D62E453}"
 EndProject
 Global
@@ -127,10 +125,6 @@ Global
 		{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -157,7 +151,6 @@ Global
 		{8988C1F2-F468-4AE7-985B-13E6EE2D2208} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
 		{4B94256F-7AF4-4B87-B18C-787E8434E811} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
 		{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9} = {C4781DC1-7787-4DCB-8B42-347B608E3A5A}
-		{7BF9C847-EEDE-4F05-B5E0-4A550B6BCEF2} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

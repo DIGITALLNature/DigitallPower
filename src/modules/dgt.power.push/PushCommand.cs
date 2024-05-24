@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,15 +19,15 @@ namespace dgt.power.push;
 
 public class PushCommand : Command<PushVerb>, IPowerLogic
 {
-    private readonly IConfigResolver _configResolver;
     private readonly IOrganizationService _connection;
+    private readonly WebresourcesProcessor _webresourcesProcessor;
     private readonly ITracer _tracer;
 
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection)
+    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor)
     {
         _tracer = tracer;
-        _configResolver = configResolver;
         _connection = connection;
+        _webresourcesProcessor = webresourcesProcessor;
     }
 
     public override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings)
@@ -38,7 +41,9 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             {
                 // ReSharper disable once ObjectCreationAsStatement - Justification:  Set Earlybound Resolution fixed
 #pragma warning disable CA1806
+#pragma warning disable S1848
                 new DataContext(_connection);
+#pragma warning restore S1848
 #pragma warning restore CA1806
 
 
@@ -156,29 +161,10 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
     private void ProcessWebresourcesFolder(PushVerb settings, StatusContext ctx)
     {
-        var processor = new WebresourcesProcessor(_connection);
+        var statusCallback = (string status) => {
+            ctx.Status(status);
+        };
 
-        ctx.Status("Check Settings");
-
-        processor.LoadSolution(settings.Solution, out bool isDefault);
-        if (settings.DeleteObsolete && isDefault)
-        {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Delete Obsolete [bold red]without[/] proper solution set - aborting");
-            return;
-        }
-
-        ctx.Status("Discover Webresources");
-        processor.DiscoverWebresources(settings.Target);
-
-        ctx.Status("Upsert Webresources");
-        processor.UpsertResources(settings.Publish);
-
-        if (settings.DeleteObsolete)
-        {
-            processor.DiscoverObsoleteWebresources();
-            ctx.Status("Delete Webresources");
-            processor.DeleteResources();
-        }
+        _webresourcesProcessor.Process(settings, statusCallback);
     }
-
 }

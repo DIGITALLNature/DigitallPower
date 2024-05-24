@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
@@ -20,6 +23,7 @@ public sealed class UserRoleExport : BaseExport
 
     protected override bool Invoke(ExportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         var fileDir = args.FileDir;
@@ -98,7 +102,8 @@ public sealed class UserRoleExport : BaseExport
         );
         roLink.EntityAlias = "ro";
 
-        while (true)
+        bool moreRecords = true;
+        while (moreRecords)
         {
             // Retrieve the page.
             var results = service.RetrieveMultiple(userQuery);
@@ -131,10 +136,8 @@ public sealed class UserRoleExport : BaseExport
                 userQuery.PageInfo.PageNumber++;
                 userQuery.PageInfo.PagingCookie = results.PagingCookie;
             }
-            else
-            {
-                break;
-            }
+
+            moreRecords = results.MoreRecords;
         }
 
         foreach (var userRole in userRoles)

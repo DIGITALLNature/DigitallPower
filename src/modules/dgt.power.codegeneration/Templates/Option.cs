@@ -1,4 +1,7 @@
-﻿#pragma warning disable CA1716
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+#pragma warning disable CA1716
 namespace dgt.power.codegeneration.Templates
 {
     public struct Option

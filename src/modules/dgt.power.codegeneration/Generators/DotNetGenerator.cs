@@ -1,4 +1,8 @@
-﻿using dgt.power.codegeneration.Base;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
+using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
@@ -20,6 +24,8 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void PrepareDirectory(CodeGenerationVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+
         if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder)))
         {
             Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder));
@@ -38,7 +44,13 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void GenerateActions(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (config.SuppressActions) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.SuppressActions)
+        {
+            return;
+        }
 
 
         var actions = _metadataService.RetrieveActions(config);
@@ -54,7 +66,14 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (config.SuppressSdkMessages) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.SuppressSdkMessages)
+        {
+            return;
+        }
+
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
         using var file = File.CreateText(fileName);
@@ -66,7 +85,13 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
-        if (!config.GlobalOptionSets.Any()) return;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (!config.GlobalOptionSets.Any())
+        {
+            return;
+        }
 
         var optionSets = _metadataService.RetrieveOptionSets(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
@@ -80,6 +105,9 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void GenerateContext(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         var contextFile = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Context}.cs");
 
         using var file = File.CreateText(contextFile);
@@ -91,6 +119,9 @@ public class DotNetGenerator : IDotNetGenerator
 
     public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
         foreach (var entity in config.Entities)
         {
             var metadata = _metadataService.RetrieveEntityMetadata(entity,

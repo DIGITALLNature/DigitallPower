@@ -1,4 +1,7 @@
-﻿using System.IO.IsolatedStorage;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,9 +14,11 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
+// ReSharper disable RedundantUsingDirective
 using dgt.power.common.Commands;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
+// ReSharper restore RedundantUsingDirective
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.export.Base;
@@ -24,6 +29,7 @@ using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using dgt.power.push.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
@@ -32,8 +38,14 @@ using NuGet.Protocol.Core.Types;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
+var defaultConfiguration = new Dictionary<string, string?>
+{
+    {"pollrate", "5000"}
+};
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
+    .AddInMemoryCollection(defaultConfiguration)
     .AddJsonFile("dgtp.json", optional: true)
     .AddEnvironmentVariables("dgtp:")
     .Build();
@@ -67,6 +79,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetCommand, DotNetCommand>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
+registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -88,7 +101,7 @@ app.Configure(config =>
     config.AddBranch<ExportVerb>("export", export =>
     {
         export.SetDescription("Exports artifacts from the current Dataverse Environment");
-        export.AddExample(new[] {"export", "bulkdeletes", "--filedir", "c:/TargetDir"});
+        export.AddExample("export", "bulkdeletes", "--filedir", "c:/TargetDir");
         export.AddCommand<TeamTemplateExport>("teamtemplates")
             .WithDescription("Exports the existing teamtemplates from the current environment");
         export.AddCommand<BulkDeleteExport>("bulkdeletes")
@@ -113,26 +126,41 @@ app.Configure(config =>
         maintenance =>
         {
             maintenance.SetDescription("Executes maintenance Tasks against the current Dataverse environment");
-            maintenance.AddExample(new[] {"maintenance", "bulkdelete"});
+            maintenance.AddExample("maintenance", "bulkdelete");
             maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                 .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                .WithExample(new[] {"maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml"});
+                .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml");
             maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                 .WithDescription("Sets the auto number format for specified columns")
-                .WithExample(new[] {"maintenance", "autonumber", "--config", "./config.json"});
+                .WithExample("maintenance", "autonumber", "--config", "./config.json");
             maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
                 .WithDescription("Prevents all calculated fields from receiving an active layer.")
-                .WithExample(new[] {"maintenance", "protectfields"});
+                .WithExample("maintenance", "protectfields");
             maintenance.AddCommand<ExportCarrierInfo>("carrierinfo")
                 .WithDescription(
-                    "Exports all active carriers from an environment to a json file. To see what an carrier is check [link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
-                .WithExample(new[] {"maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json"});
+                    "Exports all active carriers from an environment to a json file. To see what an carrier is check " +
+                    "[link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
+                .WithExample("maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json");
             maintenance.AddCommand<IncrementSolutionVersion>("solution-version")
                 .WithDescription("Increments the solution version by given flag")
-                .WithExample(new[] {"maintenance", "solution-version", "sample_solution", "--minor"});
+                .WithExample("maintenance", "solution-version", "sample_solution", "--minor");
+            maintenance.AddCommand<CreateWorkflowStateConfig>("createworkflowstate")
+                .WithDescription("Creates a workflowstate configuration file")
+                .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--solutions", "solution1,solution2")
+                .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--publishers", "publisher1,publisher2");
             maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
                 .WithDescription("Updates workflows with given configuration")
-                .WithExample(new[] {"maintenance", "workflowstate", "--config", "./config.json"});
+                .WithExample("maintenance", "workflowstate", "--config", "./config.json");
+            maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
+                .WithDescription("Removes solution components that are already existing")
+                .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
+            maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
+                .WithDescription("Add Messagefiltering for PowerFx Plugins")
+                .WithExample("maintenance","filterfxplugins","--config", "./config.json");
+            maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
+                .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
+                .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
+
         });
 
     config.AddBranch<AnalyzeVerb>("analyze", analyze =>
@@ -142,21 +170,23 @@ app.Configure(config =>
             .WithDescription("Scans the specified solutions for entities containing with assets");
         analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
             .WithDescription("Scans the specified (unmanaged) solutions for components without active layer")
-            .WithExample(new[] {"analyze", "noactivelayer", "--inline", "solution1,solution2"});
+            .WithExample("analyze", "noactivelayer", "--inline", "solution1,solution2");
         analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
             .WithDescription("Scans for components that are in multiple of the specified solutions");
+        analyze.AddCommand<RedundantPatchAnalyze>("redundantpatches")
+            .WithDescription("Scans for patch solutions that are not longer needed because all contained elements are not top-layer anymore");
         analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
             .WithDescription("Scans the specified (managed) solutions for components with active layer")
-            .WithExample(new[] {"analyze", "activelayer", "--inline", "solution1,solution2"});
+            .WithExample("analyze", "activelayer", "--inline", "solution1,solution2");
         analyze.AddCommand<TopLayerAnalyze>("toplayer")
             .WithDescription("Scans the specified (managed) solutions for components where solution is not top layer")
-            .WithExample(new[] {"analyze", "toplayer", "--inline", "solution1,solution2"});
+            .WithExample("analyze", "toplayer", "--inline", "solution1,solution2");
     });
 
     config.AddBranch<ImportVerb>("import", import =>
     {
         import.SetDescription("import specific artifacts in the current Dataverse environment");
-        import.AddExample(new[] {"import", "outlooktemplates", "--filedir", "c:/TargetDir"});
+        import.AddExample("import", "outlooktemplates", "--filedir", "c:/TargetDir");
         import.AddCommand<OutlookTemplateImport>("outlooktemplates");
         import.AddCommand<UserRoleImport>("userroles");
         import.AddCommand<QueueImport>("queues");
@@ -172,11 +202,11 @@ app.Configure(config =>
     config.AddCommand<CodeGenerationCommand>("codegeneration")
         .WithAlias("cg")
         .WithDescription("Generates .cs, .ts and metadata.xml modelfiles for Dataverse")
-        .WithExample(new[] {"codegeneration", "c:/TargetDir", "-c", "genconfig.json"});
+        .WithExample("codegeneration", "c:/TargetDir", "-c", "genconfig.json");
 
     config.AddCommand<PushCommand>("push")
         .WithDescription("Import specific Dataverse Artefacts")
-        .WithExample(new[] {"push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution"});
+        .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
 
     config.Settings.ApplicationName = "dgtp";
 

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.ComponentModel;
 using dgt.power.common;
 using Spectre.Console.Cli;
 
@@ -26,4 +29,8 @@ public class PushVerb : BaseProgramSettings
     [CommandOption("--publish")]
     [Description("Publish changed objects")]
     public bool Publish { get; set; }
+
+    [CommandOption("--config")]
+    [Description("Configuration file for webressources mapping")]
+    public string Config { get; set; }
 }

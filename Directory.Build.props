@@ -15,9 +15,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.12.1</Version>
-    <InformationalVersion>1.12.1</InformationalVersion>
-    <RepositoryCommit>299ca8ed48e63319e7b52d51de564b4d00090685</RepositoryCommit>
+    <Version>2.0.0-beta.8</Version>
+    <InformationalVersion>2.0.0-beta.8</InformationalVersion>
+    <RepositoryCommit>a13d169206c8ab1a883541a4926cc48ce69e77e4</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">

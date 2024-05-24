@@ -1,4 +1,7 @@
-﻿using dgt.power.common;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.common;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using dgt.power.codegeneration.Constants;
@@ -18,7 +21,7 @@ public class CodeGenerationVerb : BaseProgramSettings
     [CommandOption("-f|--folder")]
     [Description("Define an alternate name for the model folder. The default will be 'Model'")]
     [DefaultValue(Folders.Model)]
-    public string Folder { get; init; } = Folders.Model;
+    public string Folder { get; init; } = Folders.Model ;
 
     [CommandOption("-c|--config")]
     [Description("Full path to the config file, e.g. C:\\temp\\config.json")]

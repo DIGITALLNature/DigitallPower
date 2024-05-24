@@ -1,4 +1,7 @@
-﻿using System.Activities;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Activities;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -20,7 +23,7 @@ internal class AssemblyModelBuilder
 {
     private readonly DataContext _context;
 
-    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration" };
+    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration", "Digitall.APower.Registration" };
 
     private readonly string[] _knownPluginAttributes =
     {
@@ -102,7 +105,7 @@ internal class AssemblyModelBuilder
 
 
             var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
-            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
 
             foreach (var nugetDlls in Directory.GetFiles(tempPath, "*.dll"))
             {

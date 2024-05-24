@@ -2,6 +2,9 @@ name: Build DGTP
 
 on:
   push:
+    branches-ignore:
+      - main
+      - beta
 
 jobs:
   build:
@@ -14,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Cache Packages
       uses: actions/cache@v3

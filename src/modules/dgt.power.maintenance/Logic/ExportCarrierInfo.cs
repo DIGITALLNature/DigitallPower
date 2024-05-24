@@ -1,7 +1,9 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Commands;
 using dgt.power.common.Extensions;
@@ -19,7 +21,7 @@ namespace dgt.power.maintenance.Logic;
 
 public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 {
-    public const string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
+    public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
     private readonly IFileService _fileService;
 
     public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService) : base(
@@ -30,32 +32,40 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
     public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
     {
-        var isSuccessfulEc4u = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
-        {
-            EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4uCarrier.EntityLogicalName
-        }, out _);
-
-        var isSuccessfulDgt= OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        return (isSuccessfulEc4u || isSuccessfulDgt)
+        var isSuccessfulEc4u = !isSuccessfulDgt && OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = Ec4uCarrier.EntityLogicalName
+        }, out _);
+
+        return (isSuccessfulDgt || isSuccessfulEc4u)
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
     public override ExitCode Execute(CarrierInfoSettings settings)
     {
+        Debug.Assert(settings != null, nameof(settings) + " != null");
+
         var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = Ec4uCarrier.EntityLogicalName
         }, out _);
 
-        List<Ec4uCarrier> carriers;
+        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        {
+            EntityFilters = EntityFilters.Entity,
+            LogicalName = DgtCarrier.EntityLogicalName
+        }, out _);
+
+        List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
         if (isSuccessfulOld)
         {
             carriers = DataContext.Ec4uCarrierSet
@@ -74,7 +84,8 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
                 })
                 .ToList();
         }
-        else
+
+        if(isSuccessfulDgt)
         {
             carriers = DataContext.DgtCarrierSet
                 .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
@@ -112,7 +123,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         return ExitCode.Success;
     }
 
-    private bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
+    private static bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
     {
         return tuple.Solution != null;
     }
@@ -128,9 +139,9 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
     };
 
 
-    private bool IsCarrierValid(Ec4uCarrier carrier)
+    private static bool IsCarrierValid(Ec4uCarrier carrier)
     {
-        if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid, out _))
+        if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid,CultureInfo.InvariantCulture, out _))
         {
             return true;
         }
@@ -152,14 +163,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             })
             .SingleOrDefault();
 
-        if (solution != null)
-        {
-            AnsiConsole.MarkupLine($"found carrier solution [green]{solution.UniqueName}[/]");
-        }
-        else
-        {
-            AnsiConsole.MarkupLine($"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
-        }
+        AnsiConsole.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
 
         return (solution, tuple.Order);
     }
@@ -167,6 +171,6 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
     private static (Guid SolutionId, Ec4uCarrier Carrier) ExtractIdAndOrder(Ec4uCarrier carrier)
     {
         carrier.Ec4uCarTransportOrderNo ??= -1;
-        return (Guid.Parse(carrier.Ec4uCarSolutionid!), carrier);
+        return (Guid.Parse(carrier.Ec4uCarSolutionid!,CultureInfo.InvariantCulture), carrier);
     }
 }

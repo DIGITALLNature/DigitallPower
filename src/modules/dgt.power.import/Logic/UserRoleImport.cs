@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -18,10 +21,11 @@ public sealed class UserRoleImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
-        if (!ConfigResolver.GetConfigFile<UserRoles>(args.FileDir, fileName, out var userRoles))
+        if (!ConfigResolver.TryGetConfigFile<UserRoles>(args.FileDir, fileName, out var userRoles))
         {
             return Tracer.NotConfigured(this);
         }
@@ -106,7 +110,7 @@ public sealed class UserRoleImport : BaseImport
                     TraceEventType.Information);
                 result = Connection.TryAssociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
-                    new EntityReferenceCollection(missingRoles)) & result;
+                    new EntityReferenceCollection(missingRoles)) && result;
             }
 
             var spareRoles = (from role in assignedRoles
@@ -119,7 +123,7 @@ public sealed class UserRoleImport : BaseImport
                     TraceEventType.Information);
                 result = Connection.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
-                    new EntityReferenceCollection(spareRoles)) & result;
+                    new EntityReferenceCollection(spareRoles)) && result;
             }
         }
 

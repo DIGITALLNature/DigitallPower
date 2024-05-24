@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Text.Json.Serialization;
 
 namespace dgt.power.common.Logic;
 
@@ -21,15 +24,7 @@ public class Identities : IIdentities
 
     public void Upsert(string key, Identity identity)
     {
-        if (IdentityStore.ContainsKey(key))
-        {
-            IdentityStore[key] = identity;
-        }
-        else
-        {
-            IdentityStore.Add(key, identity);
-        }
-
+        IdentityStore[key] = identity;
         Current = key;
     }
 
@@ -43,7 +38,7 @@ public class Identities : IIdentities
         }
     }
 
-    [JsonIgnore] public IEnumerable<string> Keys => IdentityStore.Keys;
+    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key,i.Value is TokenIdentity?  "Token" : "Classic"));
 
     public void SetCurrent(string key)
     {
@@ -54,4 +49,6 @@ public class Identities : IIdentities
 
         Current = key;
     }
+
+    public bool Contains(string key) => IdentityStore.ContainsKey(key);
 }

@@ -3,7 +3,6 @@
 
 using System.ComponentModel;
 using dgt.power.common;
-using dgt.power.maintenance.Base;
 using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Model.Settings;

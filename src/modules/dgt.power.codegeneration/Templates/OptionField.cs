@@ -1,4 +1,7 @@
-﻿using dgt.power.codegeneration.Constants;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;

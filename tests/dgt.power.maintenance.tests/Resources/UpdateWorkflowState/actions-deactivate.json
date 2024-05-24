@@ -1,0 +1,13 @@
+﻿{
+    "actions": {
+        "Draft -> Draft": {
+            "disabled": true
+        },
+        "Suspended -> Suspended": {
+            "disabled": true
+        },
+        "Activated -> Draft":  {
+            "disabled": true
+        }
+    }
+}

@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Text.Json.Serialization;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -16,10 +19,10 @@ public class EntityAllAssets
     //regex
     [JsonPropertyName("whitelist")]
     [JsonRequired]
-    public List<string> WhiteList { get; init; } = new();
+    public IList<string> WhiteList { get; init; } = new List<string>();
 
     //regex
     [JsonPropertyName("blacklist")]
     [JsonRequired]
-    public List<string> BlackList { get; init; } = new();
+    public IList<string> BlackList { get; init; } = new List<string>();
 }

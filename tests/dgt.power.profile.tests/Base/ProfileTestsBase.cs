@@ -1,4 +1,7 @@
-﻿using System.IO.IsolatedStorage;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.IO.IsolatedStorage;
 using dgt.power.common;
 using dgt.power.common.Logic;
 using dgt.power.tests;
@@ -35,12 +38,12 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
 
     protected ProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>().As<ProfileManager>();
 
-    protected Identities GetIdentities() => ProfileManager.GetIdentities().As<Identities>();
+    protected Identities GetIdentities() => ProfileManager.LoadIdentities().As<Identities>();
 
     protected void AddIdentity(string name, string connectionString)
     {
         var profileManager = ProfileManager;
-        profileManager.GetIdentities().Upsert(name, new Identity {ConnectionString = connectionString});
+        profileManager.LoadIdentities().Upsert(name, new Identity {ConnectionString = connectionString});
         profileManager.Save();
     }
 

@@ -1,6 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -66,8 +66,8 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
 
         [DebuggerNonUserCode]
 		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -663,7 +663,7 @@ namespace dgt.power.dataverse
             if (_trackChanges)
             {
                 var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
                 {
                     attr.Add(attrName,this[attrName]);
                 }

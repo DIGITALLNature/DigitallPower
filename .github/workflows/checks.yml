@@ -1,14 +1,16 @@
 name: Check DGTP
 
 on:
+  push:
+    branches: [ "beta" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "beta" ]
 
 jobs:
   check:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -22,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Cache Packages
       uses: actions/cache@v3
@@ -38,15 +40,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Enable Integration Tests
-      env:
-        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
-      if: env.DGTP_TESTS_INTEGRATION_CONNECTION != null
-      run: echo "DGTP_TESTS_INTEGRATION_RUN=TRUE" >> $GITHUB_ENV
-
     - name: Run Tests
-      env:
-        DGTP_TESTS_INTEGRATION_CONNECTION: ${{ secrets.DGTP_TESTS_INTEGRATION_CONNECTION }}
       run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings --blame-hang-timeout 3m
 
     - name: Test Report

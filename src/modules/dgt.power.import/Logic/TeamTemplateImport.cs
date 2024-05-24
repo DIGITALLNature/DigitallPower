@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -19,10 +22,11 @@ public sealed class TeamTemplateImport : BaseImport
 
     protected override bool Invoke(ImportVerb args)
     {
+        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
-        if (!ConfigResolver.GetConfigFile<TeamTemplates>(args.FileDir, fileName, out var templates))
+        if (!ConfigResolver.TryGetConfigFile<TeamTemplates>(args.FileDir, fileName, out var templates))
         {
             return Tracer.NotConfigured(this);
         }
@@ -49,74 +53,70 @@ public sealed class TeamTemplateImport : BaseImport
 
         //find templates which need to be removed
         Tracer.Log("delete check", TraceEventType.Information);
-        foreach (var teamTemplate in teamTemplates.Where(e => templates.All(c => e.Id != c.TeamTemplateId)))
+        foreach (var teamTemplate in teamTemplates.Where(e => templates.TrueForAll(c => e.Id != c.TeamTemplateId)))
         {
-            result = DeleteTeamTemplate(teamTemplate, result);
+            result = DeleteTeamTemplate(teamTemplate) && result;
         }
 
         //find templates which need to be updated
         Tracer.Log("update check", TraceEventType.Information);
-        foreach (var updateTemplate in templates.Where(c => teamTemplates.Any(e => e.Id == c.TeamTemplateId)))
+        foreach (var updateTemplate in templates.Where(c => teamTemplates.Exists(e => e.Id == c.TeamTemplateId)))
         {
-            result = UpdateTeamTemplate(teamTemplates, updateTemplate, entities, result);
+            result = UpdateTeamTemplate(teamTemplates, updateTemplate, entities) && result;
         }
 
         //find templates which need to be created
         Tracer.Log("create check", TraceEventType.Information);
-        foreach (var newTemplate in templates.Where(c => teamTemplates.All(e => e.Id != c.TeamTemplateId)))
+        foreach (var newTemplate in templates.Where(c => teamTemplates.TrueForAll(e => e.Id != c.TeamTemplateId)))
         {
-            result = CreateTeamTemplate(entities, newTemplate, result);
+            result = CreateTeamTemplate(entities, newTemplate) && result;
         }
 
         return Tracer.End(this, result);
     }
 
-    private bool CreateTeamTemplate(List<EntityMetadata> entities, TeamTemplate newTemplate, bool result)
+    private bool CreateTeamTemplate(List<EntityMetadata> entities, TeamTemplate newTemplate)
     {
-        var entity = entities.FirstOrDefault(e => e.LogicalName == newTemplate.Entity);
+        var entity = entities.Find(e => e.LogicalName == newTemplate.Entity);
 
         if (entity?.ObjectTypeCode == null)
         {
             Tracer.Log($"unknown template entity: {newTemplate.Entity}", TraceEventType.Verbose);
-            result = false;
-            return result;
+            return false;
         }
 
         if (entity.AutoCreateAccessTeams == null)
         {
             Tracer.Log($"access teams not enabled template entity: {newTemplate.Entity}", TraceEventType.Verbose);
-            result = false;
-            return result;
+            return false;
         }
 
         //create template
         Tracer.Log($"create template: {newTemplate.TeamTemplateName}", TraceEventType.Verbose);
-        result = Connection.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
+        return Connection.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
         {
             TeamTemplateName = newTemplate.TeamTemplateName,
             Description = newTemplate.Description,
             DefaultAccessRightsMask = newTemplate.DefaultAccessRightsMask,
             ObjectTypeCode = entity.ObjectTypeCode
-        }, out _) & result;
-        return result;
+        }, out _);
     }
 
-    private bool UpdateTeamTemplate(IList<dataverse.TeamTemplate> teamTemplates, TeamTemplate updateTemplate, List<EntityMetadata> entities,
-        bool result)
+    private bool UpdateTeamTemplate(IEnumerable<dataverse.TeamTemplate> teamTemplates, TeamTemplate updateTemplate, List<EntityMetadata> entities)
     {
         var existingTemplate = teamTemplates.Single(e => e.Id == updateTemplate.TeamTemplateId);
 
-        var entity = entities.FirstOrDefault(e => e.LogicalName == updateTemplate.Entity)?.ObjectTypeCode;
+        var entity = entities.Find(e => e.LogicalName == updateTemplate.Entity)?.ObjectTypeCode;
 
         if (entity == null)
         {
             Tracer.Log($"unknown template entity: {updateTemplate.Entity}", TraceEventType.Verbose);
-            result = false;
-            return result;
+            return false;
         }
 
         var unchangedRule = Unchanged(existingTemplate, entity.Value, updateTemplate);
 
+        var result = true;
         if (unchangedRule)
         {
             Tracer.Log($"unchanged template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
@@ -132,18 +132,17 @@ public sealed class TeamTemplateImport : BaseImport
                 //IsSystem = updateTemplate.IsSystem,
                 DefaultAccessRightsMask = updateTemplate.DefaultAccessRightsMask,
                 ObjectTypeCode = entity
-            }) & result;
+            });
         }
 
         return result;
     }
 
-    private bool DeleteTeamTemplate(dataverse.TeamTemplate teamTemplate, bool result)
+    private bool DeleteTeamTemplate(dataverse.TeamTemplate teamTemplate)
     {
         //delete template
         Tracer.Log($"delete template: {teamTemplate.TeamTemplateName}", TraceEventType.Verbose);
-        result = Connection.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id) & result;
-        return result;
+        return Connection.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
     }
 
     private static bool Unchanged(dataverse.TeamTemplate existing, int entity, TeamTemplate config)

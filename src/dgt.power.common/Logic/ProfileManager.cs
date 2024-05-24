@@ -1,4 +1,7 @@
-﻿using System.IO.IsolatedStorage;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.IO.IsolatedStorage;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
@@ -12,13 +15,17 @@ public class ProfileManager : IProfileManager
     private readonly IsolatedStorageFile _storage;
     private Identities _identities = new();
 
-    public ProfileManager(IsolatedStorageFile storage, string identityFileName = "identities.dat")
+    public ProfileManager(IsolatedStorageFile storage) : this(storage, "identities.dat")
+    {
+    }
+
+    public ProfileManager(IsolatedStorageFile storage, string identityFileName)
     {
         _storage = storage;
         _identityFileName = identityFileName;
     }
 
-    public IIdentities GetIdentities()
+    public IIdentities LoadIdentities()
     {
         if (!_identities.IsEmpty)
         {
@@ -47,6 +54,13 @@ public class ProfileManager : IProfileManager
             AnsiConsole.WriteException(e);
         }
 
+        // TODO Remove 2025 - Mitigation of changed Key-Format
+        if (_identities != null)
+        {
+            _identities.IdentityStore =
+                _identities.IdentityStore.ToDictionary(k => k.Key.ToUpperInvariant(), v => v.Value);
+        }
+
         return _identities ??= new Identities();
     }
 
@@ -65,7 +79,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.Current;
@@ -78,7 +92,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.CurrentIdentity;
@@ -91,7 +105,7 @@ public class ProfileManager : IProfileManager
         {
             if (_identities.IsEmpty)
             {
-                GetIdentities();
+                LoadIdentities();
             }
 
             return _identities.CurrentConnectionString;
@@ -138,7 +152,7 @@ public class ProfileManager : IProfileManager
 
     private static IDataProtector GetDataProtector()
     {
-        var applicationName = "dgtp";
+        const string applicationName = "dgtp";
         var protectionProvider = DataProtectionProvider.Create(applicationName);
         var protector = protectionProvider.CreateProtector($"{applicationName}-Identity");
         return protector;
@@ -146,6 +160,8 @@ public class ProfileManager : IProfileManager
 
     private static class ProfileEnv
     {
+        #pragma warning disable S109
         public static byte[] Seed { get; } = { 22, 4, 19, 8, 6 };
+        #pragma warning restore S109
     }
 }
