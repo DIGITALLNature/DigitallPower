@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="dgt.registration" Version="1.0.1" />
-    <PackageReference Include="NuGet.Packaging" Version="6.9.1" />
+    <PackageReference Include="NuGet.Packaging" Version="6.10.0" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
     <PackageReference Include="UiPath.Workflow" Version="6.0.3" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">

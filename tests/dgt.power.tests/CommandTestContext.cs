@@ -43,7 +43,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 
     private static CommandContext GetCommandContext()
     {
-        var commandContext = new CommandContext(A.Dummy<IRemainingArguments>(), "test", null);
+        var commandContext = new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "test", null);
         return commandContext;
     }
 
