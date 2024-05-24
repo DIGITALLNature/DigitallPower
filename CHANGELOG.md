@@ -1,3 +1,31 @@
+# [2.0.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.1...v2.0.0) (2024-05-24)
+
+
+### Bug Fixes
+
+* **maintenance:** correct handling if both carrier-solutions are present ([bbc7b7d](https://github.com/DIGITALLNature/DigitallPower/commit/bbc7b7d3b7b38750d5f214f22238b896d1c896bf))
+* **push-package:** dispose to not block file ([#73](https://github.com/DIGITALLNature/DigitallPower/issues/73)) ([5ed2993](https://github.com/DIGITALLNature/DigitallPower/commit/5ed2993da4823e6aa284f2dbce854fd92d940c5b))
+
+
+### Features
+
+* **analyze:** add redundantpatches check ([#80](https://github.com/DIGITALLNature/DigitallPower/issues/80)) ([a13d169](https://github.com/DIGITALLNature/DigitallPower/commit/a13d169206c8ab1a883541a4926cc48ce69e77e4))
+* change namespace to Digitall.APower [#66](https://github.com/DIGITALLNature/DigitallPower/issues/66) ([#68](https://github.com/DIGITALLNature/DigitallPower/issues/68)) ([6e33c4e](https://github.com/DIGITALLNature/DigitallPower/commit/6e33c4e929fc8c5d721ca6c6d721908897fa1359))
+* **maintenance:** add FilterPowerFxPluginSteps ([c32fe26](https://github.com/DIGITALLNature/DigitallPower/commit/c32fe269ebc913fd3f74103656439842fb659cdb))
+* **maintenance:** check for dgt carrier first ([fb5135c](https://github.com/DIGITALLNature/DigitallPower/commit/fb5135cc815c9d502ed006ad457e16173a3db8d9))
+* **Maintenance:** option to remove redundant components in a solution compared with multiple sources solutions ([cecfac4](https://github.com/DIGITALLNature/DigitallPower/commit/cecfac46ccca2439e9a0bb0844c5fb07efce18dd))
+* **profile:** add option to do token based authentication ([c1bdd87](https://github.com/DIGITALLNature/DigitallPower/commit/c1bdd87185453e0bed4c3e3cc143856e6d639332))
+* **push:** allow mapping to push webresources ([4d6666d](https://github.com/DIGITALLNature/DigitallPower/commit/4d6666d258948de0711200f62490638af3f8405a))
+* waiting time for dataverse operations is now configurable ([5228d7e](https://github.com/DIGITALLNature/DigitallPower/commit/5228d7e244eb18ae0a9cf749f99aa3c248093bd8))
+* **workflowstate:** include other workflow categories and introduce config generator ([50260a1](https://github.com/DIGITALLNature/DigitallPower/commit/50260a187ddcc7463d6ffaa1b4293928f8aca8b3))
+
+
+### BREAKING CHANGES
+
+* **push:** no longer tries to delete the webresource if adding to solution fails
+
+Co-Authored-By: Micha Oberstein <Moberstein@users.noreply.github.com>
+
 # [2.0.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.7...v2.0.0-beta.8) (2024-03-28)
 
 
