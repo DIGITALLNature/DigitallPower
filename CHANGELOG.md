@@ -1,3 +1,10 @@
+## [2.0.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0...v2.0.1-beta.1) (2024-05-28)
+
+
+### Bug Fixes
+
+* **maintenance workflowstate:** assign workflows before enabling then  Mitigates issues with licensing when old owner is no longer licensed ([d1da4c5](https://github.com/DIGITALLNature/DigitallPower/commit/d1da4c5bd33d5b8a0ca8569de3f6a2b2b09b6587))
+
 # [2.0.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.8...v2.0.0-beta.9) (2024-05-28)
 
 
