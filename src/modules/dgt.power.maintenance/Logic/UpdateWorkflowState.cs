@@ -7,6 +7,7 @@ using System.Reflection;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -139,7 +140,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
                 }
                 catch (Exception e)
                 {
-                    Tracer?.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
+                     Tracer?.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
                     updateResult = false;
                 }
 
@@ -269,10 +270,8 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         // check if owner needs to be changed and also skip any update if workflow is still active
         if (desiredOwner != default && desiredOwner?.SystemUserId != currentOwner?.Id)
         {
-            updateWorkflow.OwnerId = desiredOwner!.ToEntityReference();
-            updateNeeded = true;
-
-            Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): marking update - owner={desiredOwnerDomainName}({desiredOwner?.Id})", TraceEventType.Information);
+            Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): chaging owner from {currentOwnerDomainName}'({currentOwner?.Id}) to owner={desiredOwnerDomainName}({desiredOwner?.Id})", TraceEventType.Information);
+            Connection.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });
         }
 
         if (!updateNeeded)
