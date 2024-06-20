@@ -1222,8 +1222,8 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[32.0.3, )",
-          "dgt.power.common": "[2.0.0-beta.8, )",
-          "dgt.power.dto": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )",
+          "dgt.power.dto": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -1233,7 +1233,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.1.22, )",
           "Spectre.Console.Cli": "[0.49.1, )",
           "System.CodeDom": "[8.0.0, )",
-          "dgt.power.common": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.common": {
@@ -1243,7 +1243,7 @@
           "Microsoft.AspNetCore.DataProtection.Extensions": "[8.0.5, )",
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.22, )",
           "Spectre.Console.Cli": "[0.49.1, )",
-          "dgt.power.dataverse": "[2.0.0-beta.8, )"
+          "dgt.power.dataverse": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.dataverse": {
@@ -1258,28 +1258,28 @@
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.8, )",
-          "dgt.power.dto": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )",
+          "dgt.power.dto": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.0.2, )",
-          "dgt.power.common": "[2.0.0-beta.8, )",
-          "dgt.power.dto": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )",
+          "dgt.power.dto": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.0-beta.8, )"
+          "dgt.power.common": "[2.0.1-beta.1, )"
         }
       },
       "dgt.power.push": {
@@ -1288,7 +1288,7 @@
           "NuGet.Packaging": "[6.10.0, )",
           "System.Reflection.MetadataLoadContext": "[8.0.0, )",
           "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[2.0.0-beta.8, )",
+          "dgt.power.common": "[2.0.1-beta.1, )",
           "dgt.registration": "[1.0.1, )"
         }
       }

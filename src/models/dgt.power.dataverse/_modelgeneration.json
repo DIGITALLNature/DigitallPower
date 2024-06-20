@@ -45,7 +45,8 @@
         "attribute",
         "ec4u_carrier",
         "dgt_carrier",
-        "webresource"
+        "webresource",
+        "solutioncomponentdefinition"
     ],
     "SuppressTypeScript": true,
     "SuppressMetaData": true,

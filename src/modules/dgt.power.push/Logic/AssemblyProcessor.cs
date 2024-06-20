@@ -93,11 +93,29 @@ internal class AssemblyProcessor
 
     private void AddPluginPackageToSolution(PluginPackage pluginPackage, string solution)
     {
-        // Plugin package = 10119
+        // Determinate Componenttype for PluginPackage
+        var scd = _service.RetrieveMultiple(new QueryExpression(SolutionComponentDefinition.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(SolutionComponentDefinition.LogicalNames.SolutionComponentType),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, PluginPackage.EntityLogicalName)
+                }
+            }
+        }).Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>();
+
+        if (scd == null)
+        {
+            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
+            throw new Exception("The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " + pluginPackage.Name);
+        }
         var addReq = new AddSolutionComponentRequest
         {
             AddRequiredComponents = false,
-            ComponentType = 10119,
+            ComponentType = scd.SolutionComponentType.Value,
             ComponentId = pluginPackage.Id,
             SolutionUniqueName = solution
         };
@@ -112,7 +130,7 @@ internal class AssemblyProcessor
         {
             try
             {
-                _service.Delete(PluginAssembly.EntityLogicalName, pluginPackage.Id);
+                _service.Delete(PluginPackage.EntityLogicalName, pluginPackage.Id);
             }
             catch (Exception rb)
             {
