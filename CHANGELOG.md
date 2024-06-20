@@ -1,3 +1,10 @@
+## [2.0.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.1...v2.0.1-beta.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* problem with adding a dependent plugin to a solution ([5f8696e](https://github.com/DIGITALLNature/DigitallPower/commit/5f8696e86d87d460052b79bef0dedd960c6d4247))
+
 ## [2.0.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0...v2.0.1-beta.1) (2024-05-28)
 
 
