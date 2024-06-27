@@ -8,6 +8,8 @@ using dgt.power.push.Model;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using PluginType = dgt.power.push.Model.PluginType;
@@ -93,11 +95,14 @@ internal class AssemblyProcessor
 
     private void AddPluginPackageToSolution(PluginPackage pluginPackage, string solution)
     {
-        // Plugin package = 10119
+        // component type is actually object type code of pluginpackage entity
+        // it is different for each environment
+        var componentType = GetPluginPackageObjectTypeCode();
+
         var addReq = new AddSolutionComponentRequest
         {
             AddRequiredComponents = false,
-            ComponentType = 10119,
+            ComponentType = componentType,
             ComponentId = pluginPackage.Id,
             SolutionUniqueName = solution
         };
@@ -122,6 +127,19 @@ internal class AssemblyProcessor
 
             throw new Exception("The Plugin Registration was aborted. Package: " + pluginPackage.Name, ex.RootException());
         }
+    }
+
+    private int GetPluginPackageObjectTypeCode()
+    {
+        var request = new RetrieveEntityRequest
+        {
+            LogicalName = PluginPackage.EntityLogicalName,
+            EntityFilters = EntityFilters.Entity
+        };
+
+        var response = (RetrieveEntityResponse) _service.Execute(request);
+        return response.EntityMetadata.ObjectTypeCode ??
+               throw new Exception("Unable to retrieve ObjectTypeCode for PluginPackage");
     }
 
     #endregion
