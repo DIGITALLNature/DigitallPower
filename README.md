@@ -28,7 +28,7 @@ With the goal of universally helping the community.
 
 ## 🚀&nbsp; Installation and Documentation
 
-The [Wiki](https://github.com/DIGITALLNature/DigitallPower/wiki) contains the documentation of all features and the parameters.
+The [Wiki on digitallnature.github.io](https://digitallnature.github.io/powertool.html) contains the documentation of all features and the parameters.
 
 But every adventure starts with:
 ```dotnetcli
@@ -41,11 +41,6 @@ dotnet tool install -g dgt.power
 The DigitallPower CLI is a **community-driven open source project** backed by DIGITALL. We are committed to a fully transparent development process and **highly appreciate any contributions**. Whether you are helping us fixing bugs, proposing new feature, improving our documentation or spreading the word - **we would love to have you as part of the DigitallPower CLI community**.
 
 
-## 📫&nbsp; Have a question? Want to chat? Ran into a problem?
-
-We are happy to answer your questions via [GitHub Discussions](https://github.com/DIGITALLNature/DigitallPower/discussions)!
-
-
 ## 🤝&nbsp; Found a bug? Missing a specific feature?
 
 Feel free to **file a new issue** with a respective title and description on the the [DigitallPower](https://github.com/DIGITALLNature/DigitallPower/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**! Have a look at our [contribution guidelines](https://github.com/DIGITALLNature/DigitallPower/contributing.md) to find out about our coding standards.
@@ -53,7 +48,7 @@ Feel free to **file a new issue** with a respective title and description on the
 
 ## ✅&nbsp; Requirements
 
-DigitallPower CLI requires DOTNET7 to be used.
+DigitallPower CLI requires DOTNET8 to be used.
 
 
 ## 📘&nbsp; License
