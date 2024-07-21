@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -134,6 +131,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Personas/Licenses the security role applies to
+		/// </summary>
+		[AttributeLogicalName("appliesto")]
+        public string? AppliesTo
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("appliesto");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AppliesTo));
+                SetAttributeValue("appliesto", value);
+                OnPropertyChanged(nameof(AppliesTo));
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier of the business unit with which the role is associated.
 		/// </summary>
 		[AttributeLogicalName("businessunitid")]
@@ -226,6 +243,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Description of the security role
+		/// </summary>
+		[AttributeLogicalName("description")]
+        public string? Description
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("description");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(Description));
+                SetAttributeValue("description", value);
+                OnPropertyChanged(nameof(Description));
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier of the data import or data migration that created this record.
 		/// </summary>
 		[AttributeLogicalName("importsequencenumber")]
@@ -242,6 +279,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(ImportSequenceNumber));
                 SetAttributeValue("importsequencenumber", value);
                 OnPropertyChanged(nameof(ImportSequenceNumber));
+            }
+        }
+
+		/// <summary>
+		/// Value indicating whether security role is auto-assigned based on user license
+		/// </summary>
+		[AttributeLogicalName("isautoassigned")]
+        public OptionSetValue? IsAutoAssigned
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("isautoassigned");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(IsAutoAssigned));
+                SetAttributeValue("isautoassigned", value);
+                OnPropertyChanged(nameof(IsAutoAssigned));
             }
         }
 
@@ -469,6 +526,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Summary of Core Table Permissions of the Role
+		/// </summary>
+		[AttributeLogicalName("summaryofcoretablepermissions")]
+        public string? SummaryofCoreTablePermissions
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("summaryofcoretablepermissions");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(SummaryofCoreTablePermissions));
+                SetAttributeValue("summaryofcoretablepermissions", value);
+                OnPropertyChanged(nameof(SummaryofCoreTablePermissions));
+            }
+        }
+
+		/// <summary>
 		/// Version number of the role.
 		/// </summary>
 		[AttributeLogicalName("versionnumber")]
@@ -557,6 +634,11 @@ namespace dgt.power.dataverse
 					public const int Deleted = 2;
 					public const int DeletedUnpublished = 3;
                 }
+			    public struct IsAutoAssigned
+                {
+					public const int No = 0;
+					public const int Yes = 1;
+                }
 			    public struct IsInherited
                 {
 					public const int TeamPrivilegesOnly = 0;
@@ -574,13 +656,16 @@ namespace dgt.power.dataverse
 		public static class LogicalNames
 		{
 				public const string RoleId = "roleid";
+				public const string AppliesTo = "appliesto";
 				public const string BusinessUnitId = "businessunitid";
 				public const string CanBeDeleted = "canbedeleted";
 				public const string ComponentState = "componentstate";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
+				public const string Description = "description";
 				public const string ImportSequenceNumber = "importsequencenumber";
+				public const string IsAutoAssigned = "isautoassigned";
 				public const string IsCustomizable = "iscustomizable";
 				public const string IsInherited = "isinherited";
 				public const string IsManaged = "ismanaged";
@@ -596,6 +681,7 @@ namespace dgt.power.dataverse
 				public const string RoleIdUnique = "roleidunique";
 				public const string RoleTemplateId = "roletemplateid";
 				public const string SolutionId = "solutionid";
+				public const string SummaryofCoreTablePermissions = "summaryofcoretablepermissions";
 				public const string VersionNumber = "versionnumber";
 		}
 		#endregion
@@ -615,6 +701,7 @@ namespace dgt.power.dataverse
             {
 				public const string LkMsdynRoleid = "lk_msdyn_roleid";
 				public const string MsdynRoleMsdynPersonasecurityrolemapping = "msdyn_role_msdyn_personasecurityrolemapping";
+				public const string MsdynRoleMsdynServicecopilotpluginroleRoleid = "msdyn_role_msdyn_servicecopilotpluginrole_roleid";
 				public const string RoleAsyncOperations = "Role_AsyncOperations";
 				public const string RoleBulkDeleteFailures = "Role_BulkDeleteFailures";
 				public const string RoleMsdynAppprofilerolemapping = "role_msdyn_appprofilerolemapping";
@@ -640,6 +727,7 @@ namespace dgt.power.dataverse
 
             public static class ManyToMany
             {
+				public const string ApplicationRole = "application_role";
 				public const string Applicationuserrole = "applicationuserrole";
 				public const string AppmodulerolesAssociation = "appmoduleroles_association";
 				public const string RoleprivilegesAssociation = "roleprivileges_association";

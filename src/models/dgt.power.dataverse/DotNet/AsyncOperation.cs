@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -298,6 +295,17 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("datablobid_name")]
+        public string? DataBlobIdName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("datablobid_name");
+            }
+        }
+
 		/// <summary>
 		/// Execution of all operations with the same dependency token is serialized.
 		/// </summary>
@@ -569,24 +577,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
 		/// <summary>
 		/// Unique identifier of the business unit that owns the system job.
 		/// </summary>
@@ -617,42 +607,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(OwningExtensionId));
                 SetAttributeValue("owningextensionid", value);
                 OnPropertyChanged(nameof(OwningExtensionId));
-            }
-        }
-
-		
-		[AttributeLogicalName("owningextensionidname")]
-        public string? OwningExtensionIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owningextensionidname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwningExtensionIdName));
-                SetAttributeValue("owningextensionidname", value);
-                OnPropertyChanged(nameof(OwningExtensionIdName));
-            }
-        }
-
-		
-		[AttributeLogicalName("owningextensiontypecode")]
-        public string? OwningExtensionTypeCode
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owningextensiontypecode");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwningExtensionTypeCode));
-                SetAttributeValue("owningextensiontypecode", value);
-                OnPropertyChanged(nameof(OwningExtensionTypeCode));
             }
         }
 
@@ -797,60 +751,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(RegardingObjectId));
                 SetAttributeValue("regardingobjectid", value);
                 OnPropertyChanged(nameof(RegardingObjectId));
-            }
-        }
-
-		
-		[AttributeLogicalName("regardingobjectidname")]
-        public string? RegardingObjectIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("regardingobjectidname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(RegardingObjectIdName));
-                SetAttributeValue("regardingobjectidname", value);
-                OnPropertyChanged(nameof(RegardingObjectIdName));
-            }
-        }
-
-		
-		[AttributeLogicalName("regardingobjectidyominame")]
-        public string? RegardingObjectIdYomiName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("regardingobjectidyominame");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(RegardingObjectIdYomiName));
-                SetAttributeValue("regardingobjectidyominame", value);
-                OnPropertyChanged(nameof(RegardingObjectIdYomiName));
-            }
-        }
-
-		
-		[AttributeLogicalName("regardingobjecttypecode")]
-        public string? RegardingObjectTypeCode
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("regardingobjecttypecode");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(RegardingObjectTypeCode));
-                SetAttributeValue("regardingobjecttypecode", value);
-                OnPropertyChanged(nameof(RegardingObjectTypeCode));
             }
         }
 
@@ -1181,6 +1081,8 @@ namespace dgt.power.dataverse
 					public const int MigrateNotesToAttachmentsJob = 85;
 					public const int MigrateArticleContentToFileStorage = 86;
 					public const int UpdatedDeactivedOnForResolvedCasesJob = 87;
+					public const int CascadeReparentDBAsyncOperation = 88;
+					public const int CascadeMergeAsyncOperation = 89;
 					public const int CascadeAssign = 90;
 					public const int CascadeDelete = 91;
 					public const int EventExpanderOperation = 92;
@@ -1193,6 +1095,9 @@ namespace dgt.power.dataverse
 					public const int UpdateModernFlowAsyncOperation = 101;
 					public const int AsyncArchiveAsyncOperation = 102;
 					public const int CancelAsyncOperations_System_ = 103;
+					public const int ProcessTableForRecycleBin = 104;
+					public const int CascadeAssignAllAsyncOperation = 105;
+					public const int AsyncRestoreJob = 187;
 					public const int ProvisionLanguageForUser = 201;
 					public const int ExportSolutionAsyncOperation = 202;
 					public const int ImportSolutionAsyncOperation = 203;
@@ -1216,6 +1121,9 @@ namespace dgt.power.dataverse
 					public const int CatalogServiceGeneratePackageAsyncOperation = 320;
 					public const int CatalogServiceSubmitApprovalRequestAsyncOperation = 321;
 					public const int CatalogServiceInstallRequestAsyncOperation = 322;
+					public const int TDSEndpointProvisioningNewTVFFunctionsAndGrantPermissionAsyncOperation = 330;
+					public const int FinOpsDeployCustomPackageAsyncOperation = 332;
+					public const int DeletesRelatedElasticTableRecordsWhenASQLRecordIsDeleted = 333;
 					public const int CascadeGrantOrRevokeAccessVersionTrackingAsyncOperation = 12801;
 					public const int AIBuilderTrainingEvents = 190690091;
 					public const int AIBuilderPredictionEvents = 190690092;
@@ -1260,6 +1168,7 @@ namespace dgt.power.dataverse
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
 				public const string Data = "data";
 				public const string DataBlobId = "datablobid";
+				public const string DataBlobIdName = "datablobid_name";
 				public const string DependencyToken = "dependencytoken";
 				public const string Depth = "depth";
 				public const string ErrorCode = "errorcode";
@@ -1276,11 +1185,8 @@ namespace dgt.power.dataverse
 				public const string Name = "name";
 				public const string OperationType = "operationtype";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningExtensionId = "owningextensionid";
-				public const string OwningExtensionIdName = "owningextensionidname";
-				public const string OwningExtensionTypeCode = "owningextensiontypecode";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
 				public const string ParentPluginExecutionId = "parentpluginexecutionid";
@@ -1289,9 +1195,6 @@ namespace dgt.power.dataverse
 				public const string RecurrencePattern = "recurrencepattern";
 				public const string RecurrenceStartTime = "recurrencestarttime";
 				public const string RegardingObjectId = "regardingobjectid";
-				public const string RegardingObjectIdName = "regardingobjectidname";
-				public const string RegardingObjectIdYomiName = "regardingobjectidyominame";
-				public const string RegardingObjectTypeCode = "regardingobjecttypecode";
 				public const string RequestId = "requestid";
 				public const string RetainJobHistory = "retainjobhistory";
 				public const string RetryCount = "retrycount";
@@ -1315,6 +1218,7 @@ namespace dgt.power.dataverse
             public static class OneToMany
             {
 				public const string AsyncOperationBulkDeleteOperation = "AsyncOperation_BulkDeleteOperation";
+				public const string AsyncOperationDeletedItemReferenceRegardingObjectId = "AsyncOperation_DeletedItemReference_RegardingObjectId";
 				public const string AsyncOperationDuplicateBaseRecord = "AsyncOperation_DuplicateBaseRecord";
 				public const string AsyncOperationEmails = "AsyncOperation_Emails";
 				public const string AsyncoperationFileAttachments = "asyncoperation_FileAttachments";
@@ -1335,20 +1239,45 @@ namespace dgt.power.dataverse
 				public const string ActivitymonitorAsyncOperations = "activitymonitor_AsyncOperations";
 				public const string ActivityPointerAsyncOperations = "ActivityPointer_AsyncOperations";
 				public const string AdminsettingsentityAsyncOperations = "adminsettingsentity_AsyncOperations";
+				public const string AdxExternalidentityAsyncOperations = "adx_externalidentity_AsyncOperations";
+				public const string AdxInvitationAsyncOperations = "adx_invitation_AsyncOperations";
+				public const string AdxInviteredemptionAsyncOperations = "adx_inviteredemption_AsyncOperations";
+				public const string AdxPortalcommentAsyncOperations = "adx_portalcomment_AsyncOperations";
+				public const string AdxSettingAsyncOperations = "adx_setting_AsyncOperations";
+				public const string AdxWebformsessionAsyncOperations = "adx_webformsession_AsyncOperations";
+				public const string AicopilotAsyncOperations = "aicopilot_AsyncOperations";
+				public const string AipluginAsyncOperations = "aiplugin_AsyncOperations";
+				public const string AipluginauthAsyncOperations = "aipluginauth_AsyncOperations";
+				public const string AipluginconversationstarterAsyncOperations = "aipluginconversationstarter_AsyncOperations";
+				public const string AipluginconversationstartermappingAsyncOperations = "aipluginconversationstartermapping_AsyncOperations";
+				public const string AipluginexternalschemaAsyncOperations = "aipluginexternalschema_AsyncOperations";
+				public const string AipluginexternalschemapropertyAsyncOperations = "aipluginexternalschemaproperty_AsyncOperations";
+				public const string AiplugingovernanceAsyncOperations = "aiplugingovernance_AsyncOperations";
+				public const string AiplugingovernanceextAsyncOperations = "aiplugingovernanceext_AsyncOperations";
+				public const string AiplugininstanceAsyncOperations = "aiplugininstance_AsyncOperations";
+				public const string AipluginoperationAsyncOperations = "aipluginoperation_AsyncOperations";
+				public const string AipluginoperationparameterAsyncOperations = "aipluginoperationparameter_AsyncOperations";
+				public const string AipluginoperationresponsetemplateAsyncOperations = "aipluginoperationresponsetemplate_AsyncOperations";
+				public const string AiplugintitleAsyncOperations = "aiplugintitle_AsyncOperations";
+				public const string AipluginusersettingAsyncOperations = "aipluginusersetting_AsyncOperations";
 				public const string AnnotationAsyncOperations = "Annotation_AsyncOperations";
 				public const string AnnualFiscalCalendarAsyncOperations = "AnnualFiscalCalendar_AsyncOperations";
 				public const string AppactionAsyncOperations = "appaction_AsyncOperations";
 				public const string AppactionmigrationAsyncOperations = "appactionmigration_AsyncOperations";
 				public const string AppactionruleAsyncOperations = "appactionrule_AsyncOperations";
 				public const string AppelementAsyncOperations = "appelement_AsyncOperations";
+				public const string ApplicationAsyncOperations = "application_AsyncOperations";
 				public const string ApplicationuserAsyncOperations = "applicationuser_AsyncOperations";
 				public const string AppmodulecomponentedgeAsyncOperations = "appmodulecomponentedge_AsyncOperations";
 				public const string AppmodulecomponentnodeAsyncOperations = "appmodulecomponentnode_AsyncOperations";
 				public const string AppointmentAsyncOperations = "Appointment_AsyncOperations";
 				public const string AppsettingAsyncOperations = "appsetting_AsyncOperations";
 				public const string AppusersettingAsyncOperations = "appusersetting_AsyncOperations";
+				public const string ArchivecleanupinfoAsyncOperations = "archivecleanupinfo_AsyncOperations";
+				public const string ArchivecleanupoperationAsyncOperations = "archivecleanupoperation_AsyncOperations";
 				public const string AttributeimageconfigAsyncOperations = "attributeimageconfig_AsyncOperations";
 				public const string AttributeMapAsyncOperations = "AttributeMap_AsyncOperations";
+				public const string AttributemaskingruleAsyncOperations = "attributemaskingrule_AsyncOperations";
 				public const string BookableresourceAsyncOperations = "bookableresource_AsyncOperations";
 				public const string BookableresourcebookingAsyncOperations = "bookableresourcebooking_AsyncOperations";
 				public const string BookableresourcebookingexchangesyncidmappingAsyncOperations = "bookableresourcebookingexchangesyncidmapping_AsyncOperations";
@@ -1360,6 +1289,11 @@ namespace dgt.power.dataverse
 				public const string BookingstatusAsyncOperations = "bookingstatus_AsyncOperations";
 				public const string BotAsyncOperations = "bot_AsyncOperations";
 				public const string BotcomponentAsyncOperations = "botcomponent_AsyncOperations";
+				public const string BotcomponentcollectionAsyncOperations = "botcomponentcollection_AsyncOperations";
+				public const string BulkarchiveconfigAsyncOperations = "bulkarchiveconfig_AsyncOperations";
+				public const string BulkarchivefailuredetailAsyncOperations = "bulkarchivefailuredetail_AsyncOperations";
+				public const string BulkarchiveoperationAsyncOperations = "bulkarchiveoperation_AsyncOperations";
+				public const string BulkarchiveoperationdetailAsyncOperations = "bulkarchiveoperationdetail_AsyncOperations";
 				public const string BulkOperationAsyncOperations = "BulkOperation_AsyncOperations";
 				public const string BulkOperationLogAsyncOperations = "BulkOperationLog_AsyncOperations";
 				public const string BusinessUnitAsyncoperation = "business_unit_asyncoperation";
@@ -1389,6 +1323,7 @@ namespace dgt.power.dataverse
 				public const string CompetitorsalesliteratureAsyncOperations = "competitorsalesliterature_AsyncOperations";
 				public const string ConnectionAsyncOperations = "Connection_AsyncOperations";
 				public const string ConnectionRoleAsyncOperations = "Connection_Role_AsyncOperations";
+				public const string ConnectioninstanceAsyncOperations = "connectioninstance_AsyncOperations";
 				public const string ConnectionreferenceAsyncOperations = "connectionreference_AsyncOperations";
 				public const string ConnectorAsyncOperations = "connector_AsyncOperations";
 				public const string ConstraintBasedGroupAsyncOperations = "ConstraintBasedGroup_AsyncOperations";
@@ -1402,6 +1337,11 @@ namespace dgt.power.dataverse
 				public const string ContractTemplateAsyncOperations = "ContractTemplate_AsyncOperations";
 				public const string ConversationtranscriptAsyncOperations = "conversationtranscript_AsyncOperations";
 				public const string ConvertruleAsyncOperations = "Convertrule_AsyncOperations";
+				public const string CopilotexamplequestionAsyncOperations = "copilotexamplequestion_AsyncOperations";
+				public const string CopilotglossarytermAsyncOperations = "copilotglossaryterm_AsyncOperations";
+				public const string CopilotsynonymsAsyncOperations = "copilotsynonyms_AsyncOperations";
+				public const string Cr072BookingAsyncOperations = "cr072_booking_AsyncOperations";
+				public const string CredentialAsyncOperations = "credential_AsyncOperations";
 				public const string CustomapiAsyncOperations = "customapi_AsyncOperations";
 				public const string CustomapirequestparameterAsyncOperations = "customapirequestparameter_AsyncOperations";
 				public const string CustomapiresponsepropertyAsyncOperations = "customapiresponseproperty_AsyncOperations";
@@ -1413,35 +1353,31 @@ namespace dgt.power.dataverse
 				public const string DatalakeworkspaceAsyncOperations = "datalakeworkspace_AsyncOperations";
 				public const string DatalakeworkspacepermissionAsyncOperations = "datalakeworkspacepermission_AsyncOperations";
 				public const string DataprocessingconfigurationAsyncOperations = "dataprocessingconfiguration_AsyncOperations";
+				public const string DelegatedauthorizationAsyncOperations = "delegatedauthorization_AsyncOperations";
+				public const string DeleteditemreferenceAsyncOperations = "deleteditemreference_AsyncOperations";
 				public const string DesktopflowbinaryAsyncOperations = "desktopflowbinary_AsyncOperations";
 				public const string DesktopflowmoduleAsyncOperations = "desktopflowmodule_AsyncOperations";
+				public const string DgtCarrierAsyncOperations = "dgt_carrier_AsyncOperations";
+				public const string DgtCarrierDependencyCheckAsyncOperations = "dgt_carrier_dependency_check_AsyncOperations";
+				public const string DgtCarrierMissingDependencyAsyncOperations = "dgt_carrier_missing_dependency_AsyncOperations";
+				public const string DgtWorkbenchAsyncOperations = "dgt_workbench_AsyncOperations";
+				public const string DgtWorkbenchHistoryAsyncOperations = "dgt_workbench_history_AsyncOperations";
 				public const string DiscountAsyncOperations = "Discount_AsyncOperations";
 				public const string DiscountTypeAsyncOperations = "DiscountType_AsyncOperations";
 				public const string DisplayStringAsyncOperations = "DisplayString_AsyncOperations";
+				public const string DvfilesearchAsyncOperations = "dvfilesearch_AsyncOperations";
+				public const string DvfilesearchattributeAsyncOperations = "dvfilesearchattribute_AsyncOperations";
+				public const string DvfilesearchentityAsyncOperations = "dvfilesearchentity_AsyncOperations";
+				public const string DvtablesearchAsyncOperations = "dvtablesearch_AsyncOperations";
+				public const string DvtablesearchattributeAsyncOperations = "dvtablesearchattribute_AsyncOperations";
+				public const string DvtablesearchentityAsyncOperations = "dvtablesearchentity_AsyncOperations";
 				public const string DynamicpropertyAsyncOperations = "dynamicproperty_AsyncOperations";
 				public const string DynamicpropertyassociationAsyncOperations = "dynamicpropertyassociation_AsyncOperations";
 				public const string DynamicpropertyinstanceAsyncOperations = "dynamicpropertyinstance_AsyncOperations";
 				public const string DynamicpropertyoptionsetitemAsyncOperations = "dynamicpropertyoptionsetitem_AsyncOperations";
-				public const string Ec4uAcquirelegalbasisAsyncOperations = "ec4u_acquirelegalbasis_AsyncOperations";
-				public const string Ec4uCarrierAsyncOperations = "ec4u_carrier_AsyncOperations";
-				public const string Ec4uCarrierDependencyCheckAsyncOperations = "ec4u_carrier_dependency_check_AsyncOperations";
-				public const string Ec4uCarrierMissingDependencyAsyncOperations = "ec4u_carrier_missing_dependency_AsyncOperations";
-				public const string Ec4uGdprBpfCorrectionAsyncOperations = "ec4u_gdpr_bpf_correction_AsyncOperations";
-				public const string Ec4uGdprBpfDeletionAsyncOperations = "ec4u_gdpr_bpf_deletion_AsyncOperations";
-				public const string Ec4uGdprBpfInformationAsyncOperations = "ec4u_gdpr_bpf_information_AsyncOperations";
-				public const string Ec4uGdprConfigEntityAsyncOperations = "ec4u_gdpr_config_entity_AsyncOperations";
-				public const string Ec4uGdprConfigFieldAsyncOperations = "ec4u_gdpr_config_field_AsyncOperations";
-				public const string Ec4uGdprConfigHierarchyAsyncOperations = "ec4u_gdpr_config_hierarchy_AsyncOperations";
-				public const string Ec4uGdprProtocolAsyncOperations = "ec4u_gdpr_protocol_AsyncOperations";
-				public const string Ec4uGdprProtocolDetailAsyncOperations = "ec4u_gdpr_protocol_detail_AsyncOperations";
-				public const string Ec4uGdprReportAsyncOperations = "ec4u_gdpr_report_AsyncOperations";
-				public const string Ec4uGdprRequestAsyncOperations = "ec4u_gdpr_request_AsyncOperations";
-				public const string Ec4uLegalbasisAsyncOperations = "ec4u_legalbasis_AsyncOperations";
-				public const string Ec4uLegalbasistypeAsyncOperations = "ec4u_legalbasistype_AsyncOperations";
-				public const string Ec4uWorkbenchAsyncOperations = "ec4u_workbench_AsyncOperations";
-				public const string Ec4uWorkbenchHistoryAsyncOperations = "ec4u_workbench_history_AsyncOperations";
 				public const string EmailAsyncOperations = "Email_AsyncOperations";
 				public const string EmailserverprofileAsyncoperations = "emailserverprofile_asyncoperations";
+				public const string EnablearchivalrequestAsyncOperations = "enablearchivalrequest_AsyncOperations";
 				public const string EntitlementAsyncOperations = "entitlement_AsyncOperations";
 				public const string EntitlementchannelAsyncOperations = "entitlementchannel_AsyncOperations";
 				public const string EntitlementcontactsAsyncOperations = "entitlementcontacts_AsyncOperations";
@@ -1462,16 +1398,23 @@ namespace dgt.power.dataverse
 				public const string ExportsolutionuploadAsyncOperations = "exportsolutionupload_AsyncOperations";
 				public const string ExternalpartyAsyncOperations = "externalparty_AsyncOperations";
 				public const string ExternalpartyitemAsyncOperations = "externalpartyitem_AsyncOperations";
+				public const string FabricaiskillAsyncOperations = "fabricaiskill_AsyncOperations";
 				public const string FaxAsyncOperations = "Fax_AsyncOperations";
 				public const string FeaturecontrolsettingAsyncOperations = "featurecontrolsetting_AsyncOperations";
+				public const string FederatedknowledgeconfigurationAsyncOperations = "federatedknowledgeconfiguration_AsyncOperations";
+				public const string FederatedknowledgeentityconfigurationAsyncOperations = "federatedknowledgeentityconfiguration_AsyncOperations";
 				public const string FileAttachmentAsyncOperationDataBlobId = "FileAttachment_AsyncOperation_DataBlobId";
 				public const string FixedMonthlyFiscalCalendarAsyncOperations = "FixedMonthlyFiscalCalendar_AsyncOperations";
+				public const string FlowcapacityassignmentAsyncOperations = "flowcapacityassignment_AsyncOperations";
+				public const string FlowcredentialapplicationAsyncOperations = "flowcredentialapplication_AsyncOperations";
+				public const string FloweventAsyncOperations = "flowevent_AsyncOperations";
 				public const string FlowmachineAsyncOperations = "flowmachine_AsyncOperations";
 				public const string FlowmachinegroupAsyncOperations = "flowmachinegroup_AsyncOperations";
 				public const string FlowmachineimageAsyncOperations = "flowmachineimage_AsyncOperations";
 				public const string FlowmachineimageversionAsyncOperations = "flowmachineimageversion_AsyncOperations";
 				public const string FlowmachinenetworkAsyncOperations = "flowmachinenetwork_AsyncOperations";
 				public const string FlowsessionAsyncOperations = "flowsession_AsyncOperations";
+				public const string FxexpressionAsyncOperations = "fxexpression_AsyncOperations";
 				public const string GoalAsyncOperations = "Goal_AsyncOperations";
 				public const string GoalrollupqueryAsyncOperations = "goalrollupquery_AsyncOperations";
 				public const string HolidaywrapperAsyncOperations = "holidaywrapper_AsyncOperations";
@@ -1512,21 +1455,46 @@ namespace dgt.power.dataverse
 				public const string LkAsyncoperationWorkflowactivationid = "lk_asyncoperation_workflowactivationid";
 				public const string MailboxAsyncoperations = "mailbox_asyncoperations";
 				public const string MailMergeTemplateAsyncOperations = "MailMergeTemplate_AsyncOperations";
+				public const string MainfewshotAsyncOperations = "mainfewshot_AsyncOperations";
+				public const string MakerfewshotAsyncOperations = "makerfewshot_AsyncOperations";
 				public const string ManagedidentityAsyncOperations = "managedidentity_AsyncOperations";
 				public const string MarketingformdisplayattributesAsyncOperations = "marketingformdisplayattributes_AsyncOperations";
+				public const string MaskingruleAsyncOperations = "maskingrule_AsyncOperations";
+				public const string MetadataforarchivalAsyncOperations = "metadataforarchival_AsyncOperations";
 				public const string MetricAsyncOperations = "metric_AsyncOperations";
 				public const string MobileofflineprofileextensionAsyncOperations = "mobileofflineprofileextension_AsyncOperations";
 				public const string MonthlyFiscalCalendarAsyncOperations = "MonthlyFiscalCalendar_AsyncOperations";
+				public const string Msdyn3dmodelAsyncOperations = "msdyn_3dmodel_AsyncOperations";
 				public const string MsdynAccountkpiitemAsyncOperations = "msdyn_accountkpiitem_AsyncOperations";
+				public const string MsdynAccountpricelistAsyncOperations = "msdyn_accountpricelist_AsyncOperations";
+				public const string MsdynActioncardactionstatAsyncOperations = "msdyn_actioncardactionstat_AsyncOperations";
 				public const string MsdynActioncardregardingAsyncOperations = "msdyn_actioncardregarding_AsyncOperations";
 				public const string MsdynActioncardrolesettingAsyncOperations = "msdyn_actioncardrolesetting_AsyncOperations";
+				public const string MsdynActioncardstataggregationAsyncOperations = "msdyn_actioncardstataggregation_AsyncOperations";
+				public const string MsdynActiveicdextensionAsyncOperations = "msdyn_activeicdextension_AsyncOperations";
 				public const string MsdynActivityanalysiscleanupstateAsyncOperations = "msdyn_activityanalysiscleanupstate_AsyncOperations";
 				public const string MsdynActivityanalysisconfigAsyncOperations = "msdyn_activityanalysisconfig_AsyncOperations";
+				public const string MsdynActualAsyncOperations = "msdyn_actual_AsyncOperations";
 				public const string MsdynAdaptivecardconfigurationAsyncOperations = "msdyn_adaptivecardconfiguration_AsyncOperations";
 				public const string MsdynAdminappstateAsyncOperations = "msdyn_adminappstate_AsyncOperations";
+				public const string MsdynAgentcapacityprofileunitAsyncOperations = "msdyn_agentcapacityprofileunit_AsyncOperations";
 				public const string MsdynAgentcapacityupdatehistoryAsyncOperations = "msdyn_agentcapacityupdatehistory_AsyncOperations";
+				public const string MsdynAgentchannelstateAsyncOperations = "msdyn_agentchannelstate_AsyncOperations";
+				public const string MsdynAgentcopilotsettingAsyncOperations = "msdyn_agentcopilotsetting_AsyncOperations";
 				public const string MsdynAgentresourceforecastingAsyncOperations = "msdyn_agentresourceforecasting_AsyncOperations";
+				public const string MsdynAgentstatusAsyncOperations = "msdyn_agentstatus_AsyncOperations";
 				public const string MsdynAgentstatushistoryAsyncOperations = "msdyn_agentstatushistory_AsyncOperations";
+				public const string MsdynAgreementAsyncOperations = "msdyn_agreement_AsyncOperations";
+				public const string MsdynAgreementbookingdateAsyncOperations = "msdyn_agreementbookingdate_AsyncOperations";
+				public const string MsdynAgreementbookingincidentAsyncOperations = "msdyn_agreementbookingincident_AsyncOperations";
+				public const string MsdynAgreementbookingproductAsyncOperations = "msdyn_agreementbookingproduct_AsyncOperations";
+				public const string MsdynAgreementbookingserviceAsyncOperations = "msdyn_agreementbookingservice_AsyncOperations";
+				public const string MsdynAgreementbookingservicetaskAsyncOperations = "msdyn_agreementbookingservicetask_AsyncOperations";
+				public const string MsdynAgreementbookingsetupAsyncOperations = "msdyn_agreementbookingsetup_AsyncOperations";
+				public const string MsdynAgreementinvoicedateAsyncOperations = "msdyn_agreementinvoicedate_AsyncOperations";
+				public const string MsdynAgreementinvoiceproductAsyncOperations = "msdyn_agreementinvoiceproduct_AsyncOperations";
+				public const string MsdynAgreementinvoicesetupAsyncOperations = "msdyn_agreementinvoicesetup_AsyncOperations";
+				public const string MsdynAgreementsubstatusAsyncOperations = "msdyn_agreementsubstatus_AsyncOperations";
 				public const string MsdynAibdatasetAsyncOperations = "msdyn_aibdataset_AsyncOperations";
 				public const string MsdynAibdatasetfileAsyncOperations = "msdyn_aibdatasetfile_AsyncOperations";
 				public const string MsdynAibdatasetrecordAsyncOperations = "msdyn_aibdatasetrecord_AsyncOperations";
@@ -1536,6 +1504,7 @@ namespace dgt.power.dataverse
 				public const string MsdynAibfileattacheddataAsyncOperations = "msdyn_aibfileattacheddata_AsyncOperations";
 				public const string MsdynAiconfigurationAsyncOperations = "msdyn_aiconfiguration_AsyncOperations";
 				public const string MsdynAicontactsuggestionAsyncOperations = "msdyn_aicontactsuggestion_AsyncOperations";
+				public const string MsdynAieventAsyncOperations = "msdyn_aievent_AsyncOperations";
 				public const string MsdynAifptrainingdocumentAsyncOperations = "msdyn_aifptrainingdocument_AsyncOperations";
 				public const string MsdynAimodelAsyncOperations = "msdyn_aimodel_AsyncOperations";
 				public const string MsdynAiodimageAsyncOperations = "msdyn_aiodimage_AsyncOperations";
@@ -1545,17 +1514,23 @@ namespace dgt.power.dataverse
 				public const string MsdynAitemplateAsyncOperations = "msdyn_aitemplate_AsyncOperations";
 				public const string MsdynAnalysiscomponentAsyncOperations = "msdyn_analysiscomponent_AsyncOperations";
 				public const string MsdynAnalysisjobAsyncOperations = "msdyn_analysisjob_AsyncOperations";
+				public const string MsdynAnalysisoverrideAsyncOperations = "msdyn_analysisoverride_AsyncOperations";
 				public const string MsdynAnalysisresultAsyncOperations = "msdyn_analysisresult_AsyncOperations";
 				public const string MsdynAnalysisresultdetailAsyncOperations = "msdyn_analysisresultdetail_AsyncOperations";
 				public const string MsdynAnalyticsAsyncOperations = "msdyn_analytics_AsyncOperations";
 				public const string MsdynAnalyticsadminsettingsAsyncOperations = "msdyn_analyticsadminsettings_AsyncOperations";
 				public const string MsdynAnalyticsforcsAsyncOperations = "msdyn_analyticsforcs_AsyncOperations";
 				public const string MsdynAppconfigurationAsyncOperations = "msdyn_appconfiguration_AsyncOperations";
+				public const string MsdynAppcopilotconfigurationAsyncOperations = "msdyn_appcopilotconfiguration_AsyncOperations";
 				public const string MsdynAppinsightsmetadataAsyncOperations = "msdyn_appinsightsmetadata_AsyncOperations";
 				public const string MsdynApplicationextensionAsyncOperations = "msdyn_applicationextension_AsyncOperations";
 				public const string MsdynApplicationtabtemplateAsyncOperations = "msdyn_applicationtabtemplate_AsyncOperations";
 				public const string MsdynAppprofilerolemappingAsyncOperations = "msdyn_appprofilerolemapping_AsyncOperations";
+				public const string MsdynApprovalAsyncOperations = "msdyn_approval_AsyncOperations";
+				public const string MsdynApprovalsetAsyncOperations = "msdyn_approvalset_AsyncOperations";
+				public const string MsdynAppstateAsyncOperations = "msdyn_appstate_AsyncOperations";
 				public const string MsdynAssetcategorytemplateassociationAsyncOperations = "msdyn_assetcategorytemplateassociation_AsyncOperations";
+				public const string MsdynAssetsuggestionssettingAsyncOperations = "msdyn_assetsuggestionssetting_AsyncOperations";
 				public const string MsdynAssettemplateassociationAsyncOperations = "msdyn_assettemplateassociation_AsyncOperations";
 				public const string MsdynAssignmentconfigurationAsyncOperations = "msdyn_assignmentconfiguration_AsyncOperations";
 				public const string MsdynAssignmentconfigurationstepAsyncOperations = "msdyn_assignmentconfigurationstep_AsyncOperations";
@@ -1568,7 +1543,28 @@ namespace dgt.power.dataverse
 				public const string MsdynAuthsettingsentryAsyncOperations = "msdyn_authsettingsentry_AsyncOperations";
 				public const string MsdynAutocaptureruleAsyncOperations = "msdyn_autocapturerule_AsyncOperations";
 				public const string MsdynAutocapturesettingsAsyncOperations = "msdyn_autocapturesettings_AsyncOperations";
+				public const string MsdynAutonomouscasecreationruleAsyncOperations = "msdyn_autonomouscasecreationrule_AsyncOperations";
+				public const string MsdynBatchjobAsyncOperations = "msdyn_batchjob_AsyncOperations";
+				public const string MsdynBgjobledgerAsyncOperations = "msdyn_bgjobledger_AsyncOperations";
+				public const string MsdynBookableresourceassociationAsyncOperations = "msdyn_bookableresourceassociation_AsyncOperations";
+				public const string MsdynBookableresourcebookingquicknoteAsyncOperations = "msdyn_bookableresourcebookingquicknote_AsyncOperations";
 				public const string MsdynBookableresourcecapacityprofileAsyncOperations = "msdyn_bookableresourcecapacityprofile_AsyncOperations";
+				public const string MsdynBookingalertAsyncOperations = "msdyn_bookingalert_AsyncOperations";
+				public const string MsdynBookingalertstatusAsyncOperations = "msdyn_bookingalertstatus_AsyncOperations";
+				public const string MsdynBookingchangeAsyncOperations = "msdyn_bookingchange_AsyncOperations";
+				public const string MsdynBookingjournalAsyncOperations = "msdyn_bookingjournal_AsyncOperations";
+				public const string MsdynBookingruleAsyncOperations = "msdyn_bookingrule_AsyncOperations";
+				public const string MsdynBookingsetupmetadataAsyncOperations = "msdyn_bookingsetupmetadata_AsyncOperations";
+				public const string MsdynBookingtimestampAsyncOperations = "msdyn_bookingtimestamp_AsyncOperations";
+				public const string MsdynBotsessionAsyncOperations = "msdyn_botsession_AsyncOperations";
+				public const string MsdynBpf2c5fe86acc8b414b8322ae571000c799AsyncOperations = "msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_AsyncOperations";
+				public const string MsdynBpf477c16f59170487b8b4dc895c5dcd09bAsyncOperations = "msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_AsyncOperations";
+				public const string MsdynBpf665e73aa18c247d886bfc50499c73b82AsyncOperations = "msdyn_bpf_665e73aa18c247d886bfc50499c73b82_AsyncOperations";
+				public const string MsdynBpf989e9b1857e24af18787d5143b67523bAsyncOperations = "msdyn_bpf_989e9b1857e24af18787d5143b67523b_AsyncOperations";
+				public const string MsdynBpfBaa0a411a239410cb8bded8b5fdd88e3AsyncOperations = "msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_AsyncOperations";
+				public const string MsdynBpfD3d97bac8c294105840e99e37a9d1c39AsyncOperations = "msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_AsyncOperations";
+				public const string MsdynBpfD8f9dc7f099f44db9d641dd81fbd470dAsyncOperations = "msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_AsyncOperations";
+				public const string MsdynBusinessclosureAsyncOperations = "msdyn_businessclosure_AsyncOperations";
 				public const string MsdynCallablecontextAsyncOperations = "msdyn_callablecontext_AsyncOperations";
 				public const string MsdynCannedmessageAsyncOperations = "msdyn_cannedmessage_AsyncOperations";
 				public const string MsdynCapacityprofileAsyncOperations = "msdyn_capacityprofile_AsyncOperations";
@@ -1579,17 +1575,27 @@ namespace dgt.power.dataverse
 				public const string MsdynCasetopicsettingAsyncOperations = "msdyn_casetopicsetting_AsyncOperations";
 				public const string MsdynCasetopicsummaryAsyncOperations = "msdyn_casetopicsummary_AsyncOperations";
 				public const string MsdynCdsentityengagementctxAsyncOperations = "msdyn_cdsentityengagementctx_AsyncOperations";
+				public const string MsdynChannelAsyncOperations = "msdyn_channel_AsyncOperations";
 				public const string MsdynChannelcapabilityAsyncOperations = "msdyn_channelcapability_AsyncOperations";
 				public const string MsdynChanneldefinitionAsyncOperations = "msdyn_channeldefinition_AsyncOperations";
 				public const string MsdynChanneldefinitionconsentAsyncOperations = "msdyn_channeldefinitionconsent_AsyncOperations";
 				public const string MsdynChanneldefinitionlocaleAsyncOperations = "msdyn_channeldefinitionlocale_AsyncOperations";
 				public const string MsdynChannelinstanceAsyncOperations = "msdyn_channelinstance_AsyncOperations";
 				public const string MsdynChannelinstanceaccountAsyncOperations = "msdyn_channelinstanceaccount_AsyncOperations";
+				public const string MsdynChannelmessageattachmentAsyncOperations = "msdyn_channelmessageattachment_AsyncOperations";
+				public const string MsdynChannelmessagecontextpartAsyncOperations = "msdyn_channelmessagecontextpart_AsyncOperations";
 				public const string MsdynChannelmessagepartAsyncOperations = "msdyn_channelmessagepart_AsyncOperations";
 				public const string MsdynChannelproviderAsyncOperations = "msdyn_channelprovider_AsyncOperations";
+				public const string MsdynCharacteristicreqforteammemberAsyncOperations = "msdyn_characteristicreqforteammember_AsyncOperations";
+				public const string MsdynChatansweroptionAsyncOperations = "msdyn_chatansweroption_AsyncOperations";
+				public const string MsdynChatquestionnaireresponseAsyncOperations = "msdyn_chatquestionnaireresponse_AsyncOperations";
+				public const string MsdynChatquestionnaireresponseitemAsyncOperations = "msdyn_chatquestionnaireresponseitem_AsyncOperations";
+				public const string MsdynChatwidgetlanguageAsyncOperations = "msdyn_chatwidgetlanguage_AsyncOperations";
 				public const string MsdynCiproviderAsyncOperations = "msdyn_ciprovider_AsyncOperations";
+				public const string MsdynClientextensionAsyncOperations = "msdyn_clientextension_AsyncOperations";
 				public const string MsdynCollabgraphresourceAsyncOperations = "msdyn_collabgraphresource_AsyncOperations";
 				public const string MsdynCollabspaceteamassociationAsyncOperations = "msdyn_collabspaceteamassociation_AsyncOperations";
+				public const string MsdynConfigurationAsyncOperations = "msdyn_configuration_AsyncOperations";
 				public const string MsdynConsoleapplicationnotificationfieldAsyncOperations = "msdyn_consoleapplicationnotificationfield_AsyncOperations";
 				public const string MsdynConsoleapplicationnotificationtemplateAsyncOperations = "msdyn_consoleapplicationnotificationtemplate_AsyncOperations";
 				public const string MsdynConsoleapplicationsessiontemplateAsyncOperations = "msdyn_consoleapplicationsessiontemplate_AsyncOperations";
@@ -1599,17 +1605,50 @@ namespace dgt.power.dataverse
 				public const string MsdynConsoleappparameterdefinitionAsyncOperations = "msdyn_consoleappparameterdefinition_AsyncOperations";
 				public const string MsdynConsumingapplicationAsyncOperations = "msdyn_consumingapplication_AsyncOperations";
 				public const string MsdynContactkpiitemAsyncOperations = "msdyn_contactkpiitem_AsyncOperations";
+				public const string MsdynContactpricelistAsyncOperations = "msdyn_contactpricelist_AsyncOperations";
 				public const string MsdynContactsuggestionruleAsyncOperations = "msdyn_contactsuggestionrule_AsyncOperations";
 				public const string MsdynContactsuggestionrulesetAsyncOperations = "msdyn_contactsuggestionruleset_AsyncOperations";
+				public const string MsdynContractlinedetailperformanceAsyncOperations = "msdyn_contractlinedetailperformance_AsyncOperations";
+				public const string MsdynContractlineinvoicescheduleAsyncOperations = "msdyn_contractlineinvoiceschedule_AsyncOperations";
+				public const string MsdynContractlinescheduleofvalueAsyncOperations = "msdyn_contractlinescheduleofvalue_AsyncOperations";
+				public const string MsdynContractperformanceAsyncOperations = "msdyn_contractperformance_AsyncOperations";
 				public const string MsdynConversationactionAsyncOperations = "msdyn_conversationaction_AsyncOperations";
+				public const string MsdynConversationactionitemAsyncOperations = "msdyn_conversationactionitem_AsyncOperations";
 				public const string MsdynConversationactionlocaleAsyncOperations = "msdyn_conversationactionlocale_AsyncOperations";
+				public const string MsdynConversationaggregatedinsightsAsyncOperations = "msdyn_conversationaggregatedinsights_AsyncOperations";
+				public const string MsdynConversationcommentAsyncOperations = "msdyn_conversationcomment_AsyncOperations";
 				public const string MsdynConversationdataAsyncOperations = "msdyn_conversationdata_AsyncOperations";
 				public const string MsdynConversationinsightAsyncOperations = "msdyn_conversationinsight_AsyncOperations";
 				public const string MsdynConversationmessageblockAsyncOperations = "msdyn_conversationmessageblock_AsyncOperations";
+				public const string MsdynConversationparticipantinsightsAsyncOperations = "msdyn_conversationparticipantinsights_AsyncOperations";
+				public const string MsdynConversationparticipantsentimentAsyncOperations = "msdyn_conversationparticipantsentiment_AsyncOperations";
+				public const string MsdynConversationquestionAsyncOperations = "msdyn_conversationquestion_AsyncOperations";
+				public const string MsdynConversationsegmentsentimentAsyncOperations = "msdyn_conversationsegmentsentiment_AsyncOperations";
+				public const string MsdynConversationsentimentAsyncOperations = "msdyn_conversationsentiment_AsyncOperations";
+				public const string MsdynConversationsignalAsyncOperations = "msdyn_conversationsignal_AsyncOperations";
+				public const string MsdynConversationsubjectAsyncOperations = "msdyn_conversationsubject_AsyncOperations";
+				public const string MsdynConversationsuggestionrequestpayloadAsyncOperations = "msdyn_conversationsuggestionrequestpayload_AsyncOperations";
+				public const string MsdynConversationsummaryinteractionAsyncOperations = "msdyn_conversationsummaryinteraction_AsyncOperations";
+				public const string MsdynConversationsummarysettingAsyncOperations = "msdyn_conversationsummarysetting_AsyncOperations";
+				public const string MsdynConversationsummarysuggestionAsyncOperations = "msdyn_conversationsummarysuggestion_AsyncOperations";
+				public const string MsdynConversationsystemtagAsyncOperations = "msdyn_conversationsystemtag_AsyncOperations";
+				public const string MsdynConversationtagAsyncOperations = "msdyn_conversationtag_AsyncOperations";
+				public const string MsdynConversationtopicAsyncOperations = "msdyn_conversationtopic_AsyncOperations";
+				public const string MsdynConversationtopicConversationAsyncOperations = "msdyn_conversationtopic_conversation_AsyncOperations";
+				public const string MsdynConversationtopicsettingAsyncOperations = "msdyn_conversationtopicsetting_AsyncOperations";
+				public const string MsdynConversationtopicsummaryAsyncOperations = "msdyn_conversationtopicsummary_AsyncOperations";
+				public const string MsdynCopilotagentpreferenceAsyncOperations = "msdyn_copilotagentpreference_AsyncOperations";
+				public const string MsdynCopilotinteractionAsyncOperations = "msdyn_copilotinteraction_AsyncOperations";
+				public const string MsdynCopilotinteractiondataAsyncOperations = "msdyn_copilotinteractiondata_AsyncOperations";
+				public const string MsdynCopilotsummarizationsettingAsyncOperations = "msdyn_copilotsummarizationsetting_AsyncOperations";
+				public const string MsdynCopilottranscriptAsyncOperations = "msdyn_copilottranscript_AsyncOperations";
+				public const string MsdynCopilottranscriptdataAsyncOperations = "msdyn_copilottranscriptdata_AsyncOperations";
 				public const string MsdynCrmconnectionAsyncOperations = "msdyn_crmconnection_AsyncOperations";
 				public const string MsdynCsadminconfigAsyncOperations = "msdyn_csadminconfig_AsyncOperations";
+				public const string MsdynCskeyvalueconfigAsyncOperations = "msdyn_cskeyvalueconfig_AsyncOperations";
 				public const string MsdynCustomapirulesetconfigurationAsyncOperations = "msdyn_customapirulesetconfiguration_AsyncOperations";
 				public const string MsdynCustomcontrolextendedsettingsAsyncOperations = "msdyn_customcontrolextendedsettings_AsyncOperations";
+				public const string MsdynCustomengagementctxAsyncOperations = "msdyn_customengagementctx_AsyncOperations";
 				public const string MsdynCustomerassetAsyncOperations = "msdyn_customerasset_AsyncOperations";
 				public const string MsdynCustomerassetattachmentAsyncOperations = "msdyn_customerassetattachment_AsyncOperations";
 				public const string MsdynCustomerassetcategoryAsyncOperations = "msdyn_customerassetcategory_AsyncOperations";
@@ -1621,14 +1660,26 @@ namespace dgt.power.dataverse
 				public const string MsdynDataanalyticscustomizedreportAsyncOperations = "msdyn_dataanalyticscustomizedreport_AsyncOperations";
 				public const string MsdynDataanalyticsdatasetAsyncOperations = "msdyn_dataanalyticsdataset_AsyncOperations";
 				public const string MsdynDataanalyticsreportAsyncOperations = "msdyn_dataanalyticsreport_AsyncOperations";
+				public const string MsdynDataanalyticsreportCopilotAsyncOperations = "msdyn_dataanalyticsreport_copilot_AsyncOperations";
 				public const string MsdynDataanalyticsreportCsrmanagerAsyncOperations = "msdyn_dataanalyticsreport_csrmanager_AsyncOperations";
 				public const string MsdynDataanalyticsreportForecastAsyncOperations = "msdyn_dataanalyticsreport_forecast_AsyncOperations";
+				public const string MsdynDataanalyticsreportFsAsyncOperations = "msdyn_dataanalyticsreport_fs_AsyncOperations";
+				public const string MsdynDataanalyticsreportFspredictrsAsyncOperations = "msdyn_dataanalyticsreport_fspredictrs_AsyncOperations";
+				public const string MsdynDataanalyticsreportFspredictwhdAsyncOperations = "msdyn_dataanalyticsreport_fspredictwhd_AsyncOperations";
 				public const string MsdynDataanalyticsreportKsinsightsAsyncOperations = "msdyn_dataanalyticsreport_ksinsights_AsyncOperations";
+				public const string MsdynDataanalyticsreportOcAsyncOperations = "msdyn_dataanalyticsreport_oc_AsyncOperations";
+				public const string MsdynDataanalyticsreportOcRtAsyncOperations = "msdyn_dataanalyticsreport_oc_rt_AsyncOperations";
+				public const string MsdynDataanalyticsreportOcvoiceAsyncOperations = "msdyn_dataanalyticsreport_ocvoice_AsyncOperations";
+				public const string MsdynDataanalyticsreportSareportingAsyncOperations = "msdyn_dataanalyticsreport_sareporting_AsyncOperations";
 				public const string MsdynDataanalyticsreportSutreportingAsyncOperations = "msdyn_dataanalyticsreport_sutreporting_AsyncOperations";
 				public const string MsdynDataanalyticsworkspaceAsyncOperations = "msdyn_dataanalyticsworkspace_AsyncOperations";
 				public const string MsdynDatabaseversionAsyncOperations = "msdyn_databaseversion_AsyncOperations";
+				public const string MsdynDataexportAsyncOperations = "msdyn_dataexport_AsyncOperations";
 				public const string MsdynDataflowAsyncOperations = "msdyn_dataflow_AsyncOperations";
+				public const string MsdynDataflowDatalakefolderAsyncOperations = "msdyn_dataflow_datalakefolder_AsyncOperations";
+				public const string MsdynDataflowconnectionreferenceAsyncOperations = "msdyn_dataflowconnectionreference_AsyncOperations";
 				public const string MsdynDataflowrefreshhistoryAsyncOperations = "msdyn_dataflowrefreshhistory_AsyncOperations";
+				public const string MsdynDataflowtemplateAsyncOperations = "msdyn_dataflowtemplate_AsyncOperations";
 				public const string MsdynDatahygienesettinginfoAsyncOperations = "msdyn_datahygienesettinginfo_AsyncOperations";
 				public const string MsdynDatainsightsandanalyticsfeatureAsyncOperations = "msdyn_datainsightsandanalyticsfeature_AsyncOperations";
 				public const string MsdynDealmanageraccessAsyncOperations = "msdyn_dealmanageraccess_AsyncOperations";
@@ -1637,23 +1688,49 @@ namespace dgt.power.dataverse
 				public const string MsdynDecisionrulesetAsyncOperations = "msdyn_decisionruleset_AsyncOperations";
 				public const string MsdynDefextendedchannelinstanceAsyncOperations = "msdyn_defextendedchannelinstance_AsyncOperations";
 				public const string MsdynDefextendedchannelinstanceaccountAsyncOperations = "msdyn_defextendedchannelinstanceaccount_AsyncOperations";
+				public const string MsdynDelegationAsyncOperations = "msdyn_delegation_AsyncOperations";
 				public const string MsdynDeletedconversationAsyncOperations = "msdyn_deletedconversation_AsyncOperations";
 				public const string MsdynDigitalsellingactivetaskAsyncOperations = "msdyn_digitalsellingactivetask_AsyncOperations";
 				public const string MsdynDigitalsellingcompletedtaskAsyncOperations = "msdyn_digitalsellingcompletedtask_AsyncOperations";
+				public const string MsdynDimensionAsyncOperations = "msdyn_dimension_AsyncOperations";
+				public const string MsdynDimensionfieldnameAsyncOperations = "msdyn_dimensionfieldname_AsyncOperations";
 				public const string MsdynDistributedlockAsyncOperations = "msdyn_distributedlock_AsyncOperations";
+				public const string MsdynDmsrequestAsyncOperations = "msdyn_dmsrequest_AsyncOperations";
+				public const string MsdynDmsrequeststatusAsyncOperations = "msdyn_dmsrequeststatus_AsyncOperations";
+				public const string MsdynDmssyncrequestAsyncOperations = "msdyn_dmssyncrequest_AsyncOperations";
+				public const string MsdynDmssyncstatusAsyncOperations = "msdyn_dmssyncstatus_AsyncOperations";
 				public const string MsdynDuplicatedetectionpluginrunAsyncOperations = "msdyn_duplicatedetectionpluginrun_AsyncOperations";
 				public const string MsdynDuplicateleadmappingAsyncOperations = "msdyn_duplicateleadmapping_AsyncOperations";
 				public const string MsdynEffortpredictionresultAsyncOperations = "msdyn_effortpredictionresult_AsyncOperations";
+				public const string MsdynEntitlementapplicationAsyncOperations = "msdyn_entitlementapplication_AsyncOperations";
+				public const string MsdynEntityattachmentAsyncOperations = "msdyn_entityattachment_AsyncOperations";
 				public const string MsdynEntityconfigAsyncOperations = "msdyn_entityconfig_AsyncOperations";
+				public const string MsdynEntityconfigurationAsyncOperations = "msdyn_entityconfiguration_AsyncOperations";
 				public const string MsdynEntitylinkchatconfigurationAsyncOperations = "msdyn_entitylinkchatconfiguration_AsyncOperations";
 				public const string MsdynEntityrankingruleAsyncOperations = "msdyn_entityrankingrule_AsyncOperations";
 				public const string MsdynEntityrefreshhistoryAsyncOperations = "msdyn_entityrefreshhistory_AsyncOperations";
 				public const string MsdynEntityroutingconfigurationAsyncOperations = "msdyn_entityroutingconfiguration_AsyncOperations";
+				public const string MsdynEntityworkstreammapAsyncOperations = "msdyn_entityworkstreammap_AsyncOperations";
+				public const string MsdynEstimateAsyncOperations = "msdyn_estimate_AsyncOperations";
+				public const string MsdynEstimatelineAsyncOperations = "msdyn_estimateline_AsyncOperations";
+				public const string MsdynExpenseAsyncOperations = "msdyn_expense_AsyncOperations";
+				public const string MsdynExpensecategoryAsyncOperations = "msdyn_expensecategory_AsyncOperations";
+				public const string MsdynExpensereceiptAsyncOperations = "msdyn_expensereceipt_AsyncOperations";
 				public const string MsdynExtendedusersettingAsyncOperations = "msdyn_extendedusersetting_AsyncOperations";
+				public const string MsdynFacebookengagementctxAsyncOperations = "msdyn_facebookengagementctx_AsyncOperations";
+				public const string MsdynFactAsyncOperations = "msdyn_fact_AsyncOperations";
 				public const string MsdynFavoriteknowledgearticleAsyncOperations = "msdyn_favoriteknowledgearticle_AsyncOperations";
 				public const string MsdynFederatedarticleAsyncOperations = "msdyn_federatedarticle_AsyncOperations";
 				public const string MsdynFederatedarticleincidentAsyncOperations = "msdyn_federatedarticleincident_AsyncOperations";
+				public const string MsdynFieldcomputationAsyncOperations = "msdyn_fieldcomputation_AsyncOperations";
+				public const string MsdynFieldservicepricelistitemAsyncOperations = "msdyn_fieldservicepricelistitem_AsyncOperations";
+				public const string MsdynFieldservicesettingAsyncOperations = "msdyn_fieldservicesetting_AsyncOperations";
+				public const string MsdynFieldserviceslaconfigurationAsyncOperations = "msdyn_fieldserviceslaconfiguration_AsyncOperations";
+				public const string MsdynFieldservicesystemjobAsyncOperations = "msdyn_fieldservicesystemjob_AsyncOperations";
+				public const string MsdynFileuploadAsyncOperations = "msdyn_fileupload_AsyncOperations";
+				public const string MsdynFindworkeventAsyncOperations = "msdyn_findworkevent_AsyncOperations";
 				public const string MsdynFlowcardtypeAsyncOperations = "msdyn_flowcardtype_AsyncOperations";
+				public const string MsdynFlwconfigurationAsyncOperations = "msdyn_flwconfiguration_AsyncOperations";
 				public const string MsdynForecastconfigurationAsyncOperations = "msdyn_forecastconfiguration_AsyncOperations";
 				public const string MsdynForecastdefinitionAsyncOperations = "msdyn_forecastdefinition_AsyncOperations";
 				public const string MsdynForecastingcacheAsyncOperations = "msdyn_forecastingcache_AsyncOperations";
@@ -1661,15 +1738,51 @@ namespace dgt.power.dataverse
 				public const string MsdynForecastpredictionstatusAsyncOperations = "msdyn_forecastpredictionstatus_AsyncOperations";
 				public const string MsdynForecastrecurrenceAsyncOperations = "msdyn_forecastrecurrence_AsyncOperations";
 				public const string MsdynForecastsettingsandsummaryAsyncOperations = "msdyn_forecastsettingsandsummary_AsyncOperations";
+				public const string MsdynFormmappingAsyncOperations = "msdyn_formmapping_AsyncOperations";
 				public const string MsdynFunctionallocationAsyncOperations = "msdyn_functionallocation_AsyncOperations";
+				public const string MsdynFunctionallocationtypeAsyncOperations = "msdyn_functionallocationtype_AsyncOperations";
 				public const string MsdynGdprdataAsyncOperations = "msdyn_gdprdata_AsyncOperations";
+				public const string MsdynGeofenceAsyncOperations = "msdyn_geofence_AsyncOperations";
+				public const string MsdynGeofenceeventAsyncOperations = "msdyn_geofenceevent_AsyncOperations";
+				public const string MsdynGeofencingsettingsAsyncOperations = "msdyn_geofencingsettings_AsyncOperations";
+				public const string MsdynGeolocationsettingsAsyncOperations = "msdyn_geolocationsettings_AsyncOperations";
+				public const string MsdynGeolocationtrackingAsyncOperations = "msdyn_geolocationtracking_AsyncOperations";
 				public const string MsdynHelppageAsyncOperations = "msdyn_helppage_AsyncOperations";
+				public const string MsdynIcdextensionAsyncOperations = "msdyn_icdextension_AsyncOperations";
 				public const string MsdynIcebreakersconfigAsyncOperations = "msdyn_icebreakersconfig_AsyncOperations";
 				public const string MsdynIermlmodelAsyncOperations = "msdyn_iermlmodel_AsyncOperations";
 				public const string MsdynIermltrainingAsyncOperations = "msdyn_iermltraining_AsyncOperations";
+				public const string MsdynInboxcardconfigurationAsyncOperations = "msdyn_inboxcardconfiguration_AsyncOperations";
 				public const string MsdynInboxconfigurationAsyncOperations = "msdyn_inboxconfiguration_AsyncOperations";
+				public const string MsdynInboxentityconfigAsyncOperations = "msdyn_inboxentityconfig_AsyncOperations";
+				public const string MsdynIncidenttypeAsyncOperations = "msdyn_incidenttype_AsyncOperations";
+				public const string MsdynIncidenttypeRequirementgroupAsyncOperations = "msdyn_incidenttype_requirementgroup_AsyncOperations";
+				public const string MsdynIncidenttypecharacteristicAsyncOperations = "msdyn_incidenttypecharacteristic_AsyncOperations";
+				public const string MsdynIncidenttypeproductAsyncOperations = "msdyn_incidenttypeproduct_AsyncOperations";
+				public const string MsdynIncidenttyperecommendationresultAsyncOperations = "msdyn_incidenttyperecommendationresult_AsyncOperations";
+				public const string MsdynIncidenttyperecommendationrunhistoryAsyncOperations = "msdyn_incidenttyperecommendationrunhistory_AsyncOperations";
+				public const string MsdynIncidenttyperesolutionAsyncOperations = "msdyn_incidenttyperesolution_AsyncOperations";
+				public const string MsdynIncidenttypeserviceAsyncOperations = "msdyn_incidenttypeservice_AsyncOperations";
+				public const string MsdynIncidenttypeservicetaskAsyncOperations = "msdyn_incidenttypeservicetask_AsyncOperations";
+				public const string MsdynIncidenttypessetupAsyncOperations = "msdyn_incidenttypessetup_AsyncOperations";
 				public const string MsdynInsightsstorevirtualentityAsyncOperations = "msdyn_insightsstorevirtualentity_AsyncOperations";
+				public const string MsdynInspectionAsyncOperations = "msdyn_inspection_AsyncOperations";
+				public const string MsdynInspectionattachmentAsyncOperations = "msdyn_inspectionattachment_AsyncOperations";
+				public const string MsdynInspectiondefinitionAsyncOperations = "msdyn_inspectiondefinition_AsyncOperations";
+				public const string MsdynInspectioninstanceAsyncOperations = "msdyn_inspectioninstance_AsyncOperations";
+				public const string MsdynInspectionresponseAsyncOperations = "msdyn_inspectionresponse_AsyncOperations";
+				public const string MsdynInsuranceAsyncOperations = "msdyn_insurance_AsyncOperations";
 				public const string MsdynIntegratedsearchproviderAsyncOperations = "msdyn_integratedsearchprovider_AsyncOperations";
+				public const string MsdynIntegrationjobAsyncOperations = "msdyn_integrationjob_AsyncOperations";
+				public const string MsdynIntegrationjobdetailAsyncOperations = "msdyn_integrationjobdetail_AsyncOperations";
+				public const string MsdynIntentAsyncOperations = "msdyn_intent_AsyncOperations";
+				public const string MsdynInventoryadjustmentAsyncOperations = "msdyn_inventoryadjustment_AsyncOperations";
+				public const string MsdynInventoryadjustmentproductAsyncOperations = "msdyn_inventoryadjustmentproduct_AsyncOperations";
+				public const string MsdynInventoryjournalAsyncOperations = "msdyn_inventoryjournal_AsyncOperations";
+				public const string MsdynInventorytransferAsyncOperations = "msdyn_inventorytransfer_AsyncOperations";
+				public const string MsdynInvoicefrequencyAsyncOperations = "msdyn_invoicefrequency_AsyncOperations";
+				public const string MsdynInvoicefrequencydetailAsyncOperations = "msdyn_invoicefrequencydetail_AsyncOperations";
+				public const string MsdynInvoicelinetransactionAsyncOperations = "msdyn_invoicelinetransaction_AsyncOperations";
 				public const string MsdynIotalertAsyncOperations = "msdyn_iotalert_AsyncOperations";
 				public const string MsdynIotdeviceAsyncOperations = "msdyn_iotdevice_AsyncOperations";
 				public const string MsdynIotdevicecategoryAsyncOperations = "msdyn_iotdevicecategory_AsyncOperations";
@@ -1685,6 +1798,9 @@ namespace dgt.power.dataverse
 				public const string MsdynIotproviderinstanceAsyncOperations = "msdyn_iotproviderinstance_AsyncOperations";
 				public const string MsdynIotsettingsAsyncOperations = "msdyn_iotsettings_AsyncOperations";
 				public const string MsdynIottocaseprocessAsyncOperations = "msdyn_iottocaseprocess_AsyncOperations";
+				public const string MsdynJobsstateAsyncOperations = "msdyn_jobsstate_AsyncOperations";
+				public const string MsdynJournalAsyncOperations = "msdyn_journal_AsyncOperations";
+				public const string MsdynJournallineAsyncOperations = "msdyn_journalline_AsyncOperations";
 				public const string MsdynKalanguagesettingAsyncOperations = "msdyn_kalanguagesetting_AsyncOperations";
 				public const string MsdynKbattachmentAsyncOperations = "msdyn_kbattachment_AsyncOperations";
 				public const string MsdynKbenrichmentAsyncOperations = "msdyn_kbenrichment_AsyncOperations";
@@ -1693,6 +1809,7 @@ namespace dgt.power.dataverse
 				public const string MsdynKmpersonalizationsettingAsyncOperations = "msdyn_kmpersonalizationsetting_AsyncOperations";
 				public const string MsdynKnowledgearticleimageAsyncOperations = "msdyn_knowledgearticleimage_AsyncOperations";
 				public const string MsdynKnowledgearticletemplateAsyncOperations = "msdyn_knowledgearticletemplate_AsyncOperations";
+				public const string MsdynKnowledgeassetconfigurationAsyncOperations = "msdyn_knowledgeassetconfiguration_AsyncOperations";
 				public const string MsdynKnowledgeconfigurationAsyncOperations = "msdyn_knowledgeconfiguration_AsyncOperations";
 				public const string MsdynKnowledgeinteractioninsightAsyncOperations = "msdyn_knowledgeinteractioninsight_AsyncOperations";
 				public const string MsdynKnowledgemanagementsettingAsyncOperations = "msdyn_knowledgemanagementsetting_AsyncOperations";
@@ -1704,16 +1821,28 @@ namespace dgt.power.dataverse
 				public const string MsdynLeadhygienesettingAsyncOperations = "msdyn_leadhygienesetting_AsyncOperations";
 				public const string MsdynLeadkpiitemAsyncOperations = "msdyn_leadkpiitem_AsyncOperations";
 				public const string MsdynLeadmodelconfigAsyncOperations = "msdyn_leadmodelconfig_AsyncOperations";
+				public const string MsdynLineengagementctxAsyncOperations = "msdyn_lineengagementctx_AsyncOperations";
 				public const string MsdynLinkedentityattributevalidityAsyncOperations = "msdyn_linkedentityattributevalidity_AsyncOperations";
+				public const string MsdynLivechatconfigAsyncOperations = "msdyn_livechatconfig_AsyncOperations";
+				public const string MsdynLivechatengagementctxAsyncOperations = "msdyn_livechatengagementctx_AsyncOperations";
+				public const string MsdynLivechatwidgetlocationAsyncOperations = "msdyn_livechatwidgetlocation_AsyncOperations";
 				public const string MsdynLiveconversationAsyncOperations = "msdyn_liveconversation_AsyncOperations";
 				public const string MsdynLiveworkitemeventAsyncOperations = "msdyn_liveworkitemevent_AsyncOperations";
 				public const string MsdynLiveworkstreamAsyncOperations = "msdyn_liveworkstream_AsyncOperations";
 				public const string MsdynLiveworkstreamcapacityprofileAsyncOperations = "msdyn_liveworkstreamcapacityprofile_AsyncOperations";
+				public const string MsdynLocalizedsurveyquestionAsyncOperations = "msdyn_localizedsurveyquestion_AsyncOperations";
+				public const string MsdynLocationtemplateassociationAsyncOperations = "msdyn_locationtemplateassociation_AsyncOperations";
+				public const string MsdynLocationtypetemplateassociationAsyncOperations = "msdyn_locationtypetemplateassociation_AsyncOperations";
+				public const string MsdynLockstatusAsyncOperations = "msdyn_lockstatus_AsyncOperations";
 				public const string MsdynMacrosessionAsyncOperations = "msdyn_macrosession_AsyncOperations";
 				public const string MsdynMaskingruleAsyncOperations = "msdyn_maskingrule_AsyncOperations";
 				public const string MsdynMasterentityroutingconfigurationAsyncOperations = "msdyn_masterentityroutingconfiguration_AsyncOperations";
 				public const string MsdynMigrationtrackerAsyncOperations = "msdyn_migrationtracker_AsyncOperations";
+				public const string MsdynMlresultcacheAsyncOperations = "msdyn_mlresultcache_AsyncOperations";
+				public const string MsdynMobileappAsyncOperations = "msdyn_mobileapp_AsyncOperations";
+				public const string MsdynMobilesourceAsyncOperations = "msdyn_mobilesource_AsyncOperations";
 				public const string MsdynModelpreviewstatusAsyncOperations = "msdyn_modelpreviewstatus_AsyncOperations";
+				public const string MsdynModulerundetailAsyncOperations = "msdyn_modulerundetail_AsyncOperations";
 				public const string MsdynMostcontactedAsyncOperations = "msdyn_mostcontacted_AsyncOperations";
 				public const string MsdynMostcontactedbyAsyncOperations = "msdyn_mostcontactedby_AsyncOperations";
 				public const string MsdynMsteamssettingAsyncOperations = "msdyn_msteamssetting_AsyncOperations";
@@ -1721,18 +1850,33 @@ namespace dgt.power.dataverse
 				public const string MsdynNotesanalysisconfigAsyncOperations = "msdyn_notesanalysisconfig_AsyncOperations";
 				public const string MsdynNotificationfieldAsyncOperations = "msdyn_notificationfield_AsyncOperations";
 				public const string MsdynNotificationtemplateAsyncOperations = "msdyn_notificationtemplate_AsyncOperations";
+				public const string MsdynNottoexceedAsyncOperations = "msdyn_nottoexceed_AsyncOperations";
 				public const string MsdynOcGeolocationproviderAsyncOperations = "msdyn_oc_geolocationprovider_AsyncOperations";
+				public const string MsdynOcagentassignedcustomapiprivilegeAsyncOperations = "msdyn_ocagentassignedcustomapiprivilege_AsyncOperations";
+				public const string MsdynOcapplebusinessaccountAsyncOperations = "msdyn_ocapplebusinessaccount_AsyncOperations";
+				public const string MsdynOcapplemessagesforbusinessengagementctxAsyncOperations = "msdyn_ocapplemessagesforbusinessengagementctx_AsyncOperations";
+				public const string MsdynOcapplepayAsyncOperations = "msdyn_ocapplepay_AsyncOperations";
 				public const string MsdynOcautoblockruleAsyncOperations = "msdyn_ocautoblockrule_AsyncOperations";
 				public const string MsdynOcbotchannelregistrationAsyncOperations = "msdyn_ocbotchannelregistration_AsyncOperations";
 				public const string MsdynOcbotchannelregistrationsecretAsyncOperations = "msdyn_ocbotchannelregistrationsecret_AsyncOperations";
+				public const string MsdynOccarrierAsyncOperations = "msdyn_occarrier_AsyncOperations";
 				public const string MsdynOcchannelapiconversationprivilegeAsyncOperations = "msdyn_occhannelapiconversationprivilege_AsyncOperations";
 				public const string MsdynOcchannelapimessageprivilegeAsyncOperations = "msdyn_occhannelapimessageprivilege_AsyncOperations";
 				public const string MsdynOcchannelapimethodmappingAsyncOperations = "msdyn_occhannelapimethodmapping_AsyncOperations";
 				public const string MsdynOcchannelconfigurationAsyncOperations = "msdyn_occhannelconfiguration_AsyncOperations";
 				public const string MsdynOcchannelstateconfigurationAsyncOperations = "msdyn_occhannelstateconfiguration_AsyncOperations";
+				public const string MsdynOccommunicationprovidersettingAsyncOperations = "msdyn_occommunicationprovidersetting_AsyncOperations";
+				public const string MsdynOccommunicationprovidersettingentryAsyncOperations = "msdyn_occommunicationprovidersettingentry_AsyncOperations";
+				public const string MsdynOccustommessagingchannelAsyncOperations = "msdyn_occustommessagingchannel_AsyncOperations";
 				public const string MsdynOcexternalcontextAsyncOperations = "msdyn_ocexternalcontext_AsyncOperations";
+				public const string MsdynOcfbapplicationAsyncOperations = "msdyn_ocfbapplication_AsyncOperations";
+				public const string MsdynOcfbpageAsyncOperations = "msdyn_ocfbpage_AsyncOperations";
 				public const string MsdynOcflaggedspamAsyncOperations = "msdyn_ocflaggedspam_AsyncOperations";
+				public const string MsdynOcgooglebusinessmessagesagentaccountAsyncOperations = "msdyn_ocgooglebusinessmessagesagentaccount_AsyncOperations";
+				public const string MsdynOcgooglebusinessmessagesengagementctxAsyncOperations = "msdyn_ocgooglebusinessmessagesengagementctx_AsyncOperations";
+				public const string MsdynOcgooglebusinessmessagespartneraccountAsyncOperations = "msdyn_ocgooglebusinessmessagespartneraccount_AsyncOperations";
 				public const string MsdynOclanguageAsyncOperations = "msdyn_oclanguage_AsyncOperations";
+				public const string MsdynOclinechannelconfigAsyncOperations = "msdyn_oclinechannelconfig_AsyncOperations";
 				public const string MsdynOcliveworkitemAsyncOperations = "msdyn_ocliveworkitem_AsyncOperations";
 				public const string MsdynOcliveworkitemcapacityprofileAsyncOperations = "msdyn_ocliveworkitemcapacityprofile_AsyncOperations";
 				public const string MsdynOcliveworkitemcharacteristicAsyncOperations = "msdyn_ocliveworkitemcharacteristic_AsyncOperations";
@@ -1741,7 +1885,10 @@ namespace dgt.power.dataverse
 				public const string MsdynOcliveworkitemsentimentAsyncOperations = "msdyn_ocliveworkitemsentiment_AsyncOperations";
 				public const string MsdynOcliveworkstreamcontextvariableAsyncOperations = "msdyn_ocliveworkstreamcontextvariable_AsyncOperations";
 				public const string MsdynOclocalizationdataAsyncOperations = "msdyn_oclocalizationdata_AsyncOperations";
+				public const string MsdynOcoutboundconfigurationAsyncOperations = "msdyn_ocoutboundconfiguration_AsyncOperations";
+				public const string MsdynOcoutboundmessageAsyncOperations = "msdyn_ocoutboundmessage_AsyncOperations";
 				public const string MsdynOcpaymentprofileAsyncOperations = "msdyn_ocpaymentprofile_AsyncOperations";
+				public const string MsdynOcphonenumberAsyncOperations = "msdyn_ocphonenumber_AsyncOperations";
 				public const string MsdynOcprovisioningstateAsyncOperations = "msdyn_ocprovisioningstate_AsyncOperations";
 				public const string MsdynOcrecordingAsyncOperations = "msdyn_ocrecording_AsyncOperations";
 				public const string MsdynOcrequestAsyncOperations = "msdyn_ocrequest_AsyncOperations";
@@ -1760,19 +1907,52 @@ namespace dgt.power.dataverse
 				public const string MsdynOcsitdskillAsyncOperations = "msdyn_ocsitdskill_AsyncOperations";
 				public const string MsdynOcsitrainingdataAsyncOperations = "msdyn_ocsitrainingdata_AsyncOperations";
 				public const string MsdynOcskillidentmlmodelAsyncOperations = "msdyn_ocskillidentmlmodel_AsyncOperations";
+				public const string MsdynOcsmschannelsettingAsyncOperations = "msdyn_ocsmschannelsetting_AsyncOperations";
+				public const string MsdynOcsmssettingsecretAsyncOperations = "msdyn_ocsmssettingsecret_AsyncOperations";
 				public const string MsdynOcsystemmessageAsyncOperations = "msdyn_ocsystemmessage_AsyncOperations";
 				public const string MsdynOctagAsyncOperations = "msdyn_octag_AsyncOperations";
+				public const string MsdynOcteamschannelconfigAsyncOperations = "msdyn_octeamschannelconfig_AsyncOperations";
+				public const string MsdynOctwitterapplicationAsyncOperations = "msdyn_octwitterapplication_AsyncOperations";
+				public const string MsdynOctwitterhandleAsyncOperations = "msdyn_octwitterhandle_AsyncOperations";
+				public const string MsdynOctwitterhandleprovisioningstatusAsyncOperations = "msdyn_octwitterhandleprovisioningstatus_AsyncOperations";
+				public const string MsdynOctwitterhandlesecretAsyncOperations = "msdyn_octwitterhandlesecret_AsyncOperations";
+				public const string MsdynOcwechatchannelconfigAsyncOperations = "msdyn_ocwechatchannelconfig_AsyncOperations";
+				public const string MsdynOcwhatsappchannelaccountAsyncOperations = "msdyn_ocwhatsappchannelaccount_AsyncOperations";
+				public const string MsdynOcwhatsappchannelnumberAsyncOperations = "msdyn_ocwhatsappchannelnumber_AsyncOperations";
+				public const string MsdynOdosfeaturemetadataAsyncOperations = "msdyn_odosfeaturemetadata_AsyncOperations";
+				public const string MsdynOdosmetadataAsyncOperations = "msdyn_odosmetadata_AsyncOperations";
 				public const string MsdynOmnichannelconfigurationAsyncOperations = "msdyn_omnichannelconfiguration_AsyncOperations";
 				public const string MsdynOmnichannelpersonalizationAsyncOperations = "msdyn_omnichannelpersonalization_AsyncOperations";
 				public const string MsdynOmnichannelqueueAsyncOperations = "msdyn_omnichannelqueue_AsyncOperations";
 				public const string MsdynOmnichannelsyncconfigAsyncOperations = "msdyn_omnichannelsyncconfig_AsyncOperations";
 				public const string MsdynOperatinghourAsyncOperations = "msdyn_operatinghour_AsyncOperations";
 				public const string MsdynOpportunitykpiitemAsyncOperations = "msdyn_opportunitykpiitem_AsyncOperations";
+				public const string MsdynOpportunitylineresourcecategoryAsyncOperations = "msdyn_opportunitylineresourcecategory_AsyncOperations";
+				public const string MsdynOpportunitylinetransactionAsyncOperations = "msdyn_opportunitylinetransaction_AsyncOperations";
+				public const string MsdynOpportunitylinetransactioncategoryAsyncOperations = "msdyn_opportunitylinetransactioncategory_AsyncOperations";
+				public const string MsdynOpportunitylinetransactionclassificatioAsyncOperations = "msdyn_opportunitylinetransactionclassificatio_AsyncOperations";
 				public const string MsdynOpportunitymodelconfigAsyncOperations = "msdyn_opportunitymodelconfig_AsyncOperations";
+				public const string MsdynOpportunitypricelistAsyncOperations = "msdyn_opportunitypricelist_AsyncOperations";
+				public const string MsdynOrderinvoicingdateAsyncOperations = "msdyn_orderinvoicingdate_AsyncOperations";
+				public const string MsdynOrderinvoicingproductAsyncOperations = "msdyn_orderinvoicingproduct_AsyncOperations";
+				public const string MsdynOrderinvoicingsetupAsyncOperations = "msdyn_orderinvoicingsetup_AsyncOperations";
+				public const string MsdynOrderinvoicingsetupdateAsyncOperations = "msdyn_orderinvoicingsetupdate_AsyncOperations";
+				public const string MsdynOrderlineresourcecategoryAsyncOperations = "msdyn_orderlineresourcecategory_AsyncOperations";
+				public const string MsdynOrderlinetransactionAsyncOperations = "msdyn_orderlinetransaction_AsyncOperations";
+				public const string MsdynOrderlinetransactioncategoryAsyncOperations = "msdyn_orderlinetransactioncategory_AsyncOperations";
+				public const string MsdynOrderlinetransactionclassificationAsyncOperations = "msdyn_orderlinetransactionclassification_AsyncOperations";
+				public const string MsdynOrderpricelistAsyncOperations = "msdyn_orderpricelist_AsyncOperations";
+				public const string MsdynOrganizationalunitAsyncOperations = "msdyn_organizationalunit_AsyncOperations";
+				public const string MsdynOrgchartnodeAsyncOperations = "msdyn_orgchartnode_AsyncOperations";
+				public const string MsdynOriginatingqueueAsyncOperations = "msdyn_originatingqueue_AsyncOperations";
 				public const string MsdynOverflowactionconfigAsyncOperations = "msdyn_overflowactionconfig_AsyncOperations";
 				public const string MsdynPaneconfigurationAsyncOperations = "msdyn_paneconfiguration_AsyncOperations";
 				public const string MsdynPanetabconfigurationAsyncOperations = "msdyn_panetabconfiguration_AsyncOperations";
 				public const string MsdynPanetoolconfigurationAsyncOperations = "msdyn_panetoolconfiguration_AsyncOperations";
+				public const string MsdynPaymentAsyncOperations = "msdyn_payment_AsyncOperations";
+				public const string MsdynPaymentdetailAsyncOperations = "msdyn_paymentdetail_AsyncOperations";
+				public const string MsdynPaymentmethodAsyncOperations = "msdyn_paymentmethod_AsyncOperations";
+				public const string MsdynPaymenttermAsyncOperations = "msdyn_paymentterm_AsyncOperations";
 				public const string MsdynPersonalmessageAsyncOperations = "msdyn_personalmessage_AsyncOperations";
 				public const string MsdynPersonalsoundsettingAsyncOperations = "msdyn_personalsoundsetting_AsyncOperations";
 				public const string MsdynPersonasecurityrolemappingAsyncOperations = "msdyn_personasecurityrolemapping_AsyncOperations";
@@ -1782,6 +1962,7 @@ namespace dgt.power.dataverse
 				public const string MsdynPlaybookinstanceAsyncOperations = "msdyn_playbookinstance_AsyncOperations";
 				public const string MsdynPlaybooktemplateAsyncOperations = "msdyn_playbooktemplate_AsyncOperations";
 				public const string MsdynPmanalysishistoryAsyncOperations = "msdyn_pmanalysishistory_AsyncOperations";
+				public const string MsdynPmbusinessruleautomationconfigAsyncOperations = "msdyn_pmbusinessruleautomationconfig_AsyncOperations";
 				public const string MsdynPmcalendarAsyncOperations = "msdyn_pmcalendar_AsyncOperations";
 				public const string MsdynPmcalendarversionAsyncOperations = "msdyn_pmcalendarversion_AsyncOperations";
 				public const string MsdynPminferredtaskAsyncOperations = "msdyn_pminferredtask_AsyncOperations";
@@ -1790,17 +1971,29 @@ namespace dgt.power.dataverse
 				public const string MsdynPmprocessusersettingsAsyncOperations = "msdyn_pmprocessusersettings_AsyncOperations";
 				public const string MsdynPmprocessversionAsyncOperations = "msdyn_pmprocessversion_AsyncOperations";
 				public const string MsdynPmrecordingAsyncOperations = "msdyn_pmrecording_AsyncOperations";
+				public const string MsdynPmsimulationAsyncOperations = "msdyn_pmsimulation_AsyncOperations";
 				public const string MsdynPmtemplateAsyncOperations = "msdyn_pmtemplate_AsyncOperations";
 				public const string MsdynPmviewAsyncOperations = "msdyn_pmview_AsyncOperations";
 				public const string MsdynPostalbumAsyncOperations = "msdyn_postalbum_AsyncOperations";
+				public const string MsdynPostalcodeAsyncOperations = "msdyn_postalcode_AsyncOperations";
 				public const string MsdynPostconfigAsyncOperations = "msdyn_postconfig_AsyncOperations";
 				public const string MsdynPostruleconfigAsyncOperations = "msdyn_postruleconfig_AsyncOperations";
+				public const string MsdynPredictioncomputationoperationAsyncOperations = "msdyn_predictioncomputationoperation_AsyncOperations";
+				public const string MsdynPredictionmodelstatusAsyncOperations = "msdyn_predictionmodelstatus_AsyncOperations";
+				public const string MsdynPredictionscheduledoperationAsyncOperations = "msdyn_predictionscheduledoperation_AsyncOperations";
 				public const string MsdynPredictivemodelscoreAsyncOperations = "msdyn_predictivemodelscore_AsyncOperations";
 				public const string MsdynPredictivescoreAsyncOperations = "msdyn_predictivescore_AsyncOperations";
+				public const string MsdynPredictivescoringsyncstatusAsyncOperations = "msdyn_predictivescoringsyncstatus_AsyncOperations";
+				public const string MsdynPredictworkhourdurationsettingAsyncOperations = "msdyn_predictworkhourdurationsetting_AsyncOperations";
 				public const string MsdynPreferredagentAsyncOperations = "msdyn_preferredagent_AsyncOperations";
 				public const string MsdynPreferredagentcustomeridentityAsyncOperations = "msdyn_preferredagentcustomeridentity_AsyncOperations";
 				public const string MsdynPreferredagentroutedentityAsyncOperations = "msdyn_preferredagentroutedentity_AsyncOperations";
 				public const string MsdynPresenceAsyncOperations = "msdyn_presence_AsyncOperations";
+				public const string MsdynPriorityAsyncOperations = "msdyn_priority_AsyncOperations";
+				public const string MsdynProblematicassetAsyncOperations = "msdyn_problematicasset_AsyncOperations";
+				public const string MsdynProblematicassetfeedbackAsyncOperations = "msdyn_problematicassetfeedback_AsyncOperations";
+				public const string MsdynProcessnotesAsyncOperations = "msdyn_processnotes_AsyncOperations";
+				public const string MsdynProductinventoryAsyncOperations = "msdyn_productinventory_AsyncOperations";
 				public const string MsdynProductivityactioninputparameterAsyncOperations = "msdyn_productivityactioninputparameter_AsyncOperations";
 				public const string MsdynProductivityactionoutputparameterAsyncOperations = "msdyn_productivityactionoutputparameter_AsyncOperations";
 				public const string MsdynProductivityagentscriptAsyncOperations = "msdyn_productivityagentscript_AsyncOperations";
@@ -1809,28 +2002,100 @@ namespace dgt.power.dataverse
 				public const string MsdynProductivitymacroconnectorAsyncOperations = "msdyn_productivitymacroconnector_AsyncOperations";
 				public const string MsdynProductivitymacrosolutionconfigurationAsyncOperations = "msdyn_productivitymacrosolutionconfiguration_AsyncOperations";
 				public const string MsdynProductivityparameterdefinitionAsyncOperations = "msdyn_productivityparameterdefinition_AsyncOperations";
+				public const string MsdynProjectAsyncOperations = "msdyn_project_AsyncOperations";
+				public const string MsdynProjectapprovalAsyncOperations = "msdyn_projectapproval_AsyncOperations";
+				public const string MsdynProjectparameterAsyncOperations = "msdyn_projectparameter_AsyncOperations";
+				public const string MsdynProjectparameterpricelistAsyncOperations = "msdyn_projectparameterpricelist_AsyncOperations";
+				public const string MsdynProjectpricelistAsyncOperations = "msdyn_projectpricelist_AsyncOperations";
+				public const string MsdynProjecttaskAsyncOperations = "msdyn_projecttask_AsyncOperations";
+				public const string MsdynProjecttaskdependencyAsyncOperations = "msdyn_projecttaskdependency_AsyncOperations";
+				public const string MsdynProjecttaskstatususerAsyncOperations = "msdyn_projecttaskstatususer_AsyncOperations";
+				public const string MsdynProjectteamAsyncOperations = "msdyn_projectteam_AsyncOperations";
+				public const string MsdynProjectteammembersignupAsyncOperations = "msdyn_projectteammembersignup_AsyncOperations";
+				public const string MsdynProjecttransactioncategoryAsyncOperations = "msdyn_projecttransactioncategory_AsyncOperations";
 				public const string MsdynPropertyAsyncOperations = "msdyn_property_AsyncOperations";
 				public const string MsdynPropertyassetassociationAsyncOperations = "msdyn_propertyassetassociation_AsyncOperations";
+				public const string MsdynPropertylocationassociationAsyncOperations = "msdyn_propertylocationassociation_AsyncOperations";
 				public const string MsdynPropertylogAsyncOperations = "msdyn_propertylog_AsyncOperations";
 				public const string MsdynPropertytemplateassociationAsyncOperations = "msdyn_propertytemplateassociation_AsyncOperations";
 				public const string MsdynProviderAsyncOperations = "msdyn_provider_AsyncOperations";
+				public const string MsdynPurchaseorderAsyncOperations = "msdyn_purchaseorder_AsyncOperations";
+				public const string MsdynPurchaseorderbillAsyncOperations = "msdyn_purchaseorderbill_AsyncOperations";
+				public const string MsdynPurchaseorderproductAsyncOperations = "msdyn_purchaseorderproduct_AsyncOperations";
+				public const string MsdynPurchaseorderreceiptAsyncOperations = "msdyn_purchaseorderreceipt_AsyncOperations";
+				public const string MsdynPurchaseorderreceiptproductAsyncOperations = "msdyn_purchaseorderreceiptproduct_AsyncOperations";
+				public const string MsdynPurchaseordersubstatusAsyncOperations = "msdyn_purchaseordersubstatus_AsyncOperations";
+				public const string MsdynQuestionsequenceAsyncOperations = "msdyn_questionsequence_AsyncOperations";
+				public const string MsdynQuotebookingincidentAsyncOperations = "msdyn_quotebookingincident_AsyncOperations";
+				public const string MsdynQuotebookingproductAsyncOperations = "msdyn_quotebookingproduct_AsyncOperations";
+				public const string MsdynQuotebookingserviceAsyncOperations = "msdyn_quotebookingservice_AsyncOperations";
+				public const string MsdynQuotebookingservicetaskAsyncOperations = "msdyn_quotebookingservicetask_AsyncOperations";
+				public const string MsdynQuotebookingsetupAsyncOperations = "msdyn_quotebookingsetup_AsyncOperations";
+				public const string MsdynQuoteinvoicingproductAsyncOperations = "msdyn_quoteinvoicingproduct_AsyncOperations";
+				public const string MsdynQuoteinvoicingsetupAsyncOperations = "msdyn_quoteinvoicingsetup_AsyncOperations";
+				public const string MsdynQuotelineanalyticsbreakdownAsyncOperations = "msdyn_quotelineanalyticsbreakdown_AsyncOperations";
+				public const string MsdynQuotelineinvoicescheduleAsyncOperations = "msdyn_quotelineinvoiceschedule_AsyncOperations";
+				public const string MsdynQuotelineresourcecategoryAsyncOperations = "msdyn_quotelineresourcecategory_AsyncOperations";
+				public const string MsdynQuotelinescheduleofvalueAsyncOperations = "msdyn_quotelinescheduleofvalue_AsyncOperations";
+				public const string MsdynQuotelinetransactionAsyncOperations = "msdyn_quotelinetransaction_AsyncOperations";
+				public const string MsdynQuotelinetransactioncategoryAsyncOperations = "msdyn_quotelinetransactioncategory_AsyncOperations";
+				public const string MsdynQuotelinetransactionclassificationAsyncOperations = "msdyn_quotelinetransactionclassification_AsyncOperations";
+				public const string MsdynQuotepricelistAsyncOperations = "msdyn_quotepricelist_AsyncOperations";
+				public const string MsdynReadtrackingenabledinfoAsyncOperations = "msdyn_readtrackingenabledinfo_AsyncOperations";
 				public const string MsdynRealtimescoringAsyncOperations = "msdyn_realtimescoring_AsyncOperations";
+				public const string MsdynRealtimescoringoperationAsyncOperations = "msdyn_realtimescoringoperation_AsyncOperations";
 				public const string MsdynRecomputetrackerAsyncOperations = "msdyn_recomputetracker_AsyncOperations";
 				public const string MsdynRecordingAsyncOperations = "msdyn_recording_AsyncOperations";
 				public const string MsdynRecurringsalesactionAsyncOperations = "msdyn_recurringsalesaction_AsyncOperations";
+				public const string MsdynRecurringsalesactionv2AsyncOperations = "msdyn_recurringsalesactionv2_AsyncOperations";
+				public const string MsdynRelationshipanalyticsmetadataAsyncOperations = "msdyn_relationshipanalyticsmetadata_AsyncOperations";
 				public const string MsdynRelationshipinsightsunifiedconfigAsyncOperations = "msdyn_relationshipinsightsunifiedconfig_AsyncOperations";
 				public const string MsdynReportbookmarkAsyncOperations = "msdyn_reportbookmark_AsyncOperations";
+				public const string MsdynRequirementchangeAsyncOperations = "msdyn_requirementchange_AsyncOperations";
+				public const string MsdynRequirementcharacteristicAsyncOperations = "msdyn_requirementcharacteristic_AsyncOperations";
+				public const string MsdynRequirementdependencyAsyncOperations = "msdyn_requirementdependency_AsyncOperations";
+				public const string MsdynRequirementgroupAsyncOperations = "msdyn_requirementgroup_AsyncOperations";
+				public const string MsdynRequirementorganizationunitAsyncOperations = "msdyn_requirementorganizationunit_AsyncOperations";
+				public const string MsdynRequirementrelationshipAsyncOperations = "msdyn_requirementrelationship_AsyncOperations";
+				public const string MsdynRequirementresourcecategoryAsyncOperations = "msdyn_requirementresourcecategory_AsyncOperations";
+				public const string MsdynRequirementresourcepreferenceAsyncOperations = "msdyn_requirementresourcepreference_AsyncOperations";
+				public const string MsdynRequirementstatusAsyncOperations = "msdyn_requirementstatus_AsyncOperations";
+				public const string MsdynResolutionAsyncOperations = "msdyn_resolution_AsyncOperations";
+				public const string MsdynResourceassignmentAsyncOperations = "msdyn_resourceassignment_AsyncOperations";
+				public const string MsdynResourceassignmentdetailAsyncOperations = "msdyn_resourceassignmentdetail_AsyncOperations";
+				public const string MsdynResourcecategorymarkuppricelevelAsyncOperations = "msdyn_resourcecategorymarkuppricelevel_AsyncOperations";
+				public const string MsdynResourcecategorypricelevelAsyncOperations = "msdyn_resourcecategorypricelevel_AsyncOperations";
+				public const string MsdynResourcepaytypeAsyncOperations = "msdyn_resourcepaytype_AsyncOperations";
+				public const string MsdynResourcerequestAsyncOperations = "msdyn_resourcerequest_AsyncOperations";
+				public const string MsdynResourcerequirementAsyncOperations = "msdyn_resourcerequirement_AsyncOperations";
+				public const string MsdynResourcerequirementdetailAsyncOperations = "msdyn_resourcerequirementdetail_AsyncOperations";
+				public const string MsdynResourceterritoryAsyncOperations = "msdyn_resourceterritory_AsyncOperations";
 				public const string MsdynRichtextfileAsyncOperations = "msdyn_richtextfile_AsyncOperations";
+				public const string MsdynRmaAsyncOperations = "msdyn_rma_AsyncOperations";
+				public const string MsdynRmaproductAsyncOperations = "msdyn_rmaproduct_AsyncOperations";
+				public const string MsdynRmareceiptAsyncOperations = "msdyn_rmareceipt_AsyncOperations";
+				public const string MsdynRmareceiptproductAsyncOperations = "msdyn_rmareceiptproduct_AsyncOperations";
+				public const string MsdynRmasubstatusAsyncOperations = "msdyn_rmasubstatus_AsyncOperations";
+				public const string MsdynRolecompetencyrequirementAsyncOperations = "msdyn_rolecompetencyrequirement_AsyncOperations";
+				public const string MsdynRoleutilizationAsyncOperations = "msdyn_roleutilization_AsyncOperations";
 				public const string MsdynRoutingconfigurationAsyncOperations = "msdyn_routingconfiguration_AsyncOperations";
 				public const string MsdynRoutingconfigurationstepAsyncOperations = "msdyn_routingconfigurationstep_AsyncOperations";
 				public const string MsdynRoutingrequestAsyncOperations = "msdyn_routingrequest_AsyncOperations";
 				public const string MsdynRoutingrulesetsettingAsyncOperations = "msdyn_routingrulesetsetting_AsyncOperations";
+				public const string MsdynRtvAsyncOperations = "msdyn_rtv_AsyncOperations";
+				public const string MsdynRtvproductAsyncOperations = "msdyn_rtvproduct_AsyncOperations";
+				public const string MsdynRtvsubstatusAsyncOperations = "msdyn_rtvsubstatus_AsyncOperations";
 				public const string MsdynRulesetdependencymappingAsyncOperations = "msdyn_rulesetdependencymapping_AsyncOperations";
 				public const string MsdynSabackupdiagnosticAsyncOperations = "msdyn_sabackupdiagnostic_AsyncOperations";
 				public const string MsdynSabatchruninstanceAsyncOperations = "msdyn_sabatchruninstance_AsyncOperations";
 				public const string MsdynSalesaccelerationinsightAsyncOperations = "msdyn_salesaccelerationinsight_AsyncOperations";
 				public const string MsdynSalesaccelerationsettingsAsyncOperations = "msdyn_salesaccelerationsettings_AsyncOperations";
 				public const string MsdynSalesassignmentsettingAsyncOperations = "msdyn_salesassignmentsetting_AsyncOperations";
+				public const string MsdynSalescopilotinsightAsyncOperations = "msdyn_salescopilotinsight_AsyncOperations";
+				public const string MsdynSalescopilotorgsettingsAsyncOperations = "msdyn_salescopilotorgsettings_AsyncOperations";
+				public const string MsdynSalescopilotusersettingAsyncOperations = "msdyn_salescopilotusersetting_AsyncOperations";
+				public const string MsdynSalesforcestructuredobjectAsyncOperations = "msdyn_salesforcestructuredobject_AsyncOperations";
+				public const string MsdynSalesforcestructuredqnaconfigAsyncOperations = "msdyn_salesforcestructuredqnaconfig_AsyncOperations";
 				public const string MsdynSalesinsightssettingsAsyncOperations = "msdyn_salesinsightssettings_AsyncOperations";
 				public const string MsdynSalesocmessageAsyncOperations = "msdyn_salesocmessage_AsyncOperations";
 				public const string MsdynSalesocsmstemplateAsyncOperations = "msdyn_salesocsmstemplate_AsyncOperations";
@@ -1839,6 +2104,17 @@ namespace dgt.power.dataverse
 				public const string MsdynSalessuggestionAsyncOperations = "msdyn_salessuggestion_AsyncOperations";
 				public const string MsdynSalestagAsyncOperations = "msdyn_salestag_AsyncOperations";
 				public const string MsdynSaruninstanceAsyncOperations = "msdyn_saruninstance_AsyncOperations";
+				public const string MsdynScenarioAsyncOperations = "msdyn_scenario_AsyncOperations";
+				public const string MsdynScheduleAsyncOperations = "msdyn_schedule_AsyncOperations";
+				public const string MsdynScheduleboardsettingAsyncOperations = "msdyn_scheduleboardsetting_AsyncOperations";
+				public const string MsdynSchedulingfeatureflagAsyncOperations = "msdyn_schedulingfeatureflag_AsyncOperations";
+				public const string MsdynSchedulingparameterAsyncOperations = "msdyn_schedulingparameter_AsyncOperations";
+				public const string MsdynSciconversationAsyncOperations = "msdyn_sciconversation_AsyncOperations";
+				public const string MsdynScicustomemailhighlightAsyncOperations = "msdyn_scicustomemailhighlight_AsyncOperations";
+				public const string MsdynScicustomhighlightAsyncOperations = "msdyn_scicustomhighlight_AsyncOperations";
+				public const string MsdynScicustompublisherAsyncOperations = "msdyn_scicustompublisher_AsyncOperations";
+				public const string MsdynScienvironmentsettingsAsyncOperations = "msdyn_scienvironmentsettings_AsyncOperations";
+				public const string MsdynSciusersettingsAsyncOperations = "msdyn_sciusersettings_AsyncOperations";
 				public const string MsdynSearchconfigurationAsyncOperations = "msdyn_searchconfiguration_AsyncOperations";
 				public const string MsdynSegmentAsyncOperations = "msdyn_segment_AsyncOperations";
 				public const string MsdynSegmentationsettingAsyncOperations = "msdyn_segmentationsetting_AsyncOperations";
@@ -1851,13 +2127,17 @@ namespace dgt.power.dataverse
 				public const string MsdynSequencetargetstepAsyncOperations = "msdyn_sequencetargetstep_AsyncOperations";
 				public const string MsdynSequencetemplateAsyncOperations = "msdyn_sequencetemplate_AsyncOperations";
 				public const string MsdynServiceconfigurationAsyncOperations = "msdyn_serviceconfiguration_AsyncOperations";
+				public const string MsdynServicecopilotpluginAsyncOperations = "msdyn_servicecopilotplugin_AsyncOperations";
+				public const string MsdynServicecopilotpluginroleAsyncOperations = "msdyn_servicecopilotpluginrole_AsyncOperations";
 				public const string MsdynServiceoneprovisioningrequestAsyncOperations = "msdyn_serviceoneprovisioningrequest_AsyncOperations";
+				public const string MsdynServicetasktypeAsyncOperations = "msdyn_servicetasktype_AsyncOperations";
 				public const string MsdynSessiondataAsyncOperations = "msdyn_sessiondata_AsyncOperations";
 				public const string MsdynSessioneventAsyncOperations = "msdyn_sessionevent_AsyncOperations";
 				public const string MsdynSessionparticipantAsyncOperations = "msdyn_sessionparticipant_AsyncOperations";
 				public const string MsdynSessionparticipantdataAsyncOperations = "msdyn_sessionparticipantdata_AsyncOperations";
 				public const string MsdynSessiontemplateAsyncOperations = "msdyn_sessiontemplate_AsyncOperations";
 				public const string MsdynShareasconfigurationAsyncOperations = "msdyn_shareasconfiguration_AsyncOperations";
+				public const string MsdynShipviaAsyncOperations = "msdyn_shipvia_AsyncOperations";
 				public const string MsdynSiconfigAsyncOperations = "msdyn_siconfig_AsyncOperations";
 				public const string MsdynSikeyvalueconfigAsyncOperations = "msdyn_sikeyvalueconfig_AsyncOperations";
 				public const string MsdynSimilarentitiesfeatureimportanceAsyncOperations = "msdyn_similarentitiesfeatureimportance_AsyncOperations";
@@ -1865,11 +2145,14 @@ namespace dgt.power.dataverse
 				public const string MsdynSkillattachmenttargetAsyncOperations = "msdyn_skillattachmenttarget_AsyncOperations";
 				public const string MsdynSlakpiAsyncOperations = "msdyn_slakpi_AsyncOperations";
 				public const string MsdynSmartassistconfigAsyncOperations = "msdyn_smartassistconfig_AsyncOperations";
+				public const string MsdynSmsengagementctxAsyncOperations = "msdyn_smsengagementctx_AsyncOperations";
+				public const string MsdynSmsnumberAsyncOperations = "msdyn_smsnumber_AsyncOperations";
 				public const string MsdynSolutionhealthruleAsyncOperations = "msdyn_solutionhealthrule_AsyncOperations";
 				public const string MsdynSolutionhealthruleargumentAsyncOperations = "msdyn_solutionhealthruleargument_AsyncOperations";
 				public const string MsdynSolutionhealthrulesetAsyncOperations = "msdyn_solutionhealthruleset_AsyncOperations";
 				public const string MsdynSoundfileAsyncOperations = "msdyn_soundfile_AsyncOperations";
 				public const string MsdynSoundnotificationsettingAsyncOperations = "msdyn_soundnotificationsetting_AsyncOperations";
+				public const string MsdynSubmodeldefinitionAsyncOperations = "msdyn_submodeldefinition_AsyncOperations";
 				public const string MsdynSuggestionassignmentruleAsyncOperations = "msdyn_suggestionassignmentrule_AsyncOperations";
 				public const string MsdynSuggestioninteractionAsyncOperations = "msdyn_suggestioninteraction_AsyncOperations";
 				public const string MsdynSuggestionprincipalobjectaccessAsyncOperations = "msdyn_suggestionprincipalobjectaccess_AsyncOperations";
@@ -1877,26 +2160,51 @@ namespace dgt.power.dataverse
 				public const string MsdynSuggestionsellerpriorityAsyncOperations = "msdyn_suggestionsellerpriority_AsyncOperations";
 				public const string MsdynSuggestionsmodelsummaryAsyncOperations = "msdyn_suggestionsmodelsummary_AsyncOperations";
 				public const string MsdynSuggestionssettingAsyncOperations = "msdyn_suggestionssetting_AsyncOperations";
+				public const string MsdynSurveyquestionAsyncOperations = "msdyn_surveyquestion_AsyncOperations";
+				public const string MsdynSurveysettingAsyncOperations = "msdyn_surveysetting_AsyncOperations";
 				public const string MsdynSwarmAsyncOperations = "msdyn_swarm_AsyncOperations";
 				public const string MsdynSwarmparticipantAsyncOperations = "msdyn_swarmparticipant_AsyncOperations";
 				public const string MsdynSwarmparticipantruleAsyncOperations = "msdyn_swarmparticipantrule_AsyncOperations";
 				public const string MsdynSwarmroleAsyncOperations = "msdyn_swarmrole_AsyncOperations";
 				public const string MsdynSwarmskillAsyncOperations = "msdyn_swarmskill_AsyncOperations";
 				public const string MsdynSwarmtemplateAsyncOperations = "msdyn_swarmtemplate_AsyncOperations";
+				public const string MsdynSystemuserschedulersettingAsyncOperations = "msdyn_systemuserschedulersetting_AsyncOperations";
 				public const string MsdynTaggedrecordAsyncOperations = "msdyn_taggedrecord_AsyncOperations";
+				public const string MsdynTaxcodeAsyncOperations = "msdyn_taxcode_AsyncOperations";
+				public const string MsdynTaxcodedetailAsyncOperations = "msdyn_taxcodedetail_AsyncOperations";
+				public const string MsdynTeamschannelengagementctxAsyncOperations = "msdyn_teamschannelengagementctx_AsyncOperations";
 				public const string MsdynTeamschatassociationAsyncOperations = "msdyn_teamschatassociation_AsyncOperations";
 				public const string MsdynTeamschatsuggestionAsyncOperations = "msdyn_teamschatsuggestion_AsyncOperations";
 				public const string MsdynTeamscollaborationAsyncOperations = "msdyn_teamscollaboration_AsyncOperations";
 				public const string MsdynTeamsdialeradminsettingsAsyncOperations = "msdyn_teamsdialeradminsettings_AsyncOperations";
+				public const string MsdynTeamsengagementctxAsyncOperations = "msdyn_teamsengagementctx_AsyncOperations";
 				public const string MsdynTemplateforpropertiesAsyncOperations = "msdyn_templateforproperties_AsyncOperations";
 				public const string MsdynTemplateparameterAsyncOperations = "msdyn_templateparameter_AsyncOperations";
 				public const string MsdynTemplatetagsAsyncOperations = "msdyn_templatetags_AsyncOperations";
+				public const string MsdynTimeentryAsyncOperations = "msdyn_timeentry_AsyncOperations";
+				public const string MsdynTimeentrysettingAsyncOperations = "msdyn_timeentrysetting_AsyncOperations";
+				public const string MsdynTimegroupAsyncOperations = "msdyn_timegroup_AsyncOperations";
+				public const string MsdynTimegroupdetailAsyncOperations = "msdyn_timegroupdetail_AsyncOperations";
+				public const string MsdynTimeoffcalendarAsyncOperations = "msdyn_timeoffcalendar_AsyncOperations";
+				public const string MsdynTimeoffrequestAsyncOperations = "msdyn_timeoffrequest_AsyncOperations";
 				public const string MsdynTimespentAsyncOperations = "msdyn_timespent_AsyncOperations";
 				public const string MsdynTourAsyncOperations = "msdyn_tour_AsyncOperations";
+				public const string MsdynTradeAsyncOperations = "msdyn_trade_AsyncOperations";
+				public const string MsdynTradecoverageAsyncOperations = "msdyn_tradecoverage_AsyncOperations";
+				public const string MsdynTrainingresultAsyncOperations = "msdyn_trainingresult_AsyncOperations";
+				public const string MsdynTransactioncategoryAsyncOperations = "msdyn_transactioncategory_AsyncOperations";
+				public const string MsdynTransactioncategoryclassificationAsyncOperations = "msdyn_transactioncategoryclassification_AsyncOperations";
+				public const string MsdynTransactioncategoryhierarchyelementAsyncOperations = "msdyn_transactioncategoryhierarchyelement_AsyncOperations";
+				public const string MsdynTransactioncategorypricelevelAsyncOperations = "msdyn_transactioncategorypricelevel_AsyncOperations";
+				public const string MsdynTransactionconnectionAsyncOperations = "msdyn_transactionconnection_AsyncOperations";
+				public const string MsdynTransactionoriginAsyncOperations = "msdyn_transactionorigin_AsyncOperations";
+				public const string MsdynTransactiontypeAsyncOperations = "msdyn_transactiontype_AsyncOperations";
 				public const string MsdynTranscriptAsyncOperations = "msdyn_transcript_AsyncOperations";
+				public const string MsdynTwitterengagementctxAsyncOperations = "msdyn_twitterengagementctx_AsyncOperations";
 				public const string MsdynUnifiedroutingdiagnosticAsyncOperations = "msdyn_unifiedroutingdiagnostic_AsyncOperations";
 				public const string MsdynUnifiedroutingrunAsyncOperations = "msdyn_unifiedroutingrun_AsyncOperations";
 				public const string MsdynUnifiedroutingsetuptrackerAsyncOperations = "msdyn_unifiedroutingsetuptracker_AsyncOperations";
+				public const string MsdynUniquenumberAsyncOperations = "msdyn_uniquenumber_AsyncOperations";
 				public const string MsdynUntrackedappointmentAsyncOperations = "msdyn_untrackedappointment_AsyncOperations";
 				public const string MsdynUpgraderunAsyncOperations = "msdyn_upgraderun_AsyncOperations";
 				public const string MsdynUpgradestepAsyncOperations = "msdyn_upgradestep_AsyncOperations";
@@ -1906,19 +2214,38 @@ namespace dgt.power.dataverse
 				public const string MsdynUsagemetricAsyncOperations = "msdyn_usagemetric_AsyncOperations";
 				public const string MsdynUsagereportingAsyncOperations = "msdyn_usagereporting_AsyncOperations";
 				public const string MsdynUsersettingAsyncOperations = "msdyn_usersetting_AsyncOperations";
+				public const string MsdynUserworkhistoryAsyncOperations = "msdyn_userworkhistory_AsyncOperations";
 				public const string MsdynVirtualtablecolumncandidateAsyncOperations = "msdyn_virtualtablecolumncandidate_AsyncOperations";
 				public const string MsdynVisitorjourneyAsyncOperations = "msdyn_visitorjourney_AsyncOperations";
 				public const string MsdynVivacustomerlistAsyncOperations = "msdyn_vivacustomerlist_AsyncOperations";
 				public const string MsdynVivaentitysettingAsyncOperations = "msdyn_vivaentitysetting_AsyncOperations";
+				public const string MsdynVivaorgextensioncredAsyncOperations = "msdyn_vivaorgextensioncred_AsyncOperations";
 				public const string MsdynVivaorgsettingAsyncOperations = "msdyn_vivaorgsetting_AsyncOperations";
 				public const string MsdynVivausersettingAsyncOperations = "msdyn_vivausersetting_AsyncOperations";
 				public const string MsdynWallsavedqueryAsyncOperations = "msdyn_wallsavedquery_AsyncOperations";
 				public const string MsdynWallsavedqueryusersettingsAsyncOperations = "msdyn_wallsavedqueryusersettings_AsyncOperations";
+				public const string MsdynWarehouseAsyncOperations = "msdyn_warehouse_AsyncOperations";
+				public const string MsdynWarrantyAsyncOperations = "msdyn_warranty_AsyncOperations";
+				public const string MsdynWechatengagementctxAsyncOperations = "msdyn_wechatengagementctx_AsyncOperations";
+				public const string MsdynWhatsappengagementctxAsyncOperations = "msdyn_whatsappengagementctx_AsyncOperations";
 				public const string MsdynWkwcolleaguesforcompanyAsyncOperations = "msdyn_wkwcolleaguesforcompany_AsyncOperations";
 				public const string MsdynWkwcolleaguesforcontactAsyncOperations = "msdyn_wkwcolleaguesforcontact_AsyncOperations";
 				public const string MsdynWkwconfigAsyncOperations = "msdyn_wkwconfig_AsyncOperations";
 				public const string MsdynWorkflowactionstatusAsyncOperations = "msdyn_workflowactionstatus_AsyncOperations";
+				public const string MsdynWorkhourtemplateAsyncOperations = "msdyn_workhourtemplate_AsyncOperations";
 				public const string MsdynWorklistviewconfigurationAsyncOperations = "msdyn_worklistviewconfiguration_AsyncOperations";
+				public const string MsdynWorkorderAsyncOperations = "msdyn_workorder_AsyncOperations";
+				public const string MsdynWorkordercharacteristicAsyncOperations = "msdyn_workordercharacteristic_AsyncOperations";
+				public const string MsdynWorkorderdetailsgenerationqueueAsyncOperations = "msdyn_workorderdetailsgenerationqueue_AsyncOperations";
+				public const string MsdynWorkorderincidentAsyncOperations = "msdyn_workorderincident_AsyncOperations";
+				public const string MsdynWorkordernteAsyncOperations = "msdyn_workordernte_AsyncOperations";
+				public const string MsdynWorkorderproductAsyncOperations = "msdyn_workorderproduct_AsyncOperations";
+				public const string MsdynWorkorderresolutionAsyncOperations = "msdyn_workorderresolution_AsyncOperations";
+				public const string MsdynWorkorderresourcerestrictionAsyncOperations = "msdyn_workorderresourcerestriction_AsyncOperations";
+				public const string MsdynWorkorderserviceAsyncOperations = "msdyn_workorderservice_AsyncOperations";
+				public const string MsdynWorkorderservicetaskAsyncOperations = "msdyn_workorderservicetask_AsyncOperations";
+				public const string MsdynWorkordersubstatusAsyncOperations = "msdyn_workordersubstatus_AsyncOperations";
+				public const string MsdynWorkordertypeAsyncOperations = "msdyn_workordertype_AsyncOperations";
 				public const string MsdynWorkqueuestateAsyncOperations = "msdyn_workqueuestate_AsyncOperations";
 				public const string MsdynWorkqueueusersettingAsyncOperations = "msdyn_workqueueusersetting_AsyncOperations";
 				public const string MsdynceBotcontentAsyncOperations = "msdynce_botcontent_AsyncOperations";
@@ -1935,6 +2262,8 @@ namespace dgt.power.dataverse
 				public const string MsdyncrmQrcodestyleAsyncOperations = "msdyncrm_qrcodestyle_AsyncOperations";
 				public const string MsdyncrmTextstyleAsyncOperations = "msdyncrm_textstyle_AsyncOperations";
 				public const string MsdyncrmVideostyleAsyncOperations = "msdyncrm_videostyle_AsyncOperations";
+				public const string MsdynmktByoacschannelinstanceAsyncOperations = "msdynmkt_byoacschannelinstance_AsyncOperations";
+				public const string MsdynmktByoacschannelinstanceaccountAsyncOperations = "msdynmkt_byoacschannelinstanceaccount_AsyncOperations";
 				public const string MsdynmktCatalogeventstatusconfigurationAsyncOperations = "msdynmkt_catalogeventstatusconfiguration_AsyncOperations";
 				public const string MsdynmktConfigurationAsyncOperations = "msdynmkt_configuration_AsyncOperations";
 				public const string MsdynmktEventmetadataAsyncOperations = "msdynmkt_eventmetadata_AsyncOperations";
@@ -1956,6 +2285,32 @@ namespace dgt.power.dataverse
 				public const string MsdynmktTelesignchannelinstanceaccountAsyncOperations = "msdynmkt_telesignchannelinstanceaccount_AsyncOperations";
 				public const string MsdynmktTwiliochannelinstanceAsyncOperations = "msdynmkt_twiliochannelinstance_AsyncOperations";
 				public const string MsdynmktTwiliochannelinstanceaccountAsyncOperations = "msdynmkt_twiliochannelinstanceaccount_AsyncOperations";
+				public const string MsdynmktVibeschannelinstanceAsyncOperations = "msdynmkt_vibeschannelinstance_AsyncOperations";
+				public const string MsdynmktVibeschannelinstanceaccountAsyncOperations = "msdynmkt_vibeschannelinstanceaccount_AsyncOperations";
+				public const string MsdyusdActioncallworkflowAsyncOperations = "msdyusd_actioncallworkflow_AsyncOperations";
+				public const string MsdyusdAgentscriptactionAsyncOperations = "msdyusd_agentscriptaction_AsyncOperations";
+				public const string MsdyusdAgentscripttaskcategoryAsyncOperations = "msdyusd_agentscripttaskcategory_AsyncOperations";
+				public const string MsdyusdAnswerAsyncOperations = "msdyusd_answer_AsyncOperations";
+				public const string MsdyusdAuditanddiagnosticssettingAsyncOperations = "msdyusd_auditanddiagnosticssetting_AsyncOperations";
+				public const string MsdyusdConfigurationAsyncOperations = "msdyusd_configuration_AsyncOperations";
+				public const string MsdyusdCustomizationfilesAsyncOperations = "msdyusd_customizationfiles_AsyncOperations";
+				public const string MsdyusdEntityassignmentAsyncOperations = "msdyusd_entityassignment_AsyncOperations";
+				public const string MsdyusdEntitysearchAsyncOperations = "msdyusd_entitysearch_AsyncOperations";
+				public const string MsdyusdFormAsyncOperations = "msdyusd_form_AsyncOperations";
+				public const string MsdyusdLanguagemoduleAsyncOperations = "msdyusd_languagemodule_AsyncOperations";
+				public const string MsdyusdScriptletAsyncOperations = "msdyusd_scriptlet_AsyncOperations";
+				public const string MsdyusdScripttasktriggerAsyncOperations = "msdyusd_scripttasktrigger_AsyncOperations";
+				public const string MsdyusdSearchAsyncOperations = "msdyusd_search_AsyncOperations";
+				public const string MsdyusdSessioninformationAsyncOperations = "msdyusd_sessioninformation_AsyncOperations";
+				public const string MsdyusdSessiontransferAsyncOperations = "msdyusd_sessiontransfer_AsyncOperations";
+				public const string MsdyusdTaskAsyncOperations = "msdyusd_task_AsyncOperations";
+				public const string MsdyusdToolbarbuttonAsyncOperations = "msdyusd_toolbarbutton_AsyncOperations";
+				public const string MsdyusdToolbarstripAsyncOperations = "msdyusd_toolbarstrip_AsyncOperations";
+				public const string MsdyusdTracesourcesettingAsyncOperations = "msdyusd_tracesourcesetting_AsyncOperations";
+				public const string MsdyusdUcisettingsAsyncOperations = "msdyusd_ucisettings_AsyncOperations";
+				public const string MsdyusdUiieventAsyncOperations = "msdyusd_uiievent_AsyncOperations";
+				public const string MsdyusdUsersettingsAsyncOperations = "msdyusd_usersettings_AsyncOperations";
+				public const string MsdyusdWindowrouteAsyncOperations = "msdyusd_windowroute_AsyncOperations";
 				public const string MsfpAlertAsyncOperations = "msfp_alert_AsyncOperations";
 				public const string MsfpAlertruleAsyncOperations = "msfp_alertrule_AsyncOperations";
 				public const string MsfpEmailtemplateAsyncOperations = "msfp_emailtemplate_AsyncOperations";
@@ -1971,143 +2326,8 @@ namespace dgt.power.dataverse
 				public const string MsfpSurveyresponseAsyncOperations = "msfp_surveyresponse_AsyncOperations";
 				public const string MsfpUnsubscribedrecipientAsyncOperations = "msfp_unsubscribedrecipient_AsyncOperations";
 				public const string MsgraphresourcetosubscriptionAsyncOperations = "msgraphresourcetosubscription_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86dAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8eAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8fAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827bAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71bAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5bAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6bAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1157154580deAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6fAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acdAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630feAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6ebAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT21225727811AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11bAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0fAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5fAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bbaAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT36634415773AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260acAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8ddAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05beaAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1feAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95ddAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69afAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbbAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ecAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61dAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2dAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3eAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903cAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT94251be212fAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200aAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450edAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25dbAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7AsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7_AsyncOperations";
-				public const string NewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0eAsyncOperations = "new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474_AsyncOperations";
-				public const string NewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13AsyncOperations = "new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13_AsyncOperations";
+				public const string MspcatCatalogsubmissionfilesAsyncOperations = "mspcat_catalogsubmissionfiles_AsyncOperations";
+				public const string MspcatPackagestoreAsyncOperations = "mspcat_packagestore_AsyncOperations";
 				public const string OpportunityAsyncOperations = "Opportunity_AsyncOperations";
 				public const string OpportunityCloseAsyncOperations = "OpportunityClose_AsyncOperations";
 				public const string OpportunitycompetitorsAsyncOperations = "opportunitycompetitors_AsyncOperations";
@@ -2115,23 +2335,35 @@ namespace dgt.power.dataverse
 				public const string OpportunitysalesprocessAsyncOperations = "opportunitysalesprocess_AsyncOperations";
 				public const string OrderCloseAsyncOperations = "OrderClose_AsyncOperations";
 				public const string OrganizationAsyncOperations = "Organization_AsyncOperations";
+				public const string OrganizationdatasyncfnostateAsyncOperations = "organizationdatasyncfnostate_AsyncOperations";
 				public const string OrganizationdatasyncstateAsyncOperations = "organizationdatasyncstate_AsyncOperations";
 				public const string OrganizationdatasyncsubscriptionAsyncOperations = "organizationdatasyncsubscription_AsyncOperations";
 				public const string OrganizationdatasyncsubscriptionentityAsyncOperations = "organizationdatasyncsubscriptionentity_AsyncOperations";
+				public const string OrganizationdatasyncsubscriptionfnotableAsyncOperations = "organizationdatasyncsubscriptionfnotable_AsyncOperations";
 				public const string OrganizationsettingAsyncOperations = "organizationsetting_AsyncOperations";
 				public const string OwnerAsyncoperations = "owner_asyncoperations";
 				public const string PackageAsyncOperations = "package_AsyncOperations";
+				public const string PackagehistoryAsyncOperations = "packagehistory_AsyncOperations";
 				public const string PdfsettingAsyncOperations = "pdfsetting_AsyncOperations";
 				public const string PhoneCallAsyncOperations = "PhoneCall_AsyncOperations";
 				public const string PhonetocaseprocessAsyncOperations = "phonetocaseprocess_AsyncOperations";
+				public const string PlannerbusinessscenarioAsyncOperations = "plannerbusinessscenario_AsyncOperations";
+				public const string PlannersyncactionAsyncOperations = "plannersyncaction_AsyncOperations";
 				public const string PluginpackageAsyncOperations = "pluginpackage_AsyncOperations";
 				public const string PositionAsyncOperations = "position_AsyncOperations";
 				public const string PostAsyncOperations = "post_AsyncOperations";
 				public const string PostFollowAsyncOperations = "PostFollow_AsyncOperations";
 				public const string PowerbidatasetAsyncOperations = "powerbidataset_AsyncOperations";
+				public const string PowerbidatasetapdxAsyncOperations = "powerbidatasetapdx_AsyncOperations";
 				public const string PowerbimashupparameterAsyncOperations = "powerbimashupparameter_AsyncOperations";
 				public const string PowerbireportAsyncOperations = "powerbireport_AsyncOperations";
+				public const string PowerbireportapdxAsyncOperations = "powerbireportapdx_AsyncOperations";
 				public const string PowerfxruleAsyncOperations = "powerfxrule_AsyncOperations";
+				public const string PowerpagecomponentAsyncOperations = "powerpagecomponent_AsyncOperations";
+				public const string PowerpagesiteAsyncOperations = "powerpagesite_AsyncOperations";
+				public const string PowerpagesitelanguageAsyncOperations = "powerpagesitelanguage_AsyncOperations";
+				public const string PowerpagesitepublishedAsyncOperations = "powerpagesitepublished_AsyncOperations";
+				public const string PowerpagesscanreportAsyncOperations = "powerpagesscanreport_AsyncOperations";
 				public const string PriceLevelAsyncOperations = "PriceLevel_AsyncOperations";
 				public const string PrivilegeAsyncOperations = "Privilege_AsyncOperations";
 				public const string PrivilegesremovalsettingAsyncOperations = "privilegesremovalsetting_AsyncOperations";
@@ -2151,8 +2383,12 @@ namespace dgt.power.dataverse
 				public const string QuoteDetailAsyncOperations = "QuoteDetail_AsyncOperations";
 				public const string RatingmodelAsyncOperations = "ratingmodel_AsyncOperations";
 				public const string RatingvalueAsyncOperations = "ratingvalue_AsyncOperations";
+				public const string ReconciliationentityinfoAsyncOperations = "reconciliationentityinfo_AsyncOperations";
+				public const string ReconciliationentitystepinfoAsyncOperations = "reconciliationentitystepinfo_AsyncOperations";
+				public const string ReconciliationinfoAsyncOperations = "reconciliationinfo_AsyncOperations";
 				public const string RecordfilterAsyncOperations = "recordfilter_AsyncOperations";
 				public const string RecurringAppointmentMasterAsyncOperations = "RecurringAppointmentMaster_AsyncOperations";
+				public const string RecyclebinconfigAsyncOperations = "recyclebinconfig_AsyncOperations";
 				public const string RelationshipattributeAsyncOperations = "relationshipattribute_AsyncOperations";
 				public const string RelationshipRoleAsyncOperations = "RelationshipRole_AsyncOperations";
 				public const string RelationshipRoleMapAsyncOperations = "RelationshipRoleMap_AsyncOperations";
@@ -2161,6 +2397,13 @@ namespace dgt.power.dataverse
 				public const string ResourceGroupAsyncOperations = "ResourceGroup_AsyncOperations";
 				public const string ResourcegroupexpansionAsyncOperations = "resourcegroupexpansion_AsyncOperations";
 				public const string ResourceSpecAsyncOperations = "ResourceSpec_AsyncOperations";
+				public const string RetaineddataexcelAsyncOperations = "retaineddataexcel_AsyncOperations";
+				public const string RetentioncleanupinfoAsyncOperations = "retentioncleanupinfo_AsyncOperations";
+				public const string RetentioncleanupoperationAsyncOperations = "retentioncleanupoperation_AsyncOperations";
+				public const string RetentionconfigAsyncOperations = "retentionconfig_AsyncOperations";
+				public const string RetentionfailuredetailAsyncOperations = "retentionfailuredetail_AsyncOperations";
+				public const string RetentionoperationAsyncOperations = "retentionoperation_AsyncOperations";
+				public const string RetentionoperationdetailAsyncOperations = "retentionoperationdetail_AsyncOperations";
 				public const string RevokeinheritedaccessrecordstrackerAsyncOperations = "revokeinheritedaccessrecordstracker_AsyncOperations";
 				public const string RoleAsyncOperations = "Role_AsyncOperations";
 				public const string RoleeditorlayoutAsyncOperations = "roleeditorlayout_AsyncOperations";
@@ -2174,19 +2417,24 @@ namespace dgt.power.dataverse
 				public const string SalesprocessinstanceAsyncOperations = "salesprocessinstance_AsyncOperations";
 				public const string SavedQueryAsyncOperations = "SavedQuery_AsyncOperations";
 				public const string SdkMessageProcessingStepAsyncOperations = "SdkMessageProcessingStep_AsyncOperations";
+				public const string SearchattributesettingsAsyncOperations = "searchattributesettings_AsyncOperations";
+				public const string SearchcustomanalyzerAsyncOperations = "searchcustomanalyzer_AsyncOperations";
 				public const string SearchrelationshipsettingsAsyncOperations = "searchrelationshipsettings_AsyncOperations";
 				public const string SemiAnnualFiscalCalendarAsyncOperations = "SemiAnnualFiscalCalendar_AsyncOperations";
 				public const string ServiceAsyncOperations = "Service_AsyncOperations";
 				public const string ServiceAppointmentAsyncOperations = "ServiceAppointment_AsyncOperations";
 				public const string ServicecontractcontactsAsyncOperations = "servicecontractcontacts_AsyncOperations";
 				public const string ServiceplanAsyncOperations = "serviceplan_AsyncOperations";
+				public const string ServiceplancustomcontrolAsyncOperations = "serviceplancustomcontrol_AsyncOperations";
 				public const string ServiceplanmappingAsyncOperations = "serviceplanmapping_AsyncOperations";
 				public const string SettingdefinitionAsyncOperations = "settingdefinition_AsyncOperations";
 				public const string SharedlinksettingAsyncOperations = "sharedlinksetting_AsyncOperations";
 				public const string SharedobjectAsyncOperations = "sharedobject_AsyncOperations";
 				public const string SharedworkspaceAsyncOperations = "sharedworkspace_AsyncOperations";
+				public const string SharedworkspacepoolAsyncOperations = "sharedworkspacepool_AsyncOperations";
 				public const string SharePointDocumentLocationAsyncOperations = "SharePointDocumentLocation_AsyncOperations";
 				public const string SharePointSiteAsyncOperations = "SharePointSite_AsyncOperations";
+				public const string SideloadedaipluginAsyncOperations = "sideloadedaiplugin_AsyncOperations";
 				public const string SimilarityruleAsyncOperations = "similarityrule_AsyncOperations";
 				public const string SiteAsyncOperations = "Site_AsyncOperations";
 				public const string SlabaseAsyncOperations = "slabase_AsyncOperations";
@@ -2197,6 +2445,8 @@ namespace dgt.power.dataverse
 				public const string SolutioncomponentconfigurationAsyncOperations = "solutioncomponentconfiguration_AsyncOperations";
 				public const string SolutioncomponentrelationshipconfigurationAsyncOperations = "solutioncomponentrelationshipconfiguration_AsyncOperations";
 				public const string StagedentityAsyncOperations = "stagedentity_AsyncOperations";
+				public const string StagedentityattributeAsyncOperations = "stagedentityattribute_AsyncOperations";
+				public const string StagedmetadataasyncoperationAsyncOperations = "stagedmetadataasyncoperation_AsyncOperations";
 				public const string StagesolutionuploadAsyncOperations = "stagesolutionupload_AsyncOperations";
 				public const string SubjectAsyncOperations = "Subject_AsyncOperations";
 				public const string SupportusertableAsyncOperations = "supportusertable_AsyncOperations";
@@ -2224,6 +2474,17 @@ namespace dgt.power.dataverse
 				public const string TopicmodelconfigurationAsyncOperations = "topicmodelconfiguration_AsyncOperations";
 				public const string TopicmodelexecutionhistoryAsyncOperations = "topicmodelexecutionhistory_AsyncOperations";
 				public const string TransactionCurrencyAsyncOperations = "TransactionCurrency_AsyncOperations";
+				public const string UiiActionAsyncOperations = "uii_action_AsyncOperations";
+				public const string UiiAuditAsyncOperations = "uii_audit_AsyncOperations";
+				public const string UiiContextAsyncOperations = "uii_context_AsyncOperations";
+				public const string UiiHostedapplicationAsyncOperations = "uii_hostedapplication_AsyncOperations";
+				public const string UiiNonhostedapplicationAsyncOperations = "uii_nonhostedapplication_AsyncOperations";
+				public const string UiiOptionAsyncOperations = "uii_option_AsyncOperations";
+				public const string UiiSavedsessionAsyncOperations = "uii_savedsession_AsyncOperations";
+				public const string UiiSessiontransferAsyncOperations = "uii_sessiontransfer_AsyncOperations";
+				public const string UiiWorkflowAsyncOperations = "uii_workflow_AsyncOperations";
+				public const string UiiWorkflowWorkflowstepMappingAsyncOperations = "uii_workflow_workflowstep_mapping_AsyncOperations";
+				public const string UiiWorkflowstepAsyncOperations = "uii_workflowstep_AsyncOperations";
 				public const string UoMAsyncOperations = "UoM_AsyncOperations";
 				public const string UoMScheduleAsyncOperations = "UoMSchedule_AsyncOperations";
 				public const string UserFormAsyncOperations = "UserForm_AsyncOperations";
@@ -2231,8 +2492,11 @@ namespace dgt.power.dataverse
 				public const string UsermobileofflineprofilemembershipAsyncOperations = "usermobileofflineprofilemembership_AsyncOperations";
 				public const string UserQueryAsyncOperations = "UserQuery_AsyncOperations";
 				public const string UserratingAsyncOperations = "userrating_AsyncOperations";
+				public const string ViewasexamplequestionAsyncOperations = "viewasexamplequestion_AsyncOperations";
 				public const string VirtualentitymetadataAsyncOperations = "virtualentitymetadata_AsyncOperations";
 				public const string WorkflowbinaryAsyncOperations = "workflowbinary_AsyncOperations";
+				public const string WorkqueueAsyncOperations = "workqueue_AsyncOperations";
+				public const string WorkqueueitemAsyncOperations = "workqueueitem_AsyncOperations";
             }
 
             public static class ManyToMany

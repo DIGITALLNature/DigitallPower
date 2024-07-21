@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -357,66 +354,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		[AttributeLogicalName("owneridname")]
-        public string? OwnerIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdName));
-                SetAttributeValue("owneridname", value);
-                OnPropertyChanged(nameof(OwnerIdName));
-            }
-        }
-
-		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
-		/// For internal use only
-		/// </summary>
-		[AttributeLogicalName("owneridyominame")]
-        public string? OwnerIdYomiName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridyominame");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdYomiName));
-                SetAttributeValue("owneridyominame", value);
-                OnPropertyChanged(nameof(OwnerIdYomiName));
-            }
-        }
-
-		/// <summary>
 		/// For internal use only
 		/// </summary>
 		[AttributeLogicalName("owningbusinessunit")]
@@ -635,24 +572,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("workflowidname")]
-        public string? WorkflowIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("workflowidname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(WorkflowIdName));
-                SetAttributeValue("workflowidname", value);
-                OnPropertyChanged(nameof(WorkflowIdName));
-            }
-        }
-
 
 		#endregion
 
@@ -746,9 +665,6 @@ namespace dgt.power.dataverse
 				public const string OrganizationId = "organizationid";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdName = "owneridname";
-				public const string OwnerIdType = "owneridtype";
-				public const string OwnerIdYomiName = "owneridyominame";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
@@ -761,7 +677,6 @@ namespace dgt.power.dataverse
 				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
 				public const string VersionNumber = "versionnumber";
 				public const string WorkflowId = "workflowid";
-				public const string WorkflowIdName = "workflowidname";
 		}
 		#endregion
 

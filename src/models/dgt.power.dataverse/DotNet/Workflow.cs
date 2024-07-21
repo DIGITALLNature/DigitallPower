@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -247,6 +244,19 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// For Internal Use Only.
+		/// </summary>
+		[AttributeLogicalName("clientdataiscompressed")]
+        public bool? ClientDataIsCompressed
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("clientdataiscompressed");
+            }
+        }
+
+		/// <summary>
 		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("componentstate")]
@@ -315,6 +325,26 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
+            }
+        }
+
+		/// <summary>
+		/// Create metadata for this workflow.
+		/// </summary>
+		[AttributeLogicalName("createmetadata")]
+        public string? CreateMetadata
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("createmetadata");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(CreateMetadata));
+                SetAttributeValue("createmetadata", value);
+                OnPropertyChanged(nameof(CreateMetadata));
             }
         }
 
@@ -700,6 +730,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// The source of the license entitlements.
+		/// </summary>
+		[AttributeLogicalName("licenseentitledby")]
+        public EntityReference? LicenseEntitledBy
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("licenseentitledby");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(LicenseEntitledBy));
+                SetAttributeValue("licenseentitledby", value);
+                OnPropertyChanged(nameof(LicenseEntitledBy));
+            }
+        }
+
+		/// <summary>
 		/// Additional metadata for this workflow.
 		/// </summary>
 		[AttributeLogicalName("metadata")]
@@ -871,24 +921,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
 		/// <summary>
 		/// Unique identifier of the business unit that owns the process.
 		/// </summary>
@@ -938,6 +970,26 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("parentworkflowid");
+            }
+        }
+
+		/// <summary>
+		/// For Internal Use Only.
+		/// </summary>
+		[AttributeLogicalName("planverified")]
+        public bool? PlanVerified
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("planverified");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(PlanVerified));
+                SetAttributeValue("planverified", value);
+                OnPropertyChanged(nameof(PlanVerified));
             }
         }
 
@@ -1105,6 +1157,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<string?>("resourcecontainer");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ResourceContainer));
+                SetAttributeValue("resourcecontainer", value);
+                OnPropertyChanged(nameof(ResourceContainer));
+            }
         }
 
 		/// <summary>
@@ -1117,6 +1176,13 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<Guid?>("resourceid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ResourceId));
+                SetAttributeValue("resourceid", value);
+                OnPropertyChanged(nameof(ResourceId));
             }
         }
 
@@ -1301,6 +1367,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(SyncWorkflowLogOnFailure));
                 SetAttributeValue("syncworkflowlogonfailure", value);
                 OnPropertyChanged(nameof(SyncWorkflowLogOnFailure));
+            }
+        }
+
+		/// <summary>
+		/// The throttling behavior type.
+		/// </summary>
+		[AttributeLogicalName("throttlingbehavior")]
+        public OptionSetValue? ThrottlingBehavior
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("throttlingbehavior");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ThrottlingBehavior));
+                SetAttributeValue("throttlingbehavior", value);
+                OnPropertyChanged(nameof(ThrottlingBehavior));
             }
         }
 
@@ -1599,6 +1685,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N Workflow_licenseentitledby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Workflow_licenseentitledby")]
+		public System.Collections.Generic.IEnumerable<Workflow> WorkflowLicenseentitledby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Workflow>("Workflow_licenseentitledby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("WorkflowLicenseentitledby");
+				this.SetRelatedEntities<Workflow>("Workflow_licenseentitledby", null, value);
+				this.OnPropertyChanged("WorkflowLicenseentitledby");
+			}
+		}
+
+		/// <summary>
 		/// 1:N workflow_parent_workflow
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_parent_workflow")]
@@ -1662,7 +1768,13 @@ namespace dgt.power.dataverse
 					public const int BusinessProcessFlow = 4;
 					public const int ModernFlow = 5;
 					public const int DesktopFlow = 6;
+					public const int AIFlow = 7;
 					public const int WebClientAPIFlow = 9000;
+                }
+                public struct ClientDataIsCompressed
+                {
+                    public const bool WorkflowDoesNotHaveCompressedClientData = false;
+                    public const bool WorkflowHasCompressedClientData = true;
                 }
 			    public struct ComponentState
                 {
@@ -1706,6 +1818,11 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+                public struct PlanVerified
+                {
+                    public const bool NotVerified = false;
+                    public const bool Verified = true;
+                }
 			    public struct ProcessTriggerScope
                 {
 					public const int Form = 1;
@@ -1744,6 +1861,11 @@ namespace dgt.power.dataverse
                 {
                     public const bool No = false;
                     public const bool Yes = true;
+                }
+			    public struct ThrottlingBehavior
+                {
+					public const int None = 0;
+					public const int TenantPool = 1;
                 }
                 public struct TriggerOnCreate
                 {
@@ -1791,11 +1913,13 @@ namespace dgt.power.dataverse
 				public const string BusinessProcessType = "businessprocesstype";
 				public const string Category = "category";
 				public const string ClientData = "clientdata";
+				public const string ClientDataIsCompressed = "clientdataiscompressed";
 				public const string ComponentState = "componentstate";
 				public const string ConnectionReferences = "connectionreferences";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
+				public const string CreateMetadata = "createmetadata";
 				public const string CreateStage = "createstage";
 				public const string Definition = "definition";
 				public const string DeleteStage = "deletestage";
@@ -1817,6 +1941,7 @@ namespace dgt.power.dataverse
 				public const string IsManaged = "ismanaged";
 				public const string IsTransacted = "istransacted";
 				public const string LanguageCode = "languagecode";
+				public const string LicenseEntitledBy = "licenseentitledby";
 				public const string Metadata = "metadata";
 				public const string Mode = "mode";
 				public const string ModifiedBy = "modifiedby";
@@ -1827,11 +1952,11 @@ namespace dgt.power.dataverse
 				public const string Outputs = "outputs";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
 				public const string ParentWorkflowId = "parentworkflowid";
+				public const string PlanVerified = "planverified";
 				public const string PluginTypeId = "plugintypeid";
 				public const string PrimaryEntity = "primaryentity";
 				public const string ProcessOrder = "processorder";
@@ -1852,6 +1977,7 @@ namespace dgt.power.dataverse
 				public const string Subprocess = "subprocess";
 				public const string SuspensionReasonDetails = "suspensionreasondetails";
 				public const string SyncWorkflowLogOnFailure = "syncworkflowlogonfailure";
+				public const string ThrottlingBehavior = "throttlingbehavior";
 				public const string TriggerOnCreate = "triggeroncreate";
 				public const string TriggerOnDelete = "triggerondelete";
 				public const string TriggerOnUpdateAttributeList = "triggeronupdateattributelist";
@@ -1872,15 +1998,23 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+				public const string AdxInvitationRedemptionworkflow = "adx_invitation_redemptionworkflow";
+				public const string AIPluginOperationWorkflowWorkflow = "AIPluginOperation_Workflow_Workflow";
 				public const string CatalogassignmentWorkflow = "catalogassignment_workflow";
 				public const string CommentArtifactWorkflow = "Comment_Artifact_Workflow";
 				public const string ConvertruleitembaseWorkflowid = "convertruleitembase_workflowid";
+				public const string FlowcapacityassignmentWorkflow = "flowcapacityassignment_workflow";
+				public const string FloweventWorkflow = "flowevent_workflow";
 				public const string LkAsyncoperationWorkflowactivationid = "lk_asyncoperation_workflowactivationid";
-				public const string LkEc4uGdprBpfCorrectionProcessid = "lk_ec4u_gdpr_bpf_correction_processid";
-				public const string LkEc4uGdprBpfDeletionProcessid = "lk_ec4u_gdpr_bpf_deletion_processid";
-				public const string LkEc4uGdprBpfInformationProcessid = "lk_ec4u_gdpr_bpf_information_processid";
 				public const string LkExpiredprocessProcessid = "lk_expiredprocess_processid";
 				public const string LkLeadtoopportunitysalesprocessProcessid = "lk_leadtoopportunitysalesprocess_processid";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Processid = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_processid";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bProcessid = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_processid";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Processid = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_processid";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bProcessid = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_processid";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Processid = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_processid";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Processid = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_processid";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dProcessid = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_processid";
 				public const string LkMsdynIottocaseprocessProcessid = "lk_msdyn_iottocaseprocess_processid";
 				public const string LkNewprocessProcessid = "lk_newprocess_processid";
 				public const string LkOpportunitysalesprocessProcessid = "lk_opportunitysalesprocess_processid";
@@ -1906,8 +2040,14 @@ namespace dgt.power.dataverse
 				public const string UserentityinstancedataWorkflow = "userentityinstancedata_workflow";
 				public const string WorkflowActiveWorkflow = "workflow_active_workflow";
 				public const string WorkflowAnnotation = "Workflow_Annotation";
+				public const string WorkflowComponentversionnrddatasourceset = "workflow_componentversionnrddatasourceset";
+				public const string WorkflowComponentversions = "workflow_componentversions";
 				public const string WorkflowDependencies = "workflow_dependencies";
 				public const string WorkflowDesktopflowbinaryProcess = "workflow_desktopflowbinary_Process";
+				public const string WorkflowFlowlogCloudflowid = "workflow_flowlog_cloudflowid";
+				public const string WorkflowFlowlogDesktopflowid = "workflow_flowlog_desktopflowid";
+				public const string WorkflowFlowrunWorkflow = "workflow_flowrun_Workflow";
+				public const string WorkflowLicenseentitledby = "Workflow_licenseentitledby";
 				public const string WorkflowParentWorkflow = "workflow_parent_workflow";
 				public const string WorkflowRoutingrule = "Workflow_routingrule";
 				public const string WorkflowSyncErrors = "Workflow_SyncErrors";
@@ -1926,6 +2066,7 @@ namespace dgt.power.dataverse
 				public const string WorkflowCreatedby = "workflow_createdby";
 				public const string WorkflowCreatedonbehalfby = "workflow_createdonbehalfby";
 				public const string WorkflowEntityimage = "workflow_entityimage";
+				public const string WorkflowLicenseentitledby = "Workflow_licenseentitledby";
 				public const string WorkflowModifiedby = "workflow_modifiedby";
 				public const string WorkflowModifiedonbehalfby = "workflow_modifiedonbehalfby";
 				public const string WorkflowParentWorkflow = "workflow_parent_workflow";
@@ -1934,6 +2075,7 @@ namespace dgt.power.dataverse
             public static class ManyToMany
             {
 				public const string BotcomponentWorkflow = "botcomponent_workflow";
+				public const string WorkflowCardConnections = "workflow_card_connections";
             }
         }
 

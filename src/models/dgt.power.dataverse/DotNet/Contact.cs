@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -1609,6 +1606,534 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("adx_confirmremovepassword")]
+        public bool? AdxConfirmRemovePassword
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_confirmremovepassword");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxConfirmRemovePassword));
+                SetAttributeValue("adx_confirmremovepassword", value);
+                OnPropertyChanged(nameof(AdxConfirmRemovePassword));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_createdbyipaddress")]
+        public string? AdxCreatedByIPAddress
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_createdbyipaddress");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxCreatedByIPAddress));
+                SetAttributeValue("adx_createdbyipaddress", value);
+                OnPropertyChanged(nameof(AdxCreatedByIPAddress));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_createdbyusername")]
+        public string? AdxCreatedByUsername
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_createdbyusername");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxCreatedByUsername));
+                SetAttributeValue("adx_createdbyusername", value);
+                OnPropertyChanged(nameof(AdxCreatedByUsername));
+            }
+        }
+
+		/// <summary>
+		/// Shows the current count of failed password attempts for the contact.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_accessfailedcount")]
+        public int? AdxIdentityAccessfailedcount
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("adx_identity_accessfailedcount");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityAccessfailedcount));
+                SetAttributeValue("adx_identity_accessfailedcount", value);
+                OnPropertyChanged(nameof(AdxIdentityAccessfailedcount));
+            }
+        }
+
+		/// <summary>
+		/// Determines if the email is confirmed by the contact.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_emailaddress1confirmed")]
+        public bool? AdxIdentityEmailaddress1confirmed
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_emailaddress1confirmed");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityEmailaddress1confirmed));
+                SetAttributeValue("adx_identity_emailaddress1confirmed", value);
+                OnPropertyChanged(nameof(AdxIdentityEmailaddress1confirmed));
+            }
+        }
+
+		/// <summary>
+		/// Indicates the last date and time the user successfully signed in to a portal.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_lastsuccessfullogin")]
+        public DateTime? AdxIdentityLastsuccessfullogin
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("adx_identity_lastsuccessfullogin");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityLastsuccessfullogin));
+                SetAttributeValue("adx_identity_lastsuccessfullogin", value);
+                OnPropertyChanged(nameof(AdxIdentityLastsuccessfullogin));
+            }
+        }
+
+		/// <summary>
+		/// Indicates that the contact can no longer sign in to the portal using the local account.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_locallogindisabled")]
+        public bool? AdxIdentityLocallogindisabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_locallogindisabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityLocallogindisabled));
+                SetAttributeValue("adx_identity_locallogindisabled", value);
+                OnPropertyChanged(nameof(AdxIdentityLocallogindisabled));
+            }
+        }
+
+		/// <summary>
+		/// Determines if this contact will track failed access attempts and become locked after too many failed attempts. To prevent the contact from becoming locked, you can disable this setting.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_lockoutenabled")]
+        public bool? AdxIdentityLockoutenabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_lockoutenabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityLockoutenabled));
+                SetAttributeValue("adx_identity_lockoutenabled", value);
+                OnPropertyChanged(nameof(AdxIdentityLockoutenabled));
+            }
+        }
+
+		/// <summary>
+		/// Shows the moment in time when the locked contact becomes unlocked again.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_lockoutenddate")]
+        public DateTime? AdxIdentityLockoutenddate
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("adx_identity_lockoutenddate");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityLockoutenddate));
+                SetAttributeValue("adx_identity_lockoutenddate", value);
+                OnPropertyChanged(nameof(AdxIdentityLockoutenddate));
+            }
+        }
+
+		/// <summary>
+		/// Determines if web authentication is enabled for the contact.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_logonenabled")]
+        public bool? AdxIdentityLogonenabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_logonenabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityLogonenabled));
+                SetAttributeValue("adx_identity_logonenabled", value);
+                OnPropertyChanged(nameof(AdxIdentityLogonenabled));
+            }
+        }
+
+		/// <summary>
+		/// Determines if the phone number is confirmed by the contact.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_mobilephoneconfirmed")]
+        public bool? AdxIdentityMobilephoneconfirmed
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_mobilephoneconfirmed");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityMobilephoneconfirmed));
+                SetAttributeValue("adx_identity_mobilephoneconfirmed", value);
+                OnPropertyChanged(nameof(AdxIdentityMobilephoneconfirmed));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_identity_newpassword")]
+        public string? AdxIdentityNewpassword
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_identity_newpassword");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityNewpassword));
+                SetAttributeValue("adx_identity_newpassword", value);
+                OnPropertyChanged(nameof(AdxIdentityNewpassword));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_identity_passwordhash")]
+        public string? AdxIdentityPasswordhash
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_identity_passwordhash");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityPasswordhash));
+                SetAttributeValue("adx_identity_passwordhash", value);
+                OnPropertyChanged(nameof(AdxIdentityPasswordhash));
+            }
+        }
+
+		/// <summary>
+		/// A token used to manage the web authentication session.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_securitystamp")]
+        public string? AdxIdentitySecuritystamp
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_identity_securitystamp");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentitySecuritystamp));
+                SetAttributeValue("adx_identity_securitystamp", value);
+                OnPropertyChanged(nameof(AdxIdentitySecuritystamp));
+            }
+        }
+
+		/// <summary>
+		/// Determines if two-factor authentication is enabled for the contact.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_twofactorenabled")]
+        public bool? AdxIdentityTwofactorenabled
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_identity_twofactorenabled");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityTwofactorenabled));
+                SetAttributeValue("adx_identity_twofactorenabled", value);
+                OnPropertyChanged(nameof(AdxIdentityTwofactorenabled));
+            }
+        }
+
+		/// <summary>
+		/// Shows the user identity for local web authentication.
+		/// </summary>
+		[AttributeLogicalName("adx_identity_username")]
+        public string? AdxIdentityUsername
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_identity_username");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxIdentityUsername));
+                SetAttributeValue("adx_identity_username", value);
+                OnPropertyChanged(nameof(AdxIdentityUsername));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_modifiedbyipaddress")]
+        public string? AdxModifiedByIPAddress
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyipaddress");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxModifiedByIPAddress));
+                SetAttributeValue("adx_modifiedbyipaddress", value);
+                OnPropertyChanged(nameof(AdxModifiedByIPAddress));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_modifiedbyusername")]
+        public string? AdxModifiedByUsername
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyusername");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxModifiedByUsername));
+                SetAttributeValue("adx_modifiedbyusername", value);
+                OnPropertyChanged(nameof(AdxModifiedByUsername));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_organizationname")]
+        public string? AdxOrganizationName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_organizationname");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxOrganizationName));
+                SetAttributeValue("adx_organizationname", value);
+                OnPropertyChanged(nameof(AdxOrganizationName));
+            }
+        }
+
+		/// <summary>
+		/// User’s preferred portal LCID
+		/// </summary>
+		[AttributeLogicalName("adx_preferredlcid")]
+        public int? AdxPreferredlcid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("adx_preferredlcid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxPreferredlcid));
+                SetAttributeValue("adx_preferredlcid", value);
+                OnPropertyChanged(nameof(AdxPreferredlcid));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profilealert")]
+        public bool? AdxProfilealert
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_profilealert");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfilealert));
+                SetAttributeValue("adx_profilealert", value);
+                OnPropertyChanged(nameof(AdxProfilealert));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profilealertdate")]
+        public DateTime? AdxProfilealertdate
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("adx_profilealertdate");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfilealertdate));
+                SetAttributeValue("adx_profilealertdate", value);
+                OnPropertyChanged(nameof(AdxProfilealertdate));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profilealertinstructions")]
+        public string? AdxProfilealertinstructions
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_profilealertinstructions");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfilealertinstructions));
+                SetAttributeValue("adx_profilealertinstructions", value);
+                OnPropertyChanged(nameof(AdxProfilealertinstructions));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profileisanonymous")]
+        public bool? AdxProfileIsAnonymous
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("adx_profileisanonymous");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfileIsAnonymous));
+                SetAttributeValue("adx_profileisanonymous", value);
+                OnPropertyChanged(nameof(AdxProfileIsAnonymous));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profilelastactivity")]
+        public DateTime? AdxProfileLastActivity
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("adx_profilelastactivity");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfileLastActivity));
+                SetAttributeValue("adx_profilelastactivity", value);
+                OnPropertyChanged(nameof(AdxProfileLastActivity));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_profilemodifiedon")]
+        public DateTime? AdxProfilemodifiedon
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("adx_profilemodifiedon");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxProfilemodifiedon));
+                SetAttributeValue("adx_profilemodifiedon", value);
+                OnPropertyChanged(nameof(AdxProfilemodifiedon));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_publicprofilecopy")]
+        public string? AdxPublicProfileCopy
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_publicprofilecopy");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxPublicProfileCopy));
+                SetAttributeValue("adx_publicprofilecopy", value);
+                OnPropertyChanged(nameof(AdxPublicProfileCopy));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_timezone")]
+        public int? AdxTimeZone
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("adx_timezone");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxTimeZone));
+                SetAttributeValue("adx_timezone", value);
+                OnPropertyChanged(nameof(AdxTimeZone));
+            }
+        }
+
 		/// <summary>
 		/// For system use only.
 		/// </summary>
@@ -2262,98 +2787,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(DoNotSendMM));
                 SetAttributeValue("donotsendmm", value);
                 OnPropertyChanged(nameof(DoNotSendMM));
-            }
-        }
-
-		
-		[AttributeLogicalName("ec4u_dateofdeletion")]
-        public DateTime? Ec4uDateofdeletion
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<DateTime?>("ec4u_dateofdeletion");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uDateofdeletion));
-                SetAttributeValue("ec4u_dateofdeletion", value);
-                OnPropertyChanged(nameof(Ec4uDateofdeletion));
-            }
-        }
-
-		
-		[AttributeLogicalName("ec4u_gdpr_status")]
-        public OptionSetValue? Ec4uGdprStatus
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<OptionSetValue?>("ec4u_gdpr_status");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uGdprStatus));
-                SetAttributeValue("ec4u_gdpr_status", value);
-                OnPropertyChanged(nameof(Ec4uGdprStatus));
-            }
-        }
-
-		
-		[AttributeLogicalName("ec4u_is_locked")]
-        public bool? Ec4uIsLocked
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("ec4u_is_locked");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uIsLocked));
-                SetAttributeValue("ec4u_is_locked", value);
-                OnPropertyChanged(nameof(Ec4uIsLocked));
-            }
-        }
-
-		/// <summary>
-		/// Unique identifier for Legal basis associated with Contact.
-		/// </summary>
-		[AttributeLogicalName("ec4u_legalbasisid")]
-        public EntityReference? Ec4uLegalbasisId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("ec4u_legalbasisid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uLegalbasisId));
-                SetAttributeValue("ec4u_legalbasisid", value);
-                OnPropertyChanged(nameof(Ec4uLegalbasisId));
-            }
-        }
-
-		
-		[AttributeLogicalName("ec4u_opt_in_dataprivacy")]
-        public bool? Ec4uOptInDataprivacy
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("ec4u_opt_in_dataprivacy");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uOptInDataprivacy));
-                SetAttributeValue("ec4u_opt_in_dataprivacy", value);
-                OnPropertyChanged(nameof(Ec4uOptInDataprivacy));
             }
         }
 
@@ -3057,6 +3490,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Unique identifier for Account associated with Contact.
+		/// </summary>
+		[AttributeLogicalName("msa_managingpartnerid")]
+        public EntityReference? MsaManagingpartnerid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msa_managingpartnerid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsaManagingpartnerid));
+                SetAttributeValue("msa_managingpartnerid", value);
+                OnPropertyChanged(nameof(MsaManagingpartnerid));
+            }
+        }
+
+		/// <summary>
 		/// Maps to contact KPI records
 		/// </summary>
 		[AttributeLogicalName("msdyn_contactkpiid")]
@@ -3073,6 +3526,46 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynContactkpiid));
                 SetAttributeValue("msdyn_contactkpiid", value);
                 OnPropertyChanged(nameof(MsdynContactkpiid));
+            }
+        }
+
+		/// <summary>
+		/// Indicate buying influence using labels
+		/// </summary>
+		[AttributeLogicalName("msdyn_decisioninfluencetag")]
+        public OptionSetValue? MsdynDecisioninfluencetag
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("msdyn_decisioninfluencetag");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynDecisioninfluencetag));
+                SetAttributeValue("msdyn_decisioninfluencetag", value);
+                OnPropertyChanged(nameof(MsdynDecisioninfluencetag));
+            }
+        }
+
+		/// <summary>
+		/// Indicates that the contact has opted out of web tracking.
+		/// </summary>
+		[AttributeLogicalName("msdyn_disablewebtracking")]
+        public bool? MsdynDisablewebtracking
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("msdyn_disablewebtracking");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynDisablewebtracking));
+                SetAttributeValue("msdyn_disablewebtracking", value);
+                OnPropertyChanged(nameof(MsdynDisablewebtracking));
             }
         }
 
@@ -3097,6 +3590,66 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Describes if the contact is an assistant in org chart
+		/// </summary>
+		[AttributeLogicalName("msdyn_isassistantinorgchart")]
+        public bool? MsdynIsassistantinorgchart
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("msdyn_isassistantinorgchart");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynIsassistantinorgchart));
+                SetAttributeValue("msdyn_isassistantinorgchart", value);
+                OnPropertyChanged(nameof(MsdynIsassistantinorgchart));
+            }
+        }
+
+		/// <summary>
+		/// Indicates that the contact is considered a minor in their jurisdiction.
+		/// </summary>
+		[AttributeLogicalName("msdyn_isminor")]
+        public bool? MsdynIsminor
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("msdyn_isminor");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynIsminor));
+                SetAttributeValue("msdyn_isminor", value);
+                OnPropertyChanged(nameof(MsdynIsminor));
+            }
+        }
+
+		/// <summary>
+		/// Indicates that the contact is considered a minor in their jurisdiction and has parental consent.
+		/// </summary>
+		[AttributeLogicalName("msdyn_isminorwithparentalconsent")]
+        public bool? MsdynIsminorwithparentalconsent
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("msdyn_isminorwithparentalconsent");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynIsminorwithparentalconsent));
+                SetAttributeValue("msdyn_isminorwithparentalconsent", value);
+                OnPropertyChanged(nameof(MsdynIsminorwithparentalconsent));
+            }
+        }
+
+		/// <summary>
 		/// Whether or not the contact belongs to the associated account
 		/// </summary>
 		[AttributeLogicalName("msdyn_orgchangestatus")]
@@ -3117,6 +3670,46 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Indicates the date and time that the person agreed to the portal terms and conditions.
+		/// </summary>
+		[AttributeLogicalName("msdyn_portaltermsagreementdate")]
+        public DateTime? MsdynPortaltermsagreementdate
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("msdyn_portaltermsagreementdate");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPortaltermsagreementdate));
+                SetAttributeValue("msdyn_portaltermsagreementdate", value);
+                OnPropertyChanged(nameof(MsdynPortaltermsagreementdate));
+            }
+        }
+
+		/// <summary>
+		/// Indicates the primary time zone that the contact works on.
+		/// </summary>
+		[AttributeLogicalName("msdyn_primarytimezone")]
+        public int? MsdynPrimaryTimeZone
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("msdyn_primarytimezone");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPrimaryTimeZone));
+                SetAttributeValue("msdyn_primarytimezone", value);
+                OnPropertyChanged(nameof(MsdynPrimaryTimeZone));
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier for Segment associated with contact.
 		/// </summary>
 		[AttributeLogicalName("msdyn_segmentid")]
@@ -3133,6 +3726,80 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynSegmentid));
                 SetAttributeValue("msdyn_segmentid", value);
                 OnPropertyChanged(nameof(MsdynSegmentid));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyusd_currentprofile")]
+        public string? MsdyusdCurrentProfile
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyusd_currentprofile");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdCurrentProfile));
+                SetAttributeValue("msdyusd_currentprofile", value);
+                OnPropertyChanged(nameof(MsdyusdCurrentProfile));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyusd_facebook")]
+        public string? MsdyusdFacebook
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyusd_facebook");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdFacebook));
+                SetAttributeValue("msdyusd_facebook", value);
+                OnPropertyChanged(nameof(MsdyusdFacebook));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyusd_twitter")]
+        public string? MsdyusdTwitter
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyusd_twitter");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdTwitter));
+                SetAttributeValue("msdyusd_twitter", value);
+                OnPropertyChanged(nameof(MsdyusdTwitter));
+            }
+        }
+
+		/// <summary>
+		/// User’s preferred portal language
+		/// </summary>
+		[AttributeLogicalName("mspp_userpreferredlcid")]
+        public OptionSetValue? MsppUserpreferredlcid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("mspp_userpreferredlcid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsppUserpreferredlcid));
+                SetAttributeValue("mspp_userpreferredlcid", value);
+                OnPropertyChanged(nameof(MsppUserpreferredlcid));
             }
         }
 
@@ -3249,24 +3916,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
 		/// <summary>
 		/// Unique identifier of the business unit that owns the contact.
 		/// </summary>
@@ -3356,24 +4005,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(ParentCustomerId));
                 SetAttributeValue("parentcustomerid", value);
                 OnPropertyChanged(nameof(ParentCustomerId));
-            }
-        }
-
-		
-		[AttributeLogicalName("parentcustomeridtype")]
-        public string? ParentCustomerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("parentcustomeridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(ParentCustomerIdType));
-                SetAttributeValue("parentcustomeridtype", value);
-                OnPropertyChanged(nameof(ParentCustomerIdType));
             }
         }
 
@@ -4185,6 +4816,51 @@ namespace dgt.power.dataverse
                 {
 					public const int DefaultValue = 1;
                 }
+                public struct AdxConfirmRemovePassword
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityEmailaddress1confirmed
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityLocallogindisabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityLockoutenabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityLogonenabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityMobilephoneconfirmed
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxIdentityTwofactorenabled
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxProfilealert
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct AdxProfileIsAnonymous
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct CreditOnHold
                 {
                     public const bool No = false;
@@ -4233,22 +4909,6 @@ namespace dgt.power.dataverse
                     public const bool Send = false;
                     public const bool DoNotSend = true;
                 }
-			    public struct Ec4uGdprStatus
-                {
-					public const int None = 596030000;
-					public const int Masked = 596030001;
-					public const int Deleted = 596030002;
-                }
-                public struct Ec4uIsLocked
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct Ec4uOptInDataprivacy
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
 			    public struct EducationCode
                 {
 					public const int DefaultValue = 1;
@@ -4293,7 +4953,34 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+			    public struct MsdynDecisioninfluencetag
+                {
+					public const int DecisionMaker = 0;
+					public const int Influencer = 1;
+					public const int Blocker = 2;
+					public const int Unknown = 3;
+                }
+                public struct MsdynDisablewebtracking
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct MsdynGdproptout
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct MsdynIsassistantinorgchart
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct MsdynIsminor
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+                public struct MsdynIsminorwithparentalconsent
                 {
                     public const bool No = false;
                     public const bool Yes = true;
@@ -4303,6 +4990,54 @@ namespace dgt.power.dataverse
 					public const int NoFeedback = 0;
 					public const int NotAtCompany = 1;
 					public const int Ignore = 2;
+                }
+			    public struct MsppUserpreferredlcid
+                {
+					public const int Arabic = 1025;
+					public const int BulgarianBulgaria = 1026;
+					public const int CatalanCatalan = 1027;
+					public const int ChineseTraditional = 1028;
+					public const int CzechCzechRepublic = 1029;
+					public const int DanishDenmark = 1030;
+					public const int GermanGermany = 1031;
+					public const int GreekGreece = 1032;
+					public const int English = 1033;
+					public const int FinnishFinland = 1035;
+					public const int FrenchFrance = 1036;
+					public const int Hebrew = 1037;
+					public const int HungarianHungary = 1038;
+					public const int ItalianItaly = 1040;
+					public const int JapaneseJapan = 1041;
+					public const int KoreanKorea = 1042;
+					public const int DutchNetherlands = 1043;
+					public const int Norwegian_Bokm_l_Norway = 1044;
+					public const int PolishPoland = 1045;
+					public const int PortugueseBrazil = 1046;
+					public const int RomanianRomania = 1048;
+					public const int RussianRussia = 1049;
+					public const int CroatianCroatia = 1050;
+					public const int SlovakSlovakia = 1051;
+					public const int SwedishSweden = 1053;
+					public const int ThaiThailand = 1054;
+					public const int TurkishTürkiye = 1055;
+					public const int IndonesianIndonesia = 1057;
+					public const int UkrainianUkraine = 1058;
+					public const int SlovenianSlovenia = 1060;
+					public const int EstonianEstonia = 1061;
+					public const int LatvianLatvia = 1062;
+					public const int LithuanianLithuania = 1063;
+					public const int VietnameseVietnam = 1066;
+					public const int BasqueBasque = 1069;
+					public const int HindiIndia = 1081;
+					public const int MalayMalaysia = 1086;
+					public const int KazakhKazakhstan = 1087;
+					public const int GalicianSpain = 1110;
+					public const int ChineseChina = 2052;
+					public const int PortuguesePortugal = 2070;
+					public const int Serbian_Latin_Serbia = 2074;
+					public const int ChineseHongKongSAR = 3076;
+					public const int Spanish_TraditionalSort_Spain = 3082;
+					public const int Serbian_Cyrillic_Serbia = 3098;
                 }
                 public struct ParticipatesInWorkflow
                 {
@@ -4439,6 +5174,34 @@ namespace dgt.power.dataverse
 				public const string Address3Telephone3 = "address3_telephone3";
 				public const string Address3UPSZone = "address3_upszone";
 				public const string Address3UTCOffset = "address3_utcoffset";
+				public const string AdxConfirmRemovePassword = "adx_confirmremovepassword";
+				public const string AdxCreatedByIPAddress = "adx_createdbyipaddress";
+				public const string AdxCreatedByUsername = "adx_createdbyusername";
+				public const string AdxIdentityAccessfailedcount = "adx_identity_accessfailedcount";
+				public const string AdxIdentityEmailaddress1confirmed = "adx_identity_emailaddress1confirmed";
+				public const string AdxIdentityLastsuccessfullogin = "adx_identity_lastsuccessfullogin";
+				public const string AdxIdentityLocallogindisabled = "adx_identity_locallogindisabled";
+				public const string AdxIdentityLockoutenabled = "adx_identity_lockoutenabled";
+				public const string AdxIdentityLockoutenddate = "adx_identity_lockoutenddate";
+				public const string AdxIdentityLogonenabled = "adx_identity_logonenabled";
+				public const string AdxIdentityMobilephoneconfirmed = "adx_identity_mobilephoneconfirmed";
+				public const string AdxIdentityNewpassword = "adx_identity_newpassword";
+				public const string AdxIdentityPasswordhash = "adx_identity_passwordhash";
+				public const string AdxIdentitySecuritystamp = "adx_identity_securitystamp";
+				public const string AdxIdentityTwofactorenabled = "adx_identity_twofactorenabled";
+				public const string AdxIdentityUsername = "adx_identity_username";
+				public const string AdxModifiedByIPAddress = "adx_modifiedbyipaddress";
+				public const string AdxModifiedByUsername = "adx_modifiedbyusername";
+				public const string AdxOrganizationName = "adx_organizationname";
+				public const string AdxPreferredlcid = "adx_preferredlcid";
+				public const string AdxProfilealert = "adx_profilealert";
+				public const string AdxProfilealertdate = "adx_profilealertdate";
+				public const string AdxProfilealertinstructions = "adx_profilealertinstructions";
+				public const string AdxProfileIsAnonymous = "adx_profileisanonymous";
+				public const string AdxProfileLastActivity = "adx_profilelastactivity";
+				public const string AdxProfilemodifiedon = "adx_profilemodifiedon";
+				public const string AdxPublicProfileCopy = "adx_publicprofilecopy";
+				public const string AdxTimeZone = "adx_timezone";
 				public const string Aging30 = "aging30";
 				public const string Aging30Base = "aging30_base";
 				public const string Aging60 = "aging60";
@@ -4476,11 +5239,6 @@ namespace dgt.power.dataverse
 				public const string DoNotPhone = "donotphone";
 				public const string DoNotPostalMail = "donotpostalmail";
 				public const string DoNotSendMM = "donotsendmm";
-				public const string Ec4uDateofdeletion = "ec4u_dateofdeletion";
-				public const string Ec4uGdprStatus = "ec4u_gdpr_status";
-				public const string Ec4uIsLocked = "ec4u_is_locked";
-				public const string Ec4uLegalbasisId = "ec4u_legalbasisid";
-				public const string Ec4uOptInDataprivacy = "ec4u_opt_in_dataprivacy";
 				public const string EducationCode = "educationcode";
 				public const string EMailAddress1 = "emailaddress1";
 				public const string EMailAddress2 = "emailaddress2";
@@ -4520,24 +5278,34 @@ namespace dgt.power.dataverse
 				public const string ModifiedByExternalParty = "modifiedbyexternalparty";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+				public const string MsaManagingpartnerid = "msa_managingpartnerid";
 				public const string MsdynContactkpiid = "msdyn_contactkpiid";
+				public const string MsdynDecisioninfluencetag = "msdyn_decisioninfluencetag";
+				public const string MsdynDisablewebtracking = "msdyn_disablewebtracking";
 				public const string MsdynGdproptout = "msdyn_gdproptout";
+				public const string MsdynIsassistantinorgchart = "msdyn_isassistantinorgchart";
+				public const string MsdynIsminor = "msdyn_isminor";
+				public const string MsdynIsminorwithparentalconsent = "msdyn_isminorwithparentalconsent";
 				public const string MsdynOrgchangestatus = "msdyn_orgchangestatus";
+				public const string MsdynPortaltermsagreementdate = "msdyn_portaltermsagreementdate";
+				public const string MsdynPrimaryTimeZone = "msdyn_primarytimezone";
 				public const string MsdynSegmentid = "msdyn_segmentid";
+				public const string MsdyusdCurrentProfile = "msdyusd_currentprofile";
+				public const string MsdyusdFacebook = "msdyusd_facebook";
+				public const string MsdyusdTwitter = "msdyusd_twitter";
+				public const string MsppUserpreferredlcid = "mspp_userpreferredlcid";
 				public const string NickName = "nickname";
 				public const string NumberOfChildren = "numberofchildren";
 				public const string OnHoldTime = "onholdtime";
 				public const string OriginatingLeadId = "originatingleadid";
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
 				public const string Pager = "pager";
 				public const string ParentContactId = "parentcontactid";
 				public const string ParentCustomerId = "parentcustomerid";
-				public const string ParentCustomerIdType = "parentcustomeridtype";
 				public const string ParticipatesInWorkflow = "participatesinworkflow";
 				public const string PaymentTermsCode = "paymenttermscode";
 				public const string PreferredAppointmentDayCode = "preferredappointmentdaycode";
@@ -4582,9 +5350,16 @@ namespace dgt.power.dataverse
             public static class OneToMany
             {
 				public const string AccountPrimaryContact = "account_primary_contact";
+				public const string AdxContactExternalidentity = "adx_contact_externalidentity";
+				public const string AdxInvitationInvitecontact = "adx_invitation_invitecontact";
+				public const string AdxInvitationInvitercontact = "adx_invitation_invitercontact";
+				public const string AdxInvitationRedeemedContact = "adx_invitation_redeemedContact";
+				public const string AdxWebformsessionContact = "adx_webformsession_contact";
 				public const string ContactActioncard = "contact_actioncard";
 				public const string ContactActivityParties = "contact_activity_parties";
 				public const string ContactActivityPointers = "Contact_ActivityPointers";
+				public const string ContactAdxInviteredemptions = "contact_adx_inviteredemptions";
+				public const string ContactAdxPortalcomments = "contact_adx_portalcomments";
 				public const string ContactAnnotation = "Contact_Annotation";
 				public const string ContactAppointments = "Contact_Appointments";
 				public const string ContactAsPrimaryContact = "contact_as_primary_contact";
@@ -4614,8 +5389,13 @@ namespace dgt.power.dataverse
 				public const string ContactLetters = "Contact_Letters";
 				public const string ContactMailboxTrackingFolder = "Contact_MailboxTrackingFolder";
 				public const string ContactMasterContact = "contact_master_contact";
+				public const string ContactMsdynApprovals = "contact_msdyn_approvals";
+				public const string ContactMsdynBookingalerts = "contact_msdyn_bookingalerts";
+				public const string ContactMsdynCopilottranscripts = "contact_msdyn_copilottranscripts";
 				public const string ContactMsdynOcliveworkitems = "contact_msdyn_ocliveworkitems";
+				public const string ContactMsdynOcoutboundmessages = "contact_msdyn_ocoutboundmessages";
 				public const string ContactMsdynOcsessions = "contact_msdyn_ocsessions";
+				public const string ContactMsdynOrgchartnodeMsdynNoderecord = "contact_msdyn_orgchartnode_msdyn_noderecord";
 				public const string ContactMsfpAlerts = "contact_msfp_alerts";
 				public const string ContactMsfpSurveyinvites = "contact_msfp_surveyinvites";
 				public const string ContactMsfpSurveyresponses = "contact_msfp_surveyresponses";
@@ -4628,7 +5408,6 @@ namespace dgt.power.dataverse
 				public const string ContactProcessSessions = "Contact_ProcessSessions";
 				public const string ContactRecurringAppointmentMasters = "Contact_RecurringAppointmentMasters";
 				public const string ContactServiceAppointments = "Contact_ServiceAppointments";
-				public const string ContactSharePointDocumentLocations = "contact_SharePointDocumentLocations";
 				public const string ContactSharePointDocuments = "contact_SharePointDocuments";
 				public const string ContactSocialActivities = "Contact_SocialActivities";
 				public const string ContactSyncErrors = "Contact_SyncErrors";
@@ -4637,11 +5416,6 @@ namespace dgt.power.dataverse
 				public const string ContractCustomerContacts = "contract_customer_contacts";
 				public const string ContractlineitemCustomerContacts = "contractlineitem_customer_contacts";
 				public const string CreatedContactBulkOperationLogs = "CreatedContact_BulkOperationLogs";
-				public const string Ec4uContactEc4uAcquirelegalbasis = "ec4u_contact_ec4u_acquirelegalbasis";
-				public const string Ec4uContactEc4uGdprRequestContact = "ec4u_contact_ec4u_gdpr_request_Contact";
-				public const string Ec4uContactEc4uLegalbasis = "ec4u_contact_ec4u_legalbasis";
-				public const string Ec4uEc4uGdprProtocolContactEc4uRegardingRecordId = "ec4u_ec4u_gdpr_protocol_contact_ec4u_regarding_record_id";
-				public const string Ec4uEc4uGdprRequestContactEc4uRegardingRecordId = "ec4u_ec4u_gdpr_request_contact_ec4u_regarding_record_id";
 				public const string IncidentCustomerContacts = "incident_customer_contacts";
 				public const string InvoiceCustomerContacts = "invoice_customer_contacts";
 				public const string LeadCustomerContacts = "lead_customer_contacts";
@@ -4649,13 +5423,37 @@ namespace dgt.power.dataverse
 				public const string LkContactFeedbackCreatedby = "lk_contact_feedback_createdby";
 				public const string LkContactFeedbackCreatedonbehalfby = "lk_contact_feedback_createdonbehalfby";
 				public const string MsdynContactDailycontactkpiitemEntityid = "msdyn_contact_dailycontactkpiitem_entityid";
+				public const string MsdynContactMsdynActualContactCustomer = "msdyn_contact_msdyn_actual_ContactCustomer";
+				public const string MsdynContactMsdynActualContactVendor = "msdyn_contact_msdyn_actual_ContactVendor";
 				public const string MsdynContactMsdynContactkpiitemContactid = "msdyn_contact_msdyn_contactkpiitem_contactid";
+				public const string MsdynContactMsdynContactpricelistContact = "msdyn_contact_msdyn_contactpricelist_Contact";
+				public const string MsdynContactMsdynEstimatelineContactCustomer = "msdyn_contact_msdyn_estimateline_ContactCustomer";
+				public const string MsdynContactMsdynEstimatelineContactVendor = "msdyn_contact_msdyn_estimateline_ContactVendor";
+				public const string MsdynContactMsdynFactContactCustomer = "msdyn_contact_msdyn_fact_ContactCustomer";
+				public const string MsdynContactMsdynFactContactVendor = "msdyn_contact_msdyn_fact_ContactVendor";
+				public const string MsdynContactMsdynInvoicelinetransactionContactCustomer = "msdyn_contact_msdyn_invoicelinetransaction_ContactCustomer";
+				public const string MsdynContactMsdynInvoicelinetransactionContactVendor = "msdyn_contact_msdyn_invoicelinetransaction_ContactVendor";
+				public const string MsdynContactMsdynJournallineContactCustomer = "msdyn_contact_msdyn_journalline_ContactCustomer";
+				public const string MsdynContactMsdynJournallineContactVendor = "msdyn_contact_msdyn_journalline_ContactVendor";
 				public const string MsdynContactMsdynLiveconversationCustomer = "msdyn_contact_msdyn_liveconversation_Customer";
 				public const string MsdynContactMsdynMostcontactedRegardingObjectId = "msdyn_contact_msdyn_mostcontacted_regardingObjectId";
 				public const string MsdynContactMsdynMostcontactedbyRegardingObjectId = "msdyn_contact_msdyn_mostcontactedby_regardingObjectId";
 				public const string MsdynContactMsdynOcliveworkitemCustomer = "msdyn_contact_msdyn_ocliveworkitem_Customer";
+				public const string MsdynContactMsdynOpportunitylinetransactionContactCustomer = "msdyn_contact_msdyn_opportunitylinetransaction_ContactCustomer";
+				public const string MsdynContactMsdynOpportunitylinetransactionContactVendor = "msdyn_contact_msdyn_opportunitylinetransaction_ContactVendor";
+				public const string MsdynContactMsdynOrderlinetransactionContactCustomer = "msdyn_contact_msdyn_orderlinetransaction_ContactCustomer";
+				public const string MsdynContactMsdynOrderlinetransactionContactVendor = "msdyn_contact_msdyn_orderlinetransaction_ContactVendor";
+				public const string MsdynContactMsdynQuotelinetransactionContactCustomer = "msdyn_contact_msdyn_quotelinetransaction_ContactCustomer";
+				public const string MsdynContactMsdynQuotelinetransactionContactVendor = "msdyn_contact_msdyn_quotelinetransaction_ContactVendor";
+				public const string MsdynContactMsdynRmaRequestedByContact = "msdyn_contact_msdyn_rma_RequestedByContact";
+				public const string MsdynContactMsdynRtvVendorContact = "msdyn_contact_msdyn_rtv_VendorContact";
+				public const string MsdynContactMsdynSalesroutingrunTargetobject = "msdyn_contact_msdyn_salesroutingrun_targetobject";
 				public const string MsdynContactMsdynSalessuggestion = "msdyn_contact_msdyn_salessuggestion";
+				public const string MsdynContactMsdynWorkorderReportedByContact = "msdyn_contact_msdyn_workorder_ReportedByContact";
+				public const string MsdynLinkeditemvalidityPolymorphicContactid = "msdyn_linkeditemvalidity_polymorphic_contactid";
+				public const string MsdynMsdynConversationparticipantinsightsContactMsdynUser = "msdyn_msdyn_conversationparticipantinsights_contact_msdyn_User";
 				public const string MsdynMsdynPreferredagentContactMsdynRecordId = "msdyn_msdyn_preferredagent_contact_msdyn_recordId";
+				public const string MsdynMsdynSalescopilotinsightContactMsdynTargetentityid = "msdyn_msdyn_salescopilotinsight_contact_msdyn_targetentityid";
 				public const string MsdynMsdynTaggedrecordContactMsdynDynamicsrecordid = "msdyn_msdyn_taggedrecord_contact_msdyn_dynamicsrecordid";
 				public const string MsdynPlaybookinstanceContact = "msdyn_playbookinstance_contact";
 				public const string MsdynSabackupdiagnosticContactMsdynTarget = "msdyn_sabackupdiagnostic_contact_msdyn_target";
@@ -4681,7 +5479,6 @@ namespace dgt.power.dataverse
 				public const string ContactMasterContact = "contact_master_contact";
 				public const string ContactOriginatingLead = "contact_originating_lead";
 				public const string ContactOwningUser = "contact_owning_user";
-				public const string Ec4uEc4uLegalbasisContact = "ec4u_ec4u_legalbasis_contact";
 				public const string EquipmentContacts = "equipment_contacts";
 				public const string LkContactCreatedonbehalfby = "lk_contact_createdonbehalfby";
 				public const string LkContactEntityimage = "lk_contact_entityimage";
@@ -4691,6 +5488,7 @@ namespace dgt.power.dataverse
 				public const string LkExternalpartyContactCreatedby = "lk_externalparty_contact_createdby";
 				public const string LkExternalpartyContactModifiedby = "lk_externalparty_contact_modifiedby";
 				public const string ManualslaContact = "manualsla_contact";
+				public const string MsaContactManagingpartner = "msa_contact_managingpartner";
 				public const string MsdynMsdynContactkpiitemContactContactkpiid = "msdyn_msdyn_contactkpiitem_contact_contactkpiid";
 				public const string MsdynMsdynSegmentContact = "msdyn_msdyn_segment_contact";
 				public const string OwnerContacts = "owner_contacts";
@@ -4705,6 +5503,8 @@ namespace dgt.power.dataverse
 
             public static class ManyToMany
             {
+				public const string AdxInvitationInvitecontacts = "adx_invitation_invitecontacts";
+				public const string AdxInvitationRedeemedcontacts = "adx_invitation_redeemedcontacts";
 				public const string BulkOperationContacts = "BulkOperation_Contacts";
 				public const string CampaignActivityContacts = "CampaignActivity_Contacts";
 				public const string ContactSubscriptionAssociation = "contact_subscription_association";
@@ -4714,6 +5514,7 @@ namespace dgt.power.dataverse
 				public const string ContactquotesAssociation = "contactquotes_association";
 				public const string EntitlementcontactsAssociation = "entitlementcontacts_association";
 				public const string ListcontactAssociation = "listcontact_association";
+				public const string PowerpagecomponentMsppWebroleContact = "powerpagecomponent_mspp_webrole_contact";
 				public const string ServicecontractcontactsAssociation = "servicecontractcontacts_association";
             }
         }

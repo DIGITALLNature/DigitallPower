@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -154,7 +151,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// The Azure active directory object Id for a group.
+		/// The object Id for a group.
 		/// </summary>
 		[AttributeLogicalName("azureactivedirectoryobjectid")]
         public Guid? AzureActiveDirectoryObjectId
@@ -229,6 +226,26 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
+            }
+        }
+
+		/// <summary>
+		/// The delegated authorization context for the team.
+		/// </summary>
+		[AttributeLogicalName("delegatedauthorizationid")]
+        public EntityReference? DelegatedAuthorizationId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("delegatedauthorizationid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(DelegatedAuthorizationId));
+                SetAttributeValue("delegatedauthorizationid", value);
+                OnPropertyChanged(nameof(DelegatedAuthorizationId));
             }
         }
 
@@ -500,26 +517,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Type of the associated record for team - used for system managed access teams only.
-		/// </summary>
-		[AttributeLogicalName("regardingobjecttypecode")]
-        public string? RegardingObjectTypeCode
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("regardingobjecttypecode");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(RegardingObjectTypeCode));
-                SetAttributeValue("regardingobjecttypecode", value);
-                OnPropertyChanged(nameof(RegardingObjectTypeCode));
-            }
-        }
-
-		/// <summary>
 		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("sharelinkqualifier")]
@@ -783,46 +780,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N team_customapirequestparameter
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_customapirequestparameter")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> TeamCustomapirequestparameter
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<CustomAPIRequestParameter>("team_customapirequestparameter", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("TeamCustomapirequestparameter");
-				this.SetRelatedEntities<CustomAPIRequestParameter>("team_customapirequestparameter", null, value);
-				this.OnPropertyChanged("TeamCustomapirequestparameter");
-			}
-		}
-
-		/// <summary>
-		/// 1:N team_customapiresponseproperty
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_customapiresponseproperty")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> TeamCustomapiresponseproperty
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<CustomAPIResponseProperty>("team_customapiresponseproperty", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("TeamCustomapiresponseproperty");
-				this.SetRelatedEntities<CustomAPIResponseProperty>("team_customapiresponseproperty", null, value);
-				this.OnPropertyChanged("TeamCustomapiresponseproperty");
-			}
-		}
-
-		/// <summary>
 		/// 1:N team_DuplicateRules
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_DuplicateRules")]
@@ -843,22 +800,42 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N team_ec4u_carrier
+		/// 1:N team_environmentvariabledefinition
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> TeamEc4uCarrier
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_environmentvariabledefinition")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> TeamEnvironmentvariabledefinition
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("team_environmentvariabledefinition", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("TeamEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null, value);
-				this.OnPropertyChanged("TeamEc4uCarrier");
+				this.OnPropertyChanging("TeamEnvironmentvariabledefinition");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("team_environmentvariabledefinition", null, value);
+				this.OnPropertyChanged("TeamEnvironmentvariabledefinition");
+			}
+		}
+
+		/// <summary>
+		/// 1:N team_environmentvariablevalue
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_environmentvariablevalue")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> TeamEnvironmentvariablevalue
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<EnvironmentVariableValue>("team_environmentvariablevalue", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("TeamEnvironmentvariablevalue");
+				this.SetRelatedEntities<EnvironmentVariableValue>("team_environmentvariablevalue", null, value);
+				this.OnPropertyChanged("TeamEnvironmentvariablevalue");
 			}
 		}
 
@@ -973,8 +950,8 @@ namespace dgt.power.dataverse
                 {
 					public const int Owner = 0;
 					public const int Access = 1;
-					public const int AADSecurityGroup = 2;
-					public const int AADOfficeGroup = 3;
+					public const int SecurityGroup = 2;
+					public const int OfficeGroup = 3;
                 }
 		}
 		#endregion
@@ -989,6 +966,7 @@ namespace dgt.power.dataverse
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
+				public const string DelegatedAuthorizationId = "delegatedauthorizationid";
 				public const string Description = "description";
 				public const string EMailAddress = "emailaddress";
 				public const string ExchangeRate = "exchangerate";
@@ -1005,7 +983,6 @@ namespace dgt.power.dataverse
 				public const string ProcessId = "processid";
 				public const string QueueId = "queueid";
 				public const string RegardingObjectId = "regardingobjectid";
-				public const string RegardingObjectTypeCode = "regardingobjecttypecode";
 				public const string ShareLinkQualifier = "sharelinkqualifier";
 				public const string StageId = "stageid";
 				public const string SystemManaged = "systemmanaged";
@@ -1021,7 +998,7 @@ namespace dgt.power.dataverse
 		#region AlternateKeys
 		public static class AlternateKeys
 		{
-				public const string AADObjectIdWithMembershipType = "aadobjectid_membershiptype";
+				public const string ObjectIdWithMembershipType = "aadobjectid_membershiptype";
 		}
 		#endregion
 
@@ -1030,11 +1007,18 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+				public const string AdxInviteredemptionTeamOwningteam = "adx_inviteredemption_team_owningteam";
+				public const string AdxPortalcommentTeamOwningteam = "adx_portalcomment_team_owningteam";
 				public const string ChatTeamOwningteam = "chat_team_owningteam";
 				public const string ImportFileTeam = "ImportFile_Team";
 				public const string LeadOwningTeam = "lead_owning_team";
+				public const string MsdynApprovalTeamOwningteam = "msdyn_approval_team_owningteam";
+				public const string MsdynBookingalertTeamOwningteam = "msdyn_bookingalert_team_owningteam";
+				public const string MsdynCopilottranscriptTeamOwningteam = "msdyn_copilottranscript_team_owningteam";
 				public const string MsdynOcliveworkitemTeamOwningteam = "msdyn_ocliveworkitem_team_owningteam";
+				public const string MsdynOcoutboundmessageTeamOwningteam = "msdyn_ocoutboundmessage_team_owningteam";
 				public const string MsdynOcsessionTeamOwningteam = "msdyn_ocsession_team_owningteam";
+				public const string MsdynTeamMsdynProjectProjectteamid = "msdyn_team_msdyn_project_projectteamid";
 				public const string MsdynTeamMsdynSalesroutingrunOwnerassigned = "msdyn_team_msdyn_salesroutingrun_ownerassigned";
 				public const string MsdynTeamMsdynSalesroutingrunPreviousowner = "msdyn_team_msdyn_salesroutingrun_previousowner";
 				public const string MsfpAlertTeamOwningteam = "msfp_alert_team_owningteam";
@@ -1047,9 +1031,26 @@ namespace dgt.power.dataverse
 				public const string TeamActivityfileattachment = "team_activityfileattachment";
 				public const string TeamActivitymonitor = "team_activitymonitor";
 				public const string TeamAdminsettingsentity = "team_adminsettingsentity";
+				public const string TeamAdxInvitation = "team_adx_invitation";
+				public const string TeamAdxSetting = "team_adx_setting";
+				public const string TeamAiplugin = "team_aiplugin";
+				public const string TeamAipluginauth = "team_aipluginauth";
+				public const string TeamAipluginconversationstarter = "team_aipluginconversationstarter";
+				public const string TeamAipluginconversationstartermapping = "team_aipluginconversationstartermapping";
+				public const string TeamAipluginexternalschema = "team_aipluginexternalschema";
+				public const string TeamAipluginexternalschemaproperty = "team_aipluginexternalschemaproperty";
+				public const string TeamAiplugingovernance = "team_aiplugingovernance";
+				public const string TeamAiplugingovernanceext = "team_aiplugingovernanceext";
+				public const string TeamAiplugininstance = "team_aiplugininstance";
+				public const string TeamAipluginoperation = "team_aipluginoperation";
+				public const string TeamAipluginoperationparameter = "team_aipluginoperationparameter";
+				public const string TeamAipluginoperationresponsetemplate = "team_aipluginoperationresponsetemplate";
+				public const string TeamAipluginusersetting = "team_aipluginusersetting";
 				public const string TeamAnnotations = "team_annotations";
 				public const string TeamAppnotification = "team_appnotification";
 				public const string TeamAppointment = "team_appointment";
+				public const string TeamArchivecleanupinfo = "team_archivecleanupinfo";
+				public const string TeamArchivecleanupoperation = "team_archivecleanupoperation";
 				public const string TeamAsyncoperation = "team_asyncoperation";
 				public const string TeamAsyncOperations = "Team_AsyncOperations";
 				public const string TeamBookableresource = "team_bookableresource";
@@ -1063,6 +1064,10 @@ namespace dgt.power.dataverse
 				public const string TeamBookingstatus = "team_bookingstatus";
 				public const string TeamBot = "team_bot";
 				public const string TeamBotcomponent = "team_botcomponent";
+				public const string TeamBotcomponentcollection = "team_botcomponentcollection";
+				public const string TeamBulkarchiveconfig = "team_bulkarchiveconfig";
+				public const string TeamBulkarchivefailuredetail = "team_bulkarchivefailuredetail";
+				public const string TeamBulkarchiveoperation = "team_bulkarchiveoperation";
 				public const string TeamBulkDeleteFailures = "Team_BulkDeleteFailures";
 				public const string TeamBulkOperation = "team_BulkOperation";
 				public const string TeamBulkoperationlog = "team_bulkoperationlog";
@@ -1074,6 +1079,8 @@ namespace dgt.power.dataverse
 				public const string TeamChannelaccessprofile = "team_channelaccessprofile";
 				public const string TeamCharacteristic = "team_characteristic";
 				public const string TeamComment = "team_comment";
+				public const string TeamComponentversion = "team_componentversion";
+				public const string TeamConnectioninstance = "team_connectioninstance";
 				public const string TeamConnectionreference = "team_connectionreference";
 				public const string TeamConnections1 = "team_connections1";
 				public const string TeamConnections2 = "team_connections2";
@@ -1082,33 +1089,32 @@ namespace dgt.power.dataverse
 				public const string TeamContractdetail = "team_contractdetail";
 				public const string TeamConversationtranscript = "team_conversationtranscript";
 				public const string TeamConvertrule = "team_convertrule";
+				public const string TeamCopilotglossaryterm = "team_copilotglossaryterm";
+				public const string TeamCopilotsynonyms = "team_copilotsynonyms";
+				public const string TeamCr072Booking = "team_cr072_booking";
+				public const string TeamCredential = "team_credential";
 				public const string TeamCustomapi = "team_customapi";
-				public const string TeamCustomapirequestparameter = "team_customapirequestparameter";
-				public const string TeamCustomapiresponseproperty = "team_customapiresponseproperty";
 				public const string TeamCustomerOpportunityRoles = "team_customer_opportunity_roles";
 				public const string TeamCustomerRelationship = "team_customer_relationship";
 				public const string TeamDatalakefolder = "team_datalakefolder";
-				public const string TeamDatalakefolderpermission = "team_datalakefolderpermission";
 				public const string TeamDesktopflowbinary = "team_desktopflowbinary";
 				public const string TeamDesktopflowmodule = "team_desktopflowmodule";
+				public const string TeamDgtWorkbench = "team_dgt_workbench";
+				public const string TeamDgtWorkbenchHistory = "team_dgt_workbench_history";
 				public const string TeamDuplicateBaseRecord = "Team_DuplicateBaseRecord";
 				public const string TeamDuplicateMatchingRecord = "Team_DuplicateMatchingRecord";
 				public const string TeamDuplicateRules = "team_DuplicateRules";
+				public const string TeamDvfilesearch = "team_dvfilesearch";
+				public const string TeamDvfilesearchattribute = "team_dvfilesearchattribute";
+				public const string TeamDvfilesearchentity = "team_dvfilesearchentity";
+				public const string TeamDvtablesearch = "team_dvtablesearch";
+				public const string TeamDvtablesearchattribute = "team_dvtablesearchattribute";
+				public const string TeamDvtablesearchentity = "team_dvtablesearchentity";
 				public const string TeamDynamicPropertyInstance = "team_DynamicPropertyInstance";
-				public const string TeamEc4uAcquirelegalbasis = "team_ec4u_acquirelegalbasis";
-				public const string TeamEc4uCarrier = "team_ec4u_carrier";
-				public const string TeamEc4uCarrierDependencyCheck = "team_ec4u_carrier_dependency_check";
-				public const string TeamEc4uCarrierMissingDependency = "team_ec4u_carrier_missing_dependency";
-				public const string TeamEc4uGdprProtocol = "team_ec4u_gdpr_protocol";
-				public const string TeamEc4uGdprProtocolDetail = "team_ec4u_gdpr_protocol_detail";
-				public const string TeamEc4uGdprReport = "team_ec4u_gdpr_report";
-				public const string TeamEc4uGdprRequest = "team_ec4u_gdpr_request";
-				public const string TeamEc4uLegalbasis = "team_ec4u_legalbasis";
-				public const string TeamEc4uWorkbench = "team_ec4u_workbench";
-				public const string TeamEc4uWorkbenchHistory = "team_ec4u_workbench_history";
 				public const string TeamEmail = "team_email";
 				public const string TeamEmailTemplates = "team_email_templates";
 				public const string TeamEmailserverprofile = "team_emailserverprofile";
+				public const string TeamEnablearchivalrequest = "team_enablearchivalrequest";
 				public const string TeamEntitlement = "team_entitlement";
 				public const string TeamEntitlementchannel = "team_entitlementchannel";
 				public const string TeamEntitlemententityallocationtypemapping = "team_entitlemententityallocationtypemapping";
@@ -1118,14 +1124,22 @@ namespace dgt.power.dataverse
 				public const string TeamExportedexcel = "team_exportedexcel";
 				public const string TeamExportsolutionupload = "team_exportsolutionupload";
 				public const string TeamExternalparty = "team_externalparty";
+				public const string TeamFabricaiskill = "team_fabricaiskill";
 				public const string TeamFax = "team_fax";
 				public const string TeamFeaturecontrolsetting = "team_featurecontrolsetting";
+				public const string TeamFederatedknowledgeconfiguration = "team_federatedknowledgeconfiguration";
+				public const string TeamFederatedknowledgeentityconfiguration = "team_federatedknowledgeentityconfiguration";
+				public const string TeamFlowcapacityassignment = "team_flowcapacityassignment";
+				public const string TeamFlowcredentialapplication = "team_flowcredentialapplication";
+				public const string TeamFlowevent = "team_flowevent";
 				public const string TeamFlowmachine = "team_flowmachine";
 				public const string TeamFlowmachinegroup = "team_flowmachinegroup";
 				public const string TeamFlowmachineimage = "team_flowmachineimage";
 				public const string TeamFlowmachineimageversion = "team_flowmachineimageversion";
 				public const string TeamFlowmachinenetwork = "team_flowmachinenetwork";
+				public const string TeamFlowrun = "team_flowrun";
 				public const string TeamFlowsession = "team_flowsession";
+				public const string TeamFxexpression = "team_fxexpression";
 				public const string TeamGoal = "team_goal";
 				public const string TeamGoalGoalowner = "team_goal_goalowner";
 				public const string TeamGoalrollupquery = "team_goalrollupquery";
@@ -1149,11 +1163,30 @@ namespace dgt.power.dataverse
 				public const string TeamMailboxtrackingcategory = "team_mailboxtrackingcategory";
 				public const string TeamMailboxtrackingfolder = "team_mailboxtrackingfolder";
 				public const string TeamManagedidentity = "team_managedidentity";
+				public const string TeamMsdynAccountpricelist = "team_msdyn_accountpricelist";
+				public const string TeamMsdynActioncardactionstat = "team_msdyn_actioncardactionstat";
 				public const string TeamMsdynActioncardregarding = "team_msdyn_actioncardregarding";
 				public const string TeamMsdynActioncardrolesetting = "team_msdyn_actioncardrolesetting";
+				public const string TeamMsdynActioncardstataggregation = "team_msdyn_actioncardstataggregation";
+				public const string TeamMsdynActiveicdextension = "team_msdyn_activeicdextension";
+				public const string TeamMsdynActual = "team_msdyn_actual";
 				public const string TeamMsdynAdminappstate = "team_msdyn_adminappstate";
+				public const string TeamMsdynAgentcapacityprofileunit = "team_msdyn_agentcapacityprofileunit";
 				public const string TeamMsdynAgentcapacityupdatehistory = "team_msdyn_agentcapacityupdatehistory";
+				public const string TeamMsdynAgentchannelstate = "team_msdyn_agentchannelstate";
+				public const string TeamMsdynAgentstatus = "team_msdyn_agentstatus";
 				public const string TeamMsdynAgentstatushistory = "team_msdyn_agentstatushistory";
+				public const string TeamMsdynAgreement = "team_msdyn_agreement";
+				public const string TeamMsdynAgreementbookingdate = "team_msdyn_agreementbookingdate";
+				public const string TeamMsdynAgreementbookingincident = "team_msdyn_agreementbookingincident";
+				public const string TeamMsdynAgreementbookingproduct = "team_msdyn_agreementbookingproduct";
+				public const string TeamMsdynAgreementbookingservice = "team_msdyn_agreementbookingservice";
+				public const string TeamMsdynAgreementbookingservicetask = "team_msdyn_agreementbookingservicetask";
+				public const string TeamMsdynAgreementbookingsetup = "team_msdyn_agreementbookingsetup";
+				public const string TeamMsdynAgreementinvoicedate = "team_msdyn_agreementinvoicedate";
+				public const string TeamMsdynAgreementinvoiceproduct = "team_msdyn_agreementinvoiceproduct";
+				public const string TeamMsdynAgreementinvoicesetup = "team_msdyn_agreementinvoicesetup";
+				public const string TeamMsdynAgreementsubstatus = "team_msdyn_agreementsubstatus";
 				public const string TeamMsdynAibdataset = "team_msdyn_aibdataset";
 				public const string TeamMsdynAibdatasetfile = "team_msdyn_aibdatasetfile";
 				public const string TeamMsdynAibdatasetrecord = "team_msdyn_aibdatasetrecord";
@@ -1162,6 +1195,7 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynAibfile = "team_msdyn_aibfile";
 				public const string TeamMsdynAibfileattacheddata = "team_msdyn_aibfileattacheddata";
 				public const string TeamMsdynAicontactsuggestion = "team_msdyn_aicontactsuggestion";
+				public const string TeamMsdynAievent = "team_msdyn_aievent";
 				public const string TeamMsdynAifptrainingdocument = "team_msdyn_aifptrainingdocument";
 				public const string TeamMsdynAimodel = "team_msdyn_aimodel";
 				public const string TeamMsdynAiodimage = "team_msdyn_aiodimage";
@@ -1171,6 +1205,7 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynAitemplate = "team_msdyn_aitemplate";
 				public const string TeamMsdynAnalysiscomponent = "team_msdyn_analysiscomponent";
 				public const string TeamMsdynAnalysisjob = "team_msdyn_analysisjob";
+				public const string TeamMsdynAnalysisoverride = "team_msdyn_analysisoverride";
 				public const string TeamMsdynAnalysisresult = "team_msdyn_analysisresult";
 				public const string TeamMsdynAnalysisresultdetail = "team_msdyn_analysisresultdetail";
 				public const string TeamMsdynAnalytics = "team_msdyn_analytics";
@@ -1180,6 +1215,8 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynApplicationextension = "team_msdyn_applicationextension";
 				public const string TeamMsdynApplicationtabtemplate = "team_msdyn_applicationtabtemplate";
 				public const string TeamMsdynAppprofilerolemapping = "team_msdyn_appprofilerolemapping";
+				public const string TeamMsdynApprovalset = "team_msdyn_approvalset";
+				public const string TeamMsdynAppstate = "team_msdyn_appstate";
 				public const string TeamMsdynAssetcategorytemplateassociation = "team_msdyn_assetcategorytemplateassociation";
 				public const string TeamMsdynAssettemplateassociation = "team_msdyn_assettemplateassociation";
 				public const string TeamMsdynAssignmentconfiguration = "team_msdyn_assignmentconfiguration";
@@ -1192,34 +1229,77 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynAuthsettingsentry = "team_msdyn_authsettingsentry";
 				public const string TeamMsdynAutocapturerule = "team_msdyn_autocapturerule";
 				public const string TeamMsdynAutocapturesettings = "team_msdyn_autocapturesettings";
+				public const string TeamMsdynAutonomouscasecreationrule = "team_msdyn_autonomouscasecreationrule";
+				public const string TeamMsdynBgjobledger = "team_msdyn_bgjobledger";
+				public const string TeamMsdynBookableresourceassociation = "team_msdyn_bookableresourceassociation";
+				public const string TeamMsdynBookableresourcebookingquicknote = "team_msdyn_bookableresourcebookingquicknote";
 				public const string TeamMsdynBookableresourcecapacityprofile = "team_msdyn_bookableresourcecapacityprofile";
+				public const string TeamMsdynBookingalertstatus = "team_msdyn_bookingalertstatus";
+				public const string TeamMsdynBookingchange = "team_msdyn_bookingchange";
+				public const string TeamMsdynBookingjournal = "team_msdyn_bookingjournal";
+				public const string TeamMsdynBookingrule = "team_msdyn_bookingrule";
+				public const string TeamMsdynBookingsetupmetadata = "team_msdyn_bookingsetupmetadata";
+				public const string TeamMsdynBookingtimestamp = "team_msdyn_bookingtimestamp";
+				public const string TeamMsdynBotsession = "team_msdyn_botsession";
+				public const string TeamMsdynBusinessclosure = "team_msdyn_businessclosure";
 				public const string TeamMsdynCallablecontext = "team_msdyn_callablecontext";
 				public const string TeamMsdynCapacityprofile = "team_msdyn_capacityprofile";
 				public const string TeamMsdynCdsentityengagementctx = "team_msdyn_cdsentityengagementctx";
+				public const string TeamMsdynChannel = "team_msdyn_channel";
 				public const string TeamMsdynChanneldefinition = "team_msdyn_channeldefinition";
 				public const string TeamMsdynChanneldefinitionconsent = "team_msdyn_channeldefinitionconsent";
 				public const string TeamMsdynChanneldefinitionlocale = "team_msdyn_channeldefinitionlocale";
 				public const string TeamMsdynChannelinstance = "team_msdyn_channelinstance";
 				public const string TeamMsdynChannelinstanceaccount = "team_msdyn_channelinstanceaccount";
+				public const string TeamMsdynChannelmessageattachment = "team_msdyn_channelmessageattachment";
+				public const string TeamMsdynChannelmessagecontextpart = "team_msdyn_channelmessagecontextpart";
 				public const string TeamMsdynChannelmessagepart = "team_msdyn_channelmessagepart";
 				public const string TeamMsdynChannelprovider = "team_msdyn_channelprovider";
+				public const string TeamMsdynCharacteristicreqforteammember = "team_msdyn_characteristicreqforteammember";
+				public const string TeamMsdynChatansweroption = "team_msdyn_chatansweroption";
+				public const string TeamMsdynChatquestionnaireresponse = "team_msdyn_chatquestionnaireresponse";
+				public const string TeamMsdynChatquestionnaireresponseitem = "team_msdyn_chatquestionnaireresponseitem";
+				public const string TeamMsdynChatwidgetlanguage = "team_msdyn_chatwidgetlanguage";
+				public const string TeamMsdynClientextension = "team_msdyn_clientextension";
+				public const string TeamMsdynConfiguration = "team_msdyn_configuration";
 				public const string TeamMsdynConsoleapplicationnotificationfield = "team_msdyn_consoleapplicationnotificationfield";
 				public const string TeamMsdynConsoleapplicationnotificationtemplate = "team_msdyn_consoleapplicationnotificationtemplate";
 				public const string TeamMsdynConsoleapplicationsessiontemplate = "team_msdyn_consoleapplicationsessiontemplate";
 				public const string TeamMsdynConsoleapplicationtemplate = "team_msdyn_consoleapplicationtemplate";
 				public const string TeamMsdynConsoleapplicationtemplateparameter = "team_msdyn_consoleapplicationtemplateparameter";
 				public const string TeamMsdynConsumingapplication = "team_msdyn_consumingapplication";
+				public const string TeamMsdynContactpricelist = "team_msdyn_contactpricelist";
 				public const string TeamMsdynContactsuggestionrule = "team_msdyn_contactsuggestionrule";
 				public const string TeamMsdynContactsuggestionruleset = "team_msdyn_contactsuggestionruleset";
+				public const string TeamMsdynContractlinedetailperformance = "team_msdyn_contractlinedetailperformance";
+				public const string TeamMsdynContractlinescheduleofvalue = "team_msdyn_contractlinescheduleofvalue";
+				public const string TeamMsdynContractperformance = "team_msdyn_contractperformance";
 				public const string TeamMsdynConversationaction = "team_msdyn_conversationaction";
+				public const string TeamMsdynConversationactionitem = "team_msdyn_conversationactionitem";
 				public const string TeamMsdynConversationactionlocale = "team_msdyn_conversationactionlocale";
+				public const string TeamMsdynConversationaggregatedinsights = "team_msdyn_conversationaggregatedinsights";
+				public const string TeamMsdynConversationcomment = "team_msdyn_conversationcomment";
 				public const string TeamMsdynConversationdata = "team_msdyn_conversationdata";
 				public const string TeamMsdynConversationinsight = "team_msdyn_conversationinsight";
 				public const string TeamMsdynConversationmessageblock = "team_msdyn_conversationmessageblock";
+				public const string TeamMsdynConversationparticipantinsights = "team_msdyn_conversationparticipantinsights";
+				public const string TeamMsdynConversationparticipantsentiment = "team_msdyn_conversationparticipantsentiment";
+				public const string TeamMsdynConversationquestion = "team_msdyn_conversationquestion";
+				public const string TeamMsdynConversationsegmentsentiment = "team_msdyn_conversationsegmentsentiment";
+				public const string TeamMsdynConversationsentiment = "team_msdyn_conversationsentiment";
+				public const string TeamMsdynConversationsignal = "team_msdyn_conversationsignal";
+				public const string TeamMsdynConversationsubject = "team_msdyn_conversationsubject";
+				public const string TeamMsdynConversationsummarysuggestion = "team_msdyn_conversationsummarysuggestion";
+				public const string TeamMsdynConversationsystemtag = "team_msdyn_conversationsystemtag";
+				public const string TeamMsdynConversationtag = "team_msdyn_conversationtag";
+				public const string TeamMsdynCopilotagentpreference = "team_msdyn_copilotagentpreference";
+				public const string TeamMsdynCopilotinteractiondata = "team_msdyn_copilotinteractiondata";
+				public const string TeamMsdynCopilottranscriptdata = "team_msdyn_copilottranscriptdata";
 				public const string TeamMsdynCrmconnection = "team_msdyn_crmconnection";
 				public const string TeamMsdynCsadminconfig = "team_msdyn_csadminconfig";
 				public const string TeamMsdynCustomapirulesetconfiguration = "team_msdyn_customapirulesetconfiguration";
 				public const string TeamMsdynCustomcontrolextendedsettings = "team_msdyn_customcontrolextendedsettings";
+				public const string TeamMsdynCustomengagementctx = "team_msdyn_customengagementctx";
 				public const string TeamMsdynCustomerasset = "team_msdyn_customerasset";
 				public const string TeamMsdynCustomerassetattachment = "team_msdyn_customerassetattachment";
 				public const string TeamMsdynCustomerassetcategory = "team_msdyn_customerassetcategory";
@@ -1227,36 +1307,91 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynDataanalyticsdataset = "team_msdyn_dataanalyticsdataset";
 				public const string TeamMsdynDataanalyticsreport = "team_msdyn_dataanalyticsreport";
 				public const string TeamMsdynDataanalyticsworkspace = "team_msdyn_dataanalyticsworkspace";
+				public const string TeamMsdynDataexport = "team_msdyn_dataexport";
 				public const string TeamMsdynDataflow = "team_msdyn_dataflow";
+				public const string TeamMsdynDataflowDatalakefolder = "team_msdyn_dataflow_datalakefolder";
+				public const string TeamMsdynDataflowconnectionreference = "team_msdyn_dataflowconnectionreference";
 				public const string TeamMsdynDataflowrefreshhistory = "team_msdyn_dataflowrefreshhistory";
+				public const string TeamMsdynDataflowtemplate = "team_msdyn_dataflowtemplate";
 				public const string TeamMsdynDealmanageraccess = "team_msdyn_dealmanageraccess";
 				public const string TeamMsdynDealmanagersettings = "team_msdyn_dealmanagersettings";
 				public const string TeamMsdynDecisioncontract = "team_msdyn_decisioncontract";
 				public const string TeamMsdynDecisionruleset = "team_msdyn_decisionruleset";
 				public const string TeamMsdynDefextendedchannelinstance = "team_msdyn_defextendedchannelinstance";
 				public const string TeamMsdynDefextendedchannelinstanceaccount = "team_msdyn_defextendedchannelinstanceaccount";
+				public const string TeamMsdynDelegation = "team_msdyn_delegation";
 				public const string TeamMsdynDeletedconversation = "team_msdyn_deletedconversation";
+				public const string TeamMsdynDimension = "team_msdyn_dimension";
+				public const string TeamMsdynDmsrequest = "team_msdyn_dmsrequest";
+				public const string TeamMsdynDmsrequeststatus = "team_msdyn_dmsrequeststatus";
+				public const string TeamMsdynDmssyncrequest = "team_msdyn_dmssyncrequest";
+				public const string TeamMsdynDmssyncstatus = "team_msdyn_dmssyncstatus";
 				public const string TeamMsdynDuplicateleadmapping = "team_msdyn_duplicateleadmapping";
 				public const string TeamMsdynEffortpredictionresult = "team_msdyn_effortpredictionresult";
+				public const string TeamMsdynEntitlementapplication = "team_msdyn_entitlementapplication";
+				public const string TeamMsdynEntityattachment = "team_msdyn_entityattachment";
 				public const string TeamMsdynEntityconfig = "team_msdyn_entityconfig";
+				public const string TeamMsdynEntityconfiguration = "team_msdyn_entityconfiguration";
 				public const string TeamMsdynEntitylinkchatconfiguration = "team_msdyn_entitylinkchatconfiguration";
 				public const string TeamMsdynEntityrankingrule = "team_msdyn_entityrankingrule";
 				public const string TeamMsdynEntityrefreshhistory = "team_msdyn_entityrefreshhistory";
 				public const string TeamMsdynEntityroutingconfiguration = "team_msdyn_entityroutingconfiguration";
+				public const string TeamMsdynEntityworkstreammap = "team_msdyn_entityworkstreammap";
+				public const string TeamMsdynEstimate = "team_msdyn_estimate";
+				public const string TeamMsdynEstimateline = "team_msdyn_estimateline";
+				public const string TeamMsdynExpense = "team_msdyn_expense";
+				public const string TeamMsdynExpensereceipt = "team_msdyn_expensereceipt";
 				public const string TeamMsdynExtendedusersetting = "team_msdyn_extendedusersetting";
+				public const string TeamMsdynFacebookengagementctx = "team_msdyn_facebookengagementctx";
+				public const string TeamMsdynFact = "team_msdyn_fact";
 				public const string TeamMsdynFavoriteknowledgearticle = "team_msdyn_favoriteknowledgearticle";
 				public const string TeamMsdynFederatedarticle = "team_msdyn_federatedarticle";
+				public const string TeamMsdynFieldcomputation = "team_msdyn_fieldcomputation";
+				public const string TeamMsdynFieldservicesetting = "team_msdyn_fieldservicesetting";
+				public const string TeamMsdynFieldserviceslaconfiguration = "team_msdyn_fieldserviceslaconfiguration";
+				public const string TeamMsdynFileupload = "team_msdyn_fileupload";
+				public const string TeamMsdynFindworkevent = "team_msdyn_findworkevent";
 				public const string TeamMsdynFlowcardtype = "team_msdyn_flowcardtype";
 				public const string TeamMsdynForecastconfiguration = "team_msdyn_forecastconfiguration";
 				public const string TeamMsdynForecastdefinition = "team_msdyn_forecastdefinition";
 				public const string TeamMsdynForecastinstance = "team_msdyn_forecastinstance";
 				public const string TeamMsdynForecastrecurrence = "team_msdyn_forecastrecurrence";
+				public const string TeamMsdynFormmapping = "team_msdyn_formmapping";
 				public const string TeamMsdynFunctionallocation = "team_msdyn_functionallocation";
+				public const string TeamMsdynFunctionallocationtype = "team_msdyn_functionallocationtype";
 				public const string TeamMsdynGdprdata = "team_msdyn_gdprdata";
+				public const string TeamMsdynGeofence = "team_msdyn_geofence";
+				public const string TeamMsdynGeofenceevent = "team_msdyn_geofenceevent";
+				public const string TeamMsdynGeofencingsettings = "team_msdyn_geofencingsettings";
+				public const string TeamMsdynIcdextension = "team_msdyn_icdextension";
 				public const string TeamMsdynIcebreakersconfig = "team_msdyn_icebreakersconfig";
 				public const string TeamMsdynIermlmodel = "team_msdyn_iermlmodel";
 				public const string TeamMsdynIermltraining = "team_msdyn_iermltraining";
+				public const string TeamMsdynIncidenttype = "team_msdyn_incidenttype";
+				public const string TeamMsdynIncidenttypeRequirementgroup = "team_msdyn_incidenttype_requirementgroup";
+				public const string TeamMsdynIncidenttypecharacteristic = "team_msdyn_incidenttypecharacteristic";
+				public const string TeamMsdynIncidenttypeproduct = "team_msdyn_incidenttypeproduct";
+				public const string TeamMsdynIncidenttyperecommendationresult = "team_msdyn_incidenttyperecommendationresult";
+				public const string TeamMsdynIncidenttyperecommendationrunhistory = "team_msdyn_incidenttyperecommendationrunhistory";
+				public const string TeamMsdynIncidenttyperesolution = "team_msdyn_incidenttyperesolution";
+				public const string TeamMsdynIncidenttypeservice = "team_msdyn_incidenttypeservice";
+				public const string TeamMsdynIncidenttypeservicetask = "team_msdyn_incidenttypeservicetask";
+				public const string TeamMsdynIncidenttypessetup = "team_msdyn_incidenttypessetup";
+				public const string TeamMsdynInspection = "team_msdyn_inspection";
+				public const string TeamMsdynInspectionattachment = "team_msdyn_inspectionattachment";
+				public const string TeamMsdynInspectiondefinition = "team_msdyn_inspectiondefinition";
+				public const string TeamMsdynInspectioninstance = "team_msdyn_inspectioninstance";
+				public const string TeamMsdynInspectionresponse = "team_msdyn_inspectionresponse";
+				public const string TeamMsdynInsurance = "team_msdyn_insurance";
 				public const string TeamMsdynIntegratedsearchprovider = "team_msdyn_integratedsearchprovider";
+				public const string TeamMsdynIntegrationjob = "team_msdyn_integrationjob";
+				public const string TeamMsdynIntegrationjobdetail = "team_msdyn_integrationjobdetail";
+				public const string TeamMsdynIntent = "team_msdyn_intent";
+				public const string TeamMsdynInventoryadjustment = "team_msdyn_inventoryadjustment";
+				public const string TeamMsdynInventoryadjustmentproduct = "team_msdyn_inventoryadjustmentproduct";
+				public const string TeamMsdynInventoryjournal = "team_msdyn_inventoryjournal";
+				public const string TeamMsdynInventorytransfer = "team_msdyn_inventorytransfer";
+				public const string TeamMsdynInvoicelinetransaction = "team_msdyn_invoicelinetransaction";
 				public const string TeamMsdynIotalert = "team_msdyn_iotalert";
 				public const string TeamMsdynIotdevice = "team_msdyn_iotdevice";
 				public const string TeamMsdynIotdevicecategory = "team_msdyn_iotdevicecategory";
@@ -1271,11 +1406,15 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynIotprovider = "team_msdyn_iotprovider";
 				public const string TeamMsdynIotproviderinstance = "team_msdyn_iotproviderinstance";
 				public const string TeamMsdynIotsettings = "team_msdyn_iotsettings";
+				public const string TeamMsdynJobsstate = "team_msdyn_jobsstate";
+				public const string TeamMsdynJournal = "team_msdyn_journal";
+				public const string TeamMsdynJournalline = "team_msdyn_journalline";
 				public const string TeamMsdynKalanguagesetting = "team_msdyn_kalanguagesetting";
 				public const string TeamMsdynKbattachment = "team_msdyn_kbattachment";
 				public const string TeamMsdynKmfederatedsearchconfig = "team_msdyn_kmfederatedsearchconfig";
 				public const string TeamMsdynKnowledgearticleimage = "team_msdyn_knowledgearticleimage";
 				public const string TeamMsdynKnowledgearticletemplate = "team_msdyn_knowledgearticletemplate";
+				public const string TeamMsdynKnowledgeassetconfiguration = "team_msdyn_knowledgeassetconfiguration";
 				public const string TeamMsdynKnowledgeinteractioninsight = "team_msdyn_knowledgeinteractioninsight";
 				public const string TeamMsdynKnowledgemanagementsetting = "team_msdyn_knowledgemanagementsetting";
 				public const string TeamMsdynKnowledgepersonalfilter = "team_msdyn_knowledgepersonalfilter";
@@ -1284,35 +1423,61 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynKpieventdata = "team_msdyn_kpieventdata";
 				public const string TeamMsdynKpieventdefinition = "team_msdyn_kpieventdefinition";
 				public const string TeamMsdynLeadmodelconfig = "team_msdyn_leadmodelconfig";
+				public const string TeamMsdynLineengagementctx = "team_msdyn_lineengagementctx";
+				public const string TeamMsdynLivechatconfig = "team_msdyn_livechatconfig";
+				public const string TeamMsdynLivechatengagementctx = "team_msdyn_livechatengagementctx";
+				public const string TeamMsdynLivechatwidgetlocation = "team_msdyn_livechatwidgetlocation";
 				public const string TeamMsdynLiveconversation = "team_msdyn_liveconversation";
 				public const string TeamMsdynLiveworkitemevent = "team_msdyn_liveworkitemevent";
 				public const string TeamMsdynLiveworkstream = "team_msdyn_liveworkstream";
 				public const string TeamMsdynLiveworkstreamcapacityprofile = "team_msdyn_liveworkstreamcapacityprofile";
+				public const string TeamMsdynLocationtemplateassociation = "team_msdyn_locationtemplateassociation";
+				public const string TeamMsdynLocationtypetemplateassociation = "team_msdyn_locationtypetemplateassociation";
+				public const string TeamMsdynLockstatus = "team_msdyn_lockstatus";
 				public const string TeamMsdynMacrosession = "team_msdyn_macrosession";
 				public const string TeamMsdynMasterentityroutingconfiguration = "team_msdyn_masterentityroutingconfiguration";
 				public const string TeamMsdynMigrationtracker = "team_msdyn_migrationtracker";
+				public const string TeamMsdynMobileapp = "team_msdyn_mobileapp";
+				public const string TeamMsdynMobilesource = "team_msdyn_mobilesource";
 				public const string TeamMsdynModelpreviewstatus = "team_msdyn_modelpreviewstatus";
 				public const string TeamMsdynMsteamssetting = "team_msdyn_msteamssetting";
 				public const string TeamMsdynNotesanalysisconfig = "team_msdyn_notesanalysisconfig";
 				public const string TeamMsdynNotificationfield = "team_msdyn_notificationfield";
 				public const string TeamMsdynNotificationtemplate = "team_msdyn_notificationtemplate";
+				public const string TeamMsdynNottoexceed = "team_msdyn_nottoexceed";
 				public const string TeamMsdynOcGeolocationprovider = "team_msdyn_oc_geolocationprovider";
+				public const string TeamMsdynOcagentassignedcustomapiprivilege = "team_msdyn_ocagentassignedcustomapiprivilege";
+				public const string TeamMsdynOcapplebusinessaccount = "team_msdyn_ocapplebusinessaccount";
+				public const string TeamMsdynOcapplemessagesforbusinessengagementctx = "team_msdyn_ocapplemessagesforbusinessengagementctx";
+				public const string TeamMsdynOcapplepay = "team_msdyn_ocapplepay";
 				public const string TeamMsdynOcautoblockrule = "team_msdyn_ocautoblockrule";
 				public const string TeamMsdynOcbotchannelregistration = "team_msdyn_ocbotchannelregistration";
 				public const string TeamMsdynOcbotchannelregistrationsecret = "team_msdyn_ocbotchannelregistrationsecret";
+				public const string TeamMsdynOccarrier = "team_msdyn_occarrier";
 				public const string TeamMsdynOcchannelapiconversationprivilege = "team_msdyn_occhannelapiconversationprivilege";
 				public const string TeamMsdynOcchannelapimessageprivilege = "team_msdyn_occhannelapimessageprivilege";
 				public const string TeamMsdynOcchannelapimethodmapping = "team_msdyn_occhannelapimethodmapping";
+				public const string TeamMsdynOccommunicationprovidersetting = "team_msdyn_occommunicationprovidersetting";
+				public const string TeamMsdynOccommunicationprovidersettingentry = "team_msdyn_occommunicationprovidersettingentry";
+				public const string TeamMsdynOccustommessagingchannel = "team_msdyn_occustommessagingchannel";
 				public const string TeamMsdynOcexternalcontext = "team_msdyn_ocexternalcontext";
+				public const string TeamMsdynOcfbapplication = "team_msdyn_ocfbapplication";
+				public const string TeamMsdynOcfbpage = "team_msdyn_ocfbpage";
 				public const string TeamMsdynOcflaggedspam = "team_msdyn_ocflaggedspam";
+				public const string TeamMsdynOcgooglebusinessmessagesagentaccount = "team_msdyn_ocgooglebusinessmessagesagentaccount";
+				public const string TeamMsdynOcgooglebusinessmessagesengagementctx = "team_msdyn_ocgooglebusinessmessagesengagementctx";
+				public const string TeamMsdynOcgooglebusinessmessagespartneraccount = "team_msdyn_ocgooglebusinessmessagespartneraccount";
 				public const string TeamMsdynOclanguage = "team_msdyn_oclanguage";
+				public const string TeamMsdynOclinechannelconfig = "team_msdyn_oclinechannelconfig";
 				public const string TeamMsdynOcliveworkitemcapacityprofile = "team_msdyn_ocliveworkitemcapacityprofile";
 				public const string TeamMsdynOcliveworkitemcharacteristic = "team_msdyn_ocliveworkitemcharacteristic";
 				public const string TeamMsdynOcliveworkitemcontextitem = "team_msdyn_ocliveworkitemcontextitem";
 				public const string TeamMsdynOcliveworkitemparticipant = "team_msdyn_ocliveworkitemparticipant";
 				public const string TeamMsdynOcliveworkitemsentiment = "team_msdyn_ocliveworkitemsentiment";
 				public const string TeamMsdynOcliveworkstreamcontextvariable = "team_msdyn_ocliveworkstreamcontextvariable";
+				public const string TeamMsdynOcoutboundconfiguration = "team_msdyn_ocoutboundconfiguration";
 				public const string TeamMsdynOcpaymentprofile = "team_msdyn_ocpaymentprofile";
+				public const string TeamMsdynOcphonenumber = "team_msdyn_ocphonenumber";
 				public const string TeamMsdynOcprovisioningstate = "team_msdyn_ocprovisioningstate";
 				public const string TeamMsdynOcrecording = "team_msdyn_ocrecording";
 				public const string TeamMsdynOcrequest = "team_msdyn_ocrequest";
@@ -1330,12 +1495,40 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynOcsitdskill = "team_msdyn_ocsitdskill";
 				public const string TeamMsdynOcsitrainingdata = "team_msdyn_ocsitrainingdata";
 				public const string TeamMsdynOcskillidentmlmodel = "team_msdyn_ocskillidentmlmodel";
+				public const string TeamMsdynOcsmssettingsecret = "team_msdyn_ocsmssettingsecret";
+				public const string TeamMsdynOcteamschannelconfig = "team_msdyn_octeamschannelconfig";
+				public const string TeamMsdynOctwitterapplication = "team_msdyn_octwitterapplication";
+				public const string TeamMsdynOctwitterhandle = "team_msdyn_octwitterhandle";
+				public const string TeamMsdynOctwitterhandleprovisioningstatus = "team_msdyn_octwitterhandleprovisioningstatus";
+				public const string TeamMsdynOctwitterhandlesecret = "team_msdyn_octwitterhandlesecret";
+				public const string TeamMsdynOcwechatchannelconfig = "team_msdyn_ocwechatchannelconfig";
+				public const string TeamMsdynOcwhatsappchannelaccount = "team_msdyn_ocwhatsappchannelaccount";
+				public const string TeamMsdynOcwhatsappchannelnumber = "team_msdyn_ocwhatsappchannelnumber";
 				public const string TeamMsdynOmnichannelpersonalization = "team_msdyn_omnichannelpersonalization";
 				public const string TeamMsdynOmnichannelqueue = "team_msdyn_omnichannelqueue";
 				public const string TeamMsdynOmnichannelsyncconfig = "team_msdyn_omnichannelsyncconfig";
 				public const string TeamMsdynOperatinghour = "team_msdyn_operatinghour";
+				public const string TeamMsdynOpportunitylineresourcecategory = "team_msdyn_opportunitylineresourcecategory";
+				public const string TeamMsdynOpportunitylinetransaction = "team_msdyn_opportunitylinetransaction";
+				public const string TeamMsdynOpportunitylinetransactioncategory = "team_msdyn_opportunitylinetransactioncategory";
+				public const string TeamMsdynOpportunitylinetransactionclassificatio = "team_msdyn_opportunitylinetransactionclassificatio";
 				public const string TeamMsdynOpportunitymodelconfig = "team_msdyn_opportunitymodelconfig";
+				public const string TeamMsdynOpportunitypricelist = "team_msdyn_opportunitypricelist";
+				public const string TeamMsdynOrderinvoicingdate = "team_msdyn_orderinvoicingdate";
+				public const string TeamMsdynOrderinvoicingproduct = "team_msdyn_orderinvoicingproduct";
+				public const string TeamMsdynOrderinvoicingsetup = "team_msdyn_orderinvoicingsetup";
+				public const string TeamMsdynOrderinvoicingsetupdate = "team_msdyn_orderinvoicingsetupdate";
+				public const string TeamMsdynOrderlineresourcecategory = "team_msdyn_orderlineresourcecategory";
+				public const string TeamMsdynOrderlinetransaction = "team_msdyn_orderlinetransaction";
+				public const string TeamMsdynOrderlinetransactioncategory = "team_msdyn_orderlinetransactioncategory";
+				public const string TeamMsdynOrderlinetransactionclassification = "team_msdyn_orderlinetransactionclassification";
+				public const string TeamMsdynOrderpricelist = "team_msdyn_orderpricelist";
+				public const string TeamMsdynOrgchartnode = "team_msdyn_orgchartnode";
 				public const string TeamMsdynOverflowactionconfig = "team_msdyn_overflowactionconfig";
+				public const string TeamMsdynPayment = "team_msdyn_payment";
+				public const string TeamMsdynPaymentdetail = "team_msdyn_paymentdetail";
+				public const string TeamMsdynPaymentmethod = "team_msdyn_paymentmethod";
+				public const string TeamMsdynPaymentterm = "team_msdyn_paymentterm";
 				public const string TeamMsdynPersonalmessage = "team_msdyn_personalmessage";
 				public const string TeamMsdynPersonalsoundsetting = "team_msdyn_personalsoundsetting";
 				public const string TeamMsdynPlaybookactivity = "team_msdyn_playbookactivity";
@@ -1344,6 +1537,7 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynPlaybookinstance = "team_msdyn_playbookinstance";
 				public const string TeamMsdynPlaybooktemplate = "team_msdyn_playbooktemplate";
 				public const string TeamMsdynPmanalysishistory = "team_msdyn_pmanalysishistory";
+				public const string TeamMsdynPmbusinessruleautomationconfig = "team_msdyn_pmbusinessruleautomationconfig";
 				public const string TeamMsdynPmcalendar = "team_msdyn_pmcalendar";
 				public const string TeamMsdynPmcalendarversion = "team_msdyn_pmcalendarversion";
 				public const string TeamMsdynPminferredtask = "team_msdyn_pminferredtask";
@@ -1352,12 +1546,21 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynPmprocessusersettings = "team_msdyn_pmprocessusersettings";
 				public const string TeamMsdynPmprocessversion = "team_msdyn_pmprocessversion";
 				public const string TeamMsdynPmrecording = "team_msdyn_pmrecording";
+				public const string TeamMsdynPmsimulation = "team_msdyn_pmsimulation";
 				public const string TeamMsdynPmtemplate = "team_msdyn_pmtemplate";
 				public const string TeamMsdynPmview = "team_msdyn_pmview";
 				public const string TeamMsdynPostalbum = "team_msdyn_postalbum";
+				public const string TeamMsdynPostalcode = "team_msdyn_postalcode";
+				public const string TeamMsdynPredictioncomputationoperation = "team_msdyn_predictioncomputationoperation";
+				public const string TeamMsdynPredictionmodelstatus = "team_msdyn_predictionmodelstatus";
+				public const string TeamMsdynPredictionscheduledoperation = "team_msdyn_predictionscheduledoperation";
+				public const string TeamMsdynPredictivescoringsyncstatus = "team_msdyn_predictivescoringsyncstatus";
 				public const string TeamMsdynPreferredagent = "team_msdyn_preferredagent";
 				public const string TeamMsdynPreferredagentcustomeridentity = "team_msdyn_preferredagentcustomeridentity";
 				public const string TeamMsdynPreferredagentroutedentity = "team_msdyn_preferredagentroutedentity";
+				public const string TeamMsdynPriority = "team_msdyn_priority";
+				public const string TeamMsdynProblematicasset = "team_msdyn_problematicasset";
+				public const string TeamMsdynProblematicassetfeedback = "team_msdyn_problematicassetfeedback";
 				public const string TeamMsdynProductivityactioninputparameter = "team_msdyn_productivityactioninputparameter";
 				public const string TeamMsdynProductivityactionoutputparameter = "team_msdyn_productivityactionoutputparameter";
 				public const string TeamMsdynProductivityagentscript = "team_msdyn_productivityagentscript";
@@ -1366,25 +1569,96 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynProductivitymacroconnector = "team_msdyn_productivitymacroconnector";
 				public const string TeamMsdynProductivitymacrosolutionconfiguration = "team_msdyn_productivitymacrosolutionconfiguration";
 				public const string TeamMsdynProductivityparameterdefinition = "team_msdyn_productivityparameterdefinition";
+				public const string TeamMsdynProject = "team_msdyn_project";
+				public const string TeamMsdynProjectapproval = "team_msdyn_projectapproval";
+				public const string TeamMsdynProjectpricelist = "team_msdyn_projectpricelist";
+				public const string TeamMsdynProjecttask = "team_msdyn_projecttask";
+				public const string TeamMsdynProjecttaskdependency = "team_msdyn_projecttaskdependency";
+				public const string TeamMsdynProjecttaskstatususer = "team_msdyn_projecttaskstatususer";
+				public const string TeamMsdynProjectteam = "team_msdyn_projectteam";
+				public const string TeamMsdynProjecttransactioncategory = "team_msdyn_projecttransactioncategory";
 				public const string TeamMsdynProperty = "team_msdyn_property";
 				public const string TeamMsdynPropertyassetassociation = "team_msdyn_propertyassetassociation";
+				public const string TeamMsdynPropertylocationassociation = "team_msdyn_propertylocationassociation";
 				public const string TeamMsdynPropertylog = "team_msdyn_propertylog";
 				public const string TeamMsdynPropertytemplateassociation = "team_msdyn_propertytemplateassociation";
+				public const string TeamMsdynPurchaseorder = "team_msdyn_purchaseorder";
+				public const string TeamMsdynPurchaseorderbill = "team_msdyn_purchaseorderbill";
+				public const string TeamMsdynPurchaseorderproduct = "team_msdyn_purchaseorderproduct";
+				public const string TeamMsdynPurchaseorderreceipt = "team_msdyn_purchaseorderreceipt";
+				public const string TeamMsdynPurchaseorderreceiptproduct = "team_msdyn_purchaseorderreceiptproduct";
+				public const string TeamMsdynPurchaseordersubstatus = "team_msdyn_purchaseordersubstatus";
+				public const string TeamMsdynQuestionsequence = "team_msdyn_questionsequence";
+				public const string TeamMsdynQuotebookingincident = "team_msdyn_quotebookingincident";
+				public const string TeamMsdynQuotebookingproduct = "team_msdyn_quotebookingproduct";
+				public const string TeamMsdynQuotebookingservice = "team_msdyn_quotebookingservice";
+				public const string TeamMsdynQuotebookingservicetask = "team_msdyn_quotebookingservicetask";
+				public const string TeamMsdynQuotebookingsetup = "team_msdyn_quotebookingsetup";
+				public const string TeamMsdynQuoteinvoicingproduct = "team_msdyn_quoteinvoicingproduct";
+				public const string TeamMsdynQuoteinvoicingsetup = "team_msdyn_quoteinvoicingsetup";
+				public const string TeamMsdynQuotelineanalyticsbreakdown = "team_msdyn_quotelineanalyticsbreakdown";
+				public const string TeamMsdynQuotelineresourcecategory = "team_msdyn_quotelineresourcecategory";
+				public const string TeamMsdynQuotelinescheduleofvalue = "team_msdyn_quotelinescheduleofvalue";
+				public const string TeamMsdynQuotelinetransaction = "team_msdyn_quotelinetransaction";
+				public const string TeamMsdynQuotelinetransactioncategory = "team_msdyn_quotelinetransactioncategory";
+				public const string TeamMsdynQuotelinetransactionclassification = "team_msdyn_quotelinetransactionclassification";
+				public const string TeamMsdynQuotepricelist = "team_msdyn_quotepricelist";
+				public const string TeamMsdynReadtracker = "team_msdyn_readtracker";
 				public const string TeamMsdynRealtimescoring = "team_msdyn_realtimescoring";
+				public const string TeamMsdynRealtimescoringoperation = "team_msdyn_realtimescoringoperation";
 				public const string TeamMsdynRecording = "team_msdyn_recording";
 				public const string TeamMsdynRelationshipinsightsunifiedconfig = "team_msdyn_relationshipinsightsunifiedconfig";
 				public const string TeamMsdynReportbookmark = "team_msdyn_reportbookmark";
+				public const string TeamMsdynRequirementchange = "team_msdyn_requirementchange";
+				public const string TeamMsdynRequirementcharacteristic = "team_msdyn_requirementcharacteristic";
+				public const string TeamMsdynRequirementdependency = "team_msdyn_requirementdependency";
+				public const string TeamMsdynRequirementgroup = "team_msdyn_requirementgroup";
+				public const string TeamMsdynRequirementorganizationunit = "team_msdyn_requirementorganizationunit";
+				public const string TeamMsdynRequirementrelationship = "team_msdyn_requirementrelationship";
+				public const string TeamMsdynRequirementresourcecategory = "team_msdyn_requirementresourcecategory";
+				public const string TeamMsdynRequirementresourcepreference = "team_msdyn_requirementresourcepreference";
+				public const string TeamMsdynRequirementstatus = "team_msdyn_requirementstatus";
+				public const string TeamMsdynResolution = "team_msdyn_resolution";
+				public const string TeamMsdynResourceassignment = "team_msdyn_resourceassignment";
+				public const string TeamMsdynResourceassignmentdetail = "team_msdyn_resourceassignmentdetail";
+				public const string TeamMsdynResourcepaytype = "team_msdyn_resourcepaytype";
+				public const string TeamMsdynResourcerequest = "team_msdyn_resourcerequest";
+				public const string TeamMsdynResourcerequirement = "team_msdyn_resourcerequirement";
+				public const string TeamMsdynResourcerequirementdetail = "team_msdyn_resourcerequirementdetail";
+				public const string TeamMsdynResourceterritory = "team_msdyn_resourceterritory";
 				public const string TeamMsdynRichtextfile = "team_msdyn_richtextfile";
+				public const string TeamMsdynRma = "team_msdyn_rma";
+				public const string TeamMsdynRmaproduct = "team_msdyn_rmaproduct";
+				public const string TeamMsdynRmareceipt = "team_msdyn_rmareceipt";
+				public const string TeamMsdynRmareceiptproduct = "team_msdyn_rmareceiptproduct";
+				public const string TeamMsdynRmasubstatus = "team_msdyn_rmasubstatus";
+				public const string TeamMsdynRolecompetencyrequirement = "team_msdyn_rolecompetencyrequirement";
+				public const string TeamMsdynRoleutilization = "team_msdyn_roleutilization";
 				public const string TeamMsdynRoutingconfiguration = "team_msdyn_routingconfiguration";
 				public const string TeamMsdynRoutingconfigurationstep = "team_msdyn_routingconfigurationstep";
 				public const string TeamMsdynRoutingrequest = "team_msdyn_routingrequest";
+				public const string TeamMsdynRtv = "team_msdyn_rtv";
+				public const string TeamMsdynRtvproduct = "team_msdyn_rtvproduct";
+				public const string TeamMsdynRtvsubstatus = "team_msdyn_rtvsubstatus";
 				public const string TeamMsdynRulesetdependencymapping = "team_msdyn_rulesetdependencymapping";
+				public const string TeamMsdynSalescopilotinsight = "team_msdyn_salescopilotinsight";
+				public const string TeamMsdynSalesforcestructuredobject = "team_msdyn_salesforcestructuredobject";
+				public const string TeamMsdynSalesforcestructuredqnaconfig = "team_msdyn_salesforcestructuredqnaconfig";
 				public const string TeamMsdynSalesinsightssettings = "team_msdyn_salesinsightssettings";
 				public const string TeamMsdynSalesocmessage = "team_msdyn_salesocmessage";
 				public const string TeamMsdynSalesocsmstemplate = "team_msdyn_salesocsmstemplate";
 				public const string TeamMsdynSalesroutingrun = "team_msdyn_salesroutingrun";
 				public const string TeamMsdynSalessuggestion = "team_msdyn_salessuggestion";
 				public const string TeamMsdynSalestag = "team_msdyn_salestag";
+				public const string TeamMsdynScenario = "team_msdyn_scenario";
+				public const string TeamMsdynSchedule = "team_msdyn_schedule";
+				public const string TeamMsdynScheduleboardsetting = "team_msdyn_scheduleboardsetting";
+				public const string TeamMsdynSchedulingfeatureflag = "team_msdyn_schedulingfeatureflag";
+				public const string TeamMsdynSciconversation = "team_msdyn_sciconversation";
+				public const string TeamMsdynScicustomemailhighlight = "team_msdyn_scicustomemailhighlight";
+				public const string TeamMsdynScicustomhighlight = "team_msdyn_scicustomhighlight";
+				public const string TeamMsdynScicustompublisher = "team_msdyn_scicustompublisher";
+				public const string TeamMsdynSciusersettings = "team_msdyn_sciusersettings";
 				public const string TeamMsdynSearchconfiguration = "team_msdyn_searchconfiguration";
 				public const string TeamMsdynSegment = "team_msdyn_segment";
 				public const string TeamMsdynSequence = "team_msdyn_sequence";
@@ -1394,44 +1668,84 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynSequencetemplate = "team_msdyn_sequencetemplate";
 				public const string TeamMsdynServiceconfiguration = "team_msdyn_serviceconfiguration";
 				public const string TeamMsdynServiceoneprovisioningrequest = "team_msdyn_serviceoneprovisioningrequest";
+				public const string TeamMsdynServicetasktype = "team_msdyn_servicetasktype";
 				public const string TeamMsdynSessiondata = "team_msdyn_sessiondata";
 				public const string TeamMsdynSessionevent = "team_msdyn_sessionevent";
 				public const string TeamMsdynSessionparticipant = "team_msdyn_sessionparticipant";
 				public const string TeamMsdynSessionparticipantdata = "team_msdyn_sessionparticipantdata";
 				public const string TeamMsdynSessiontemplate = "team_msdyn_sessiontemplate";
+				public const string TeamMsdynShipvia = "team_msdyn_shipvia";
 				public const string TeamMsdynSiconfig = "team_msdyn_siconfig";
 				public const string TeamMsdynSkillattachmentruleitem = "team_msdyn_skillattachmentruleitem";
 				public const string TeamMsdynSkillattachmenttarget = "team_msdyn_skillattachmenttarget";
 				public const string TeamMsdynSlakpi = "team_msdyn_slakpi";
+				public const string TeamMsdynSmsengagementctx = "team_msdyn_smsengagementctx";
+				public const string TeamMsdynSmsnumber = "team_msdyn_smsnumber";
 				public const string TeamMsdynSolutionhealthrule = "team_msdyn_solutionhealthrule";
 				public const string TeamMsdynSolutionhealthruleargument = "team_msdyn_solutionhealthruleargument";
 				public const string TeamMsdynSoundnotificationsetting = "team_msdyn_soundnotificationsetting";
+				public const string TeamMsdynSubmodeldefinition = "team_msdyn_submodeldefinition";
 				public const string TeamMsdynSuggestionassignmentrule = "team_msdyn_suggestionassignmentrule";
 				public const string TeamMsdynSuggestionprincipalobjectaccess = "team_msdyn_suggestionprincipalobjectaccess";
 				public const string TeamMsdynSuggestionsellerpriority = "team_msdyn_suggestionsellerpriority";
+				public const string TeamMsdynSurveyquestion = "team_msdyn_surveyquestion";
 				public const string TeamMsdynSwarm = "team_msdyn_swarm";
 				public const string TeamMsdynSwarmparticipant = "team_msdyn_swarmparticipant";
 				public const string TeamMsdynSwarmparticipantrule = "team_msdyn_swarmparticipantrule";
 				public const string TeamMsdynSwarmrole = "team_msdyn_swarmrole";
 				public const string TeamMsdynSwarmskill = "team_msdyn_swarmskill";
 				public const string TeamMsdynSwarmtemplate = "team_msdyn_swarmtemplate";
+				public const string TeamMsdynSystemuserschedulersetting = "team_msdyn_systemuserschedulersetting";
 				public const string TeamMsdynTaggedrecord = "team_msdyn_taggedrecord";
+				public const string TeamMsdynTaxcode = "team_msdyn_taxcode";
+				public const string TeamMsdynTaxcodedetail = "team_msdyn_taxcodedetail";
+				public const string TeamMsdynTeamschannelengagementctx = "team_msdyn_teamschannelengagementctx";
+				public const string TeamMsdynTeamsengagementctx = "team_msdyn_teamsengagementctx";
 				public const string TeamMsdynTemplateforproperties = "team_msdyn_templateforproperties";
 				public const string TeamMsdynTemplateparameter = "team_msdyn_templateparameter";
 				public const string TeamMsdynTemplatetags = "team_msdyn_templatetags";
+				public const string TeamMsdynTimeentry = "team_msdyn_timeentry";
+				public const string TeamMsdynTimeentrysetting = "team_msdyn_timeentrysetting";
+				public const string TeamMsdynTimegroup = "team_msdyn_timegroup";
+				public const string TeamMsdynTimegroupdetail = "team_msdyn_timegroupdetail";
+				public const string TeamMsdynTimeoffcalendar = "team_msdyn_timeoffcalendar";
+				public const string TeamMsdynTimeoffrequest = "team_msdyn_timeoffrequest";
 				public const string TeamMsdynTimespent = "team_msdyn_timespent";
+				public const string TeamMsdynTrade = "team_msdyn_trade";
+				public const string TeamMsdynTradecoverage = "team_msdyn_tradecoverage";
+				public const string TeamMsdynTrainingresult = "team_msdyn_trainingresult";
+				public const string TeamMsdynTransactionconnection = "team_msdyn_transactionconnection";
+				public const string TeamMsdynTransactionorigin = "team_msdyn_transactionorigin";
 				public const string TeamMsdynTranscript = "team_msdyn_transcript";
+				public const string TeamMsdynTwitterengagementctx = "team_msdyn_twitterengagementctx";
 				public const string TeamMsdynUnifiedroutingdiagnostic = "team_msdyn_unifiedroutingdiagnostic";
 				public const string TeamMsdynUnifiedroutingrun = "team_msdyn_unifiedroutingrun";
 				public const string TeamMsdynUntrackedappointment = "team_msdyn_untrackedappointment";
 				public const string TeamMsdynUrnotificationtemplate = "team_msdyn_urnotificationtemplate";
 				public const string TeamMsdynUrnotificationtemplatemapping = "team_msdyn_urnotificationtemplatemapping";
+				public const string TeamMsdynUserworkhistory = "team_msdyn_userworkhistory";
 				public const string TeamMsdynVirtualtablecolumncandidate = "team_msdyn_virtualtablecolumncandidate";
 				public const string TeamMsdynVisitorjourney = "team_msdyn_visitorjourney";
 				public const string TeamMsdynVivacustomerlist = "team_msdyn_vivacustomerlist";
 				public const string TeamMsdynVivausersetting = "team_msdyn_vivausersetting";
 				public const string TeamMsdynWallsavedqueryusersettings = "team_msdyn_wallsavedqueryusersettings";
+				public const string TeamMsdynWarehouse = "team_msdyn_warehouse";
+				public const string TeamMsdynWarranty = "team_msdyn_warranty";
+				public const string TeamMsdynWechatengagementctx = "team_msdyn_wechatengagementctx";
+				public const string TeamMsdynWhatsappengagementctx = "team_msdyn_whatsappengagementctx";
 				public const string TeamMsdynWkwconfig = "team_msdyn_wkwconfig";
+				public const string TeamMsdynWorkhourtemplate = "team_msdyn_workhourtemplate";
+				public const string TeamMsdynWorkorder = "team_msdyn_workorder";
+				public const string TeamMsdynWorkordercharacteristic = "team_msdyn_workordercharacteristic";
+				public const string TeamMsdynWorkorderincident = "team_msdyn_workorderincident";
+				public const string TeamMsdynWorkordernte = "team_msdyn_workordernte";
+				public const string TeamMsdynWorkorderproduct = "team_msdyn_workorderproduct";
+				public const string TeamMsdynWorkorderresolution = "team_msdyn_workorderresolution";
+				public const string TeamMsdynWorkorderresourcerestriction = "team_msdyn_workorderresourcerestriction";
+				public const string TeamMsdynWorkorderservice = "team_msdyn_workorderservice";
+				public const string TeamMsdynWorkorderservicetask = "team_msdyn_workorderservicetask";
+				public const string TeamMsdynWorkordersubstatus = "team_msdyn_workordersubstatus";
+				public const string TeamMsdynWorkordertype = "team_msdyn_workordertype";
 				public const string TeamMsdynWorkqueuestate = "team_msdyn_workqueuestate";
 				public const string TeamMsdynWorkqueueusersetting = "team_msdyn_workqueueusersetting";
 				public const string TeamMsdynceBotcontent = "team_msdynce_botcontent";
@@ -1448,6 +1762,8 @@ namespace dgt.power.dataverse
 				public const string TeamMsdyncrmQrcodestyle = "team_msdyncrm_qrcodestyle";
 				public const string TeamMsdyncrmTextstyle = "team_msdyncrm_textstyle";
 				public const string TeamMsdyncrmVideostyle = "team_msdyncrm_videostyle";
+				public const string TeamMsdynmktByoacschannelinstance = "team_msdynmkt_byoacschannelinstance";
+				public const string TeamMsdynmktByoacschannelinstanceaccount = "team_msdynmkt_byoacschannelinstanceaccount";
 				public const string TeamMsdynmktCatalogeventstatusconfiguration = "team_msdynmkt_catalogeventstatusconfiguration";
 				public const string TeamMsdynmktConfiguration = "team_msdynmkt_configuration";
 				public const string TeamMsdynmktEventmetadata = "team_msdynmkt_eventmetadata";
@@ -1468,6 +1784,32 @@ namespace dgt.power.dataverse
 				public const string TeamMsdynmktTelesignchannelinstanceaccount = "team_msdynmkt_telesignchannelinstanceaccount";
 				public const string TeamMsdynmktTwiliochannelinstance = "team_msdynmkt_twiliochannelinstance";
 				public const string TeamMsdynmktTwiliochannelinstanceaccount = "team_msdynmkt_twiliochannelinstanceaccount";
+				public const string TeamMsdynmktVibeschannelinstance = "team_msdynmkt_vibeschannelinstance";
+				public const string TeamMsdynmktVibeschannelinstanceaccount = "team_msdynmkt_vibeschannelinstanceaccount";
+				public const string TeamMsdyusdActioncallworkflow = "team_msdyusd_actioncallworkflow";
+				public const string TeamMsdyusdAgentscriptaction = "team_msdyusd_agentscriptaction";
+				public const string TeamMsdyusdAgentscripttaskcategory = "team_msdyusd_agentscripttaskcategory";
+				public const string TeamMsdyusdAnswer = "team_msdyusd_answer";
+				public const string TeamMsdyusdAuditanddiagnosticssetting = "team_msdyusd_auditanddiagnosticssetting";
+				public const string TeamMsdyusdConfiguration = "team_msdyusd_configuration";
+				public const string TeamMsdyusdCustomizationfiles = "team_msdyusd_customizationfiles";
+				public const string TeamMsdyusdEntityassignment = "team_msdyusd_entityassignment";
+				public const string TeamMsdyusdEntitysearch = "team_msdyusd_entitysearch";
+				public const string TeamMsdyusdForm = "team_msdyusd_form";
+				public const string TeamMsdyusdLanguagemodule = "team_msdyusd_languagemodule";
+				public const string TeamMsdyusdScriptlet = "team_msdyusd_scriptlet";
+				public const string TeamMsdyusdScripttasktrigger = "team_msdyusd_scripttasktrigger";
+				public const string TeamMsdyusdSearch = "team_msdyusd_search";
+				public const string TeamMsdyusdSessioninformation = "team_msdyusd_sessioninformation";
+				public const string TeamMsdyusdSessiontransfer = "team_msdyusd_sessiontransfer";
+				public const string TeamMsdyusdTask = "team_msdyusd_task";
+				public const string TeamMsdyusdToolbarbutton = "team_msdyusd_toolbarbutton";
+				public const string TeamMsdyusdToolbarstrip = "team_msdyusd_toolbarstrip";
+				public const string TeamMsdyusdTracesourcesetting = "team_msdyusd_tracesourcesetting";
+				public const string TeamMsdyusdUcisettings = "team_msdyusd_ucisettings";
+				public const string TeamMsdyusdUiievent = "team_msdyusd_uiievent";
+				public const string TeamMsdyusdUsersettings = "team_msdyusd_usersettings";
+				public const string TeamMsdyusdWindowroute = "team_msdyusd_windowroute";
 				public const string TeamMsfpAlertrule = "team_msfp_alertrule";
 				public const string TeamMsfpEmailtemplate = "team_msfp_emailtemplate";
 				public const string TeamMsfpFileresponse = "team_msfp_fileresponse";
@@ -1479,123 +1821,9 @@ namespace dgt.power.dataverse
 				public const string TeamMsfpSurvey = "team_msfp_survey";
 				public const string TeamMsfpSurveyreminder = "team_msfp_surveyreminder";
 				public const string TeamMsfpUnsubscribedrecipient = "team_msfp_unsubscribedrecipient";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86d = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8e = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8f = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827b = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580de = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6f = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acd = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630fe = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6eb = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11b = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0f = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5f = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bba = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260ac = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8dd = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05bea = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1fe = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95dd = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69af = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbb = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ec = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61d = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2d = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3e = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903c = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212f = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8 = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8";
-				public const string TeamNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200a = "team_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474";
-				public const string TeamNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13 = "team_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13";
+				public const string TeamMspcatCatalogsubmissionfiles = "team_mspcat_catalogsubmissionfiles";
+				public const string TeamMspcatPackagestore = "team_mspcat_packagestore";
+				public const string TeamNlsqregistration = "team_nlsqregistration";
 				public const string TeamOpportunities = "team_opportunities";
 				public const string TeamOpportunityclose = "team_opportunityclose";
 				public const string TeamOpportunityproduct = "team_opportunityproduct";
@@ -1603,12 +1831,22 @@ namespace dgt.power.dataverse
 				public const string TeamOrders = "team_orders";
 				public const string TeamPdfsetting = "team_pdfsetting";
 				public const string TeamPhonecall = "team_phonecall";
+				public const string TeamPlannerbusinessscenario = "team_plannerbusinessscenario";
+				public const string TeamPlannersyncaction = "team_plannersyncaction";
 				public const string TeamPostRegardings = "team_PostRegardings";
 				public const string TeamPostRoles = "team_PostRoles";
 				public const string TeamPowerbidataset = "team_powerbidataset";
+				public const string TeamPowerbidatasetapdx = "team_powerbidatasetapdx";
 				public const string TeamPowerbimashupparameter = "team_powerbimashupparameter";
 				public const string TeamPowerbireport = "team_powerbireport";
+				public const string TeamPowerbireportapdx = "team_powerbireportapdx";
 				public const string TeamPowerfxrule = "team_powerfxrule";
+				public const string TeamPowerpagecomponent = "team_powerpagecomponent";
+				public const string TeamPowerpagesite = "team_powerpagesite";
+				public const string TeamPowerpagesitelanguage = "team_powerpagesitelanguage";
+				public const string TeamPowerpagesitepublished = "team_powerpagesitepublished";
+				public const string TeamPowerpageslog = "team_powerpageslog";
+				public const string TeamPowerpagesscanreport = "team_powerpagesscanreport";
 				public const string TeamPrincipalobjectattributeaccess = "team_principalobjectattributeaccess";
 				public const string TeamPrincipalobjectattributeaccessPrincipalid = "team_principalobjectattributeaccess_principalid";
 				public const string TeamProcesssession = "team_processsession";
@@ -1621,9 +1859,19 @@ namespace dgt.power.dataverse
 				public const string TeamQuotes = "team_quotes";
 				public const string TeamRatingmodel = "team_ratingmodel";
 				public const string TeamRatingvalue = "team_ratingvalue";
+				public const string TeamRecentlyused = "team_recentlyused";
+				public const string TeamReconciliationentityinfo = "team_reconciliationentityinfo";
+				public const string TeamReconciliationentitystepinfo = "team_reconciliationentitystepinfo";
+				public const string TeamReconciliationinfo = "team_reconciliationinfo";
 				public const string TeamRecurringappointmentmaster = "team_recurringappointmentmaster";
 				public const string TeamResourceGroups = "team_resource_groups";
 				public const string TeamResourceSpecs = "team_resource_specs";
+				public const string TeamRetaineddataexcel = "team_retaineddataexcel";
+				public const string TeamRetentioncleanupinfo = "team_retentioncleanupinfo";
+				public const string TeamRetentioncleanupoperation = "team_retentioncleanupoperation";
+				public const string TeamRetentionconfig = "team_retentionconfig";
+				public const string TeamRetentionfailuredetail = "team_retentionfailuredetail";
+				public const string TeamRetentionoperation = "team_retentionoperation";
 				public const string TeamRoutingrule = "team_routingrule";
 				public const string TeamRoutingruleitem = "team_routingruleitem";
 				public const string TeamSalesorderdetail = "team_salesorderdetail";
@@ -1631,6 +1879,7 @@ namespace dgt.power.dataverse
 				public const string TeamServiceContracts = "team_service_contracts";
 				public const string TeamSharepointdocumentlocation = "team_sharepointdocumentlocation";
 				public const string TeamSharepointsite = "team_sharepointsite";
+				public const string TeamSideloadedaiplugin = "team_sideloadedaiplugin";
 				public const string TeamSlaBase = "team_slaBase";
 				public const string TeamSocialactivity = "team_socialactivity";
 				public const string TeamSolutioncomponentbatchconfiguration = "team_solutioncomponentbatchconfiguration";
@@ -1641,6 +1890,17 @@ namespace dgt.power.dataverse
 				public const string TeamTask = "team_task";
 				public const string TeamTdsmetadata = "team_tdsmetadata";
 				public const string TeamTeammobileofflineprofilemembershipTeamId = "team_teammobileofflineprofilemembership_TeamId";
+				public const string TeamUiiAction = "team_uii_action";
+				public const string TeamUiiAudit = "team_uii_audit";
+				public const string TeamUiiContext = "team_uii_context";
+				public const string TeamUiiHostedapplication = "team_uii_hostedapplication";
+				public const string TeamUiiNonhostedapplication = "team_uii_nonhostedapplication";
+				public const string TeamUiiOption = "team_uii_option";
+				public const string TeamUiiSavedsession = "team_uii_savedsession";
+				public const string TeamUiiSessiontransfer = "team_uii_sessiontransfer";
+				public const string TeamUiiWorkflow = "team_uii_workflow";
+				public const string TeamUiiWorkflowWorkflowstepMapping = "team_uii_workflow_workflowstep_mapping";
+				public const string TeamUiiWorkflowstep = "team_uii_workflowstep";
 				public const string TeamUserentityinstancedata = "team_userentityinstancedata";
 				public const string TeamUserentityuisettings = "team_userentityuisettings";
 				public const string TeamUserform = "team_userform";
@@ -1649,6 +1909,8 @@ namespace dgt.power.dataverse
 				public const string TeamWorkflow = "team_workflow";
 				public const string TeamWorkflowbinary = "team_workflowbinary";
 				public const string TeamWorkflowlog = "team_workflowlog";
+				public const string TeamWorkqueue = "team_workqueue";
+				public const string TeamWorkqueueitem = "team_workqueueitem";
 				public const string UserentityinstancedataTeam = "userentityinstancedata_team";
             }
 
@@ -1665,6 +1927,7 @@ namespace dgt.power.dataverse
 				public const string OrganizationTeams = "organization_teams";
 				public const string ProcessstageTeams = "processstage_teams";
 				public const string QueueTeam = "queue_team";
+				public const string TeamDelegatedauthorization = "team_delegatedauthorization";
 				public const string TeamtemplateTeams = "teamtemplate_Teams";
 				public const string TransactionCurrencyTeam = "TransactionCurrency_Team";
             }

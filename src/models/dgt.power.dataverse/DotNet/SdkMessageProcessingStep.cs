@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -150,6 +147,24 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(AsyncAutoDelete));
                 SetAttributeValue("asyncautodelete", value);
                 OnPropertyChanged(nameof(AsyncAutoDelete));
+            }
+        }
+
+		
+		[AttributeLogicalName("canbebypassed")]
+        public bool? CanBeBypassed
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("canbebypassed");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(CanBeBypassed));
+                SetAttributeValue("canbebypassed", value);
+                OnPropertyChanged(nameof(CanBeBypassed));
             }
         }
 
@@ -358,24 +373,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("eventhandlertypecode")]
-        public string? EventHandlerTypeCode
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("eventhandlertypecode");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(EventHandlerTypeCode));
-                SetAttributeValue("eventhandlertypecode", value);
-                OnPropertyChanged(nameof(EventHandlerTypeCode));
-            }
-        }
-
 		/// <summary>
 		/// Comma-separated list of attributes. If at least one of these attributes is modified, the plug-in should execute.
 		/// </summary>
@@ -393,6 +390,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(FilteringAttributesField));
                 SetAttributeValue("filteringattributes", value);
                 OnPropertyChanged(nameof(FilteringAttributesField));
+            }
+        }
+
+		/// <summary>
+		/// Unique identifier for fxexpression associated with SdkMessageProcessingStep.
+		/// </summary>
+		[AttributeLogicalName("fxexpressionid")]
+        public EntityReference? FxExpressionId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("fxexpressionid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(FxExpressionId));
+                SetAttributeValue("fxexpressionid", value);
+                OnPropertyChanged(nameof(FxExpressionId));
             }
         }
 
@@ -927,6 +944,11 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+                public struct CanBeBypassed
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
                 public struct CanUseReadOnlyConnection
                 {
                     public const bool No = false;
@@ -1000,6 +1022,7 @@ namespace dgt.power.dataverse
 		{
 				public const string SdkMessageProcessingStepId = "sdkmessageprocessingstepid";
 				public const string AsyncAutoDelete = "asyncautodelete";
+				public const string CanBeBypassed = "canbebypassed";
 				public const string CanUseReadOnlyConnection = "canusereadonlyconnection";
 				public const string Category = "category";
 				public const string ComponentState = "componentstate";
@@ -1012,8 +1035,8 @@ namespace dgt.power.dataverse
 				public const string EnablePluginProfiler = "enablepluginprofiler";
 				public const string EventExpander = "eventexpander";
 				public const string EventHandler = "eventhandler";
-				public const string EventHandlerTypeCode = "eventhandlertypecode";
 				public const string FilteringAttributes = "filteringattributes";
+				public const string FxExpressionId = "fxexpressionid";
 				public const string ImpersonatingUserId = "impersonatinguserid";
 				public const string IntroducedVersion = "introducedversion";
 				public const string InvocationSource = "invocationsource";
@@ -1058,6 +1081,7 @@ namespace dgt.power.dataverse
             public static class ManyToOne
             {
 				public const string CreatedbySdkmessageprocessingstep = "createdby_sdkmessageprocessingstep";
+				public const string FxexpressionSdkmessageprocessingstep = "fxexpression_sdkmessageprocessingstep";
 				public const string ImpersonatinguseridSdkmessageprocessingstep = "impersonatinguserid_sdkmessageprocessingstep";
 				public const string LkSdkmessageprocessingstepCreatedonbehalfby = "lk_sdkmessageprocessingstep_createdonbehalfby";
 				public const string LkSdkmessageprocessingstepModifiedonbehalfby = "lk_sdkmessageprocessingstep_modifiedonbehalfby";

@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -134,6 +131,32 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("componentidunique")]
+        public Guid? ComponentIdUnique
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<Guid?>("componentidunique");
+            }
+        }
+
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("componentstate")]
+        public OptionSetValue? ComponentState
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("componentstate");
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier of the user who created the team template.
 		/// </summary>
 		[AttributeLogicalName("createdby")]
@@ -213,6 +236,39 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("iscustomizable")]
+        public BooleanManagedProperty? IsCustomizable
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(IsCustomizable));
+                SetAttributeValue("iscustomizable", value);
+                OnPropertyChanged(nameof(IsCustomizable));
+            }
+        }
+
+		/// <summary>
+		/// Indicates whether the solution component is part of a managed solution.
+		/// </summary>
+		[AttributeLogicalName("ismanaged")]
+        public bool? IsManaged
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("ismanaged");
+            }
+        }
+
+		/// <summary>
 		/// Information about whether this team template is user-defined or system-defined.
 		/// </summary>
 		[AttributeLogicalName("issystem")]
@@ -285,6 +341,32 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[AttributeLogicalName("overwritetime")]
+        public DateTime? OverwriteTime
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<DateTime?>("overwritetime");
+            }
+        }
+
+		/// <summary>
+		/// Unique identifier of the associated solution.
+		/// </summary>
+		[AttributeLogicalName("solutionid")]
+        public Guid? SolutionId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<Guid?>("solutionid");
+            }
+        }
+
+		/// <summary>
 		/// Type the name of the team template.
 		/// </summary>
 		[AttributeLogicalName("teamtemplatename")]
@@ -346,6 +428,18 @@ namespace dgt.power.dataverse
 		#region Options
 		public static class Options
 		{
+			    public struct ComponentState
+                {
+					public const int Published = 0;
+					public const int Unpublished = 1;
+					public const int Deleted = 2;
+					public const int DeletedUnpublished = 3;
+                }
+                public struct IsManaged
+                {
+                    public const bool Unmanaged = false;
+                    public const bool Managed = true;
+                }
                 public struct IsSystem
                 {
                     public const bool No = false;
@@ -358,16 +452,22 @@ namespace dgt.power.dataverse
 		public static class LogicalNames
 		{
 				public const string TeamTemplateId = "teamtemplateid";
+				public const string ComponentIdUnique = "componentidunique";
+				public const string ComponentState = "componentstate";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
 				public const string DefaultAccessRightsMask = "defaultaccessrightsmask";
 				public const string Description = "description";
+				public const string IsCustomizable = "iscustomizable";
+				public const string IsManaged = "ismanaged";
 				public const string IsSystem = "issystem";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
 				public const string ObjectTypeCode = "objecttypecode";
+				public const string OverwriteTime = "overwritetime";
+				public const string SolutionId = "solutionid";
 				public const string TeamTemplateName = "teamtemplatename";
 				public const string Versionnumber = "versionnumber";
 		}

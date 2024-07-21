@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -64,7 +61,7 @@ namespace dgt.power.dataverse
         #region consts
         public const string EntityLogicalName = "customapi";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10021;
+        public const int EntityTypeCode = 10027;
         #endregion
 
         #region Events
@@ -319,6 +316,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Unique identifier for fxexpression associated with Custom API.
+		/// </summary>
+		[AttributeLogicalName("fxexpressionid")]
+        public EntityReference? FxExpressionId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("fxexpressionid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(FxExpressionId));
+                SetAttributeValue("fxexpressionid", value);
+                OnPropertyChanged(nameof(FxExpressionId));
+            }
+        }
+
+		/// <summary>
 		/// Sequence number of the import that created this record.
 		/// </summary>
 		[AttributeLogicalName("importsequencenumber")]
@@ -520,26 +537,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(OwnerId));
                 SetAttributeValue("ownerid", value);
                 OnPropertyChanged(nameof(OwnerId));
-            }
-        }
-
-		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
             }
         }
 
@@ -920,6 +917,7 @@ namespace dgt.power.dataverse
 				public const string Description = "description";
 				public const string DisplayName = "displayname";
 				public const string ExecutePrivilegeName = "executeprivilegename";
+				public const string FxExpressionId = "fxexpressionid";
 				public const string ImportSequenceNumber = "importsequencenumber";
 				public const string IsCustomizable = "iscustomizable";
 				public const string IsFunction = "isfunction";
@@ -932,7 +930,6 @@ namespace dgt.power.dataverse
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
@@ -953,7 +950,7 @@ namespace dgt.power.dataverse
 		#region AlternateKeys
 		public static class AlternateKeys
 		{
-				public const string CustomAPIExportKey = "customapiexportkey";
+				public const string CustomAPIExportKey = "custom api export key";
 		}
 		#endregion
 
@@ -962,6 +959,7 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+				public const string AIPluginOperationCustomAPICustomAPI = "AIPluginOperation_CustomAPI_CustomAPI";
 				public const string CatalogassignmentCustomapi = "catalogassignment_customapi";
 				public const string CustomapiAsyncOperations = "customapi_AsyncOperations";
 				public const string CustomapiBulkDeleteFailures = "customapi_BulkDeleteFailures";
@@ -970,15 +968,21 @@ namespace dgt.power.dataverse
 				public const string CustomapiMailboxTrackingFolders = "customapi_MailboxTrackingFolders";
 				public const string CustomapiPrincipalObjectAttributeAccesses = "customapi_PrincipalObjectAttributeAccesses";
 				public const string CustomapiProcessSession = "customapi_ProcessSession";
+				public const string CustomapiServiceplanmapping = "customapi_serviceplanmapping";
 				public const string CustomapiSyncErrors = "customapi_SyncErrors";
 				public const string CustomapiUserEntityInstanceDatas = "customapi_UserEntityInstanceDatas";
+				public const string FabricaiskillCustomapiid = "fabricaiskill_customapiid";
 				public const string MsdynCustomapiMsdynCustomapirulesetconfigurationCustomAPI = "msdyn_customapi_msdyn_customapirulesetconfiguration_CustomAPI";
+				public const string MsdynCustomapiMsdynPmbusinessruleautomationconfigCustomApiId = "msdyn_customapi_msdyn_pmbusinessruleautomationconfig_CustomApiId";
+				public const string MsdynFormmappingCustomapiid = "msdyn_formmapping_customapiid";
+				public const string MsdynKnowledgeassetconfigurationCustomapiid = "msdyn_knowledgeassetconfiguration_customapiid";
 				public const string MsdynmktCustomapiEventmetadata = "msdynmkt_customapi_eventmetadata";
             }
 
             public static class ManyToOne
             {
 				public const string BusinessUnitCustomapi = "business_unit_customapi";
+				public const string FxexpressionCustomapi = "fxexpression_customapi";
 				public const string LkCustomapiCreatedby = "lk_customapi_createdby";
 				public const string LkCustomapiCreatedonbehalfby = "lk_customapi_createdonbehalfby";
 				public const string LkCustomapiModifiedby = "lk_customapi_modifiedby";

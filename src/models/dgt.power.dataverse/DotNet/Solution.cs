@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -717,6 +714,7 @@ namespace dgt.power.dataverse
 				public const string SolutionSolutioncomponent = "solution_solutioncomponent";
 				public const string SolutionSyncErrors = "Solution_SyncErrors";
 				public const string SolutionTopDependencynode = "solution_top_dependencynode";
+				public const string UserSettingsPreferredSolution = "user_settings_preferred_solution";
 				public const string UserentityinstancedataSolution = "userentityinstancedata_solution";
             }
 

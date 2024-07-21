@@ -14,40 +14,40 @@ namespace dgt.power.dataverse
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// Entity that defines a response property for a custom API
+	/// Holds the value for the associated EnvironmentVariableDefinition entity.
 	/// </summary>
 	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("customapiresponseproperty")]
+	[EntityLogicalNameAttribute("environmentvariablevalue")]
 	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
-	public partial class CustomAPIResponseProperty : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class EnvironmentVariableValue : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
 		[DebuggerNonUserCode]
-		public CustomAPIResponseProperty() : this(false)
+		public EnvironmentVariableValue() : this(false)
         {
         }
 
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(bool trackChanges = false) : base(EntityLogicalName)
-        {
-			_trackChanges = trackChanges;
-        }
-
-        [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+		public EnvironmentVariableValue(bool trackChanges = false) : base(EntityLogicalName)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+		public EnvironmentVariableValue(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+		public EnvironmentVariableValue(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        [DebuggerNonUserCode]
+		public EnvironmentVariableValue(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
 			_trackChanges = trackChanges;
         }
@@ -59,9 +59,9 @@ namespace dgt.power.dataverse
         #endregion
 
         #region consts
-        public const string EntityLogicalName = "customapiresponseproperty";
-        public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10029;
+        public const string EntityLogicalName = "environmentvariablevalue";
+        public const string PrimaryNameAttribute = "schemaname";
+        public const int EntityTypeCode = 381;
         #endregion
 
         #region Events
@@ -87,7 +87,7 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Attributes
-		[AttributeLogicalNameAttribute("customapiresponsepropertyid")]
+		[AttributeLogicalNameAttribute("environmentvariablevalueid")]
 		public new System.Guid Id
 		{
 		    [DebuggerNonUserCode]
@@ -98,26 +98,26 @@ namespace dgt.power.dataverse
             [DebuggerNonUserCode]
 			set
 			{
-				CustomAPIResponsePropertyId = value;
+				EnvironmentVariableValueId = value;
 			}
 		}
 
 		/// <summary>
-		/// Unique identifier for custom API response property instances
+		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("customapiresponsepropertyid")]
-        public Guid? CustomAPIResponsePropertyId
+		[AttributeLogicalName("environmentvariablevalueid")]
+        public Guid? EnvironmentVariableValueId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Guid?>("customapiresponsepropertyid");
+                return GetAttributeValue<Guid?>("environmentvariablevalueid");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(CustomAPIResponsePropertyId));
-                SetAttributeValue("customapiresponsepropertyid", value);
+                OnPropertyChanging(nameof(EnvironmentVariableValueId));
+                SetAttributeValue("environmentvariablevalueid", value);
 				if (value.HasValue)
 				{
 					base.Id = value.Value;
@@ -126,20 +126,7 @@ namespace dgt.power.dataverse
 				{
 					base.Id = System.Guid.Empty;
 				}
-                OnPropertyChanged(nameof(CustomAPIResponsePropertyId));
-            }
-        }
-
-		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		[AttributeLogicalName("componentidunique")]
-        public Guid? ComponentIdUnique
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Guid?>("componentidunique");
+                OnPropertyChanged(nameof(EnvironmentVariableValueId));
             }
         }
 
@@ -196,62 +183,35 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Unique identifier for the custom API that owns this custom API response property
+		/// Unique identifier for Environment Variable Definition associated with Environment Variable Value.
 		/// </summary>
-		[AttributeLogicalName("customapiid")]
-        public EntityReference? CustomAPIId
+		[AttributeLogicalName("environmentvariabledefinitionid")]
+        public EntityReference? EnvironmentVariableDefinitionId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference?>("customapiid");
+                return GetAttributeValue<EntityReference?>("environmentvariabledefinitionid");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(CustomAPIId));
-                SetAttributeValue("customapiid", value);
-                OnPropertyChanged(nameof(CustomAPIId));
+                OnPropertyChanging(nameof(EnvironmentVariableDefinitionId));
+                SetAttributeValue("environmentvariabledefinitionid", value);
+                OnPropertyChanged(nameof(EnvironmentVariableDefinitionId));
             }
         }
 
 		/// <summary>
-		/// Localized description for custom API response property instances
+		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("description")]
-        public string? Description
+		[AttributeLogicalName("environmentvariablevalueidunique")]
+        public Guid? EnvironmentVariableValueIdUnique
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("description");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Description));
-                SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
-            }
-        }
-
-		/// <summary>
-		/// Localized display name for custom API response property instances
-		/// </summary>
-		[AttributeLogicalName("displayname")]
-        public string? DisplayName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("displayname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DisplayName));
-                SetAttributeValue("displayname", value);
-                OnPropertyChanged(nameof(DisplayName));
+                return GetAttributeValue<Guid?>("environmentvariablevalueidunique");
             }
         }
 
@@ -276,7 +236,27 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// For internal use only.
+		/// Version in which the form is introduced.
+		/// </summary>
+		[AttributeLogicalName("introducedversion")]
+        public string? IntroducedVersion
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("introducedversion");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(IntroducedVersion));
+                SetAttributeValue("introducedversion", value);
+                OnPropertyChanged(nameof(IntroducedVersion));
+            }
+        }
+
+		/// <summary>
+		/// Tells whether the component can be customized.
 		/// </summary>
 		[AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
@@ -305,26 +285,6 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<bool?>("ismanaged");
-            }
-        }
-
-		/// <summary>
-		/// The logical name of the entity bound to the custom API response property
-		/// </summary>
-		[AttributeLogicalName("logicalentityname")]
-        public string? LogicalEntityName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("logicalentityname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(LogicalEntityName));
-                SetAttributeValue("logicalentityname", value);
-                OnPropertyChanged(nameof(LogicalEntityName));
             }
         }
 
@@ -364,26 +324,6 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
-            }
-        }
-
-		/// <summary>
-		/// The primary name of the custom API response property
-		/// </summary>
-		[AttributeLogicalName("name")]
-        public string? Name
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("name");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Name));
-                SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -431,6 +371,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(OwnerId));
+                SetAttributeValue("ownerid", value);
+                OnPropertyChanged(nameof(OwnerId));
+            }
         }
 
 		/// <summary>
@@ -473,6 +420,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Unique entity name.
+		/// </summary>
+		[AttributeLogicalName("schemaname")]
+        public string? SchemaName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("schemaname");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(SchemaName));
+                SetAttributeValue("schemaname", value);
+                OnPropertyChanged(nameof(SchemaName));
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
 		[AttributeLogicalName("solutionid")]
@@ -486,7 +453,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Status of the Custom API Response Property
+		/// Status of the Environment Variable Value
 		/// </summary>
 		[AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
@@ -506,7 +473,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Reason for the status of the Custom API Response Property
+		/// Reason for the status of the Environment Variable Value
 		/// </summary>
 		[AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
@@ -546,46 +513,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// The data type of the custom API response property
-		/// </summary>
-		[AttributeLogicalName("type")]
-        public OptionSetValue? Type
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<OptionSetValue?>("type");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Type));
-                SetAttributeValue("type", value);
-                OnPropertyChanged(nameof(Type));
-            }
-        }
-
-		/// <summary>
-		/// Unique name for the custom API response property
-		/// </summary>
-		[AttributeLogicalName("uniquename")]
-        public string? UniqueName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("uniquename");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(UniqueName));
-                SetAttributeValue("uniquename", value);
-                OnPropertyChanged(nameof(UniqueName));
-            }
-        }
-
-		/// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
 		[AttributeLogicalName("utcconversiontimezonecode")]
@@ -602,6 +529,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
                 SetAttributeValue("utcconversiontimezonecode", value);
                 OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+            }
+        }
+
+		/// <summary>
+		/// Contains the actual variable data.
+		/// </summary>
+		[AttributeLogicalName("value")]
+        public string? Value
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("value");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(Value));
+                SetAttributeValue("value", value);
+                OnPropertyChanged(nameof(Value));
             }
         }
 
@@ -623,22 +570,22 @@ namespace dgt.power.dataverse
 
 		#region NavigationProperties
 		/// <summary>
-		/// 1:N customapiresponseproperty_AsyncOperations
+		/// 1:N environmentvariablevalue_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("customapiresponseproperty_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> CustomapiresponsepropertyAsyncOperations
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("environmentvariablevalue_AsyncOperations")]
+		public System.Collections.Generic.IEnumerable<AsyncOperation> EnvironmentvariablevalueAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<AsyncOperation>("customapiresponseproperty_AsyncOperations", null);
+				return this.GetRelatedEntities<AsyncOperation>("environmentvariablevalue_AsyncOperations", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("CustomapiresponsepropertyAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("customapiresponseproperty_AsyncOperations", null, value);
-				this.OnPropertyChanged("CustomapiresponsepropertyAsyncOperations");
+				this.OnPropertyChanging("EnvironmentvariablevalueAsyncOperations");
+				this.SetRelatedEntities<AsyncOperation>("environmentvariablevalue_AsyncOperations", null, value);
+				this.OnPropertyChanged("EnvironmentvariablevalueAsyncOperations");
 			}
 		}
 
@@ -669,66 +616,40 @@ namespace dgt.power.dataverse
 					public const int Active = 1;
 					public const int Inactive = 2;
                 }
-			    public struct Type
-                {
-					public const int Boolean = 0;
-					public const int DateTime = 1;
-					public const int Decimal = 2;
-					public const int Entity = 3;
-					public const int EntityCollection = 4;
-					public const int EntityReference = 5;
-					public const int Float = 6;
-					public const int Integer = 7;
-					public const int Money = 8;
-					public const int Picklist = 9;
-					public const int String = 10;
-					public const int StringArray = 11;
-					public const int Guid = 12;
-                }
 		}
 		#endregion
 
 		#region LogicalNames
 		public static class LogicalNames
 		{
-				public const string CustomAPIResponsePropertyId = "customapiresponsepropertyid";
-				public const string ComponentIdUnique = "componentidunique";
+				public const string EnvironmentVariableValueId = "environmentvariablevalueid";
 				public const string ComponentState = "componentstate";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CustomAPIId = "customapiid";
-				public const string Description = "description";
-				public const string DisplayName = "displayname";
+				public const string EnvironmentVariableDefinitionId = "environmentvariabledefinitionid";
+				public const string EnvironmentVariableValueIdUnique = "environmentvariablevalueidunique";
 				public const string ImportSequenceNumber = "importsequencenumber";
+				public const string IntroducedVersion = "introducedversion";
 				public const string IsCustomizable = "iscustomizable";
 				public const string IsManaged = "ismanaged";
-				public const string LogicalEntityName = "logicalentityname";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
+				public const string SchemaName = "schemaname";
 				public const string SolutionId = "solutionid";
 				public const string Statecode = "statecode";
 				public const string Statuscode = "statuscode";
 				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string Type = "type";
-				public const string UniqueName = "uniquename";
 				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+				public const string Value = "value";
 				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region AlternateKeys
-		public static class AlternateKeys
-		{
-				public const string CustomAPIResponsePropertyExportKey = "custom api response property export key";
 		}
 		#endregion
 
@@ -737,23 +658,28 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
-				public const string CustomapiresponsepropertyAsyncOperations = "customapiresponseproperty_AsyncOperations";
-				public const string CustomapiresponsepropertyBulkDeleteFailures = "customapiresponseproperty_BulkDeleteFailures";
-				public const string CustomapiresponsepropertyMailboxTrackingFolders = "customapiresponseproperty_MailboxTrackingFolders";
-				public const string CustomapiresponsepropertyPrincipalObjectAttributeAccesses = "customapiresponseproperty_PrincipalObjectAttributeAccesses";
-				public const string CustomapiresponsepropertyProcessSession = "customapiresponseproperty_ProcessSession";
-				public const string CustomapiresponsepropertySyncErrors = "customapiresponseproperty_SyncErrors";
-				public const string CustomapiresponsepropertyUserEntityInstanceDatas = "customapiresponseproperty_UserEntityInstanceDatas";
-				public const string MsdynCustomapiresponsepropertyMsdynCustomapirulesetconfigurationCustomAPIResponseProperty = "msdyn_customapiresponseproperty_msdyn_customapirulesetconfiguration_CustomAPIResponseProperty";
+				public const string EnvironmentvariablevalueAsyncOperations = "environmentvariablevalue_AsyncOperations";
+				public const string EnvironmentvariablevalueBulkDeleteFailures = "environmentvariablevalue_BulkDeleteFailures";
+				public const string EnvironmentvariablevalueDuplicateBaseRecord = "environmentvariablevalue_DuplicateBaseRecord";
+				public const string EnvironmentvariablevalueDuplicateMatchingRecord = "environmentvariablevalue_DuplicateMatchingRecord";
+				public const string EnvironmentvariablevalueMailboxTrackingFolders = "environmentvariablevalue_MailboxTrackingFolders";
+				public const string EnvironmentvariablevaluePrincipalObjectAttributeAccesses = "environmentvariablevalue_PrincipalObjectAttributeAccesses";
+				public const string EnvironmentvariablevalueProcessSession = "environmentvariablevalue_ProcessSession";
+				public const string EnvironmentvariablevalueSyncErrors = "environmentvariablevalue_SyncErrors";
+				public const string EnvironmentvariablevalueUserEntityInstanceDatas = "environmentvariablevalue_UserEntityInstanceDatas";
             }
 
             public static class ManyToOne
             {
-				public const string CustomapiCustomapiresponseproperty = "customapi_customapiresponseproperty";
-				public const string LkCustomapiresponsepropertyCreatedby = "lk_customapiresponseproperty_createdby";
-				public const string LkCustomapiresponsepropertyCreatedonbehalfby = "lk_customapiresponseproperty_createdonbehalfby";
-				public const string LkCustomapiresponsepropertyModifiedby = "lk_customapiresponseproperty_modifiedby";
-				public const string LkCustomapiresponsepropertyModifiedonbehalfby = "lk_customapiresponseproperty_modifiedonbehalfby";
+				public const string BusinessUnitEnvironmentvariablevalue = "business_unit_environmentvariablevalue";
+				public const string EnvironmentvariabledefinitionEnvironmentvariablevalue = "environmentvariabledefinition_environmentvariablevalue";
+				public const string LkEnvironmentvariablevalueCreatedby = "lk_environmentvariablevalue_createdby";
+				public const string LkEnvironmentvariablevalueCreatedonbehalfby = "lk_environmentvariablevalue_createdonbehalfby";
+				public const string LkEnvironmentvariablevalueModifiedby = "lk_environmentvariablevalue_modifiedby";
+				public const string LkEnvironmentvariablevalueModifiedonbehalfby = "lk_environmentvariablevalue_modifiedonbehalfby";
+				public const string OwnerEnvironmentvariablevalue = "owner_environmentvariablevalue";
+				public const string TeamEnvironmentvariablevalue = "team_environmentvariablevalue";
+				public const string UserEnvironmentvariablevalue = "user_environmentvariablevalue";
             }
 
             public static class ManyToMany
@@ -770,17 +696,17 @@ namespace dgt.power.dataverse
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
-        public static CustomAPIResponseProperty Retrieve(IOrganizationService service, Guid id)
+        public static EnvironmentVariableValue Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
         }
 
-        public static CustomAPIResponseProperty Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        public static EnvironmentVariableValue Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
         {
-            return service.Retrieve("customapiresponseproperty", id, columnSet).ToEntity<CustomAPIResponseProperty>();
+            return service.Retrieve("environmentvariablevalue", id, columnSet).ToEntity<EnvironmentVariableValue>();
         }
 
-        public CustomAPIResponseProperty GetChangedEntity()
+        public EnvironmentVariableValue GetChangedEntity()
         {
             if (_trackChanges)
             {
@@ -789,7 +715,7 @@ namespace dgt.power.dataverse
                 {
                     attr.Add(attrName,this[attrName]);
                 }
-                return new  CustomAPIResponseProperty(Id) {Attributes = attr };
+                return new  EnvironmentVariableValue(Id) {Attributes = attr };
             }
             return this;
         }
@@ -799,11 +725,11 @@ namespace dgt.power.dataverse
 	#region Context
 	public partial class DataContext
 	{
-		public IQueryable<CustomAPIResponseProperty> CustomAPIResponsePropertySet
+		public IQueryable<EnvironmentVariableValue> EnvironmentVariableValueSet
 		{
 			get
 			{
-				return CreateQuery<CustomAPIResponseProperty>();
+				return CreateQuery<EnvironmentVariableValue>();
 			}
 		}
 	}

@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -412,6 +409,8 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+				public const string AttributeDvfilesearchattribute = "attribute_dvfilesearchattribute";
+				public const string AttributeDvtablesearchattribute = "attribute_dvtablesearchattribute";
 				public const string AttributeSolutioncomponentattrconfig = "attribute_solutioncomponentattrconfig";
 				public const string ReferencedattributeRelationshipattribute = "referencedattribute_relationshipattribute";
 				public const string ReferencingattributeRelationshipattribute = "referencingattribute_relationshipattribute";

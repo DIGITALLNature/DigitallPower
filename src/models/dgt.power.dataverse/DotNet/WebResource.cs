@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -199,6 +196,17 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("contentfileref_name")]
+        public string? ContentFileRefName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("contentfileref_name");
+            }
+        }
+
 		/// <summary>
 		/// Json representation of the content of the resource.
 		/// </summary>
@@ -229,6 +237,17 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<Guid?>("contentjsonfileref");
+            }
+        }
+
+		
+		[AttributeLogicalName("contentjsonfileref_name")]
+        public string? ContentJsonFileRefName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("contentjsonfileref_name");
             }
         }
 
@@ -701,8 +720,10 @@ namespace dgt.power.dataverse
 				public const string ComponentState = "componentstate";
 				public const string Content = "content";
 				public const string ContentFileRef = "contentfileref";
+				public const string ContentFileRefName = "contentfileref_name";
 				public const string ContentJson = "contentjson";
 				public const string ContentJsonFileRef = "contentjsonfileref";
+				public const string ContentJsonFileRefName = "contentjsonfileref_name";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";

@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -432,7 +429,9 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+		/// <summary>
+		/// Uniquely identifies the plug-in type associated with a plugin package when exporting a solution.
+		/// </summary>
 		[AttributeLogicalName("plugintypeexportkey")]
         public string? PluginTypeExportKey
         {
@@ -675,6 +674,13 @@ namespace dgt.power.dataverse
 				public const string Version = "version";
 				public const string VersionNumber = "versionnumber";
 				public const string WorkflowActivityGroupName = "workflowactivitygroupname";
+		}
+		#endregion
+
+		#region AlternateKeys
+		public static class AlternateKeys
+		{
+				public const string PluginTypeEntityKey1 = "plugintypeentitykey";
 		}
 		#endregion
 

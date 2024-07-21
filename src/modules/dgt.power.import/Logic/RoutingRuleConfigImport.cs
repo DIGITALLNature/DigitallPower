@@ -74,7 +74,6 @@ public sealed class RoutingRuleConfigImport : BaseImport
                 RoutingRuleId = rri.RoutingRuleId,
                 MsdynRouteto = rri.MsdynRouteto,
                 RoutedQueueId = rri.RoutedQueueId,
-                AssignObjectIdType = rri.AssignObjectIdType,
                 AssignObjectId = rri.AssignObjectId
             });
 

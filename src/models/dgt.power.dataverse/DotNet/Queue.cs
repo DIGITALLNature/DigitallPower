@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -872,24 +869,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
 		/// <summary>
 		/// Unique identifier of the business unit that owns the queue.
 		/// </summary>
@@ -1282,7 +1261,6 @@ namespace dgt.power.dataverse
 				public const string OutgoingEmailDeliveryMethod = "outgoingemaildeliverymethod";
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
@@ -1311,6 +1289,10 @@ namespace dgt.power.dataverse
 				public const string MsdynQueueMsdynLiveworkstreamQueueid = "msdyn_queue_msdyn_liveworkstream_queueid";
 				public const string MsdynQueueMsdynOcliveworkitemQueueid = "msdyn_queue_msdyn_ocliveworkitem_queueid";
 				public const string MsdynQueueMsdynOcsessionQueueid = "msdyn_queue_msdyn_ocsession_queueid";
+				public const string MsdynQueueMsdynOriginatingqueueQueueid = "msdyn_queue_msdyn_originatingqueue_queueid";
+				public const string MsdynQueueMsdynSalesroutingrunOwnerassigned = "msdyn_queue_msdyn_salesroutingrun_ownerassigned";
+				public const string MsdynQueueMsdynSalesroutingrunPreviousowner = "msdyn_queue_msdyn_salesroutingrun_previousowner";
+				public const string MsdynQueueMsdynSessionparticipantMsdynCdsqueueid = "msdyn_queue_msdyn_sessionparticipant_msdyn_cdsqueueid";
 				public const string MsdynQueueMsdynUnifiedroutingrunQueue = "msdyn_queue_msdyn_unifiedroutingrun_queue";
 				public const string MsdynQueueOcruleitem = "msdyn_queue_ocruleitem";
 				public const string MsdynRulesetdependencymappingQueueMsdynReferencedpolymorphicentityid = "msdyn_rulesetdependencymapping_queue_msdyn_referencedpolymorphicentityid";
@@ -1322,6 +1304,9 @@ namespace dgt.power.dataverse
 				public const string QueueDuplicateMatchingRecord = "Queue_DuplicateMatchingRecord";
 				public const string QueueEmailEmailSender = "Queue_Email_EmailSender";
 				public const string QueueEntries = "queue_entries";
+				public const string QueueMsdynEntityIdMsdynActiveicdextension = "queue_msdyn_entityId_msdyn_activeicdextension";
+				public const string QueueMsdynEntityIdMsdynEntityWorkstreamMap = "queue_msdyn_entityId_msdyn_entityWorkstreamMap";
+				public const string QueueMsdynEntityIdMsdynIcdextension = "queue_msdyn_entityId_msdyn_icdextension";
 				public const string QueuePostFollows = "queue_PostFollows";
 				public const string QueuePostRegardings = "queue_PostRegardings";
 				public const string QueuePostRoles = "queue_PostRoles";

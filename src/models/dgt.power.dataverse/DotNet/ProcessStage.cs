@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -470,26 +467,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N processstage_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("ProcessstageEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null, value);
-				this.OnPropertyChanged("ProcessstageEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N processstage_parentprocessstage
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_parentprocessstage")]
@@ -586,6 +563,7 @@ namespace dgt.power.dataverse
 					public const int Substring = 473330022;
 					public const int VirtualAgent = 473330023;
 					public const int FormatNumber = 473330024;
+					public const int Skills = 473330025;
                 }
 			    public struct OperationType
                 {
@@ -685,11 +663,15 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
-				public const string LkEc4uGdprBpfCorrectionActivestageid = "lk_ec4u_gdpr_bpf_correction_activestageid";
-				public const string LkEc4uGdprBpfDeletionActivestageid = "lk_ec4u_gdpr_bpf_deletion_activestageid";
-				public const string LkEc4uGdprBpfInformationActivestageid = "lk_ec4u_gdpr_bpf_information_activestageid";
 				public const string LkExpiredprocessActivestageid = "lk_expiredprocess_activestageid";
 				public const string LkLeadtoopportunitysalesprocessActivestageid = "lk_leadtoopportunitysalesprocess_activestageid";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Activestageid = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_activestageid";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bActivestageid = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_activestageid";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Activestageid = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_activestageid";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bActivestageid = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_activestageid";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Activestageid = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_activestageid";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Activestageid = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_activestageid";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dActivestageid = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_activestageid";
 				public const string LkMsdynIottocaseprocessActivestageid = "lk_msdyn_iottocaseprocess_activestageid";
 				public const string LkNewprocessActivestageid = "lk_newprocess_activestageid";
 				public const string LkOpportunitysalesprocessActivestageid = "lk_opportunitysalesprocess_activestageid";
@@ -697,6 +679,7 @@ namespace dgt.power.dataverse
 				public const string LkTranslationprocessActivestageid = "lk_translationprocess_activestageid";
 				public const string MsdynProcessstageMsdynTimespentStage = "msdyn_processstage_msdyn_timespent_stage";
 				public const string ProcessstageAccount = "processstage_account";
+				public const string ProcessstageAdxPortalcomment = "processstage_adx_portalcomment";
 				public const string ProcessstageAppointments = "processstage_appointments";
 				public const string ProcessstageBookableResource = "processstage_BookableResource";
 				public const string ProcessstageBookableResourceBooking = "processstage_BookableResourceBooking";
@@ -707,9 +690,6 @@ namespace dgt.power.dataverse
 				public const string ProcessstageCampaigns = "processstage_campaigns";
 				public const string ProcessstageCompetitors = "processstage_competitors";
 				public const string ProcessstageContact = "processstage_contact";
-				public const string ProcessstageEc4uCarrier = "processstage_ec4u_carrier";
-				public const string ProcessstageEc4uGdprRequest = "processstage_ec4u_gdpr_request";
-				public const string ProcessstageEc4uWorkbench = "processstage_ec4u_workbench";
 				public const string ProcessstageEmails = "processstage_emails";
 				public const string ProcessstageEntitlement = "processstage_Entitlement";
 				public const string ProcessstageFaxes = "processstage_faxes";
@@ -719,7 +699,21 @@ namespace dgt.power.dataverse
 				public const string ProcessstageLead = "processstage_lead";
 				public const string ProcessstageLetters = "processstage_letters";
 				public const string ProcessstageLists = "processstage_lists";
+				public const string ProcessstageMsdynAgreement = "processstage_msdyn_agreement";
+				public const string ProcessstageMsdynAgreementbookingsetup = "processstage_msdyn_agreementbookingsetup";
+				public const string ProcessstageMsdynAgreementinvoicesetup = "processstage_msdyn_agreementinvoicesetup";
+				public const string ProcessstageMsdynExpense = "processstage_msdyn_expense";
 				public const string ProcessstageMsdynIotalert = "processstage_msdyn_iotalert";
+				public const string ProcessstageMsdynJournal = "processstage_msdyn_journal";
+				public const string ProcessstageMsdynProject = "processstage_msdyn_project";
+				public const string ProcessstageMsdynPurchaseorder = "processstage_msdyn_purchaseorder";
+				public const string ProcessstageMsdynPurchaseorderbill = "processstage_msdyn_purchaseorderbill";
+				public const string ProcessstageMsdynPurchaseorderreceipt = "processstage_msdyn_purchaseorderreceipt";
+				public const string ProcessstageMsdynQuotebookingsetup = "processstage_msdyn_quotebookingsetup";
+				public const string ProcessstageMsdynTimeentry = "processstage_msdyn_timeentry";
+				public const string ProcessstageMsdynTimegroup = "processstage_msdyn_timegroup";
+				public const string ProcessstageMsdynTimegroupdetail = "processstage_msdyn_timegroupdetail";
+				public const string ProcessstageMsdynWorkorder = "processstage_msdyn_workorder";
 				public const string ProcessstageOpportunity = "processstage_opportunity";
 				public const string ProcessstageParentprocessstage = "processstage_parentprocessstage";
 				public const string ProcessstagePhonecalls = "processstage_phonecalls";

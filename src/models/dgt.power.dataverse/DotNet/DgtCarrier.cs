@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,14 +6,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk.Query; 
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
 	/// <inheritdoc />
-
+	
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("dgt_carrier")]
 	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
@@ -62,7 +59,7 @@ namespace dgt.power.dataverse
         #region consts
         public const string EntityLogicalName = "dgt_carrier";
         public const string PrimaryNameAttribute = "dgt_reference";
-        public const int EntityTypeCode = 10394;
+        public const int EntityTypeCode = 11393;
         #endregion
 
         #region Events
@@ -135,12 +132,12 @@ namespace dgt.power.dataverse
 		/// Unique identifier of the user who created the record.
 		/// </summary>
 		[AttributeLogicalName("createdby")]
-        public EntityReference CreatedBy
+        public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("createdby");
+                return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
@@ -161,23 +158,23 @@ namespace dgt.power.dataverse
 		/// Unique identifier of the delegate user who created the record.
 		/// </summary>
 		[AttributeLogicalName("createdonbehalfby")]
-        public EntityReference CreatedOnBehalfBy
+        public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("createdonbehalfby");
+                return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_constraint_mset")]
-        public Microsoft.Xrm.Sdk.OptionSetValueCollection DgtConstraintMset
+        public Microsoft.Xrm.Sdk.OptionSetValueCollection? DgtConstraintMset
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValueCollection>("dgt_constraint_mset");
+                return GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValueCollection?>("dgt_constraint_mset");
             }
             [DebuggerNonUserCode]
 			set
@@ -188,7 +185,7 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_handshake_ts")]
         public DateTime? DgtHandshakeTs
         {
@@ -206,7 +203,7 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_locked_opt")]
         public bool? DgtLockedOpt
         {
@@ -228,12 +225,12 @@ namespace dgt.power.dataverse
 		/// The Carrier Reference
 		/// </summary>
 		[AttributeLogicalName("dgt_reference")]
-        public string DgtReference
+        public string? DgtReference
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("dgt_reference");
+                return GetAttributeValue<string?>("dgt_reference");
             }
             [DebuggerNonUserCode]
 			set
@@ -244,14 +241,14 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_solutionfriendlyname")]
-        public string DgtSolutionfriendlyname
+        public string? DgtSolutionfriendlyname
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("dgt_solutionfriendlyname");
+                return GetAttributeValue<string?>("dgt_solutionfriendlyname");
             }
             [DebuggerNonUserCode]
 			set
@@ -262,14 +259,14 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_solutionid")]
-        public string DgtSolutionid
+        public string? DgtSolutionid
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("dgt_solutionid");
+                return GetAttributeValue<string?>("dgt_solutionid");
             }
             [DebuggerNonUserCode]
 			set
@@ -280,14 +277,14 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_solutionuniquename")]
-        public string DgtSolutionuniquename
+        public string? DgtSolutionuniquename
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("dgt_solutionuniquename");
+                return GetAttributeValue<string?>("dgt_solutionuniquename");
             }
             [DebuggerNonUserCode]
 			set
@@ -298,14 +295,14 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_solutionversion")]
-        public string DgtSolutionversion
+        public string? DgtSolutionversion
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("dgt_solutionversion");
+                return GetAttributeValue<string?>("dgt_solutionversion");
             }
             [DebuggerNonUserCode]
 			set
@@ -316,7 +313,7 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_transport_order_no")]
         public int? DgtTransportOrderNo
         {
@@ -334,14 +331,14 @@ namespace dgt.power.dataverse
             }
         }
 
-
+		
 		[AttributeLogicalName("dgt_workbench_id")]
-        public EntityReference DgtWorkbenchId
+        public EntityReference? DgtWorkbenchId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("dgt_workbench_id");
+                return GetAttributeValue<EntityReference?>("dgt_workbench_id");
             }
             [DebuggerNonUserCode]
 			set
@@ -376,12 +373,12 @@ namespace dgt.power.dataverse
 		/// Unique identifier of the user who modified the record.
 		/// </summary>
 		[AttributeLogicalName("modifiedby")]
-        public EntityReference ModifiedBy
+        public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("modifiedby");
+                return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
@@ -402,12 +399,12 @@ namespace dgt.power.dataverse
 		/// Unique identifier of the delegate user who modified the record.
 		/// </summary>
 		[AttributeLogicalName("modifiedonbehalfby")]
-        public EntityReference ModifiedOnBehalfBy
+        public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("modifiedonbehalfby");
+                return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
@@ -415,12 +412,12 @@ namespace dgt.power.dataverse
 		/// Unique identifier for the organization
 		/// </summary>
 		[AttributeLogicalName("organizationid")]
-        public EntityReference OrganizationId
+        public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference>("organizationid");
+                return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
@@ -448,12 +445,12 @@ namespace dgt.power.dataverse
 		/// Status of the Carrier
 		/// </summary>
 		[AttributeLogicalName("statecode")]
-        public OptionSetValue Statecode
+        public OptionSetValue? Statecode
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<OptionSetValue>("statecode");
+                return GetAttributeValue<OptionSetValue?>("statecode");
             }
             [DebuggerNonUserCode]
 			set
@@ -468,12 +465,12 @@ namespace dgt.power.dataverse
 		/// Reason for the status of the Carrier
 		/// </summary>
 		[AttributeLogicalName("statuscode")]
-        public OptionSetValue Statuscode
+        public OptionSetValue? Statuscode
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<OptionSetValue>("statuscode");
+                return GetAttributeValue<OptionSetValue?>("statuscode");
             }
             [DebuggerNonUserCode]
 			set
@@ -541,7 +538,27 @@ namespace dgt.power.dataverse
 		#endregion
 
 		#region NavigationProperties
-        #endregion
+		/// <summary>
+		/// 1:N dgt_carrier_AsyncOperations
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_AsyncOperations")]
+		public System.Collections.Generic.IEnumerable<AsyncOperation> DgtCarrierAsyncOperations
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<AsyncOperation>("dgt_carrier_AsyncOperations", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("DgtCarrierAsyncOperations");
+				this.SetRelatedEntities<AsyncOperation>("dgt_carrier_AsyncOperations", null, value);
+				this.OnPropertyChanged("DgtCarrierAsyncOperations");
+			}
+		}
+
+		#endregion
 
 		#region Options
 		public static class Options
@@ -644,8 +661,7 @@ namespace dgt.power.dataverse
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
-            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
-
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
         public static DgtCarrier Retrieve(IOrganizationService service, Guid id)

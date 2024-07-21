@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -62,7 +59,7 @@ namespace dgt.power.dataverse
         #region consts
         public const string EntityLogicalName = "pluginpackage";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10109;
+        public const int EntityTypeCode = 10030;
         #endregion
 
         #region Events
@@ -215,6 +212,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Export Key Version
+		/// </summary>
+		[AttributeLogicalName("exportkeyversion")]
+        public int? ExportKeyVersion
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("exportkeyversion");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ExportKeyVersion));
+                SetAttributeValue("exportkeyversion", value);
+                OnPropertyChanged(nameof(ExportKeyVersion));
+            }
+        }
+
+		/// <summary>
 		/// Lookup to FileAttachment
 		/// </summary>
 		[AttributeLogicalName("fileid")]
@@ -224,6 +241,17 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<Guid?>("fileid");
+            }
+        }
+
+		
+		[AttributeLogicalName("fileid_name")]
+        public string? FileIdName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("fileid_name");
             }
         }
 
@@ -277,6 +305,26 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<bool?>("ismanaged");
+            }
+        }
+
+		/// <summary>
+		/// Managed Identity Id to look up to ManagedIdentity Entity
+		/// </summary>
+		[AttributeLogicalName("managedidentityid")]
+        public EntityReference? Managedidentityid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("managedidentityid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(Managedidentityid));
+                SetAttributeValue("managedidentityid", value);
+                OnPropertyChanged(nameof(Managedidentityid));
             }
         }
 
@@ -395,6 +443,17 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<Guid?>("package");
+            }
+        }
+
+		
+		[AttributeLogicalName("package_name")]
+        public string? PackageName
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("package_name");
             }
         }
 
@@ -628,10 +687,13 @@ namespace dgt.power.dataverse
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
+				public const string ExportKeyVersion = "exportkeyversion";
 				public const string FileId = "fileid";
+				public const string FileIdName = "fileid_name";
 				public const string ImportSequenceNumber = "importsequencenumber";
 				public const string IsCustomizable = "iscustomizable";
 				public const string IsManaged = "ismanaged";
+				public const string Managedidentityid = "managedidentityid";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
@@ -640,6 +702,7 @@ namespace dgt.power.dataverse
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OverwriteTime = "overwritetime";
 				public const string Package = "package";
+				public const string PackageName = "package_name";
 				public const string SolutionId = "solutionid";
 				public const string Statecode = "statecode";
 				public const string Statuscode = "statuscode";
@@ -654,7 +717,7 @@ namespace dgt.power.dataverse
 		#region AlternateKeys
 		public static class AlternateKeys
 		{
-				public const string FullNameOfPackage = "uniquename\"";
+				public const string FullNameOfPackage = "uniquename";
 		}
 		#endregion
 
@@ -681,6 +744,7 @@ namespace dgt.power.dataverse
 				public const string LkPluginpackageCreatedonbehalfby = "lk_pluginpackage_createdonbehalfby";
 				public const string LkPluginpackageModifiedby = "lk_pluginpackage_modifiedby";
 				public const string LkPluginpackageModifiedonbehalfby = "lk_pluginpackage_modifiedonbehalfby";
+				public const string ManagedidentityPluginpackage = "managedidentity_pluginpackage";
 				public const string OrganizationPluginpackage = "organization_pluginpackage";
             }
 

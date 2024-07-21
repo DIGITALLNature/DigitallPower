@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -669,6 +666,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Contains the role display conditions for the SavedQuery.
+		/// </summary>
+		[AttributeLogicalName("roledisplayconditionsxml")]
+        public string? RoleDisplayConditionsXml
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("roledisplayconditionsxml");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(RoleDisplayConditionsXml));
+                SetAttributeValue("roledisplayconditionsxml", value);
+                OnPropertyChanged(nameof(RoleDisplayConditionsXml));
+            }
+        }
+
+		/// <summary>
 		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("savedqueryidunique")]
@@ -862,6 +879,7 @@ namespace dgt.power.dataverse
 				public const string QueryAppUsage = "queryappusage";
 				public const string QueryType = "querytype";
 				public const string ReturnedTypeCode = "returnedtypecode";
+				public const string RoleDisplayConditionsXml = "roledisplayconditionsxml";
 				public const string SavedQueryIdUnique = "savedqueryidunique";
 				public const string SolutionId = "solutionid";
 				public const string StateCode = "statecode";

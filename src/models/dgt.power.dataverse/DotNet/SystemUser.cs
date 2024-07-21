@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -1785,24 +1782,6 @@ namespace dgt.power.dataverse
             }
         }
 
-		
-		[AttributeLogicalName("mobileofflineprofileidname")]
-        public string? MobileOfflineProfileIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("mobileofflineprofileidname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(MobileOfflineProfileIdName));
-                SetAttributeValue("mobileofflineprofileidname", value);
-                OnPropertyChanged(nameof(MobileOfflineProfileIdName));
-            }
-        }
-
 		/// <summary>
 		/// Mobile phone number for the user.
 		/// </summary>
@@ -1863,6 +1842,46 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Type of user - Application user or Bot application user
+		/// </summary>
+		[AttributeLogicalName("msdyn_agentType")]
+        public OptionSetValue? MsdynAgentType
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("msdyn_agentType");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynAgentType));
+                SetAttributeValue("msdyn_agentType", value);
+                OnPropertyChanged(nameof(MsdynAgentType));
+            }
+        }
+
+		/// <summary>
+		/// Application ID of the bot.
+		/// </summary>
+		[AttributeLogicalName("msdyn_botapplicationid")]
+        public string? MsdynBotApplicationId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_botapplicationid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynBotApplicationId));
+                SetAttributeValue("msdyn_botapplicationid", value);
+                OnPropertyChanged(nameof(MsdynBotApplicationId));
+            }
+        }
+
+		/// <summary>
 		/// BOT User Description
 		/// </summary>
 		[AttributeLogicalName("msdyn_botdescription")]
@@ -1899,6 +1918,46 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynBotEndpoint));
                 SetAttributeValue("msdyn_botendpoint", value);
                 OnPropertyChanged(nameof(MsdynBotEndpoint));
+            }
+        }
+
+		/// <summary>
+		/// Bot handle
+		/// </summary>
+		[AttributeLogicalName("msdyn_bothandle")]
+        public string? MsdynBothandle
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_bothandle");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynBothandle));
+                SetAttributeValue("msdyn_bothandle", value);
+                OnPropertyChanged(nameof(MsdynBothandle));
+            }
+        }
+
+		/// <summary>
+		/// Indicates the type of bot
+		/// </summary>
+		[AttributeLogicalName("msdyn_botprovider")]
+        public OptionSetValue? MsdynBotProvider
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("msdyn_botprovider");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynBotProvider));
+                SetAttributeValue("msdyn_botprovider", value);
+                OnPropertyChanged(nameof(MsdynBotProvider));
             }
         }
 
@@ -2023,6 +2082,44 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Environment Id of the CDS environment that owns the bot user.
+		/// </summary>
+		[AttributeLogicalName("msdyn_owningenvironmentid")]
+        public string? MsdynOwningEnvironmentId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_owningenvironmentid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynOwningEnvironmentId));
+                SetAttributeValue("msdyn_owningenvironmentid", value);
+                OnPropertyChanged(nameof(MsdynOwningEnvironmentId));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyn_phonenumberid")]
+        public EntityReference? MsdynPhonenumberid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_phonenumberid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPhonenumberid));
+                SetAttributeValue("msdyn_phonenumberid", value);
+                OnPropertyChanged(nameof(MsdynPhonenumberid));
+            }
+        }
+
+		/// <summary>
 		/// Type of user - CRM or BOT user
 		/// </summary>
 		[AttributeLogicalName("msdyn_usertype")]
@@ -2039,6 +2136,26 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynUserType));
                 SetAttributeValue("msdyn_usertype", value);
                 OnPropertyChanged(nameof(MsdynUserType));
+            }
+        }
+
+		/// <summary>
+		/// Unique identifier for Configuration associated with User.
+		/// </summary>
+		[AttributeLogicalName("msdyusd_usdconfigurationid")]
+        public EntityReference? MsdyusdUSDConfigurationId
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyusd_usdconfigurationid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdUSDConfigurationId));
+                SetAttributeValue("msdyusd_usdconfigurationid", value);
+                OnPropertyChanged(nameof(MsdyusdUSDConfigurationId));
             }
         }
 
@@ -3659,6 +3776,86 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N lk_dgt_carrier_createdby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_dgt_carrier_createdby")]
+		public System.Collections.Generic.IEnumerable<DgtCarrier> LkDgtCarrierCreatedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtCarrier>("lk_dgt_carrier_createdby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkDgtCarrierCreatedby");
+				this.SetRelatedEntities<DgtCarrier>("lk_dgt_carrier_createdby", null, value);
+				this.OnPropertyChanged("LkDgtCarrierCreatedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_dgt_carrier_createdonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_dgt_carrier_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<DgtCarrier> LkDgtCarrierCreatedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtCarrier>("lk_dgt_carrier_createdonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkDgtCarrierCreatedonbehalfby");
+				this.SetRelatedEntities<DgtCarrier>("lk_dgt_carrier_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkDgtCarrierCreatedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_dgt_carrier_modifiedby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_dgt_carrier_modifiedby")]
+		public System.Collections.Generic.IEnumerable<DgtCarrier> LkDgtCarrierModifiedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtCarrier>("lk_dgt_carrier_modifiedby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkDgtCarrierModifiedby");
+				this.SetRelatedEntities<DgtCarrier>("lk_dgt_carrier_modifiedby", null, value);
+				this.OnPropertyChanged("LkDgtCarrierModifiedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_dgt_carrier_modifiedonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_dgt_carrier_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<DgtCarrier> LkDgtCarrierModifiedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtCarrier>("lk_dgt_carrier_modifiedonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkDgtCarrierModifiedonbehalfby");
+				this.SetRelatedEntities<DgtCarrier>("lk_dgt_carrier_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkDgtCarrierModifiedonbehalfby");
+			}
+		}
+
+		/// <summary>
 		/// 1:N lk_documenttemplatebase_createdby
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_createdby")]
@@ -3899,82 +4096,162 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdby
+		/// 1:N lk_environmentvariabledefinition_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariabledefinition_createdby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> LkEnvironmentvariabledefinitionCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_createdby", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedby");
+				this.OnPropertyChanging("LkEnvironmentvariabledefinitionCreatedby");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_createdby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariabledefinitionCreatedby");
 			}
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdonbehalfby
+		/// 1:N lk_environmentvariabledefinition_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariabledefinition_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> LkEnvironmentvariabledefinitionCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_createdonbehalfby", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedonbehalfby");
+				this.OnPropertyChanging("LkEnvironmentvariabledefinitionCreatedonbehalfby");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariabledefinitionCreatedonbehalfby");
 			}
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedby
+		/// 1:N lk_environmentvariabledefinition_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariabledefinition_modifiedby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> LkEnvironmentvariabledefinitionModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_modifiedby", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedby");
+				this.OnPropertyChanging("LkEnvironmentvariabledefinitionModifiedby");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_modifiedby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariabledefinitionModifiedby");
 			}
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedonbehalfby
+		/// 1:N lk_environmentvariabledefinition_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariabledefinition_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> LkEnvironmentvariabledefinitionModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_modifiedonbehalfby", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedonbehalfby");
+				this.OnPropertyChanging("LkEnvironmentvariabledefinitionModifiedonbehalfby");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("lk_environmentvariabledefinition_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariabledefinitionModifiedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_environmentvariablevalue_createdby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariablevalue_createdby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> LkEnvironmentvariablevalueCreatedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_createdby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEnvironmentvariablevalueCreatedby");
+				this.SetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_createdby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariablevalueCreatedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_environmentvariablevalue_createdonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariablevalue_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> LkEnvironmentvariablevalueCreatedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_createdonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEnvironmentvariablevalueCreatedonbehalfby");
+				this.SetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariablevalueCreatedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_environmentvariablevalue_modifiedby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariablevalue_modifiedby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> LkEnvironmentvariablevalueModifiedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_modifiedby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEnvironmentvariablevalueModifiedby");
+				this.SetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_modifiedby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariablevalueModifiedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_environmentvariablevalue_modifiedonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_environmentvariablevalue_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> LkEnvironmentvariablevalueModifiedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_modifiedonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkEnvironmentvariablevalueModifiedonbehalfby");
+				this.SetRelatedEntities<EnvironmentVariableValue>("lk_environmentvariablevalue_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkEnvironmentvariablevalueModifiedonbehalfby");
 			}
 		}
 
@@ -5799,62 +6076,42 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N user_customapirequestparameter
+		/// 1:N user_environmentvariabledefinition
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_customapirequestparameter")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> UserCustomapirequestparameter
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_environmentvariabledefinition")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableDefinition> UserEnvironmentvariabledefinition
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<CustomAPIRequestParameter>("user_customapirequestparameter", null);
+				return this.GetRelatedEntities<EnvironmentVariableDefinition>("user_environmentvariabledefinition", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("UserCustomapirequestparameter");
-				this.SetRelatedEntities<CustomAPIRequestParameter>("user_customapirequestparameter", null, value);
-				this.OnPropertyChanged("UserCustomapirequestparameter");
+				this.OnPropertyChanging("UserEnvironmentvariabledefinition");
+				this.SetRelatedEntities<EnvironmentVariableDefinition>("user_environmentvariabledefinition", null, value);
+				this.OnPropertyChanged("UserEnvironmentvariabledefinition");
 			}
 		}
 
 		/// <summary>
-		/// 1:N user_customapiresponseproperty
+		/// 1:N user_environmentvariablevalue
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_customapiresponseproperty")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> UserCustomapiresponseproperty
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_environmentvariablevalue")]
+		public System.Collections.Generic.IEnumerable<EnvironmentVariableValue> UserEnvironmentvariablevalue
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<CustomAPIResponseProperty>("user_customapiresponseproperty", null);
+				return this.GetRelatedEntities<EnvironmentVariableValue>("user_environmentvariablevalue", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("UserCustomapiresponseproperty");
-				this.SetRelatedEntities<CustomAPIResponseProperty>("user_customapiresponseproperty", null, value);
-				this.OnPropertyChanged("UserCustomapiresponseproperty");
-			}
-		}
-
-		/// <summary>
-		/// 1:N user_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> UserEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("UserEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null, value);
-				this.OnPropertyChanged("UserEc4uCarrier");
+				this.OnPropertyChanging("UserEnvironmentvariablevalue");
+				this.SetRelatedEntities<EnvironmentVariableValue>("user_environmentvariablevalue", null, value);
+				this.OnPropertyChanged("UserEnvironmentvariablevalue");
 			}
 		}
 
@@ -6174,6 +6431,17 @@ namespace dgt.power.dataverse
                     public const bool No = false;
                     public const bool Yes = true;
                 }
+			    public struct MsdynAgentType
+                {
+					public const int ApplicationUser = 192350000;
+					public const int BotApplicationUser = 192350001;
+                }
+			    public struct MsdynBotProvider
+                {
+					public const int VirtualAgent = 192350000;
+					public const int Other = 192350001;
+					public const int None = 192350002;
+                }
                 public struct MsdynGdproptout
                 {
                     public const bool No = false;
@@ -6312,20 +6580,26 @@ namespace dgt.power.dataverse
 				public const string MiddleName = "middlename";
 				public const string MobileAlertEMail = "mobilealertemail";
 				public const string MobileOfflineProfileId = "mobileofflineprofileid";
-				public const string MobileOfflineProfileIdName = "mobileofflineprofileidname";
 				public const string MobilePhone = "mobilephone";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+				public const string MsdynAgentType = "msdyn_agentType";
+				public const string MsdynBotApplicationId = "msdyn_botapplicationid";
 				public const string MsdynBotDescription = "msdyn_botdescription";
 				public const string MsdynBotEndpoint = "msdyn_botendpoint";
+				public const string MsdynBothandle = "msdyn_bothandle";
+				public const string MsdynBotProvider = "msdyn_botprovider";
 				public const string MsdynBotSecretKeys = "msdyn_botsecretkeys";
 				public const string MsdynCapacity = "msdyn_capacity";
 				public const string MsdynDefaultPresenceIdUser = "msdyn_defaultpresenceiduser";
 				public const string MsdynGdproptout = "msdyn_gdproptout";
 				public const string MsdynGridwrappercontrolfield = "msdyn_gridwrappercontrolfield";
 				public const string MsdynIsexpertenabledforswarm = "msdyn_isexpertenabledforswarm";
+				public const string MsdynOwningEnvironmentId = "msdyn_owningenvironmentid";
+				public const string MsdynPhonenumberid = "msdyn_phonenumberid";
 				public const string MsdynUserType = "msdyn_usertype";
+				public const string MsdyusdUSDConfigurationId = "msdyusd_usdconfigurationid";
 				public const string NickName = "nickname";
 				public const string OrganizationId = "organizationid";
 				public const string OutgoingEmailDeliveryMethod = "outgoingemaildeliverymethod";
@@ -6379,6 +6653,18 @@ namespace dgt.power.dataverse
             public static class OneToMany
             {
 				public const string ActioncardusersettingsOwningUser = "actioncardusersettings_owning_user";
+				public const string AdxInviteredemptionSystemuserCreatedby = "adx_inviteredemption_systemuser_createdby";
+				public const string AdxInviteredemptionSystemuserCreatedonbehalfby = "adx_inviteredemption_systemuser_createdonbehalfby";
+				public const string AdxInviteredemptionSystemuserModifiedby = "adx_inviteredemption_systemuser_modifiedby";
+				public const string AdxInviteredemptionSystemuserModifiedonbehalfby = "adx_inviteredemption_systemuser_modifiedonbehalfby";
+				public const string AdxInviteredemptionSystemuserOwninguser = "adx_inviteredemption_systemuser_owninguser";
+				public const string AdxPortalcommentSystemuserCreatedby = "adx_portalcomment_systemuser_createdby";
+				public const string AdxPortalcommentSystemuserCreatedonbehalfby = "adx_portalcomment_systemuser_createdonbehalfby";
+				public const string AdxPortalcommentSystemuserModifiedby = "adx_portalcomment_systemuser_modifiedby";
+				public const string AdxPortalcommentSystemuserModifiedonbehalfby = "adx_portalcomment_systemuser_modifiedonbehalfby";
+				public const string AdxPortalcommentSystemuserOwninguser = "adx_portalcomment_systemuser_owninguser";
+				public const string AdxWebformsessionSystemuser = "adx_webformsession_systemuser";
+				public const string AIPluginUserSettingSystemUserSyst = "AIPluginUserSetting_SystemUser_Syst";
 				public const string AnnotationOwningUser = "annotation_owning_user";
 				public const string BizmapSystemuserBusinessid = "bizmap_systemuser_businessid";
 				public const string ChatSystemuserCreatedby = "chat_systemuser_createdby";
@@ -6454,6 +6740,82 @@ namespace dgt.power.dataverse
 				public const string LkAdvancedsimilarityruleCreatedonbehalfby = "lk_advancedsimilarityrule_createdonbehalfby";
 				public const string LkAdvancedsimilarityruleModifiedby = "lk_advancedsimilarityrule_modifiedby";
 				public const string LkAdvancedsimilarityruleModifiedonbehalfby = "lk_advancedsimilarityrule_modifiedonbehalfby";
+				public const string LkAdxExternalidentityCreatedby = "lk_adx_externalidentity_createdby";
+				public const string LkAdxExternalidentityCreatedonbehalfby = "lk_adx_externalidentity_createdonbehalfby";
+				public const string LkAdxExternalidentityModifiedby = "lk_adx_externalidentity_modifiedby";
+				public const string LkAdxExternalidentityModifiedonbehalfby = "lk_adx_externalidentity_modifiedonbehalfby";
+				public const string LkAdxInvitationCreatedby = "lk_adx_invitation_createdby";
+				public const string LkAdxInvitationCreatedonbehalfby = "lk_adx_invitation_createdonbehalfby";
+				public const string LkAdxInvitationModifiedby = "lk_adx_invitation_modifiedby";
+				public const string LkAdxInvitationModifiedonbehalfby = "lk_adx_invitation_modifiedonbehalfby";
+				public const string LkAdxSettingCreatedby = "lk_adx_setting_createdby";
+				public const string LkAdxSettingCreatedonbehalfby = "lk_adx_setting_createdonbehalfby";
+				public const string LkAdxSettingModifiedby = "lk_adx_setting_modifiedby";
+				public const string LkAdxSettingModifiedonbehalfby = "lk_adx_setting_modifiedonbehalfby";
+				public const string LkAdxWebformsessionCreatedby = "lk_adx_webformsession_createdby";
+				public const string LkAdxWebformsessionCreatedonbehalfby = "lk_adx_webformsession_createdonbehalfby";
+				public const string LkAdxWebformsessionModifiedby = "lk_adx_webformsession_modifiedby";
+				public const string LkAdxWebformsessionModifiedonbehalfby = "lk_adx_webformsession_modifiedonbehalfby";
+				public const string LkAicopilotCreatedby = "lk_aicopilot_createdby";
+				public const string LkAicopilotCreatedonbehalfby = "lk_aicopilot_createdonbehalfby";
+				public const string LkAicopilotModifiedby = "lk_aicopilot_modifiedby";
+				public const string LkAicopilotModifiedonbehalfby = "lk_aicopilot_modifiedonbehalfby";
+				public const string LkAipluginCreatedby = "lk_aiplugin_createdby";
+				public const string LkAipluginCreatedonbehalfby = "lk_aiplugin_createdonbehalfby";
+				public const string LkAipluginModifiedby = "lk_aiplugin_modifiedby";
+				public const string LkAipluginModifiedonbehalfby = "lk_aiplugin_modifiedonbehalfby";
+				public const string LkAipluginauthCreatedby = "lk_aipluginauth_createdby";
+				public const string LkAipluginauthCreatedonbehalfby = "lk_aipluginauth_createdonbehalfby";
+				public const string LkAipluginauthModifiedby = "lk_aipluginauth_modifiedby";
+				public const string LkAipluginauthModifiedonbehalfby = "lk_aipluginauth_modifiedonbehalfby";
+				public const string LkAipluginconversationstarterCreatedby = "lk_aipluginconversationstarter_createdby";
+				public const string LkAipluginconversationstarterCreatedonbehalfby = "lk_aipluginconversationstarter_createdonbehalfby";
+				public const string LkAipluginconversationstarterModifiedby = "lk_aipluginconversationstarter_modifiedby";
+				public const string LkAipluginconversationstarterModifiedonbehalfby = "lk_aipluginconversationstarter_modifiedonbehalfby";
+				public const string LkAipluginconversationstartermappingCreatedby = "lk_aipluginconversationstartermapping_createdby";
+				public const string LkAipluginconversationstartermappingCreatedonbehalfby = "lk_aipluginconversationstartermapping_createdonbehalfby";
+				public const string LkAipluginconversationstartermappingModifiedby = "lk_aipluginconversationstartermapping_modifiedby";
+				public const string LkAipluginconversationstartermappingModifiedonbehalfby = "lk_aipluginconversationstartermapping_modifiedonbehalfby";
+				public const string LkAipluginexternalschemaCreatedby = "lk_aipluginexternalschema_createdby";
+				public const string LkAipluginexternalschemaCreatedonbehalfby = "lk_aipluginexternalschema_createdonbehalfby";
+				public const string LkAipluginexternalschemaModifiedby = "lk_aipluginexternalschema_modifiedby";
+				public const string LkAipluginexternalschemaModifiedonbehalfby = "lk_aipluginexternalschema_modifiedonbehalfby";
+				public const string LkAipluginexternalschemapropertyCreatedby = "lk_aipluginexternalschemaproperty_createdby";
+				public const string LkAipluginexternalschemapropertyCreatedonbehalfby = "lk_aipluginexternalschemaproperty_createdonbehalfby";
+				public const string LkAipluginexternalschemapropertyModifiedby = "lk_aipluginexternalschemaproperty_modifiedby";
+				public const string LkAipluginexternalschemapropertyModifiedonbehalfby = "lk_aipluginexternalschemaproperty_modifiedonbehalfby";
+				public const string LkAiplugingovernanceCreatedby = "lk_aiplugingovernance_createdby";
+				public const string LkAiplugingovernanceCreatedonbehalfby = "lk_aiplugingovernance_createdonbehalfby";
+				public const string LkAiplugingovernanceModifiedby = "lk_aiplugingovernance_modifiedby";
+				public const string LkAiplugingovernanceModifiedonbehalfby = "lk_aiplugingovernance_modifiedonbehalfby";
+				public const string LkAiplugingovernanceextCreatedby = "lk_aiplugingovernanceext_createdby";
+				public const string LkAiplugingovernanceextCreatedonbehalfby = "lk_aiplugingovernanceext_createdonbehalfby";
+				public const string LkAiplugingovernanceextModifiedby = "lk_aiplugingovernanceext_modifiedby";
+				public const string LkAiplugingovernanceextModifiedonbehalfby = "lk_aiplugingovernanceext_modifiedonbehalfby";
+				public const string LkAiplugininstanceCreatedby = "lk_aiplugininstance_createdby";
+				public const string LkAiplugininstanceCreatedonbehalfby = "lk_aiplugininstance_createdonbehalfby";
+				public const string LkAiplugininstanceModifiedby = "lk_aiplugininstance_modifiedby";
+				public const string LkAiplugininstanceModifiedonbehalfby = "lk_aiplugininstance_modifiedonbehalfby";
+				public const string LkAipluginoperationCreatedby = "lk_aipluginoperation_createdby";
+				public const string LkAipluginoperationCreatedonbehalfby = "lk_aipluginoperation_createdonbehalfby";
+				public const string LkAipluginoperationModifiedby = "lk_aipluginoperation_modifiedby";
+				public const string LkAipluginoperationModifiedonbehalfby = "lk_aipluginoperation_modifiedonbehalfby";
+				public const string LkAipluginoperationparameterCreatedby = "lk_aipluginoperationparameter_createdby";
+				public const string LkAipluginoperationparameterCreatedonbehalfby = "lk_aipluginoperationparameter_createdonbehalfby";
+				public const string LkAipluginoperationparameterModifiedby = "lk_aipluginoperationparameter_modifiedby";
+				public const string LkAipluginoperationparameterModifiedonbehalfby = "lk_aipluginoperationparameter_modifiedonbehalfby";
+				public const string LkAipluginoperationresponsetemplateCreatedby = "lk_aipluginoperationresponsetemplate_createdby";
+				public const string LkAipluginoperationresponsetemplateCreatedonbehalfby = "lk_aipluginoperationresponsetemplate_createdonbehalfby";
+				public const string LkAipluginoperationresponsetemplateModifiedby = "lk_aipluginoperationresponsetemplate_modifiedby";
+				public const string LkAipluginoperationresponsetemplateModifiedonbehalfby = "lk_aipluginoperationresponsetemplate_modifiedonbehalfby";
+				public const string LkAiplugintitleCreatedby = "lk_aiplugintitle_createdby";
+				public const string LkAiplugintitleCreatedonbehalfby = "lk_aiplugintitle_createdonbehalfby";
+				public const string LkAiplugintitleModifiedby = "lk_aiplugintitle_modifiedby";
+				public const string LkAiplugintitleModifiedonbehalfby = "lk_aiplugintitle_modifiedonbehalfby";
+				public const string LkAipluginusersettingCreatedby = "lk_aipluginusersetting_createdby";
+				public const string LkAipluginusersettingCreatedonbehalfby = "lk_aipluginusersetting_createdonbehalfby";
+				public const string LkAipluginusersettingModifiedby = "lk_aipluginusersetting_modifiedby";
+				public const string LkAipluginusersettingModifiedonbehalfby = "lk_aipluginusersetting_modifiedonbehalfby";
 				public const string LkAnnotationbaseCreatedby = "lk_annotationbase_createdby";
 				public const string LkAnnotationbaseCreatedonbehalfby = "lk_annotationbase_createdonbehalfby";
 				public const string LkAnnotationbaseModifiedby = "lk_annotationbase_modifiedby";
@@ -6531,6 +6893,14 @@ namespace dgt.power.dataverse
 				public const string LkAppusersettingCreatedonbehalfby = "lk_appusersetting_createdonbehalfby";
 				public const string LkAppusersettingModifiedby = "lk_appusersetting_modifiedby";
 				public const string LkAppusersettingModifiedonbehalfby = "lk_appusersetting_modifiedonbehalfby";
+				public const string LkArchivecleanupinfoCreatedby = "lk_archivecleanupinfo_createdby";
+				public const string LkArchivecleanupinfoCreatedonbehalfby = "lk_archivecleanupinfo_createdonbehalfby";
+				public const string LkArchivecleanupinfoModifiedby = "lk_archivecleanupinfo_modifiedby";
+				public const string LkArchivecleanupinfoModifiedonbehalfby = "lk_archivecleanupinfo_modifiedonbehalfby";
+				public const string LkArchivecleanupoperationCreatedby = "lk_archivecleanupoperation_createdby";
+				public const string LkArchivecleanupoperationCreatedonbehalfby = "lk_archivecleanupoperation_createdonbehalfby";
+				public const string LkArchivecleanupoperationModifiedby = "lk_archivecleanupoperation_modifiedby";
+				public const string LkArchivecleanupoperationModifiedonbehalfby = "lk_archivecleanupoperation_modifiedonbehalfby";
 				public const string LkAsyncoperationCreatedby = "lk_asyncoperation_createdby";
 				public const string LkAsyncoperationCreatedonbehalfby = "lk_asyncoperation_createdonbehalfby";
 				public const string LkAsyncoperationModifiedby = "lk_asyncoperation_modifiedby";
@@ -6593,6 +6963,26 @@ namespace dgt.power.dataverse
 				public const string LkBotcomponentCreatedonbehalfby = "lk_botcomponent_createdonbehalfby";
 				public const string LkBotcomponentModifiedby = "lk_botcomponent_modifiedby";
 				public const string LkBotcomponentModifiedonbehalfby = "lk_botcomponent_modifiedonbehalfby";
+				public const string LkBotcomponentcollectionCreatedby = "lk_botcomponentcollection_createdby";
+				public const string LkBotcomponentcollectionCreatedonbehalfby = "lk_botcomponentcollection_createdonbehalfby";
+				public const string LkBotcomponentcollectionModifiedby = "lk_botcomponentcollection_modifiedby";
+				public const string LkBotcomponentcollectionModifiedonbehalfby = "lk_botcomponentcollection_modifiedonbehalfby";
+				public const string LkBulkarchiveconfigCreatedby = "lk_bulkarchiveconfig_createdby";
+				public const string LkBulkarchiveconfigCreatedonbehalfby = "lk_bulkarchiveconfig_createdonbehalfby";
+				public const string LkBulkarchiveconfigModifiedby = "lk_bulkarchiveconfig_modifiedby";
+				public const string LkBulkarchiveconfigModifiedonbehalfby = "lk_bulkarchiveconfig_modifiedonbehalfby";
+				public const string LkBulkarchivefailuredetailCreatedby = "lk_bulkarchivefailuredetail_createdby";
+				public const string LkBulkarchivefailuredetailCreatedonbehalfby = "lk_bulkarchivefailuredetail_createdonbehalfby";
+				public const string LkBulkarchivefailuredetailModifiedby = "lk_bulkarchivefailuredetail_modifiedby";
+				public const string LkBulkarchivefailuredetailModifiedonbehalfby = "lk_bulkarchivefailuredetail_modifiedonbehalfby";
+				public const string LkBulkarchiveoperationCreatedby = "lk_bulkarchiveoperation_createdby";
+				public const string LkBulkarchiveoperationCreatedonbehalfby = "lk_bulkarchiveoperation_createdonbehalfby";
+				public const string LkBulkarchiveoperationModifiedby = "lk_bulkarchiveoperation_modifiedby";
+				public const string LkBulkarchiveoperationModifiedonbehalfby = "lk_bulkarchiveoperation_modifiedonbehalfby";
+				public const string LkBulkarchiveoperationdetailCreatedby = "lk_bulkarchiveoperationdetail_createdby";
+				public const string LkBulkarchiveoperationdetailCreatedonbehalfby = "lk_bulkarchiveoperationdetail_createdonbehalfby";
+				public const string LkBulkarchiveoperationdetailModifiedby = "lk_bulkarchiveoperationdetail_modifiedby";
+				public const string LkBulkarchiveoperationdetailModifiedonbehalfby = "lk_bulkarchiveoperationdetail_modifiedonbehalfby";
 				public const string LkBulkdeleteoperationCreatedonbehalfby = "lk_bulkdeleteoperation_createdonbehalfby";
 				public const string LkBulkdeleteoperationModifiedonbehalfby = "lk_bulkdeleteoperation_modifiedonbehalfby";
 				public const string LkBulkdeleteoperationbaseCreatedby = "lk_bulkdeleteoperationbase_createdby";
@@ -6645,6 +7035,10 @@ namespace dgt.power.dataverse
 				public const string LkCardCreatedonbehalfby = "lk_card_createdonbehalfby";
 				public const string LkCardModifiedby = "lk_card_modifiedby";
 				public const string LkCardModifiedonbehalfby = "lk_card_modifiedonbehalfby";
+				public const string LkCardstateitemCreatedby = "lk_cardstateitem_createdby";
+				public const string LkCardstateitemCreatedonbehalfby = "lk_cardstateitem_createdonbehalfby";
+				public const string LkCardstateitemModifiedby = "lk_cardstateitem_modifiedby";
+				public const string LkCardstateitemModifiedonbehalfby = "lk_cardstateitem_modifiedonbehalfby";
 				public const string LkCardtypeCreatedby = "lk_cardtype_createdby";
 				public const string LkCardtypeCreatedonbehalfby = "lk_cardtype_createdonbehalfby";
 				public const string LkCardtypeModifiedby = "lk_cardtype_modifiedby";
@@ -6693,8 +7087,18 @@ namespace dgt.power.dataverse
 				public const string LkCompetitoraddressbaseModifiedby = "lk_competitoraddressbase_modifiedby";
 				public const string LkCompetitorbaseCreatedby = "lk_competitorbase_createdby";
 				public const string LkCompetitorbaseModifiedby = "lk_competitorbase_modifiedby";
+				public const string LkComponentversionCreatedby = "lk_componentversion_createdby";
+				public const string LkComponentversionModifiedby = "lk_componentversion_modifiedby";
+				public const string LkComponentversionnrddatasourceCreatedby = "lk_componentversionnrddatasource_createdby";
+				public const string LkComponentversionnrddatasourceCreatedonbehalfby = "lk_componentversionnrddatasource_createdonbehalfby";
+				public const string LkComponentversionnrddatasourceModifiedby = "lk_componentversionnrddatasource_modifiedby";
+				public const string LkComponentversionnrddatasourceModifiedonbehalfby = "lk_componentversionnrddatasource_modifiedonbehalfby";
 				public const string LkConnectionbaseCreatedonbehalfby = "lk_connectionbase_createdonbehalfby";
 				public const string LkConnectionbaseModifiedonbehalfby = "lk_connectionbase_modifiedonbehalfby";
+				public const string LkConnectioninstanceCreatedby = "lk_connectioninstance_createdby";
+				public const string LkConnectioninstanceCreatedonbehalfby = "lk_connectioninstance_createdonbehalfby";
+				public const string LkConnectioninstanceModifiedby = "lk_connectioninstance_modifiedby";
+				public const string LkConnectioninstanceModifiedonbehalfby = "lk_connectioninstance_modifiedonbehalfby";
 				public const string LkConnectionreferenceCreatedby = "lk_connectionreference_createdby";
 				public const string LkConnectionreferenceCreatedonbehalfby = "lk_connectionreference_createdonbehalfby";
 				public const string LkConnectionreferenceModifiedby = "lk_connectionreference_modifiedby";
@@ -6737,6 +7141,26 @@ namespace dgt.power.dataverse
 				public const string LkConvertruleitembaseCreatedonbehalfby = "lk_convertruleitembase_createdonbehalfby";
 				public const string LkConvertruleitembaseModifiedby = "lk_convertruleitembase_modifiedby";
 				public const string LkConvertruleitembaseModifiedonbehalfby = "lk_convertruleitembase_modifiedonbehalfby";
+				public const string LkCopilotexamplequestionCreatedby = "lk_copilotexamplequestion_createdby";
+				public const string LkCopilotexamplequestionCreatedonbehalfby = "lk_copilotexamplequestion_createdonbehalfby";
+				public const string LkCopilotexamplequestionModifiedby = "lk_copilotexamplequestion_modifiedby";
+				public const string LkCopilotexamplequestionModifiedonbehalfby = "lk_copilotexamplequestion_modifiedonbehalfby";
+				public const string LkCopilotglossarytermCreatedby = "lk_copilotglossaryterm_createdby";
+				public const string LkCopilotglossarytermCreatedonbehalfby = "lk_copilotglossaryterm_createdonbehalfby";
+				public const string LkCopilotglossarytermModifiedby = "lk_copilotglossaryterm_modifiedby";
+				public const string LkCopilotglossarytermModifiedonbehalfby = "lk_copilotglossaryterm_modifiedonbehalfby";
+				public const string LkCopilotsynonymsCreatedby = "lk_copilotsynonyms_createdby";
+				public const string LkCopilotsynonymsCreatedonbehalfby = "lk_copilotsynonyms_createdonbehalfby";
+				public const string LkCopilotsynonymsModifiedby = "lk_copilotsynonyms_modifiedby";
+				public const string LkCopilotsynonymsModifiedonbehalfby = "lk_copilotsynonyms_modifiedonbehalfby";
+				public const string LkCr072BookingCreatedby = "lk_cr072_booking_createdby";
+				public const string LkCr072BookingCreatedonbehalfby = "lk_cr072_booking_createdonbehalfby";
+				public const string LkCr072BookingModifiedby = "lk_cr072_booking_modifiedby";
+				public const string LkCr072BookingModifiedonbehalfby = "lk_cr072_booking_modifiedonbehalfby";
+				public const string LkCredentialCreatedby = "lk_credential_createdby";
+				public const string LkCredentialCreatedonbehalfby = "lk_credential_createdonbehalfby";
+				public const string LkCredentialModifiedby = "lk_credential_modifiedby";
+				public const string LkCredentialModifiedonbehalfby = "lk_credential_modifiedonbehalfby";
 				public const string LkCustomapiCreatedby = "lk_customapi_createdby";
 				public const string LkCustomapiCreatedonbehalfby = "lk_customapi_createdonbehalfby";
 				public const string LkCustomapiModifiedby = "lk_customapi_modifiedby";
@@ -6789,6 +7213,14 @@ namespace dgt.power.dataverse
 				public const string LkDataprocessingconfigurationCreatedonbehalfby = "lk_dataprocessingconfiguration_createdonbehalfby";
 				public const string LkDataprocessingconfigurationModifiedby = "lk_dataprocessingconfiguration_modifiedby";
 				public const string LkDataprocessingconfigurationModifiedonbehalfby = "lk_dataprocessingconfiguration_modifiedonbehalfby";
+				public const string LkDelegatedauthorizationCreatedby = "lk_delegatedauthorization_createdby";
+				public const string LkDelegatedauthorizationCreatedonbehalfby = "lk_delegatedauthorization_createdonbehalfby";
+				public const string LkDelegatedauthorizationModifiedby = "lk_delegatedauthorization_modifiedby";
+				public const string LkDelegatedauthorizationModifiedonbehalfby = "lk_delegatedauthorization_modifiedonbehalfby";
+				public const string LkDeleteditemreferenceCreatedby = "lk_deleteditemreference_createdby";
+				public const string LkDeleteditemreferenceCreatedonbehalfby = "lk_deleteditemreference_createdonbehalfby";
+				public const string LkDeleteditemreferenceModifiedby = "lk_deleteditemreference_modifiedby";
+				public const string LkDeleteditemreferenceModifiedonbehalfby = "lk_deleteditemreference_modifiedonbehalfby";
 				public const string LkDelveactionhubCreatedby = "lk_delveactionhub_createdby";
 				public const string LkDelveactionhubCreatedonbehalfby = "lk_delveactionhub_createdonbehalfby";
 				public const string LkDelveactionhubModifiedby = "lk_delveactionhub_modifiedby";
@@ -6801,6 +7233,26 @@ namespace dgt.power.dataverse
 				public const string LkDesktopflowmoduleCreatedonbehalfby = "lk_desktopflowmodule_createdonbehalfby";
 				public const string LkDesktopflowmoduleModifiedby = "lk_desktopflowmodule_modifiedby";
 				public const string LkDesktopflowmoduleModifiedonbehalfby = "lk_desktopflowmodule_modifiedonbehalfby";
+				public const string LkDgtCarrierCreatedby = "lk_dgt_carrier_createdby";
+				public const string LkDgtCarrierCreatedonbehalfby = "lk_dgt_carrier_createdonbehalfby";
+				public const string LkDgtCarrierDependencyCheckCreatedby = "lk_dgt_carrier_dependency_check_createdby";
+				public const string LkDgtCarrierDependencyCheckCreatedonbehalfby = "lk_dgt_carrier_dependency_check_createdonbehalfby";
+				public const string LkDgtCarrierDependencyCheckModifiedby = "lk_dgt_carrier_dependency_check_modifiedby";
+				public const string LkDgtCarrierDependencyCheckModifiedonbehalfby = "lk_dgt_carrier_dependency_check_modifiedonbehalfby";
+				public const string LkDgtCarrierMissingDependencyCreatedby = "lk_dgt_carrier_missing_dependency_createdby";
+				public const string LkDgtCarrierMissingDependencyCreatedonbehalfby = "lk_dgt_carrier_missing_dependency_createdonbehalfby";
+				public const string LkDgtCarrierMissingDependencyModifiedby = "lk_dgt_carrier_missing_dependency_modifiedby";
+				public const string LkDgtCarrierMissingDependencyModifiedonbehalfby = "lk_dgt_carrier_missing_dependency_modifiedonbehalfby";
+				public const string LkDgtCarrierModifiedby = "lk_dgt_carrier_modifiedby";
+				public const string LkDgtCarrierModifiedonbehalfby = "lk_dgt_carrier_modifiedonbehalfby";
+				public const string LkDgtWorkbenchCreatedby = "lk_dgt_workbench_createdby";
+				public const string LkDgtWorkbenchCreatedonbehalfby = "lk_dgt_workbench_createdonbehalfby";
+				public const string LkDgtWorkbenchHistoryCreatedby = "lk_dgt_workbench_history_createdby";
+				public const string LkDgtWorkbenchHistoryCreatedonbehalfby = "lk_dgt_workbench_history_createdonbehalfby";
+				public const string LkDgtWorkbenchHistoryModifiedby = "lk_dgt_workbench_history_modifiedby";
+				public const string LkDgtWorkbenchHistoryModifiedonbehalfby = "lk_dgt_workbench_history_modifiedonbehalfby";
+				public const string LkDgtWorkbenchModifiedby = "lk_dgt_workbench_modifiedby";
+				public const string LkDgtWorkbenchModifiedonbehalfby = "lk_dgt_workbench_modifiedonbehalfby";
 				public const string LkDiscountCreatedonbehalfby = "lk_discount_createdonbehalfby";
 				public const string LkDiscountModifiedonbehalfby = "lk_discount_modifiedonbehalfby";
 				public const string LkDiscountbaseCreatedby = "lk_discountbase_createdby";
@@ -6829,6 +7281,30 @@ namespace dgt.power.dataverse
 				public const string LkDuplicateruleconditionModifiedonbehalfby = "lk_duplicaterulecondition_modifiedonbehalfby";
 				public const string LkDuplicateruleconditionbaseCreatedby = "lk_duplicateruleconditionbase_createdby";
 				public const string LkDuplicateruleconditionbaseModifiedby = "lk_duplicateruleconditionbase_modifiedby";
+				public const string LkDvfilesearchCreatedby = "lk_dvfilesearch_createdby";
+				public const string LkDvfilesearchCreatedonbehalfby = "lk_dvfilesearch_createdonbehalfby";
+				public const string LkDvfilesearchModifiedby = "lk_dvfilesearch_modifiedby";
+				public const string LkDvfilesearchModifiedonbehalfby = "lk_dvfilesearch_modifiedonbehalfby";
+				public const string LkDvfilesearchattributeCreatedby = "lk_dvfilesearchattribute_createdby";
+				public const string LkDvfilesearchattributeCreatedonbehalfby = "lk_dvfilesearchattribute_createdonbehalfby";
+				public const string LkDvfilesearchattributeModifiedby = "lk_dvfilesearchattribute_modifiedby";
+				public const string LkDvfilesearchattributeModifiedonbehalfby = "lk_dvfilesearchattribute_modifiedonbehalfby";
+				public const string LkDvfilesearchentityCreatedby = "lk_dvfilesearchentity_createdby";
+				public const string LkDvfilesearchentityCreatedonbehalfby = "lk_dvfilesearchentity_createdonbehalfby";
+				public const string LkDvfilesearchentityModifiedby = "lk_dvfilesearchentity_modifiedby";
+				public const string LkDvfilesearchentityModifiedonbehalfby = "lk_dvfilesearchentity_modifiedonbehalfby";
+				public const string LkDvtablesearchCreatedby = "lk_dvtablesearch_createdby";
+				public const string LkDvtablesearchCreatedonbehalfby = "lk_dvtablesearch_createdonbehalfby";
+				public const string LkDvtablesearchModifiedby = "lk_dvtablesearch_modifiedby";
+				public const string LkDvtablesearchModifiedonbehalfby = "lk_dvtablesearch_modifiedonbehalfby";
+				public const string LkDvtablesearchattributeCreatedby = "lk_dvtablesearchattribute_createdby";
+				public const string LkDvtablesearchattributeCreatedonbehalfby = "lk_dvtablesearchattribute_createdonbehalfby";
+				public const string LkDvtablesearchattributeModifiedby = "lk_dvtablesearchattribute_modifiedby";
+				public const string LkDvtablesearchattributeModifiedonbehalfby = "lk_dvtablesearchattribute_modifiedonbehalfby";
+				public const string LkDvtablesearchentityCreatedby = "lk_dvtablesearchentity_createdby";
+				public const string LkDvtablesearchentityCreatedonbehalfby = "lk_dvtablesearchentity_createdonbehalfby";
+				public const string LkDvtablesearchentityModifiedby = "lk_dvtablesearchentity_modifiedby";
+				public const string LkDvtablesearchentityModifiedonbehalfby = "lk_dvtablesearchentity_modifiedonbehalfby";
 				public const string LkDynamicPropertyCreatedby = "lk_DynamicProperty_createdby";
 				public const string LkDynamicPropertyCreatedonbehalfby = "lk_DynamicProperty_createdonbehalfby";
 				public const string LkDynamicPropertyModifiedby = "lk_DynamicProperty_modifiedby";
@@ -6844,78 +7320,6 @@ namespace dgt.power.dataverse
 				public const string LkDynamicPropertyOptionSetItemCreatedonbehalfby = "lk_DynamicPropertyOptionSetItem_createdonbehalfby";
 				public const string LkDynamicPropertyOptionSetItemModifiedby = "lk_DynamicPropertyOptionSetItem_modifiedby";
 				public const string LkDynamicPropertyOptionSetItemModifiedonbehalfby = "lk_DynamicPropertyOptionSetItem_modifiedonbehalfby";
-				public const string LkEc4uAcquirelegalbasisCreatedby = "lk_ec4u_acquirelegalbasis_createdby";
-				public const string LkEc4uAcquirelegalbasisCreatedonbehalfby = "lk_ec4u_acquirelegalbasis_createdonbehalfby";
-				public const string LkEc4uAcquirelegalbasisModifiedby = "lk_ec4u_acquirelegalbasis_modifiedby";
-				public const string LkEc4uAcquirelegalbasisModifiedonbehalfby = "lk_ec4u_acquirelegalbasis_modifiedonbehalfby";
-				public const string LkEc4uCarrierCreatedby = "lk_ec4u_carrier_createdby";
-				public const string LkEc4uCarrierCreatedonbehalfby = "lk_ec4u_carrier_createdonbehalfby";
-				public const string LkEc4uCarrierDependencyCheckCreatedby = "lk_ec4u_carrier_dependency_check_createdby";
-				public const string LkEc4uCarrierDependencyCheckCreatedonbehalfby = "lk_ec4u_carrier_dependency_check_createdonbehalfby";
-				public const string LkEc4uCarrierDependencyCheckModifiedby = "lk_ec4u_carrier_dependency_check_modifiedby";
-				public const string LkEc4uCarrierDependencyCheckModifiedonbehalfby = "lk_ec4u_carrier_dependency_check_modifiedonbehalfby";
-				public const string LkEc4uCarrierMissingDependencyCreatedby = "lk_ec4u_carrier_missing_dependency_createdby";
-				public const string LkEc4uCarrierMissingDependencyCreatedonbehalfby = "lk_ec4u_carrier_missing_dependency_createdonbehalfby";
-				public const string LkEc4uCarrierMissingDependencyModifiedby = "lk_ec4u_carrier_missing_dependency_modifiedby";
-				public const string LkEc4uCarrierMissingDependencyModifiedonbehalfby = "lk_ec4u_carrier_missing_dependency_modifiedonbehalfby";
-				public const string LkEc4uCarrierModifiedby = "lk_ec4u_carrier_modifiedby";
-				public const string LkEc4uCarrierModifiedonbehalfby = "lk_ec4u_carrier_modifiedonbehalfby";
-				public const string LkEc4uGdprBpfCorrectionCreatedby = "lk_ec4u_gdpr_bpf_correction_createdby";
-				public const string LkEc4uGdprBpfCorrectionCreatedonbehalfby = "lk_ec4u_gdpr_bpf_correction_createdonbehalfby";
-				public const string LkEc4uGdprBpfCorrectionModifiedby = "lk_ec4u_gdpr_bpf_correction_modifiedby";
-				public const string LkEc4uGdprBpfCorrectionModifiedonbehalfby = "lk_ec4u_gdpr_bpf_correction_modifiedonbehalfby";
-				public const string LkEc4uGdprBpfDeletionCreatedby = "lk_ec4u_gdpr_bpf_deletion_createdby";
-				public const string LkEc4uGdprBpfDeletionCreatedonbehalfby = "lk_ec4u_gdpr_bpf_deletion_createdonbehalfby";
-				public const string LkEc4uGdprBpfDeletionModifiedby = "lk_ec4u_gdpr_bpf_deletion_modifiedby";
-				public const string LkEc4uGdprBpfDeletionModifiedonbehalfby = "lk_ec4u_gdpr_bpf_deletion_modifiedonbehalfby";
-				public const string LkEc4uGdprBpfInformationCreatedby = "lk_ec4u_gdpr_bpf_information_createdby";
-				public const string LkEc4uGdprBpfInformationCreatedonbehalfby = "lk_ec4u_gdpr_bpf_information_createdonbehalfby";
-				public const string LkEc4uGdprBpfInformationModifiedby = "lk_ec4u_gdpr_bpf_information_modifiedby";
-				public const string LkEc4uGdprBpfInformationModifiedonbehalfby = "lk_ec4u_gdpr_bpf_information_modifiedonbehalfby";
-				public const string LkEc4uGdprConfigEntityCreatedby = "lk_ec4u_gdpr_config_entity_createdby";
-				public const string LkEc4uGdprConfigEntityCreatedonbehalfby = "lk_ec4u_gdpr_config_entity_createdonbehalfby";
-				public const string LkEc4uGdprConfigEntityModifiedby = "lk_ec4u_gdpr_config_entity_modifiedby";
-				public const string LkEc4uGdprConfigEntityModifiedonbehalfby = "lk_ec4u_gdpr_config_entity_modifiedonbehalfby";
-				public const string LkEc4uGdprConfigFieldCreatedby = "lk_ec4u_gdpr_config_field_createdby";
-				public const string LkEc4uGdprConfigFieldCreatedonbehalfby = "lk_ec4u_gdpr_config_field_createdonbehalfby";
-				public const string LkEc4uGdprConfigFieldModifiedby = "lk_ec4u_gdpr_config_field_modifiedby";
-				public const string LkEc4uGdprConfigFieldModifiedonbehalfby = "lk_ec4u_gdpr_config_field_modifiedonbehalfby";
-				public const string LkEc4uGdprConfigHierarchyCreatedby = "lk_ec4u_gdpr_config_hierarchy_createdby";
-				public const string LkEc4uGdprConfigHierarchyCreatedonbehalfby = "lk_ec4u_gdpr_config_hierarchy_createdonbehalfby";
-				public const string LkEc4uGdprConfigHierarchyModifiedby = "lk_ec4u_gdpr_config_hierarchy_modifiedby";
-				public const string LkEc4uGdprConfigHierarchyModifiedonbehalfby = "lk_ec4u_gdpr_config_hierarchy_modifiedonbehalfby";
-				public const string LkEc4uGdprProtocolCreatedby = "lk_ec4u_gdpr_protocol_createdby";
-				public const string LkEc4uGdprProtocolCreatedonbehalfby = "lk_ec4u_gdpr_protocol_createdonbehalfby";
-				public const string LkEc4uGdprProtocolDetailCreatedby = "lk_ec4u_gdpr_protocol_detail_createdby";
-				public const string LkEc4uGdprProtocolDetailCreatedonbehalfby = "lk_ec4u_gdpr_protocol_detail_createdonbehalfby";
-				public const string LkEc4uGdprProtocolDetailModifiedby = "lk_ec4u_gdpr_protocol_detail_modifiedby";
-				public const string LkEc4uGdprProtocolDetailModifiedonbehalfby = "lk_ec4u_gdpr_protocol_detail_modifiedonbehalfby";
-				public const string LkEc4uGdprProtocolModifiedby = "lk_ec4u_gdpr_protocol_modifiedby";
-				public const string LkEc4uGdprProtocolModifiedonbehalfby = "lk_ec4u_gdpr_protocol_modifiedonbehalfby";
-				public const string LkEc4uGdprReportCreatedby = "lk_ec4u_gdpr_report_createdby";
-				public const string LkEc4uGdprReportCreatedonbehalfby = "lk_ec4u_gdpr_report_createdonbehalfby";
-				public const string LkEc4uGdprReportModifiedby = "lk_ec4u_gdpr_report_modifiedby";
-				public const string LkEc4uGdprReportModifiedonbehalfby = "lk_ec4u_gdpr_report_modifiedonbehalfby";
-				public const string LkEc4uGdprRequestCreatedby = "lk_ec4u_gdpr_request_createdby";
-				public const string LkEc4uGdprRequestCreatedonbehalfby = "lk_ec4u_gdpr_request_createdonbehalfby";
-				public const string LkEc4uGdprRequestModifiedby = "lk_ec4u_gdpr_request_modifiedby";
-				public const string LkEc4uGdprRequestModifiedonbehalfby = "lk_ec4u_gdpr_request_modifiedonbehalfby";
-				public const string LkEc4uLegalbasisCreatedby = "lk_ec4u_legalbasis_createdby";
-				public const string LkEc4uLegalbasisCreatedonbehalfby = "lk_ec4u_legalbasis_createdonbehalfby";
-				public const string LkEc4uLegalbasisModifiedby = "lk_ec4u_legalbasis_modifiedby";
-				public const string LkEc4uLegalbasisModifiedonbehalfby = "lk_ec4u_legalbasis_modifiedonbehalfby";
-				public const string LkEc4uLegalbasistypeCreatedby = "lk_ec4u_legalbasistype_createdby";
-				public const string LkEc4uLegalbasistypeCreatedonbehalfby = "lk_ec4u_legalbasistype_createdonbehalfby";
-				public const string LkEc4uLegalbasistypeModifiedby = "lk_ec4u_legalbasistype_modifiedby";
-				public const string LkEc4uLegalbasistypeModifiedonbehalfby = "lk_ec4u_legalbasistype_modifiedonbehalfby";
-				public const string LkEc4uWorkbenchCreatedby = "lk_ec4u_workbench_createdby";
-				public const string LkEc4uWorkbenchCreatedonbehalfby = "lk_ec4u_workbench_createdonbehalfby";
-				public const string LkEc4uWorkbenchHistoryCreatedby = "lk_ec4u_workbench_history_createdby";
-				public const string LkEc4uWorkbenchHistoryCreatedonbehalfby = "lk_ec4u_workbench_history_createdonbehalfby";
-				public const string LkEc4uWorkbenchHistoryModifiedby = "lk_ec4u_workbench_history_modifiedby";
-				public const string LkEc4uWorkbenchHistoryModifiedonbehalfby = "lk_ec4u_workbench_history_modifiedonbehalfby";
-				public const string LkEc4uWorkbenchModifiedby = "lk_ec4u_workbench_modifiedby";
-				public const string LkEc4uWorkbenchModifiedonbehalfby = "lk_ec4u_workbench_modifiedonbehalfby";
 				public const string LkEmailCreatedby = "lk_email_createdby";
 				public const string LkEmailCreatedonbehalfby = "lk_email_createdonbehalfby";
 				public const string LkEmailModifiedby = "lk_email_modifiedby";
@@ -6928,6 +7332,10 @@ namespace dgt.power.dataverse
 				public const string LkEmailsignaturebaseCreatedonbehalfby = "lk_emailsignaturebase_createdonbehalfby";
 				public const string LkEmailsignaturebaseModifiedby = "lk_emailsignaturebase_modifiedby";
 				public const string LkEmailsignaturebaseModifiedonbehalfby = "lk_emailsignaturebase_modifiedonbehalfby";
+				public const string LkEnablearchivalrequestCreatedby = "lk_enablearchivalrequest_createdby";
+				public const string LkEnablearchivalrequestCreatedonbehalfby = "lk_enablearchivalrequest_createdonbehalfby";
+				public const string LkEnablearchivalrequestModifiedby = "lk_enablearchivalrequest_modifiedby";
+				public const string LkEnablearchivalrequestModifiedonbehalfby = "lk_enablearchivalrequest_modifiedonbehalfby";
 				public const string LkEntitlementCreatedby = "lk_entitlement_createdby";
 				public const string LkEntitlementCreatedonbehalfby = "lk_entitlement_createdonbehalfby";
 				public const string LkEntitlementModifiedby = "lk_entitlement_modifiedby";
@@ -6966,6 +7374,10 @@ namespace dgt.power.dataverse
 				public const string LkEquipmentCreatedonbehalfby = "lk_equipment_createdonbehalfby";
 				public const string LkEquipmentModifiedby = "lk_equipment_modifiedby";
 				public const string LkEquipmentModifiedonbehalfby = "lk_equipment_modifiedonbehalfby";
+				public const string LkEventexpanderbreadcrumbCreatedby = "lk_eventexpanderbreadcrumb_createdby";
+				public const string LkEventexpanderbreadcrumbCreatedonbehalfby = "lk_eventexpanderbreadcrumb_createdonbehalfby";
+				public const string LkEventexpanderbreadcrumbModifiedby = "lk_eventexpanderbreadcrumb_modifiedby";
+				public const string LkEventexpanderbreadcrumbModifiedonbehalfby = "lk_eventexpanderbreadcrumb_modifiedonbehalfby";
 				public const string LkExpandereventCreatedonbehalfby = "lk_expanderevent_createdonbehalfby";
 				public const string LkExpandereventModifiedonbehalfby = "lk_expanderevent_modifiedonbehalfby";
 				public const string LkExpiredprocessCreatedby = "lk_expiredprocess_createdby";
@@ -6988,6 +7400,10 @@ namespace dgt.power.dataverse
 				public const string LkExternalpartyitemCreatedonbehalfby = "lk_externalpartyitem_createdonbehalfby";
 				public const string LkExternalpartyitemModifiedby = "lk_externalpartyitem_modifiedby";
 				public const string LkExternalpartyitemModifiedonbehalfby = "lk_externalpartyitem_modifiedonbehalfby";
+				public const string LkFabricaiskillCreatedby = "lk_fabricaiskill_createdby";
+				public const string LkFabricaiskillCreatedonbehalfby = "lk_fabricaiskill_createdonbehalfby";
+				public const string LkFabricaiskillModifiedby = "lk_fabricaiskill_modifiedby";
+				public const string LkFabricaiskillModifiedonbehalfby = "lk_fabricaiskill_modifiedonbehalfby";
 				public const string LkFaxCreatedby = "lk_fax_createdby";
 				public const string LkFaxCreatedonbehalfby = "lk_fax_createdonbehalfby";
 				public const string LkFaxModifiedby = "lk_fax_modifiedby";
@@ -6996,6 +7412,14 @@ namespace dgt.power.dataverse
 				public const string LkFeaturecontrolsettingCreatedonbehalfby = "lk_featurecontrolsetting_createdonbehalfby";
 				public const string LkFeaturecontrolsettingModifiedby = "lk_featurecontrolsetting_modifiedby";
 				public const string LkFeaturecontrolsettingModifiedonbehalfby = "lk_featurecontrolsetting_modifiedonbehalfby";
+				public const string LkFederatedknowledgeconfigurationCreatedby = "lk_federatedknowledgeconfiguration_createdby";
+				public const string LkFederatedknowledgeconfigurationCreatedonbehalfby = "lk_federatedknowledgeconfiguration_createdonbehalfby";
+				public const string LkFederatedknowledgeconfigurationModifiedby = "lk_federatedknowledgeconfiguration_modifiedby";
+				public const string LkFederatedknowledgeconfigurationModifiedonbehalfby = "lk_federatedknowledgeconfiguration_modifiedonbehalfby";
+				public const string LkFederatedknowledgeentityconfigurationCreatedby = "lk_federatedknowledgeentityconfiguration_createdby";
+				public const string LkFederatedknowledgeentityconfigurationCreatedonbehalfby = "lk_federatedknowledgeentityconfiguration_createdonbehalfby";
+				public const string LkFederatedknowledgeentityconfigurationModifiedby = "lk_federatedknowledgeentityconfiguration_modifiedby";
+				public const string LkFederatedknowledgeentityconfigurationModifiedonbehalfby = "lk_federatedknowledgeentityconfiguration_modifiedonbehalfby";
 				public const string LkFeedbackClosedby = "lk_feedback_closedby";
 				public const string LkFeedbackCreatedby = "lk_feedback_createdby";
 				public const string LkFeedbackCreatedonbehalfby = "lk_feedback_createdonbehalfby";
@@ -7010,6 +7434,22 @@ namespace dgt.power.dataverse
 				public const string LkFixedmonthlyfiscalcalendarModifiedby = "lk_fixedmonthlyfiscalcalendar_modifiedby";
 				public const string LkFixedmonthlyfiscalcalendarModifiedonbehalfby = "lk_fixedmonthlyfiscalcalendar_modifiedonbehalfby";
 				public const string LkFixedmonthlyfiscalcalendarSalespersonid = "lk_fixedmonthlyfiscalcalendar_salespersonid";
+				public const string LkFlowcapacityassignmentCreatedby = "lk_flowcapacityassignment_createdby";
+				public const string LkFlowcapacityassignmentCreatedonbehalfby = "lk_flowcapacityassignment_createdonbehalfby";
+				public const string LkFlowcapacityassignmentModifiedby = "lk_flowcapacityassignment_modifiedby";
+				public const string LkFlowcapacityassignmentModifiedonbehalfby = "lk_flowcapacityassignment_modifiedonbehalfby";
+				public const string LkFlowcredentialapplicationCreatedby = "lk_flowcredentialapplication_createdby";
+				public const string LkFlowcredentialapplicationCreatedonbehalfby = "lk_flowcredentialapplication_createdonbehalfby";
+				public const string LkFlowcredentialapplicationModifiedby = "lk_flowcredentialapplication_modifiedby";
+				public const string LkFlowcredentialapplicationModifiedonbehalfby = "lk_flowcredentialapplication_modifiedonbehalfby";
+				public const string LkFloweventCreatedby = "lk_flowevent_createdby";
+				public const string LkFloweventCreatedonbehalfby = "lk_flowevent_createdonbehalfby";
+				public const string LkFloweventModifiedby = "lk_flowevent_modifiedby";
+				public const string LkFloweventModifiedonbehalfby = "lk_flowevent_modifiedonbehalfby";
+				public const string LkFlowlogCreatedby = "lk_flowlog_createdby";
+				public const string LkFlowlogCreatedonbehalfby = "lk_flowlog_createdonbehalfby";
+				public const string LkFlowlogModifiedby = "lk_flowlog_modifiedby";
+				public const string LkFlowlogModifiedonbehalfby = "lk_flowlog_modifiedonbehalfby";
 				public const string LkFlowmachineCreatedby = "lk_flowmachine_createdby";
 				public const string LkFlowmachineCreatedonbehalfby = "lk_flowmachine_createdonbehalfby";
 				public const string LkFlowmachineModifiedby = "lk_flowmachine_modifiedby";
@@ -7030,10 +7470,18 @@ namespace dgt.power.dataverse
 				public const string LkFlowmachinenetworkCreatedonbehalfby = "lk_flowmachinenetwork_createdonbehalfby";
 				public const string LkFlowmachinenetworkModifiedby = "lk_flowmachinenetwork_modifiedby";
 				public const string LkFlowmachinenetworkModifiedonbehalfby = "lk_flowmachinenetwork_modifiedonbehalfby";
+				public const string LkFlowrunCreatedby = "lk_flowrun_createdby";
+				public const string LkFlowrunCreatedonbehalfby = "lk_flowrun_createdonbehalfby";
+				public const string LkFlowrunModifiedby = "lk_flowrun_modifiedby";
+				public const string LkFlowrunModifiedonbehalfby = "lk_flowrun_modifiedonbehalfby";
 				public const string LkFlowsessionCreatedby = "lk_flowsession_createdby";
 				public const string LkFlowsessionCreatedonbehalfby = "lk_flowsession_createdonbehalfby";
 				public const string LkFlowsessionModifiedby = "lk_flowsession_modifiedby";
 				public const string LkFlowsessionModifiedonbehalfby = "lk_flowsession_modifiedonbehalfby";
+				public const string LkFxexpressionCreatedby = "lk_fxexpression_createdby";
+				public const string LkFxexpressionCreatedonbehalfby = "lk_fxexpression_createdonbehalfby";
+				public const string LkFxexpressionModifiedby = "lk_fxexpression_modifiedby";
+				public const string LkFxexpressionModifiedonbehalfby = "lk_fxexpression_modifiedonbehalfby";
 				public const string LkGoalCreatedby = "lk_goal_createdby";
 				public const string LkGoalCreatedonbehalfby = "lk_goal_createdonbehalfby";
 				public const string LkGoalModifiedby = "lk_goal_modifiedby";
@@ -7186,6 +7634,14 @@ namespace dgt.power.dataverse
 				public const string LkMailmergetemplateModifiedonbehalfby = "lk_mailmergetemplate_modifiedonbehalfby";
 				public const string LkMailmergetemplatebaseCreatedby = "lk_mailmergetemplatebase_createdby";
 				public const string LkMailmergetemplatebaseModifiedby = "lk_mailmergetemplatebase_modifiedby";
+				public const string LkMainfewshotCreatedby = "lk_mainfewshot_createdby";
+				public const string LkMainfewshotCreatedonbehalfby = "lk_mainfewshot_createdonbehalfby";
+				public const string LkMainfewshotModifiedby = "lk_mainfewshot_modifiedby";
+				public const string LkMainfewshotModifiedonbehalfby = "lk_mainfewshot_modifiedonbehalfby";
+				public const string LkMakerfewshotCreatedby = "lk_makerfewshot_createdby";
+				public const string LkMakerfewshotCreatedonbehalfby = "lk_makerfewshot_createdonbehalfby";
+				public const string LkMakerfewshotModifiedby = "lk_makerfewshot_modifiedby";
+				public const string LkMakerfewshotModifiedonbehalfby = "lk_makerfewshot_modifiedonbehalfby";
 				public const string LkManagedidentityCreatedby = "lk_managedidentity_createdby";
 				public const string LkManagedidentityCreatedonbehalfby = "lk_managedidentity_createdonbehalfby";
 				public const string LkManagedidentityModifiedby = "lk_managedidentity_modifiedby";
@@ -7194,6 +7650,10 @@ namespace dgt.power.dataverse
 				public const string LkMarketingformdisplayattributesCreatedonbehalfby = "lk_marketingformdisplayattributes_createdonbehalfby";
 				public const string LkMarketingformdisplayattributesModifiedby = "lk_marketingformdisplayattributes_modifiedby";
 				public const string LkMarketingformdisplayattributesModifiedonbehalfby = "lk_marketingformdisplayattributes_modifiedonbehalfby";
+				public const string LkMetadataforarchivalCreatedby = "lk_metadataforarchival_createdby";
+				public const string LkMetadataforarchivalCreatedonbehalfby = "lk_metadataforarchival_createdonbehalfby";
+				public const string LkMetadataforarchivalModifiedby = "lk_metadataforarchival_modifiedby";
+				public const string LkMetadataforarchivalModifiedonbehalfby = "lk_metadataforarchival_modifiedonbehalfby";
 				public const string LkMetricCreatedby = "lk_metric_createdby";
 				public const string LkMetricCreatedonbehalfby = "lk_metric_createdonbehalfby";
 				public const string LkMetricModifiedby = "lk_metric_modifiedby";
@@ -7219,10 +7679,22 @@ namespace dgt.power.dataverse
 				public const string LkMonthlyfiscalcalendarModifiedby = "lk_monthlyfiscalcalendar_modifiedby";
 				public const string LkMonthlyfiscalcalendarModifiedonbehalfby = "lk_monthlyfiscalcalendar_modifiedonbehalfby";
 				public const string LkMonthlyfiscalcalendarSalespersonid = "lk_monthlyfiscalcalendar_salespersonid";
+				public const string LkMsdyn3dmodelCreatedby = "lk_msdyn_3dmodel_createdby";
+				public const string LkMsdyn3dmodelCreatedonbehalfby = "lk_msdyn_3dmodel_createdonbehalfby";
+				public const string LkMsdyn3dmodelModifiedby = "lk_msdyn_3dmodel_modifiedby";
+				public const string LkMsdyn3dmodelModifiedonbehalfby = "lk_msdyn_3dmodel_modifiedonbehalfby";
 				public const string LkMsdynAccountkpiitemCreatedby = "lk_msdyn_accountkpiitem_createdby";
 				public const string LkMsdynAccountkpiitemCreatedonbehalfby = "lk_msdyn_accountkpiitem_createdonbehalfby";
 				public const string LkMsdynAccountkpiitemModifiedby = "lk_msdyn_accountkpiitem_modifiedby";
 				public const string LkMsdynAccountkpiitemModifiedonbehalfby = "lk_msdyn_accountkpiitem_modifiedonbehalfby";
+				public const string LkMsdynAccountpricelistCreatedby = "lk_msdyn_accountpricelist_createdby";
+				public const string LkMsdynAccountpricelistCreatedonbehalfby = "lk_msdyn_accountpricelist_createdonbehalfby";
+				public const string LkMsdynAccountpricelistModifiedby = "lk_msdyn_accountpricelist_modifiedby";
+				public const string LkMsdynAccountpricelistModifiedonbehalfby = "lk_msdyn_accountpricelist_modifiedonbehalfby";
+				public const string LkMsdynActioncardactionstatCreatedby = "lk_msdyn_actioncardactionstat_createdby";
+				public const string LkMsdynActioncardactionstatCreatedonbehalfby = "lk_msdyn_actioncardactionstat_createdonbehalfby";
+				public const string LkMsdynActioncardactionstatModifiedby = "lk_msdyn_actioncardactionstat_modifiedby";
+				public const string LkMsdynActioncardactionstatModifiedonbehalfby = "lk_msdyn_actioncardactionstat_modifiedonbehalfby";
 				public const string LkMsdynActioncardregardingCreatedby = "lk_msdyn_actioncardregarding_createdby";
 				public const string LkMsdynActioncardregardingCreatedonbehalfby = "lk_msdyn_actioncardregarding_createdonbehalfby";
 				public const string LkMsdynActioncardregardingModifiedby = "lk_msdyn_actioncardregarding_modifiedby";
@@ -7231,6 +7703,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynActioncardrolesettingCreatedonbehalfby = "lk_msdyn_actioncardrolesetting_createdonbehalfby";
 				public const string LkMsdynActioncardrolesettingModifiedby = "lk_msdyn_actioncardrolesetting_modifiedby";
 				public const string LkMsdynActioncardrolesettingModifiedonbehalfby = "lk_msdyn_actioncardrolesetting_modifiedonbehalfby";
+				public const string LkMsdynActioncardstataggregationCreatedby = "lk_msdyn_actioncardstataggregation_createdby";
+				public const string LkMsdynActioncardstataggregationCreatedonbehalfby = "lk_msdyn_actioncardstataggregation_createdonbehalfby";
+				public const string LkMsdynActioncardstataggregationModifiedby = "lk_msdyn_actioncardstataggregation_modifiedby";
+				public const string LkMsdynActioncardstataggregationModifiedonbehalfby = "lk_msdyn_actioncardstataggregation_modifiedonbehalfby";
+				public const string LkMsdynActiveicdextensionCreatedby = "lk_msdyn_activeicdextension_createdby";
+				public const string LkMsdynActiveicdextensionCreatedonbehalfby = "lk_msdyn_activeicdextension_createdonbehalfby";
+				public const string LkMsdynActiveicdextensionModifiedby = "lk_msdyn_activeicdextension_modifiedby";
+				public const string LkMsdynActiveicdextensionModifiedonbehalfby = "lk_msdyn_activeicdextension_modifiedonbehalfby";
 				public const string LkMsdynActivityanalysiscleanupstateCreatedby = "lk_msdyn_activityanalysiscleanupstate_createdby";
 				public const string LkMsdynActivityanalysiscleanupstateCreatedonbehalfby = "lk_msdyn_activityanalysiscleanupstate_createdonbehalfby";
 				public const string LkMsdynActivityanalysiscleanupstateModifiedby = "lk_msdyn_activityanalysiscleanupstate_modifiedby";
@@ -7239,6 +7719,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynActivityanalysisconfigCreatedonbehalfby = "lk_msdyn_activityanalysisconfig_createdonbehalfby";
 				public const string LkMsdynActivityanalysisconfigModifiedby = "lk_msdyn_activityanalysisconfig_modifiedby";
 				public const string LkMsdynActivityanalysisconfigModifiedonbehalfby = "lk_msdyn_activityanalysisconfig_modifiedonbehalfby";
+				public const string LkMsdynActualCreatedby = "lk_msdyn_actual_createdby";
+				public const string LkMsdynActualCreatedonbehalfby = "lk_msdyn_actual_createdonbehalfby";
+				public const string LkMsdynActualModifiedby = "lk_msdyn_actual_modifiedby";
+				public const string LkMsdynActualModifiedonbehalfby = "lk_msdyn_actual_modifiedonbehalfby";
 				public const string LkMsdynAdaptivecardconfigurationCreatedby = "lk_msdyn_adaptivecardconfiguration_createdby";
 				public const string LkMsdynAdaptivecardconfigurationCreatedonbehalfby = "lk_msdyn_adaptivecardconfiguration_createdonbehalfby";
 				public const string LkMsdynAdaptivecardconfigurationModifiedby = "lk_msdyn_adaptivecardconfiguration_modifiedby";
@@ -7251,18 +7735,78 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAdminappstateCreatedonbehalfby = "lk_msdyn_adminappstate_createdonbehalfby";
 				public const string LkMsdynAdminappstateModifiedby = "lk_msdyn_adminappstate_modifiedby";
 				public const string LkMsdynAdminappstateModifiedonbehalfby = "lk_msdyn_adminappstate_modifiedonbehalfby";
+				public const string LkMsdynAgentcapacityprofileunitCreatedby = "lk_msdyn_agentcapacityprofileunit_createdby";
+				public const string LkMsdynAgentcapacityprofileunitCreatedonbehalfby = "lk_msdyn_agentcapacityprofileunit_createdonbehalfby";
+				public const string LkMsdynAgentcapacityprofileunitModifiedby = "lk_msdyn_agentcapacityprofileunit_modifiedby";
+				public const string LkMsdynAgentcapacityprofileunitModifiedonbehalfby = "lk_msdyn_agentcapacityprofileunit_modifiedonbehalfby";
 				public const string LkMsdynAgentcapacityupdatehistoryCreatedby = "lk_msdyn_agentcapacityupdatehistory_createdby";
 				public const string LkMsdynAgentcapacityupdatehistoryCreatedonbehalfby = "lk_msdyn_agentcapacityupdatehistory_createdonbehalfby";
 				public const string LkMsdynAgentcapacityupdatehistoryModifiedby = "lk_msdyn_agentcapacityupdatehistory_modifiedby";
 				public const string LkMsdynAgentcapacityupdatehistoryModifiedonbehalfby = "lk_msdyn_agentcapacityupdatehistory_modifiedonbehalfby";
+				public const string LkMsdynAgentchannelstateCreatedby = "lk_msdyn_agentchannelstate_createdby";
+				public const string LkMsdynAgentchannelstateCreatedonbehalfby = "lk_msdyn_agentchannelstate_createdonbehalfby";
+				public const string LkMsdynAgentchannelstateModifiedby = "lk_msdyn_agentchannelstate_modifiedby";
+				public const string LkMsdynAgentchannelstateModifiedonbehalfby = "lk_msdyn_agentchannelstate_modifiedonbehalfby";
+				public const string LkMsdynAgentcopilotsettingCreatedby = "lk_msdyn_agentcopilotsetting_createdby";
+				public const string LkMsdynAgentcopilotsettingCreatedonbehalfby = "lk_msdyn_agentcopilotsetting_createdonbehalfby";
+				public const string LkMsdynAgentcopilotsettingModifiedby = "lk_msdyn_agentcopilotsetting_modifiedby";
+				public const string LkMsdynAgentcopilotsettingModifiedonbehalfby = "lk_msdyn_agentcopilotsetting_modifiedonbehalfby";
 				public const string LkMsdynAgentresourceforecastingCreatedby = "lk_msdyn_agentresourceforecasting_createdby";
 				public const string LkMsdynAgentresourceforecastingCreatedonbehalfby = "lk_msdyn_agentresourceforecasting_createdonbehalfby";
 				public const string LkMsdynAgentresourceforecastingModifiedby = "lk_msdyn_agentresourceforecasting_modifiedby";
 				public const string LkMsdynAgentresourceforecastingModifiedonbehalfby = "lk_msdyn_agentresourceforecasting_modifiedonbehalfby";
+				public const string LkMsdynAgentstatusCreatedby = "lk_msdyn_agentstatus_createdby";
+				public const string LkMsdynAgentstatusCreatedonbehalfby = "lk_msdyn_agentstatus_createdonbehalfby";
+				public const string LkMsdynAgentstatusModifiedby = "lk_msdyn_agentstatus_modifiedby";
+				public const string LkMsdynAgentstatusModifiedonbehalfby = "lk_msdyn_agentstatus_modifiedonbehalfby";
 				public const string LkMsdynAgentstatushistoryCreatedby = "lk_msdyn_agentstatushistory_createdby";
 				public const string LkMsdynAgentstatushistoryCreatedonbehalfby = "lk_msdyn_agentstatushistory_createdonbehalfby";
 				public const string LkMsdynAgentstatushistoryModifiedby = "lk_msdyn_agentstatushistory_modifiedby";
 				public const string LkMsdynAgentstatushistoryModifiedonbehalfby = "lk_msdyn_agentstatushistory_modifiedonbehalfby";
+				public const string LkMsdynAgreementCreatedby = "lk_msdyn_agreement_createdby";
+				public const string LkMsdynAgreementCreatedonbehalfby = "lk_msdyn_agreement_createdonbehalfby";
+				public const string LkMsdynAgreementModifiedby = "lk_msdyn_agreement_modifiedby";
+				public const string LkMsdynAgreementModifiedonbehalfby = "lk_msdyn_agreement_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingdateCreatedby = "lk_msdyn_agreementbookingdate_createdby";
+				public const string LkMsdynAgreementbookingdateCreatedonbehalfby = "lk_msdyn_agreementbookingdate_createdonbehalfby";
+				public const string LkMsdynAgreementbookingdateModifiedby = "lk_msdyn_agreementbookingdate_modifiedby";
+				public const string LkMsdynAgreementbookingdateModifiedonbehalfby = "lk_msdyn_agreementbookingdate_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingincidentCreatedby = "lk_msdyn_agreementbookingincident_createdby";
+				public const string LkMsdynAgreementbookingincidentCreatedonbehalfby = "lk_msdyn_agreementbookingincident_createdonbehalfby";
+				public const string LkMsdynAgreementbookingincidentModifiedby = "lk_msdyn_agreementbookingincident_modifiedby";
+				public const string LkMsdynAgreementbookingincidentModifiedonbehalfby = "lk_msdyn_agreementbookingincident_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingproductCreatedby = "lk_msdyn_agreementbookingproduct_createdby";
+				public const string LkMsdynAgreementbookingproductCreatedonbehalfby = "lk_msdyn_agreementbookingproduct_createdonbehalfby";
+				public const string LkMsdynAgreementbookingproductModifiedby = "lk_msdyn_agreementbookingproduct_modifiedby";
+				public const string LkMsdynAgreementbookingproductModifiedonbehalfby = "lk_msdyn_agreementbookingproduct_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingserviceCreatedby = "lk_msdyn_agreementbookingservice_createdby";
+				public const string LkMsdynAgreementbookingserviceCreatedonbehalfby = "lk_msdyn_agreementbookingservice_createdonbehalfby";
+				public const string LkMsdynAgreementbookingserviceModifiedby = "lk_msdyn_agreementbookingservice_modifiedby";
+				public const string LkMsdynAgreementbookingserviceModifiedonbehalfby = "lk_msdyn_agreementbookingservice_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingservicetaskCreatedby = "lk_msdyn_agreementbookingservicetask_createdby";
+				public const string LkMsdynAgreementbookingservicetaskCreatedonbehalfby = "lk_msdyn_agreementbookingservicetask_createdonbehalfby";
+				public const string LkMsdynAgreementbookingservicetaskModifiedby = "lk_msdyn_agreementbookingservicetask_modifiedby";
+				public const string LkMsdynAgreementbookingservicetaskModifiedonbehalfby = "lk_msdyn_agreementbookingservicetask_modifiedonbehalfby";
+				public const string LkMsdynAgreementbookingsetupCreatedby = "lk_msdyn_agreementbookingsetup_createdby";
+				public const string LkMsdynAgreementbookingsetupCreatedonbehalfby = "lk_msdyn_agreementbookingsetup_createdonbehalfby";
+				public const string LkMsdynAgreementbookingsetupModifiedby = "lk_msdyn_agreementbookingsetup_modifiedby";
+				public const string LkMsdynAgreementbookingsetupModifiedonbehalfby = "lk_msdyn_agreementbookingsetup_modifiedonbehalfby";
+				public const string LkMsdynAgreementinvoicedateCreatedby = "lk_msdyn_agreementinvoicedate_createdby";
+				public const string LkMsdynAgreementinvoicedateCreatedonbehalfby = "lk_msdyn_agreementinvoicedate_createdonbehalfby";
+				public const string LkMsdynAgreementinvoicedateModifiedby = "lk_msdyn_agreementinvoicedate_modifiedby";
+				public const string LkMsdynAgreementinvoicedateModifiedonbehalfby = "lk_msdyn_agreementinvoicedate_modifiedonbehalfby";
+				public const string LkMsdynAgreementinvoiceproductCreatedby = "lk_msdyn_agreementinvoiceproduct_createdby";
+				public const string LkMsdynAgreementinvoiceproductCreatedonbehalfby = "lk_msdyn_agreementinvoiceproduct_createdonbehalfby";
+				public const string LkMsdynAgreementinvoiceproductModifiedby = "lk_msdyn_agreementinvoiceproduct_modifiedby";
+				public const string LkMsdynAgreementinvoiceproductModifiedonbehalfby = "lk_msdyn_agreementinvoiceproduct_modifiedonbehalfby";
+				public const string LkMsdynAgreementinvoicesetupCreatedby = "lk_msdyn_agreementinvoicesetup_createdby";
+				public const string LkMsdynAgreementinvoicesetupCreatedonbehalfby = "lk_msdyn_agreementinvoicesetup_createdonbehalfby";
+				public const string LkMsdynAgreementinvoicesetupModifiedby = "lk_msdyn_agreementinvoicesetup_modifiedby";
+				public const string LkMsdynAgreementinvoicesetupModifiedonbehalfby = "lk_msdyn_agreementinvoicesetup_modifiedonbehalfby";
+				public const string LkMsdynAgreementsubstatusCreatedby = "lk_msdyn_agreementsubstatus_createdby";
+				public const string LkMsdynAgreementsubstatusCreatedonbehalfby = "lk_msdyn_agreementsubstatus_createdonbehalfby";
+				public const string LkMsdynAgreementsubstatusModifiedby = "lk_msdyn_agreementsubstatus_modifiedby";
+				public const string LkMsdynAgreementsubstatusModifiedonbehalfby = "lk_msdyn_agreementsubstatus_modifiedonbehalfby";
 				public const string LkMsdynAibdatasetCreatedby = "lk_msdyn_aibdataset_createdby";
 				public const string LkMsdynAibdatasetCreatedonbehalfby = "lk_msdyn_aibdataset_createdonbehalfby";
 				public const string LkMsdynAibdatasetModifiedby = "lk_msdyn_aibdataset_modifiedby";
@@ -7299,6 +7843,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAicontactsuggestionCreatedonbehalfby = "lk_msdyn_aicontactsuggestion_createdonbehalfby";
 				public const string LkMsdynAicontactsuggestionModifiedby = "lk_msdyn_aicontactsuggestion_modifiedby";
 				public const string LkMsdynAicontactsuggestionModifiedonbehalfby = "lk_msdyn_aicontactsuggestion_modifiedonbehalfby";
+				public const string LkMsdynAieventCreatedby = "lk_msdyn_aievent_createdby";
+				public const string LkMsdynAieventCreatedonbehalfby = "lk_msdyn_aievent_createdonbehalfby";
+				public const string LkMsdynAieventModifiedby = "lk_msdyn_aievent_modifiedby";
+				public const string LkMsdynAieventModifiedonbehalfby = "lk_msdyn_aievent_modifiedonbehalfby";
 				public const string LkMsdynAifptrainingdocumentCreatedby = "lk_msdyn_aifptrainingdocument_createdby";
 				public const string LkMsdynAifptrainingdocumentCreatedonbehalfby = "lk_msdyn_aifptrainingdocument_createdonbehalfby";
 				public const string LkMsdynAifptrainingdocumentModifiedby = "lk_msdyn_aifptrainingdocument_modifiedby";
@@ -7335,6 +7883,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAnalysisjobCreatedonbehalfby = "lk_msdyn_analysisjob_createdonbehalfby";
 				public const string LkMsdynAnalysisjobModifiedby = "lk_msdyn_analysisjob_modifiedby";
 				public const string LkMsdynAnalysisjobModifiedonbehalfby = "lk_msdyn_analysisjob_modifiedonbehalfby";
+				public const string LkMsdynAnalysisoverrideCreatedby = "lk_msdyn_analysisoverride_createdby";
+				public const string LkMsdynAnalysisoverrideCreatedonbehalfby = "lk_msdyn_analysisoverride_createdonbehalfby";
+				public const string LkMsdynAnalysisoverrideModifiedby = "lk_msdyn_analysisoverride_modifiedby";
+				public const string LkMsdynAnalysisoverrideModifiedonbehalfby = "lk_msdyn_analysisoverride_modifiedonbehalfby";
 				public const string LkMsdynAnalysisresultCreatedby = "lk_msdyn_analysisresult_createdby";
 				public const string LkMsdynAnalysisresultCreatedonbehalfby = "lk_msdyn_analysisresult_createdonbehalfby";
 				public const string LkMsdynAnalysisresultModifiedby = "lk_msdyn_analysisresult_modifiedby";
@@ -7359,6 +7911,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAppconfigurationCreatedonbehalfby = "lk_msdyn_appconfiguration_createdonbehalfby";
 				public const string LkMsdynAppconfigurationModifiedby = "lk_msdyn_appconfiguration_modifiedby";
 				public const string LkMsdynAppconfigurationModifiedonbehalfby = "lk_msdyn_appconfiguration_modifiedonbehalfby";
+				public const string LkMsdynAppcopilotconfigurationCreatedby = "lk_msdyn_appcopilotconfiguration_createdby";
+				public const string LkMsdynAppcopilotconfigurationCreatedonbehalfby = "lk_msdyn_appcopilotconfiguration_createdonbehalfby";
+				public const string LkMsdynAppcopilotconfigurationModifiedby = "lk_msdyn_appcopilotconfiguration_modifiedby";
+				public const string LkMsdynAppcopilotconfigurationModifiedonbehalfby = "lk_msdyn_appcopilotconfiguration_modifiedonbehalfby";
 				public const string LkMsdynAppinsightsmetadataCreatedby = "lk_msdyn_appinsightsmetadata_createdby";
 				public const string LkMsdynAppinsightsmetadataCreatedonbehalfby = "lk_msdyn_appinsightsmetadata_createdonbehalfby";
 				public const string LkMsdynAppinsightsmetadataModifiedby = "lk_msdyn_appinsightsmetadata_modifiedby";
@@ -7375,10 +7931,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAppprofilerolemappingCreatedonbehalfby = "lk_msdyn_appprofilerolemapping_createdonbehalfby";
 				public const string LkMsdynAppprofilerolemappingModifiedby = "lk_msdyn_appprofilerolemapping_modifiedby";
 				public const string LkMsdynAppprofilerolemappingModifiedonbehalfby = "lk_msdyn_appprofilerolemapping_modifiedonbehalfby";
+				public const string LkMsdynApprovalsetCreatedby = "lk_msdyn_approvalset_createdby";
+				public const string LkMsdynApprovalsetCreatedonbehalfby = "lk_msdyn_approvalset_createdonbehalfby";
+				public const string LkMsdynApprovalsetModifiedby = "lk_msdyn_approvalset_modifiedby";
+				public const string LkMsdynApprovalsetModifiedonbehalfby = "lk_msdyn_approvalset_modifiedonbehalfby";
+				public const string LkMsdynAppstateCreatedby = "lk_msdyn_appstate_createdby";
+				public const string LkMsdynAppstateCreatedonbehalfby = "lk_msdyn_appstate_createdonbehalfby";
+				public const string LkMsdynAppstateModifiedby = "lk_msdyn_appstate_modifiedby";
+				public const string LkMsdynAppstateModifiedonbehalfby = "lk_msdyn_appstate_modifiedonbehalfby";
 				public const string LkMsdynAssetcategorytemplateassociationCreatedby = "lk_msdyn_assetcategorytemplateassociation_createdby";
 				public const string LkMsdynAssetcategorytemplateassociationCreatedonbehalfby = "lk_msdyn_assetcategorytemplateassociation_createdonbehalfby";
 				public const string LkMsdynAssetcategorytemplateassociationModifiedby = "lk_msdyn_assetcategorytemplateassociation_modifiedby";
 				public const string LkMsdynAssetcategorytemplateassociationModifiedonbehalfby = "lk_msdyn_assetcategorytemplateassociation_modifiedonbehalfby";
+				public const string LkMsdynAssetsuggestionssettingCreatedby = "lk_msdyn_assetsuggestionssetting_createdby";
+				public const string LkMsdynAssetsuggestionssettingCreatedonbehalfby = "lk_msdyn_assetsuggestionssetting_createdonbehalfby";
+				public const string LkMsdynAssetsuggestionssettingModifiedby = "lk_msdyn_assetsuggestionssetting_modifiedby";
+				public const string LkMsdynAssetsuggestionssettingModifiedonbehalfby = "lk_msdyn_assetsuggestionssetting_modifiedonbehalfby";
 				public const string LkMsdynAssettemplateassociationCreatedby = "lk_msdyn_assettemplateassociation_createdby";
 				public const string LkMsdynAssettemplateassociationCreatedonbehalfby = "lk_msdyn_assettemplateassociation_createdonbehalfby";
 				public const string LkMsdynAssettemplateassociationModifiedby = "lk_msdyn_assettemplateassociation_modifiedby";
@@ -7427,10 +7995,90 @@ namespace dgt.power.dataverse
 				public const string LkMsdynAutocapturesettingsCreatedonbehalfby = "lk_msdyn_autocapturesettings_createdonbehalfby";
 				public const string LkMsdynAutocapturesettingsModifiedby = "lk_msdyn_autocapturesettings_modifiedby";
 				public const string LkMsdynAutocapturesettingsModifiedonbehalfby = "lk_msdyn_autocapturesettings_modifiedonbehalfby";
+				public const string LkMsdynAutonomouscasecreationruleCreatedby = "lk_msdyn_autonomouscasecreationrule_createdby";
+				public const string LkMsdynAutonomouscasecreationruleCreatedonbehalfby = "lk_msdyn_autonomouscasecreationrule_createdonbehalfby";
+				public const string LkMsdynAutonomouscasecreationruleModifiedby = "lk_msdyn_autonomouscasecreationrule_modifiedby";
+				public const string LkMsdynAutonomouscasecreationruleModifiedonbehalfby = "lk_msdyn_autonomouscasecreationrule_modifiedonbehalfby";
+				public const string LkMsdynBatchjobCreatedby = "lk_msdyn_batchjob_createdby";
+				public const string LkMsdynBatchjobCreatedonbehalfby = "lk_msdyn_batchjob_createdonbehalfby";
+				public const string LkMsdynBatchjobModifiedby = "lk_msdyn_batchjob_modifiedby";
+				public const string LkMsdynBatchjobModifiedonbehalfby = "lk_msdyn_batchjob_modifiedonbehalfby";
+				public const string LkMsdynBgjobledgerCreatedby = "lk_msdyn_bgjobledger_createdby";
+				public const string LkMsdynBgjobledgerCreatedonbehalfby = "lk_msdyn_bgjobledger_createdonbehalfby";
+				public const string LkMsdynBgjobledgerModifiedby = "lk_msdyn_bgjobledger_modifiedby";
+				public const string LkMsdynBgjobledgerModifiedonbehalfby = "lk_msdyn_bgjobledger_modifiedonbehalfby";
+				public const string LkMsdynBookableresourceassociationCreatedby = "lk_msdyn_bookableresourceassociation_createdby";
+				public const string LkMsdynBookableresourceassociationCreatedonbehalfby = "lk_msdyn_bookableresourceassociation_createdonbehalfby";
+				public const string LkMsdynBookableresourceassociationModifiedby = "lk_msdyn_bookableresourceassociation_modifiedby";
+				public const string LkMsdynBookableresourceassociationModifiedonbehalfby = "lk_msdyn_bookableresourceassociation_modifiedonbehalfby";
+				public const string LkMsdynBookableresourcebookingquicknoteCreatedby = "lk_msdyn_bookableresourcebookingquicknote_createdby";
+				public const string LkMsdynBookableresourcebookingquicknoteCreatedonbehalfby = "lk_msdyn_bookableresourcebookingquicknote_createdonbehalfby";
+				public const string LkMsdynBookableresourcebookingquicknoteModifiedby = "lk_msdyn_bookableresourcebookingquicknote_modifiedby";
+				public const string LkMsdynBookableresourcebookingquicknoteModifiedonbehalfby = "lk_msdyn_bookableresourcebookingquicknote_modifiedonbehalfby";
 				public const string LkMsdynBookableresourcecapacityprofileCreatedby = "lk_msdyn_bookableresourcecapacityprofile_createdby";
 				public const string LkMsdynBookableresourcecapacityprofileCreatedonbehalfby = "lk_msdyn_bookableresourcecapacityprofile_createdonbehalfby";
 				public const string LkMsdynBookableresourcecapacityprofileModifiedby = "lk_msdyn_bookableresourcecapacityprofile_modifiedby";
 				public const string LkMsdynBookableresourcecapacityprofileModifiedonbehalfby = "lk_msdyn_bookableresourcecapacityprofile_modifiedonbehalfby";
+				public const string LkMsdynBookingalertstatusCreatedby = "lk_msdyn_bookingalertstatus_createdby";
+				public const string LkMsdynBookingalertstatusCreatedonbehalfby = "lk_msdyn_bookingalertstatus_createdonbehalfby";
+				public const string LkMsdynBookingalertstatusModifiedby = "lk_msdyn_bookingalertstatus_modifiedby";
+				public const string LkMsdynBookingalertstatusModifiedonbehalfby = "lk_msdyn_bookingalertstatus_modifiedonbehalfby";
+				public const string LkMsdynBookingchangeCreatedby = "lk_msdyn_bookingchange_createdby";
+				public const string LkMsdynBookingchangeCreatedonbehalfby = "lk_msdyn_bookingchange_createdonbehalfby";
+				public const string LkMsdynBookingchangeModifiedby = "lk_msdyn_bookingchange_modifiedby";
+				public const string LkMsdynBookingchangeModifiedonbehalfby = "lk_msdyn_bookingchange_modifiedonbehalfby";
+				public const string LkMsdynBookingjournalCreatedby = "lk_msdyn_bookingjournal_createdby";
+				public const string LkMsdynBookingjournalCreatedonbehalfby = "lk_msdyn_bookingjournal_createdonbehalfby";
+				public const string LkMsdynBookingjournalModifiedby = "lk_msdyn_bookingjournal_modifiedby";
+				public const string LkMsdynBookingjournalModifiedonbehalfby = "lk_msdyn_bookingjournal_modifiedonbehalfby";
+				public const string LkMsdynBookingruleCreatedby = "lk_msdyn_bookingrule_createdby";
+				public const string LkMsdynBookingruleCreatedonbehalfby = "lk_msdyn_bookingrule_createdonbehalfby";
+				public const string LkMsdynBookingruleModifiedby = "lk_msdyn_bookingrule_modifiedby";
+				public const string LkMsdynBookingruleModifiedonbehalfby = "lk_msdyn_bookingrule_modifiedonbehalfby";
+				public const string LkMsdynBookingsetupmetadataCreatedby = "lk_msdyn_bookingsetupmetadata_createdby";
+				public const string LkMsdynBookingsetupmetadataCreatedonbehalfby = "lk_msdyn_bookingsetupmetadata_createdonbehalfby";
+				public const string LkMsdynBookingsetupmetadataModifiedby = "lk_msdyn_bookingsetupmetadata_modifiedby";
+				public const string LkMsdynBookingsetupmetadataModifiedonbehalfby = "lk_msdyn_bookingsetupmetadata_modifiedonbehalfby";
+				public const string LkMsdynBookingtimestampCreatedby = "lk_msdyn_bookingtimestamp_createdby";
+				public const string LkMsdynBookingtimestampCreatedonbehalfby = "lk_msdyn_bookingtimestamp_createdonbehalfby";
+				public const string LkMsdynBookingtimestampModifiedby = "lk_msdyn_bookingtimestamp_modifiedby";
+				public const string LkMsdynBookingtimestampModifiedonbehalfby = "lk_msdyn_bookingtimestamp_modifiedonbehalfby";
+				public const string LkMsdynBotsessionCreatedby = "lk_msdyn_botsession_createdby";
+				public const string LkMsdynBotsessionCreatedonbehalfby = "lk_msdyn_botsession_createdonbehalfby";
+				public const string LkMsdynBotsessionModifiedby = "lk_msdyn_botsession_modifiedby";
+				public const string LkMsdynBotsessionModifiedonbehalfby = "lk_msdyn_botsession_modifiedonbehalfby";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Createdby = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_createdby";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Createdonbehalfby = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_createdonbehalfby";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Modifiedby = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_modifiedby";
+				public const string LkMsdynBpf2c5fe86acc8b414b8322ae571000c799Modifiedonbehalfby = "lk_msdyn_bpf_2c5fe86acc8b414b8322ae571000c799_modifiedonbehalfby";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bCreatedby = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_createdby";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bCreatedonbehalfby = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_createdonbehalfby";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bModifiedby = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_modifiedby";
+				public const string LkMsdynBpf477c16f59170487b8b4dc895c5dcd09bModifiedonbehalfby = "lk_msdyn_bpf_477c16f59170487b8b4dc895c5dcd09b_modifiedonbehalfby";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Createdby = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_createdby";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Createdonbehalfby = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_createdonbehalfby";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Modifiedby = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_modifiedby";
+				public const string LkMsdynBpf665e73aa18c247d886bfc50499c73b82Modifiedonbehalfby = "lk_msdyn_bpf_665e73aa18c247d886bfc50499c73b82_modifiedonbehalfby";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bCreatedby = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_createdby";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bCreatedonbehalfby = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_createdonbehalfby";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bModifiedby = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_modifiedby";
+				public const string LkMsdynBpf989e9b1857e24af18787d5143b67523bModifiedonbehalfby = "lk_msdyn_bpf_989e9b1857e24af18787d5143b67523b_modifiedonbehalfby";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Createdby = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_createdby";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Createdonbehalfby = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_createdonbehalfby";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Modifiedby = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_modifiedby";
+				public const string LkMsdynBpfBaa0a411a239410cb8bded8b5fdd88e3Modifiedonbehalfby = "lk_msdyn_bpf_baa0a411a239410cb8bded8b5fdd88e3_modifiedonbehalfby";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Createdby = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_createdby";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Createdonbehalfby = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_createdonbehalfby";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Modifiedby = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_modifiedby";
+				public const string LkMsdynBpfD3d97bac8c294105840e99e37a9d1c39Modifiedonbehalfby = "lk_msdyn_bpf_d3d97bac8c294105840e99e37a9d1c39_modifiedonbehalfby";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dCreatedby = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_createdby";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dCreatedonbehalfby = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_createdonbehalfby";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dModifiedby = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_modifiedby";
+				public const string LkMsdynBpfD8f9dc7f099f44db9d641dd81fbd470dModifiedonbehalfby = "lk_msdyn_bpf_d8f9dc7f099f44db9d641dd81fbd470d_modifiedonbehalfby";
+				public const string LkMsdynBusinessclosureCreatedby = "lk_msdyn_businessclosure_createdby";
+				public const string LkMsdynBusinessclosureCreatedonbehalfby = "lk_msdyn_businessclosure_createdonbehalfby";
+				public const string LkMsdynBusinessclosureModifiedby = "lk_msdyn_businessclosure_modifiedby";
+				public const string LkMsdynBusinessclosureModifiedonbehalfby = "lk_msdyn_businessclosure_modifiedonbehalfby";
 				public const string LkMsdynCallablecontextCreatedby = "lk_msdyn_callablecontext_createdby";
 				public const string LkMsdynCallablecontextCreatedonbehalfby = "lk_msdyn_callablecontext_createdonbehalfby";
 				public const string LkMsdynCallablecontextModifiedby = "lk_msdyn_callablecontext_modifiedby";
@@ -7471,6 +8119,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynCdsentityengagementctxCreatedonbehalfby = "lk_msdyn_cdsentityengagementctx_createdonbehalfby";
 				public const string LkMsdynCdsentityengagementctxModifiedby = "lk_msdyn_cdsentityengagementctx_modifiedby";
 				public const string LkMsdynCdsentityengagementctxModifiedonbehalfby = "lk_msdyn_cdsentityengagementctx_modifiedonbehalfby";
+				public const string LkMsdynChannelCreatedby = "lk_msdyn_channel_createdby";
+				public const string LkMsdynChannelCreatedonbehalfby = "lk_msdyn_channel_createdonbehalfby";
+				public const string LkMsdynChannelModifiedby = "lk_msdyn_channel_modifiedby";
+				public const string LkMsdynChannelModifiedonbehalfby = "lk_msdyn_channel_modifiedonbehalfby";
 				public const string LkMsdynChannelcapabilityCreatedby = "lk_msdyn_channelcapability_createdby";
 				public const string LkMsdynChannelcapabilityCreatedonbehalfby = "lk_msdyn_channelcapability_createdonbehalfby";
 				public const string LkMsdynChannelcapabilityModifiedby = "lk_msdyn_channelcapability_modifiedby";
@@ -7495,6 +8147,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynChannelinstanceaccountCreatedonbehalfby = "lk_msdyn_channelinstanceaccount_createdonbehalfby";
 				public const string LkMsdynChannelinstanceaccountModifiedby = "lk_msdyn_channelinstanceaccount_modifiedby";
 				public const string LkMsdynChannelinstanceaccountModifiedonbehalfby = "lk_msdyn_channelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdynChannelmessageattachmentCreatedby = "lk_msdyn_channelmessageattachment_createdby";
+				public const string LkMsdynChannelmessageattachmentCreatedonbehalfby = "lk_msdyn_channelmessageattachment_createdonbehalfby";
+				public const string LkMsdynChannelmessageattachmentModifiedby = "lk_msdyn_channelmessageattachment_modifiedby";
+				public const string LkMsdynChannelmessageattachmentModifiedonbehalfby = "lk_msdyn_channelmessageattachment_modifiedonbehalfby";
+				public const string LkMsdynChannelmessagecontextpartCreatedby = "lk_msdyn_channelmessagecontextpart_createdby";
+				public const string LkMsdynChannelmessagecontextpartCreatedonbehalfby = "lk_msdyn_channelmessagecontextpart_createdonbehalfby";
+				public const string LkMsdynChannelmessagecontextpartModifiedby = "lk_msdyn_channelmessagecontextpart_modifiedby";
+				public const string LkMsdynChannelmessagecontextpartModifiedonbehalfby = "lk_msdyn_channelmessagecontextpart_modifiedonbehalfby";
 				public const string LkMsdynChannelmessagepartCreatedby = "lk_msdyn_channelmessagepart_createdby";
 				public const string LkMsdynChannelmessagepartCreatedonbehalfby = "lk_msdyn_channelmessagepart_createdonbehalfby";
 				public const string LkMsdynChannelmessagepartModifiedby = "lk_msdyn_channelmessagepart_modifiedby";
@@ -7503,10 +8163,34 @@ namespace dgt.power.dataverse
 				public const string LkMsdynChannelproviderCreatedonbehalfby = "lk_msdyn_channelprovider_createdonbehalfby";
 				public const string LkMsdynChannelproviderModifiedby = "lk_msdyn_channelprovider_modifiedby";
 				public const string LkMsdynChannelproviderModifiedonbehalfby = "lk_msdyn_channelprovider_modifiedonbehalfby";
+				public const string LkMsdynCharacteristicreqforteammemberCreatedby = "lk_msdyn_characteristicreqforteammember_createdby";
+				public const string LkMsdynCharacteristicreqforteammemberCreatedonbehalfby = "lk_msdyn_characteristicreqforteammember_createdonbehalfby";
+				public const string LkMsdynCharacteristicreqforteammemberModifiedby = "lk_msdyn_characteristicreqforteammember_modifiedby";
+				public const string LkMsdynCharacteristicreqforteammemberModifiedonbehalfby = "lk_msdyn_characteristicreqforteammember_modifiedonbehalfby";
+				public const string LkMsdynChatansweroptionCreatedby = "lk_msdyn_chatansweroption_createdby";
+				public const string LkMsdynChatansweroptionCreatedonbehalfby = "lk_msdyn_chatansweroption_createdonbehalfby";
+				public const string LkMsdynChatansweroptionModifiedby = "lk_msdyn_chatansweroption_modifiedby";
+				public const string LkMsdynChatansweroptionModifiedonbehalfby = "lk_msdyn_chatansweroption_modifiedonbehalfby";
+				public const string LkMsdynChatquestionnaireresponseCreatedby = "lk_msdyn_chatquestionnaireresponse_createdby";
+				public const string LkMsdynChatquestionnaireresponseCreatedonbehalfby = "lk_msdyn_chatquestionnaireresponse_createdonbehalfby";
+				public const string LkMsdynChatquestionnaireresponseModifiedby = "lk_msdyn_chatquestionnaireresponse_modifiedby";
+				public const string LkMsdynChatquestionnaireresponseModifiedonbehalfby = "lk_msdyn_chatquestionnaireresponse_modifiedonbehalfby";
+				public const string LkMsdynChatquestionnaireresponseitemCreatedby = "lk_msdyn_chatquestionnaireresponseitem_createdby";
+				public const string LkMsdynChatquestionnaireresponseitemCreatedonbehalfby = "lk_msdyn_chatquestionnaireresponseitem_createdonbehalfby";
+				public const string LkMsdynChatquestionnaireresponseitemModifiedby = "lk_msdyn_chatquestionnaireresponseitem_modifiedby";
+				public const string LkMsdynChatquestionnaireresponseitemModifiedonbehalfby = "lk_msdyn_chatquestionnaireresponseitem_modifiedonbehalfby";
+				public const string LkMsdynChatwidgetlanguageCreatedby = "lk_msdyn_chatwidgetlanguage_createdby";
+				public const string LkMsdynChatwidgetlanguageCreatedonbehalfby = "lk_msdyn_chatwidgetlanguage_createdonbehalfby";
+				public const string LkMsdynChatwidgetlanguageModifiedby = "lk_msdyn_chatwidgetlanguage_modifiedby";
+				public const string LkMsdynChatwidgetlanguageModifiedonbehalfby = "lk_msdyn_chatwidgetlanguage_modifiedonbehalfby";
 				public const string LkMsdynCiproviderCreatedby = "lk_msdyn_ciprovider_createdby";
 				public const string LkMsdynCiproviderCreatedonbehalfby = "lk_msdyn_ciprovider_createdonbehalfby";
 				public const string LkMsdynCiproviderModifiedby = "lk_msdyn_ciprovider_modifiedby";
 				public const string LkMsdynCiproviderModifiedonbehalfby = "lk_msdyn_ciprovider_modifiedonbehalfby";
+				public const string LkMsdynClientextensionCreatedby = "lk_msdyn_clientextension_createdby";
+				public const string LkMsdynClientextensionCreatedonbehalfby = "lk_msdyn_clientextension_createdonbehalfby";
+				public const string LkMsdynClientextensionModifiedby = "lk_msdyn_clientextension_modifiedby";
+				public const string LkMsdynClientextensionModifiedonbehalfby = "lk_msdyn_clientextension_modifiedonbehalfby";
 				public const string LkMsdynCollabgraphresourceCreatedby = "lk_msdyn_collabgraphresource_createdby";
 				public const string LkMsdynCollabgraphresourceCreatedonbehalfby = "lk_msdyn_collabgraphresource_createdonbehalfby";
 				public const string LkMsdynCollabgraphresourceModifiedby = "lk_msdyn_collabgraphresource_modifiedby";
@@ -7515,6 +8199,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynCollabspaceteamassociationCreatedonbehalfby = "lk_msdyn_collabspaceteamassociation_createdonbehalfby";
 				public const string LkMsdynCollabspaceteamassociationModifiedby = "lk_msdyn_collabspaceteamassociation_modifiedby";
 				public const string LkMsdynCollabspaceteamassociationModifiedonbehalfby = "lk_msdyn_collabspaceteamassociation_modifiedonbehalfby";
+				public const string LkMsdynConfigurationCreatedby = "lk_msdyn_configuration_createdby";
+				public const string LkMsdynConfigurationCreatedonbehalfby = "lk_msdyn_configuration_createdonbehalfby";
+				public const string LkMsdynConfigurationModifiedby = "lk_msdyn_configuration_modifiedby";
+				public const string LkMsdynConfigurationModifiedonbehalfby = "lk_msdyn_configuration_modifiedonbehalfby";
 				public const string LkMsdynConsoleapplicationnotificationfieldCreatedby = "lk_msdyn_consoleapplicationnotificationfield_createdby";
 				public const string LkMsdynConsoleapplicationnotificationfieldCreatedonbehalfby = "lk_msdyn_consoleapplicationnotificationfield_createdonbehalfby";
 				public const string LkMsdynConsoleapplicationnotificationfieldModifiedby = "lk_msdyn_consoleapplicationnotificationfield_modifiedby";
@@ -7551,6 +8239,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynContactkpiitemCreatedonbehalfby = "lk_msdyn_contactkpiitem_createdonbehalfby";
 				public const string LkMsdynContactkpiitemModifiedby = "lk_msdyn_contactkpiitem_modifiedby";
 				public const string LkMsdynContactkpiitemModifiedonbehalfby = "lk_msdyn_contactkpiitem_modifiedonbehalfby";
+				public const string LkMsdynContactpricelistCreatedby = "lk_msdyn_contactpricelist_createdby";
+				public const string LkMsdynContactpricelistCreatedonbehalfby = "lk_msdyn_contactpricelist_createdonbehalfby";
+				public const string LkMsdynContactpricelistModifiedby = "lk_msdyn_contactpricelist_modifiedby";
+				public const string LkMsdynContactpricelistModifiedonbehalfby = "lk_msdyn_contactpricelist_modifiedonbehalfby";
 				public const string LkMsdynContactsuggestionruleCreatedby = "lk_msdyn_contactsuggestionrule_createdby";
 				public const string LkMsdynContactsuggestionruleCreatedonbehalfby = "lk_msdyn_contactsuggestionrule_createdonbehalfby";
 				public const string LkMsdynContactsuggestionruleModifiedby = "lk_msdyn_contactsuggestionrule_modifiedby";
@@ -7559,14 +8251,42 @@ namespace dgt.power.dataverse
 				public const string LkMsdynContactsuggestionrulesetCreatedonbehalfby = "lk_msdyn_contactsuggestionruleset_createdonbehalfby";
 				public const string LkMsdynContactsuggestionrulesetModifiedby = "lk_msdyn_contactsuggestionruleset_modifiedby";
 				public const string LkMsdynContactsuggestionrulesetModifiedonbehalfby = "lk_msdyn_contactsuggestionruleset_modifiedonbehalfby";
+				public const string LkMsdynContractlinedetailperformanceCreatedby = "lk_msdyn_contractlinedetailperformance_createdby";
+				public const string LkMsdynContractlinedetailperformanceCreatedonbehalfby = "lk_msdyn_contractlinedetailperformance_createdonbehalfby";
+				public const string LkMsdynContractlinedetailperformanceModifiedby = "lk_msdyn_contractlinedetailperformance_modifiedby";
+				public const string LkMsdynContractlinedetailperformanceModifiedonbehalfby = "lk_msdyn_contractlinedetailperformance_modifiedonbehalfby";
+				public const string LkMsdynContractlineinvoicescheduleCreatedby = "lk_msdyn_contractlineinvoiceschedule_createdby";
+				public const string LkMsdynContractlineinvoicescheduleCreatedonbehalfby = "lk_msdyn_contractlineinvoiceschedule_createdonbehalfby";
+				public const string LkMsdynContractlineinvoicescheduleModifiedby = "lk_msdyn_contractlineinvoiceschedule_modifiedby";
+				public const string LkMsdynContractlineinvoicescheduleModifiedonbehalfby = "lk_msdyn_contractlineinvoiceschedule_modifiedonbehalfby";
+				public const string LkMsdynContractlinescheduleofvalueCreatedby = "lk_msdyn_contractlinescheduleofvalue_createdby";
+				public const string LkMsdynContractlinescheduleofvalueCreatedonbehalfby = "lk_msdyn_contractlinescheduleofvalue_createdonbehalfby";
+				public const string LkMsdynContractlinescheduleofvalueModifiedby = "lk_msdyn_contractlinescheduleofvalue_modifiedby";
+				public const string LkMsdynContractlinescheduleofvalueModifiedonbehalfby = "lk_msdyn_contractlinescheduleofvalue_modifiedonbehalfby";
+				public const string LkMsdynContractperformanceCreatedby = "lk_msdyn_contractperformance_createdby";
+				public const string LkMsdynContractperformanceCreatedonbehalfby = "lk_msdyn_contractperformance_createdonbehalfby";
+				public const string LkMsdynContractperformanceModifiedby = "lk_msdyn_contractperformance_modifiedby";
+				public const string LkMsdynContractperformanceModifiedonbehalfby = "lk_msdyn_contractperformance_modifiedonbehalfby";
 				public const string LkMsdynConversationactionCreatedby = "lk_msdyn_conversationaction_createdby";
 				public const string LkMsdynConversationactionCreatedonbehalfby = "lk_msdyn_conversationaction_createdonbehalfby";
 				public const string LkMsdynConversationactionModifiedby = "lk_msdyn_conversationaction_modifiedby";
 				public const string LkMsdynConversationactionModifiedonbehalfby = "lk_msdyn_conversationaction_modifiedonbehalfby";
+				public const string LkMsdynConversationactionitemCreatedby = "lk_msdyn_conversationactionitem_createdby";
+				public const string LkMsdynConversationactionitemCreatedonbehalfby = "lk_msdyn_conversationactionitem_createdonbehalfby";
+				public const string LkMsdynConversationactionitemModifiedby = "lk_msdyn_conversationactionitem_modifiedby";
+				public const string LkMsdynConversationactionitemModifiedonbehalfby = "lk_msdyn_conversationactionitem_modifiedonbehalfby";
 				public const string LkMsdynConversationactionlocaleCreatedby = "lk_msdyn_conversationactionlocale_createdby";
 				public const string LkMsdynConversationactionlocaleCreatedonbehalfby = "lk_msdyn_conversationactionlocale_createdonbehalfby";
 				public const string LkMsdynConversationactionlocaleModifiedby = "lk_msdyn_conversationactionlocale_modifiedby";
 				public const string LkMsdynConversationactionlocaleModifiedonbehalfby = "lk_msdyn_conversationactionlocale_modifiedonbehalfby";
+				public const string LkMsdynConversationaggregatedinsightsCreatedby = "lk_msdyn_conversationaggregatedinsights_createdby";
+				public const string LkMsdynConversationaggregatedinsightsCreatedonbehalfby = "lk_msdyn_conversationaggregatedinsights_createdonbehalfby";
+				public const string LkMsdynConversationaggregatedinsightsModifiedby = "lk_msdyn_conversationaggregatedinsights_modifiedby";
+				public const string LkMsdynConversationaggregatedinsightsModifiedonbehalfby = "lk_msdyn_conversationaggregatedinsights_modifiedonbehalfby";
+				public const string LkMsdynConversationcommentCreatedby = "lk_msdyn_conversationcomment_createdby";
+				public const string LkMsdynConversationcommentCreatedonbehalfby = "lk_msdyn_conversationcomment_createdonbehalfby";
+				public const string LkMsdynConversationcommentModifiedby = "lk_msdyn_conversationcomment_modifiedby";
+				public const string LkMsdynConversationcommentModifiedonbehalfby = "lk_msdyn_conversationcomment_modifiedonbehalfby";
 				public const string LkMsdynConversationdataCreatedby = "lk_msdyn_conversationdata_createdby";
 				public const string LkMsdynConversationdataCreatedonbehalfby = "lk_msdyn_conversationdata_createdonbehalfby";
 				public const string LkMsdynConversationdataModifiedby = "lk_msdyn_conversationdata_modifiedby";
@@ -7579,6 +8299,94 @@ namespace dgt.power.dataverse
 				public const string LkMsdynConversationmessageblockCreatedonbehalfby = "lk_msdyn_conversationmessageblock_createdonbehalfby";
 				public const string LkMsdynConversationmessageblockModifiedby = "lk_msdyn_conversationmessageblock_modifiedby";
 				public const string LkMsdynConversationmessageblockModifiedonbehalfby = "lk_msdyn_conversationmessageblock_modifiedonbehalfby";
+				public const string LkMsdynConversationparticipantinsightsCreatedby = "lk_msdyn_conversationparticipantinsights_createdby";
+				public const string LkMsdynConversationparticipantinsightsCreatedonbehalfby = "lk_msdyn_conversationparticipantinsights_createdonbehalfby";
+				public const string LkMsdynConversationparticipantinsightsModifiedby = "lk_msdyn_conversationparticipantinsights_modifiedby";
+				public const string LkMsdynConversationparticipantinsightsModifiedonbehalfby = "lk_msdyn_conversationparticipantinsights_modifiedonbehalfby";
+				public const string LkMsdynConversationparticipantsentimentCreatedby = "lk_msdyn_conversationparticipantsentiment_createdby";
+				public const string LkMsdynConversationparticipantsentimentCreatedonbehalfby = "lk_msdyn_conversationparticipantsentiment_createdonbehalfby";
+				public const string LkMsdynConversationparticipantsentimentModifiedby = "lk_msdyn_conversationparticipantsentiment_modifiedby";
+				public const string LkMsdynConversationparticipantsentimentModifiedonbehalfby = "lk_msdyn_conversationparticipantsentiment_modifiedonbehalfby";
+				public const string LkMsdynConversationquestionCreatedby = "lk_msdyn_conversationquestion_createdby";
+				public const string LkMsdynConversationquestionCreatedonbehalfby = "lk_msdyn_conversationquestion_createdonbehalfby";
+				public const string LkMsdynConversationquestionModifiedby = "lk_msdyn_conversationquestion_modifiedby";
+				public const string LkMsdynConversationquestionModifiedonbehalfby = "lk_msdyn_conversationquestion_modifiedonbehalfby";
+				public const string LkMsdynConversationsegmentsentimentCreatedby = "lk_msdyn_conversationsegmentsentiment_createdby";
+				public const string LkMsdynConversationsegmentsentimentCreatedonbehalfby = "lk_msdyn_conversationsegmentsentiment_createdonbehalfby";
+				public const string LkMsdynConversationsegmentsentimentModifiedby = "lk_msdyn_conversationsegmentsentiment_modifiedby";
+				public const string LkMsdynConversationsegmentsentimentModifiedonbehalfby = "lk_msdyn_conversationsegmentsentiment_modifiedonbehalfby";
+				public const string LkMsdynConversationsentimentCreatedby = "lk_msdyn_conversationsentiment_createdby";
+				public const string LkMsdynConversationsentimentCreatedonbehalfby = "lk_msdyn_conversationsentiment_createdonbehalfby";
+				public const string LkMsdynConversationsentimentModifiedby = "lk_msdyn_conversationsentiment_modifiedby";
+				public const string LkMsdynConversationsentimentModifiedonbehalfby = "lk_msdyn_conversationsentiment_modifiedonbehalfby";
+				public const string LkMsdynConversationsignalCreatedby = "lk_msdyn_conversationsignal_createdby";
+				public const string LkMsdynConversationsignalCreatedonbehalfby = "lk_msdyn_conversationsignal_createdonbehalfby";
+				public const string LkMsdynConversationsignalModifiedby = "lk_msdyn_conversationsignal_modifiedby";
+				public const string LkMsdynConversationsignalModifiedonbehalfby = "lk_msdyn_conversationsignal_modifiedonbehalfby";
+				public const string LkMsdynConversationsubjectCreatedby = "lk_msdyn_conversationsubject_createdby";
+				public const string LkMsdynConversationsubjectCreatedonbehalfby = "lk_msdyn_conversationsubject_createdonbehalfby";
+				public const string LkMsdynConversationsubjectModifiedby = "lk_msdyn_conversationsubject_modifiedby";
+				public const string LkMsdynConversationsubjectModifiedonbehalfby = "lk_msdyn_conversationsubject_modifiedonbehalfby";
+				public const string LkMsdynConversationsuggestionrequestpayloadCreatedby = "lk_msdyn_conversationsuggestionrequestpayload_createdby";
+				public const string LkMsdynConversationsuggestionrequestpayloadCreatedonbehalfby = "lk_msdyn_conversationsuggestionrequestpayload_createdonbehalfby";
+				public const string LkMsdynConversationsuggestionrequestpayloadModifiedby = "lk_msdyn_conversationsuggestionrequestpayload_modifiedby";
+				public const string LkMsdynConversationsuggestionrequestpayloadModifiedonbehalfby = "lk_msdyn_conversationsuggestionrequestpayload_modifiedonbehalfby";
+				public const string LkMsdynConversationsummaryinteractionCreatedby = "lk_msdyn_conversationsummaryinteraction_createdby";
+				public const string LkMsdynConversationsummaryinteractionCreatedonbehalfby = "lk_msdyn_conversationsummaryinteraction_createdonbehalfby";
+				public const string LkMsdynConversationsummaryinteractionModifiedby = "lk_msdyn_conversationsummaryinteraction_modifiedby";
+				public const string LkMsdynConversationsummaryinteractionModifiedonbehalfby = "lk_msdyn_conversationsummaryinteraction_modifiedonbehalfby";
+				public const string LkMsdynConversationsummarysettingCreatedby = "lk_msdyn_conversationsummarysetting_createdby";
+				public const string LkMsdynConversationsummarysettingCreatedonbehalfby = "lk_msdyn_conversationsummarysetting_createdonbehalfby";
+				public const string LkMsdynConversationsummarysettingModifiedby = "lk_msdyn_conversationsummarysetting_modifiedby";
+				public const string LkMsdynConversationsummarysettingModifiedonbehalfby = "lk_msdyn_conversationsummarysetting_modifiedonbehalfby";
+				public const string LkMsdynConversationsummarysuggestionCreatedby = "lk_msdyn_conversationsummarysuggestion_createdby";
+				public const string LkMsdynConversationsummarysuggestionCreatedonbehalfby = "lk_msdyn_conversationsummarysuggestion_createdonbehalfby";
+				public const string LkMsdynConversationsummarysuggestionModifiedby = "lk_msdyn_conversationsummarysuggestion_modifiedby";
+				public const string LkMsdynConversationsummarysuggestionModifiedonbehalfby = "lk_msdyn_conversationsummarysuggestion_modifiedonbehalfby";
+				public const string LkMsdynConversationsystemtagCreatedby = "lk_msdyn_conversationsystemtag_createdby";
+				public const string LkMsdynConversationsystemtagCreatedonbehalfby = "lk_msdyn_conversationsystemtag_createdonbehalfby";
+				public const string LkMsdynConversationsystemtagModifiedby = "lk_msdyn_conversationsystemtag_modifiedby";
+				public const string LkMsdynConversationsystemtagModifiedonbehalfby = "lk_msdyn_conversationsystemtag_modifiedonbehalfby";
+				public const string LkMsdynConversationtagCreatedby = "lk_msdyn_conversationtag_createdby";
+				public const string LkMsdynConversationtagCreatedonbehalfby = "lk_msdyn_conversationtag_createdonbehalfby";
+				public const string LkMsdynConversationtagModifiedby = "lk_msdyn_conversationtag_modifiedby";
+				public const string LkMsdynConversationtagModifiedonbehalfby = "lk_msdyn_conversationtag_modifiedonbehalfby";
+				public const string LkMsdynConversationtopicConversationCreatedby = "lk_msdyn_conversationtopic_conversation_createdby";
+				public const string LkMsdynConversationtopicConversationCreatedonbehalfby = "lk_msdyn_conversationtopic_conversation_createdonbehalfby";
+				public const string LkMsdynConversationtopicConversationModifiedby = "lk_msdyn_conversationtopic_conversation_modifiedby";
+				public const string LkMsdynConversationtopicConversationModifiedonbehalfby = "lk_msdyn_conversationtopic_conversation_modifiedonbehalfby";
+				public const string LkMsdynConversationtopicCreatedby = "lk_msdyn_conversationtopic_createdby";
+				public const string LkMsdynConversationtopicCreatedonbehalfby = "lk_msdyn_conversationtopic_createdonbehalfby";
+				public const string LkMsdynConversationtopicModifiedby = "lk_msdyn_conversationtopic_modifiedby";
+				public const string LkMsdynConversationtopicModifiedonbehalfby = "lk_msdyn_conversationtopic_modifiedonbehalfby";
+				public const string LkMsdynConversationtopicsettingCreatedby = "lk_msdyn_conversationtopicsetting_createdby";
+				public const string LkMsdynConversationtopicsettingCreatedonbehalfby = "lk_msdyn_conversationtopicsetting_createdonbehalfby";
+				public const string LkMsdynConversationtopicsettingModifiedby = "lk_msdyn_conversationtopicsetting_modifiedby";
+				public const string LkMsdynConversationtopicsettingModifiedonbehalfby = "lk_msdyn_conversationtopicsetting_modifiedonbehalfby";
+				public const string LkMsdynConversationtopicsummaryCreatedby = "lk_msdyn_conversationtopicsummary_createdby";
+				public const string LkMsdynConversationtopicsummaryCreatedonbehalfby = "lk_msdyn_conversationtopicsummary_createdonbehalfby";
+				public const string LkMsdynConversationtopicsummaryModifiedby = "lk_msdyn_conversationtopicsummary_modifiedby";
+				public const string LkMsdynConversationtopicsummaryModifiedonbehalfby = "lk_msdyn_conversationtopicsummary_modifiedonbehalfby";
+				public const string LkMsdynCopilotagentpreferenceCreatedby = "lk_msdyn_copilotagentpreference_createdby";
+				public const string LkMsdynCopilotagentpreferenceCreatedonbehalfby = "lk_msdyn_copilotagentpreference_createdonbehalfby";
+				public const string LkMsdynCopilotagentpreferenceModifiedby = "lk_msdyn_copilotagentpreference_modifiedby";
+				public const string LkMsdynCopilotagentpreferenceModifiedonbehalfby = "lk_msdyn_copilotagentpreference_modifiedonbehalfby";
+				public const string LkMsdynCopilotinteractionCreatedby = "lk_msdyn_copilotinteraction_createdby";
+				public const string LkMsdynCopilotinteractionCreatedonbehalfby = "lk_msdyn_copilotinteraction_createdonbehalfby";
+				public const string LkMsdynCopilotinteractionModifiedby = "lk_msdyn_copilotinteraction_modifiedby";
+				public const string LkMsdynCopilotinteractionModifiedonbehalfby = "lk_msdyn_copilotinteraction_modifiedonbehalfby";
+				public const string LkMsdynCopilotinteractiondataCreatedby = "lk_msdyn_copilotinteractiondata_createdby";
+				public const string LkMsdynCopilotinteractiondataCreatedonbehalfby = "lk_msdyn_copilotinteractiondata_createdonbehalfby";
+				public const string LkMsdynCopilotinteractiondataModifiedby = "lk_msdyn_copilotinteractiondata_modifiedby";
+				public const string LkMsdynCopilotinteractiondataModifiedonbehalfby = "lk_msdyn_copilotinteractiondata_modifiedonbehalfby";
+				public const string LkMsdynCopilotsummarizationsettingCreatedby = "lk_msdyn_copilotsummarizationsetting_createdby";
+				public const string LkMsdynCopilotsummarizationsettingCreatedonbehalfby = "lk_msdyn_copilotsummarizationsetting_createdonbehalfby";
+				public const string LkMsdynCopilotsummarizationsettingModifiedby = "lk_msdyn_copilotsummarizationsetting_modifiedby";
+				public const string LkMsdynCopilotsummarizationsettingModifiedonbehalfby = "lk_msdyn_copilotsummarizationsetting_modifiedonbehalfby";
+				public const string LkMsdynCopilottranscriptdataCreatedby = "lk_msdyn_copilottranscriptdata_createdby";
+				public const string LkMsdynCopilottranscriptdataCreatedonbehalfby = "lk_msdyn_copilottranscriptdata_createdonbehalfby";
+				public const string LkMsdynCopilottranscriptdataModifiedby = "lk_msdyn_copilottranscriptdata_modifiedby";
+				public const string LkMsdynCopilottranscriptdataModifiedonbehalfby = "lk_msdyn_copilottranscriptdata_modifiedonbehalfby";
 				public const string LkMsdynCrmconnectionCreatedby = "lk_msdyn_crmconnection_createdby";
 				public const string LkMsdynCrmconnectionCreatedonbehalfby = "lk_msdyn_crmconnection_createdonbehalfby";
 				public const string LkMsdynCrmconnectionModifiedby = "lk_msdyn_crmconnection_modifiedby";
@@ -7587,6 +8395,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynCsadminconfigCreatedonbehalfby = "lk_msdyn_csadminconfig_createdonbehalfby";
 				public const string LkMsdynCsadminconfigModifiedby = "lk_msdyn_csadminconfig_modifiedby";
 				public const string LkMsdynCsadminconfigModifiedonbehalfby = "lk_msdyn_csadminconfig_modifiedonbehalfby";
+				public const string LkMsdynCskeyvalueconfigCreatedby = "lk_msdyn_cskeyvalueconfig_createdby";
+				public const string LkMsdynCskeyvalueconfigCreatedonbehalfby = "lk_msdyn_cskeyvalueconfig_createdonbehalfby";
+				public const string LkMsdynCskeyvalueconfigModifiedby = "lk_msdyn_cskeyvalueconfig_modifiedby";
+				public const string LkMsdynCskeyvalueconfigModifiedonbehalfby = "lk_msdyn_cskeyvalueconfig_modifiedonbehalfby";
 				public const string LkMsdynCustomapirulesetconfigurationCreatedby = "lk_msdyn_customapirulesetconfiguration_createdby";
 				public const string LkMsdynCustomapirulesetconfigurationCreatedonbehalfby = "lk_msdyn_customapirulesetconfiguration_createdonbehalfby";
 				public const string LkMsdynCustomapirulesetconfigurationModifiedby = "lk_msdyn_customapirulesetconfiguration_modifiedby";
@@ -7595,6 +8407,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynCustomcontrolextendedsettingsCreatedonbehalfby = "lk_msdyn_customcontrolextendedsettings_createdonbehalfby";
 				public const string LkMsdynCustomcontrolextendedsettingsModifiedby = "lk_msdyn_customcontrolextendedsettings_modifiedby";
 				public const string LkMsdynCustomcontrolextendedsettingsModifiedonbehalfby = "lk_msdyn_customcontrolextendedsettings_modifiedonbehalfby";
+				public const string LkMsdynCustomengagementctxCreatedby = "lk_msdyn_customengagementctx_createdby";
+				public const string LkMsdynCustomengagementctxCreatedonbehalfby = "lk_msdyn_customengagementctx_createdonbehalfby";
+				public const string LkMsdynCustomengagementctxModifiedby = "lk_msdyn_customengagementctx_modifiedby";
+				public const string LkMsdynCustomengagementctxModifiedonbehalfby = "lk_msdyn_customengagementctx_modifiedonbehalfby";
 				public const string LkMsdynCustomerassetCreatedby = "lk_msdyn_customerasset_createdby";
 				public const string LkMsdynCustomerassetCreatedonbehalfby = "lk_msdyn_customerasset_createdonbehalfby";
 				public const string LkMsdynCustomerassetModifiedby = "lk_msdyn_customerasset_modifiedby";
@@ -7635,6 +8451,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynDataanalyticsdatasetCreatedonbehalfby = "lk_msdyn_dataanalyticsdataset_createdonbehalfby";
 				public const string LkMsdynDataanalyticsdatasetModifiedby = "lk_msdyn_dataanalyticsdataset_modifiedby";
 				public const string LkMsdynDataanalyticsdatasetModifiedonbehalfby = "lk_msdyn_dataanalyticsdataset_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportCopilotCreatedby = "lk_msdyn_dataanalyticsreport_copilot_createdby";
+				public const string LkMsdynDataanalyticsreportCopilotCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_copilot_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportCopilotModifiedby = "lk_msdyn_dataanalyticsreport_copilot_modifiedby";
+				public const string LkMsdynDataanalyticsreportCopilotModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_copilot_modifiedonbehalfby";
 				public const string LkMsdynDataanalyticsreportCreatedby = "lk_msdyn_dataanalyticsreport_createdby";
 				public const string LkMsdynDataanalyticsreportCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_createdonbehalfby";
 				public const string LkMsdynDataanalyticsreportCsrmanagerCreatedby = "lk_msdyn_dataanalyticsreport_csrmanager_createdby";
@@ -7645,12 +8465,40 @@ namespace dgt.power.dataverse
 				public const string LkMsdynDataanalyticsreportForecastCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_forecast_createdonbehalfby";
 				public const string LkMsdynDataanalyticsreportForecastModifiedby = "lk_msdyn_dataanalyticsreport_forecast_modifiedby";
 				public const string LkMsdynDataanalyticsreportForecastModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_forecast_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportFsCreatedby = "lk_msdyn_dataanalyticsreport_fs_createdby";
+				public const string LkMsdynDataanalyticsreportFsCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_fs_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportFsModifiedby = "lk_msdyn_dataanalyticsreport_fs_modifiedby";
+				public const string LkMsdynDataanalyticsreportFsModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_fs_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportFspredictrsCreatedby = "lk_msdyn_dataanalyticsreport_fspredictrs_createdby";
+				public const string LkMsdynDataanalyticsreportFspredictrsCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_fspredictrs_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportFspredictrsModifiedby = "lk_msdyn_dataanalyticsreport_fspredictrs_modifiedby";
+				public const string LkMsdynDataanalyticsreportFspredictrsModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_fspredictrs_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportFspredictwhdCreatedby = "lk_msdyn_dataanalyticsreport_fspredictwhd_createdby";
+				public const string LkMsdynDataanalyticsreportFspredictwhdCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_fspredictwhd_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportFspredictwhdModifiedby = "lk_msdyn_dataanalyticsreport_fspredictwhd_modifiedby";
+				public const string LkMsdynDataanalyticsreportFspredictwhdModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_fspredictwhd_modifiedonbehalfby";
 				public const string LkMsdynDataanalyticsreportKsinsightsCreatedby = "lk_msdyn_dataanalyticsreport_ksinsights_createdby";
 				public const string LkMsdynDataanalyticsreportKsinsightsCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_ksinsights_createdonbehalfby";
 				public const string LkMsdynDataanalyticsreportKsinsightsModifiedby = "lk_msdyn_dataanalyticsreport_ksinsights_modifiedby";
 				public const string LkMsdynDataanalyticsreportKsinsightsModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_ksinsights_modifiedonbehalfby";
 				public const string LkMsdynDataanalyticsreportModifiedby = "lk_msdyn_dataanalyticsreport_modifiedby";
 				public const string LkMsdynDataanalyticsreportModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcCreatedby = "lk_msdyn_dataanalyticsreport_oc_createdby";
+				public const string LkMsdynDataanalyticsreportOcCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_oc_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcModifiedby = "lk_msdyn_dataanalyticsreport_oc_modifiedby";
+				public const string LkMsdynDataanalyticsreportOcModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_oc_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcRtCreatedby = "lk_msdyn_dataanalyticsreport_oc_rt_createdby";
+				public const string LkMsdynDataanalyticsreportOcRtCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_oc_rt_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcRtModifiedby = "lk_msdyn_dataanalyticsreport_oc_rt_modifiedby";
+				public const string LkMsdynDataanalyticsreportOcRtModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_oc_rt_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcvoiceCreatedby = "lk_msdyn_dataanalyticsreport_ocvoice_createdby";
+				public const string LkMsdynDataanalyticsreportOcvoiceCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_ocvoice_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportOcvoiceModifiedby = "lk_msdyn_dataanalyticsreport_ocvoice_modifiedby";
+				public const string LkMsdynDataanalyticsreportOcvoiceModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_ocvoice_modifiedonbehalfby";
+				public const string LkMsdynDataanalyticsreportSareportingCreatedby = "lk_msdyn_dataanalyticsreport_sareporting_createdby";
+				public const string LkMsdynDataanalyticsreportSareportingCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_sareporting_createdonbehalfby";
+				public const string LkMsdynDataanalyticsreportSareportingModifiedby = "lk_msdyn_dataanalyticsreport_sareporting_modifiedby";
+				public const string LkMsdynDataanalyticsreportSareportingModifiedonbehalfby = "lk_msdyn_dataanalyticsreport_sareporting_modifiedonbehalfby";
 				public const string LkMsdynDataanalyticsreportSutreportingCreatedby = "lk_msdyn_dataanalyticsreport_sutreporting_createdby";
 				public const string LkMsdynDataanalyticsreportSutreportingCreatedonbehalfby = "lk_msdyn_dataanalyticsreport_sutreporting_createdonbehalfby";
 				public const string LkMsdynDataanalyticsreportSutreportingModifiedby = "lk_msdyn_dataanalyticsreport_sutreporting_modifiedby";
@@ -7663,14 +8511,30 @@ namespace dgt.power.dataverse
 				public const string LkMsdynDatabaseversionCreatedonbehalfby = "lk_msdyn_databaseversion_createdonbehalfby";
 				public const string LkMsdynDatabaseversionModifiedby = "lk_msdyn_databaseversion_modifiedby";
 				public const string LkMsdynDatabaseversionModifiedonbehalfby = "lk_msdyn_databaseversion_modifiedonbehalfby";
+				public const string LkMsdynDataexportCreatedby = "lk_msdyn_dataexport_createdby";
+				public const string LkMsdynDataexportCreatedonbehalfby = "lk_msdyn_dataexport_createdonbehalfby";
+				public const string LkMsdynDataexportModifiedby = "lk_msdyn_dataexport_modifiedby";
+				public const string LkMsdynDataexportModifiedonbehalfby = "lk_msdyn_dataexport_modifiedonbehalfby";
 				public const string LkMsdynDataflowCreatedby = "lk_msdyn_dataflow_createdby";
 				public const string LkMsdynDataflowCreatedonbehalfby = "lk_msdyn_dataflow_createdonbehalfby";
+				public const string LkMsdynDataflowDatalakefolderCreatedby = "lk_msdyn_dataflow_datalakefolder_createdby";
+				public const string LkMsdynDataflowDatalakefolderCreatedonbehalfby = "lk_msdyn_dataflow_datalakefolder_createdonbehalfby";
+				public const string LkMsdynDataflowDatalakefolderModifiedby = "lk_msdyn_dataflow_datalakefolder_modifiedby";
+				public const string LkMsdynDataflowDatalakefolderModifiedonbehalfby = "lk_msdyn_dataflow_datalakefolder_modifiedonbehalfby";
 				public const string LkMsdynDataflowModifiedby = "lk_msdyn_dataflow_modifiedby";
 				public const string LkMsdynDataflowModifiedonbehalfby = "lk_msdyn_dataflow_modifiedonbehalfby";
+				public const string LkMsdynDataflowconnectionreferenceCreatedby = "lk_msdyn_dataflowconnectionreference_createdby";
+				public const string LkMsdynDataflowconnectionreferenceCreatedonbehalfby = "lk_msdyn_dataflowconnectionreference_createdonbehalfby";
+				public const string LkMsdynDataflowconnectionreferenceModifiedby = "lk_msdyn_dataflowconnectionreference_modifiedby";
+				public const string LkMsdynDataflowconnectionreferenceModifiedonbehalfby = "lk_msdyn_dataflowconnectionreference_modifiedonbehalfby";
 				public const string LkMsdynDataflowrefreshhistoryCreatedby = "lk_msdyn_dataflowrefreshhistory_createdby";
 				public const string LkMsdynDataflowrefreshhistoryCreatedonbehalfby = "lk_msdyn_dataflowrefreshhistory_createdonbehalfby";
 				public const string LkMsdynDataflowrefreshhistoryModifiedby = "lk_msdyn_dataflowrefreshhistory_modifiedby";
 				public const string LkMsdynDataflowrefreshhistoryModifiedonbehalfby = "lk_msdyn_dataflowrefreshhistory_modifiedonbehalfby";
+				public const string LkMsdynDataflowtemplateCreatedby = "lk_msdyn_dataflowtemplate_createdby";
+				public const string LkMsdynDataflowtemplateCreatedonbehalfby = "lk_msdyn_dataflowtemplate_createdonbehalfby";
+				public const string LkMsdynDataflowtemplateModifiedby = "lk_msdyn_dataflowtemplate_modifiedby";
+				public const string LkMsdynDataflowtemplateModifiedonbehalfby = "lk_msdyn_dataflowtemplate_modifiedonbehalfby";
 				public const string LkMsdynDatahygienesettinginfoCreatedby = "lk_msdyn_datahygienesettinginfo_createdby";
 				public const string LkMsdynDatahygienesettinginfoCreatedonbehalfby = "lk_msdyn_datahygienesettinginfo_createdonbehalfby";
 				public const string LkMsdynDatahygienesettinginfoModifiedby = "lk_msdyn_datahygienesettinginfo_modifiedby";
@@ -7703,6 +8567,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynDefextendedchannelinstanceaccountCreatedonbehalfby = "lk_msdyn_defextendedchannelinstanceaccount_createdonbehalfby";
 				public const string LkMsdynDefextendedchannelinstanceaccountModifiedby = "lk_msdyn_defextendedchannelinstanceaccount_modifiedby";
 				public const string LkMsdynDefextendedchannelinstanceaccountModifiedonbehalfby = "lk_msdyn_defextendedchannelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdynDelegationCreatedby = "lk_msdyn_delegation_createdby";
+				public const string LkMsdynDelegationCreatedonbehalfby = "lk_msdyn_delegation_createdonbehalfby";
+				public const string LkMsdynDelegationModifiedby = "lk_msdyn_delegation_modifiedby";
+				public const string LkMsdynDelegationModifiedonbehalfby = "lk_msdyn_delegation_modifiedonbehalfby";
 				public const string LkMsdynDeletedconversationCreatedby = "lk_msdyn_deletedconversation_createdby";
 				public const string LkMsdynDeletedconversationCreatedonbehalfby = "lk_msdyn_deletedconversation_createdonbehalfby";
 				public const string LkMsdynDeletedconversationModifiedby = "lk_msdyn_deletedconversation_modifiedby";
@@ -7715,10 +8583,34 @@ namespace dgt.power.dataverse
 				public const string LkMsdynDigitalsellingcompletedtaskCreatedonbehalfby = "lk_msdyn_digitalsellingcompletedtask_createdonbehalfby";
 				public const string LkMsdynDigitalsellingcompletedtaskModifiedby = "lk_msdyn_digitalsellingcompletedtask_modifiedby";
 				public const string LkMsdynDigitalsellingcompletedtaskModifiedonbehalfby = "lk_msdyn_digitalsellingcompletedtask_modifiedonbehalfby";
+				public const string LkMsdynDimensionCreatedby = "lk_msdyn_dimension_createdby";
+				public const string LkMsdynDimensionCreatedonbehalfby = "lk_msdyn_dimension_createdonbehalfby";
+				public const string LkMsdynDimensionModifiedby = "lk_msdyn_dimension_modifiedby";
+				public const string LkMsdynDimensionModifiedonbehalfby = "lk_msdyn_dimension_modifiedonbehalfby";
+				public const string LkMsdynDimensionfieldnameCreatedby = "lk_msdyn_dimensionfieldname_createdby";
+				public const string LkMsdynDimensionfieldnameCreatedonbehalfby = "lk_msdyn_dimensionfieldname_createdonbehalfby";
+				public const string LkMsdynDimensionfieldnameModifiedby = "lk_msdyn_dimensionfieldname_modifiedby";
+				public const string LkMsdynDimensionfieldnameModifiedonbehalfby = "lk_msdyn_dimensionfieldname_modifiedonbehalfby";
 				public const string LkMsdynDistributedlockCreatedby = "lk_msdyn_distributedlock_createdby";
 				public const string LkMsdynDistributedlockCreatedonbehalfby = "lk_msdyn_distributedlock_createdonbehalfby";
 				public const string LkMsdynDistributedlockModifiedby = "lk_msdyn_distributedlock_modifiedby";
 				public const string LkMsdynDistributedlockModifiedonbehalfby = "lk_msdyn_distributedlock_modifiedonbehalfby";
+				public const string LkMsdynDmsrequestCreatedby = "lk_msdyn_dmsrequest_createdby";
+				public const string LkMsdynDmsrequestCreatedonbehalfby = "lk_msdyn_dmsrequest_createdonbehalfby";
+				public const string LkMsdynDmsrequestModifiedby = "lk_msdyn_dmsrequest_modifiedby";
+				public const string LkMsdynDmsrequestModifiedonbehalfby = "lk_msdyn_dmsrequest_modifiedonbehalfby";
+				public const string LkMsdynDmsrequeststatusCreatedby = "lk_msdyn_dmsrequeststatus_createdby";
+				public const string LkMsdynDmsrequeststatusCreatedonbehalfby = "lk_msdyn_dmsrequeststatus_createdonbehalfby";
+				public const string LkMsdynDmsrequeststatusModifiedby = "lk_msdyn_dmsrequeststatus_modifiedby";
+				public const string LkMsdynDmsrequeststatusModifiedonbehalfby = "lk_msdyn_dmsrequeststatus_modifiedonbehalfby";
+				public const string LkMsdynDmssyncrequestCreatedby = "lk_msdyn_dmssyncrequest_createdby";
+				public const string LkMsdynDmssyncrequestCreatedonbehalfby = "lk_msdyn_dmssyncrequest_createdonbehalfby";
+				public const string LkMsdynDmssyncrequestModifiedby = "lk_msdyn_dmssyncrequest_modifiedby";
+				public const string LkMsdynDmssyncrequestModifiedonbehalfby = "lk_msdyn_dmssyncrequest_modifiedonbehalfby";
+				public const string LkMsdynDmssyncstatusCreatedby = "lk_msdyn_dmssyncstatus_createdby";
+				public const string LkMsdynDmssyncstatusCreatedonbehalfby = "lk_msdyn_dmssyncstatus_createdonbehalfby";
+				public const string LkMsdynDmssyncstatusModifiedby = "lk_msdyn_dmssyncstatus_modifiedby";
+				public const string LkMsdynDmssyncstatusModifiedonbehalfby = "lk_msdyn_dmssyncstatus_modifiedonbehalfby";
 				public const string LkMsdynDuplicatedetectionpluginrunCreatedby = "lk_msdyn_duplicatedetectionpluginrun_createdby";
 				public const string LkMsdynDuplicatedetectionpluginrunCreatedonbehalfby = "lk_msdyn_duplicatedetectionpluginrun_createdonbehalfby";
 				public const string LkMsdynDuplicatedetectionpluginrunModifiedby = "lk_msdyn_duplicatedetectionpluginrun_modifiedby";
@@ -7731,10 +8623,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynEffortpredictionresultCreatedonbehalfby = "lk_msdyn_effortpredictionresult_createdonbehalfby";
 				public const string LkMsdynEffortpredictionresultModifiedby = "lk_msdyn_effortpredictionresult_modifiedby";
 				public const string LkMsdynEffortpredictionresultModifiedonbehalfby = "lk_msdyn_effortpredictionresult_modifiedonbehalfby";
+				public const string LkMsdynEntitlementapplicationCreatedby = "lk_msdyn_entitlementapplication_createdby";
+				public const string LkMsdynEntitlementapplicationCreatedonbehalfby = "lk_msdyn_entitlementapplication_createdonbehalfby";
+				public const string LkMsdynEntitlementapplicationModifiedby = "lk_msdyn_entitlementapplication_modifiedby";
+				public const string LkMsdynEntitlementapplicationModifiedonbehalfby = "lk_msdyn_entitlementapplication_modifiedonbehalfby";
+				public const string LkMsdynEntityattachmentCreatedby = "lk_msdyn_entityattachment_createdby";
+				public const string LkMsdynEntityattachmentCreatedonbehalfby = "lk_msdyn_entityattachment_createdonbehalfby";
+				public const string LkMsdynEntityattachmentModifiedby = "lk_msdyn_entityattachment_modifiedby";
+				public const string LkMsdynEntityattachmentModifiedonbehalfby = "lk_msdyn_entityattachment_modifiedonbehalfby";
 				public const string LkMsdynEntityconfigCreatedby = "lk_msdyn_entityconfig_createdby";
 				public const string LkMsdynEntityconfigCreatedonbehalfby = "lk_msdyn_entityconfig_createdonbehalfby";
 				public const string LkMsdynEntityconfigModifiedby = "lk_msdyn_entityconfig_modifiedby";
 				public const string LkMsdynEntityconfigModifiedonbehalfby = "lk_msdyn_entityconfig_modifiedonbehalfby";
+				public const string LkMsdynEntityconfigurationCreatedby = "lk_msdyn_entityconfiguration_createdby";
+				public const string LkMsdynEntityconfigurationCreatedonbehalfby = "lk_msdyn_entityconfiguration_createdonbehalfby";
+				public const string LkMsdynEntityconfigurationModifiedby = "lk_msdyn_entityconfiguration_modifiedby";
+				public const string LkMsdynEntityconfigurationModifiedonbehalfby = "lk_msdyn_entityconfiguration_modifiedonbehalfby";
 				public const string LkMsdynEntitydeltachangeCreatedby = "lk_msdyn_entitydeltachange_createdby";
 				public const string LkMsdynEntitydeltachangeCreatedonbehalfby = "lk_msdyn_entitydeltachange_createdonbehalfby";
 				public const string LkMsdynEntitydeltachangeModifiedby = "lk_msdyn_entitydeltachange_modifiedby";
@@ -7755,10 +8659,42 @@ namespace dgt.power.dataverse
 				public const string LkMsdynEntityroutingconfigurationCreatedonbehalfby = "lk_msdyn_entityroutingconfiguration_createdonbehalfby";
 				public const string LkMsdynEntityroutingconfigurationModifiedby = "lk_msdyn_entityroutingconfiguration_modifiedby";
 				public const string LkMsdynEntityroutingconfigurationModifiedonbehalfby = "lk_msdyn_entityroutingconfiguration_modifiedonbehalfby";
+				public const string LkMsdynEntityworkstreammapCreatedby = "lk_msdyn_entityworkstreammap_createdby";
+				public const string LkMsdynEntityworkstreammapCreatedonbehalfby = "lk_msdyn_entityworkstreammap_createdonbehalfby";
+				public const string LkMsdynEntityworkstreammapModifiedby = "lk_msdyn_entityworkstreammap_modifiedby";
+				public const string LkMsdynEntityworkstreammapModifiedonbehalfby = "lk_msdyn_entityworkstreammap_modifiedonbehalfby";
+				public const string LkMsdynEstimateCreatedby = "lk_msdyn_estimate_createdby";
+				public const string LkMsdynEstimateCreatedonbehalfby = "lk_msdyn_estimate_createdonbehalfby";
+				public const string LkMsdynEstimateModifiedby = "lk_msdyn_estimate_modifiedby";
+				public const string LkMsdynEstimateModifiedonbehalfby = "lk_msdyn_estimate_modifiedonbehalfby";
+				public const string LkMsdynEstimatelineCreatedby = "lk_msdyn_estimateline_createdby";
+				public const string LkMsdynEstimatelineCreatedonbehalfby = "lk_msdyn_estimateline_createdonbehalfby";
+				public const string LkMsdynEstimatelineModifiedby = "lk_msdyn_estimateline_modifiedby";
+				public const string LkMsdynEstimatelineModifiedonbehalfby = "lk_msdyn_estimateline_modifiedonbehalfby";
+				public const string LkMsdynExpenseCreatedby = "lk_msdyn_expense_createdby";
+				public const string LkMsdynExpenseCreatedonbehalfby = "lk_msdyn_expense_createdonbehalfby";
+				public const string LkMsdynExpenseModifiedby = "lk_msdyn_expense_modifiedby";
+				public const string LkMsdynExpenseModifiedonbehalfby = "lk_msdyn_expense_modifiedonbehalfby";
+				public const string LkMsdynExpensecategoryCreatedby = "lk_msdyn_expensecategory_createdby";
+				public const string LkMsdynExpensecategoryCreatedonbehalfby = "lk_msdyn_expensecategory_createdonbehalfby";
+				public const string LkMsdynExpensecategoryModifiedby = "lk_msdyn_expensecategory_modifiedby";
+				public const string LkMsdynExpensecategoryModifiedonbehalfby = "lk_msdyn_expensecategory_modifiedonbehalfby";
+				public const string LkMsdynExpensereceiptCreatedby = "lk_msdyn_expensereceipt_createdby";
+				public const string LkMsdynExpensereceiptCreatedonbehalfby = "lk_msdyn_expensereceipt_createdonbehalfby";
+				public const string LkMsdynExpensereceiptModifiedby = "lk_msdyn_expensereceipt_modifiedby";
+				public const string LkMsdynExpensereceiptModifiedonbehalfby = "lk_msdyn_expensereceipt_modifiedonbehalfby";
 				public const string LkMsdynExtendedusersettingCreatedby = "lk_msdyn_extendedusersetting_createdby";
 				public const string LkMsdynExtendedusersettingCreatedonbehalfby = "lk_msdyn_extendedusersetting_createdonbehalfby";
 				public const string LkMsdynExtendedusersettingModifiedby = "lk_msdyn_extendedusersetting_modifiedby";
 				public const string LkMsdynExtendedusersettingModifiedonbehalfby = "lk_msdyn_extendedusersetting_modifiedonbehalfby";
+				public const string LkMsdynFacebookengagementctxCreatedby = "lk_msdyn_facebookengagementctx_createdby";
+				public const string LkMsdynFacebookengagementctxCreatedonbehalfby = "lk_msdyn_facebookengagementctx_createdonbehalfby";
+				public const string LkMsdynFacebookengagementctxModifiedby = "lk_msdyn_facebookengagementctx_modifiedby";
+				public const string LkMsdynFacebookengagementctxModifiedonbehalfby = "lk_msdyn_facebookengagementctx_modifiedonbehalfby";
+				public const string LkMsdynFactCreatedby = "lk_msdyn_fact_createdby";
+				public const string LkMsdynFactCreatedonbehalfby = "lk_msdyn_fact_createdonbehalfby";
+				public const string LkMsdynFactModifiedby = "lk_msdyn_fact_modifiedby";
+				public const string LkMsdynFactModifiedonbehalfby = "lk_msdyn_fact_modifiedonbehalfby";
 				public const string LkMsdynFavoriteknowledgearticleCreatedby = "lk_msdyn_favoriteknowledgearticle_createdby";
 				public const string LkMsdynFavoriteknowledgearticleCreatedonbehalfby = "lk_msdyn_favoriteknowledgearticle_createdonbehalfby";
 				public const string LkMsdynFavoriteknowledgearticleModifiedby = "lk_msdyn_favoriteknowledgearticle_modifiedby";
@@ -7771,14 +8707,46 @@ namespace dgt.power.dataverse
 				public const string LkMsdynFederatedarticleincidentCreatedonbehalfby = "lk_msdyn_federatedarticleincident_createdonbehalfby";
 				public const string LkMsdynFederatedarticleincidentModifiedby = "lk_msdyn_federatedarticleincident_modifiedby";
 				public const string LkMsdynFederatedarticleincidentModifiedonbehalfby = "lk_msdyn_federatedarticleincident_modifiedonbehalfby";
+				public const string LkMsdynFieldcomputationCreatedby = "lk_msdyn_fieldcomputation_createdby";
+				public const string LkMsdynFieldcomputationCreatedonbehalfby = "lk_msdyn_fieldcomputation_createdonbehalfby";
+				public const string LkMsdynFieldcomputationModifiedby = "lk_msdyn_fieldcomputation_modifiedby";
+				public const string LkMsdynFieldcomputationModifiedonbehalfby = "lk_msdyn_fieldcomputation_modifiedonbehalfby";
+				public const string LkMsdynFieldservicepricelistitemCreatedby = "lk_msdyn_fieldservicepricelistitem_createdby";
+				public const string LkMsdynFieldservicepricelistitemCreatedonbehalfby = "lk_msdyn_fieldservicepricelistitem_createdonbehalfby";
+				public const string LkMsdynFieldservicepricelistitemModifiedby = "lk_msdyn_fieldservicepricelistitem_modifiedby";
+				public const string LkMsdynFieldservicepricelistitemModifiedonbehalfby = "lk_msdyn_fieldservicepricelistitem_modifiedonbehalfby";
+				public const string LkMsdynFieldservicesettingCreatedby = "lk_msdyn_fieldservicesetting_createdby";
+				public const string LkMsdynFieldservicesettingCreatedonbehalfby = "lk_msdyn_fieldservicesetting_createdonbehalfby";
+				public const string LkMsdynFieldservicesettingModifiedby = "lk_msdyn_fieldservicesetting_modifiedby";
+				public const string LkMsdynFieldservicesettingModifiedonbehalfby = "lk_msdyn_fieldservicesetting_modifiedonbehalfby";
+				public const string LkMsdynFieldserviceslaconfigurationCreatedby = "lk_msdyn_fieldserviceslaconfiguration_createdby";
+				public const string LkMsdynFieldserviceslaconfigurationCreatedonbehalfby = "lk_msdyn_fieldserviceslaconfiguration_createdonbehalfby";
+				public const string LkMsdynFieldserviceslaconfigurationModifiedby = "lk_msdyn_fieldserviceslaconfiguration_modifiedby";
+				public const string LkMsdynFieldserviceslaconfigurationModifiedonbehalfby = "lk_msdyn_fieldserviceslaconfiguration_modifiedonbehalfby";
+				public const string LkMsdynFieldservicesystemjobCreatedby = "lk_msdyn_fieldservicesystemjob_createdby";
+				public const string LkMsdynFieldservicesystemjobCreatedonbehalfby = "lk_msdyn_fieldservicesystemjob_createdonbehalfby";
+				public const string LkMsdynFieldservicesystemjobModifiedby = "lk_msdyn_fieldservicesystemjob_modifiedby";
+				public const string LkMsdynFieldservicesystemjobModifiedonbehalfby = "lk_msdyn_fieldservicesystemjob_modifiedonbehalfby";
+				public const string LkMsdynFileuploadCreatedby = "lk_msdyn_fileupload_createdby";
+				public const string LkMsdynFileuploadCreatedonbehalfby = "lk_msdyn_fileupload_createdonbehalfby";
+				public const string LkMsdynFileuploadModifiedby = "lk_msdyn_fileupload_modifiedby";
+				public const string LkMsdynFileuploadModifiedonbehalfby = "lk_msdyn_fileupload_modifiedonbehalfby";
 				public const string LkMsdynFileuploadstatustrackerCreatedby = "lk_msdyn_fileuploadstatustracker_createdby";
 				public const string LkMsdynFileuploadstatustrackerCreatedonbehalfby = "lk_msdyn_fileuploadstatustracker_createdonbehalfby";
 				public const string LkMsdynFileuploadstatustrackerModifiedby = "lk_msdyn_fileuploadstatustracker_modifiedby";
 				public const string LkMsdynFileuploadstatustrackerModifiedonbehalfby = "lk_msdyn_fileuploadstatustracker_modifiedonbehalfby";
+				public const string LkMsdynFindworkeventCreatedby = "lk_msdyn_findworkevent_createdby";
+				public const string LkMsdynFindworkeventCreatedonbehalfby = "lk_msdyn_findworkevent_createdonbehalfby";
+				public const string LkMsdynFindworkeventModifiedby = "lk_msdyn_findworkevent_modifiedby";
+				public const string LkMsdynFindworkeventModifiedonbehalfby = "lk_msdyn_findworkevent_modifiedonbehalfby";
 				public const string LkMsdynFlowcardtypeCreatedby = "lk_msdyn_flowcardtype_createdby";
 				public const string LkMsdynFlowcardtypeCreatedonbehalfby = "lk_msdyn_flowcardtype_createdonbehalfby";
 				public const string LkMsdynFlowcardtypeModifiedby = "lk_msdyn_flowcardtype_modifiedby";
 				public const string LkMsdynFlowcardtypeModifiedonbehalfby = "lk_msdyn_flowcardtype_modifiedonbehalfby";
+				public const string LkMsdynFlwconfigurationCreatedby = "lk_msdyn_flwconfiguration_createdby";
+				public const string LkMsdynFlwconfigurationCreatedonbehalfby = "lk_msdyn_flwconfiguration_createdonbehalfby";
+				public const string LkMsdynFlwconfigurationModifiedby = "lk_msdyn_flwconfiguration_modifiedby";
+				public const string LkMsdynFlwconfigurationModifiedonbehalfby = "lk_msdyn_flwconfiguration_modifiedonbehalfby";
 				public const string LkMsdynForecastCreatedby = "lk_msdyn_forecast_createdby";
 				public const string LkMsdynForecastCreatedonbehalfby = "lk_msdyn_forecast_createdonbehalfby";
 				public const string LkMsdynForecastModifiedby = "lk_msdyn_forecast_modifiedby";
@@ -7819,18 +8787,50 @@ namespace dgt.power.dataverse
 				public const string LkMsdynForecastsettingsandsummaryCreatedonbehalfby = "lk_msdyn_forecastsettingsandsummary_createdonbehalfby";
 				public const string LkMsdynForecastsettingsandsummaryModifiedby = "lk_msdyn_forecastsettingsandsummary_modifiedby";
 				public const string LkMsdynForecastsettingsandsummaryModifiedonbehalfby = "lk_msdyn_forecastsettingsandsummary_modifiedonbehalfby";
+				public const string LkMsdynFormmappingCreatedby = "lk_msdyn_formmapping_createdby";
+				public const string LkMsdynFormmappingCreatedonbehalfby = "lk_msdyn_formmapping_createdonbehalfby";
+				public const string LkMsdynFormmappingModifiedby = "lk_msdyn_formmapping_modifiedby";
+				public const string LkMsdynFormmappingModifiedonbehalfby = "lk_msdyn_formmapping_modifiedonbehalfby";
 				public const string LkMsdynFunctionallocationCreatedby = "lk_msdyn_functionallocation_createdby";
 				public const string LkMsdynFunctionallocationCreatedonbehalfby = "lk_msdyn_functionallocation_createdonbehalfby";
 				public const string LkMsdynFunctionallocationModifiedby = "lk_msdyn_functionallocation_modifiedby";
 				public const string LkMsdynFunctionallocationModifiedonbehalfby = "lk_msdyn_functionallocation_modifiedonbehalfby";
+				public const string LkMsdynFunctionallocationtypeCreatedby = "lk_msdyn_functionallocationtype_createdby";
+				public const string LkMsdynFunctionallocationtypeCreatedonbehalfby = "lk_msdyn_functionallocationtype_createdonbehalfby";
+				public const string LkMsdynFunctionallocationtypeModifiedby = "lk_msdyn_functionallocationtype_modifiedby";
+				public const string LkMsdynFunctionallocationtypeModifiedonbehalfby = "lk_msdyn_functionallocationtype_modifiedonbehalfby";
 				public const string LkMsdynGdprdataCreatedby = "lk_msdyn_gdprdata_createdby";
 				public const string LkMsdynGdprdataCreatedonbehalfby = "lk_msdyn_gdprdata_createdonbehalfby";
 				public const string LkMsdynGdprdataModifiedby = "lk_msdyn_gdprdata_modifiedby";
 				public const string LkMsdynGdprdataModifiedonbehalfby = "lk_msdyn_gdprdata_modifiedonbehalfby";
+				public const string LkMsdynGeofenceCreatedby = "lk_msdyn_geofence_createdby";
+				public const string LkMsdynGeofenceCreatedonbehalfby = "lk_msdyn_geofence_createdonbehalfby";
+				public const string LkMsdynGeofenceModifiedby = "lk_msdyn_geofence_modifiedby";
+				public const string LkMsdynGeofenceModifiedonbehalfby = "lk_msdyn_geofence_modifiedonbehalfby";
+				public const string LkMsdynGeofenceeventCreatedby = "lk_msdyn_geofenceevent_createdby";
+				public const string LkMsdynGeofenceeventCreatedonbehalfby = "lk_msdyn_geofenceevent_createdonbehalfby";
+				public const string LkMsdynGeofenceeventModifiedby = "lk_msdyn_geofenceevent_modifiedby";
+				public const string LkMsdynGeofenceeventModifiedonbehalfby = "lk_msdyn_geofenceevent_modifiedonbehalfby";
+				public const string LkMsdynGeofencingsettingsCreatedby = "lk_msdyn_geofencingsettings_createdby";
+				public const string LkMsdynGeofencingsettingsCreatedonbehalfby = "lk_msdyn_geofencingsettings_createdonbehalfby";
+				public const string LkMsdynGeofencingsettingsModifiedby = "lk_msdyn_geofencingsettings_modifiedby";
+				public const string LkMsdynGeofencingsettingsModifiedonbehalfby = "lk_msdyn_geofencingsettings_modifiedonbehalfby";
+				public const string LkMsdynGeolocationsettingsCreatedby = "lk_msdyn_geolocationsettings_createdby";
+				public const string LkMsdynGeolocationsettingsCreatedonbehalfby = "lk_msdyn_geolocationsettings_createdonbehalfby";
+				public const string LkMsdynGeolocationsettingsModifiedby = "lk_msdyn_geolocationsettings_modifiedby";
+				public const string LkMsdynGeolocationsettingsModifiedonbehalfby = "lk_msdyn_geolocationsettings_modifiedonbehalfby";
+				public const string LkMsdynGeolocationtrackingCreatedby = "lk_msdyn_geolocationtracking_createdby";
+				public const string LkMsdynGeolocationtrackingCreatedonbehalfby = "lk_msdyn_geolocationtracking_createdonbehalfby";
+				public const string LkMsdynGeolocationtrackingModifiedby = "lk_msdyn_geolocationtracking_modifiedby";
+				public const string LkMsdynGeolocationtrackingModifiedonbehalfby = "lk_msdyn_geolocationtracking_modifiedonbehalfby";
 				public const string LkMsdynHelppageCreatedby = "lk_msdyn_helppage_createdby";
 				public const string LkMsdynHelppageCreatedonbehalfby = "lk_msdyn_helppage_createdonbehalfby";
 				public const string LkMsdynHelppageModifiedby = "lk_msdyn_helppage_modifiedby";
 				public const string LkMsdynHelppageModifiedonbehalfby = "lk_msdyn_helppage_modifiedonbehalfby";
+				public const string LkMsdynIcdextensionCreatedby = "lk_msdyn_icdextension_createdby";
+				public const string LkMsdynIcdextensionCreatedonbehalfby = "lk_msdyn_icdextension_createdonbehalfby";
+				public const string LkMsdynIcdextensionModifiedby = "lk_msdyn_icdextension_modifiedby";
+				public const string LkMsdynIcdextensionModifiedonbehalfby = "lk_msdyn_icdextension_modifiedonbehalfby";
 				public const string LkMsdynIcebreakersconfigCreatedby = "lk_msdyn_icebreakersconfig_createdby";
 				public const string LkMsdynIcebreakersconfigCreatedonbehalfby = "lk_msdyn_icebreakersconfig_createdonbehalfby";
 				public const string LkMsdynIcebreakersconfigModifiedby = "lk_msdyn_icebreakersconfig_modifiedby";
@@ -7843,18 +8843,130 @@ namespace dgt.power.dataverse
 				public const string LkMsdynIermltrainingCreatedonbehalfby = "lk_msdyn_iermltraining_createdonbehalfby";
 				public const string LkMsdynIermltrainingModifiedby = "lk_msdyn_iermltraining_modifiedby";
 				public const string LkMsdynIermltrainingModifiedonbehalfby = "lk_msdyn_iermltraining_modifiedonbehalfby";
+				public const string LkMsdynInboxcardconfigurationCreatedby = "lk_msdyn_inboxcardconfiguration_createdby";
+				public const string LkMsdynInboxcardconfigurationCreatedonbehalfby = "lk_msdyn_inboxcardconfiguration_createdonbehalfby";
+				public const string LkMsdynInboxcardconfigurationModifiedby = "lk_msdyn_inboxcardconfiguration_modifiedby";
+				public const string LkMsdynInboxcardconfigurationModifiedonbehalfby = "lk_msdyn_inboxcardconfiguration_modifiedonbehalfby";
 				public const string LkMsdynInboxconfigurationCreatedby = "lk_msdyn_inboxconfiguration_createdby";
 				public const string LkMsdynInboxconfigurationCreatedonbehalfby = "lk_msdyn_inboxconfiguration_createdonbehalfby";
 				public const string LkMsdynInboxconfigurationModifiedby = "lk_msdyn_inboxconfiguration_modifiedby";
 				public const string LkMsdynInboxconfigurationModifiedonbehalfby = "lk_msdyn_inboxconfiguration_modifiedonbehalfby";
+				public const string LkMsdynInboxentityconfigCreatedby = "lk_msdyn_inboxentityconfig_createdby";
+				public const string LkMsdynInboxentityconfigCreatedonbehalfby = "lk_msdyn_inboxentityconfig_createdonbehalfby";
+				public const string LkMsdynInboxentityconfigModifiedby = "lk_msdyn_inboxentityconfig_modifiedby";
+				public const string LkMsdynInboxentityconfigModifiedonbehalfby = "lk_msdyn_inboxentityconfig_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypeCreatedby = "lk_msdyn_incidenttype_createdby";
+				public const string LkMsdynIncidenttypeCreatedonbehalfby = "lk_msdyn_incidenttype_createdonbehalfby";
+				public const string LkMsdynIncidenttypeModifiedby = "lk_msdyn_incidenttype_modifiedby";
+				public const string LkMsdynIncidenttypeModifiedonbehalfby = "lk_msdyn_incidenttype_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypeRequirementgroupCreatedby = "lk_msdyn_incidenttype_requirementgroup_createdby";
+				public const string LkMsdynIncidenttypeRequirementgroupCreatedonbehalfby = "lk_msdyn_incidenttype_requirementgroup_createdonbehalfby";
+				public const string LkMsdynIncidenttypeRequirementgroupModifiedby = "lk_msdyn_incidenttype_requirementgroup_modifiedby";
+				public const string LkMsdynIncidenttypeRequirementgroupModifiedonbehalfby = "lk_msdyn_incidenttype_requirementgroup_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypecharacteristicCreatedby = "lk_msdyn_incidenttypecharacteristic_createdby";
+				public const string LkMsdynIncidenttypecharacteristicCreatedonbehalfby = "lk_msdyn_incidenttypecharacteristic_createdonbehalfby";
+				public const string LkMsdynIncidenttypecharacteristicModifiedby = "lk_msdyn_incidenttypecharacteristic_modifiedby";
+				public const string LkMsdynIncidenttypecharacteristicModifiedonbehalfby = "lk_msdyn_incidenttypecharacteristic_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypeproductCreatedby = "lk_msdyn_incidenttypeproduct_createdby";
+				public const string LkMsdynIncidenttypeproductCreatedonbehalfby = "lk_msdyn_incidenttypeproduct_createdonbehalfby";
+				public const string LkMsdynIncidenttypeproductModifiedby = "lk_msdyn_incidenttypeproduct_modifiedby";
+				public const string LkMsdynIncidenttypeproductModifiedonbehalfby = "lk_msdyn_incidenttypeproduct_modifiedonbehalfby";
+				public const string LkMsdynIncidenttyperecommendationresultCreatedby = "lk_msdyn_incidenttyperecommendationresult_createdby";
+				public const string LkMsdynIncidenttyperecommendationresultCreatedonbehalfby = "lk_msdyn_incidenttyperecommendationresult_createdonbehalfby";
+				public const string LkMsdynIncidenttyperecommendationresultModifiedby = "lk_msdyn_incidenttyperecommendationresult_modifiedby";
+				public const string LkMsdynIncidenttyperecommendationresultModifiedonbehalfby = "lk_msdyn_incidenttyperecommendationresult_modifiedonbehalfby";
+				public const string LkMsdynIncidenttyperecommendationrunhistoryCreatedby = "lk_msdyn_incidenttyperecommendationrunhistory_createdby";
+				public const string LkMsdynIncidenttyperecommendationrunhistoryCreatedonbehalfby = "lk_msdyn_incidenttyperecommendationrunhistory_createdonbehalfby";
+				public const string LkMsdynIncidenttyperecommendationrunhistoryModifiedby = "lk_msdyn_incidenttyperecommendationrunhistory_modifiedby";
+				public const string LkMsdynIncidenttyperecommendationrunhistoryModifiedonbehalfby = "lk_msdyn_incidenttyperecommendationrunhistory_modifiedonbehalfby";
+				public const string LkMsdynIncidenttyperesolutionCreatedby = "lk_msdyn_incidenttyperesolution_createdby";
+				public const string LkMsdynIncidenttyperesolutionCreatedonbehalfby = "lk_msdyn_incidenttyperesolution_createdonbehalfby";
+				public const string LkMsdynIncidenttyperesolutionModifiedby = "lk_msdyn_incidenttyperesolution_modifiedby";
+				public const string LkMsdynIncidenttyperesolutionModifiedonbehalfby = "lk_msdyn_incidenttyperesolution_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypeserviceCreatedby = "lk_msdyn_incidenttypeservice_createdby";
+				public const string LkMsdynIncidenttypeserviceCreatedonbehalfby = "lk_msdyn_incidenttypeservice_createdonbehalfby";
+				public const string LkMsdynIncidenttypeserviceModifiedby = "lk_msdyn_incidenttypeservice_modifiedby";
+				public const string LkMsdynIncidenttypeserviceModifiedonbehalfby = "lk_msdyn_incidenttypeservice_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypeservicetaskCreatedby = "lk_msdyn_incidenttypeservicetask_createdby";
+				public const string LkMsdynIncidenttypeservicetaskCreatedonbehalfby = "lk_msdyn_incidenttypeservicetask_createdonbehalfby";
+				public const string LkMsdynIncidenttypeservicetaskModifiedby = "lk_msdyn_incidenttypeservicetask_modifiedby";
+				public const string LkMsdynIncidenttypeservicetaskModifiedonbehalfby = "lk_msdyn_incidenttypeservicetask_modifiedonbehalfby";
+				public const string LkMsdynIncidenttypessetupCreatedby = "lk_msdyn_incidenttypessetup_createdby";
+				public const string LkMsdynIncidenttypessetupCreatedonbehalfby = "lk_msdyn_incidenttypessetup_createdonbehalfby";
+				public const string LkMsdynIncidenttypessetupModifiedby = "lk_msdyn_incidenttypessetup_modifiedby";
+				public const string LkMsdynIncidenttypessetupModifiedonbehalfby = "lk_msdyn_incidenttypessetup_modifiedonbehalfby";
 				public const string LkMsdynInsightsstorevirtualentityCreatedby = "lk_msdyn_insightsstorevirtualentity_createdby";
 				public const string LkMsdynInsightsstorevirtualentityCreatedonbehalfby = "lk_msdyn_insightsstorevirtualentity_createdonbehalfby";
 				public const string LkMsdynInsightsstorevirtualentityModifiedby = "lk_msdyn_insightsstorevirtualentity_modifiedby";
 				public const string LkMsdynInsightsstorevirtualentityModifiedonbehalfby = "lk_msdyn_insightsstorevirtualentity_modifiedonbehalfby";
+				public const string LkMsdynInspectionCreatedby = "lk_msdyn_inspection_createdby";
+				public const string LkMsdynInspectionCreatedonbehalfby = "lk_msdyn_inspection_createdonbehalfby";
+				public const string LkMsdynInspectionModifiedby = "lk_msdyn_inspection_modifiedby";
+				public const string LkMsdynInspectionModifiedonbehalfby = "lk_msdyn_inspection_modifiedonbehalfby";
+				public const string LkMsdynInspectionattachmentCreatedby = "lk_msdyn_inspectionattachment_createdby";
+				public const string LkMsdynInspectionattachmentCreatedonbehalfby = "lk_msdyn_inspectionattachment_createdonbehalfby";
+				public const string LkMsdynInspectionattachmentModifiedby = "lk_msdyn_inspectionattachment_modifiedby";
+				public const string LkMsdynInspectionattachmentModifiedonbehalfby = "lk_msdyn_inspectionattachment_modifiedonbehalfby";
+				public const string LkMsdynInspectiondefinitionCreatedby = "lk_msdyn_inspectiondefinition_createdby";
+				public const string LkMsdynInspectiondefinitionCreatedonbehalfby = "lk_msdyn_inspectiondefinition_createdonbehalfby";
+				public const string LkMsdynInspectiondefinitionModifiedby = "lk_msdyn_inspectiondefinition_modifiedby";
+				public const string LkMsdynInspectiondefinitionModifiedonbehalfby = "lk_msdyn_inspectiondefinition_modifiedonbehalfby";
+				public const string LkMsdynInspectioninstanceCreatedby = "lk_msdyn_inspectioninstance_createdby";
+				public const string LkMsdynInspectioninstanceCreatedonbehalfby = "lk_msdyn_inspectioninstance_createdonbehalfby";
+				public const string LkMsdynInspectioninstanceModifiedby = "lk_msdyn_inspectioninstance_modifiedby";
+				public const string LkMsdynInspectioninstanceModifiedonbehalfby = "lk_msdyn_inspectioninstance_modifiedonbehalfby";
+				public const string LkMsdynInspectionresponseCreatedby = "lk_msdyn_inspectionresponse_createdby";
+				public const string LkMsdynInspectionresponseCreatedonbehalfby = "lk_msdyn_inspectionresponse_createdonbehalfby";
+				public const string LkMsdynInspectionresponseModifiedby = "lk_msdyn_inspectionresponse_modifiedby";
+				public const string LkMsdynInspectionresponseModifiedonbehalfby = "lk_msdyn_inspectionresponse_modifiedonbehalfby";
+				public const string LkMsdynInsuranceCreatedby = "lk_msdyn_insurance_createdby";
+				public const string LkMsdynInsuranceCreatedonbehalfby = "lk_msdyn_insurance_createdonbehalfby";
+				public const string LkMsdynInsuranceModifiedby = "lk_msdyn_insurance_modifiedby";
+				public const string LkMsdynInsuranceModifiedonbehalfby = "lk_msdyn_insurance_modifiedonbehalfby";
 				public const string LkMsdynIntegratedsearchproviderCreatedby = "lk_msdyn_integratedsearchprovider_createdby";
 				public const string LkMsdynIntegratedsearchproviderCreatedonbehalfby = "lk_msdyn_integratedsearchprovider_createdonbehalfby";
 				public const string LkMsdynIntegratedsearchproviderModifiedby = "lk_msdyn_integratedsearchprovider_modifiedby";
 				public const string LkMsdynIntegratedsearchproviderModifiedonbehalfby = "lk_msdyn_integratedsearchprovider_modifiedonbehalfby";
+				public const string LkMsdynIntegrationjobCreatedby = "lk_msdyn_integrationjob_createdby";
+				public const string LkMsdynIntegrationjobCreatedonbehalfby = "lk_msdyn_integrationjob_createdonbehalfby";
+				public const string LkMsdynIntegrationjobModifiedby = "lk_msdyn_integrationjob_modifiedby";
+				public const string LkMsdynIntegrationjobModifiedonbehalfby = "lk_msdyn_integrationjob_modifiedonbehalfby";
+				public const string LkMsdynIntegrationjobdetailCreatedby = "lk_msdyn_integrationjobdetail_createdby";
+				public const string LkMsdynIntegrationjobdetailCreatedonbehalfby = "lk_msdyn_integrationjobdetail_createdonbehalfby";
+				public const string LkMsdynIntegrationjobdetailModifiedby = "lk_msdyn_integrationjobdetail_modifiedby";
+				public const string LkMsdynIntegrationjobdetailModifiedonbehalfby = "lk_msdyn_integrationjobdetail_modifiedonbehalfby";
+				public const string LkMsdynIntentCreatedby = "lk_msdyn_intent_createdby";
+				public const string LkMsdynIntentCreatedonbehalfby = "lk_msdyn_intent_createdonbehalfby";
+				public const string LkMsdynIntentModifiedby = "lk_msdyn_intent_modifiedby";
+				public const string LkMsdynIntentModifiedonbehalfby = "lk_msdyn_intent_modifiedonbehalfby";
+				public const string LkMsdynInventoryadjustmentCreatedby = "lk_msdyn_inventoryadjustment_createdby";
+				public const string LkMsdynInventoryadjustmentCreatedonbehalfby = "lk_msdyn_inventoryadjustment_createdonbehalfby";
+				public const string LkMsdynInventoryadjustmentModifiedby = "lk_msdyn_inventoryadjustment_modifiedby";
+				public const string LkMsdynInventoryadjustmentModifiedonbehalfby = "lk_msdyn_inventoryadjustment_modifiedonbehalfby";
+				public const string LkMsdynInventoryadjustmentproductCreatedby = "lk_msdyn_inventoryadjustmentproduct_createdby";
+				public const string LkMsdynInventoryadjustmentproductCreatedonbehalfby = "lk_msdyn_inventoryadjustmentproduct_createdonbehalfby";
+				public const string LkMsdynInventoryadjustmentproductModifiedby = "lk_msdyn_inventoryadjustmentproduct_modifiedby";
+				public const string LkMsdynInventoryadjustmentproductModifiedonbehalfby = "lk_msdyn_inventoryadjustmentproduct_modifiedonbehalfby";
+				public const string LkMsdynInventoryjournalCreatedby = "lk_msdyn_inventoryjournal_createdby";
+				public const string LkMsdynInventoryjournalCreatedonbehalfby = "lk_msdyn_inventoryjournal_createdonbehalfby";
+				public const string LkMsdynInventoryjournalModifiedby = "lk_msdyn_inventoryjournal_modifiedby";
+				public const string LkMsdynInventoryjournalModifiedonbehalfby = "lk_msdyn_inventoryjournal_modifiedonbehalfby";
+				public const string LkMsdynInventorytransferCreatedby = "lk_msdyn_inventorytransfer_createdby";
+				public const string LkMsdynInventorytransferCreatedonbehalfby = "lk_msdyn_inventorytransfer_createdonbehalfby";
+				public const string LkMsdynInventorytransferModifiedby = "lk_msdyn_inventorytransfer_modifiedby";
+				public const string LkMsdynInventorytransferModifiedonbehalfby = "lk_msdyn_inventorytransfer_modifiedonbehalfby";
+				public const string LkMsdynInvoicefrequencyCreatedby = "lk_msdyn_invoicefrequency_createdby";
+				public const string LkMsdynInvoicefrequencyCreatedonbehalfby = "lk_msdyn_invoicefrequency_createdonbehalfby";
+				public const string LkMsdynInvoicefrequencyModifiedby = "lk_msdyn_invoicefrequency_modifiedby";
+				public const string LkMsdynInvoicefrequencyModifiedonbehalfby = "lk_msdyn_invoicefrequency_modifiedonbehalfby";
+				public const string LkMsdynInvoicefrequencydetailCreatedby = "lk_msdyn_invoicefrequencydetail_createdby";
+				public const string LkMsdynInvoicefrequencydetailCreatedonbehalfby = "lk_msdyn_invoicefrequencydetail_createdonbehalfby";
+				public const string LkMsdynInvoicefrequencydetailModifiedby = "lk_msdyn_invoicefrequencydetail_modifiedby";
+				public const string LkMsdynInvoicefrequencydetailModifiedonbehalfby = "lk_msdyn_invoicefrequencydetail_modifiedonbehalfby";
+				public const string LkMsdynInvoicelinetransactionCreatedby = "lk_msdyn_invoicelinetransaction_createdby";
+				public const string LkMsdynInvoicelinetransactionCreatedonbehalfby = "lk_msdyn_invoicelinetransaction_createdonbehalfby";
+				public const string LkMsdynInvoicelinetransactionModifiedby = "lk_msdyn_invoicelinetransaction_modifiedby";
+				public const string LkMsdynInvoicelinetransactionModifiedonbehalfby = "lk_msdyn_invoicelinetransaction_modifiedonbehalfby";
 				public const string LkMsdynIotalertCreatedby = "lk_msdyn_iotalert_createdby";
 				public const string LkMsdynIotalertCreatedonbehalfby = "lk_msdyn_iotalert_createdonbehalfby";
 				public const string LkMsdynIotalertModifiedby = "lk_msdyn_iotalert_modifiedby";
@@ -7915,6 +9027,18 @@ namespace dgt.power.dataverse
 				public const string LkMsdynIottocaseprocessCreatedonbehalfby = "lk_msdyn_iottocaseprocess_createdonbehalfby";
 				public const string LkMsdynIottocaseprocessModifiedby = "lk_msdyn_iottocaseprocess_modifiedby";
 				public const string LkMsdynIottocaseprocessModifiedonbehalfby = "lk_msdyn_iottocaseprocess_modifiedonbehalfby";
+				public const string LkMsdynJobsstateCreatedby = "lk_msdyn_jobsstate_createdby";
+				public const string LkMsdynJobsstateCreatedonbehalfby = "lk_msdyn_jobsstate_createdonbehalfby";
+				public const string LkMsdynJobsstateModifiedby = "lk_msdyn_jobsstate_modifiedby";
+				public const string LkMsdynJobsstateModifiedonbehalfby = "lk_msdyn_jobsstate_modifiedonbehalfby";
+				public const string LkMsdynJournalCreatedby = "lk_msdyn_journal_createdby";
+				public const string LkMsdynJournalCreatedonbehalfby = "lk_msdyn_journal_createdonbehalfby";
+				public const string LkMsdynJournalModifiedby = "lk_msdyn_journal_modifiedby";
+				public const string LkMsdynJournalModifiedonbehalfby = "lk_msdyn_journal_modifiedonbehalfby";
+				public const string LkMsdynJournallineCreatedby = "lk_msdyn_journalline_createdby";
+				public const string LkMsdynJournallineCreatedonbehalfby = "lk_msdyn_journalline_createdonbehalfby";
+				public const string LkMsdynJournallineModifiedby = "lk_msdyn_journalline_modifiedby";
+				public const string LkMsdynJournallineModifiedonbehalfby = "lk_msdyn_journalline_modifiedonbehalfby";
 				public const string LkMsdynKalanguagesettingCreatedby = "lk_msdyn_kalanguagesetting_createdby";
 				public const string LkMsdynKalanguagesettingCreatedonbehalfby = "lk_msdyn_kalanguagesetting_createdonbehalfby";
 				public const string LkMsdynKalanguagesettingModifiedby = "lk_msdyn_kalanguagesetting_modifiedby";
@@ -7947,6 +9071,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynKnowledgearticletemplateCreatedonbehalfby = "lk_msdyn_knowledgearticletemplate_createdonbehalfby";
 				public const string LkMsdynKnowledgearticletemplateModifiedby = "lk_msdyn_knowledgearticletemplate_modifiedby";
 				public const string LkMsdynKnowledgearticletemplateModifiedonbehalfby = "lk_msdyn_knowledgearticletemplate_modifiedonbehalfby";
+				public const string LkMsdynKnowledgeassetconfigurationCreatedby = "lk_msdyn_knowledgeassetconfiguration_createdby";
+				public const string LkMsdynKnowledgeassetconfigurationCreatedonbehalfby = "lk_msdyn_knowledgeassetconfiguration_createdonbehalfby";
+				public const string LkMsdynKnowledgeassetconfigurationModifiedby = "lk_msdyn_knowledgeassetconfiguration_modifiedby";
+				public const string LkMsdynKnowledgeassetconfigurationModifiedonbehalfby = "lk_msdyn_knowledgeassetconfiguration_modifiedonbehalfby";
 				public const string LkMsdynKnowledgeconfigurationCreatedby = "lk_msdyn_knowledgeconfiguration_createdby";
 				public const string LkMsdynKnowledgeconfigurationCreatedonbehalfby = "lk_msdyn_knowledgeconfiguration_createdonbehalfby";
 				public const string LkMsdynKnowledgeconfigurationModifiedby = "lk_msdyn_knowledgeconfiguration_modifiedby";
@@ -7991,10 +9119,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynLeadmodelconfigCreatedonbehalfby = "lk_msdyn_leadmodelconfig_createdonbehalfby";
 				public const string LkMsdynLeadmodelconfigModifiedby = "lk_msdyn_leadmodelconfig_modifiedby";
 				public const string LkMsdynLeadmodelconfigModifiedonbehalfby = "lk_msdyn_leadmodelconfig_modifiedonbehalfby";
+				public const string LkMsdynLineengagementctxCreatedby = "lk_msdyn_lineengagementctx_createdby";
+				public const string LkMsdynLineengagementctxCreatedonbehalfby = "lk_msdyn_lineengagementctx_createdonbehalfby";
+				public const string LkMsdynLineengagementctxModifiedby = "lk_msdyn_lineengagementctx_modifiedby";
+				public const string LkMsdynLineengagementctxModifiedonbehalfby = "lk_msdyn_lineengagementctx_modifiedonbehalfby";
 				public const string LkMsdynLinkedentityattributevalidityCreatedby = "lk_msdyn_linkedentityattributevalidity_createdby";
 				public const string LkMsdynLinkedentityattributevalidityCreatedonbehalfby = "lk_msdyn_linkedentityattributevalidity_createdonbehalfby";
 				public const string LkMsdynLinkedentityattributevalidityModifiedby = "lk_msdyn_linkedentityattributevalidity_modifiedby";
 				public const string LkMsdynLinkedentityattributevalidityModifiedonbehalfby = "lk_msdyn_linkedentityattributevalidity_modifiedonbehalfby";
+				public const string LkMsdynLivechatconfigCreatedby = "lk_msdyn_livechatconfig_createdby";
+				public const string LkMsdynLivechatconfigCreatedonbehalfby = "lk_msdyn_livechatconfig_createdonbehalfby";
+				public const string LkMsdynLivechatconfigModifiedby = "lk_msdyn_livechatconfig_modifiedby";
+				public const string LkMsdynLivechatconfigModifiedonbehalfby = "lk_msdyn_livechatconfig_modifiedonbehalfby";
+				public const string LkMsdynLivechatengagementctxCreatedby = "lk_msdyn_livechatengagementctx_createdby";
+				public const string LkMsdynLivechatengagementctxCreatedonbehalfby = "lk_msdyn_livechatengagementctx_createdonbehalfby";
+				public const string LkMsdynLivechatengagementctxModifiedby = "lk_msdyn_livechatengagementctx_modifiedby";
+				public const string LkMsdynLivechatengagementctxModifiedonbehalfby = "lk_msdyn_livechatengagementctx_modifiedonbehalfby";
+				public const string LkMsdynLivechatwidgetlocationCreatedby = "lk_msdyn_livechatwidgetlocation_createdby";
+				public const string LkMsdynLivechatwidgetlocationCreatedonbehalfby = "lk_msdyn_livechatwidgetlocation_createdonbehalfby";
+				public const string LkMsdynLivechatwidgetlocationModifiedby = "lk_msdyn_livechatwidgetlocation_modifiedby";
+				public const string LkMsdynLivechatwidgetlocationModifiedonbehalfby = "lk_msdyn_livechatwidgetlocation_modifiedonbehalfby";
 				public const string LkMsdynLiveconversationCreatedby = "lk_msdyn_liveconversation_createdby";
 				public const string LkMsdynLiveconversationCreatedonbehalfby = "lk_msdyn_liveconversation_createdonbehalfby";
 				public const string LkMsdynLiveconversationModifiedby = "lk_msdyn_liveconversation_modifiedby";
@@ -8011,6 +9155,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynLiveworkstreamcapacityprofileCreatedonbehalfby = "lk_msdyn_liveworkstreamcapacityprofile_createdonbehalfby";
 				public const string LkMsdynLiveworkstreamcapacityprofileModifiedby = "lk_msdyn_liveworkstreamcapacityprofile_modifiedby";
 				public const string LkMsdynLiveworkstreamcapacityprofileModifiedonbehalfby = "lk_msdyn_liveworkstreamcapacityprofile_modifiedonbehalfby";
+				public const string LkMsdynLocalizedsurveyquestionCreatedby = "lk_msdyn_localizedsurveyquestion_createdby";
+				public const string LkMsdynLocalizedsurveyquestionCreatedonbehalfby = "lk_msdyn_localizedsurveyquestion_createdonbehalfby";
+				public const string LkMsdynLocalizedsurveyquestionModifiedby = "lk_msdyn_localizedsurveyquestion_modifiedby";
+				public const string LkMsdynLocalizedsurveyquestionModifiedonbehalfby = "lk_msdyn_localizedsurveyquestion_modifiedonbehalfby";
+				public const string LkMsdynLocationtemplateassociationCreatedby = "lk_msdyn_locationtemplateassociation_createdby";
+				public const string LkMsdynLocationtemplateassociationCreatedonbehalfby = "lk_msdyn_locationtemplateassociation_createdonbehalfby";
+				public const string LkMsdynLocationtemplateassociationModifiedby = "lk_msdyn_locationtemplateassociation_modifiedby";
+				public const string LkMsdynLocationtemplateassociationModifiedonbehalfby = "lk_msdyn_locationtemplateassociation_modifiedonbehalfby";
+				public const string LkMsdynLocationtypetemplateassociationCreatedby = "lk_msdyn_locationtypetemplateassociation_createdby";
+				public const string LkMsdynLocationtypetemplateassociationCreatedonbehalfby = "lk_msdyn_locationtypetemplateassociation_createdonbehalfby";
+				public const string LkMsdynLocationtypetemplateassociationModifiedby = "lk_msdyn_locationtypetemplateassociation_modifiedby";
+				public const string LkMsdynLocationtypetemplateassociationModifiedonbehalfby = "lk_msdyn_locationtypetemplateassociation_modifiedonbehalfby";
+				public const string LkMsdynLockstatusCreatedby = "lk_msdyn_lockstatus_createdby";
+				public const string LkMsdynLockstatusCreatedonbehalfby = "lk_msdyn_lockstatus_createdonbehalfby";
+				public const string LkMsdynLockstatusModifiedby = "lk_msdyn_lockstatus_modifiedby";
+				public const string LkMsdynLockstatusModifiedonbehalfby = "lk_msdyn_lockstatus_modifiedonbehalfby";
 				public const string LkMsdynMacrosessionCreatedby = "lk_msdyn_macrosession_createdby";
 				public const string LkMsdynMacrosessionCreatedonbehalfby = "lk_msdyn_macrosession_createdonbehalfby";
 				public const string LkMsdynMacrosessionModifiedby = "lk_msdyn_macrosession_modifiedby";
@@ -8027,10 +9187,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynMigrationtrackerCreatedonbehalfby = "lk_msdyn_migrationtracker_createdonbehalfby";
 				public const string LkMsdynMigrationtrackerModifiedby = "lk_msdyn_migrationtracker_modifiedby";
 				public const string LkMsdynMigrationtrackerModifiedonbehalfby = "lk_msdyn_migrationtracker_modifiedonbehalfby";
+				public const string LkMsdynMlresultcacheCreatedby = "lk_msdyn_mlresultcache_createdby";
+				public const string LkMsdynMlresultcacheCreatedonbehalfby = "lk_msdyn_mlresultcache_createdonbehalfby";
+				public const string LkMsdynMlresultcacheModifiedby = "lk_msdyn_mlresultcache_modifiedby";
+				public const string LkMsdynMlresultcacheModifiedonbehalfby = "lk_msdyn_mlresultcache_modifiedonbehalfby";
+				public const string LkMsdynMobileappCreatedby = "lk_msdyn_mobileapp_createdby";
+				public const string LkMsdynMobileappCreatedonbehalfby = "lk_msdyn_mobileapp_createdonbehalfby";
+				public const string LkMsdynMobileappModifiedby = "lk_msdyn_mobileapp_modifiedby";
+				public const string LkMsdynMobileappModifiedonbehalfby = "lk_msdyn_mobileapp_modifiedonbehalfby";
+				public const string LkMsdynMobilesourceCreatedby = "lk_msdyn_mobilesource_createdby";
+				public const string LkMsdynMobilesourceCreatedonbehalfby = "lk_msdyn_mobilesource_createdonbehalfby";
+				public const string LkMsdynMobilesourceModifiedby = "lk_msdyn_mobilesource_modifiedby";
+				public const string LkMsdynMobilesourceModifiedonbehalfby = "lk_msdyn_mobilesource_modifiedonbehalfby";
 				public const string LkMsdynModelpreviewstatusCreatedby = "lk_msdyn_modelpreviewstatus_createdby";
 				public const string LkMsdynModelpreviewstatusCreatedonbehalfby = "lk_msdyn_modelpreviewstatus_createdonbehalfby";
 				public const string LkMsdynModelpreviewstatusModifiedby = "lk_msdyn_modelpreviewstatus_modifiedby";
 				public const string LkMsdynModelpreviewstatusModifiedonbehalfby = "lk_msdyn_modelpreviewstatus_modifiedonbehalfby";
+				public const string LkMsdynModulerundetailCreatedby = "lk_msdyn_modulerundetail_createdby";
+				public const string LkMsdynModulerundetailCreatedonbehalfby = "lk_msdyn_modulerundetail_createdonbehalfby";
+				public const string LkMsdynModulerundetailModifiedby = "lk_msdyn_modulerundetail_modifiedby";
+				public const string LkMsdynModulerundetailModifiedonbehalfby = "lk_msdyn_modulerundetail_modifiedonbehalfby";
 				public const string LkMsdynMostcontactedCreatedby = "lk_msdyn_mostcontacted_createdby";
 				public const string LkMsdynMostcontactedCreatedonbehalfby = "lk_msdyn_mostcontacted_createdonbehalfby";
 				public const string LkMsdynMostcontactedModifiedby = "lk_msdyn_mostcontacted_modifiedby";
@@ -8059,10 +9235,30 @@ namespace dgt.power.dataverse
 				public const string LkMsdynNotificationtemplateCreatedonbehalfby = "lk_msdyn_notificationtemplate_createdonbehalfby";
 				public const string LkMsdynNotificationtemplateModifiedby = "lk_msdyn_notificationtemplate_modifiedby";
 				public const string LkMsdynNotificationtemplateModifiedonbehalfby = "lk_msdyn_notificationtemplate_modifiedonbehalfby";
+				public const string LkMsdynNottoexceedCreatedby = "lk_msdyn_nottoexceed_createdby";
+				public const string LkMsdynNottoexceedCreatedonbehalfby = "lk_msdyn_nottoexceed_createdonbehalfby";
+				public const string LkMsdynNottoexceedModifiedby = "lk_msdyn_nottoexceed_modifiedby";
+				public const string LkMsdynNottoexceedModifiedonbehalfby = "lk_msdyn_nottoexceed_modifiedonbehalfby";
 				public const string LkMsdynOcGeolocationproviderCreatedby = "lk_msdyn_oc_geolocationprovider_createdby";
 				public const string LkMsdynOcGeolocationproviderCreatedonbehalfby = "lk_msdyn_oc_geolocationprovider_createdonbehalfby";
 				public const string LkMsdynOcGeolocationproviderModifiedby = "lk_msdyn_oc_geolocationprovider_modifiedby";
 				public const string LkMsdynOcGeolocationproviderModifiedonbehalfby = "lk_msdyn_oc_geolocationprovider_modifiedonbehalfby";
+				public const string LkMsdynOcagentassignedcustomapiprivilegeCreatedby = "lk_msdyn_ocagentassignedcustomapiprivilege_createdby";
+				public const string LkMsdynOcagentassignedcustomapiprivilegeCreatedonbehalfby = "lk_msdyn_ocagentassignedcustomapiprivilege_createdonbehalfby";
+				public const string LkMsdynOcagentassignedcustomapiprivilegeModifiedby = "lk_msdyn_ocagentassignedcustomapiprivilege_modifiedby";
+				public const string LkMsdynOcagentassignedcustomapiprivilegeModifiedonbehalfby = "lk_msdyn_ocagentassignedcustomapiprivilege_modifiedonbehalfby";
+				public const string LkMsdynOcapplebusinessaccountCreatedby = "lk_msdyn_ocapplebusinessaccount_createdby";
+				public const string LkMsdynOcapplebusinessaccountCreatedonbehalfby = "lk_msdyn_ocapplebusinessaccount_createdonbehalfby";
+				public const string LkMsdynOcapplebusinessaccountModifiedby = "lk_msdyn_ocapplebusinessaccount_modifiedby";
+				public const string LkMsdynOcapplebusinessaccountModifiedonbehalfby = "lk_msdyn_ocapplebusinessaccount_modifiedonbehalfby";
+				public const string LkMsdynOcapplemessagesforbusinessengagementctxCreatedby = "lk_msdyn_ocapplemessagesforbusinessengagementctx_createdby";
+				public const string LkMsdynOcapplemessagesforbusinessengagementctxCreatedonbehalfby = "lk_msdyn_ocapplemessagesforbusinessengagementctx_createdonbehalfby";
+				public const string LkMsdynOcapplemessagesforbusinessengagementctxModifiedby = "lk_msdyn_ocapplemessagesforbusinessengagementctx_modifiedby";
+				public const string LkMsdynOcapplemessagesforbusinessengagementctxModifiedonbehalfby = "lk_msdyn_ocapplemessagesforbusinessengagementctx_modifiedonbehalfby";
+				public const string LkMsdynOcapplepayCreatedby = "lk_msdyn_ocapplepay_createdby";
+				public const string LkMsdynOcapplepayCreatedonbehalfby = "lk_msdyn_ocapplepay_createdonbehalfby";
+				public const string LkMsdynOcapplepayModifiedby = "lk_msdyn_ocapplepay_modifiedby";
+				public const string LkMsdynOcapplepayModifiedonbehalfby = "lk_msdyn_ocapplepay_modifiedonbehalfby";
 				public const string LkMsdynOcautoblockruleCreatedby = "lk_msdyn_ocautoblockrule_createdby";
 				public const string LkMsdynOcautoblockruleCreatedonbehalfby = "lk_msdyn_ocautoblockrule_createdonbehalfby";
 				public const string LkMsdynOcautoblockruleModifiedby = "lk_msdyn_ocautoblockrule_modifiedby";
@@ -8075,6 +9271,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOcbotchannelregistrationsecretCreatedonbehalfby = "lk_msdyn_ocbotchannelregistrationsecret_createdonbehalfby";
 				public const string LkMsdynOcbotchannelregistrationsecretModifiedby = "lk_msdyn_ocbotchannelregistrationsecret_modifiedby";
 				public const string LkMsdynOcbotchannelregistrationsecretModifiedonbehalfby = "lk_msdyn_ocbotchannelregistrationsecret_modifiedonbehalfby";
+				public const string LkMsdynOccarrierCreatedby = "lk_msdyn_occarrier_createdby";
+				public const string LkMsdynOccarrierCreatedonbehalfby = "lk_msdyn_occarrier_createdonbehalfby";
+				public const string LkMsdynOccarrierModifiedby = "lk_msdyn_occarrier_modifiedby";
+				public const string LkMsdynOccarrierModifiedonbehalfby = "lk_msdyn_occarrier_modifiedonbehalfby";
 				public const string LkMsdynOcchannelapiconversationprivilegeCreatedby = "lk_msdyn_occhannelapiconversationprivilege_createdby";
 				public const string LkMsdynOcchannelapiconversationprivilegeCreatedonbehalfby = "lk_msdyn_occhannelapiconversationprivilege_createdonbehalfby";
 				public const string LkMsdynOcchannelapiconversationprivilegeModifiedby = "lk_msdyn_occhannelapiconversationprivilege_modifiedby";
@@ -8095,18 +9295,54 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOcchannelstateconfigurationCreatedonbehalfby = "lk_msdyn_occhannelstateconfiguration_createdonbehalfby";
 				public const string LkMsdynOcchannelstateconfigurationModifiedby = "lk_msdyn_occhannelstateconfiguration_modifiedby";
 				public const string LkMsdynOcchannelstateconfigurationModifiedonbehalfby = "lk_msdyn_occhannelstateconfiguration_modifiedonbehalfby";
+				public const string LkMsdynOccommunicationprovidersettingCreatedby = "lk_msdyn_occommunicationprovidersetting_createdby";
+				public const string LkMsdynOccommunicationprovidersettingCreatedonbehalfby = "lk_msdyn_occommunicationprovidersetting_createdonbehalfby";
+				public const string LkMsdynOccommunicationprovidersettingModifiedby = "lk_msdyn_occommunicationprovidersetting_modifiedby";
+				public const string LkMsdynOccommunicationprovidersettingModifiedonbehalfby = "lk_msdyn_occommunicationprovidersetting_modifiedonbehalfby";
+				public const string LkMsdynOccommunicationprovidersettingentryCreatedby = "lk_msdyn_occommunicationprovidersettingentry_createdby";
+				public const string LkMsdynOccommunicationprovidersettingentryCreatedonbehalfby = "lk_msdyn_occommunicationprovidersettingentry_createdonbehalfby";
+				public const string LkMsdynOccommunicationprovidersettingentryModifiedby = "lk_msdyn_occommunicationprovidersettingentry_modifiedby";
+				public const string LkMsdynOccommunicationprovidersettingentryModifiedonbehalfby = "lk_msdyn_occommunicationprovidersettingentry_modifiedonbehalfby";
+				public const string LkMsdynOccustommessagingchannelCreatedby = "lk_msdyn_occustommessagingchannel_createdby";
+				public const string LkMsdynOccustommessagingchannelCreatedonbehalfby = "lk_msdyn_occustommessagingchannel_createdonbehalfby";
+				public const string LkMsdynOccustommessagingchannelModifiedby = "lk_msdyn_occustommessagingchannel_modifiedby";
+				public const string LkMsdynOccustommessagingchannelModifiedonbehalfby = "lk_msdyn_occustommessagingchannel_modifiedonbehalfby";
 				public const string LkMsdynOcexternalcontextCreatedby = "lk_msdyn_ocexternalcontext_createdby";
 				public const string LkMsdynOcexternalcontextCreatedonbehalfby = "lk_msdyn_ocexternalcontext_createdonbehalfby";
 				public const string LkMsdynOcexternalcontextModifiedby = "lk_msdyn_ocexternalcontext_modifiedby";
 				public const string LkMsdynOcexternalcontextModifiedonbehalfby = "lk_msdyn_ocexternalcontext_modifiedonbehalfby";
+				public const string LkMsdynOcfbapplicationCreatedby = "lk_msdyn_ocfbapplication_createdby";
+				public const string LkMsdynOcfbapplicationCreatedonbehalfby = "lk_msdyn_ocfbapplication_createdonbehalfby";
+				public const string LkMsdynOcfbapplicationModifiedby = "lk_msdyn_ocfbapplication_modifiedby";
+				public const string LkMsdynOcfbapplicationModifiedonbehalfby = "lk_msdyn_ocfbapplication_modifiedonbehalfby";
+				public const string LkMsdynOcfbpageCreatedby = "lk_msdyn_ocfbpage_createdby";
+				public const string LkMsdynOcfbpageCreatedonbehalfby = "lk_msdyn_ocfbpage_createdonbehalfby";
+				public const string LkMsdynOcfbpageModifiedby = "lk_msdyn_ocfbpage_modifiedby";
+				public const string LkMsdynOcfbpageModifiedonbehalfby = "lk_msdyn_ocfbpage_modifiedonbehalfby";
 				public const string LkMsdynOcflaggedspamCreatedby = "lk_msdyn_ocflaggedspam_createdby";
 				public const string LkMsdynOcflaggedspamCreatedonbehalfby = "lk_msdyn_ocflaggedspam_createdonbehalfby";
 				public const string LkMsdynOcflaggedspamModifiedby = "lk_msdyn_ocflaggedspam_modifiedby";
 				public const string LkMsdynOcflaggedspamModifiedonbehalfby = "lk_msdyn_ocflaggedspam_modifiedonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagesagentaccountCreatedby = "lk_msdyn_ocgooglebusinessmessagesagentaccount_createdby";
+				public const string LkMsdynOcgooglebusinessmessagesagentaccountCreatedonbehalfby = "lk_msdyn_ocgooglebusinessmessagesagentaccount_createdonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagesagentaccountModifiedby = "lk_msdyn_ocgooglebusinessmessagesagentaccount_modifiedby";
+				public const string LkMsdynOcgooglebusinessmessagesagentaccountModifiedonbehalfby = "lk_msdyn_ocgooglebusinessmessagesagentaccount_modifiedonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagesengagementctxCreatedby = "lk_msdyn_ocgooglebusinessmessagesengagementctx_createdby";
+				public const string LkMsdynOcgooglebusinessmessagesengagementctxCreatedonbehalfby = "lk_msdyn_ocgooglebusinessmessagesengagementctx_createdonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagesengagementctxModifiedby = "lk_msdyn_ocgooglebusinessmessagesengagementctx_modifiedby";
+				public const string LkMsdynOcgooglebusinessmessagesengagementctxModifiedonbehalfby = "lk_msdyn_ocgooglebusinessmessagesengagementctx_modifiedonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagespartneraccountCreatedby = "lk_msdyn_ocgooglebusinessmessagespartneraccount_createdby";
+				public const string LkMsdynOcgooglebusinessmessagespartneraccountCreatedonbehalfby = "lk_msdyn_ocgooglebusinessmessagespartneraccount_createdonbehalfby";
+				public const string LkMsdynOcgooglebusinessmessagespartneraccountModifiedby = "lk_msdyn_ocgooglebusinessmessagespartneraccount_modifiedby";
+				public const string LkMsdynOcgooglebusinessmessagespartneraccountModifiedonbehalfby = "lk_msdyn_ocgooglebusinessmessagespartneraccount_modifiedonbehalfby";
 				public const string LkMsdynOclanguageCreatedby = "lk_msdyn_oclanguage_createdby";
 				public const string LkMsdynOclanguageCreatedonbehalfby = "lk_msdyn_oclanguage_createdonbehalfby";
 				public const string LkMsdynOclanguageModifiedby = "lk_msdyn_oclanguage_modifiedby";
 				public const string LkMsdynOclanguageModifiedonbehalfby = "lk_msdyn_oclanguage_modifiedonbehalfby";
+				public const string LkMsdynOclinechannelconfigCreatedby = "lk_msdyn_oclinechannelconfig_createdby";
+				public const string LkMsdynOclinechannelconfigCreatedonbehalfby = "lk_msdyn_oclinechannelconfig_createdonbehalfby";
+				public const string LkMsdynOclinechannelconfigModifiedby = "lk_msdyn_oclinechannelconfig_modifiedby";
+				public const string LkMsdynOclinechannelconfigModifiedonbehalfby = "lk_msdyn_oclinechannelconfig_modifiedonbehalfby";
 				public const string LkMsdynOcliveworkitemcapacityprofileCreatedby = "lk_msdyn_ocliveworkitemcapacityprofile_createdby";
 				public const string LkMsdynOcliveworkitemcapacityprofileCreatedonbehalfby = "lk_msdyn_ocliveworkitemcapacityprofile_createdonbehalfby";
 				public const string LkMsdynOcliveworkitemcapacityprofileModifiedby = "lk_msdyn_ocliveworkitemcapacityprofile_modifiedby";
@@ -8135,10 +9371,18 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOclocalizationdataCreatedonbehalfby = "lk_msdyn_oclocalizationdata_createdonbehalfby";
 				public const string LkMsdynOclocalizationdataModifiedby = "lk_msdyn_oclocalizationdata_modifiedby";
 				public const string LkMsdynOclocalizationdataModifiedonbehalfby = "lk_msdyn_oclocalizationdata_modifiedonbehalfby";
+				public const string LkMsdynOcoutboundconfigurationCreatedby = "lk_msdyn_ocoutboundconfiguration_createdby";
+				public const string LkMsdynOcoutboundconfigurationCreatedonbehalfby = "lk_msdyn_ocoutboundconfiguration_createdonbehalfby";
+				public const string LkMsdynOcoutboundconfigurationModifiedby = "lk_msdyn_ocoutboundconfiguration_modifiedby";
+				public const string LkMsdynOcoutboundconfigurationModifiedonbehalfby = "lk_msdyn_ocoutboundconfiguration_modifiedonbehalfby";
 				public const string LkMsdynOcpaymentprofileCreatedby = "lk_msdyn_ocpaymentprofile_createdby";
 				public const string LkMsdynOcpaymentprofileCreatedonbehalfby = "lk_msdyn_ocpaymentprofile_createdonbehalfby";
 				public const string LkMsdynOcpaymentprofileModifiedby = "lk_msdyn_ocpaymentprofile_modifiedby";
 				public const string LkMsdynOcpaymentprofileModifiedonbehalfby = "lk_msdyn_ocpaymentprofile_modifiedonbehalfby";
+				public const string LkMsdynOcphonenumberCreatedby = "lk_msdyn_ocphonenumber_createdby";
+				public const string LkMsdynOcphonenumberCreatedonbehalfby = "lk_msdyn_ocphonenumber_createdonbehalfby";
+				public const string LkMsdynOcphonenumberModifiedby = "lk_msdyn_ocphonenumber_modifiedby";
+				public const string LkMsdynOcphonenumberModifiedonbehalfby = "lk_msdyn_ocphonenumber_modifiedonbehalfby";
 				public const string LkMsdynOcprovisioningstateCreatedby = "lk_msdyn_ocprovisioningstate_createdby";
 				public const string LkMsdynOcprovisioningstateCreatedonbehalfby = "lk_msdyn_ocprovisioningstate_createdonbehalfby";
 				public const string LkMsdynOcprovisioningstateModifiedby = "lk_msdyn_ocprovisioningstate_modifiedby";
@@ -8207,6 +9451,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOcskillidentmlmodelCreatedonbehalfby = "lk_msdyn_ocskillidentmlmodel_createdonbehalfby";
 				public const string LkMsdynOcskillidentmlmodelModifiedby = "lk_msdyn_ocskillidentmlmodel_modifiedby";
 				public const string LkMsdynOcskillidentmlmodelModifiedonbehalfby = "lk_msdyn_ocskillidentmlmodel_modifiedonbehalfby";
+				public const string LkMsdynOcsmschannelsettingCreatedby = "lk_msdyn_ocsmschannelsetting_createdby";
+				public const string LkMsdynOcsmschannelsettingCreatedonbehalfby = "lk_msdyn_ocsmschannelsetting_createdonbehalfby";
+				public const string LkMsdynOcsmschannelsettingModifiedby = "lk_msdyn_ocsmschannelsetting_modifiedby";
+				public const string LkMsdynOcsmschannelsettingModifiedonbehalfby = "lk_msdyn_ocsmschannelsetting_modifiedonbehalfby";
+				public const string LkMsdynOcsmssettingsecretCreatedby = "lk_msdyn_ocsmssettingsecret_createdby";
+				public const string LkMsdynOcsmssettingsecretCreatedonbehalfby = "lk_msdyn_ocsmssettingsecret_createdonbehalfby";
+				public const string LkMsdynOcsmssettingsecretModifiedby = "lk_msdyn_ocsmssettingsecret_modifiedby";
+				public const string LkMsdynOcsmssettingsecretModifiedonbehalfby = "lk_msdyn_ocsmssettingsecret_modifiedonbehalfby";
 				public const string LkMsdynOcsystemmessageCreatedby = "lk_msdyn_ocsystemmessage_createdby";
 				public const string LkMsdynOcsystemmessageCreatedonbehalfby = "lk_msdyn_ocsystemmessage_createdonbehalfby";
 				public const string LkMsdynOcsystemmessageModifiedby = "lk_msdyn_ocsystemmessage_modifiedby";
@@ -8215,6 +9467,46 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOctagCreatedonbehalfby = "lk_msdyn_octag_createdonbehalfby";
 				public const string LkMsdynOctagModifiedby = "lk_msdyn_octag_modifiedby";
 				public const string LkMsdynOctagModifiedonbehalfby = "lk_msdyn_octag_modifiedonbehalfby";
+				public const string LkMsdynOcteamschannelconfigCreatedby = "lk_msdyn_octeamschannelconfig_createdby";
+				public const string LkMsdynOcteamschannelconfigCreatedonbehalfby = "lk_msdyn_octeamschannelconfig_createdonbehalfby";
+				public const string LkMsdynOcteamschannelconfigModifiedby = "lk_msdyn_octeamschannelconfig_modifiedby";
+				public const string LkMsdynOcteamschannelconfigModifiedonbehalfby = "lk_msdyn_octeamschannelconfig_modifiedonbehalfby";
+				public const string LkMsdynOctwitterapplicationCreatedby = "lk_msdyn_octwitterapplication_createdby";
+				public const string LkMsdynOctwitterapplicationCreatedonbehalfby = "lk_msdyn_octwitterapplication_createdonbehalfby";
+				public const string LkMsdynOctwitterapplicationModifiedby = "lk_msdyn_octwitterapplication_modifiedby";
+				public const string LkMsdynOctwitterapplicationModifiedonbehalfby = "lk_msdyn_octwitterapplication_modifiedonbehalfby";
+				public const string LkMsdynOctwitterhandleCreatedby = "lk_msdyn_octwitterhandle_createdby";
+				public const string LkMsdynOctwitterhandleCreatedonbehalfby = "lk_msdyn_octwitterhandle_createdonbehalfby";
+				public const string LkMsdynOctwitterhandleModifiedby = "lk_msdyn_octwitterhandle_modifiedby";
+				public const string LkMsdynOctwitterhandleModifiedonbehalfby = "lk_msdyn_octwitterhandle_modifiedonbehalfby";
+				public const string LkMsdynOctwitterhandleprovisioningstatusCreatedby = "lk_msdyn_octwitterhandleprovisioningstatus_createdby";
+				public const string LkMsdynOctwitterhandleprovisioningstatusCreatedonbehalfby = "lk_msdyn_octwitterhandleprovisioningstatus_createdonbehalfby";
+				public const string LkMsdynOctwitterhandleprovisioningstatusModifiedby = "lk_msdyn_octwitterhandleprovisioningstatus_modifiedby";
+				public const string LkMsdynOctwitterhandleprovisioningstatusModifiedonbehalfby = "lk_msdyn_octwitterhandleprovisioningstatus_modifiedonbehalfby";
+				public const string LkMsdynOctwitterhandlesecretCreatedby = "lk_msdyn_octwitterhandlesecret_createdby";
+				public const string LkMsdynOctwitterhandlesecretCreatedonbehalfby = "lk_msdyn_octwitterhandlesecret_createdonbehalfby";
+				public const string LkMsdynOctwitterhandlesecretModifiedby = "lk_msdyn_octwitterhandlesecret_modifiedby";
+				public const string LkMsdynOctwitterhandlesecretModifiedonbehalfby = "lk_msdyn_octwitterhandlesecret_modifiedonbehalfby";
+				public const string LkMsdynOcwechatchannelconfigCreatedby = "lk_msdyn_ocwechatchannelconfig_createdby";
+				public const string LkMsdynOcwechatchannelconfigCreatedonbehalfby = "lk_msdyn_ocwechatchannelconfig_createdonbehalfby";
+				public const string LkMsdynOcwechatchannelconfigModifiedby = "lk_msdyn_ocwechatchannelconfig_modifiedby";
+				public const string LkMsdynOcwechatchannelconfigModifiedonbehalfby = "lk_msdyn_ocwechatchannelconfig_modifiedonbehalfby";
+				public const string LkMsdynOcwhatsappchannelaccountCreatedby = "lk_msdyn_ocwhatsappchannelaccount_createdby";
+				public const string LkMsdynOcwhatsappchannelaccountCreatedonbehalfby = "lk_msdyn_ocwhatsappchannelaccount_createdonbehalfby";
+				public const string LkMsdynOcwhatsappchannelaccountModifiedby = "lk_msdyn_ocwhatsappchannelaccount_modifiedby";
+				public const string LkMsdynOcwhatsappchannelaccountModifiedonbehalfby = "lk_msdyn_ocwhatsappchannelaccount_modifiedonbehalfby";
+				public const string LkMsdynOcwhatsappchannelnumberCreatedby = "lk_msdyn_ocwhatsappchannelnumber_createdby";
+				public const string LkMsdynOcwhatsappchannelnumberCreatedonbehalfby = "lk_msdyn_ocwhatsappchannelnumber_createdonbehalfby";
+				public const string LkMsdynOcwhatsappchannelnumberModifiedby = "lk_msdyn_ocwhatsappchannelnumber_modifiedby";
+				public const string LkMsdynOcwhatsappchannelnumberModifiedonbehalfby = "lk_msdyn_ocwhatsappchannelnumber_modifiedonbehalfby";
+				public const string LkMsdynOdosfeaturemetadataCreatedby = "lk_msdyn_odosfeaturemetadata_createdby";
+				public const string LkMsdynOdosfeaturemetadataCreatedonbehalfby = "lk_msdyn_odosfeaturemetadata_createdonbehalfby";
+				public const string LkMsdynOdosfeaturemetadataModifiedby = "lk_msdyn_odosfeaturemetadata_modifiedby";
+				public const string LkMsdynOdosfeaturemetadataModifiedonbehalfby = "lk_msdyn_odosfeaturemetadata_modifiedonbehalfby";
+				public const string LkMsdynOdosmetadataCreatedby = "lk_msdyn_odosmetadata_createdby";
+				public const string LkMsdynOdosmetadataCreatedonbehalfby = "lk_msdyn_odosmetadata_createdonbehalfby";
+				public const string LkMsdynOdosmetadataModifiedby = "lk_msdyn_odosmetadata_modifiedby";
+				public const string LkMsdynOdosmetadataModifiedonbehalfby = "lk_msdyn_odosmetadata_modifiedonbehalfby";
 				public const string LkMsdynOmnichannelconfigurationCreatedby = "lk_msdyn_omnichannelconfiguration_createdby";
 				public const string LkMsdynOmnichannelconfigurationCreatedonbehalfby = "lk_msdyn_omnichannelconfiguration_createdonbehalfby";
 				public const string LkMsdynOmnichannelconfigurationModifiedby = "lk_msdyn_omnichannelconfiguration_modifiedby";
@@ -8239,10 +9531,78 @@ namespace dgt.power.dataverse
 				public const string LkMsdynOpportunitykpiitemCreatedonbehalfby = "lk_msdyn_opportunitykpiitem_createdonbehalfby";
 				public const string LkMsdynOpportunitykpiitemModifiedby = "lk_msdyn_opportunitykpiitem_modifiedby";
 				public const string LkMsdynOpportunitykpiitemModifiedonbehalfby = "lk_msdyn_opportunitykpiitem_modifiedonbehalfby";
+				public const string LkMsdynOpportunitylineresourcecategoryCreatedby = "lk_msdyn_opportunitylineresourcecategory_createdby";
+				public const string LkMsdynOpportunitylineresourcecategoryCreatedonbehalfby = "lk_msdyn_opportunitylineresourcecategory_createdonbehalfby";
+				public const string LkMsdynOpportunitylineresourcecategoryModifiedby = "lk_msdyn_opportunitylineresourcecategory_modifiedby";
+				public const string LkMsdynOpportunitylineresourcecategoryModifiedonbehalfby = "lk_msdyn_opportunitylineresourcecategory_modifiedonbehalfby";
+				public const string LkMsdynOpportunitylinetransactionCreatedby = "lk_msdyn_opportunitylinetransaction_createdby";
+				public const string LkMsdynOpportunitylinetransactionCreatedonbehalfby = "lk_msdyn_opportunitylinetransaction_createdonbehalfby";
+				public const string LkMsdynOpportunitylinetransactionModifiedby = "lk_msdyn_opportunitylinetransaction_modifiedby";
+				public const string LkMsdynOpportunitylinetransactionModifiedonbehalfby = "lk_msdyn_opportunitylinetransaction_modifiedonbehalfby";
+				public const string LkMsdynOpportunitylinetransactioncategoryCreatedby = "lk_msdyn_opportunitylinetransactioncategory_createdby";
+				public const string LkMsdynOpportunitylinetransactioncategoryCreatedonbehalfby = "lk_msdyn_opportunitylinetransactioncategory_createdonbehalfby";
+				public const string LkMsdynOpportunitylinetransactioncategoryModifiedby = "lk_msdyn_opportunitylinetransactioncategory_modifiedby";
+				public const string LkMsdynOpportunitylinetransactioncategoryModifiedonbehalfby = "lk_msdyn_opportunitylinetransactioncategory_modifiedonbehalfby";
+				public const string LkMsdynOpportunitylinetransactionclassificatioCreatedby = "lk_msdyn_opportunitylinetransactionclassificatio_createdby";
+				public const string LkMsdynOpportunitylinetransactionclassificatioCreatedonbehalfby = "lk_msdyn_opportunitylinetransactionclassificatio_createdonbehalfby";
+				public const string LkMsdynOpportunitylinetransactionclassificatioModifiedby = "lk_msdyn_opportunitylinetransactionclassificatio_modifiedby";
+				public const string LkMsdynOpportunitylinetransactionclassificatioModifiedonbehalfby = "lk_msdyn_opportunitylinetransactionclassificatio_modifiedonbehalfby";
 				public const string LkMsdynOpportunitymodelconfigCreatedby = "lk_msdyn_opportunitymodelconfig_createdby";
 				public const string LkMsdynOpportunitymodelconfigCreatedonbehalfby = "lk_msdyn_opportunitymodelconfig_createdonbehalfby";
 				public const string LkMsdynOpportunitymodelconfigModifiedby = "lk_msdyn_opportunitymodelconfig_modifiedby";
 				public const string LkMsdynOpportunitymodelconfigModifiedonbehalfby = "lk_msdyn_opportunitymodelconfig_modifiedonbehalfby";
+				public const string LkMsdynOpportunitypricelistCreatedby = "lk_msdyn_opportunitypricelist_createdby";
+				public const string LkMsdynOpportunitypricelistCreatedonbehalfby = "lk_msdyn_opportunitypricelist_createdonbehalfby";
+				public const string LkMsdynOpportunitypricelistModifiedby = "lk_msdyn_opportunitypricelist_modifiedby";
+				public const string LkMsdynOpportunitypricelistModifiedonbehalfby = "lk_msdyn_opportunitypricelist_modifiedonbehalfby";
+				public const string LkMsdynOrderinvoicingdateCreatedby = "lk_msdyn_orderinvoicingdate_createdby";
+				public const string LkMsdynOrderinvoicingdateCreatedonbehalfby = "lk_msdyn_orderinvoicingdate_createdonbehalfby";
+				public const string LkMsdynOrderinvoicingdateModifiedby = "lk_msdyn_orderinvoicingdate_modifiedby";
+				public const string LkMsdynOrderinvoicingdateModifiedonbehalfby = "lk_msdyn_orderinvoicingdate_modifiedonbehalfby";
+				public const string LkMsdynOrderinvoicingproductCreatedby = "lk_msdyn_orderinvoicingproduct_createdby";
+				public const string LkMsdynOrderinvoicingproductCreatedonbehalfby = "lk_msdyn_orderinvoicingproduct_createdonbehalfby";
+				public const string LkMsdynOrderinvoicingproductModifiedby = "lk_msdyn_orderinvoicingproduct_modifiedby";
+				public const string LkMsdynOrderinvoicingproductModifiedonbehalfby = "lk_msdyn_orderinvoicingproduct_modifiedonbehalfby";
+				public const string LkMsdynOrderinvoicingsetupCreatedby = "lk_msdyn_orderinvoicingsetup_createdby";
+				public const string LkMsdynOrderinvoicingsetupCreatedonbehalfby = "lk_msdyn_orderinvoicingsetup_createdonbehalfby";
+				public const string LkMsdynOrderinvoicingsetupModifiedby = "lk_msdyn_orderinvoicingsetup_modifiedby";
+				public const string LkMsdynOrderinvoicingsetupModifiedonbehalfby = "lk_msdyn_orderinvoicingsetup_modifiedonbehalfby";
+				public const string LkMsdynOrderinvoicingsetupdateCreatedby = "lk_msdyn_orderinvoicingsetupdate_createdby";
+				public const string LkMsdynOrderinvoicingsetupdateCreatedonbehalfby = "lk_msdyn_orderinvoicingsetupdate_createdonbehalfby";
+				public const string LkMsdynOrderinvoicingsetupdateModifiedby = "lk_msdyn_orderinvoicingsetupdate_modifiedby";
+				public const string LkMsdynOrderinvoicingsetupdateModifiedonbehalfby = "lk_msdyn_orderinvoicingsetupdate_modifiedonbehalfby";
+				public const string LkMsdynOrderlineresourcecategoryCreatedby = "lk_msdyn_orderlineresourcecategory_createdby";
+				public const string LkMsdynOrderlineresourcecategoryCreatedonbehalfby = "lk_msdyn_orderlineresourcecategory_createdonbehalfby";
+				public const string LkMsdynOrderlineresourcecategoryModifiedby = "lk_msdyn_orderlineresourcecategory_modifiedby";
+				public const string LkMsdynOrderlineresourcecategoryModifiedonbehalfby = "lk_msdyn_orderlineresourcecategory_modifiedonbehalfby";
+				public const string LkMsdynOrderlinetransactionCreatedby = "lk_msdyn_orderlinetransaction_createdby";
+				public const string LkMsdynOrderlinetransactionCreatedonbehalfby = "lk_msdyn_orderlinetransaction_createdonbehalfby";
+				public const string LkMsdynOrderlinetransactionModifiedby = "lk_msdyn_orderlinetransaction_modifiedby";
+				public const string LkMsdynOrderlinetransactionModifiedonbehalfby = "lk_msdyn_orderlinetransaction_modifiedonbehalfby";
+				public const string LkMsdynOrderlinetransactioncategoryCreatedby = "lk_msdyn_orderlinetransactioncategory_createdby";
+				public const string LkMsdynOrderlinetransactioncategoryCreatedonbehalfby = "lk_msdyn_orderlinetransactioncategory_createdonbehalfby";
+				public const string LkMsdynOrderlinetransactioncategoryModifiedby = "lk_msdyn_orderlinetransactioncategory_modifiedby";
+				public const string LkMsdynOrderlinetransactioncategoryModifiedonbehalfby = "lk_msdyn_orderlinetransactioncategory_modifiedonbehalfby";
+				public const string LkMsdynOrderlinetransactionclassificationCreatedby = "lk_msdyn_orderlinetransactionclassification_createdby";
+				public const string LkMsdynOrderlinetransactionclassificationCreatedonbehalfby = "lk_msdyn_orderlinetransactionclassification_createdonbehalfby";
+				public const string LkMsdynOrderlinetransactionclassificationModifiedby = "lk_msdyn_orderlinetransactionclassification_modifiedby";
+				public const string LkMsdynOrderlinetransactionclassificationModifiedonbehalfby = "lk_msdyn_orderlinetransactionclassification_modifiedonbehalfby";
+				public const string LkMsdynOrderpricelistCreatedby = "lk_msdyn_orderpricelist_createdby";
+				public const string LkMsdynOrderpricelistCreatedonbehalfby = "lk_msdyn_orderpricelist_createdonbehalfby";
+				public const string LkMsdynOrderpricelistModifiedby = "lk_msdyn_orderpricelist_modifiedby";
+				public const string LkMsdynOrderpricelistModifiedonbehalfby = "lk_msdyn_orderpricelist_modifiedonbehalfby";
+				public const string LkMsdynOrganizationalunitCreatedby = "lk_msdyn_organizationalunit_createdby";
+				public const string LkMsdynOrganizationalunitCreatedonbehalfby = "lk_msdyn_organizationalunit_createdonbehalfby";
+				public const string LkMsdynOrganizationalunitModifiedby = "lk_msdyn_organizationalunit_modifiedby";
+				public const string LkMsdynOrganizationalunitModifiedonbehalfby = "lk_msdyn_organizationalunit_modifiedonbehalfby";
+				public const string LkMsdynOrgchartnodeCreatedby = "lk_msdyn_orgchartnode_createdby";
+				public const string LkMsdynOrgchartnodeCreatedonbehalfby = "lk_msdyn_orgchartnode_createdonbehalfby";
+				public const string LkMsdynOrgchartnodeModifiedby = "lk_msdyn_orgchartnode_modifiedby";
+				public const string LkMsdynOrgchartnodeModifiedonbehalfby = "lk_msdyn_orgchartnode_modifiedonbehalfby";
+				public const string LkMsdynOriginatingqueueCreatedby = "lk_msdyn_originatingqueue_createdby";
+				public const string LkMsdynOriginatingqueueCreatedonbehalfby = "lk_msdyn_originatingqueue_createdonbehalfby";
+				public const string LkMsdynOriginatingqueueModifiedby = "lk_msdyn_originatingqueue_modifiedby";
+				public const string LkMsdynOriginatingqueueModifiedonbehalfby = "lk_msdyn_originatingqueue_modifiedonbehalfby";
 				public const string LkMsdynOverflowactionconfigCreatedby = "lk_msdyn_overflowactionconfig_createdby";
 				public const string LkMsdynOverflowactionconfigCreatedonbehalfby = "lk_msdyn_overflowactionconfig_createdonbehalfby";
 				public const string LkMsdynOverflowactionconfigModifiedby = "lk_msdyn_overflowactionconfig_modifiedby";
@@ -8259,6 +9619,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPanetoolconfigurationCreatedonbehalfby = "lk_msdyn_panetoolconfiguration_createdonbehalfby";
 				public const string LkMsdynPanetoolconfigurationModifiedby = "lk_msdyn_panetoolconfiguration_modifiedby";
 				public const string LkMsdynPanetoolconfigurationModifiedonbehalfby = "lk_msdyn_panetoolconfiguration_modifiedonbehalfby";
+				public const string LkMsdynPaymentCreatedby = "lk_msdyn_payment_createdby";
+				public const string LkMsdynPaymentCreatedonbehalfby = "lk_msdyn_payment_createdonbehalfby";
+				public const string LkMsdynPaymentModifiedby = "lk_msdyn_payment_modifiedby";
+				public const string LkMsdynPaymentModifiedonbehalfby = "lk_msdyn_payment_modifiedonbehalfby";
+				public const string LkMsdynPaymentdetailCreatedby = "lk_msdyn_paymentdetail_createdby";
+				public const string LkMsdynPaymentdetailCreatedonbehalfby = "lk_msdyn_paymentdetail_createdonbehalfby";
+				public const string LkMsdynPaymentdetailModifiedby = "lk_msdyn_paymentdetail_modifiedby";
+				public const string LkMsdynPaymentdetailModifiedonbehalfby = "lk_msdyn_paymentdetail_modifiedonbehalfby";
+				public const string LkMsdynPaymentmethodCreatedby = "lk_msdyn_paymentmethod_createdby";
+				public const string LkMsdynPaymentmethodCreatedonbehalfby = "lk_msdyn_paymentmethod_createdonbehalfby";
+				public const string LkMsdynPaymentmethodModifiedby = "lk_msdyn_paymentmethod_modifiedby";
+				public const string LkMsdynPaymentmethodModifiedonbehalfby = "lk_msdyn_paymentmethod_modifiedonbehalfby";
+				public const string LkMsdynPaymenttermCreatedby = "lk_msdyn_paymentterm_createdby";
+				public const string LkMsdynPaymenttermCreatedonbehalfby = "lk_msdyn_paymentterm_createdonbehalfby";
+				public const string LkMsdynPaymenttermModifiedby = "lk_msdyn_paymentterm_modifiedby";
+				public const string LkMsdynPaymenttermModifiedonbehalfby = "lk_msdyn_paymentterm_modifiedonbehalfby";
 				public const string LkMsdynPersonalmessageCreatedby = "lk_msdyn_personalmessage_createdby";
 				public const string LkMsdynPersonalmessageCreatedonbehalfby = "lk_msdyn_personalmessage_createdonbehalfby";
 				public const string LkMsdynPersonalmessageModifiedby = "lk_msdyn_personalmessage_modifiedby";
@@ -8295,6 +9671,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPmanalysishistoryCreatedonbehalfby = "lk_msdyn_pmanalysishistory_createdonbehalfby";
 				public const string LkMsdynPmanalysishistoryModifiedby = "lk_msdyn_pmanalysishistory_modifiedby";
 				public const string LkMsdynPmanalysishistoryModifiedonbehalfby = "lk_msdyn_pmanalysishistory_modifiedonbehalfby";
+				public const string LkMsdynPmbusinessruleautomationconfigCreatedby = "lk_msdyn_pmbusinessruleautomationconfig_createdby";
+				public const string LkMsdynPmbusinessruleautomationconfigCreatedonbehalfby = "lk_msdyn_pmbusinessruleautomationconfig_createdonbehalfby";
+				public const string LkMsdynPmbusinessruleautomationconfigModifiedby = "lk_msdyn_pmbusinessruleautomationconfig_modifiedby";
+				public const string LkMsdynPmbusinessruleautomationconfigModifiedonbehalfby = "lk_msdyn_pmbusinessruleautomationconfig_modifiedonbehalfby";
 				public const string LkMsdynPmcalendarCreatedby = "lk_msdyn_pmcalendar_createdby";
 				public const string LkMsdynPmcalendarCreatedonbehalfby = "lk_msdyn_pmcalendar_createdonbehalfby";
 				public const string LkMsdynPmcalendarModifiedby = "lk_msdyn_pmcalendar_modifiedby";
@@ -8327,6 +9707,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPmrecordingCreatedonbehalfby = "lk_msdyn_pmrecording_createdonbehalfby";
 				public const string LkMsdynPmrecordingModifiedby = "lk_msdyn_pmrecording_modifiedby";
 				public const string LkMsdynPmrecordingModifiedonbehalfby = "lk_msdyn_pmrecording_modifiedonbehalfby";
+				public const string LkMsdynPmsimulationCreatedby = "lk_msdyn_pmsimulation_createdby";
+				public const string LkMsdynPmsimulationCreatedonbehalfby = "lk_msdyn_pmsimulation_createdonbehalfby";
+				public const string LkMsdynPmsimulationModifiedby = "lk_msdyn_pmsimulation_modifiedby";
+				public const string LkMsdynPmsimulationModifiedonbehalfby = "lk_msdyn_pmsimulation_modifiedonbehalfby";
 				public const string LkMsdynPmtemplateCreatedby = "lk_msdyn_pmtemplate_createdby";
 				public const string LkMsdynPmtemplateCreatedonbehalfby = "lk_msdyn_pmtemplate_createdonbehalfby";
 				public const string LkMsdynPmtemplateModifiedby = "lk_msdyn_pmtemplate_modifiedby";
@@ -8339,6 +9723,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPostalbumCreatedonbehalfby = "lk_msdyn_postalbum_createdonbehalfby";
 				public const string LkMsdynPostalbumModifiedby = "lk_msdyn_postalbum_modifiedby";
 				public const string LkMsdynPostalbumModifiedonbehalfby = "lk_msdyn_postalbum_modifiedonbehalfby";
+				public const string LkMsdynPostalcodeCreatedby = "lk_msdyn_postalcode_createdby";
+				public const string LkMsdynPostalcodeCreatedonbehalfby = "lk_msdyn_postalcode_createdonbehalfby";
+				public const string LkMsdynPostalcodeModifiedby = "lk_msdyn_postalcode_modifiedby";
+				public const string LkMsdynPostalcodeModifiedonbehalfby = "lk_msdyn_postalcode_modifiedonbehalfby";
 				public const string LkMsdynPostconfigCreatedby = "lk_msdyn_postconfig_createdby";
 				public const string LkMsdynPostconfigCreatedonbehalfby = "lk_msdyn_postconfig_createdonbehalfby";
 				public const string LkMsdynPostconfigModifiedby = "lk_msdyn_postconfig_modifiedby";
@@ -8347,6 +9735,18 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPostruleconfigCreatedonbehalfby = "lk_msdyn_postruleconfig_createdonbehalfby";
 				public const string LkMsdynPostruleconfigModifiedby = "lk_msdyn_postruleconfig_modifiedby";
 				public const string LkMsdynPostruleconfigModifiedonbehalfby = "lk_msdyn_postruleconfig_modifiedonbehalfby";
+				public const string LkMsdynPredictioncomputationoperationCreatedby = "lk_msdyn_predictioncomputationoperation_createdby";
+				public const string LkMsdynPredictioncomputationoperationCreatedonbehalfby = "lk_msdyn_predictioncomputationoperation_createdonbehalfby";
+				public const string LkMsdynPredictioncomputationoperationModifiedby = "lk_msdyn_predictioncomputationoperation_modifiedby";
+				public const string LkMsdynPredictioncomputationoperationModifiedonbehalfby = "lk_msdyn_predictioncomputationoperation_modifiedonbehalfby";
+				public const string LkMsdynPredictionmodelstatusCreatedby = "lk_msdyn_predictionmodelstatus_createdby";
+				public const string LkMsdynPredictionmodelstatusCreatedonbehalfby = "lk_msdyn_predictionmodelstatus_createdonbehalfby";
+				public const string LkMsdynPredictionmodelstatusModifiedby = "lk_msdyn_predictionmodelstatus_modifiedby";
+				public const string LkMsdynPredictionmodelstatusModifiedonbehalfby = "lk_msdyn_predictionmodelstatus_modifiedonbehalfby";
+				public const string LkMsdynPredictionscheduledoperationCreatedby = "lk_msdyn_predictionscheduledoperation_createdby";
+				public const string LkMsdynPredictionscheduledoperationCreatedonbehalfby = "lk_msdyn_predictionscheduledoperation_createdonbehalfby";
+				public const string LkMsdynPredictionscheduledoperationModifiedby = "lk_msdyn_predictionscheduledoperation_modifiedby";
+				public const string LkMsdynPredictionscheduledoperationModifiedonbehalfby = "lk_msdyn_predictionscheduledoperation_modifiedonbehalfby";
 				public const string LkMsdynPredictivemodelscoreCreatedby = "lk_msdyn_predictivemodelscore_createdby";
 				public const string LkMsdynPredictivemodelscoreCreatedonbehalfby = "lk_msdyn_predictivemodelscore_createdonbehalfby";
 				public const string LkMsdynPredictivemodelscoreModifiedby = "lk_msdyn_predictivemodelscore_modifiedby";
@@ -8355,6 +9755,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPredictivescoreCreatedonbehalfby = "lk_msdyn_predictivescore_createdonbehalfby";
 				public const string LkMsdynPredictivescoreModifiedby = "lk_msdyn_predictivescore_modifiedby";
 				public const string LkMsdynPredictivescoreModifiedonbehalfby = "lk_msdyn_predictivescore_modifiedonbehalfby";
+				public const string LkMsdynPredictivescoringsyncstatusCreatedby = "lk_msdyn_predictivescoringsyncstatus_createdby";
+				public const string LkMsdynPredictivescoringsyncstatusCreatedonbehalfby = "lk_msdyn_predictivescoringsyncstatus_createdonbehalfby";
+				public const string LkMsdynPredictivescoringsyncstatusModifiedby = "lk_msdyn_predictivescoringsyncstatus_modifiedby";
+				public const string LkMsdynPredictivescoringsyncstatusModifiedonbehalfby = "lk_msdyn_predictivescoringsyncstatus_modifiedonbehalfby";
+				public const string LkMsdynPredictworkhourdurationsettingCreatedby = "lk_msdyn_predictworkhourdurationsetting_createdby";
+				public const string LkMsdynPredictworkhourdurationsettingCreatedonbehalfby = "lk_msdyn_predictworkhourdurationsetting_createdonbehalfby";
+				public const string LkMsdynPredictworkhourdurationsettingModifiedby = "lk_msdyn_predictworkhourdurationsetting_modifiedby";
+				public const string LkMsdynPredictworkhourdurationsettingModifiedonbehalfby = "lk_msdyn_predictworkhourdurationsetting_modifiedonbehalfby";
 				public const string LkMsdynPreferredagentCreatedby = "lk_msdyn_preferredagent_createdby";
 				public const string LkMsdynPreferredagentCreatedonbehalfby = "lk_msdyn_preferredagent_createdonbehalfby";
 				public const string LkMsdynPreferredagentModifiedby = "lk_msdyn_preferredagent_modifiedby";
@@ -8371,6 +9779,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPresenceCreatedonbehalfby = "lk_msdyn_presence_createdonbehalfby";
 				public const string LkMsdynPresenceModifiedby = "lk_msdyn_presence_modifiedby";
 				public const string LkMsdynPresenceModifiedonbehalfby = "lk_msdyn_presence_modifiedonbehalfby";
+				public const string LkMsdynPriorityCreatedby = "lk_msdyn_priority_createdby";
+				public const string LkMsdynPriorityCreatedonbehalfby = "lk_msdyn_priority_createdonbehalfby";
+				public const string LkMsdynPriorityModifiedby = "lk_msdyn_priority_modifiedby";
+				public const string LkMsdynPriorityModifiedonbehalfby = "lk_msdyn_priority_modifiedonbehalfby";
+				public const string LkMsdynProblematicassetCreatedby = "lk_msdyn_problematicasset_createdby";
+				public const string LkMsdynProblematicassetCreatedonbehalfby = "lk_msdyn_problematicasset_createdonbehalfby";
+				public const string LkMsdynProblematicassetModifiedby = "lk_msdyn_problematicasset_modifiedby";
+				public const string LkMsdynProblematicassetModifiedonbehalfby = "lk_msdyn_problematicasset_modifiedonbehalfby";
+				public const string LkMsdynProblematicassetfeedbackCreatedby = "lk_msdyn_problematicassetfeedback_createdby";
+				public const string LkMsdynProblematicassetfeedbackCreatedonbehalfby = "lk_msdyn_problematicassetfeedback_createdonbehalfby";
+				public const string LkMsdynProblematicassetfeedbackModifiedby = "lk_msdyn_problematicassetfeedback_modifiedby";
+				public const string LkMsdynProblematicassetfeedbackModifiedonbehalfby = "lk_msdyn_problematicassetfeedback_modifiedonbehalfby";
+				public const string LkMsdynProcessnotesCreatedby = "lk_msdyn_processnotes_createdby";
+				public const string LkMsdynProcessnotesCreatedonbehalfby = "lk_msdyn_processnotes_createdonbehalfby";
+				public const string LkMsdynProcessnotesModifiedby = "lk_msdyn_processnotes_modifiedby";
+				public const string LkMsdynProcessnotesModifiedonbehalfby = "lk_msdyn_processnotes_modifiedonbehalfby";
+				public const string LkMsdynProductinventoryCreatedby = "lk_msdyn_productinventory_createdby";
+				public const string LkMsdynProductinventoryCreatedonbehalfby = "lk_msdyn_productinventory_createdonbehalfby";
+				public const string LkMsdynProductinventoryModifiedby = "lk_msdyn_productinventory_modifiedby";
+				public const string LkMsdynProductinventoryModifiedonbehalfby = "lk_msdyn_productinventory_modifiedonbehalfby";
 				public const string LkMsdynProductivityactioninputparameterCreatedby = "lk_msdyn_productivityactioninputparameter_createdby";
 				public const string LkMsdynProductivityactioninputparameterCreatedonbehalfby = "lk_msdyn_productivityactioninputparameter_createdonbehalfby";
 				public const string LkMsdynProductivityactioninputparameterModifiedby = "lk_msdyn_productivityactioninputparameter_modifiedby";
@@ -8403,6 +9831,50 @@ namespace dgt.power.dataverse
 				public const string LkMsdynProductivityparameterdefinitionCreatedonbehalfby = "lk_msdyn_productivityparameterdefinition_createdonbehalfby";
 				public const string LkMsdynProductivityparameterdefinitionModifiedby = "lk_msdyn_productivityparameterdefinition_modifiedby";
 				public const string LkMsdynProductivityparameterdefinitionModifiedonbehalfby = "lk_msdyn_productivityparameterdefinition_modifiedonbehalfby";
+				public const string LkMsdynProjectCreatedby = "lk_msdyn_project_createdby";
+				public const string LkMsdynProjectCreatedonbehalfby = "lk_msdyn_project_createdonbehalfby";
+				public const string LkMsdynProjectModifiedby = "lk_msdyn_project_modifiedby";
+				public const string LkMsdynProjectModifiedonbehalfby = "lk_msdyn_project_modifiedonbehalfby";
+				public const string LkMsdynProjectapprovalCreatedby = "lk_msdyn_projectapproval_createdby";
+				public const string LkMsdynProjectapprovalCreatedonbehalfby = "lk_msdyn_projectapproval_createdonbehalfby";
+				public const string LkMsdynProjectapprovalModifiedby = "lk_msdyn_projectapproval_modifiedby";
+				public const string LkMsdynProjectapprovalModifiedonbehalfby = "lk_msdyn_projectapproval_modifiedonbehalfby";
+				public const string LkMsdynProjectparameterCreatedby = "lk_msdyn_projectparameter_createdby";
+				public const string LkMsdynProjectparameterCreatedonbehalfby = "lk_msdyn_projectparameter_createdonbehalfby";
+				public const string LkMsdynProjectparameterModifiedby = "lk_msdyn_projectparameter_modifiedby";
+				public const string LkMsdynProjectparameterModifiedonbehalfby = "lk_msdyn_projectparameter_modifiedonbehalfby";
+				public const string LkMsdynProjectparameterpricelistCreatedby = "lk_msdyn_projectparameterpricelist_createdby";
+				public const string LkMsdynProjectparameterpricelistCreatedonbehalfby = "lk_msdyn_projectparameterpricelist_createdonbehalfby";
+				public const string LkMsdynProjectparameterpricelistModifiedby = "lk_msdyn_projectparameterpricelist_modifiedby";
+				public const string LkMsdynProjectparameterpricelistModifiedonbehalfby = "lk_msdyn_projectparameterpricelist_modifiedonbehalfby";
+				public const string LkMsdynProjectpricelistCreatedby = "lk_msdyn_projectpricelist_createdby";
+				public const string LkMsdynProjectpricelistCreatedonbehalfby = "lk_msdyn_projectpricelist_createdonbehalfby";
+				public const string LkMsdynProjectpricelistModifiedby = "lk_msdyn_projectpricelist_modifiedby";
+				public const string LkMsdynProjectpricelistModifiedonbehalfby = "lk_msdyn_projectpricelist_modifiedonbehalfby";
+				public const string LkMsdynProjecttaskCreatedby = "lk_msdyn_projecttask_createdby";
+				public const string LkMsdynProjecttaskCreatedonbehalfby = "lk_msdyn_projecttask_createdonbehalfby";
+				public const string LkMsdynProjecttaskModifiedby = "lk_msdyn_projecttask_modifiedby";
+				public const string LkMsdynProjecttaskModifiedonbehalfby = "lk_msdyn_projecttask_modifiedonbehalfby";
+				public const string LkMsdynProjecttaskdependencyCreatedby = "lk_msdyn_projecttaskdependency_createdby";
+				public const string LkMsdynProjecttaskdependencyCreatedonbehalfby = "lk_msdyn_projecttaskdependency_createdonbehalfby";
+				public const string LkMsdynProjecttaskdependencyModifiedby = "lk_msdyn_projecttaskdependency_modifiedby";
+				public const string LkMsdynProjecttaskdependencyModifiedonbehalfby = "lk_msdyn_projecttaskdependency_modifiedonbehalfby";
+				public const string LkMsdynProjecttaskstatususerCreatedby = "lk_msdyn_projecttaskstatususer_createdby";
+				public const string LkMsdynProjecttaskstatususerCreatedonbehalfby = "lk_msdyn_projecttaskstatususer_createdonbehalfby";
+				public const string LkMsdynProjecttaskstatususerModifiedby = "lk_msdyn_projecttaskstatususer_modifiedby";
+				public const string LkMsdynProjecttaskstatususerModifiedonbehalfby = "lk_msdyn_projecttaskstatususer_modifiedonbehalfby";
+				public const string LkMsdynProjectteamCreatedby = "lk_msdyn_projectteam_createdby";
+				public const string LkMsdynProjectteamCreatedonbehalfby = "lk_msdyn_projectteam_createdonbehalfby";
+				public const string LkMsdynProjectteamModifiedby = "lk_msdyn_projectteam_modifiedby";
+				public const string LkMsdynProjectteamModifiedonbehalfby = "lk_msdyn_projectteam_modifiedonbehalfby";
+				public const string LkMsdynProjectteammembersignupCreatedby = "lk_msdyn_projectteammembersignup_createdby";
+				public const string LkMsdynProjectteammembersignupCreatedonbehalfby = "lk_msdyn_projectteammembersignup_createdonbehalfby";
+				public const string LkMsdynProjectteammembersignupModifiedby = "lk_msdyn_projectteammembersignup_modifiedby";
+				public const string LkMsdynProjectteammembersignupModifiedonbehalfby = "lk_msdyn_projectteammembersignup_modifiedonbehalfby";
+				public const string LkMsdynProjecttransactioncategoryCreatedby = "lk_msdyn_projecttransactioncategory_createdby";
+				public const string LkMsdynProjecttransactioncategoryCreatedonbehalfby = "lk_msdyn_projecttransactioncategory_createdonbehalfby";
+				public const string LkMsdynProjecttransactioncategoryModifiedby = "lk_msdyn_projecttransactioncategory_modifiedby";
+				public const string LkMsdynProjecttransactioncategoryModifiedonbehalfby = "lk_msdyn_projecttransactioncategory_modifiedonbehalfby";
 				public const string LkMsdynPropertyCreatedby = "lk_msdyn_property_createdby";
 				public const string LkMsdynPropertyCreatedonbehalfby = "lk_msdyn_property_createdonbehalfby";
 				public const string LkMsdynPropertyModifiedby = "lk_msdyn_property_modifiedby";
@@ -8411,6 +9883,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynPropertyassetassociationCreatedonbehalfby = "lk_msdyn_propertyassetassociation_createdonbehalfby";
 				public const string LkMsdynPropertyassetassociationModifiedby = "lk_msdyn_propertyassetassociation_modifiedby";
 				public const string LkMsdynPropertyassetassociationModifiedonbehalfby = "lk_msdyn_propertyassetassociation_modifiedonbehalfby";
+				public const string LkMsdynPropertylocationassociationCreatedby = "lk_msdyn_propertylocationassociation_createdby";
+				public const string LkMsdynPropertylocationassociationCreatedonbehalfby = "lk_msdyn_propertylocationassociation_createdonbehalfby";
+				public const string LkMsdynPropertylocationassociationModifiedby = "lk_msdyn_propertylocationassociation_modifiedby";
+				public const string LkMsdynPropertylocationassociationModifiedonbehalfby = "lk_msdyn_propertylocationassociation_modifiedonbehalfby";
 				public const string LkMsdynPropertylogCreatedby = "lk_msdyn_propertylog_createdby";
 				public const string LkMsdynPropertylogCreatedonbehalfby = "lk_msdyn_propertylog_createdonbehalfby";
 				public const string LkMsdynPropertylogModifiedby = "lk_msdyn_propertylog_modifiedby";
@@ -8423,10 +9899,110 @@ namespace dgt.power.dataverse
 				public const string LkMsdynProviderCreatedonbehalfby = "lk_msdyn_provider_createdonbehalfby";
 				public const string LkMsdynProviderModifiedby = "lk_msdyn_provider_modifiedby";
 				public const string LkMsdynProviderModifiedonbehalfby = "lk_msdyn_provider_modifiedonbehalfby";
+				public const string LkMsdynPurchaseorderCreatedby = "lk_msdyn_purchaseorder_createdby";
+				public const string LkMsdynPurchaseorderCreatedonbehalfby = "lk_msdyn_purchaseorder_createdonbehalfby";
+				public const string LkMsdynPurchaseorderModifiedby = "lk_msdyn_purchaseorder_modifiedby";
+				public const string LkMsdynPurchaseorderModifiedonbehalfby = "lk_msdyn_purchaseorder_modifiedonbehalfby";
+				public const string LkMsdynPurchaseorderbillCreatedby = "lk_msdyn_purchaseorderbill_createdby";
+				public const string LkMsdynPurchaseorderbillCreatedonbehalfby = "lk_msdyn_purchaseorderbill_createdonbehalfby";
+				public const string LkMsdynPurchaseorderbillModifiedby = "lk_msdyn_purchaseorderbill_modifiedby";
+				public const string LkMsdynPurchaseorderbillModifiedonbehalfby = "lk_msdyn_purchaseorderbill_modifiedonbehalfby";
+				public const string LkMsdynPurchaseorderproductCreatedby = "lk_msdyn_purchaseorderproduct_createdby";
+				public const string LkMsdynPurchaseorderproductCreatedonbehalfby = "lk_msdyn_purchaseorderproduct_createdonbehalfby";
+				public const string LkMsdynPurchaseorderproductModifiedby = "lk_msdyn_purchaseorderproduct_modifiedby";
+				public const string LkMsdynPurchaseorderproductModifiedonbehalfby = "lk_msdyn_purchaseorderproduct_modifiedonbehalfby";
+				public const string LkMsdynPurchaseorderreceiptCreatedby = "lk_msdyn_purchaseorderreceipt_createdby";
+				public const string LkMsdynPurchaseorderreceiptCreatedonbehalfby = "lk_msdyn_purchaseorderreceipt_createdonbehalfby";
+				public const string LkMsdynPurchaseorderreceiptModifiedby = "lk_msdyn_purchaseorderreceipt_modifiedby";
+				public const string LkMsdynPurchaseorderreceiptModifiedonbehalfby = "lk_msdyn_purchaseorderreceipt_modifiedonbehalfby";
+				public const string LkMsdynPurchaseorderreceiptproductCreatedby = "lk_msdyn_purchaseorderreceiptproduct_createdby";
+				public const string LkMsdynPurchaseorderreceiptproductCreatedonbehalfby = "lk_msdyn_purchaseorderreceiptproduct_createdonbehalfby";
+				public const string LkMsdynPurchaseorderreceiptproductModifiedby = "lk_msdyn_purchaseorderreceiptproduct_modifiedby";
+				public const string LkMsdynPurchaseorderreceiptproductModifiedonbehalfby = "lk_msdyn_purchaseorderreceiptproduct_modifiedonbehalfby";
+				public const string LkMsdynPurchaseordersubstatusCreatedby = "lk_msdyn_purchaseordersubstatus_createdby";
+				public const string LkMsdynPurchaseordersubstatusCreatedonbehalfby = "lk_msdyn_purchaseordersubstatus_createdonbehalfby";
+				public const string LkMsdynPurchaseordersubstatusModifiedby = "lk_msdyn_purchaseordersubstatus_modifiedby";
+				public const string LkMsdynPurchaseordersubstatusModifiedonbehalfby = "lk_msdyn_purchaseordersubstatus_modifiedonbehalfby";
+				public const string LkMsdynQuestionsequenceCreatedby = "lk_msdyn_questionsequence_createdby";
+				public const string LkMsdynQuestionsequenceCreatedonbehalfby = "lk_msdyn_questionsequence_createdonbehalfby";
+				public const string LkMsdynQuestionsequenceModifiedby = "lk_msdyn_questionsequence_modifiedby";
+				public const string LkMsdynQuestionsequenceModifiedonbehalfby = "lk_msdyn_questionsequence_modifiedonbehalfby";
+				public const string LkMsdynQuotebookingincidentCreatedby = "lk_msdyn_quotebookingincident_createdby";
+				public const string LkMsdynQuotebookingincidentCreatedonbehalfby = "lk_msdyn_quotebookingincident_createdonbehalfby";
+				public const string LkMsdynQuotebookingincidentModifiedby = "lk_msdyn_quotebookingincident_modifiedby";
+				public const string LkMsdynQuotebookingincidentModifiedonbehalfby = "lk_msdyn_quotebookingincident_modifiedonbehalfby";
+				public const string LkMsdynQuotebookingproductCreatedby = "lk_msdyn_quotebookingproduct_createdby";
+				public const string LkMsdynQuotebookingproductCreatedonbehalfby = "lk_msdyn_quotebookingproduct_createdonbehalfby";
+				public const string LkMsdynQuotebookingproductModifiedby = "lk_msdyn_quotebookingproduct_modifiedby";
+				public const string LkMsdynQuotebookingproductModifiedonbehalfby = "lk_msdyn_quotebookingproduct_modifiedonbehalfby";
+				public const string LkMsdynQuotebookingserviceCreatedby = "lk_msdyn_quotebookingservice_createdby";
+				public const string LkMsdynQuotebookingserviceCreatedonbehalfby = "lk_msdyn_quotebookingservice_createdonbehalfby";
+				public const string LkMsdynQuotebookingserviceModifiedby = "lk_msdyn_quotebookingservice_modifiedby";
+				public const string LkMsdynQuotebookingserviceModifiedonbehalfby = "lk_msdyn_quotebookingservice_modifiedonbehalfby";
+				public const string LkMsdynQuotebookingservicetaskCreatedby = "lk_msdyn_quotebookingservicetask_createdby";
+				public const string LkMsdynQuotebookingservicetaskCreatedonbehalfby = "lk_msdyn_quotebookingservicetask_createdonbehalfby";
+				public const string LkMsdynQuotebookingservicetaskModifiedby = "lk_msdyn_quotebookingservicetask_modifiedby";
+				public const string LkMsdynQuotebookingservicetaskModifiedonbehalfby = "lk_msdyn_quotebookingservicetask_modifiedonbehalfby";
+				public const string LkMsdynQuotebookingsetupCreatedby = "lk_msdyn_quotebookingsetup_createdby";
+				public const string LkMsdynQuotebookingsetupCreatedonbehalfby = "lk_msdyn_quotebookingsetup_createdonbehalfby";
+				public const string LkMsdynQuotebookingsetupModifiedby = "lk_msdyn_quotebookingsetup_modifiedby";
+				public const string LkMsdynQuotebookingsetupModifiedonbehalfby = "lk_msdyn_quotebookingsetup_modifiedonbehalfby";
+				public const string LkMsdynQuoteinvoicingproductCreatedby = "lk_msdyn_quoteinvoicingproduct_createdby";
+				public const string LkMsdynQuoteinvoicingproductCreatedonbehalfby = "lk_msdyn_quoteinvoicingproduct_createdonbehalfby";
+				public const string LkMsdynQuoteinvoicingproductModifiedby = "lk_msdyn_quoteinvoicingproduct_modifiedby";
+				public const string LkMsdynQuoteinvoicingproductModifiedonbehalfby = "lk_msdyn_quoteinvoicingproduct_modifiedonbehalfby";
+				public const string LkMsdynQuoteinvoicingsetupCreatedby = "lk_msdyn_quoteinvoicingsetup_createdby";
+				public const string LkMsdynQuoteinvoicingsetupCreatedonbehalfby = "lk_msdyn_quoteinvoicingsetup_createdonbehalfby";
+				public const string LkMsdynQuoteinvoicingsetupModifiedby = "lk_msdyn_quoteinvoicingsetup_modifiedby";
+				public const string LkMsdynQuoteinvoicingsetupModifiedonbehalfby = "lk_msdyn_quoteinvoicingsetup_modifiedonbehalfby";
+				public const string LkMsdynQuotelineanalyticsbreakdownCreatedby = "lk_msdyn_quotelineanalyticsbreakdown_createdby";
+				public const string LkMsdynQuotelineanalyticsbreakdownCreatedonbehalfby = "lk_msdyn_quotelineanalyticsbreakdown_createdonbehalfby";
+				public const string LkMsdynQuotelineanalyticsbreakdownModifiedby = "lk_msdyn_quotelineanalyticsbreakdown_modifiedby";
+				public const string LkMsdynQuotelineanalyticsbreakdownModifiedonbehalfby = "lk_msdyn_quotelineanalyticsbreakdown_modifiedonbehalfby";
+				public const string LkMsdynQuotelineinvoicescheduleCreatedby = "lk_msdyn_quotelineinvoiceschedule_createdby";
+				public const string LkMsdynQuotelineinvoicescheduleCreatedonbehalfby = "lk_msdyn_quotelineinvoiceschedule_createdonbehalfby";
+				public const string LkMsdynQuotelineinvoicescheduleModifiedby = "lk_msdyn_quotelineinvoiceschedule_modifiedby";
+				public const string LkMsdynQuotelineinvoicescheduleModifiedonbehalfby = "lk_msdyn_quotelineinvoiceschedule_modifiedonbehalfby";
+				public const string LkMsdynQuotelineresourcecategoryCreatedby = "lk_msdyn_quotelineresourcecategory_createdby";
+				public const string LkMsdynQuotelineresourcecategoryCreatedonbehalfby = "lk_msdyn_quotelineresourcecategory_createdonbehalfby";
+				public const string LkMsdynQuotelineresourcecategoryModifiedby = "lk_msdyn_quotelineresourcecategory_modifiedby";
+				public const string LkMsdynQuotelineresourcecategoryModifiedonbehalfby = "lk_msdyn_quotelineresourcecategory_modifiedonbehalfby";
+				public const string LkMsdynQuotelinescheduleofvalueCreatedby = "lk_msdyn_quotelinescheduleofvalue_createdby";
+				public const string LkMsdynQuotelinescheduleofvalueCreatedonbehalfby = "lk_msdyn_quotelinescheduleofvalue_createdonbehalfby";
+				public const string LkMsdynQuotelinescheduleofvalueModifiedby = "lk_msdyn_quotelinescheduleofvalue_modifiedby";
+				public const string LkMsdynQuotelinescheduleofvalueModifiedonbehalfby = "lk_msdyn_quotelinescheduleofvalue_modifiedonbehalfby";
+				public const string LkMsdynQuotelinetransactionCreatedby = "lk_msdyn_quotelinetransaction_createdby";
+				public const string LkMsdynQuotelinetransactionCreatedonbehalfby = "lk_msdyn_quotelinetransaction_createdonbehalfby";
+				public const string LkMsdynQuotelinetransactionModifiedby = "lk_msdyn_quotelinetransaction_modifiedby";
+				public const string LkMsdynQuotelinetransactionModifiedonbehalfby = "lk_msdyn_quotelinetransaction_modifiedonbehalfby";
+				public const string LkMsdynQuotelinetransactioncategoryCreatedby = "lk_msdyn_quotelinetransactioncategory_createdby";
+				public const string LkMsdynQuotelinetransactioncategoryCreatedonbehalfby = "lk_msdyn_quotelinetransactioncategory_createdonbehalfby";
+				public const string LkMsdynQuotelinetransactioncategoryModifiedby = "lk_msdyn_quotelinetransactioncategory_modifiedby";
+				public const string LkMsdynQuotelinetransactioncategoryModifiedonbehalfby = "lk_msdyn_quotelinetransactioncategory_modifiedonbehalfby";
+				public const string LkMsdynQuotelinetransactionclassificationCreatedby = "lk_msdyn_quotelinetransactionclassification_createdby";
+				public const string LkMsdynQuotelinetransactionclassificationCreatedonbehalfby = "lk_msdyn_quotelinetransactionclassification_createdonbehalfby";
+				public const string LkMsdynQuotelinetransactionclassificationModifiedby = "lk_msdyn_quotelinetransactionclassification_modifiedby";
+				public const string LkMsdynQuotelinetransactionclassificationModifiedonbehalfby = "lk_msdyn_quotelinetransactionclassification_modifiedonbehalfby";
+				public const string LkMsdynQuotepricelistCreatedby = "lk_msdyn_quotepricelist_createdby";
+				public const string LkMsdynQuotepricelistCreatedonbehalfby = "lk_msdyn_quotepricelist_createdonbehalfby";
+				public const string LkMsdynQuotepricelistModifiedby = "lk_msdyn_quotepricelist_modifiedby";
+				public const string LkMsdynQuotepricelistModifiedonbehalfby = "lk_msdyn_quotepricelist_modifiedonbehalfby";
+				public const string LkMsdynReadtrackerCreatedby = "lk_msdyn_readtracker_createdby";
+				public const string LkMsdynReadtrackerCreatedonbehalfby = "lk_msdyn_readtracker_createdonbehalfby";
+				public const string LkMsdynReadtrackerModifiedby = "lk_msdyn_readtracker_modifiedby";
+				public const string LkMsdynReadtrackerModifiedonbehalfby = "lk_msdyn_readtracker_modifiedonbehalfby";
+				public const string LkMsdynReadtrackingenabledinfoCreatedby = "lk_msdyn_readtrackingenabledinfo_createdby";
+				public const string LkMsdynReadtrackingenabledinfoCreatedonbehalfby = "lk_msdyn_readtrackingenabledinfo_createdonbehalfby";
+				public const string LkMsdynReadtrackingenabledinfoModifiedby = "lk_msdyn_readtrackingenabledinfo_modifiedby";
+				public const string LkMsdynReadtrackingenabledinfoModifiedonbehalfby = "lk_msdyn_readtrackingenabledinfo_modifiedonbehalfby";
 				public const string LkMsdynRealtimescoringCreatedby = "lk_msdyn_realtimescoring_createdby";
 				public const string LkMsdynRealtimescoringCreatedonbehalfby = "lk_msdyn_realtimescoring_createdonbehalfby";
 				public const string LkMsdynRealtimescoringModifiedby = "lk_msdyn_realtimescoring_modifiedby";
 				public const string LkMsdynRealtimescoringModifiedonbehalfby = "lk_msdyn_realtimescoring_modifiedonbehalfby";
+				public const string LkMsdynRealtimescoringoperationCreatedby = "lk_msdyn_realtimescoringoperation_createdby";
+				public const string LkMsdynRealtimescoringoperationCreatedonbehalfby = "lk_msdyn_realtimescoringoperation_createdonbehalfby";
+				public const string LkMsdynRealtimescoringoperationModifiedby = "lk_msdyn_realtimescoringoperation_modifiedby";
+				public const string LkMsdynRealtimescoringoperationModifiedonbehalfby = "lk_msdyn_realtimescoringoperation_modifiedonbehalfby";
 				public const string LkMsdynRecomputetrackerCreatedby = "lk_msdyn_recomputetracker_createdby";
 				public const string LkMsdynRecomputetrackerCreatedonbehalfby = "lk_msdyn_recomputetracker_createdonbehalfby";
 				public const string LkMsdynRecomputetrackerModifiedby = "lk_msdyn_recomputetracker_modifiedby";
@@ -8443,6 +10019,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynRecurringsalesactionCreatedonbehalfby = "lk_msdyn_recurringsalesaction_createdonbehalfby";
 				public const string LkMsdynRecurringsalesactionModifiedby = "lk_msdyn_recurringsalesaction_modifiedby";
 				public const string LkMsdynRecurringsalesactionModifiedonbehalfby = "lk_msdyn_recurringsalesaction_modifiedonbehalfby";
+				public const string LkMsdynRecurringsalesactionv2Createdby = "lk_msdyn_recurringsalesactionv2_createdby";
+				public const string LkMsdynRecurringsalesactionv2Createdonbehalfby = "lk_msdyn_recurringsalesactionv2_createdonbehalfby";
+				public const string LkMsdynRecurringsalesactionv2Modifiedby = "lk_msdyn_recurringsalesactionv2_modifiedby";
+				public const string LkMsdynRecurringsalesactionv2Modifiedonbehalfby = "lk_msdyn_recurringsalesactionv2_modifiedonbehalfby";
+				public const string LkMsdynRelationshipanalyticsmetadataCreatedby = "lk_msdyn_relationshipanalyticsmetadata_createdby";
+				public const string LkMsdynRelationshipanalyticsmetadataCreatedonbehalfby = "lk_msdyn_relationshipanalyticsmetadata_createdonbehalfby";
+				public const string LkMsdynRelationshipanalyticsmetadataModifiedby = "lk_msdyn_relationshipanalyticsmetadata_modifiedby";
+				public const string LkMsdynRelationshipanalyticsmetadataModifiedonbehalfby = "lk_msdyn_relationshipanalyticsmetadata_modifiedonbehalfby";
 				public const string LkMsdynRelationshipinsightsunifiedconfigCreatedby = "lk_msdyn_relationshipinsightsunifiedconfig_createdby";
 				public const string LkMsdynRelationshipinsightsunifiedconfigCreatedonbehalfby = "lk_msdyn_relationshipinsightsunifiedconfig_createdonbehalfby";
 				public const string LkMsdynRelationshipinsightsunifiedconfigModifiedby = "lk_msdyn_relationshipinsightsunifiedconfig_modifiedby";
@@ -8451,10 +10035,114 @@ namespace dgt.power.dataverse
 				public const string LkMsdynReportbookmarkCreatedonbehalfby = "lk_msdyn_reportbookmark_createdonbehalfby";
 				public const string LkMsdynReportbookmarkModifiedby = "lk_msdyn_reportbookmark_modifiedby";
 				public const string LkMsdynReportbookmarkModifiedonbehalfby = "lk_msdyn_reportbookmark_modifiedonbehalfby";
+				public const string LkMsdynRequirementchangeCreatedby = "lk_msdyn_requirementchange_createdby";
+				public const string LkMsdynRequirementchangeCreatedonbehalfby = "lk_msdyn_requirementchange_createdonbehalfby";
+				public const string LkMsdynRequirementchangeModifiedby = "lk_msdyn_requirementchange_modifiedby";
+				public const string LkMsdynRequirementchangeModifiedonbehalfby = "lk_msdyn_requirementchange_modifiedonbehalfby";
+				public const string LkMsdynRequirementcharacteristicCreatedby = "lk_msdyn_requirementcharacteristic_createdby";
+				public const string LkMsdynRequirementcharacteristicCreatedonbehalfby = "lk_msdyn_requirementcharacteristic_createdonbehalfby";
+				public const string LkMsdynRequirementcharacteristicModifiedby = "lk_msdyn_requirementcharacteristic_modifiedby";
+				public const string LkMsdynRequirementcharacteristicModifiedonbehalfby = "lk_msdyn_requirementcharacteristic_modifiedonbehalfby";
+				public const string LkMsdynRequirementdependencyCreatedby = "lk_msdyn_requirementdependency_createdby";
+				public const string LkMsdynRequirementdependencyCreatedonbehalfby = "lk_msdyn_requirementdependency_createdonbehalfby";
+				public const string LkMsdynRequirementdependencyModifiedby = "lk_msdyn_requirementdependency_modifiedby";
+				public const string LkMsdynRequirementdependencyModifiedonbehalfby = "lk_msdyn_requirementdependency_modifiedonbehalfby";
+				public const string LkMsdynRequirementgroupCreatedby = "lk_msdyn_requirementgroup_createdby";
+				public const string LkMsdynRequirementgroupCreatedonbehalfby = "lk_msdyn_requirementgroup_createdonbehalfby";
+				public const string LkMsdynRequirementgroupModifiedby = "lk_msdyn_requirementgroup_modifiedby";
+				public const string LkMsdynRequirementgroupModifiedonbehalfby = "lk_msdyn_requirementgroup_modifiedonbehalfby";
+				public const string LkMsdynRequirementorganizationunitCreatedby = "lk_msdyn_requirementorganizationunit_createdby";
+				public const string LkMsdynRequirementorganizationunitCreatedonbehalfby = "lk_msdyn_requirementorganizationunit_createdonbehalfby";
+				public const string LkMsdynRequirementorganizationunitModifiedby = "lk_msdyn_requirementorganizationunit_modifiedby";
+				public const string LkMsdynRequirementorganizationunitModifiedonbehalfby = "lk_msdyn_requirementorganizationunit_modifiedonbehalfby";
+				public const string LkMsdynRequirementrelationshipCreatedby = "lk_msdyn_requirementrelationship_createdby";
+				public const string LkMsdynRequirementrelationshipCreatedonbehalfby = "lk_msdyn_requirementrelationship_createdonbehalfby";
+				public const string LkMsdynRequirementrelationshipModifiedby = "lk_msdyn_requirementrelationship_modifiedby";
+				public const string LkMsdynRequirementrelationshipModifiedonbehalfby = "lk_msdyn_requirementrelationship_modifiedonbehalfby";
+				public const string LkMsdynRequirementresourcecategoryCreatedby = "lk_msdyn_requirementresourcecategory_createdby";
+				public const string LkMsdynRequirementresourcecategoryCreatedonbehalfby = "lk_msdyn_requirementresourcecategory_createdonbehalfby";
+				public const string LkMsdynRequirementresourcecategoryModifiedby = "lk_msdyn_requirementresourcecategory_modifiedby";
+				public const string LkMsdynRequirementresourcecategoryModifiedonbehalfby = "lk_msdyn_requirementresourcecategory_modifiedonbehalfby";
+				public const string LkMsdynRequirementresourcepreferenceCreatedby = "lk_msdyn_requirementresourcepreference_createdby";
+				public const string LkMsdynRequirementresourcepreferenceCreatedonbehalfby = "lk_msdyn_requirementresourcepreference_createdonbehalfby";
+				public const string LkMsdynRequirementresourcepreferenceModifiedby = "lk_msdyn_requirementresourcepreference_modifiedby";
+				public const string LkMsdynRequirementresourcepreferenceModifiedonbehalfby = "lk_msdyn_requirementresourcepreference_modifiedonbehalfby";
+				public const string LkMsdynRequirementstatusCreatedby = "lk_msdyn_requirementstatus_createdby";
+				public const string LkMsdynRequirementstatusCreatedonbehalfby = "lk_msdyn_requirementstatus_createdonbehalfby";
+				public const string LkMsdynRequirementstatusModifiedby = "lk_msdyn_requirementstatus_modifiedby";
+				public const string LkMsdynRequirementstatusModifiedonbehalfby = "lk_msdyn_requirementstatus_modifiedonbehalfby";
+				public const string LkMsdynResolutionCreatedby = "lk_msdyn_resolution_createdby";
+				public const string LkMsdynResolutionCreatedonbehalfby = "lk_msdyn_resolution_createdonbehalfby";
+				public const string LkMsdynResolutionModifiedby = "lk_msdyn_resolution_modifiedby";
+				public const string LkMsdynResolutionModifiedonbehalfby = "lk_msdyn_resolution_modifiedonbehalfby";
+				public const string LkMsdynResourceassignmentCreatedby = "lk_msdyn_resourceassignment_createdby";
+				public const string LkMsdynResourceassignmentCreatedonbehalfby = "lk_msdyn_resourceassignment_createdonbehalfby";
+				public const string LkMsdynResourceassignmentModifiedby = "lk_msdyn_resourceassignment_modifiedby";
+				public const string LkMsdynResourceassignmentModifiedonbehalfby = "lk_msdyn_resourceassignment_modifiedonbehalfby";
+				public const string LkMsdynResourceassignmentdetailCreatedby = "lk_msdyn_resourceassignmentdetail_createdby";
+				public const string LkMsdynResourceassignmentdetailCreatedonbehalfby = "lk_msdyn_resourceassignmentdetail_createdonbehalfby";
+				public const string LkMsdynResourceassignmentdetailModifiedby = "lk_msdyn_resourceassignmentdetail_modifiedby";
+				public const string LkMsdynResourceassignmentdetailModifiedonbehalfby = "lk_msdyn_resourceassignmentdetail_modifiedonbehalfby";
+				public const string LkMsdynResourcecategorymarkuppricelevelCreatedby = "lk_msdyn_resourcecategorymarkuppricelevel_createdby";
+				public const string LkMsdynResourcecategorymarkuppricelevelCreatedonbehalfby = "lk_msdyn_resourcecategorymarkuppricelevel_createdonbehalfby";
+				public const string LkMsdynResourcecategorymarkuppricelevelModifiedby = "lk_msdyn_resourcecategorymarkuppricelevel_modifiedby";
+				public const string LkMsdynResourcecategorymarkuppricelevelModifiedonbehalfby = "lk_msdyn_resourcecategorymarkuppricelevel_modifiedonbehalfby";
+				public const string LkMsdynResourcecategorypricelevelCreatedby = "lk_msdyn_resourcecategorypricelevel_createdby";
+				public const string LkMsdynResourcecategorypricelevelCreatedonbehalfby = "lk_msdyn_resourcecategorypricelevel_createdonbehalfby";
+				public const string LkMsdynResourcecategorypricelevelModifiedby = "lk_msdyn_resourcecategorypricelevel_modifiedby";
+				public const string LkMsdynResourcecategorypricelevelModifiedonbehalfby = "lk_msdyn_resourcecategorypricelevel_modifiedonbehalfby";
+				public const string LkMsdynResourcepaytypeCreatedby = "lk_msdyn_resourcepaytype_createdby";
+				public const string LkMsdynResourcepaytypeCreatedonbehalfby = "lk_msdyn_resourcepaytype_createdonbehalfby";
+				public const string LkMsdynResourcepaytypeModifiedby = "lk_msdyn_resourcepaytype_modifiedby";
+				public const string LkMsdynResourcepaytypeModifiedonbehalfby = "lk_msdyn_resourcepaytype_modifiedonbehalfby";
+				public const string LkMsdynResourcerequestCreatedby = "lk_msdyn_resourcerequest_createdby";
+				public const string LkMsdynResourcerequestCreatedonbehalfby = "lk_msdyn_resourcerequest_createdonbehalfby";
+				public const string LkMsdynResourcerequestModifiedby = "lk_msdyn_resourcerequest_modifiedby";
+				public const string LkMsdynResourcerequestModifiedonbehalfby = "lk_msdyn_resourcerequest_modifiedonbehalfby";
+				public const string LkMsdynResourcerequirementCreatedby = "lk_msdyn_resourcerequirement_createdby";
+				public const string LkMsdynResourcerequirementCreatedonbehalfby = "lk_msdyn_resourcerequirement_createdonbehalfby";
+				public const string LkMsdynResourcerequirementModifiedby = "lk_msdyn_resourcerequirement_modifiedby";
+				public const string LkMsdynResourcerequirementModifiedonbehalfby = "lk_msdyn_resourcerequirement_modifiedonbehalfby";
+				public const string LkMsdynResourcerequirementdetailCreatedby = "lk_msdyn_resourcerequirementdetail_createdby";
+				public const string LkMsdynResourcerequirementdetailCreatedonbehalfby = "lk_msdyn_resourcerequirementdetail_createdonbehalfby";
+				public const string LkMsdynResourcerequirementdetailModifiedby = "lk_msdyn_resourcerequirementdetail_modifiedby";
+				public const string LkMsdynResourcerequirementdetailModifiedonbehalfby = "lk_msdyn_resourcerequirementdetail_modifiedonbehalfby";
+				public const string LkMsdynResourceterritoryCreatedby = "lk_msdyn_resourceterritory_createdby";
+				public const string LkMsdynResourceterritoryCreatedonbehalfby = "lk_msdyn_resourceterritory_createdonbehalfby";
+				public const string LkMsdynResourceterritoryModifiedby = "lk_msdyn_resourceterritory_modifiedby";
+				public const string LkMsdynResourceterritoryModifiedonbehalfby = "lk_msdyn_resourceterritory_modifiedonbehalfby";
 				public const string LkMsdynRichtextfileCreatedby = "lk_msdyn_richtextfile_createdby";
 				public const string LkMsdynRichtextfileCreatedonbehalfby = "lk_msdyn_richtextfile_createdonbehalfby";
 				public const string LkMsdynRichtextfileModifiedby = "lk_msdyn_richtextfile_modifiedby";
 				public const string LkMsdynRichtextfileModifiedonbehalfby = "lk_msdyn_richtextfile_modifiedonbehalfby";
+				public const string LkMsdynRmaCreatedby = "lk_msdyn_rma_createdby";
+				public const string LkMsdynRmaCreatedonbehalfby = "lk_msdyn_rma_createdonbehalfby";
+				public const string LkMsdynRmaModifiedby = "lk_msdyn_rma_modifiedby";
+				public const string LkMsdynRmaModifiedonbehalfby = "lk_msdyn_rma_modifiedonbehalfby";
+				public const string LkMsdynRmaproductCreatedby = "lk_msdyn_rmaproduct_createdby";
+				public const string LkMsdynRmaproductCreatedonbehalfby = "lk_msdyn_rmaproduct_createdonbehalfby";
+				public const string LkMsdynRmaproductModifiedby = "lk_msdyn_rmaproduct_modifiedby";
+				public const string LkMsdynRmaproductModifiedonbehalfby = "lk_msdyn_rmaproduct_modifiedonbehalfby";
+				public const string LkMsdynRmareceiptCreatedby = "lk_msdyn_rmareceipt_createdby";
+				public const string LkMsdynRmareceiptCreatedonbehalfby = "lk_msdyn_rmareceipt_createdonbehalfby";
+				public const string LkMsdynRmareceiptModifiedby = "lk_msdyn_rmareceipt_modifiedby";
+				public const string LkMsdynRmareceiptModifiedonbehalfby = "lk_msdyn_rmareceipt_modifiedonbehalfby";
+				public const string LkMsdynRmareceiptproductCreatedby = "lk_msdyn_rmareceiptproduct_createdby";
+				public const string LkMsdynRmareceiptproductCreatedonbehalfby = "lk_msdyn_rmareceiptproduct_createdonbehalfby";
+				public const string LkMsdynRmareceiptproductModifiedby = "lk_msdyn_rmareceiptproduct_modifiedby";
+				public const string LkMsdynRmareceiptproductModifiedonbehalfby = "lk_msdyn_rmareceiptproduct_modifiedonbehalfby";
+				public const string LkMsdynRmasubstatusCreatedby = "lk_msdyn_rmasubstatus_createdby";
+				public const string LkMsdynRmasubstatusCreatedonbehalfby = "lk_msdyn_rmasubstatus_createdonbehalfby";
+				public const string LkMsdynRmasubstatusModifiedby = "lk_msdyn_rmasubstatus_modifiedby";
+				public const string LkMsdynRmasubstatusModifiedonbehalfby = "lk_msdyn_rmasubstatus_modifiedonbehalfby";
+				public const string LkMsdynRolecompetencyrequirementCreatedby = "lk_msdyn_rolecompetencyrequirement_createdby";
+				public const string LkMsdynRolecompetencyrequirementCreatedonbehalfby = "lk_msdyn_rolecompetencyrequirement_createdonbehalfby";
+				public const string LkMsdynRolecompetencyrequirementModifiedby = "lk_msdyn_rolecompetencyrequirement_modifiedby";
+				public const string LkMsdynRolecompetencyrequirementModifiedonbehalfby = "lk_msdyn_rolecompetencyrequirement_modifiedonbehalfby";
+				public const string LkMsdynRoleutilizationCreatedby = "lk_msdyn_roleutilization_createdby";
+				public const string LkMsdynRoleutilizationCreatedonbehalfby = "lk_msdyn_roleutilization_createdonbehalfby";
+				public const string LkMsdynRoleutilizationModifiedby = "lk_msdyn_roleutilization_modifiedby";
+				public const string LkMsdynRoleutilizationModifiedonbehalfby = "lk_msdyn_roleutilization_modifiedonbehalfby";
 				public const string LkMsdynRoutingconfigurationCreatedby = "lk_msdyn_routingconfiguration_createdby";
 				public const string LkMsdynRoutingconfigurationCreatedonbehalfby = "lk_msdyn_routingconfiguration_createdonbehalfby";
 				public const string LkMsdynRoutingconfigurationModifiedby = "lk_msdyn_routingconfiguration_modifiedby";
@@ -8471,6 +10159,18 @@ namespace dgt.power.dataverse
 				public const string LkMsdynRoutingrulesetsettingCreatedonbehalfby = "lk_msdyn_routingrulesetsetting_createdonbehalfby";
 				public const string LkMsdynRoutingrulesetsettingModifiedby = "lk_msdyn_routingrulesetsetting_modifiedby";
 				public const string LkMsdynRoutingrulesetsettingModifiedonbehalfby = "lk_msdyn_routingrulesetsetting_modifiedonbehalfby";
+				public const string LkMsdynRtvCreatedby = "lk_msdyn_rtv_createdby";
+				public const string LkMsdynRtvCreatedonbehalfby = "lk_msdyn_rtv_createdonbehalfby";
+				public const string LkMsdynRtvModifiedby = "lk_msdyn_rtv_modifiedby";
+				public const string LkMsdynRtvModifiedonbehalfby = "lk_msdyn_rtv_modifiedonbehalfby";
+				public const string LkMsdynRtvproductCreatedby = "lk_msdyn_rtvproduct_createdby";
+				public const string LkMsdynRtvproductCreatedonbehalfby = "lk_msdyn_rtvproduct_createdonbehalfby";
+				public const string LkMsdynRtvproductModifiedby = "lk_msdyn_rtvproduct_modifiedby";
+				public const string LkMsdynRtvproductModifiedonbehalfby = "lk_msdyn_rtvproduct_modifiedonbehalfby";
+				public const string LkMsdynRtvsubstatusCreatedby = "lk_msdyn_rtvsubstatus_createdby";
+				public const string LkMsdynRtvsubstatusCreatedonbehalfby = "lk_msdyn_rtvsubstatus_createdonbehalfby";
+				public const string LkMsdynRtvsubstatusModifiedby = "lk_msdyn_rtvsubstatus_modifiedby";
+				public const string LkMsdynRtvsubstatusModifiedonbehalfby = "lk_msdyn_rtvsubstatus_modifiedonbehalfby";
 				public const string LkMsdynRulesetdependencymappingCreatedby = "lk_msdyn_rulesetdependencymapping_createdby";
 				public const string LkMsdynRulesetdependencymappingCreatedonbehalfby = "lk_msdyn_rulesetdependencymapping_createdonbehalfby";
 				public const string LkMsdynRulesetdependencymappingModifiedby = "lk_msdyn_rulesetdependencymapping_modifiedby";
@@ -8495,6 +10195,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSalesassignmentsettingCreatedonbehalfby = "lk_msdyn_salesassignmentsetting_createdonbehalfby";
 				public const string LkMsdynSalesassignmentsettingModifiedby = "lk_msdyn_salesassignmentsetting_modifiedby";
 				public const string LkMsdynSalesassignmentsettingModifiedonbehalfby = "lk_msdyn_salesassignmentsetting_modifiedonbehalfby";
+				public const string LkMsdynSalescopilotinsightCreatedby = "lk_msdyn_salescopilotinsight_createdby";
+				public const string LkMsdynSalescopilotinsightCreatedonbehalfby = "lk_msdyn_salescopilotinsight_createdonbehalfby";
+				public const string LkMsdynSalescopilotinsightModifiedby = "lk_msdyn_salescopilotinsight_modifiedby";
+				public const string LkMsdynSalescopilotinsightModifiedonbehalfby = "lk_msdyn_salescopilotinsight_modifiedonbehalfby";
+				public const string LkMsdynSalescopilotorgsettingsCreatedby = "lk_msdyn_salescopilotorgsettings_createdby";
+				public const string LkMsdynSalescopilotorgsettingsCreatedonbehalfby = "lk_msdyn_salescopilotorgsettings_createdonbehalfby";
+				public const string LkMsdynSalescopilotorgsettingsModifiedby = "lk_msdyn_salescopilotorgsettings_modifiedby";
+				public const string LkMsdynSalescopilotorgsettingsModifiedonbehalfby = "lk_msdyn_salescopilotorgsettings_modifiedonbehalfby";
+				public const string LkMsdynSalescopilotusersettingCreatedby = "lk_msdyn_salescopilotusersetting_createdby";
+				public const string LkMsdynSalescopilotusersettingCreatedonbehalfby = "lk_msdyn_salescopilotusersetting_createdonbehalfby";
+				public const string LkMsdynSalescopilotusersettingModifiedby = "lk_msdyn_salescopilotusersetting_modifiedby";
+				public const string LkMsdynSalescopilotusersettingModifiedonbehalfby = "lk_msdyn_salescopilotusersetting_modifiedonbehalfby";
+				public const string LkMsdynSalesforcestructuredobjectCreatedby = "lk_msdyn_salesforcestructuredobject_createdby";
+				public const string LkMsdynSalesforcestructuredobjectCreatedonbehalfby = "lk_msdyn_salesforcestructuredobject_createdonbehalfby";
+				public const string LkMsdynSalesforcestructuredobjectModifiedby = "lk_msdyn_salesforcestructuredobject_modifiedby";
+				public const string LkMsdynSalesforcestructuredobjectModifiedonbehalfby = "lk_msdyn_salesforcestructuredobject_modifiedonbehalfby";
+				public const string LkMsdynSalesforcestructuredqnaconfigCreatedby = "lk_msdyn_salesforcestructuredqnaconfig_createdby";
+				public const string LkMsdynSalesforcestructuredqnaconfigCreatedonbehalfby = "lk_msdyn_salesforcestructuredqnaconfig_createdonbehalfby";
+				public const string LkMsdynSalesforcestructuredqnaconfigModifiedby = "lk_msdyn_salesforcestructuredqnaconfig_modifiedby";
+				public const string LkMsdynSalesforcestructuredqnaconfigModifiedonbehalfby = "lk_msdyn_salesforcestructuredqnaconfig_modifiedonbehalfby";
 				public const string LkMsdynSalesinsightssettingsCreatedby = "lk_msdyn_salesinsightssettings_createdby";
 				public const string LkMsdynSalesinsightssettingsCreatedonbehalfby = "lk_msdyn_salesinsightssettings_createdonbehalfby";
 				public const string LkMsdynSalesinsightssettingsModifiedby = "lk_msdyn_salesinsightssettings_modifiedby";
@@ -8527,6 +10247,50 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSaruninstanceCreatedonbehalfby = "lk_msdyn_saruninstance_createdonbehalfby";
 				public const string LkMsdynSaruninstanceModifiedby = "lk_msdyn_saruninstance_modifiedby";
 				public const string LkMsdynSaruninstanceModifiedonbehalfby = "lk_msdyn_saruninstance_modifiedonbehalfby";
+				public const string LkMsdynScenarioCreatedby = "lk_msdyn_scenario_createdby";
+				public const string LkMsdynScenarioCreatedonbehalfby = "lk_msdyn_scenario_createdonbehalfby";
+				public const string LkMsdynScenarioModifiedby = "lk_msdyn_scenario_modifiedby";
+				public const string LkMsdynScenarioModifiedonbehalfby = "lk_msdyn_scenario_modifiedonbehalfby";
+				public const string LkMsdynScheduleCreatedby = "lk_msdyn_schedule_createdby";
+				public const string LkMsdynScheduleCreatedonbehalfby = "lk_msdyn_schedule_createdonbehalfby";
+				public const string LkMsdynScheduleModifiedby = "lk_msdyn_schedule_modifiedby";
+				public const string LkMsdynScheduleModifiedonbehalfby = "lk_msdyn_schedule_modifiedonbehalfby";
+				public const string LkMsdynScheduleboardsettingCreatedby = "lk_msdyn_scheduleboardsetting_createdby";
+				public const string LkMsdynScheduleboardsettingCreatedonbehalfby = "lk_msdyn_scheduleboardsetting_createdonbehalfby";
+				public const string LkMsdynScheduleboardsettingModifiedby = "lk_msdyn_scheduleboardsetting_modifiedby";
+				public const string LkMsdynScheduleboardsettingModifiedonbehalfby = "lk_msdyn_scheduleboardsetting_modifiedonbehalfby";
+				public const string LkMsdynSchedulingfeatureflagCreatedby = "lk_msdyn_schedulingfeatureflag_createdby";
+				public const string LkMsdynSchedulingfeatureflagCreatedonbehalfby = "lk_msdyn_schedulingfeatureflag_createdonbehalfby";
+				public const string LkMsdynSchedulingfeatureflagModifiedby = "lk_msdyn_schedulingfeatureflag_modifiedby";
+				public const string LkMsdynSchedulingfeatureflagModifiedonbehalfby = "lk_msdyn_schedulingfeatureflag_modifiedonbehalfby";
+				public const string LkMsdynSchedulingparameterCreatedby = "lk_msdyn_schedulingparameter_createdby";
+				public const string LkMsdynSchedulingparameterCreatedonbehalfby = "lk_msdyn_schedulingparameter_createdonbehalfby";
+				public const string LkMsdynSchedulingparameterModifiedby = "lk_msdyn_schedulingparameter_modifiedby";
+				public const string LkMsdynSchedulingparameterModifiedonbehalfby = "lk_msdyn_schedulingparameter_modifiedonbehalfby";
+				public const string LkMsdynSciconversationCreatedby = "lk_msdyn_sciconversation_createdby";
+				public const string LkMsdynSciconversationCreatedonbehalfby = "lk_msdyn_sciconversation_createdonbehalfby";
+				public const string LkMsdynSciconversationModifiedby = "lk_msdyn_sciconversation_modifiedby";
+				public const string LkMsdynSciconversationModifiedonbehalfby = "lk_msdyn_sciconversation_modifiedonbehalfby";
+				public const string LkMsdynScicustomemailhighlightCreatedby = "lk_msdyn_scicustomemailhighlight_createdby";
+				public const string LkMsdynScicustomemailhighlightCreatedonbehalfby = "lk_msdyn_scicustomemailhighlight_createdonbehalfby";
+				public const string LkMsdynScicustomemailhighlightModifiedby = "lk_msdyn_scicustomemailhighlight_modifiedby";
+				public const string LkMsdynScicustomemailhighlightModifiedonbehalfby = "lk_msdyn_scicustomemailhighlight_modifiedonbehalfby";
+				public const string LkMsdynScicustomhighlightCreatedby = "lk_msdyn_scicustomhighlight_createdby";
+				public const string LkMsdynScicustomhighlightCreatedonbehalfby = "lk_msdyn_scicustomhighlight_createdonbehalfby";
+				public const string LkMsdynScicustomhighlightModifiedby = "lk_msdyn_scicustomhighlight_modifiedby";
+				public const string LkMsdynScicustomhighlightModifiedonbehalfby = "lk_msdyn_scicustomhighlight_modifiedonbehalfby";
+				public const string LkMsdynScicustompublisherCreatedby = "lk_msdyn_scicustompublisher_createdby";
+				public const string LkMsdynScicustompublisherCreatedonbehalfby = "lk_msdyn_scicustompublisher_createdonbehalfby";
+				public const string LkMsdynScicustompublisherModifiedby = "lk_msdyn_scicustompublisher_modifiedby";
+				public const string LkMsdynScicustompublisherModifiedonbehalfby = "lk_msdyn_scicustompublisher_modifiedonbehalfby";
+				public const string LkMsdynScienvironmentsettingsCreatedby = "lk_msdyn_scienvironmentsettings_createdby";
+				public const string LkMsdynScienvironmentsettingsCreatedonbehalfby = "lk_msdyn_scienvironmentsettings_createdonbehalfby";
+				public const string LkMsdynScienvironmentsettingsModifiedby = "lk_msdyn_scienvironmentsettings_modifiedby";
+				public const string LkMsdynScienvironmentsettingsModifiedonbehalfby = "lk_msdyn_scienvironmentsettings_modifiedonbehalfby";
+				public const string LkMsdynSciusersettingsCreatedby = "lk_msdyn_sciusersettings_createdby";
+				public const string LkMsdynSciusersettingsCreatedonbehalfby = "lk_msdyn_sciusersettings_createdonbehalfby";
+				public const string LkMsdynSciusersettingsModifiedby = "lk_msdyn_sciusersettings_modifiedby";
+				public const string LkMsdynSciusersettingsModifiedonbehalfby = "lk_msdyn_sciusersettings_modifiedonbehalfby";
 				public const string LkMsdynSearchconfigurationCreatedby = "lk_msdyn_searchconfiguration_createdby";
 				public const string LkMsdynSearchconfigurationCreatedonbehalfby = "lk_msdyn_searchconfiguration_createdonbehalfby";
 				public const string LkMsdynSearchconfigurationModifiedby = "lk_msdyn_searchconfiguration_modifiedby";
@@ -8575,10 +10339,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynServiceconfigurationCreatedonbehalfby = "lk_msdyn_serviceconfiguration_createdonbehalfby";
 				public const string LkMsdynServiceconfigurationModifiedby = "lk_msdyn_serviceconfiguration_modifiedby";
 				public const string LkMsdynServiceconfigurationModifiedonbehalfby = "lk_msdyn_serviceconfiguration_modifiedonbehalfby";
+				public const string LkMsdynServicecopilotpluginCreatedby = "lk_msdyn_servicecopilotplugin_createdby";
+				public const string LkMsdynServicecopilotpluginCreatedonbehalfby = "lk_msdyn_servicecopilotplugin_createdonbehalfby";
+				public const string LkMsdynServicecopilotpluginModifiedby = "lk_msdyn_servicecopilotplugin_modifiedby";
+				public const string LkMsdynServicecopilotpluginModifiedonbehalfby = "lk_msdyn_servicecopilotplugin_modifiedonbehalfby";
+				public const string LkMsdynServicecopilotpluginroleCreatedby = "lk_msdyn_servicecopilotpluginrole_createdby";
+				public const string LkMsdynServicecopilotpluginroleCreatedonbehalfby = "lk_msdyn_servicecopilotpluginrole_createdonbehalfby";
+				public const string LkMsdynServicecopilotpluginroleModifiedby = "lk_msdyn_servicecopilotpluginrole_modifiedby";
+				public const string LkMsdynServicecopilotpluginroleModifiedonbehalfby = "lk_msdyn_servicecopilotpluginrole_modifiedonbehalfby";
 				public const string LkMsdynServiceoneprovisioningrequestCreatedby = "lk_msdyn_serviceoneprovisioningrequest_createdby";
 				public const string LkMsdynServiceoneprovisioningrequestCreatedonbehalfby = "lk_msdyn_serviceoneprovisioningrequest_createdonbehalfby";
 				public const string LkMsdynServiceoneprovisioningrequestModifiedby = "lk_msdyn_serviceoneprovisioningrequest_modifiedby";
 				public const string LkMsdynServiceoneprovisioningrequestModifiedonbehalfby = "lk_msdyn_serviceoneprovisioningrequest_modifiedonbehalfby";
+				public const string LkMsdynServicetasktypeCreatedby = "lk_msdyn_servicetasktype_createdby";
+				public const string LkMsdynServicetasktypeCreatedonbehalfby = "lk_msdyn_servicetasktype_createdonbehalfby";
+				public const string LkMsdynServicetasktypeModifiedby = "lk_msdyn_servicetasktype_modifiedby";
+				public const string LkMsdynServicetasktypeModifiedonbehalfby = "lk_msdyn_servicetasktype_modifiedonbehalfby";
 				public const string LkMsdynSessiondataCreatedby = "lk_msdyn_sessiondata_createdby";
 				public const string LkMsdynSessiondataCreatedonbehalfby = "lk_msdyn_sessiondata_createdonbehalfby";
 				public const string LkMsdynSessiondataModifiedby = "lk_msdyn_sessiondata_modifiedby";
@@ -8603,6 +10379,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynShareasconfigurationCreatedonbehalfby = "lk_msdyn_shareasconfiguration_createdonbehalfby";
 				public const string LkMsdynShareasconfigurationModifiedby = "lk_msdyn_shareasconfiguration_modifiedby";
 				public const string LkMsdynShareasconfigurationModifiedonbehalfby = "lk_msdyn_shareasconfiguration_modifiedonbehalfby";
+				public const string LkMsdynShipviaCreatedby = "lk_msdyn_shipvia_createdby";
+				public const string LkMsdynShipviaCreatedonbehalfby = "lk_msdyn_shipvia_createdonbehalfby";
+				public const string LkMsdynShipviaModifiedby = "lk_msdyn_shipvia_modifiedby";
+				public const string LkMsdynShipviaModifiedonbehalfby = "lk_msdyn_shipvia_modifiedonbehalfby";
 				public const string LkMsdynSiconfigCreatedby = "lk_msdyn_siconfig_createdby";
 				public const string LkMsdynSiconfigCreatedonbehalfby = "lk_msdyn_siconfig_createdonbehalfby";
 				public const string LkMsdynSiconfigModifiedby = "lk_msdyn_siconfig_modifiedby";
@@ -8631,6 +10411,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSmartassistconfigCreatedonbehalfby = "lk_msdyn_smartassistconfig_createdonbehalfby";
 				public const string LkMsdynSmartassistconfigModifiedby = "lk_msdyn_smartassistconfig_modifiedby";
 				public const string LkMsdynSmartassistconfigModifiedonbehalfby = "lk_msdyn_smartassistconfig_modifiedonbehalfby";
+				public const string LkMsdynSmsengagementctxCreatedby = "lk_msdyn_smsengagementctx_createdby";
+				public const string LkMsdynSmsengagementctxCreatedonbehalfby = "lk_msdyn_smsengagementctx_createdonbehalfby";
+				public const string LkMsdynSmsengagementctxModifiedby = "lk_msdyn_smsengagementctx_modifiedby";
+				public const string LkMsdynSmsengagementctxModifiedonbehalfby = "lk_msdyn_smsengagementctx_modifiedonbehalfby";
+				public const string LkMsdynSmsnumberCreatedby = "lk_msdyn_smsnumber_createdby";
+				public const string LkMsdynSmsnumberCreatedonbehalfby = "lk_msdyn_smsnumber_createdonbehalfby";
+				public const string LkMsdynSmsnumberModifiedby = "lk_msdyn_smsnumber_modifiedby";
+				public const string LkMsdynSmsnumberModifiedonbehalfby = "lk_msdyn_smsnumber_modifiedonbehalfby";
 				public const string LkMsdynSolutionhealthruleCreatedby = "lk_msdyn_solutionhealthrule_createdby";
 				public const string LkMsdynSolutionhealthruleCreatedonbehalfby = "lk_msdyn_solutionhealthrule_createdonbehalfby";
 				public const string LkMsdynSolutionhealthruleModifiedby = "lk_msdyn_solutionhealthrule_modifiedby";
@@ -8651,6 +10439,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSoundnotificationsettingCreatedonbehalfby = "lk_msdyn_soundnotificationsetting_createdonbehalfby";
 				public const string LkMsdynSoundnotificationsettingModifiedby = "lk_msdyn_soundnotificationsetting_modifiedby";
 				public const string LkMsdynSoundnotificationsettingModifiedonbehalfby = "lk_msdyn_soundnotificationsetting_modifiedonbehalfby";
+				public const string LkMsdynSubmodeldefinitionCreatedby = "lk_msdyn_submodeldefinition_createdby";
+				public const string LkMsdynSubmodeldefinitionCreatedonbehalfby = "lk_msdyn_submodeldefinition_createdonbehalfby";
+				public const string LkMsdynSubmodeldefinitionModifiedby = "lk_msdyn_submodeldefinition_modifiedby";
+				public const string LkMsdynSubmodeldefinitionModifiedonbehalfby = "lk_msdyn_submodeldefinition_modifiedonbehalfby";
 				public const string LkMsdynSuggestionassignmentruleCreatedby = "lk_msdyn_suggestionassignmentrule_createdby";
 				public const string LkMsdynSuggestionassignmentruleCreatedonbehalfby = "lk_msdyn_suggestionassignmentrule_createdonbehalfby";
 				public const string LkMsdynSuggestionassignmentruleModifiedby = "lk_msdyn_suggestionassignmentrule_modifiedby";
@@ -8679,6 +10471,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSuggestionssettingCreatedonbehalfby = "lk_msdyn_suggestionssetting_createdonbehalfby";
 				public const string LkMsdynSuggestionssettingModifiedby = "lk_msdyn_suggestionssetting_modifiedby";
 				public const string LkMsdynSuggestionssettingModifiedonbehalfby = "lk_msdyn_suggestionssetting_modifiedonbehalfby";
+				public const string LkMsdynSurveyquestionCreatedby = "lk_msdyn_surveyquestion_createdby";
+				public const string LkMsdynSurveyquestionCreatedonbehalfby = "lk_msdyn_surveyquestion_createdonbehalfby";
+				public const string LkMsdynSurveyquestionModifiedby = "lk_msdyn_surveyquestion_modifiedby";
+				public const string LkMsdynSurveyquestionModifiedonbehalfby = "lk_msdyn_surveyquestion_modifiedonbehalfby";
+				public const string LkMsdynSurveysettingCreatedby = "lk_msdyn_surveysetting_createdby";
+				public const string LkMsdynSurveysettingCreatedonbehalfby = "lk_msdyn_surveysetting_createdonbehalfby";
+				public const string LkMsdynSurveysettingModifiedby = "lk_msdyn_surveysetting_modifiedby";
+				public const string LkMsdynSurveysettingModifiedonbehalfby = "lk_msdyn_surveysetting_modifiedonbehalfby";
 				public const string LkMsdynSwarmCreatedby = "lk_msdyn_swarm_createdby";
 				public const string LkMsdynSwarmCreatedonbehalfby = "lk_msdyn_swarm_createdonbehalfby";
 				public const string LkMsdynSwarmModifiedby = "lk_msdyn_swarm_modifiedby";
@@ -8703,10 +10503,26 @@ namespace dgt.power.dataverse
 				public const string LkMsdynSwarmtemplateCreatedonbehalfby = "lk_msdyn_swarmtemplate_createdonbehalfby";
 				public const string LkMsdynSwarmtemplateModifiedby = "lk_msdyn_swarmtemplate_modifiedby";
 				public const string LkMsdynSwarmtemplateModifiedonbehalfby = "lk_msdyn_swarmtemplate_modifiedonbehalfby";
+				public const string LkMsdynSystemuserschedulersettingCreatedby = "lk_msdyn_systemuserschedulersetting_createdby";
+				public const string LkMsdynSystemuserschedulersettingCreatedonbehalfby = "lk_msdyn_systemuserschedulersetting_createdonbehalfby";
+				public const string LkMsdynSystemuserschedulersettingModifiedby = "lk_msdyn_systemuserschedulersetting_modifiedby";
+				public const string LkMsdynSystemuserschedulersettingModifiedonbehalfby = "lk_msdyn_systemuserschedulersetting_modifiedonbehalfby";
 				public const string LkMsdynTaggedrecordCreatedby = "lk_msdyn_taggedrecord_createdby";
 				public const string LkMsdynTaggedrecordCreatedonbehalfby = "lk_msdyn_taggedrecord_createdonbehalfby";
 				public const string LkMsdynTaggedrecordModifiedby = "lk_msdyn_taggedrecord_modifiedby";
 				public const string LkMsdynTaggedrecordModifiedonbehalfby = "lk_msdyn_taggedrecord_modifiedonbehalfby";
+				public const string LkMsdynTaxcodeCreatedby = "lk_msdyn_taxcode_createdby";
+				public const string LkMsdynTaxcodeCreatedonbehalfby = "lk_msdyn_taxcode_createdonbehalfby";
+				public const string LkMsdynTaxcodeModifiedby = "lk_msdyn_taxcode_modifiedby";
+				public const string LkMsdynTaxcodeModifiedonbehalfby = "lk_msdyn_taxcode_modifiedonbehalfby";
+				public const string LkMsdynTaxcodedetailCreatedby = "lk_msdyn_taxcodedetail_createdby";
+				public const string LkMsdynTaxcodedetailCreatedonbehalfby = "lk_msdyn_taxcodedetail_createdonbehalfby";
+				public const string LkMsdynTaxcodedetailModifiedby = "lk_msdyn_taxcodedetail_modifiedby";
+				public const string LkMsdynTaxcodedetailModifiedonbehalfby = "lk_msdyn_taxcodedetail_modifiedonbehalfby";
+				public const string LkMsdynTeamschannelengagementctxCreatedby = "lk_msdyn_teamschannelengagementctx_createdby";
+				public const string LkMsdynTeamschannelengagementctxCreatedonbehalfby = "lk_msdyn_teamschannelengagementctx_createdonbehalfby";
+				public const string LkMsdynTeamschannelengagementctxModifiedby = "lk_msdyn_teamschannelengagementctx_modifiedby";
+				public const string LkMsdynTeamschannelengagementctxModifiedonbehalfby = "lk_msdyn_teamschannelengagementctx_modifiedonbehalfby";
 				public const string LkMsdynTeamschatassociationCreatedby = "lk_msdyn_teamschatassociation_createdby";
 				public const string LkMsdynTeamschatassociationCreatedonbehalfby = "lk_msdyn_teamschatassociation_createdonbehalfby";
 				public const string LkMsdynTeamschatassociationModifiedby = "lk_msdyn_teamschatassociation_modifiedby";
@@ -8723,6 +10539,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynTeamsdialeradminsettingsCreatedonbehalfby = "lk_msdyn_teamsdialeradminsettings_createdonbehalfby";
 				public const string LkMsdynTeamsdialeradminsettingsModifiedby = "lk_msdyn_teamsdialeradminsettings_modifiedby";
 				public const string LkMsdynTeamsdialeradminsettingsModifiedonbehalfby = "lk_msdyn_teamsdialeradminsettings_modifiedonbehalfby";
+				public const string LkMsdynTeamsengagementctxCreatedby = "lk_msdyn_teamsengagementctx_createdby";
+				public const string LkMsdynTeamsengagementctxCreatedonbehalfby = "lk_msdyn_teamsengagementctx_createdonbehalfby";
+				public const string LkMsdynTeamsengagementctxModifiedby = "lk_msdyn_teamsengagementctx_modifiedby";
+				public const string LkMsdynTeamsengagementctxModifiedonbehalfby = "lk_msdyn_teamsengagementctx_modifiedonbehalfby";
 				public const string LkMsdynTemplateforpropertiesCreatedby = "lk_msdyn_templateforproperties_createdby";
 				public const string LkMsdynTemplateforpropertiesCreatedonbehalfby = "lk_msdyn_templateforproperties_createdonbehalfby";
 				public const string LkMsdynTemplateforpropertiesModifiedby = "lk_msdyn_templateforproperties_modifiedby";
@@ -8735,6 +10555,34 @@ namespace dgt.power.dataverse
 				public const string LkMsdynTemplatetagsCreatedonbehalfby = "lk_msdyn_templatetags_createdonbehalfby";
 				public const string LkMsdynTemplatetagsModifiedby = "lk_msdyn_templatetags_modifiedby";
 				public const string LkMsdynTemplatetagsModifiedonbehalfby = "lk_msdyn_templatetags_modifiedonbehalfby";
+				public const string LkMsdynTimeentryCreatedby = "lk_msdyn_timeentry_createdby";
+				public const string LkMsdynTimeentryCreatedonbehalfby = "lk_msdyn_timeentry_createdonbehalfby";
+				public const string LkMsdynTimeentryModifiedby = "lk_msdyn_timeentry_modifiedby";
+				public const string LkMsdynTimeentryModifiedonbehalfby = "lk_msdyn_timeentry_modifiedonbehalfby";
+				public const string LkMsdynTimeentrysettingCreatedby = "lk_msdyn_timeentrysetting_createdby";
+				public const string LkMsdynTimeentrysettingCreatedonbehalfby = "lk_msdyn_timeentrysetting_createdonbehalfby";
+				public const string LkMsdynTimeentrysettingModifiedby = "lk_msdyn_timeentrysetting_modifiedby";
+				public const string LkMsdynTimeentrysettingModifiedonbehalfby = "lk_msdyn_timeentrysetting_modifiedonbehalfby";
+				public const string LkMsdynTimegroupCreatedby = "lk_msdyn_timegroup_createdby";
+				public const string LkMsdynTimegroupCreatedonbehalfby = "lk_msdyn_timegroup_createdonbehalfby";
+				public const string LkMsdynTimegroupModifiedby = "lk_msdyn_timegroup_modifiedby";
+				public const string LkMsdynTimegroupModifiedonbehalfby = "lk_msdyn_timegroup_modifiedonbehalfby";
+				public const string LkMsdynTimegroupdetailCreatedby = "lk_msdyn_timegroupdetail_createdby";
+				public const string LkMsdynTimegroupdetailCreatedonbehalfby = "lk_msdyn_timegroupdetail_createdonbehalfby";
+				public const string LkMsdynTimegroupdetailModifiedby = "lk_msdyn_timegroupdetail_modifiedby";
+				public const string LkMsdynTimegroupdetailModifiedonbehalfby = "lk_msdyn_timegroupdetail_modifiedonbehalfby";
+				public const string LkMsdynTimelinepinCreatedby = "lk_msdyn_timelinepin_createdby";
+				public const string LkMsdynTimelinepinCreatedonbehalfby = "lk_msdyn_timelinepin_createdonbehalfby";
+				public const string LkMsdynTimelinepinModifiedby = "lk_msdyn_timelinepin_modifiedby";
+				public const string LkMsdynTimelinepinModifiedonbehalfby = "lk_msdyn_timelinepin_modifiedonbehalfby";
+				public const string LkMsdynTimeoffcalendarCreatedby = "lk_msdyn_timeoffcalendar_createdby";
+				public const string LkMsdynTimeoffcalendarCreatedonbehalfby = "lk_msdyn_timeoffcalendar_createdonbehalfby";
+				public const string LkMsdynTimeoffcalendarModifiedby = "lk_msdyn_timeoffcalendar_modifiedby";
+				public const string LkMsdynTimeoffcalendarModifiedonbehalfby = "lk_msdyn_timeoffcalendar_modifiedonbehalfby";
+				public const string LkMsdynTimeoffrequestCreatedby = "lk_msdyn_timeoffrequest_createdby";
+				public const string LkMsdynTimeoffrequestCreatedonbehalfby = "lk_msdyn_timeoffrequest_createdonbehalfby";
+				public const string LkMsdynTimeoffrequestModifiedby = "lk_msdyn_timeoffrequest_modifiedby";
+				public const string LkMsdynTimeoffrequestModifiedonbehalfby = "lk_msdyn_timeoffrequest_modifiedonbehalfby";
 				public const string LkMsdynTimespentCreatedby = "lk_msdyn_timespent_createdby";
 				public const string LkMsdynTimespentCreatedonbehalfby = "lk_msdyn_timespent_createdonbehalfby";
 				public const string LkMsdynTimespentModifiedby = "lk_msdyn_timespent_modifiedby";
@@ -8743,10 +10591,54 @@ namespace dgt.power.dataverse
 				public const string LkMsdynTourCreatedonbehalfby = "lk_msdyn_tour_createdonbehalfby";
 				public const string LkMsdynTourModifiedby = "lk_msdyn_tour_modifiedby";
 				public const string LkMsdynTourModifiedonbehalfby = "lk_msdyn_tour_modifiedonbehalfby";
+				public const string LkMsdynTradeCreatedby = "lk_msdyn_trade_createdby";
+				public const string LkMsdynTradeCreatedonbehalfby = "lk_msdyn_trade_createdonbehalfby";
+				public const string LkMsdynTradeModifiedby = "lk_msdyn_trade_modifiedby";
+				public const string LkMsdynTradeModifiedonbehalfby = "lk_msdyn_trade_modifiedonbehalfby";
+				public const string LkMsdynTradecoverageCreatedby = "lk_msdyn_tradecoverage_createdby";
+				public const string LkMsdynTradecoverageCreatedonbehalfby = "lk_msdyn_tradecoverage_createdonbehalfby";
+				public const string LkMsdynTradecoverageModifiedby = "lk_msdyn_tradecoverage_modifiedby";
+				public const string LkMsdynTradecoverageModifiedonbehalfby = "lk_msdyn_tradecoverage_modifiedonbehalfby";
+				public const string LkMsdynTrainingresultCreatedby = "lk_msdyn_trainingresult_createdby";
+				public const string LkMsdynTrainingresultCreatedonbehalfby = "lk_msdyn_trainingresult_createdonbehalfby";
+				public const string LkMsdynTrainingresultModifiedby = "lk_msdyn_trainingresult_modifiedby";
+				public const string LkMsdynTrainingresultModifiedonbehalfby = "lk_msdyn_trainingresult_modifiedonbehalfby";
+				public const string LkMsdynTransactioncategoryCreatedby = "lk_msdyn_transactioncategory_createdby";
+				public const string LkMsdynTransactioncategoryCreatedonbehalfby = "lk_msdyn_transactioncategory_createdonbehalfby";
+				public const string LkMsdynTransactioncategoryModifiedby = "lk_msdyn_transactioncategory_modifiedby";
+				public const string LkMsdynTransactioncategoryModifiedonbehalfby = "lk_msdyn_transactioncategory_modifiedonbehalfby";
+				public const string LkMsdynTransactioncategoryclassificationCreatedby = "lk_msdyn_transactioncategoryclassification_createdby";
+				public const string LkMsdynTransactioncategoryclassificationCreatedonbehalfby = "lk_msdyn_transactioncategoryclassification_createdonbehalfby";
+				public const string LkMsdynTransactioncategoryclassificationModifiedby = "lk_msdyn_transactioncategoryclassification_modifiedby";
+				public const string LkMsdynTransactioncategoryclassificationModifiedonbehalfby = "lk_msdyn_transactioncategoryclassification_modifiedonbehalfby";
+				public const string LkMsdynTransactioncategoryhierarchyelementCreatedby = "lk_msdyn_transactioncategoryhierarchyelement_createdby";
+				public const string LkMsdynTransactioncategoryhierarchyelementCreatedonbehalfby = "lk_msdyn_transactioncategoryhierarchyelement_createdonbehalfby";
+				public const string LkMsdynTransactioncategoryhierarchyelementModifiedby = "lk_msdyn_transactioncategoryhierarchyelement_modifiedby";
+				public const string LkMsdynTransactioncategoryhierarchyelementModifiedonbehalfby = "lk_msdyn_transactioncategoryhierarchyelement_modifiedonbehalfby";
+				public const string LkMsdynTransactioncategorypricelevelCreatedby = "lk_msdyn_transactioncategorypricelevel_createdby";
+				public const string LkMsdynTransactioncategorypricelevelCreatedonbehalfby = "lk_msdyn_transactioncategorypricelevel_createdonbehalfby";
+				public const string LkMsdynTransactioncategorypricelevelModifiedby = "lk_msdyn_transactioncategorypricelevel_modifiedby";
+				public const string LkMsdynTransactioncategorypricelevelModifiedonbehalfby = "lk_msdyn_transactioncategorypricelevel_modifiedonbehalfby";
+				public const string LkMsdynTransactionconnectionCreatedby = "lk_msdyn_transactionconnection_createdby";
+				public const string LkMsdynTransactionconnectionCreatedonbehalfby = "lk_msdyn_transactionconnection_createdonbehalfby";
+				public const string LkMsdynTransactionconnectionModifiedby = "lk_msdyn_transactionconnection_modifiedby";
+				public const string LkMsdynTransactionconnectionModifiedonbehalfby = "lk_msdyn_transactionconnection_modifiedonbehalfby";
+				public const string LkMsdynTransactionoriginCreatedby = "lk_msdyn_transactionorigin_createdby";
+				public const string LkMsdynTransactionoriginCreatedonbehalfby = "lk_msdyn_transactionorigin_createdonbehalfby";
+				public const string LkMsdynTransactionoriginModifiedby = "lk_msdyn_transactionorigin_modifiedby";
+				public const string LkMsdynTransactionoriginModifiedonbehalfby = "lk_msdyn_transactionorigin_modifiedonbehalfby";
+				public const string LkMsdynTransactiontypeCreatedby = "lk_msdyn_transactiontype_createdby";
+				public const string LkMsdynTransactiontypeCreatedonbehalfby = "lk_msdyn_transactiontype_createdonbehalfby";
+				public const string LkMsdynTransactiontypeModifiedby = "lk_msdyn_transactiontype_modifiedby";
+				public const string LkMsdynTransactiontypeModifiedonbehalfby = "lk_msdyn_transactiontype_modifiedonbehalfby";
 				public const string LkMsdynTranscriptCreatedby = "lk_msdyn_transcript_createdby";
 				public const string LkMsdynTranscriptCreatedonbehalfby = "lk_msdyn_transcript_createdonbehalfby";
 				public const string LkMsdynTranscriptModifiedby = "lk_msdyn_transcript_modifiedby";
 				public const string LkMsdynTranscriptModifiedonbehalfby = "lk_msdyn_transcript_modifiedonbehalfby";
+				public const string LkMsdynTwitterengagementctxCreatedby = "lk_msdyn_twitterengagementctx_createdby";
+				public const string LkMsdynTwitterengagementctxCreatedonbehalfby = "lk_msdyn_twitterengagementctx_createdonbehalfby";
+				public const string LkMsdynTwitterengagementctxModifiedby = "lk_msdyn_twitterengagementctx_modifiedby";
+				public const string LkMsdynTwitterengagementctxModifiedonbehalfby = "lk_msdyn_twitterengagementctx_modifiedonbehalfby";
 				public const string LkMsdynUnifiedroutingdiagnosticCreatedby = "lk_msdyn_unifiedroutingdiagnostic_createdby";
 				public const string LkMsdynUnifiedroutingdiagnosticCreatedonbehalfby = "lk_msdyn_unifiedroutingdiagnostic_createdonbehalfby";
 				public const string LkMsdynUnifiedroutingdiagnosticModifiedby = "lk_msdyn_unifiedroutingdiagnostic_modifiedby";
@@ -8759,6 +10651,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynUnifiedroutingsetuptrackerCreatedonbehalfby = "lk_msdyn_unifiedroutingsetuptracker_createdonbehalfby";
 				public const string LkMsdynUnifiedroutingsetuptrackerModifiedby = "lk_msdyn_unifiedroutingsetuptracker_modifiedby";
 				public const string LkMsdynUnifiedroutingsetuptrackerModifiedonbehalfby = "lk_msdyn_unifiedroutingsetuptracker_modifiedonbehalfby";
+				public const string LkMsdynUniquenumberCreatedby = "lk_msdyn_uniquenumber_createdby";
+				public const string LkMsdynUniquenumberCreatedonbehalfby = "lk_msdyn_uniquenumber_createdonbehalfby";
+				public const string LkMsdynUniquenumberModifiedby = "lk_msdyn_uniquenumber_modifiedby";
+				public const string LkMsdynUniquenumberModifiedonbehalfby = "lk_msdyn_uniquenumber_modifiedonbehalfby";
 				public const string LkMsdynUntrackedappointmentCreatedby = "lk_msdyn_untrackedappointment_createdby";
 				public const string LkMsdynUntrackedappointmentCreatedonbehalfby = "lk_msdyn_untrackedappointment_createdonbehalfby";
 				public const string LkMsdynUntrackedappointmentModifiedby = "lk_msdyn_untrackedappointment_modifiedby";
@@ -8795,6 +10691,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynUsersettingCreatedonbehalfby = "lk_msdyn_usersetting_createdonbehalfby";
 				public const string LkMsdynUsersettingModifiedby = "lk_msdyn_usersetting_modifiedby";
 				public const string LkMsdynUsersettingModifiedonbehalfby = "lk_msdyn_usersetting_modifiedonbehalfby";
+				public const string LkMsdynUserworkhistoryCreatedby = "lk_msdyn_userworkhistory_createdby";
+				public const string LkMsdynUserworkhistoryCreatedonbehalfby = "lk_msdyn_userworkhistory_createdonbehalfby";
+				public const string LkMsdynUserworkhistoryModifiedby = "lk_msdyn_userworkhistory_modifiedby";
+				public const string LkMsdynUserworkhistoryModifiedonbehalfby = "lk_msdyn_userworkhistory_modifiedonbehalfby";
 				public const string LkMsdynVirtualtablecolumncandidateCreatedby = "lk_msdyn_virtualtablecolumncandidate_createdby";
 				public const string LkMsdynVirtualtablecolumncandidateCreatedonbehalfby = "lk_msdyn_virtualtablecolumncandidate_createdonbehalfby";
 				public const string LkMsdynVirtualtablecolumncandidateModifiedby = "lk_msdyn_virtualtablecolumncandidate_modifiedby";
@@ -8811,6 +10711,10 @@ namespace dgt.power.dataverse
 				public const string LkMsdynVivaentitysettingCreatedonbehalfby = "lk_msdyn_vivaentitysetting_createdonbehalfby";
 				public const string LkMsdynVivaentitysettingModifiedby = "lk_msdyn_vivaentitysetting_modifiedby";
 				public const string LkMsdynVivaentitysettingModifiedonbehalfby = "lk_msdyn_vivaentitysetting_modifiedonbehalfby";
+				public const string LkMsdynVivaorgextensioncredCreatedby = "lk_msdyn_vivaorgextensioncred_createdby";
+				public const string LkMsdynVivaorgextensioncredCreatedonbehalfby = "lk_msdyn_vivaorgextensioncred_createdonbehalfby";
+				public const string LkMsdynVivaorgextensioncredModifiedby = "lk_msdyn_vivaorgextensioncred_modifiedby";
+				public const string LkMsdynVivaorgextensioncredModifiedonbehalfby = "lk_msdyn_vivaorgextensioncred_modifiedonbehalfby";
 				public const string LkMsdynVivaorgsettingCreatedby = "lk_msdyn_vivaorgsetting_createdby";
 				public const string LkMsdynVivaorgsettingCreatedonbehalfby = "lk_msdyn_vivaorgsetting_createdonbehalfby";
 				public const string LkMsdynVivaorgsettingModifiedby = "lk_msdyn_vivaorgsetting_modifiedby";
@@ -8827,6 +10731,22 @@ namespace dgt.power.dataverse
 				public const string LkMsdynWallsavedqueryusersettingsCreatedonbehalfby = "lk_msdyn_wallsavedqueryusersettings_createdonbehalfby";
 				public const string LkMsdynWallsavedqueryusersettingsModifiedby = "lk_msdyn_wallsavedqueryusersettings_modifiedby";
 				public const string LkMsdynWallsavedqueryusersettingsModifiedonbehalfby = "lk_msdyn_wallsavedqueryusersettings_modifiedonbehalfby";
+				public const string LkMsdynWarehouseCreatedby = "lk_msdyn_warehouse_createdby";
+				public const string LkMsdynWarehouseCreatedonbehalfby = "lk_msdyn_warehouse_createdonbehalfby";
+				public const string LkMsdynWarehouseModifiedby = "lk_msdyn_warehouse_modifiedby";
+				public const string LkMsdynWarehouseModifiedonbehalfby = "lk_msdyn_warehouse_modifiedonbehalfby";
+				public const string LkMsdynWarrantyCreatedby = "lk_msdyn_warranty_createdby";
+				public const string LkMsdynWarrantyCreatedonbehalfby = "lk_msdyn_warranty_createdonbehalfby";
+				public const string LkMsdynWarrantyModifiedby = "lk_msdyn_warranty_modifiedby";
+				public const string LkMsdynWarrantyModifiedonbehalfby = "lk_msdyn_warranty_modifiedonbehalfby";
+				public const string LkMsdynWechatengagementctxCreatedby = "lk_msdyn_wechatengagementctx_createdby";
+				public const string LkMsdynWechatengagementctxCreatedonbehalfby = "lk_msdyn_wechatengagementctx_createdonbehalfby";
+				public const string LkMsdynWechatengagementctxModifiedby = "lk_msdyn_wechatengagementctx_modifiedby";
+				public const string LkMsdynWechatengagementctxModifiedonbehalfby = "lk_msdyn_wechatengagementctx_modifiedonbehalfby";
+				public const string LkMsdynWhatsappengagementctxCreatedby = "lk_msdyn_whatsappengagementctx_createdby";
+				public const string LkMsdynWhatsappengagementctxCreatedonbehalfby = "lk_msdyn_whatsappengagementctx_createdonbehalfby";
+				public const string LkMsdynWhatsappengagementctxModifiedby = "lk_msdyn_whatsappengagementctx_modifiedby";
+				public const string LkMsdynWhatsappengagementctxModifiedonbehalfby = "lk_msdyn_whatsappengagementctx_modifiedonbehalfby";
 				public const string LkMsdynWkwcolleaguesforcompanyCreatedby = "lk_msdyn_wkwcolleaguesforcompany_createdby";
 				public const string LkMsdynWkwcolleaguesforcompanyCreatedonbehalfby = "lk_msdyn_wkwcolleaguesforcompany_createdonbehalfby";
 				public const string LkMsdynWkwcolleaguesforcompanyModifiedby = "lk_msdyn_wkwcolleaguesforcompany_modifiedby";
@@ -8843,10 +10763,62 @@ namespace dgt.power.dataverse
 				public const string LkMsdynWorkflowactionstatusCreatedonbehalfby = "lk_msdyn_workflowactionstatus_createdonbehalfby";
 				public const string LkMsdynWorkflowactionstatusModifiedby = "lk_msdyn_workflowactionstatus_modifiedby";
 				public const string LkMsdynWorkflowactionstatusModifiedonbehalfby = "lk_msdyn_workflowactionstatus_modifiedonbehalfby";
+				public const string LkMsdynWorkhourtemplateCreatedby = "lk_msdyn_workhourtemplate_createdby";
+				public const string LkMsdynWorkhourtemplateCreatedonbehalfby = "lk_msdyn_workhourtemplate_createdonbehalfby";
+				public const string LkMsdynWorkhourtemplateModifiedby = "lk_msdyn_workhourtemplate_modifiedby";
+				public const string LkMsdynWorkhourtemplateModifiedonbehalfby = "lk_msdyn_workhourtemplate_modifiedonbehalfby";
 				public const string LkMsdynWorklistviewconfigurationCreatedby = "lk_msdyn_worklistviewconfiguration_createdby";
 				public const string LkMsdynWorklistviewconfigurationCreatedonbehalfby = "lk_msdyn_worklistviewconfiguration_createdonbehalfby";
 				public const string LkMsdynWorklistviewconfigurationModifiedby = "lk_msdyn_worklistviewconfiguration_modifiedby";
 				public const string LkMsdynWorklistviewconfigurationModifiedonbehalfby = "lk_msdyn_worklistviewconfiguration_modifiedonbehalfby";
+				public const string LkMsdynWorkorderCreatedby = "lk_msdyn_workorder_createdby";
+				public const string LkMsdynWorkorderCreatedonbehalfby = "lk_msdyn_workorder_createdonbehalfby";
+				public const string LkMsdynWorkorderModifiedby = "lk_msdyn_workorder_modifiedby";
+				public const string LkMsdynWorkorderModifiedonbehalfby = "lk_msdyn_workorder_modifiedonbehalfby";
+				public const string LkMsdynWorkordercharacteristicCreatedby = "lk_msdyn_workordercharacteristic_createdby";
+				public const string LkMsdynWorkordercharacteristicCreatedonbehalfby = "lk_msdyn_workordercharacteristic_createdonbehalfby";
+				public const string LkMsdynWorkordercharacteristicModifiedby = "lk_msdyn_workordercharacteristic_modifiedby";
+				public const string LkMsdynWorkordercharacteristicModifiedonbehalfby = "lk_msdyn_workordercharacteristic_modifiedonbehalfby";
+				public const string LkMsdynWorkorderdetailsgenerationqueueCreatedby = "lk_msdyn_workorderdetailsgenerationqueue_createdby";
+				public const string LkMsdynWorkorderdetailsgenerationqueueCreatedonbehalfby = "lk_msdyn_workorderdetailsgenerationqueue_createdonbehalfby";
+				public const string LkMsdynWorkorderdetailsgenerationqueueModifiedby = "lk_msdyn_workorderdetailsgenerationqueue_modifiedby";
+				public const string LkMsdynWorkorderdetailsgenerationqueueModifiedonbehalfby = "lk_msdyn_workorderdetailsgenerationqueue_modifiedonbehalfby";
+				public const string LkMsdynWorkorderincidentCreatedby = "lk_msdyn_workorderincident_createdby";
+				public const string LkMsdynWorkorderincidentCreatedonbehalfby = "lk_msdyn_workorderincident_createdonbehalfby";
+				public const string LkMsdynWorkorderincidentModifiedby = "lk_msdyn_workorderincident_modifiedby";
+				public const string LkMsdynWorkorderincidentModifiedonbehalfby = "lk_msdyn_workorderincident_modifiedonbehalfby";
+				public const string LkMsdynWorkordernteCreatedby = "lk_msdyn_workordernte_createdby";
+				public const string LkMsdynWorkordernteCreatedonbehalfby = "lk_msdyn_workordernte_createdonbehalfby";
+				public const string LkMsdynWorkordernteModifiedby = "lk_msdyn_workordernte_modifiedby";
+				public const string LkMsdynWorkordernteModifiedonbehalfby = "lk_msdyn_workordernte_modifiedonbehalfby";
+				public const string LkMsdynWorkorderproductCreatedby = "lk_msdyn_workorderproduct_createdby";
+				public const string LkMsdynWorkorderproductCreatedonbehalfby = "lk_msdyn_workorderproduct_createdonbehalfby";
+				public const string LkMsdynWorkorderproductModifiedby = "lk_msdyn_workorderproduct_modifiedby";
+				public const string LkMsdynWorkorderproductModifiedonbehalfby = "lk_msdyn_workorderproduct_modifiedonbehalfby";
+				public const string LkMsdynWorkorderresolutionCreatedby = "lk_msdyn_workorderresolution_createdby";
+				public const string LkMsdynWorkorderresolutionCreatedonbehalfby = "lk_msdyn_workorderresolution_createdonbehalfby";
+				public const string LkMsdynWorkorderresolutionModifiedby = "lk_msdyn_workorderresolution_modifiedby";
+				public const string LkMsdynWorkorderresolutionModifiedonbehalfby = "lk_msdyn_workorderresolution_modifiedonbehalfby";
+				public const string LkMsdynWorkorderresourcerestrictionCreatedby = "lk_msdyn_workorderresourcerestriction_createdby";
+				public const string LkMsdynWorkorderresourcerestrictionCreatedonbehalfby = "lk_msdyn_workorderresourcerestriction_createdonbehalfby";
+				public const string LkMsdynWorkorderresourcerestrictionModifiedby = "lk_msdyn_workorderresourcerestriction_modifiedby";
+				public const string LkMsdynWorkorderresourcerestrictionModifiedonbehalfby = "lk_msdyn_workorderresourcerestriction_modifiedonbehalfby";
+				public const string LkMsdynWorkorderserviceCreatedby = "lk_msdyn_workorderservice_createdby";
+				public const string LkMsdynWorkorderserviceCreatedonbehalfby = "lk_msdyn_workorderservice_createdonbehalfby";
+				public const string LkMsdynWorkorderserviceModifiedby = "lk_msdyn_workorderservice_modifiedby";
+				public const string LkMsdynWorkorderserviceModifiedonbehalfby = "lk_msdyn_workorderservice_modifiedonbehalfby";
+				public const string LkMsdynWorkorderservicetaskCreatedby = "lk_msdyn_workorderservicetask_createdby";
+				public const string LkMsdynWorkorderservicetaskCreatedonbehalfby = "lk_msdyn_workorderservicetask_createdonbehalfby";
+				public const string LkMsdynWorkorderservicetaskModifiedby = "lk_msdyn_workorderservicetask_modifiedby";
+				public const string LkMsdynWorkorderservicetaskModifiedonbehalfby = "lk_msdyn_workorderservicetask_modifiedonbehalfby";
+				public const string LkMsdynWorkordersubstatusCreatedby = "lk_msdyn_workordersubstatus_createdby";
+				public const string LkMsdynWorkordersubstatusCreatedonbehalfby = "lk_msdyn_workordersubstatus_createdonbehalfby";
+				public const string LkMsdynWorkordersubstatusModifiedby = "lk_msdyn_workordersubstatus_modifiedby";
+				public const string LkMsdynWorkordersubstatusModifiedonbehalfby = "lk_msdyn_workordersubstatus_modifiedonbehalfby";
+				public const string LkMsdynWorkordertypeCreatedby = "lk_msdyn_workordertype_createdby";
+				public const string LkMsdynWorkordertypeCreatedonbehalfby = "lk_msdyn_workordertype_createdonbehalfby";
+				public const string LkMsdynWorkordertypeModifiedby = "lk_msdyn_workordertype_modifiedby";
+				public const string LkMsdynWorkordertypeModifiedonbehalfby = "lk_msdyn_workordertype_modifiedonbehalfby";
 				public const string LkMsdynWorkqueuestateCreatedby = "lk_msdyn_workqueuestate_createdby";
 				public const string LkMsdynWorkqueuestateCreatedonbehalfby = "lk_msdyn_workqueuestate_createdonbehalfby";
 				public const string LkMsdynWorkqueuestateModifiedby = "lk_msdyn_workqueuestate_modifiedby";
@@ -8911,6 +10883,14 @@ namespace dgt.power.dataverse
 				public const string LkMsdyncrmVideostyleCreatedonbehalfby = "lk_msdyncrm_videostyle_createdonbehalfby";
 				public const string LkMsdyncrmVideostyleModifiedby = "lk_msdyncrm_videostyle_modifiedby";
 				public const string LkMsdyncrmVideostyleModifiedonbehalfby = "lk_msdyncrm_videostyle_modifiedonbehalfby";
+				public const string LkMsdynmktByoacschannelinstanceCreatedby = "lk_msdynmkt_byoacschannelinstance_createdby";
+				public const string LkMsdynmktByoacschannelinstanceCreatedonbehalfby = "lk_msdynmkt_byoacschannelinstance_createdonbehalfby";
+				public const string LkMsdynmktByoacschannelinstanceModifiedby = "lk_msdynmkt_byoacschannelinstance_modifiedby";
+				public const string LkMsdynmktByoacschannelinstanceModifiedonbehalfby = "lk_msdynmkt_byoacschannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktByoacschannelinstanceaccountCreatedby = "lk_msdynmkt_byoacschannelinstanceaccount_createdby";
+				public const string LkMsdynmktByoacschannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_byoacschannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktByoacschannelinstanceaccountModifiedby = "lk_msdynmkt_byoacschannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktByoacschannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_byoacschannelinstanceaccount_modifiedonbehalfby";
 				public const string LkMsdynmktCatalogeventstatusconfigurationCreatedby = "lk_msdynmkt_catalogeventstatusconfiguration_createdby";
 				public const string LkMsdynmktCatalogeventstatusconfigurationCreatedonbehalfby = "lk_msdynmkt_catalogeventstatusconfiguration_createdonbehalfby";
 				public const string LkMsdynmktCatalogeventstatusconfigurationModifiedby = "lk_msdynmkt_catalogeventstatusconfiguration_modifiedby";
@@ -8999,6 +10979,110 @@ namespace dgt.power.dataverse
 				public const string LkMsdynmktTwiliochannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_twiliochannelinstanceaccount_createdonbehalfby";
 				public const string LkMsdynmktTwiliochannelinstanceaccountModifiedby = "lk_msdynmkt_twiliochannelinstanceaccount_modifiedby";
 				public const string LkMsdynmktTwiliochannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_twiliochannelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdynmktVibeschannelinstanceCreatedby = "lk_msdynmkt_vibeschannelinstance_createdby";
+				public const string LkMsdynmktVibeschannelinstanceCreatedonbehalfby = "lk_msdynmkt_vibeschannelinstance_createdonbehalfby";
+				public const string LkMsdynmktVibeschannelinstanceModifiedby = "lk_msdynmkt_vibeschannelinstance_modifiedby";
+				public const string LkMsdynmktVibeschannelinstanceModifiedonbehalfby = "lk_msdynmkt_vibeschannelinstance_modifiedonbehalfby";
+				public const string LkMsdynmktVibeschannelinstanceaccountCreatedby = "lk_msdynmkt_vibeschannelinstanceaccount_createdby";
+				public const string LkMsdynmktVibeschannelinstanceaccountCreatedonbehalfby = "lk_msdynmkt_vibeschannelinstanceaccount_createdonbehalfby";
+				public const string LkMsdynmktVibeschannelinstanceaccountModifiedby = "lk_msdynmkt_vibeschannelinstanceaccount_modifiedby";
+				public const string LkMsdynmktVibeschannelinstanceaccountModifiedonbehalfby = "lk_msdynmkt_vibeschannelinstanceaccount_modifiedonbehalfby";
+				public const string LkMsdyusdActioncallworkflowCreatedby = "lk_msdyusd_actioncallworkflow_createdby";
+				public const string LkMsdyusdActioncallworkflowCreatedonbehalfby = "lk_msdyusd_actioncallworkflow_createdonbehalfby";
+				public const string LkMsdyusdActioncallworkflowModifiedby = "lk_msdyusd_actioncallworkflow_modifiedby";
+				public const string LkMsdyusdActioncallworkflowModifiedonbehalfby = "lk_msdyusd_actioncallworkflow_modifiedonbehalfby";
+				public const string LkMsdyusdAgentscriptactionCreatedby = "lk_msdyusd_agentscriptaction_createdby";
+				public const string LkMsdyusdAgentscriptactionCreatedonbehalfby = "lk_msdyusd_agentscriptaction_createdonbehalfby";
+				public const string LkMsdyusdAgentscriptactionModifiedby = "lk_msdyusd_agentscriptaction_modifiedby";
+				public const string LkMsdyusdAgentscriptactionModifiedonbehalfby = "lk_msdyusd_agentscriptaction_modifiedonbehalfby";
+				public const string LkMsdyusdAgentscripttaskcategoryCreatedby = "lk_msdyusd_agentscripttaskcategory_createdby";
+				public const string LkMsdyusdAgentscripttaskcategoryCreatedonbehalfby = "lk_msdyusd_agentscripttaskcategory_createdonbehalfby";
+				public const string LkMsdyusdAgentscripttaskcategoryModifiedby = "lk_msdyusd_agentscripttaskcategory_modifiedby";
+				public const string LkMsdyusdAgentscripttaskcategoryModifiedonbehalfby = "lk_msdyusd_agentscripttaskcategory_modifiedonbehalfby";
+				public const string LkMsdyusdAnswerCreatedby = "lk_msdyusd_answer_createdby";
+				public const string LkMsdyusdAnswerCreatedonbehalfby = "lk_msdyusd_answer_createdonbehalfby";
+				public const string LkMsdyusdAnswerModifiedby = "lk_msdyusd_answer_modifiedby";
+				public const string LkMsdyusdAnswerModifiedonbehalfby = "lk_msdyusd_answer_modifiedonbehalfby";
+				public const string LkMsdyusdAuditanddiagnosticssettingCreatedby = "lk_msdyusd_auditanddiagnosticssetting_createdby";
+				public const string LkMsdyusdAuditanddiagnosticssettingCreatedonbehalfby = "lk_msdyusd_auditanddiagnosticssetting_createdonbehalfby";
+				public const string LkMsdyusdAuditanddiagnosticssettingModifiedby = "lk_msdyusd_auditanddiagnosticssetting_modifiedby";
+				public const string LkMsdyusdAuditanddiagnosticssettingModifiedonbehalfby = "lk_msdyusd_auditanddiagnosticssetting_modifiedonbehalfby";
+				public const string LkMsdyusdConfigurationCreatedby = "lk_msdyusd_configuration_createdby";
+				public const string LkMsdyusdConfigurationCreatedonbehalfby = "lk_msdyusd_configuration_createdonbehalfby";
+				public const string LkMsdyusdConfigurationModifiedby = "lk_msdyusd_configuration_modifiedby";
+				public const string LkMsdyusdConfigurationModifiedonbehalfby = "lk_msdyusd_configuration_modifiedonbehalfby";
+				public const string LkMsdyusdCustomizationfilesCreatedby = "lk_msdyusd_customizationfiles_createdby";
+				public const string LkMsdyusdCustomizationfilesCreatedonbehalfby = "lk_msdyusd_customizationfiles_createdonbehalfby";
+				public const string LkMsdyusdCustomizationfilesModifiedby = "lk_msdyusd_customizationfiles_modifiedby";
+				public const string LkMsdyusdCustomizationfilesModifiedonbehalfby = "lk_msdyusd_customizationfiles_modifiedonbehalfby";
+				public const string LkMsdyusdEntityassignmentCreatedby = "lk_msdyusd_entityassignment_createdby";
+				public const string LkMsdyusdEntityassignmentCreatedonbehalfby = "lk_msdyusd_entityassignment_createdonbehalfby";
+				public const string LkMsdyusdEntityassignmentModifiedby = "lk_msdyusd_entityassignment_modifiedby";
+				public const string LkMsdyusdEntityassignmentModifiedonbehalfby = "lk_msdyusd_entityassignment_modifiedonbehalfby";
+				public const string LkMsdyusdEntitysearchCreatedby = "lk_msdyusd_entitysearch_createdby";
+				public const string LkMsdyusdEntitysearchCreatedonbehalfby = "lk_msdyusd_entitysearch_createdonbehalfby";
+				public const string LkMsdyusdEntitysearchModifiedby = "lk_msdyusd_entitysearch_modifiedby";
+				public const string LkMsdyusdEntitysearchModifiedonbehalfby = "lk_msdyusd_entitysearch_modifiedonbehalfby";
+				public const string LkMsdyusdFormCreatedby = "lk_msdyusd_form_createdby";
+				public const string LkMsdyusdFormCreatedonbehalfby = "lk_msdyusd_form_createdonbehalfby";
+				public const string LkMsdyusdFormModifiedby = "lk_msdyusd_form_modifiedby";
+				public const string LkMsdyusdFormModifiedonbehalfby = "lk_msdyusd_form_modifiedonbehalfby";
+				public const string LkMsdyusdLanguagemoduleCreatedby = "lk_msdyusd_languagemodule_createdby";
+				public const string LkMsdyusdLanguagemoduleCreatedonbehalfby = "lk_msdyusd_languagemodule_createdonbehalfby";
+				public const string LkMsdyusdLanguagemoduleModifiedby = "lk_msdyusd_languagemodule_modifiedby";
+				public const string LkMsdyusdLanguagemoduleModifiedonbehalfby = "lk_msdyusd_languagemodule_modifiedonbehalfby";
+				public const string LkMsdyusdScriptletCreatedby = "lk_msdyusd_scriptlet_createdby";
+				public const string LkMsdyusdScriptletCreatedonbehalfby = "lk_msdyusd_scriptlet_createdonbehalfby";
+				public const string LkMsdyusdScriptletModifiedby = "lk_msdyusd_scriptlet_modifiedby";
+				public const string LkMsdyusdScriptletModifiedonbehalfby = "lk_msdyusd_scriptlet_modifiedonbehalfby";
+				public const string LkMsdyusdScripttasktriggerCreatedby = "lk_msdyusd_scripttasktrigger_createdby";
+				public const string LkMsdyusdScripttasktriggerCreatedonbehalfby = "lk_msdyusd_scripttasktrigger_createdonbehalfby";
+				public const string LkMsdyusdScripttasktriggerModifiedby = "lk_msdyusd_scripttasktrigger_modifiedby";
+				public const string LkMsdyusdScripttasktriggerModifiedonbehalfby = "lk_msdyusd_scripttasktrigger_modifiedonbehalfby";
+				public const string LkMsdyusdSearchCreatedby = "lk_msdyusd_search_createdby";
+				public const string LkMsdyusdSearchCreatedonbehalfby = "lk_msdyusd_search_createdonbehalfby";
+				public const string LkMsdyusdSearchModifiedby = "lk_msdyusd_search_modifiedby";
+				public const string LkMsdyusdSearchModifiedonbehalfby = "lk_msdyusd_search_modifiedonbehalfby";
+				public const string LkMsdyusdSessioninformationCreatedby = "lk_msdyusd_sessioninformation_createdby";
+				public const string LkMsdyusdSessioninformationCreatedonbehalfby = "lk_msdyusd_sessioninformation_createdonbehalfby";
+				public const string LkMsdyusdSessioninformationModifiedby = "lk_msdyusd_sessioninformation_modifiedby";
+				public const string LkMsdyusdSessioninformationModifiedonbehalfby = "lk_msdyusd_sessioninformation_modifiedonbehalfby";
+				public const string LkMsdyusdSessiontransferCreatedby = "lk_msdyusd_sessiontransfer_createdby";
+				public const string LkMsdyusdSessiontransferCreatedonbehalfby = "lk_msdyusd_sessiontransfer_createdonbehalfby";
+				public const string LkMsdyusdSessiontransferModifiedby = "lk_msdyusd_sessiontransfer_modifiedby";
+				public const string LkMsdyusdSessiontransferModifiedonbehalfby = "lk_msdyusd_sessiontransfer_modifiedonbehalfby";
+				public const string LkMsdyusdTaskCreatedby = "lk_msdyusd_task_createdby";
+				public const string LkMsdyusdTaskCreatedonbehalfby = "lk_msdyusd_task_createdonbehalfby";
+				public const string LkMsdyusdTaskModifiedby = "lk_msdyusd_task_modifiedby";
+				public const string LkMsdyusdTaskModifiedonbehalfby = "lk_msdyusd_task_modifiedonbehalfby";
+				public const string LkMsdyusdToolbarbuttonCreatedby = "lk_msdyusd_toolbarbutton_createdby";
+				public const string LkMsdyusdToolbarbuttonCreatedonbehalfby = "lk_msdyusd_toolbarbutton_createdonbehalfby";
+				public const string LkMsdyusdToolbarbuttonModifiedby = "lk_msdyusd_toolbarbutton_modifiedby";
+				public const string LkMsdyusdToolbarbuttonModifiedonbehalfby = "lk_msdyusd_toolbarbutton_modifiedonbehalfby";
+				public const string LkMsdyusdToolbarstripCreatedby = "lk_msdyusd_toolbarstrip_createdby";
+				public const string LkMsdyusdToolbarstripCreatedonbehalfby = "lk_msdyusd_toolbarstrip_createdonbehalfby";
+				public const string LkMsdyusdToolbarstripModifiedby = "lk_msdyusd_toolbarstrip_modifiedby";
+				public const string LkMsdyusdToolbarstripModifiedonbehalfby = "lk_msdyusd_toolbarstrip_modifiedonbehalfby";
+				public const string LkMsdyusdTracesourcesettingCreatedby = "lk_msdyusd_tracesourcesetting_createdby";
+				public const string LkMsdyusdTracesourcesettingCreatedonbehalfby = "lk_msdyusd_tracesourcesetting_createdonbehalfby";
+				public const string LkMsdyusdTracesourcesettingModifiedby = "lk_msdyusd_tracesourcesetting_modifiedby";
+				public const string LkMsdyusdTracesourcesettingModifiedonbehalfby = "lk_msdyusd_tracesourcesetting_modifiedonbehalfby";
+				public const string LkMsdyusdUcisettingsCreatedby = "lk_msdyusd_ucisettings_createdby";
+				public const string LkMsdyusdUcisettingsCreatedonbehalfby = "lk_msdyusd_ucisettings_createdonbehalfby";
+				public const string LkMsdyusdUcisettingsModifiedby = "lk_msdyusd_ucisettings_modifiedby";
+				public const string LkMsdyusdUcisettingsModifiedonbehalfby = "lk_msdyusd_ucisettings_modifiedonbehalfby";
+				public const string LkMsdyusdUiieventCreatedby = "lk_msdyusd_uiievent_createdby";
+				public const string LkMsdyusdUiieventCreatedonbehalfby = "lk_msdyusd_uiievent_createdonbehalfby";
+				public const string LkMsdyusdUiieventModifiedby = "lk_msdyusd_uiievent_modifiedby";
+				public const string LkMsdyusdUiieventModifiedonbehalfby = "lk_msdyusd_uiievent_modifiedonbehalfby";
+				public const string LkMsdyusdUsersettingsCreatedby = "lk_msdyusd_usersettings_createdby";
+				public const string LkMsdyusdUsersettingsCreatedonbehalfby = "lk_msdyusd_usersettings_createdonbehalfby";
+				public const string LkMsdyusdUsersettingsModifiedby = "lk_msdyusd_usersettings_modifiedby";
+				public const string LkMsdyusdUsersettingsModifiedonbehalfby = "lk_msdyusd_usersettings_modifiedonbehalfby";
+				public const string LkMsdyusdWindowrouteCreatedby = "lk_msdyusd_windowroute_createdby";
+				public const string LkMsdyusdWindowrouteCreatedonbehalfby = "lk_msdyusd_windowroute_createdonbehalfby";
+				public const string LkMsdyusdWindowrouteModifiedby = "lk_msdyusd_windowroute_modifiedby";
+				public const string LkMsdyusdWindowrouteModifiedonbehalfby = "lk_msdyusd_windowroute_modifiedonbehalfby";
 				public const string LkMsfpAlertruleCreatedby = "lk_msfp_alertrule_createdby";
 				public const string LkMsfpAlertruleCreatedonbehalfby = "lk_msfp_alertrule_createdonbehalfby";
 				public const string LkMsfpAlertruleModifiedby = "lk_msfp_alertrule_modifiedby";
@@ -9043,562 +11127,26 @@ namespace dgt.power.dataverse
 				public const string LkMsfpUnsubscribedrecipientCreatedonbehalfby = "lk_msfp_unsubscribedrecipient_createdonbehalfby";
 				public const string LkMsfpUnsubscribedrecipientModifiedby = "lk_msfp_unsubscribedrecipient_modifiedby";
 				public const string LkMsfpUnsubscribedrecipientModifiedonbehalfby = "lk_msfp_unsubscribedrecipient_modifiedonbehalfby";
+				public const string LkMspcatCatalogsubmissionfilesCreatedby = "lk_mspcat_catalogsubmissionfiles_createdby";
+				public const string LkMspcatCatalogsubmissionfilesCreatedonbehalfby = "lk_mspcat_catalogsubmissionfiles_createdonbehalfby";
+				public const string LkMspcatCatalogsubmissionfilesModifiedby = "lk_mspcat_catalogsubmissionfiles_modifiedby";
+				public const string LkMspcatCatalogsubmissionfilesModifiedonbehalfby = "lk_mspcat_catalogsubmissionfiles_modifiedonbehalfby";
+				public const string LkMspcatPackagestoreCreatedby = "lk_mspcat_packagestore_createdby";
+				public const string LkMspcatPackagestoreCreatedonbehalfby = "lk_mspcat_packagestore_createdonbehalfby";
+				public const string LkMspcatPackagestoreModifiedby = "lk_mspcat_packagestore_modifiedby";
+				public const string LkMspcatPackagestoreModifiedonbehalfby = "lk_mspcat_packagestore_modifiedonbehalfby";
 				public const string LkNavigationsettingCreatedby = "lk_navigationsetting_createdby";
 				public const string LkNavigationsettingCreatedonbehalfby = "lk_navigationsetting_createdonbehalfby";
 				public const string LkNavigationsettingModifiedby = "lk_navigationsetting_modifiedby";
 				public const string LkNavigationsettingModifiedonbehalfby = "lk_navigationsetting_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86dCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86dCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86dModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86dModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8eCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8eCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8eModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8eModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8fCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8fCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8fModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8fModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827bCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827bCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827bModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827bModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71bCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71bCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71bModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71bModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5bCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5bCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5bModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5bModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6bCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6bCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6bModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6bModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580deCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580deCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580deModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580deModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6fCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6fCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6fModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6fModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acdCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acdCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acdModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acdModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630feCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630feCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630feModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630feModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6ebCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6ebCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6ebModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6ebModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11bCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11bCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11bModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11bModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0fCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0fCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0fModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0fModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5fCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5fCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5fModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5fModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bbaCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bbaCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bbaModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bbaModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260acCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260acCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260acModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260acModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8ddCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8ddCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8ddModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8ddModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05beaCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05beaCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05beaModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05beaModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1feCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1feCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1feModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1feModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95ddCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95ddCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95ddModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95ddModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69afCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69afCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69afModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69afModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbbCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbbCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbbModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbbModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ecCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ecCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ecModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ecModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61dCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61dCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61dModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61dModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2dCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2dCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2dModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2dModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3eCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3eCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3eModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3eModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903cCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903cCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903cModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903cModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212fCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212fCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212fModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212fModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200aCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200aCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200aModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200aModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450edCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450edCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450edModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450edModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25dbCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25dbCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25dbModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25dbModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7Createdby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7Createdonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7Modifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7Modifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7_modifiedonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0eCreatedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e_createdby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0eCreatedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e_createdonbehalfby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0eModifiedby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e_modifiedby";
-				public const string LkNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0eModifiedonbehalfby = "lk_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474_modifiedonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13Createdby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13_createdby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13Createdonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13_createdonbehalfby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13Modifiedby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13_modifiedby";
-				public const string LkNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13Modifiedonbehalfby = "lk_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13_modifiedonbehalfby";
 				public const string LkNewprocessCreatedby = "lk_newprocess_createdby";
 				public const string LkNewprocessCreatedonbehalfby = "lk_newprocess_createdonbehalfby";
 				public const string LkNewprocessModifiedby = "lk_newprocess_modifiedby";
 				public const string LkNewprocessModifiedonbehalfby = "lk_newprocess_modifiedonbehalfby";
+				public const string LkNlsqregistrationCreatedby = "lk_nlsqregistration_createdby";
+				public const string LkNlsqregistrationCreatedonbehalfby = "lk_nlsqregistration_createdonbehalfby";
+				public const string LkNlsqregistrationModifiedby = "lk_nlsqregistration_modifiedby";
+				public const string LkNlsqregistrationModifiedonbehalfby = "lk_nlsqregistration_modifiedonbehalfby";
 				public const string LkOfficedocumentbaseCreatedonbehalfby = "lk_officedocumentbase_createdonbehalfby";
 				public const string LkOfficedocumentbaseModifiedonbehalfby = "lk_officedocumentbase_modifiedonbehalfby";
 				public const string LkOfficegraphdocumentCreatedonbehalfby = "lk_officegraphdocument_createdonbehalfby";
@@ -9631,6 +11179,10 @@ namespace dgt.power.dataverse
 				public const string LkOrganizationModifiedonbehalfby = "lk_organization_modifiedonbehalfby";
 				public const string LkOrganizationbaseCreatedby = "lk_organizationbase_createdby";
 				public const string LkOrganizationbaseModifiedby = "lk_organizationbase_modifiedby";
+				public const string LkOrganizationdatasyncfnostateCreatedby = "lk_organizationdatasyncfnostate_createdby";
+				public const string LkOrganizationdatasyncfnostateCreatedonbehalfby = "lk_organizationdatasyncfnostate_createdonbehalfby";
+				public const string LkOrganizationdatasyncfnostateModifiedby = "lk_organizationdatasyncfnostate_modifiedby";
+				public const string LkOrganizationdatasyncfnostateModifiedonbehalfby = "lk_organizationdatasyncfnostate_modifiedonbehalfby";
 				public const string LkOrganizationdatasyncstateCreatedby = "lk_organizationdatasyncstate_createdby";
 				public const string LkOrganizationdatasyncstateCreatedonbehalfby = "lk_organizationdatasyncstate_createdonbehalfby";
 				public const string LkOrganizationdatasyncstateModifiedby = "lk_organizationdatasyncstate_modifiedby";
@@ -9643,6 +11195,10 @@ namespace dgt.power.dataverse
 				public const string LkOrganizationdatasyncsubscriptionentityCreatedonbehalfby = "lk_organizationdatasyncsubscriptionentity_createdonbehalfby";
 				public const string LkOrganizationdatasyncsubscriptionentityModifiedby = "lk_organizationdatasyncsubscriptionentity_modifiedby";
 				public const string LkOrganizationdatasyncsubscriptionentityModifiedonbehalfby = "lk_organizationdatasyncsubscriptionentity_modifiedonbehalfby";
+				public const string LkOrganizationdatasyncsubscriptionfnotableCreatedby = "lk_organizationdatasyncsubscriptionfnotable_createdby";
+				public const string LkOrganizationdatasyncsubscriptionfnotableCreatedonbehalfby = "lk_organizationdatasyncsubscriptionfnotable_createdonbehalfby";
+				public const string LkOrganizationdatasyncsubscriptionfnotableModifiedby = "lk_organizationdatasyncsubscriptionfnotable_modifiedby";
+				public const string LkOrganizationdatasyncsubscriptionfnotableModifiedonbehalfby = "lk_organizationdatasyncsubscriptionfnotable_modifiedonbehalfby";
 				public const string LkOrganizationsettingCreatedby = "lk_organizationsetting_createdby";
 				public const string LkOrganizationsettingCreatedonbehalfby = "lk_organizationsetting_createdonbehalfby";
 				public const string LkOrganizationsettingModifiedby = "lk_organizationsetting_modifiedby";
@@ -9655,6 +11211,10 @@ namespace dgt.power.dataverse
 				public const string LkPackageCreatedonbehalfby = "lk_package_createdonbehalfby";
 				public const string LkPackageModifiedby = "lk_package_modifiedby";
 				public const string LkPackageModifiedonbehalfby = "lk_package_modifiedonbehalfby";
+				public const string LkPackagehistoryCreatedby = "lk_packagehistory_createdby";
+				public const string LkPackagehistoryCreatedonbehalfby = "lk_packagehistory_createdonbehalfby";
+				public const string LkPackagehistoryModifiedby = "lk_packagehistory_modifiedby";
+				public const string LkPackagehistoryModifiedonbehalfby = "lk_packagehistory_modifiedonbehalfby";
 				public const string LkPartnerapplicationCreatedby = "lk_partnerapplication_createdby";
 				public const string LkPartnerapplicationCreatedonbehalfby = "lk_partnerapplication_createdonbehalfby";
 				public const string LkPartnerapplicationModifiedby = "lk_partnerapplication_modifiedby";
@@ -9708,6 +11268,10 @@ namespace dgt.power.dataverse
 				public const string LkPowerbidatasetCreatedonbehalfby = "lk_powerbidataset_createdonbehalfby";
 				public const string LkPowerbidatasetModifiedby = "lk_powerbidataset_modifiedby";
 				public const string LkPowerbidatasetModifiedonbehalfby = "lk_powerbidataset_modifiedonbehalfby";
+				public const string LkPowerbidatasetapdxCreatedby = "lk_powerbidatasetapdx_createdby";
+				public const string LkPowerbidatasetapdxCreatedonbehalfby = "lk_powerbidatasetapdx_createdonbehalfby";
+				public const string LkPowerbidatasetapdxModifiedby = "lk_powerbidatasetapdx_modifiedby";
+				public const string LkPowerbidatasetapdxModifiedonbehalfby = "lk_powerbidatasetapdx_modifiedonbehalfby";
 				public const string LkPowerbimashupparameterCreatedby = "lk_powerbimashupparameter_createdby";
 				public const string LkPowerbimashupparameterCreatedonbehalfby = "lk_powerbimashupparameter_createdonbehalfby";
 				public const string LkPowerbimashupparameterModifiedby = "lk_powerbimashupparameter_modifiedby";
@@ -9716,10 +11280,38 @@ namespace dgt.power.dataverse
 				public const string LkPowerbireportCreatedonbehalfby = "lk_powerbireport_createdonbehalfby";
 				public const string LkPowerbireportModifiedby = "lk_powerbireport_modifiedby";
 				public const string LkPowerbireportModifiedonbehalfby = "lk_powerbireport_modifiedonbehalfby";
+				public const string LkPowerbireportapdxCreatedby = "lk_powerbireportapdx_createdby";
+				public const string LkPowerbireportapdxCreatedonbehalfby = "lk_powerbireportapdx_createdonbehalfby";
+				public const string LkPowerbireportapdxModifiedby = "lk_powerbireportapdx_modifiedby";
+				public const string LkPowerbireportapdxModifiedonbehalfby = "lk_powerbireportapdx_modifiedonbehalfby";
 				public const string LkPowerfxruleCreatedby = "lk_powerfxrule_createdby";
 				public const string LkPowerfxruleCreatedonbehalfby = "lk_powerfxrule_createdonbehalfby";
 				public const string LkPowerfxruleModifiedby = "lk_powerfxrule_modifiedby";
 				public const string LkPowerfxruleModifiedonbehalfby = "lk_powerfxrule_modifiedonbehalfby";
+				public const string LkPowerpagecomponentCreatedby = "lk_powerpagecomponent_createdby";
+				public const string LkPowerpagecomponentCreatedonbehalfby = "lk_powerpagecomponent_createdonbehalfby";
+				public const string LkPowerpagecomponentModifiedby = "lk_powerpagecomponent_modifiedby";
+				public const string LkPowerpagecomponentModifiedonbehalfby = "lk_powerpagecomponent_modifiedonbehalfby";
+				public const string LkPowerpagesiteCreatedby = "lk_powerpagesite_createdby";
+				public const string LkPowerpagesiteCreatedonbehalfby = "lk_powerpagesite_createdonbehalfby";
+				public const string LkPowerpagesiteModifiedby = "lk_powerpagesite_modifiedby";
+				public const string LkPowerpagesiteModifiedonbehalfby = "lk_powerpagesite_modifiedonbehalfby";
+				public const string LkPowerpagesitelanguageCreatedby = "lk_powerpagesitelanguage_createdby";
+				public const string LkPowerpagesitelanguageCreatedonbehalfby = "lk_powerpagesitelanguage_createdonbehalfby";
+				public const string LkPowerpagesitelanguageModifiedby = "lk_powerpagesitelanguage_modifiedby";
+				public const string LkPowerpagesitelanguageModifiedonbehalfby = "lk_powerpagesitelanguage_modifiedonbehalfby";
+				public const string LkPowerpagesitepublishedCreatedby = "lk_powerpagesitepublished_createdby";
+				public const string LkPowerpagesitepublishedCreatedonbehalfby = "lk_powerpagesitepublished_createdonbehalfby";
+				public const string LkPowerpagesitepublishedModifiedby = "lk_powerpagesitepublished_modifiedby";
+				public const string LkPowerpagesitepublishedModifiedonbehalfby = "lk_powerpagesitepublished_modifiedonbehalfby";
+				public const string LkPowerpageslogCreatedby = "lk_powerpageslog_createdby";
+				public const string LkPowerpageslogCreatedonbehalfby = "lk_powerpageslog_createdonbehalfby";
+				public const string LkPowerpageslogModifiedby = "lk_powerpageslog_modifiedby";
+				public const string LkPowerpageslogModifiedonbehalfby = "lk_powerpageslog_modifiedonbehalfby";
+				public const string LkPowerpagesscanreportCreatedby = "lk_powerpagesscanreport_createdby";
+				public const string LkPowerpagesscanreportCreatedonbehalfby = "lk_powerpagesscanreport_createdonbehalfby";
+				public const string LkPowerpagesscanreportModifiedby = "lk_powerpagesscanreport_modifiedby";
+				public const string LkPowerpagesscanreportModifiedonbehalfby = "lk_powerpagesscanreport_modifiedonbehalfby";
 				public const string LkPricelevelCreatedonbehalfby = "lk_pricelevel_createdonbehalfby";
 				public const string LkPricelevelModifiedonbehalfby = "lk_pricelevel_modifiedonbehalfby";
 				public const string LkPricelevelbaseCreatedby = "lk_pricelevelbase_createdby";
@@ -9810,10 +11402,26 @@ namespace dgt.power.dataverse
 				public const string LkRatingvalueCreatedonbehalfby = "lk_ratingvalue_createdonbehalfby";
 				public const string LkRatingvalueModifiedby = "lk_ratingvalue_modifiedby";
 				public const string LkRatingvalueModifiedonbehalfby = "lk_ratingvalue_modifiedonbehalfby";
+				public const string LkRecentlyusedCreatedby = "lk_recentlyused_createdby";
+				public const string LkRecentlyusedCreatedonbehalfby = "lk_recentlyused_createdonbehalfby";
+				public const string LkRecentlyusedModifiedby = "lk_recentlyused_modifiedby";
+				public const string LkRecentlyusedModifiedonbehalfby = "lk_recentlyused_modifiedonbehalfby";
 				public const string LkRecommendeddocumentCreatedby = "lk_recommendeddocument_createdby";
 				public const string LkRecommendeddocumentCreatedonbehalfby = "lk_recommendeddocument_createdonbehalfby";
 				public const string LkRecommendeddocumentModifiedby = "lk_recommendeddocument_modifiedby";
 				public const string LkRecommendeddocumentModifiedonbehalfby = "lk_recommendeddocument_modifiedonbehalfby";
+				public const string LkReconciliationentityinfoCreatedby = "lk_reconciliationentityinfo_createdby";
+				public const string LkReconciliationentityinfoCreatedonbehalfby = "lk_reconciliationentityinfo_createdonbehalfby";
+				public const string LkReconciliationentityinfoModifiedby = "lk_reconciliationentityinfo_modifiedby";
+				public const string LkReconciliationentityinfoModifiedonbehalfby = "lk_reconciliationentityinfo_modifiedonbehalfby";
+				public const string LkReconciliationentitystepinfoCreatedby = "lk_reconciliationentitystepinfo_createdby";
+				public const string LkReconciliationentitystepinfoCreatedonbehalfby = "lk_reconciliationentitystepinfo_createdonbehalfby";
+				public const string LkReconciliationentitystepinfoModifiedby = "lk_reconciliationentitystepinfo_modifiedby";
+				public const string LkReconciliationentitystepinfoModifiedonbehalfby = "lk_reconciliationentitystepinfo_modifiedonbehalfby";
+				public const string LkReconciliationinfoCreatedby = "lk_reconciliationinfo_createdby";
+				public const string LkReconciliationinfoCreatedonbehalfby = "lk_reconciliationinfo_createdonbehalfby";
+				public const string LkReconciliationinfoModifiedby = "lk_reconciliationinfo_modifiedby";
+				public const string LkReconciliationinfoModifiedonbehalfby = "lk_reconciliationinfo_modifiedonbehalfby";
 				public const string LkRecordfilterCreatedby = "lk_recordfilter_createdby";
 				public const string LkRecordfilterCreatedonbehalfby = "lk_recordfilter_createdonbehalfby";
 				public const string LkRecordfilterModifiedby = "lk_recordfilter_modifiedby";
@@ -9826,6 +11434,10 @@ namespace dgt.power.dataverse
 				public const string LkRecurringappointmentmasterCreatedonbehalfby = "lk_recurringappointmentmaster_createdonbehalfby";
 				public const string LkRecurringappointmentmasterModifiedby = "lk_recurringappointmentmaster_modifiedby";
 				public const string LkRecurringappointmentmasterModifiedonbehalfby = "lk_recurringappointmentmaster_modifiedonbehalfby";
+				public const string LkRecyclebinconfigCreatedby = "lk_recyclebinconfig_createdby";
+				public const string LkRecyclebinconfigCreatedonbehalfby = "lk_recyclebinconfig_createdonbehalfby";
+				public const string LkRecyclebinconfigModifiedby = "lk_recyclebinconfig_modifiedby";
+				public const string LkRecyclebinconfigModifiedonbehalfby = "lk_recyclebinconfig_modifiedonbehalfby";
 				public const string LkRelationshiproleCreatedonbehalfby = "lk_relationshiprole_createdonbehalfby";
 				public const string LkRelationshiproleModifiedonbehalfby = "lk_relationshiprole_modifiedonbehalfby";
 				public const string LkRelationshiprolemapCreatedonbehalfby = "lk_relationshiprolemap_createdonbehalfby";
@@ -9854,6 +11466,34 @@ namespace dgt.power.dataverse
 				public const string LkResourcespecCreatedonbehalfby = "lk_resourcespec_createdonbehalfby";
 				public const string LkResourcespecModifiedby = "lk_resourcespec_modifiedby";
 				public const string LkResourcespecModifiedonbehalfby = "lk_resourcespec_modifiedonbehalfby";
+				public const string LkRetaineddataexcelCreatedby = "lk_retaineddataexcel_createdby";
+				public const string LkRetaineddataexcelCreatedonbehalfby = "lk_retaineddataexcel_createdonbehalfby";
+				public const string LkRetaineddataexcelModifiedby = "lk_retaineddataexcel_modifiedby";
+				public const string LkRetaineddataexcelModifiedonbehalfby = "lk_retaineddataexcel_modifiedonbehalfby";
+				public const string LkRetentioncleanupinfoCreatedby = "lk_retentioncleanupinfo_createdby";
+				public const string LkRetentioncleanupinfoCreatedonbehalfby = "lk_retentioncleanupinfo_createdonbehalfby";
+				public const string LkRetentioncleanupinfoModifiedby = "lk_retentioncleanupinfo_modifiedby";
+				public const string LkRetentioncleanupinfoModifiedonbehalfby = "lk_retentioncleanupinfo_modifiedonbehalfby";
+				public const string LkRetentioncleanupoperationCreatedby = "lk_retentioncleanupoperation_createdby";
+				public const string LkRetentioncleanupoperationCreatedonbehalfby = "lk_retentioncleanupoperation_createdonbehalfby";
+				public const string LkRetentioncleanupoperationModifiedby = "lk_retentioncleanupoperation_modifiedby";
+				public const string LkRetentioncleanupoperationModifiedonbehalfby = "lk_retentioncleanupoperation_modifiedonbehalfby";
+				public const string LkRetentionconfigCreatedby = "lk_retentionconfig_createdby";
+				public const string LkRetentionconfigCreatedonbehalfby = "lk_retentionconfig_createdonbehalfby";
+				public const string LkRetentionconfigModifiedby = "lk_retentionconfig_modifiedby";
+				public const string LkRetentionconfigModifiedonbehalfby = "lk_retentionconfig_modifiedonbehalfby";
+				public const string LkRetentionfailuredetailCreatedby = "lk_retentionfailuredetail_createdby";
+				public const string LkRetentionfailuredetailCreatedonbehalfby = "lk_retentionfailuredetail_createdonbehalfby";
+				public const string LkRetentionfailuredetailModifiedby = "lk_retentionfailuredetail_modifiedby";
+				public const string LkRetentionfailuredetailModifiedonbehalfby = "lk_retentionfailuredetail_modifiedonbehalfby";
+				public const string LkRetentionoperationCreatedby = "lk_retentionoperation_createdby";
+				public const string LkRetentionoperationCreatedonbehalfby = "lk_retentionoperation_createdonbehalfby";
+				public const string LkRetentionoperationModifiedby = "lk_retentionoperation_modifiedby";
+				public const string LkRetentionoperationModifiedonbehalfby = "lk_retentionoperation_modifiedonbehalfby";
+				public const string LkRetentionoperationdetailCreatedby = "lk_retentionoperationdetail_createdby";
+				public const string LkRetentionoperationdetailCreatedonbehalfby = "lk_retentionoperationdetail_createdonbehalfby";
+				public const string LkRetentionoperationdetailModifiedby = "lk_retentionoperationdetail_modifiedby";
+				public const string LkRetentionoperationdetailModifiedonbehalfby = "lk_retentionoperationdetail_modifiedonbehalfby";
 				public const string LkRevokeinheritedaccessrecordstrackerCreatedby = "lk_revokeinheritedaccessrecordstracker_createdby";
 				public const string LkRevokeinheritedaccessrecordstrackerCreatedonbehalfby = "lk_revokeinheritedaccessrecordstracker_createdonbehalfby";
 				public const string LkRevokeinheritedaccessrecordstrackerModifiedby = "lk_revokeinheritedaccessrecordstracker_modifiedby";
@@ -9930,10 +11570,22 @@ namespace dgt.power.dataverse
 				public const string LkSdkmessageresponseModifiedonbehalfby = "lk_sdkmessageresponse_modifiedonbehalfby";
 				public const string LkSdkmessageresponsefieldCreatedonbehalfby = "lk_sdkmessageresponsefield_createdonbehalfby";
 				public const string LkSdkmessageresponsefieldModifiedonbehalfby = "lk_sdkmessageresponsefield_modifiedonbehalfby";
+				public const string LkSearchattributesettingsCreatedby = "lk_searchattributesettings_createdby";
+				public const string LkSearchattributesettingsCreatedonbehalfby = "lk_searchattributesettings_createdonbehalfby";
+				public const string LkSearchattributesettingsModifiedby = "lk_searchattributesettings_modifiedby";
+				public const string LkSearchattributesettingsModifiedonbehalfby = "lk_searchattributesettings_modifiedonbehalfby";
+				public const string LkSearchcustomanalyzerCreatedby = "lk_searchcustomanalyzer_createdby";
+				public const string LkSearchcustomanalyzerCreatedonbehalfby = "lk_searchcustomanalyzer_createdonbehalfby";
+				public const string LkSearchcustomanalyzerModifiedby = "lk_searchcustomanalyzer_modifiedby";
+				public const string LkSearchcustomanalyzerModifiedonbehalfby = "lk_searchcustomanalyzer_modifiedonbehalfby";
 				public const string LkSearchrelationshipsettingsCreatedby = "lk_searchrelationshipsettings_createdby";
 				public const string LkSearchrelationshipsettingsCreatedonbehalfby = "lk_searchrelationshipsettings_createdonbehalfby";
 				public const string LkSearchrelationshipsettingsModifiedby = "lk_searchrelationshipsettings_modifiedby";
 				public const string LkSearchrelationshipsettingsModifiedonbehalfby = "lk_searchrelationshipsettings_modifiedonbehalfby";
+				public const string LkSearchresultscacheCreatedby = "lk_searchresultscache_createdby";
+				public const string LkSearchresultscacheCreatedonbehalfby = "lk_searchresultscache_createdonbehalfby";
+				public const string LkSearchresultscacheModifiedby = "lk_searchresultscache_modifiedby";
+				public const string LkSearchresultscacheModifiedonbehalfby = "lk_searchresultscache_modifiedonbehalfby";
 				public const string LkSemiannualfiscalcalendarCreatedby = "lk_semiannualfiscalcalendar_createdby";
 				public const string LkSemiannualfiscalcalendarCreatedonbehalfby = "lk_semiannualfiscalcalendar_createdonbehalfby";
 				public const string LkSemiannualfiscalcalendarModifiedby = "lk_semiannualfiscalcalendar_modifiedby";
@@ -9953,6 +11605,10 @@ namespace dgt.power.dataverse
 				public const string LkServiceplanCreatedonbehalfby = "lk_serviceplan_createdonbehalfby";
 				public const string LkServiceplanModifiedby = "lk_serviceplan_modifiedby";
 				public const string LkServiceplanModifiedonbehalfby = "lk_serviceplan_modifiedonbehalfby";
+				public const string LkServiceplancustomcontrolCreatedby = "lk_serviceplancustomcontrol_createdby";
+				public const string LkServiceplancustomcontrolCreatedonbehalfby = "lk_serviceplancustomcontrol_createdonbehalfby";
+				public const string LkServiceplancustomcontrolModifiedby = "lk_serviceplancustomcontrol_modifiedby";
+				public const string LkServiceplancustomcontrolModifiedonbehalfby = "lk_serviceplancustomcontrol_modifiedonbehalfby";
 				public const string LkServiceplanmappingCreatedby = "lk_serviceplanmapping_createdby";
 				public const string LkServiceplanmappingCreatedonbehalfby = "lk_serviceplanmapping_createdonbehalfby";
 				public const string LkServiceplanmappingModifiedby = "lk_serviceplanmapping_modifiedby";
@@ -9973,6 +11629,18 @@ namespace dgt.power.dataverse
 				public const string LkSharedworkspaceCreatedonbehalfby = "lk_sharedworkspace_createdonbehalfby";
 				public const string LkSharedworkspaceModifiedby = "lk_sharedworkspace_modifiedby";
 				public const string LkSharedworkspaceModifiedonbehalfby = "lk_sharedworkspace_modifiedonbehalfby";
+				public const string LkSharedworkspaceaccesstokenCreatedby = "lk_sharedworkspaceaccesstoken_createdby";
+				public const string LkSharedworkspaceaccesstokenCreatedonbehalfby = "lk_sharedworkspaceaccesstoken_createdonbehalfby";
+				public const string LkSharedworkspaceaccesstokenModifiedby = "lk_sharedworkspaceaccesstoken_modifiedby";
+				public const string LkSharedworkspaceaccesstokenModifiedonbehalfby = "lk_sharedworkspaceaccesstoken_modifiedonbehalfby";
+				public const string LkSharedworkspacenrCreatedby = "lk_sharedworkspacenr_createdby";
+				public const string LkSharedworkspacenrCreatedonbehalfby = "lk_sharedworkspacenr_createdonbehalfby";
+				public const string LkSharedworkspacenrModifiedby = "lk_sharedworkspacenr_modifiedby";
+				public const string LkSharedworkspacenrModifiedonbehalfby = "lk_sharedworkspacenr_modifiedonbehalfby";
+				public const string LkSharedworkspacepoolCreatedby = "lk_sharedworkspacepool_createdby";
+				public const string LkSharedworkspacepoolCreatedonbehalfby = "lk_sharedworkspacepool_createdonbehalfby";
+				public const string LkSharedworkspacepoolModifiedby = "lk_sharedworkspacepool_modifiedby";
+				public const string LkSharedworkspacepoolModifiedonbehalfby = "lk_sharedworkspacepool_modifiedonbehalfby";
 				public const string LkSharePointDataCreatedby = "lk_SharePointData_createdby";
 				public const string LkSharePointDataCreatedonbehalfby = "lk_SharePointData_createdonbehalfby";
 				public const string LkSharePointDataModifiedby = "lk_SharePointData_modifiedby";
@@ -9990,6 +11658,10 @@ namespace dgt.power.dataverse
 				public const string LkSharepointsitebaseCreatedonbehalfby = "lk_sharepointsitebase_createdonbehalfby";
 				public const string LkSharepointsitebaseModifiedby = "lk_sharepointsitebase_modifiedby";
 				public const string LkSharepointsitebaseModifiedonbehalfby = "lk_sharepointsitebase_modifiedonbehalfby";
+				public const string LkSideloadedaipluginCreatedby = "lk_sideloadedaiplugin_createdby";
+				public const string LkSideloadedaipluginCreatedonbehalfby = "lk_sideloadedaiplugin_createdonbehalfby";
+				public const string LkSideloadedaipluginModifiedby = "lk_sideloadedaiplugin_modifiedby";
+				public const string LkSideloadedaipluginModifiedonbehalfby = "lk_sideloadedaiplugin_modifiedonbehalfby";
 				public const string LkSimilarityruleCreatedonbehalfby = "lk_similarityrule_createdonbehalfby";
 				public const string LkSimilarityruleModifiedonbehalfby = "lk_similarityrule_modifiedonbehalfby";
 				public const string LkSiteCreatedonbehalfby = "lk_site_createdonbehalfby";
@@ -10048,6 +11720,14 @@ namespace dgt.power.dataverse
 				public const string LkStagedentityCreatedonbehalfby = "lk_stagedentity_createdonbehalfby";
 				public const string LkStagedentityModifiedby = "lk_stagedentity_modifiedby";
 				public const string LkStagedentityModifiedonbehalfby = "lk_stagedentity_modifiedonbehalfby";
+				public const string LkStagedentityattributeCreatedby = "lk_stagedentityattribute_createdby";
+				public const string LkStagedentityattributeCreatedonbehalfby = "lk_stagedentityattribute_createdonbehalfby";
+				public const string LkStagedentityattributeModifiedby = "lk_stagedentityattribute_modifiedby";
+				public const string LkStagedentityattributeModifiedonbehalfby = "lk_stagedentityattribute_modifiedonbehalfby";
+				public const string LkStagedmetadataasyncoperationCreatedby = "lk_stagedmetadataasyncoperation_createdby";
+				public const string LkStagedmetadataasyncoperationCreatedonbehalfby = "lk_stagedmetadataasyncoperation_createdonbehalfby";
+				public const string LkStagedmetadataasyncoperationModifiedby = "lk_stagedmetadataasyncoperation_modifiedby";
+				public const string LkStagedmetadataasyncoperationModifiedonbehalfby = "lk_stagedmetadataasyncoperation_modifiedonbehalfby";
 				public const string LkStagesolutionuploadCreatedby = "lk_stagesolutionupload_createdby";
 				public const string LkStagesolutionuploadCreatedonbehalfby = "lk_stagesolutionupload_createdonbehalfby";
 				public const string LkStagesolutionuploadModifiedby = "lk_stagesolutionupload_modifiedby";
@@ -10177,6 +11857,50 @@ namespace dgt.power.dataverse
 				public const string LkTranslationprocessCreatedonbehalfby = "lk_translationprocess_createdonbehalfby";
 				public const string LkTranslationprocessModifiedby = "lk_translationprocess_modifiedby";
 				public const string LkTranslationprocessModifiedonbehalfby = "lk_translationprocess_modifiedonbehalfby";
+				public const string LkUiiActionCreatedby = "lk_uii_action_createdby";
+				public const string LkUiiActionCreatedonbehalfby = "lk_uii_action_createdonbehalfby";
+				public const string LkUiiActionModifiedby = "lk_uii_action_modifiedby";
+				public const string LkUiiActionModifiedonbehalfby = "lk_uii_action_modifiedonbehalfby";
+				public const string LkUiiAuditCreatedby = "lk_uii_audit_createdby";
+				public const string LkUiiAuditCreatedonbehalfby = "lk_uii_audit_createdonbehalfby";
+				public const string LkUiiAuditModifiedby = "lk_uii_audit_modifiedby";
+				public const string LkUiiAuditModifiedonbehalfby = "lk_uii_audit_modifiedonbehalfby";
+				public const string LkUiiContextCreatedby = "lk_uii_context_createdby";
+				public const string LkUiiContextCreatedonbehalfby = "lk_uii_context_createdonbehalfby";
+				public const string LkUiiContextModifiedby = "lk_uii_context_modifiedby";
+				public const string LkUiiContextModifiedonbehalfby = "lk_uii_context_modifiedonbehalfby";
+				public const string LkUiiHostedapplicationCreatedby = "lk_uii_hostedapplication_createdby";
+				public const string LkUiiHostedapplicationCreatedonbehalfby = "lk_uii_hostedapplication_createdonbehalfby";
+				public const string LkUiiHostedapplicationModifiedby = "lk_uii_hostedapplication_modifiedby";
+				public const string LkUiiHostedapplicationModifiedonbehalfby = "lk_uii_hostedapplication_modifiedonbehalfby";
+				public const string LkUiiNonhostedapplicationCreatedby = "lk_uii_nonhostedapplication_createdby";
+				public const string LkUiiNonhostedapplicationCreatedonbehalfby = "lk_uii_nonhostedapplication_createdonbehalfby";
+				public const string LkUiiNonhostedapplicationModifiedby = "lk_uii_nonhostedapplication_modifiedby";
+				public const string LkUiiNonhostedapplicationModifiedonbehalfby = "lk_uii_nonhostedapplication_modifiedonbehalfby";
+				public const string LkUiiOptionCreatedby = "lk_uii_option_createdby";
+				public const string LkUiiOptionCreatedonbehalfby = "lk_uii_option_createdonbehalfby";
+				public const string LkUiiOptionModifiedby = "lk_uii_option_modifiedby";
+				public const string LkUiiOptionModifiedonbehalfby = "lk_uii_option_modifiedonbehalfby";
+				public const string LkUiiSavedsessionCreatedby = "lk_uii_savedsession_createdby";
+				public const string LkUiiSavedsessionCreatedonbehalfby = "lk_uii_savedsession_createdonbehalfby";
+				public const string LkUiiSavedsessionModifiedby = "lk_uii_savedsession_modifiedby";
+				public const string LkUiiSavedsessionModifiedonbehalfby = "lk_uii_savedsession_modifiedonbehalfby";
+				public const string LkUiiSessiontransferCreatedby = "lk_uii_sessiontransfer_createdby";
+				public const string LkUiiSessiontransferCreatedonbehalfby = "lk_uii_sessiontransfer_createdonbehalfby";
+				public const string LkUiiSessiontransferModifiedby = "lk_uii_sessiontransfer_modifiedby";
+				public const string LkUiiSessiontransferModifiedonbehalfby = "lk_uii_sessiontransfer_modifiedonbehalfby";
+				public const string LkUiiWorkflowCreatedby = "lk_uii_workflow_createdby";
+				public const string LkUiiWorkflowCreatedonbehalfby = "lk_uii_workflow_createdonbehalfby";
+				public const string LkUiiWorkflowModifiedby = "lk_uii_workflow_modifiedby";
+				public const string LkUiiWorkflowModifiedonbehalfby = "lk_uii_workflow_modifiedonbehalfby";
+				public const string LkUiiWorkflowWorkflowstepMappingCreatedby = "lk_uii_workflow_workflowstep_mapping_createdby";
+				public const string LkUiiWorkflowWorkflowstepMappingCreatedonbehalfby = "lk_uii_workflow_workflowstep_mapping_createdonbehalfby";
+				public const string LkUiiWorkflowWorkflowstepMappingModifiedby = "lk_uii_workflow_workflowstep_mapping_modifiedby";
+				public const string LkUiiWorkflowWorkflowstepMappingModifiedonbehalfby = "lk_uii_workflow_workflowstep_mapping_modifiedonbehalfby";
+				public const string LkUiiWorkflowstepCreatedby = "lk_uii_workflowstep_createdby";
+				public const string LkUiiWorkflowstepCreatedonbehalfby = "lk_uii_workflowstep_createdonbehalfby";
+				public const string LkUiiWorkflowstepModifiedby = "lk_uii_workflowstep_modifiedby";
+				public const string LkUiiWorkflowstepModifiedonbehalfby = "lk_uii_workflowstep_modifiedonbehalfby";
 				public const string LkUntrackedemailCreatedby = "lk_untrackedemail_createdby";
 				public const string LkUntrackedemailCreatedonbehalfby = "lk_untrackedemail_createdonbehalfby";
 				public const string LkUntrackedemailModifiedby = "lk_untrackedemail_modifiedby";
@@ -10225,6 +11949,10 @@ namespace dgt.power.dataverse
 				public const string LkUsersettingsModifiedonbehalfby = "lk_usersettings_modifiedonbehalfby";
 				public const string LkUsersettingsbaseCreatedby = "lk_usersettingsbase_createdby";
 				public const string LkUsersettingsbaseModifiedby = "lk_usersettingsbase_modifiedby";
+				public const string LkViewasexamplequestionCreatedby = "lk_viewasexamplequestion_createdby";
+				public const string LkViewasexamplequestionCreatedonbehalfby = "lk_viewasexamplequestion_createdonbehalfby";
+				public const string LkViewasexamplequestionModifiedby = "lk_viewasexamplequestion_modifiedby";
+				public const string LkViewasexamplequestionModifiedonbehalfby = "lk_viewasexamplequestion_modifiedonbehalfby";
 				public const string LkVirtualentitymetadataCreatedby = "lk_virtualentitymetadata_createdby";
 				public const string LkVirtualentitymetadataCreatedonbehalfby = "lk_virtualentitymetadata_createdonbehalfby";
 				public const string LkVirtualentitymetadataModifiedby = "lk_virtualentitymetadata_modifiedby";
@@ -10251,6 +11979,14 @@ namespace dgt.power.dataverse
 				public const string LkWorkflowlogCreatedonbehalfby = "lk_workflowlog_createdonbehalfby";
 				public const string LkWorkflowlogModifiedby = "lk_workflowlog_modifiedby";
 				public const string LkWorkflowlogModifiedonbehalfby = "lk_workflowlog_modifiedonbehalfby";
+				public const string LkWorkqueueCreatedby = "lk_workqueue_createdby";
+				public const string LkWorkqueueCreatedonbehalfby = "lk_workqueue_createdonbehalfby";
+				public const string LkWorkqueueModifiedby = "lk_workqueue_modifiedby";
+				public const string LkWorkqueueModifiedonbehalfby = "lk_workqueue_modifiedonbehalfby";
+				public const string LkWorkqueueitemCreatedby = "lk_workqueueitem_createdby";
+				public const string LkWorkqueueitemCreatedonbehalfby = "lk_workqueueitem_createdonbehalfby";
+				public const string LkWorkqueueitemModifiedby = "lk_workqueueitem_modifiedby";
+				public const string LkWorkqueueitemModifiedonbehalfby = "lk_workqueueitem_modifiedonbehalfby";
 				public const string MailboxRegardingSystemuser = "mailbox_regarding_systemuser";
 				public const string ModifiedbyAttributemap = "modifiedby_attributemap";
 				public const string ModifiedbyConnection = "modifiedby_connection";
@@ -10276,8 +12012,28 @@ namespace dgt.power.dataverse
 				public const string ModifiedbyServiceendpoint = "modifiedby_serviceendpoint";
 				public const string ModifiedonbehalfbyAttributemap = "modifiedonbehalfby_attributemap";
 				public const string ModifiedonbehalfbyCustomerRelationship = "modifiedonbehalfby_customer_relationship";
+				public const string MsdynAccountmanagerOpportunity = "msdyn_accountmanager_opportunity";
+				public const string MsdynAccountmanagerQuote = "msdyn_accountmanager_quote";
+				public const string MsdynAccountmanagerSalesorder = "msdyn_accountmanager_salesorder";
+				public const string MsdynApprovalSystemuserCreatedby = "msdyn_approval_systemuser_createdby";
+				public const string MsdynApprovalSystemuserCreatedonbehalfby = "msdyn_approval_systemuser_createdonbehalfby";
+				public const string MsdynApprovalSystemuserModifiedby = "msdyn_approval_systemuser_modifiedby";
+				public const string MsdynApprovalSystemuserModifiedonbehalfby = "msdyn_approval_systemuser_modifiedonbehalfby";
+				public const string MsdynApprovalSystemuserOwninguser = "msdyn_approval_systemuser_owninguser";
+				public const string MsdynBookingalertSystemuserCreatedby = "msdyn_bookingalert_systemuser_createdby";
+				public const string MsdynBookingalertSystemuserCreatedonbehalfby = "msdyn_bookingalert_systemuser_createdonbehalfby";
+				public const string MsdynBookingalertSystemuserModifiedby = "msdyn_bookingalert_systemuser_modifiedby";
+				public const string MsdynBookingalertSystemuserModifiedonbehalfby = "msdyn_bookingalert_systemuser_modifiedonbehalfby";
+				public const string MsdynBookingalertSystemuserOwninguser = "msdyn_bookingalert_systemuser_owninguser";
+				public const string MsdynCopilottranscriptSystemuserCreatedby = "msdyn_copilottranscript_systemuser_createdby";
+				public const string MsdynCopilottranscriptSystemuserCreatedonbehalfby = "msdyn_copilottranscript_systemuser_createdonbehalfby";
+				public const string MsdynCopilottranscriptSystemuserModifiedby = "msdyn_copilottranscript_systemuser_modifiedby";
+				public const string MsdynCopilottranscriptSystemuserModifiedonbehalfby = "msdyn_copilottranscript_systemuser_modifiedonbehalfby";
+				public const string MsdynCopilottranscriptSystemuserOwninguser = "msdyn_copilottranscript_systemuser_owninguser";
 				public const string MsdynCustomeremailcommunicationToUserId = "msdyn_customeremailcommunication_ToUserId";
+				public const string MsdynMsdynConversationparticipantinsightsSystemuserMsdynUser = "msdyn_msdyn_conversationparticipantinsights_systemuser_msdyn_User";
 				public const string MsdynMsdynForecastOwnerid = "msdyn_msdyn_forecast_ownerid";
+				public const string MsdynMsdynReadtrackerSystemuser = "msdyn_msdyn_readtracker_systemuser";
 				public const string MsdynMsdynShareasconfigurationSharedbyuserid = "msdyn_msdyn_shareasconfiguration_sharedbyuserid";
 				public const string MsdynMsdynShareasconfigurationSharedwithuserid = "msdyn_msdyn_shareasconfiguration_sharedwithuserid";
 				public const string MsdynOcliveworkitemSystemuserCreatedby = "msdyn_ocliveworkitem_systemuser_createdby";
@@ -10286,15 +12042,27 @@ namespace dgt.power.dataverse
 				public const string MsdynOcliveworkitemSystemuserModifiedonbehalfby = "msdyn_ocliveworkitem_systemuser_modifiedonbehalfby";
 				public const string MsdynOcliveworkitemSystemuserOwninguser = "msdyn_ocliveworkitem_systemuser_owninguser";
 				public const string MsdynOcliveworkitemcharacteristicSkilladdedby = "msdyn_ocliveworkitemcharacteristic_skilladdedby";
+				public const string MsdynOcoutboundmessageSystemuserCreatedby = "msdyn_ocoutboundmessage_systemuser_createdby";
+				public const string MsdynOcoutboundmessageSystemuserCreatedonbehalfby = "msdyn_ocoutboundmessage_systemuser_createdonbehalfby";
+				public const string MsdynOcoutboundmessageSystemuserModifiedby = "msdyn_ocoutboundmessage_systemuser_modifiedby";
+				public const string MsdynOcoutboundmessageSystemuserModifiedonbehalfby = "msdyn_ocoutboundmessage_systemuser_modifiedonbehalfby";
+				public const string MsdynOcoutboundmessageSystemuserOwninguser = "msdyn_ocoutboundmessage_systemuser_owninguser";
 				public const string MsdynOcsessionSystemuserCreatedby = "msdyn_ocsession_systemuser_createdby";
 				public const string MsdynOcsessionSystemuserCreatedonbehalfby = "msdyn_ocsession_systemuser_createdonbehalfby";
 				public const string MsdynOcsessionSystemuserModifiedby = "msdyn_ocsession_systemuser_modifiedby";
 				public const string MsdynOcsessionSystemuserModifiedonbehalfby = "msdyn_ocsession_systemuser_modifiedonbehalfby";
 				public const string MsdynOcsessionSystemuserOwninguser = "msdyn_ocsession_systemuser_owninguser";
+				public const string MsdynSystemuserMsdynAgentcapacityprofileunitAgentid = "msdyn_systemuser_msdyn_agentcapacityprofileunit_agentid";
+				public const string MsdynSystemuserMsdynAgentchannelstateAgentid = "msdyn_systemuser_msdyn_agentchannelstate_agentid";
+				public const string MsdynSystemuserMsdynAgentstatusAgentid = "msdyn_systemuser_msdyn_agentstatus_agentid";
 				public const string MsdynSystemuserMsdynAgentstatushistoryAgentid = "msdyn_systemuser_msdyn_agentstatushistory_Agentid";
+				public const string MsdynSystemuserMsdynApprovalsetApprover = "msdyn_systemuser_msdyn_approvalset_Approver";
 				public const string MsdynSystemuserMsdynConversationmessageblockMsdynAgentid = "msdyn_systemuser_msdyn_conversationmessageblock_msdyn_agentid";
 				public const string MsdynSystemuserMsdynDataanalyticsworkspaceConfiguredby = "msdyn_systemuser_msdyn_dataanalyticsworkspace_configuredby";
 				public const string MsdynSystemuserMsdynDuplicateleadmappingDismissedBy = "msdyn_systemuser_msdyn_duplicateleadmapping_DismissedBy";
+				public const string MsdynSystemuserMsdynExpenseManager = "msdyn_systemuser_msdyn_expense_manager";
+				public const string MsdynSystemuserMsdynFieldservicesystemjobOwnerId = "msdyn_systemuser_msdyn_fieldservicesystemjob_OwnerId";
+				public const string MsdynSystemuserMsdynGeolocationtrackingUserId = "msdyn_systemuser_msdyn_geolocationtracking_UserId";
 				public const string MsdynSystemuserMsdynLiveconversation = "msdyn_systemuser_msdyn_liveconversation";
 				public const string MsdynSystemuserMsdynLiveworkstreamMsdynBotUser = "msdyn_systemuser_msdyn_liveworkstream_msdyn_bot_user";
 				public const string MsdynSystemuserMsdynMsdynAssignmentmapSystemuserid = "msdyn_systemuser_msdyn_msdyn_assignmentmap_systemuserid";
@@ -10302,14 +12070,32 @@ namespace dgt.power.dataverse
 				public const string MsdynSystemuserMsdynOcliveworkitemparticipantAgentid = "msdyn_systemuser_msdyn_ocliveworkitemparticipant_agentid";
 				public const string MsdynSystemuserMsdynOcsitrainingdataApprovedby = "msdyn_systemuser_msdyn_ocsitrainingdata_approvedby";
 				public const string MsdynSystemuserMsdynPreferredagentSystemuserid = "msdyn_systemuser_msdyn_preferredagent_systemuserid";
+				public const string MsdynSystemuserMsdynProjectProjectmanager = "msdyn_systemuser_msdyn_project_projectmanager";
+				public const string MsdynSystemuserMsdynProjectapprovalApprovedBy = "msdyn_systemuser_msdyn_projectapproval_ApprovedBy";
+				public const string MsdynSystemuserMsdynProjectapprovalManager = "msdyn_systemuser_msdyn_projectapproval_Manager";
+				public const string MsdynSystemuserMsdynPurchaseorderApprovedRejectedBy = "msdyn_systemuser_msdyn_purchaseorder_ApprovedRejectedBy";
+				public const string MsdynSystemuserMsdynPurchaseorderOrderedBy = "msdyn_systemuser_msdyn_purchaseorder_OrderedBy";
+				public const string MsdynSystemuserMsdynPurchaseorderreceiptReceivedBy = "msdyn_systemuser_msdyn_purchaseorderreceipt_ReceivedBy";
+				public const string MsdynSystemuserMsdynResourceassignmentUserresourceid = "msdyn_systemuser_msdyn_resourceassignment_userresourceid";
+				public const string MsdynSystemuserMsdynResourcerequestClaimedby = "msdyn_systemuser_msdyn_resourcerequest_claimedby";
+				public const string MsdynSystemuserMsdynResourcerequestRequestedby = "msdyn_systemuser_msdyn_resourcerequest_requestedby";
+				public const string MsdynSystemuserMsdynRmaApprovedBy = "msdyn_systemuser_msdyn_rma_ApprovedBy";
+				public const string MsdynSystemuserMsdynRmareceiptReceivedBy = "msdyn_systemuser_msdyn_rmareceipt_ReceivedBy";
+				public const string MsdynSystemuserMsdynRtvApprovedDeclinedBy = "msdyn_systemuser_msdyn_rtv_ApprovedDeclinedBy";
+				public const string MsdynSystemuserMsdynRtvReturnedBy = "msdyn_systemuser_msdyn_rtv_ReturnedBy";
 				public const string MsdynSystemuserMsdynSalesroutingrunOwnerassigned = "msdyn_systemuser_msdyn_salesroutingrun_ownerassigned";
 				public const string MsdynSystemuserMsdynSalesroutingrunPreviousowner = "msdyn_systemuser_msdyn_salesroutingrun_previousowner";
 				public const string MsdynSystemuserMsdynSessionparticipantAgentid = "msdyn_systemuser_msdyn_sessionparticipant_agentid";
 				public const string MsdynSystemuserMsdynSwarmparticipantUserid = "msdyn_systemuser_msdyn_swarmparticipant_userid";
+				public const string MsdynSystemuserMsdynSystemuserschedulersettingUser = "msdyn_systemuser_msdyn_systemuserschedulersetting_User";
+				public const string MsdynSystemuserMsdynTimeentryManager = "msdyn_systemuser_msdyn_timeentry_manager";
+				public const string MsdynSystemuserMsdynTimeoffrequestApprovedby = "msdyn_systemuser_msdyn_timeoffrequest_Approvedby";
 				public const string MsdynSystemuserMsdynUnifiedroutingrunAssignedagent = "msdyn_systemuser_msdyn_unifiedroutingrun_assignedagent";
+				public const string MsdynSystemuserMsdynWorkorderClosedBy = "msdyn_systemuser_msdyn_workorder_ClosedBy";
 				public const string MsdynSystemuserOcruleitem = "msdyn_systemuser_ocruleitem";
 				public const string MsdynSystemuserSuggestionprincipalobjectaccessPrincipalid = "msdyn_systemuser_suggestionprincipalobjectaccess_principalid";
 				public const string MsdynSystemuserWallsavedqueryusersettingsUserid = "msdyn_systemuser_wallsavedqueryusersettings_userid";
+				public const string MsdyusdSystemuserMsdyusdUsersettingsUser = "msdyusd_systemuser_msdyusd_usersettings_User";
 				public const string MsfpAlertSystemuserCreatedby = "msfp_alert_systemuser_createdby";
 				public const string MsfpAlertSystemuserCreatedonbehalfby = "msfp_alert_systemuser_createdonbehalfby";
 				public const string MsfpAlertSystemuserModifiedby = "msfp_alert_systemuser_modifiedby";
@@ -10326,6 +12112,64 @@ namespace dgt.power.dataverse
 				public const string MsfpSurveyresponseSystemuserModifiedonbehalfby = "msfp_surveyresponse_systemuser_modifiedonbehalfby";
 				public const string MsfpSurveyresponseSystemuserOwninguser = "msfp_surveyresponse_systemuser_owninguser";
 				public const string MsfpSystemuserMsfpSurveyPublishedby = "msfp_systemuser_msfp_survey_publishedby";
+				public const string MsppSystemuserMsppAdplacementCreatedby = "mspp_systemuser_mspp_adplacement_createdby";
+				public const string MsppSystemuserMsppAdplacementModifiedby = "mspp_systemuser_mspp_adplacement_modifiedby";
+				public const string MsppSystemuserMsppColumnpermissionCreatedby = "mspp_systemuser_mspp_columnpermission_createdby";
+				public const string MsppSystemuserMsppColumnpermissionModifiedby = "mspp_systemuser_mspp_columnpermission_modifiedby";
+				public const string MsppSystemuserMsppColumnpermissionprofileCreatedby = "mspp_systemuser_mspp_columnpermissionprofile_createdby";
+				public const string MsppSystemuserMsppColumnpermissionprofileModifiedby = "mspp_systemuser_mspp_columnpermissionprofile_modifiedby";
+				public const string MsppSystemuserMsppContentsnippetCreatedby = "mspp_systemuser_mspp_contentsnippet_createdby";
+				public const string MsppSystemuserMsppContentsnippetModifiedby = "mspp_systemuser_mspp_contentsnippet_modifiedby";
+				public const string MsppSystemuserMsppEntityformCreatedby = "mspp_systemuser_mspp_entityform_createdby";
+				public const string MsppSystemuserMsppEntityformModifiedby = "mspp_systemuser_mspp_entityform_modifiedby";
+				public const string MsppSystemuserMsppEntityformmetadataCreatedby = "mspp_systemuser_mspp_entityformmetadata_createdby";
+				public const string MsppSystemuserMsppEntityformmetadataModifiedby = "mspp_systemuser_mspp_entityformmetadata_modifiedby";
+				public const string MsppSystemuserMsppEntitylistCreatedby = "mspp_systemuser_mspp_entitylist_createdby";
+				public const string MsppSystemuserMsppEntitylistModifiedby = "mspp_systemuser_mspp_entitylist_modifiedby";
+				public const string MsppSystemuserMsppEntitypermissionCreatedby = "mspp_systemuser_mspp_entitypermission_createdby";
+				public const string MsppSystemuserMsppEntitypermissionModifiedby = "mspp_systemuser_mspp_entitypermission_modifiedby";
+				public const string MsppSystemuserMsppPagetemplateCreatedby = "mspp_systemuser_mspp_pagetemplate_createdby";
+				public const string MsppSystemuserMsppPagetemplateModifiedby = "mspp_systemuser_mspp_pagetemplate_modifiedby";
+				public const string MsppSystemuserMsppPollplacementCreatedby = "mspp_systemuser_mspp_pollplacement_createdby";
+				public const string MsppSystemuserMsppPollplacementModifiedby = "mspp_systemuser_mspp_pollplacement_modifiedby";
+				public const string MsppSystemuserMsppPublishingstateCreatedby = "mspp_systemuser_mspp_publishingstate_createdby";
+				public const string MsppSystemuserMsppPublishingstateModifiedby = "mspp_systemuser_mspp_publishingstate_modifiedby";
+				public const string MsppSystemuserMsppPublishingstatetransitionruleCreatedby = "mspp_systemuser_mspp_publishingstatetransitionrule_createdby";
+				public const string MsppSystemuserMsppPublishingstatetransitionruleModifiedby = "mspp_systemuser_mspp_publishingstatetransitionrule_modifiedby";
+				public const string MsppSystemuserMsppRedirectCreatedby = "mspp_systemuser_mspp_redirect_createdby";
+				public const string MsppSystemuserMsppRedirectModifiedby = "mspp_systemuser_mspp_redirect_modifiedby";
+				public const string MsppSystemuserMsppShortcutCreatedby = "mspp_systemuser_mspp_shortcut_createdby";
+				public const string MsppSystemuserMsppShortcutModifiedby = "mspp_systemuser_mspp_shortcut_modifiedby";
+				public const string MsppSystemuserMsppSitemarkerCreatedby = "mspp_systemuser_mspp_sitemarker_createdby";
+				public const string MsppSystemuserMsppSitemarkerModifiedby = "mspp_systemuser_mspp_sitemarker_modifiedby";
+				public const string MsppSystemuserMsppSitesettingCreatedby = "mspp_systemuser_mspp_sitesetting_createdby";
+				public const string MsppSystemuserMsppSitesettingModifiedby = "mspp_systemuser_mspp_sitesetting_modifiedby";
+				public const string MsppSystemuserMsppWebfileCreatedby = "mspp_systemuser_mspp_webfile_createdby";
+				public const string MsppSystemuserMsppWebfileModifiedby = "mspp_systemuser_mspp_webfile_modifiedby";
+				public const string MsppSystemuserMsppWebformCreatedby = "mspp_systemuser_mspp_webform_createdby";
+				public const string MsppSystemuserMsppWebformModifiedby = "mspp_systemuser_mspp_webform_modifiedby";
+				public const string MsppSystemuserMsppWebformmetadataCreatedby = "mspp_systemuser_mspp_webformmetadata_createdby";
+				public const string MsppSystemuserMsppWebformmetadataModifiedby = "mspp_systemuser_mspp_webformmetadata_modifiedby";
+				public const string MsppSystemuserMsppWebformstepCreatedby = "mspp_systemuser_mspp_webformstep_createdby";
+				public const string MsppSystemuserMsppWebformstepModifiedby = "mspp_systemuser_mspp_webformstep_modifiedby";
+				public const string MsppSystemuserMsppWeblinkCreatedby = "mspp_systemuser_mspp_weblink_createdby";
+				public const string MsppSystemuserMsppWeblinkModifiedby = "mspp_systemuser_mspp_weblink_modifiedby";
+				public const string MsppSystemuserMsppWeblinksetCreatedby = "mspp_systemuser_mspp_weblinkset_createdby";
+				public const string MsppSystemuserMsppWeblinksetModifiedby = "mspp_systemuser_mspp_weblinkset_modifiedby";
+				public const string MsppSystemuserMsppWebpageCreatedby = "mspp_systemuser_mspp_webpage_createdby";
+				public const string MsppSystemuserMsppWebpageModifiedby = "mspp_systemuser_mspp_webpage_modifiedby";
+				public const string MsppSystemuserMsppWebpageaccesscontrolruleCreatedby = "mspp_systemuser_mspp_webpageaccesscontrolrule_createdby";
+				public const string MsppSystemuserMsppWebpageaccesscontrolruleModifiedby = "mspp_systemuser_mspp_webpageaccesscontrolrule_modifiedby";
+				public const string MsppSystemuserMsppWebroleCreatedby = "mspp_systemuser_mspp_webrole_createdby";
+				public const string MsppSystemuserMsppWebroleModifiedby = "mspp_systemuser_mspp_webrole_modifiedby";
+				public const string MsppSystemuserMsppWebsiteCreatedby = "mspp_systemuser_mspp_website_createdby";
+				public const string MsppSystemuserMsppWebsiteModifiedby = "mspp_systemuser_mspp_website_modifiedby";
+				public const string MsppSystemuserMsppWebsiteaccessCreatedby = "mspp_systemuser_mspp_websiteaccess_createdby";
+				public const string MsppSystemuserMsppWebsiteaccessModifiedby = "mspp_systemuser_mspp_websiteaccess_modifiedby";
+				public const string MsppSystemuserMsppWebsitelanguageCreatedby = "mspp_systemuser_mspp_websitelanguage_createdby";
+				public const string MsppSystemuserMsppWebsitelanguageModifiedby = "mspp_systemuser_mspp_websitelanguage_modifiedby";
+				public const string MsppSystemuserMsppWebtemplateCreatedby = "mspp_systemuser_mspp_webtemplate_createdby";
+				public const string MsppSystemuserMsppWebtemplateModifiedby = "mspp_systemuser_mspp_webtemplate_modifiedby";
 				public const string MultientitysearchCreatedby = "multientitysearch_createdby";
 				public const string MultientitysearchCreatedonbehalfby = "multientitysearch_createdonbehalfby";
 				public const string MultientitysearchModifiedby = "multientitysearch_modifiedby";
@@ -10334,6 +12178,7 @@ namespace dgt.power.dataverse
 				public const string OwnerMappingSystemUser = "OwnerMapping_SystemUser";
 				public const string OwningUserDynamicpropertyinsatance = "OwningUser_Dynamicpropertyinsatance";
 				public const string QueuePrimaryUser = "queue_primary_user";
+				public const string SideloadedaipluginSideloadedpluginownerid = "sideloadedaiplugin_sideloadedpluginownerid";
 				public const string SocialProfileOwningUser = "socialProfile_owning_user";
 				public const string SupPrincipalidSystemuser = "sup_principalid_systemuser";
 				public const string SystemUserAccounts = "system_user_accounts";
@@ -10389,13 +12234,31 @@ namespace dgt.power.dataverse
 				public const string SystemuserbusinessunitentitymapSystemuseridSystemuser = "systemuserbusinessunitentitymap_systemuserid_systemuser";
 				public const string TeamsChatActivityLinkrecordSystemUser = "teams_chat_activity_linkrecord_systemUser";
 				public const string TeamsChatActivityUnlinkrecordSystemUser = "teams_chat_activity_unlinkrecord_systemUser";
+				public const string UiiToagentUiiSessiontransfer = "uii_toagent_uii_sessiontransfer";
 				public const string UserAccounts = "user_accounts";
 				public const string UserActivity = "user_activity";
 				public const string UserActivityfileattachment = "user_activityfileattachment";
 				public const string UserActivitymonitor = "user_activitymonitor";
 				public const string UserAdminsettingsentity = "user_adminsettingsentity";
+				public const string UserAdxInvitation = "user_adx_invitation";
+				public const string UserAdxSetting = "user_adx_setting";
+				public const string UserAiplugin = "user_aiplugin";
+				public const string UserAipluginauth = "user_aipluginauth";
+				public const string UserAipluginconversationstarter = "user_aipluginconversationstarter";
+				public const string UserAipluginconversationstartermapping = "user_aipluginconversationstartermapping";
+				public const string UserAipluginexternalschema = "user_aipluginexternalschema";
+				public const string UserAipluginexternalschemaproperty = "user_aipluginexternalschemaproperty";
+				public const string UserAiplugingovernance = "user_aiplugingovernance";
+				public const string UserAiplugingovernanceext = "user_aiplugingovernanceext";
+				public const string UserAiplugininstance = "user_aiplugininstance";
+				public const string UserAipluginoperation = "user_aipluginoperation";
+				public const string UserAipluginoperationparameter = "user_aipluginoperationparameter";
+				public const string UserAipluginoperationresponsetemplate = "user_aipluginoperationresponsetemplate";
+				public const string UserAipluginusersetting = "user_aipluginusersetting";
 				public const string UserAppnotification = "user_appnotification";
 				public const string UserAppointment = "user_appointment";
+				public const string UserArchivecleanupinfo = "user_archivecleanupinfo";
+				public const string UserArchivecleanupoperation = "user_archivecleanupoperation";
 				public const string UserBookableresource = "user_bookableresource";
 				public const string UserBookableresourcebooking = "user_bookableresourcebooking";
 				public const string UserBookableresourcebookingexchangesyncidmapping = "user_bookableresourcebookingexchangesyncidmapping";
@@ -10407,6 +12270,10 @@ namespace dgt.power.dataverse
 				public const string UserBookingstatus = "user_bookingstatus";
 				public const string UserBot = "user_bot";
 				public const string UserBotcomponent = "user_botcomponent";
+				public const string UserBotcomponentcollection = "user_botcomponentcollection";
+				public const string UserBulkarchiveconfig = "user_bulkarchiveconfig";
+				public const string UserBulkarchivefailuredetail = "user_bulkarchivefailuredetail";
+				public const string UserBulkarchiveoperation = "user_bulkarchiveoperation";
 				public const string UserBulkOperation = "user_BulkOperation";
 				public const string UserBulkoperationlog = "user_bulkoperationlog";
 				public const string UserCampaignactivity = "user_campaignactivity";
@@ -10416,32 +12283,33 @@ namespace dgt.power.dataverse
 				public const string UserChannelaccessprofile = "user_channelaccessprofile";
 				public const string UserCharacteristic = "user_characteristic";
 				public const string UserComment = "user_comment";
+				public const string UserComponentversion = "user_componentversion";
+				public const string UserConnectioninstance = "user_connectioninstance";
 				public const string UserConnectionreference = "user_connectionreference";
 				public const string UserConnector = "user_connector";
 				public const string UserContractdetail = "user_contractdetail";
 				public const string UserConversationtranscript = "user_conversationtranscript";
 				public const string UserConvertrule = "user_convertrule";
+				public const string UserCopilotglossaryterm = "user_copilotglossaryterm";
+				public const string UserCopilotsynonyms = "user_copilotsynonyms";
+				public const string UserCr072Booking = "user_cr072_booking";
+				public const string UserCredential = "user_credential";
 				public const string UserCustomapi = "user_customapi";
-				public const string UserCustomapirequestparameter = "user_customapirequestparameter";
-				public const string UserCustomapiresponseproperty = "user_customapiresponseproperty";
 				public const string UserCustomerOpportunityRoles = "user_customer_opportunity_roles";
 				public const string UserCustomerRelationship = "user_customer_relationship";
 				public const string UserDatalakefolder = "user_datalakefolder";
-				public const string UserDatalakefolderpermission = "user_datalakefolderpermission";
 				public const string UserDesktopflowbinary = "user_desktopflowbinary";
 				public const string UserDesktopflowmodule = "user_desktopflowmodule";
-				public const string UserEc4uAcquirelegalbasis = "user_ec4u_acquirelegalbasis";
-				public const string UserEc4uCarrier = "user_ec4u_carrier";
-				public const string UserEc4uCarrierDependencyCheck = "user_ec4u_carrier_dependency_check";
-				public const string UserEc4uCarrierMissingDependency = "user_ec4u_carrier_missing_dependency";
-				public const string UserEc4uGdprProtocol = "user_ec4u_gdpr_protocol";
-				public const string UserEc4uGdprProtocolDetail = "user_ec4u_gdpr_protocol_detail";
-				public const string UserEc4uGdprReport = "user_ec4u_gdpr_report";
-				public const string UserEc4uGdprRequest = "user_ec4u_gdpr_request";
-				public const string UserEc4uLegalbasis = "user_ec4u_legalbasis";
-				public const string UserEc4uWorkbench = "user_ec4u_workbench";
-				public const string UserEc4uWorkbenchHistory = "user_ec4u_workbench_history";
+				public const string UserDgtWorkbench = "user_dgt_workbench";
+				public const string UserDgtWorkbenchHistory = "user_dgt_workbench_history";
+				public const string UserDvfilesearch = "user_dvfilesearch";
+				public const string UserDvfilesearchattribute = "user_dvfilesearchattribute";
+				public const string UserDvfilesearchentity = "user_dvfilesearchentity";
+				public const string UserDvtablesearch = "user_dvtablesearch";
+				public const string UserDvtablesearchattribute = "user_dvtablesearchattribute";
+				public const string UserDvtablesearchentity = "user_dvtablesearchentity";
 				public const string UserEmail = "user_email";
+				public const string UserEnablearchivalrequest = "user_enablearchivalrequest";
 				public const string UserEntitlement = "user_entitlement";
 				public const string UserEntitlementchannel = "user_entitlementchannel";
 				public const string UserEntitlemententityallocationtypemapping = "user_entitlemententityallocationtypemapping";
@@ -10451,14 +12319,22 @@ namespace dgt.power.dataverse
 				public const string UserExportedexcel = "user_exportedexcel";
 				public const string UserExportsolutionupload = "user_exportsolutionupload";
 				public const string UserExternalparty = "user_externalparty";
+				public const string UserFabricaiskill = "user_fabricaiskill";
 				public const string UserFax = "user_fax";
 				public const string UserFeaturecontrolsetting = "user_featurecontrolsetting";
+				public const string UserFederatedknowledgeconfiguration = "user_federatedknowledgeconfiguration";
+				public const string UserFederatedknowledgeentityconfiguration = "user_federatedknowledgeentityconfiguration";
+				public const string UserFlowcapacityassignment = "user_flowcapacityassignment";
+				public const string UserFlowcredentialapplication = "user_flowcredentialapplication";
+				public const string UserFlowevent = "user_flowevent";
 				public const string UserFlowmachine = "user_flowmachine";
 				public const string UserFlowmachinegroup = "user_flowmachinegroup";
 				public const string UserFlowmachineimage = "user_flowmachineimage";
 				public const string UserFlowmachineimageversion = "user_flowmachineimageversion";
 				public const string UserFlowmachinenetwork = "user_flowmachinenetwork";
+				public const string UserFlowrun = "user_flowrun";
 				public const string UserFlowsession = "user_flowsession";
+				public const string UserFxexpression = "user_fxexpression";
 				public const string UserGoal = "user_goal";
 				public const string UserGoalGoalowner = "user_goal_goalowner";
 				public const string UserIncidentresolution = "user_incidentresolution";
@@ -10472,12 +12348,31 @@ namespace dgt.power.dataverse
 				public const string UserListoperation = "user_listoperation";
 				public const string UserMailbox = "user_mailbox";
 				public const string UserManagedidentity = "user_managedidentity";
+				public const string UserMsdynAccountpricelist = "user_msdyn_accountpricelist";
+				public const string UserMsdynActioncardactionstat = "user_msdyn_actioncardactionstat";
 				public const string UserMsdynActioncardregarding = "user_msdyn_actioncardregarding";
 				public const string UserMsdynActioncardrolesetting = "user_msdyn_actioncardrolesetting";
+				public const string UserMsdynActioncardstataggregation = "user_msdyn_actioncardstataggregation";
+				public const string UserMsdynActiveicdextension = "user_msdyn_activeicdextension";
+				public const string UserMsdynActual = "user_msdyn_actual";
 				public const string UserMsdynAdminappstate = "user_msdyn_adminappstate";
+				public const string UserMsdynAgentcapacityprofileunit = "user_msdyn_agentcapacityprofileunit";
 				public const string UserMsdynAgentcapacityupdatehistory = "user_msdyn_agentcapacityupdatehistory";
 				public const string UserMsdynAgentcapacityupdatehistoryAgentid = "user_msdyn_agentcapacityupdatehistory_agentid";
+				public const string UserMsdynAgentchannelstate = "user_msdyn_agentchannelstate";
+				public const string UserMsdynAgentstatus = "user_msdyn_agentstatus";
 				public const string UserMsdynAgentstatushistory = "user_msdyn_agentstatushistory";
+				public const string UserMsdynAgreement = "user_msdyn_agreement";
+				public const string UserMsdynAgreementbookingdate = "user_msdyn_agreementbookingdate";
+				public const string UserMsdynAgreementbookingincident = "user_msdyn_agreementbookingincident";
+				public const string UserMsdynAgreementbookingproduct = "user_msdyn_agreementbookingproduct";
+				public const string UserMsdynAgreementbookingservice = "user_msdyn_agreementbookingservice";
+				public const string UserMsdynAgreementbookingservicetask = "user_msdyn_agreementbookingservicetask";
+				public const string UserMsdynAgreementbookingsetup = "user_msdyn_agreementbookingsetup";
+				public const string UserMsdynAgreementinvoicedate = "user_msdyn_agreementinvoicedate";
+				public const string UserMsdynAgreementinvoiceproduct = "user_msdyn_agreementinvoiceproduct";
+				public const string UserMsdynAgreementinvoicesetup = "user_msdyn_agreementinvoicesetup";
+				public const string UserMsdynAgreementsubstatus = "user_msdyn_agreementsubstatus";
 				public const string UserMsdynAibdataset = "user_msdyn_aibdataset";
 				public const string UserMsdynAibdatasetfile = "user_msdyn_aibdatasetfile";
 				public const string UserMsdynAibdatasetrecord = "user_msdyn_aibdatasetrecord";
@@ -10486,6 +12381,7 @@ namespace dgt.power.dataverse
 				public const string UserMsdynAibfile = "user_msdyn_aibfile";
 				public const string UserMsdynAibfileattacheddata = "user_msdyn_aibfileattacheddata";
 				public const string UserMsdynAicontactsuggestion = "user_msdyn_aicontactsuggestion";
+				public const string UserMsdynAievent = "user_msdyn_aievent";
 				public const string UserMsdynAifptrainingdocument = "user_msdyn_aifptrainingdocument";
 				public const string UserMsdynAimodel = "user_msdyn_aimodel";
 				public const string UserMsdynAiodimage = "user_msdyn_aiodimage";
@@ -10495,6 +12391,7 @@ namespace dgt.power.dataverse
 				public const string UserMsdynAitemplate = "user_msdyn_aitemplate";
 				public const string UserMsdynAnalysiscomponent = "user_msdyn_analysiscomponent";
 				public const string UserMsdynAnalysisjob = "user_msdyn_analysisjob";
+				public const string UserMsdynAnalysisoverride = "user_msdyn_analysisoverride";
 				public const string UserMsdynAnalysisresult = "user_msdyn_analysisresult";
 				public const string UserMsdynAnalysisresultdetail = "user_msdyn_analysisresultdetail";
 				public const string UserMsdynAnalytics = "user_msdyn_analytics";
@@ -10504,6 +12401,8 @@ namespace dgt.power.dataverse
 				public const string UserMsdynApplicationextension = "user_msdyn_applicationextension";
 				public const string UserMsdynApplicationtabtemplate = "user_msdyn_applicationtabtemplate";
 				public const string UserMsdynAppprofilerolemapping = "user_msdyn_appprofilerolemapping";
+				public const string UserMsdynApprovalset = "user_msdyn_approvalset";
+				public const string UserMsdynAppstate = "user_msdyn_appstate";
 				public const string UserMsdynAssetcategorytemplateassociation = "user_msdyn_assetcategorytemplateassociation";
 				public const string UserMsdynAssettemplateassociation = "user_msdyn_assettemplateassociation";
 				public const string UserMsdynAssignmentconfiguration = "user_msdyn_assignmentconfiguration";
@@ -10516,34 +12415,77 @@ namespace dgt.power.dataverse
 				public const string UserMsdynAuthsettingsentry = "user_msdyn_authsettingsentry";
 				public const string UserMsdynAutocapturerule = "user_msdyn_autocapturerule";
 				public const string UserMsdynAutocapturesettings = "user_msdyn_autocapturesettings";
+				public const string UserMsdynAutonomouscasecreationrule = "user_msdyn_autonomouscasecreationrule";
+				public const string UserMsdynBgjobledger = "user_msdyn_bgjobledger";
+				public const string UserMsdynBookableresourceassociation = "user_msdyn_bookableresourceassociation";
+				public const string UserMsdynBookableresourcebookingquicknote = "user_msdyn_bookableresourcebookingquicknote";
 				public const string UserMsdynBookableresourcecapacityprofile = "user_msdyn_bookableresourcecapacityprofile";
+				public const string UserMsdynBookingalertstatus = "user_msdyn_bookingalertstatus";
+				public const string UserMsdynBookingchange = "user_msdyn_bookingchange";
+				public const string UserMsdynBookingjournal = "user_msdyn_bookingjournal";
+				public const string UserMsdynBookingrule = "user_msdyn_bookingrule";
+				public const string UserMsdynBookingsetupmetadata = "user_msdyn_bookingsetupmetadata";
+				public const string UserMsdynBookingtimestamp = "user_msdyn_bookingtimestamp";
+				public const string UserMsdynBotsession = "user_msdyn_botsession";
+				public const string UserMsdynBusinessclosure = "user_msdyn_businessclosure";
 				public const string UserMsdynCallablecontext = "user_msdyn_callablecontext";
 				public const string UserMsdynCapacityprofile = "user_msdyn_capacityprofile";
 				public const string UserMsdynCdsentityengagementctx = "user_msdyn_cdsentityengagementctx";
+				public const string UserMsdynChannel = "user_msdyn_channel";
 				public const string UserMsdynChanneldefinition = "user_msdyn_channeldefinition";
 				public const string UserMsdynChanneldefinitionconsent = "user_msdyn_channeldefinitionconsent";
 				public const string UserMsdynChanneldefinitionlocale = "user_msdyn_channeldefinitionlocale";
 				public const string UserMsdynChannelinstance = "user_msdyn_channelinstance";
 				public const string UserMsdynChannelinstanceaccount = "user_msdyn_channelinstanceaccount";
+				public const string UserMsdynChannelmessageattachment = "user_msdyn_channelmessageattachment";
+				public const string UserMsdynChannelmessagecontextpart = "user_msdyn_channelmessagecontextpart";
 				public const string UserMsdynChannelmessagepart = "user_msdyn_channelmessagepart";
 				public const string UserMsdynChannelprovider = "user_msdyn_channelprovider";
+				public const string UserMsdynCharacteristicreqforteammember = "user_msdyn_characteristicreqforteammember";
+				public const string UserMsdynChatansweroption = "user_msdyn_chatansweroption";
+				public const string UserMsdynChatquestionnaireresponse = "user_msdyn_chatquestionnaireresponse";
+				public const string UserMsdynChatquestionnaireresponseitem = "user_msdyn_chatquestionnaireresponseitem";
+				public const string UserMsdynChatwidgetlanguage = "user_msdyn_chatwidgetlanguage";
+				public const string UserMsdynClientextension = "user_msdyn_clientextension";
+				public const string UserMsdynConfiguration = "user_msdyn_configuration";
 				public const string UserMsdynConsoleapplicationnotificationfield = "user_msdyn_consoleapplicationnotificationfield";
 				public const string UserMsdynConsoleapplicationnotificationtemplate = "user_msdyn_consoleapplicationnotificationtemplate";
 				public const string UserMsdynConsoleapplicationsessiontemplate = "user_msdyn_consoleapplicationsessiontemplate";
 				public const string UserMsdynConsoleapplicationtemplate = "user_msdyn_consoleapplicationtemplate";
 				public const string UserMsdynConsoleapplicationtemplateparameter = "user_msdyn_consoleapplicationtemplateparameter";
 				public const string UserMsdynConsumingapplication = "user_msdyn_consumingapplication";
+				public const string UserMsdynContactpricelist = "user_msdyn_contactpricelist";
 				public const string UserMsdynContactsuggestionrule = "user_msdyn_contactsuggestionrule";
 				public const string UserMsdynContactsuggestionruleset = "user_msdyn_contactsuggestionruleset";
+				public const string UserMsdynContractlinedetailperformance = "user_msdyn_contractlinedetailperformance";
+				public const string UserMsdynContractlinescheduleofvalue = "user_msdyn_contractlinescheduleofvalue";
+				public const string UserMsdynContractperformance = "user_msdyn_contractperformance";
 				public const string UserMsdynConversationaction = "user_msdyn_conversationaction";
+				public const string UserMsdynConversationactionitem = "user_msdyn_conversationactionitem";
 				public const string UserMsdynConversationactionlocale = "user_msdyn_conversationactionlocale";
+				public const string UserMsdynConversationaggregatedinsights = "user_msdyn_conversationaggregatedinsights";
+				public const string UserMsdynConversationcomment = "user_msdyn_conversationcomment";
 				public const string UserMsdynConversationdata = "user_msdyn_conversationdata";
 				public const string UserMsdynConversationinsight = "user_msdyn_conversationinsight";
 				public const string UserMsdynConversationmessageblock = "user_msdyn_conversationmessageblock";
+				public const string UserMsdynConversationparticipantinsights = "user_msdyn_conversationparticipantinsights";
+				public const string UserMsdynConversationparticipantsentiment = "user_msdyn_conversationparticipantsentiment";
+				public const string UserMsdynConversationquestion = "user_msdyn_conversationquestion";
+				public const string UserMsdynConversationsegmentsentiment = "user_msdyn_conversationsegmentsentiment";
+				public const string UserMsdynConversationsentiment = "user_msdyn_conversationsentiment";
+				public const string UserMsdynConversationsignal = "user_msdyn_conversationsignal";
+				public const string UserMsdynConversationsubject = "user_msdyn_conversationsubject";
+				public const string UserMsdynConversationsummarysuggestion = "user_msdyn_conversationsummarysuggestion";
+				public const string UserMsdynConversationsystemtag = "user_msdyn_conversationsystemtag";
+				public const string UserMsdynConversationtag = "user_msdyn_conversationtag";
+				public const string UserMsdynCopilotagentpreference = "user_msdyn_copilotagentpreference";
+				public const string UserMsdynCopilotinteractiondata = "user_msdyn_copilotinteractiondata";
+				public const string UserMsdynCopilottranscriptdata = "user_msdyn_copilottranscriptdata";
 				public const string UserMsdynCrmconnection = "user_msdyn_crmconnection";
 				public const string UserMsdynCsadminconfig = "user_msdyn_csadminconfig";
 				public const string UserMsdynCustomapirulesetconfiguration = "user_msdyn_customapirulesetconfiguration";
 				public const string UserMsdynCustomcontrolextendedsettings = "user_msdyn_customcontrolextendedsettings";
+				public const string UserMsdynCustomengagementctx = "user_msdyn_customengagementctx";
 				public const string UserMsdynCustomerasset = "user_msdyn_customerasset";
 				public const string UserMsdynCustomerassetattachment = "user_msdyn_customerassetattachment";
 				public const string UserMsdynCustomerassetcategory = "user_msdyn_customerassetcategory";
@@ -10551,36 +12493,91 @@ namespace dgt.power.dataverse
 				public const string UserMsdynDataanalyticsdataset = "user_msdyn_dataanalyticsdataset";
 				public const string UserMsdynDataanalyticsreport = "user_msdyn_dataanalyticsreport";
 				public const string UserMsdynDataanalyticsworkspace = "user_msdyn_dataanalyticsworkspace";
+				public const string UserMsdynDataexport = "user_msdyn_dataexport";
 				public const string UserMsdynDataflow = "user_msdyn_dataflow";
+				public const string UserMsdynDataflowDatalakefolder = "user_msdyn_dataflow_datalakefolder";
+				public const string UserMsdynDataflowconnectionreference = "user_msdyn_dataflowconnectionreference";
 				public const string UserMsdynDataflowrefreshhistory = "user_msdyn_dataflowrefreshhistory";
+				public const string UserMsdynDataflowtemplate = "user_msdyn_dataflowtemplate";
 				public const string UserMsdynDealmanageraccess = "user_msdyn_dealmanageraccess";
 				public const string UserMsdynDealmanagersettings = "user_msdyn_dealmanagersettings";
 				public const string UserMsdynDecisioncontract = "user_msdyn_decisioncontract";
 				public const string UserMsdynDecisionruleset = "user_msdyn_decisionruleset";
 				public const string UserMsdynDefextendedchannelinstance = "user_msdyn_defextendedchannelinstance";
 				public const string UserMsdynDefextendedchannelinstanceaccount = "user_msdyn_defextendedchannelinstanceaccount";
+				public const string UserMsdynDelegation = "user_msdyn_delegation";
 				public const string UserMsdynDeletedconversation = "user_msdyn_deletedconversation";
+				public const string UserMsdynDimension = "user_msdyn_dimension";
+				public const string UserMsdynDmsrequest = "user_msdyn_dmsrequest";
+				public const string UserMsdynDmsrequeststatus = "user_msdyn_dmsrequeststatus";
+				public const string UserMsdynDmssyncrequest = "user_msdyn_dmssyncrequest";
+				public const string UserMsdynDmssyncstatus = "user_msdyn_dmssyncstatus";
 				public const string UserMsdynDuplicateleadmapping = "user_msdyn_duplicateleadmapping";
 				public const string UserMsdynEffortpredictionresult = "user_msdyn_effortpredictionresult";
+				public const string UserMsdynEntitlementapplication = "user_msdyn_entitlementapplication";
+				public const string UserMsdynEntityattachment = "user_msdyn_entityattachment";
 				public const string UserMsdynEntityconfig = "user_msdyn_entityconfig";
+				public const string UserMsdynEntityconfiguration = "user_msdyn_entityconfiguration";
 				public const string UserMsdynEntitylinkchatconfiguration = "user_msdyn_entitylinkchatconfiguration";
 				public const string UserMsdynEntityrankingrule = "user_msdyn_entityrankingrule";
 				public const string UserMsdynEntityrefreshhistory = "user_msdyn_entityrefreshhistory";
 				public const string UserMsdynEntityroutingconfiguration = "user_msdyn_entityroutingconfiguration";
+				public const string UserMsdynEntityworkstreammap = "user_msdyn_entityworkstreammap";
+				public const string UserMsdynEstimate = "user_msdyn_estimate";
+				public const string UserMsdynEstimateline = "user_msdyn_estimateline";
+				public const string UserMsdynExpense = "user_msdyn_expense";
+				public const string UserMsdynExpensereceipt = "user_msdyn_expensereceipt";
 				public const string UserMsdynExtendedusersetting = "user_msdyn_extendedusersetting";
+				public const string UserMsdynFacebookengagementctx = "user_msdyn_facebookengagementctx";
+				public const string UserMsdynFact = "user_msdyn_fact";
 				public const string UserMsdynFavoriteknowledgearticle = "user_msdyn_favoriteknowledgearticle";
 				public const string UserMsdynFederatedarticle = "user_msdyn_federatedarticle";
+				public const string UserMsdynFieldcomputation = "user_msdyn_fieldcomputation";
+				public const string UserMsdynFieldservicesetting = "user_msdyn_fieldservicesetting";
+				public const string UserMsdynFieldserviceslaconfiguration = "user_msdyn_fieldserviceslaconfiguration";
+				public const string UserMsdynFileupload = "user_msdyn_fileupload";
+				public const string UserMsdynFindworkevent = "user_msdyn_findworkevent";
 				public const string UserMsdynFlowcardtype = "user_msdyn_flowcardtype";
 				public const string UserMsdynForecastconfiguration = "user_msdyn_forecastconfiguration";
 				public const string UserMsdynForecastdefinition = "user_msdyn_forecastdefinition";
 				public const string UserMsdynForecastinstance = "user_msdyn_forecastinstance";
 				public const string UserMsdynForecastrecurrence = "user_msdyn_forecastrecurrence";
+				public const string UserMsdynFormmapping = "user_msdyn_formmapping";
 				public const string UserMsdynFunctionallocation = "user_msdyn_functionallocation";
+				public const string UserMsdynFunctionallocationtype = "user_msdyn_functionallocationtype";
 				public const string UserMsdynGdprdata = "user_msdyn_gdprdata";
+				public const string UserMsdynGeofence = "user_msdyn_geofence";
+				public const string UserMsdynGeofenceevent = "user_msdyn_geofenceevent";
+				public const string UserMsdynGeofencingsettings = "user_msdyn_geofencingsettings";
+				public const string UserMsdynIcdextension = "user_msdyn_icdextension";
 				public const string UserMsdynIcebreakersconfig = "user_msdyn_icebreakersconfig";
 				public const string UserMsdynIermlmodel = "user_msdyn_iermlmodel";
 				public const string UserMsdynIermltraining = "user_msdyn_iermltraining";
+				public const string UserMsdynIncidenttype = "user_msdyn_incidenttype";
+				public const string UserMsdynIncidenttypeRequirementgroup = "user_msdyn_incidenttype_requirementgroup";
+				public const string UserMsdynIncidenttypecharacteristic = "user_msdyn_incidenttypecharacteristic";
+				public const string UserMsdynIncidenttypeproduct = "user_msdyn_incidenttypeproduct";
+				public const string UserMsdynIncidenttyperecommendationresult = "user_msdyn_incidenttyperecommendationresult";
+				public const string UserMsdynIncidenttyperecommendationrunhistory = "user_msdyn_incidenttyperecommendationrunhistory";
+				public const string UserMsdynIncidenttyperesolution = "user_msdyn_incidenttyperesolution";
+				public const string UserMsdynIncidenttypeservice = "user_msdyn_incidenttypeservice";
+				public const string UserMsdynIncidenttypeservicetask = "user_msdyn_incidenttypeservicetask";
+				public const string UserMsdynIncidenttypessetup = "user_msdyn_incidenttypessetup";
+				public const string UserMsdynInspection = "user_msdyn_inspection";
+				public const string UserMsdynInspectionattachment = "user_msdyn_inspectionattachment";
+				public const string UserMsdynInspectiondefinition = "user_msdyn_inspectiondefinition";
+				public const string UserMsdynInspectioninstance = "user_msdyn_inspectioninstance";
+				public const string UserMsdynInspectionresponse = "user_msdyn_inspectionresponse";
+				public const string UserMsdynInsurance = "user_msdyn_insurance";
 				public const string UserMsdynIntegratedsearchprovider = "user_msdyn_integratedsearchprovider";
+				public const string UserMsdynIntegrationjob = "user_msdyn_integrationjob";
+				public const string UserMsdynIntegrationjobdetail = "user_msdyn_integrationjobdetail";
+				public const string UserMsdynIntent = "user_msdyn_intent";
+				public const string UserMsdynInventoryadjustment = "user_msdyn_inventoryadjustment";
+				public const string UserMsdynInventoryadjustmentproduct = "user_msdyn_inventoryadjustmentproduct";
+				public const string UserMsdynInventoryjournal = "user_msdyn_inventoryjournal";
+				public const string UserMsdynInventorytransfer = "user_msdyn_inventorytransfer";
+				public const string UserMsdynInvoicelinetransaction = "user_msdyn_invoicelinetransaction";
 				public const string UserMsdynIotalert = "user_msdyn_iotalert";
 				public const string UserMsdynIotdevice = "user_msdyn_iotdevice";
 				public const string UserMsdynIotdevicecategory = "user_msdyn_iotdevicecategory";
@@ -10595,11 +12592,15 @@ namespace dgt.power.dataverse
 				public const string UserMsdynIotprovider = "user_msdyn_iotprovider";
 				public const string UserMsdynIotproviderinstance = "user_msdyn_iotproviderinstance";
 				public const string UserMsdynIotsettings = "user_msdyn_iotsettings";
+				public const string UserMsdynJobsstate = "user_msdyn_jobsstate";
+				public const string UserMsdynJournal = "user_msdyn_journal";
+				public const string UserMsdynJournalline = "user_msdyn_journalline";
 				public const string UserMsdynKalanguagesetting = "user_msdyn_kalanguagesetting";
 				public const string UserMsdynKbattachment = "user_msdyn_kbattachment";
 				public const string UserMsdynKmfederatedsearchconfig = "user_msdyn_kmfederatedsearchconfig";
 				public const string UserMsdynKnowledgearticleimage = "user_msdyn_knowledgearticleimage";
 				public const string UserMsdynKnowledgearticletemplate = "user_msdyn_knowledgearticletemplate";
+				public const string UserMsdynKnowledgeassetconfiguration = "user_msdyn_knowledgeassetconfiguration";
 				public const string UserMsdynKnowledgeinteractioninsight = "user_msdyn_knowledgeinteractioninsight";
 				public const string UserMsdynKnowledgemanagementsetting = "user_msdyn_knowledgemanagementsetting";
 				public const string UserMsdynKnowledgepersonalfilter = "user_msdyn_knowledgepersonalfilter";
@@ -10608,35 +12609,61 @@ namespace dgt.power.dataverse
 				public const string UserMsdynKpieventdata = "user_msdyn_kpieventdata";
 				public const string UserMsdynKpieventdefinition = "user_msdyn_kpieventdefinition";
 				public const string UserMsdynLeadmodelconfig = "user_msdyn_leadmodelconfig";
+				public const string UserMsdynLineengagementctx = "user_msdyn_lineengagementctx";
+				public const string UserMsdynLivechatconfig = "user_msdyn_livechatconfig";
+				public const string UserMsdynLivechatengagementctx = "user_msdyn_livechatengagementctx";
+				public const string UserMsdynLivechatwidgetlocation = "user_msdyn_livechatwidgetlocation";
 				public const string UserMsdynLiveconversation = "user_msdyn_liveconversation";
 				public const string UserMsdynLiveworkitemevent = "user_msdyn_liveworkitemevent";
 				public const string UserMsdynLiveworkstream = "user_msdyn_liveworkstream";
 				public const string UserMsdynLiveworkstreamcapacityprofile = "user_msdyn_liveworkstreamcapacityprofile";
+				public const string UserMsdynLocationtemplateassociation = "user_msdyn_locationtemplateassociation";
+				public const string UserMsdynLocationtypetemplateassociation = "user_msdyn_locationtypetemplateassociation";
+				public const string UserMsdynLockstatus = "user_msdyn_lockstatus";
 				public const string UserMsdynMacrosession = "user_msdyn_macrosession";
 				public const string UserMsdynMasterentityroutingconfiguration = "user_msdyn_masterentityroutingconfiguration";
 				public const string UserMsdynMigrationtracker = "user_msdyn_migrationtracker";
+				public const string UserMsdynMobileapp = "user_msdyn_mobileapp";
+				public const string UserMsdynMobilesource = "user_msdyn_mobilesource";
 				public const string UserMsdynModelpreviewstatus = "user_msdyn_modelpreviewstatus";
 				public const string UserMsdynMsteamssetting = "user_msdyn_msteamssetting";
 				public const string UserMsdynNotesanalysisconfig = "user_msdyn_notesanalysisconfig";
 				public const string UserMsdynNotificationfield = "user_msdyn_notificationfield";
 				public const string UserMsdynNotificationtemplate = "user_msdyn_notificationtemplate";
+				public const string UserMsdynNottoexceed = "user_msdyn_nottoexceed";
 				public const string UserMsdynOcGeolocationprovider = "user_msdyn_oc_geolocationprovider";
+				public const string UserMsdynOcagentassignedcustomapiprivilege = "user_msdyn_ocagentassignedcustomapiprivilege";
+				public const string UserMsdynOcapplebusinessaccount = "user_msdyn_ocapplebusinessaccount";
+				public const string UserMsdynOcapplemessagesforbusinessengagementctx = "user_msdyn_ocapplemessagesforbusinessengagementctx";
+				public const string UserMsdynOcapplepay = "user_msdyn_ocapplepay";
 				public const string UserMsdynOcautoblockrule = "user_msdyn_ocautoblockrule";
 				public const string UserMsdynOcbotchannelregistration = "user_msdyn_ocbotchannelregistration";
 				public const string UserMsdynOcbotchannelregistrationsecret = "user_msdyn_ocbotchannelregistrationsecret";
+				public const string UserMsdynOccarrier = "user_msdyn_occarrier";
 				public const string UserMsdynOcchannelapiconversationprivilege = "user_msdyn_occhannelapiconversationprivilege";
 				public const string UserMsdynOcchannelapimessageprivilege = "user_msdyn_occhannelapimessageprivilege";
 				public const string UserMsdynOcchannelapimethodmapping = "user_msdyn_occhannelapimethodmapping";
+				public const string UserMsdynOccommunicationprovidersetting = "user_msdyn_occommunicationprovidersetting";
+				public const string UserMsdynOccommunicationprovidersettingentry = "user_msdyn_occommunicationprovidersettingentry";
+				public const string UserMsdynOccustommessagingchannel = "user_msdyn_occustommessagingchannel";
 				public const string UserMsdynOcexternalcontext = "user_msdyn_ocexternalcontext";
+				public const string UserMsdynOcfbapplication = "user_msdyn_ocfbapplication";
+				public const string UserMsdynOcfbpage = "user_msdyn_ocfbpage";
 				public const string UserMsdynOcflaggedspam = "user_msdyn_ocflaggedspam";
+				public const string UserMsdynOcgooglebusinessmessagesagentaccount = "user_msdyn_ocgooglebusinessmessagesagentaccount";
+				public const string UserMsdynOcgooglebusinessmessagesengagementctx = "user_msdyn_ocgooglebusinessmessagesengagementctx";
+				public const string UserMsdynOcgooglebusinessmessagespartneraccount = "user_msdyn_ocgooglebusinessmessagespartneraccount";
 				public const string UserMsdynOclanguage = "user_msdyn_oclanguage";
+				public const string UserMsdynOclinechannelconfig = "user_msdyn_oclinechannelconfig";
 				public const string UserMsdynOcliveworkitemcapacityprofile = "user_msdyn_ocliveworkitemcapacityprofile";
 				public const string UserMsdynOcliveworkitemcharacteristic = "user_msdyn_ocliveworkitemcharacteristic";
 				public const string UserMsdynOcliveworkitemcontextitem = "user_msdyn_ocliveworkitemcontextitem";
 				public const string UserMsdynOcliveworkitemparticipant = "user_msdyn_ocliveworkitemparticipant";
 				public const string UserMsdynOcliveworkitemsentiment = "user_msdyn_ocliveworkitemsentiment";
 				public const string UserMsdynOcliveworkstreamcontextvariable = "user_msdyn_ocliveworkstreamcontextvariable";
+				public const string UserMsdynOcoutboundconfiguration = "user_msdyn_ocoutboundconfiguration";
 				public const string UserMsdynOcpaymentprofile = "user_msdyn_ocpaymentprofile";
+				public const string UserMsdynOcphonenumber = "user_msdyn_ocphonenumber";
 				public const string UserMsdynOcprovisioningstate = "user_msdyn_ocprovisioningstate";
 				public const string UserMsdynOcrecording = "user_msdyn_ocrecording";
 				public const string UserMsdynOcrequest = "user_msdyn_ocrequest";
@@ -10654,12 +12681,40 @@ namespace dgt.power.dataverse
 				public const string UserMsdynOcsitdskill = "user_msdyn_ocsitdskill";
 				public const string UserMsdynOcsitrainingdata = "user_msdyn_ocsitrainingdata";
 				public const string UserMsdynOcskillidentmlmodel = "user_msdyn_ocskillidentmlmodel";
+				public const string UserMsdynOcsmssettingsecret = "user_msdyn_ocsmssettingsecret";
+				public const string UserMsdynOcteamschannelconfig = "user_msdyn_octeamschannelconfig";
+				public const string UserMsdynOctwitterapplication = "user_msdyn_octwitterapplication";
+				public const string UserMsdynOctwitterhandle = "user_msdyn_octwitterhandle";
+				public const string UserMsdynOctwitterhandleprovisioningstatus = "user_msdyn_octwitterhandleprovisioningstatus";
+				public const string UserMsdynOctwitterhandlesecret = "user_msdyn_octwitterhandlesecret";
+				public const string UserMsdynOcwechatchannelconfig = "user_msdyn_ocwechatchannelconfig";
+				public const string UserMsdynOcwhatsappchannelaccount = "user_msdyn_ocwhatsappchannelaccount";
+				public const string UserMsdynOcwhatsappchannelnumber = "user_msdyn_ocwhatsappchannelnumber";
 				public const string UserMsdynOmnichannelpersonalization = "user_msdyn_omnichannelpersonalization";
 				public const string UserMsdynOmnichannelqueue = "user_msdyn_omnichannelqueue";
 				public const string UserMsdynOmnichannelsyncconfig = "user_msdyn_omnichannelsyncconfig";
 				public const string UserMsdynOperatinghour = "user_msdyn_operatinghour";
+				public const string UserMsdynOpportunitylineresourcecategory = "user_msdyn_opportunitylineresourcecategory";
+				public const string UserMsdynOpportunitylinetransaction = "user_msdyn_opportunitylinetransaction";
+				public const string UserMsdynOpportunitylinetransactioncategory = "user_msdyn_opportunitylinetransactioncategory";
+				public const string UserMsdynOpportunitylinetransactionclassificatio = "user_msdyn_opportunitylinetransactionclassificatio";
 				public const string UserMsdynOpportunitymodelconfig = "user_msdyn_opportunitymodelconfig";
+				public const string UserMsdynOpportunitypricelist = "user_msdyn_opportunitypricelist";
+				public const string UserMsdynOrderinvoicingdate = "user_msdyn_orderinvoicingdate";
+				public const string UserMsdynOrderinvoicingproduct = "user_msdyn_orderinvoicingproduct";
+				public const string UserMsdynOrderinvoicingsetup = "user_msdyn_orderinvoicingsetup";
+				public const string UserMsdynOrderinvoicingsetupdate = "user_msdyn_orderinvoicingsetupdate";
+				public const string UserMsdynOrderlineresourcecategory = "user_msdyn_orderlineresourcecategory";
+				public const string UserMsdynOrderlinetransaction = "user_msdyn_orderlinetransaction";
+				public const string UserMsdynOrderlinetransactioncategory = "user_msdyn_orderlinetransactioncategory";
+				public const string UserMsdynOrderlinetransactionclassification = "user_msdyn_orderlinetransactionclassification";
+				public const string UserMsdynOrderpricelist = "user_msdyn_orderpricelist";
+				public const string UserMsdynOrgchartnode = "user_msdyn_orgchartnode";
 				public const string UserMsdynOverflowactionconfig = "user_msdyn_overflowactionconfig";
+				public const string UserMsdynPayment = "user_msdyn_payment";
+				public const string UserMsdynPaymentdetail = "user_msdyn_paymentdetail";
+				public const string UserMsdynPaymentmethod = "user_msdyn_paymentmethod";
+				public const string UserMsdynPaymentterm = "user_msdyn_paymentterm";
 				public const string UserMsdynPersonalmessage = "user_msdyn_personalmessage";
 				public const string UserMsdynPersonalsoundsetting = "user_msdyn_personalsoundsetting";
 				public const string UserMsdynPlaybookactivity = "user_msdyn_playbookactivity";
@@ -10668,6 +12723,7 @@ namespace dgt.power.dataverse
 				public const string UserMsdynPlaybookinstance = "user_msdyn_playbookinstance";
 				public const string UserMsdynPlaybooktemplate = "user_msdyn_playbooktemplate";
 				public const string UserMsdynPmanalysishistory = "user_msdyn_pmanalysishistory";
+				public const string UserMsdynPmbusinessruleautomationconfig = "user_msdyn_pmbusinessruleautomationconfig";
 				public const string UserMsdynPmcalendar = "user_msdyn_pmcalendar";
 				public const string UserMsdynPmcalendarversion = "user_msdyn_pmcalendarversion";
 				public const string UserMsdynPminferredtask = "user_msdyn_pminferredtask";
@@ -10676,12 +12732,21 @@ namespace dgt.power.dataverse
 				public const string UserMsdynPmprocessusersettings = "user_msdyn_pmprocessusersettings";
 				public const string UserMsdynPmprocessversion = "user_msdyn_pmprocessversion";
 				public const string UserMsdynPmrecording = "user_msdyn_pmrecording";
+				public const string UserMsdynPmsimulation = "user_msdyn_pmsimulation";
 				public const string UserMsdynPmtemplate = "user_msdyn_pmtemplate";
 				public const string UserMsdynPmview = "user_msdyn_pmview";
 				public const string UserMsdynPostalbum = "user_msdyn_postalbum";
+				public const string UserMsdynPostalcode = "user_msdyn_postalcode";
+				public const string UserMsdynPredictioncomputationoperation = "user_msdyn_predictioncomputationoperation";
+				public const string UserMsdynPredictionmodelstatus = "user_msdyn_predictionmodelstatus";
+				public const string UserMsdynPredictionscheduledoperation = "user_msdyn_predictionscheduledoperation";
+				public const string UserMsdynPredictivescoringsyncstatus = "user_msdyn_predictivescoringsyncstatus";
 				public const string UserMsdynPreferredagent = "user_msdyn_preferredagent";
 				public const string UserMsdynPreferredagentcustomeridentity = "user_msdyn_preferredagentcustomeridentity";
 				public const string UserMsdynPreferredagentroutedentity = "user_msdyn_preferredagentroutedentity";
+				public const string UserMsdynPriority = "user_msdyn_priority";
+				public const string UserMsdynProblematicasset = "user_msdyn_problematicasset";
+				public const string UserMsdynProblematicassetfeedback = "user_msdyn_problematicassetfeedback";
 				public const string UserMsdynProductivityactioninputparameter = "user_msdyn_productivityactioninputparameter";
 				public const string UserMsdynProductivityactionoutputparameter = "user_msdyn_productivityactionoutputparameter";
 				public const string UserMsdynProductivityagentscript = "user_msdyn_productivityagentscript";
@@ -10690,25 +12755,96 @@ namespace dgt.power.dataverse
 				public const string UserMsdynProductivitymacroconnector = "user_msdyn_productivitymacroconnector";
 				public const string UserMsdynProductivitymacrosolutionconfiguration = "user_msdyn_productivitymacrosolutionconfiguration";
 				public const string UserMsdynProductivityparameterdefinition = "user_msdyn_productivityparameterdefinition";
+				public const string UserMsdynProject = "user_msdyn_project";
+				public const string UserMsdynProjectapproval = "user_msdyn_projectapproval";
+				public const string UserMsdynProjectpricelist = "user_msdyn_projectpricelist";
+				public const string UserMsdynProjecttask = "user_msdyn_projecttask";
+				public const string UserMsdynProjecttaskdependency = "user_msdyn_projecttaskdependency";
+				public const string UserMsdynProjecttaskstatususer = "user_msdyn_projecttaskstatususer";
+				public const string UserMsdynProjectteam = "user_msdyn_projectteam";
+				public const string UserMsdynProjecttransactioncategory = "user_msdyn_projecttransactioncategory";
 				public const string UserMsdynProperty = "user_msdyn_property";
 				public const string UserMsdynPropertyassetassociation = "user_msdyn_propertyassetassociation";
+				public const string UserMsdynPropertylocationassociation = "user_msdyn_propertylocationassociation";
 				public const string UserMsdynPropertylog = "user_msdyn_propertylog";
 				public const string UserMsdynPropertytemplateassociation = "user_msdyn_propertytemplateassociation";
+				public const string UserMsdynPurchaseorder = "user_msdyn_purchaseorder";
+				public const string UserMsdynPurchaseorderbill = "user_msdyn_purchaseorderbill";
+				public const string UserMsdynPurchaseorderproduct = "user_msdyn_purchaseorderproduct";
+				public const string UserMsdynPurchaseorderreceipt = "user_msdyn_purchaseorderreceipt";
+				public const string UserMsdynPurchaseorderreceiptproduct = "user_msdyn_purchaseorderreceiptproduct";
+				public const string UserMsdynPurchaseordersubstatus = "user_msdyn_purchaseordersubstatus";
+				public const string UserMsdynQuestionsequence = "user_msdyn_questionsequence";
+				public const string UserMsdynQuotebookingincident = "user_msdyn_quotebookingincident";
+				public const string UserMsdynQuotebookingproduct = "user_msdyn_quotebookingproduct";
+				public const string UserMsdynQuotebookingservice = "user_msdyn_quotebookingservice";
+				public const string UserMsdynQuotebookingservicetask = "user_msdyn_quotebookingservicetask";
+				public const string UserMsdynQuotebookingsetup = "user_msdyn_quotebookingsetup";
+				public const string UserMsdynQuoteinvoicingproduct = "user_msdyn_quoteinvoicingproduct";
+				public const string UserMsdynQuoteinvoicingsetup = "user_msdyn_quoteinvoicingsetup";
+				public const string UserMsdynQuotelineanalyticsbreakdown = "user_msdyn_quotelineanalyticsbreakdown";
+				public const string UserMsdynQuotelineresourcecategory = "user_msdyn_quotelineresourcecategory";
+				public const string UserMsdynQuotelinescheduleofvalue = "user_msdyn_quotelinescheduleofvalue";
+				public const string UserMsdynQuotelinetransaction = "user_msdyn_quotelinetransaction";
+				public const string UserMsdynQuotelinetransactioncategory = "user_msdyn_quotelinetransactioncategory";
+				public const string UserMsdynQuotelinetransactionclassification = "user_msdyn_quotelinetransactionclassification";
+				public const string UserMsdynQuotepricelist = "user_msdyn_quotepricelist";
+				public const string UserMsdynReadtracker = "user_msdyn_readtracker";
 				public const string UserMsdynRealtimescoring = "user_msdyn_realtimescoring";
+				public const string UserMsdynRealtimescoringoperation = "user_msdyn_realtimescoringoperation";
 				public const string UserMsdynRecording = "user_msdyn_recording";
 				public const string UserMsdynRelationshipinsightsunifiedconfig = "user_msdyn_relationshipinsightsunifiedconfig";
 				public const string UserMsdynReportbookmark = "user_msdyn_reportbookmark";
+				public const string UserMsdynRequirementchange = "user_msdyn_requirementchange";
+				public const string UserMsdynRequirementcharacteristic = "user_msdyn_requirementcharacteristic";
+				public const string UserMsdynRequirementdependency = "user_msdyn_requirementdependency";
+				public const string UserMsdynRequirementgroup = "user_msdyn_requirementgroup";
+				public const string UserMsdynRequirementorganizationunit = "user_msdyn_requirementorganizationunit";
+				public const string UserMsdynRequirementrelationship = "user_msdyn_requirementrelationship";
+				public const string UserMsdynRequirementresourcecategory = "user_msdyn_requirementresourcecategory";
+				public const string UserMsdynRequirementresourcepreference = "user_msdyn_requirementresourcepreference";
+				public const string UserMsdynRequirementstatus = "user_msdyn_requirementstatus";
+				public const string UserMsdynResolution = "user_msdyn_resolution";
+				public const string UserMsdynResourceassignment = "user_msdyn_resourceassignment";
+				public const string UserMsdynResourceassignmentdetail = "user_msdyn_resourceassignmentdetail";
+				public const string UserMsdynResourcepaytype = "user_msdyn_resourcepaytype";
+				public const string UserMsdynResourcerequest = "user_msdyn_resourcerequest";
+				public const string UserMsdynResourcerequirement = "user_msdyn_resourcerequirement";
+				public const string UserMsdynResourcerequirementdetail = "user_msdyn_resourcerequirementdetail";
+				public const string UserMsdynResourceterritory = "user_msdyn_resourceterritory";
 				public const string UserMsdynRichtextfile = "user_msdyn_richtextfile";
+				public const string UserMsdynRma = "user_msdyn_rma";
+				public const string UserMsdynRmaproduct = "user_msdyn_rmaproduct";
+				public const string UserMsdynRmareceipt = "user_msdyn_rmareceipt";
+				public const string UserMsdynRmareceiptproduct = "user_msdyn_rmareceiptproduct";
+				public const string UserMsdynRmasubstatus = "user_msdyn_rmasubstatus";
+				public const string UserMsdynRolecompetencyrequirement = "user_msdyn_rolecompetencyrequirement";
+				public const string UserMsdynRoleutilization = "user_msdyn_roleutilization";
 				public const string UserMsdynRoutingconfiguration = "user_msdyn_routingconfiguration";
 				public const string UserMsdynRoutingconfigurationstep = "user_msdyn_routingconfigurationstep";
 				public const string UserMsdynRoutingrequest = "user_msdyn_routingrequest";
+				public const string UserMsdynRtv = "user_msdyn_rtv";
+				public const string UserMsdynRtvproduct = "user_msdyn_rtvproduct";
+				public const string UserMsdynRtvsubstatus = "user_msdyn_rtvsubstatus";
 				public const string UserMsdynRulesetdependencymapping = "user_msdyn_rulesetdependencymapping";
+				public const string UserMsdynSalescopilotinsight = "user_msdyn_salescopilotinsight";
+				public const string UserMsdynSalesforcestructuredobject = "user_msdyn_salesforcestructuredobject";
+				public const string UserMsdynSalesforcestructuredqnaconfig = "user_msdyn_salesforcestructuredqnaconfig";
 				public const string UserMsdynSalesinsightssettings = "user_msdyn_salesinsightssettings";
 				public const string UserMsdynSalesocmessage = "user_msdyn_salesocmessage";
 				public const string UserMsdynSalesocsmstemplate = "user_msdyn_salesocsmstemplate";
 				public const string UserMsdynSalesroutingrun = "user_msdyn_salesroutingrun";
 				public const string UserMsdynSalessuggestion = "user_msdyn_salessuggestion";
 				public const string UserMsdynSalestag = "user_msdyn_salestag";
+				public const string UserMsdynScenario = "user_msdyn_scenario";
+				public const string UserMsdynSchedule = "user_msdyn_schedule";
+				public const string UserMsdynScheduleboardsetting = "user_msdyn_scheduleboardsetting";
+				public const string UserMsdynSchedulingfeatureflag = "user_msdyn_schedulingfeatureflag";
+				public const string UserMsdynSciconversation = "user_msdyn_sciconversation";
+				public const string UserMsdynScicustomemailhighlight = "user_msdyn_scicustomemailhighlight";
+				public const string UserMsdynScicustomhighlight = "user_msdyn_scicustomhighlight";
+				public const string UserMsdynScicustompublisher = "user_msdyn_scicustompublisher";
+				public const string UserMsdynSciusersettings = "user_msdyn_sciusersettings";
 				public const string UserMsdynSearchconfiguration = "user_msdyn_searchconfiguration";
 				public const string UserMsdynSegment = "user_msdyn_segment";
 				public const string UserMsdynSequence = "user_msdyn_sequence";
@@ -10718,44 +12854,84 @@ namespace dgt.power.dataverse
 				public const string UserMsdynSequencetemplate = "user_msdyn_sequencetemplate";
 				public const string UserMsdynServiceconfiguration = "user_msdyn_serviceconfiguration";
 				public const string UserMsdynServiceoneprovisioningrequest = "user_msdyn_serviceoneprovisioningrequest";
+				public const string UserMsdynServicetasktype = "user_msdyn_servicetasktype";
 				public const string UserMsdynSessiondata = "user_msdyn_sessiondata";
 				public const string UserMsdynSessionevent = "user_msdyn_sessionevent";
 				public const string UserMsdynSessionparticipant = "user_msdyn_sessionparticipant";
 				public const string UserMsdynSessionparticipantdata = "user_msdyn_sessionparticipantdata";
 				public const string UserMsdynSessiontemplate = "user_msdyn_sessiontemplate";
+				public const string UserMsdynShipvia = "user_msdyn_shipvia";
 				public const string UserMsdynSiconfig = "user_msdyn_siconfig";
 				public const string UserMsdynSkillattachmentruleitem = "user_msdyn_skillattachmentruleitem";
 				public const string UserMsdynSkillattachmenttarget = "user_msdyn_skillattachmenttarget";
 				public const string UserMsdynSlakpi = "user_msdyn_slakpi";
+				public const string UserMsdynSmsengagementctx = "user_msdyn_smsengagementctx";
+				public const string UserMsdynSmsnumber = "user_msdyn_smsnumber";
 				public const string UserMsdynSolutionhealthrule = "user_msdyn_solutionhealthrule";
 				public const string UserMsdynSolutionhealthruleargument = "user_msdyn_solutionhealthruleargument";
 				public const string UserMsdynSoundnotificationsetting = "user_msdyn_soundnotificationsetting";
+				public const string UserMsdynSubmodeldefinition = "user_msdyn_submodeldefinition";
 				public const string UserMsdynSuggestionassignmentrule = "user_msdyn_suggestionassignmentrule";
 				public const string UserMsdynSuggestionprincipalobjectaccess = "user_msdyn_suggestionprincipalobjectaccess";
 				public const string UserMsdynSuggestionsellerpriority = "user_msdyn_suggestionsellerpriority";
+				public const string UserMsdynSurveyquestion = "user_msdyn_surveyquestion";
 				public const string UserMsdynSwarm = "user_msdyn_swarm";
 				public const string UserMsdynSwarmparticipant = "user_msdyn_swarmparticipant";
 				public const string UserMsdynSwarmparticipantrule = "user_msdyn_swarmparticipantrule";
 				public const string UserMsdynSwarmrole = "user_msdyn_swarmrole";
 				public const string UserMsdynSwarmskill = "user_msdyn_swarmskill";
 				public const string UserMsdynSwarmtemplate = "user_msdyn_swarmtemplate";
+				public const string UserMsdynSystemuserschedulersetting = "user_msdyn_systemuserschedulersetting";
 				public const string UserMsdynTaggedrecord = "user_msdyn_taggedrecord";
+				public const string UserMsdynTaxcode = "user_msdyn_taxcode";
+				public const string UserMsdynTaxcodedetail = "user_msdyn_taxcodedetail";
+				public const string UserMsdynTeamschannelengagementctx = "user_msdyn_teamschannelengagementctx";
+				public const string UserMsdynTeamsengagementctx = "user_msdyn_teamsengagementctx";
 				public const string UserMsdynTemplateforproperties = "user_msdyn_templateforproperties";
 				public const string UserMsdynTemplateparameter = "user_msdyn_templateparameter";
 				public const string UserMsdynTemplatetags = "user_msdyn_templatetags";
+				public const string UserMsdynTimeentry = "user_msdyn_timeentry";
+				public const string UserMsdynTimeentrysetting = "user_msdyn_timeentrysetting";
+				public const string UserMsdynTimegroup = "user_msdyn_timegroup";
+				public const string UserMsdynTimegroupdetail = "user_msdyn_timegroupdetail";
+				public const string UserMsdynTimeoffcalendar = "user_msdyn_timeoffcalendar";
+				public const string UserMsdynTimeoffrequest = "user_msdyn_timeoffrequest";
 				public const string UserMsdynTimespent = "user_msdyn_timespent";
+				public const string UserMsdynTrade = "user_msdyn_trade";
+				public const string UserMsdynTradecoverage = "user_msdyn_tradecoverage";
+				public const string UserMsdynTrainingresult = "user_msdyn_trainingresult";
+				public const string UserMsdynTransactionconnection = "user_msdyn_transactionconnection";
+				public const string UserMsdynTransactionorigin = "user_msdyn_transactionorigin";
 				public const string UserMsdynTranscript = "user_msdyn_transcript";
+				public const string UserMsdynTwitterengagementctx = "user_msdyn_twitterengagementctx";
 				public const string UserMsdynUnifiedroutingdiagnostic = "user_msdyn_unifiedroutingdiagnostic";
 				public const string UserMsdynUnifiedroutingrun = "user_msdyn_unifiedroutingrun";
 				public const string UserMsdynUntrackedappointment = "user_msdyn_untrackedappointment";
 				public const string UserMsdynUrnotificationtemplate = "user_msdyn_urnotificationtemplate";
 				public const string UserMsdynUrnotificationtemplatemapping = "user_msdyn_urnotificationtemplatemapping";
+				public const string UserMsdynUserworkhistory = "user_msdyn_userworkhistory";
 				public const string UserMsdynVirtualtablecolumncandidate = "user_msdyn_virtualtablecolumncandidate";
 				public const string UserMsdynVisitorjourney = "user_msdyn_visitorjourney";
 				public const string UserMsdynVivacustomerlist = "user_msdyn_vivacustomerlist";
 				public const string UserMsdynVivausersetting = "user_msdyn_vivausersetting";
 				public const string UserMsdynWallsavedqueryusersettings = "user_msdyn_wallsavedqueryusersettings";
+				public const string UserMsdynWarehouse = "user_msdyn_warehouse";
+				public const string UserMsdynWarranty = "user_msdyn_warranty";
+				public const string UserMsdynWechatengagementctx = "user_msdyn_wechatengagementctx";
+				public const string UserMsdynWhatsappengagementctx = "user_msdyn_whatsappengagementctx";
 				public const string UserMsdynWkwconfig = "user_msdyn_wkwconfig";
+				public const string UserMsdynWorkhourtemplate = "user_msdyn_workhourtemplate";
+				public const string UserMsdynWorkorder = "user_msdyn_workorder";
+				public const string UserMsdynWorkordercharacteristic = "user_msdyn_workordercharacteristic";
+				public const string UserMsdynWorkorderincident = "user_msdyn_workorderincident";
+				public const string UserMsdynWorkordernte = "user_msdyn_workordernte";
+				public const string UserMsdynWorkorderproduct = "user_msdyn_workorderproduct";
+				public const string UserMsdynWorkorderresolution = "user_msdyn_workorderresolution";
+				public const string UserMsdynWorkorderresourcerestriction = "user_msdyn_workorderresourcerestriction";
+				public const string UserMsdynWorkorderservice = "user_msdyn_workorderservice";
+				public const string UserMsdynWorkorderservicetask = "user_msdyn_workorderservicetask";
+				public const string UserMsdynWorkordersubstatus = "user_msdyn_workordersubstatus";
+				public const string UserMsdynWorkordertype = "user_msdyn_workordertype";
 				public const string UserMsdynWorkqueuestate = "user_msdyn_workqueuestate";
 				public const string UserMsdynWorkqueueusersetting = "user_msdyn_workqueueusersetting";
 				public const string UserMsdynceBotcontent = "user_msdynce_botcontent";
@@ -10772,6 +12948,8 @@ namespace dgt.power.dataverse
 				public const string UserMsdyncrmQrcodestyle = "user_msdyncrm_qrcodestyle";
 				public const string UserMsdyncrmTextstyle = "user_msdyncrm_textstyle";
 				public const string UserMsdyncrmVideostyle = "user_msdyncrm_videostyle";
+				public const string UserMsdynmktByoacschannelinstance = "user_msdynmkt_byoacschannelinstance";
+				public const string UserMsdynmktByoacschannelinstanceaccount = "user_msdynmkt_byoacschannelinstanceaccount";
 				public const string UserMsdynmktCatalogeventstatusconfiguration = "user_msdynmkt_catalogeventstatusconfiguration";
 				public const string UserMsdynmktConfiguration = "user_msdynmkt_configuration";
 				public const string UserMsdynmktEventmetadata = "user_msdynmkt_eventmetadata";
@@ -10792,6 +12970,32 @@ namespace dgt.power.dataverse
 				public const string UserMsdynmktTelesignchannelinstanceaccount = "user_msdynmkt_telesignchannelinstanceaccount";
 				public const string UserMsdynmktTwiliochannelinstance = "user_msdynmkt_twiliochannelinstance";
 				public const string UserMsdynmktTwiliochannelinstanceaccount = "user_msdynmkt_twiliochannelinstanceaccount";
+				public const string UserMsdynmktVibeschannelinstance = "user_msdynmkt_vibeschannelinstance";
+				public const string UserMsdynmktVibeschannelinstanceaccount = "user_msdynmkt_vibeschannelinstanceaccount";
+				public const string UserMsdyusdActioncallworkflow = "user_msdyusd_actioncallworkflow";
+				public const string UserMsdyusdAgentscriptaction = "user_msdyusd_agentscriptaction";
+				public const string UserMsdyusdAgentscripttaskcategory = "user_msdyusd_agentscripttaskcategory";
+				public const string UserMsdyusdAnswer = "user_msdyusd_answer";
+				public const string UserMsdyusdAuditanddiagnosticssetting = "user_msdyusd_auditanddiagnosticssetting";
+				public const string UserMsdyusdConfiguration = "user_msdyusd_configuration";
+				public const string UserMsdyusdCustomizationfiles = "user_msdyusd_customizationfiles";
+				public const string UserMsdyusdEntityassignment = "user_msdyusd_entityassignment";
+				public const string UserMsdyusdEntitysearch = "user_msdyusd_entitysearch";
+				public const string UserMsdyusdForm = "user_msdyusd_form";
+				public const string UserMsdyusdLanguagemodule = "user_msdyusd_languagemodule";
+				public const string UserMsdyusdScriptlet = "user_msdyusd_scriptlet";
+				public const string UserMsdyusdScripttasktrigger = "user_msdyusd_scripttasktrigger";
+				public const string UserMsdyusdSearch = "user_msdyusd_search";
+				public const string UserMsdyusdSessioninformation = "user_msdyusd_sessioninformation";
+				public const string UserMsdyusdSessiontransfer = "user_msdyusd_sessiontransfer";
+				public const string UserMsdyusdTask = "user_msdyusd_task";
+				public const string UserMsdyusdToolbarbutton = "user_msdyusd_toolbarbutton";
+				public const string UserMsdyusdToolbarstrip = "user_msdyusd_toolbarstrip";
+				public const string UserMsdyusdTracesourcesetting = "user_msdyusd_tracesourcesetting";
+				public const string UserMsdyusdUcisettings = "user_msdyusd_ucisettings";
+				public const string UserMsdyusdUiievent = "user_msdyusd_uiievent";
+				public const string UserMsdyusdUsersettings = "user_msdyusd_usersettings";
+				public const string UserMsdyusdWindowroute = "user_msdyusd_windowroute";
 				public const string UserMsfpAlertrule = "user_msfp_alertrule";
 				public const string UserMsfpEmailtemplate = "user_msfp_emailtemplate";
 				public const string UserMsfpFileresponse = "user_msfp_fileresponse";
@@ -10803,123 +13007,9 @@ namespace dgt.power.dataverse
 				public const string UserMsfpSurvey = "user_msfp_survey";
 				public const string UserMsfpSurveyreminder = "user_msfp_surveyreminder";
 				public const string UserMsfpUnsubscribedrecipient = "user_msfp_unsubscribedrecipient";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDef00953ba86d = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_00953ba86d";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDef0c22ae9e8e = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_0c22ae9e8e";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDef1c6c8bafd1 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_1c6c8bafd1";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDef3430122a33 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_3430122a33";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDef96c1eb3520 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_96c1eb3520";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDefB1a182e9c8 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_b1a182e9c8";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDefE3bf28df86 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_e3bf28df86";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDefE5537d018a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_e5537d018a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDefEe71d1226a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_ee71d1226a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaDefFfd19a5250 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_def_ffd19a5250";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12062a29316 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2062a29316";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12a8bdbda8f = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_2a8bdbda8f";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT13d3d3a827b = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_3d3d3a827b";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT14b75f83914 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_4b75f83914";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT15c169ef238 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_5c169ef238";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT16f6e64d2d0 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_6f6e64d2d0";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT17071985af5 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_7071985af5";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT18e1ad69a9c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_8e1ad69a9c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1A8567fad71 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_a8567fad71";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1E8ece5e3a4 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t1_e8ece5e3a4";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11191d47da52 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_191d47da52";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT111aa2dd8353 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1aa2dd8353";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT111f763c2b21 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_1f763c2b21";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11355447c1b8 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_355447c1b8";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1157154580de = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_57154580de";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11C15f04df88 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c15f04df88";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11C200febf0c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c200febf0c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11C533d064d5 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_c533d064d5";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11Eedec5d10c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_eedec5d10c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT11Ff0deec922 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t11_ff0deec922";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT124171d43cc7 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_4171d43cc7";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12542b499f6f = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_542b499f6f";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12670b0850c0 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_670b0850c0";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT127232d02acd = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_7232d02acd";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1277efa630fe = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_77efa630fe";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1291855bb2f7 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_91855bb2f7";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1292bc47a6eb = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_92bc47a6eb";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT1296e6ba6bd1 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_96e6ba6bd1";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12Bc43dc92b5 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_bc43dc92b5";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT12C1eef4d03a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t12_c1eef4d03a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT20092e7e40a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_0092e7e40a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT21225727811 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_1225727811";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT2164455c24a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_164455c24a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT23d0d5f42e9 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3d0d5f42e9";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT23e3ad1e11b = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_3e3ad1e11b";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT25a2677fa0f = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_5a2677fa0f";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT299118b1d5f = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_99118b1d5f";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT2C78e121ee6 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_c78e121ee6";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT2Dbf5b76f03 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_dbf5b76f03";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT2E28fef2bba = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t2_e28fef2bba";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT30f1afbb350 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_0f1afbb350";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT32581b7e267 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_2581b7e267";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT36634415773 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6634415773";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT36853dee4d2 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6853dee4d2";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT36dcd947688 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_6dcd947688";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT380101a7e38 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_80101a7e38";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT3C21a1260ac = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c21a1260ac";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT3C59ea92a3a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_c59ea92a3a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT3D55f2fa8dd = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d55f2fa8dd";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT3D85dd82696 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t3_d85dd82696";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4115d677022 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_115d677022";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT42468772e17 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_2468772e17";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT437c34150a1 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_37c34150a1";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT45113e1140c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_5113e1140c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT471ab6e7243 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_71ab6e7243";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4Ae02f22693 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ae02f22693";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4B867875e80 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_b867875e80";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4Ba55d05bea = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_ba55d05bea";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4D94da8a3a3 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_d94da8a3a3";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT4F36e4cc057 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t4_f36e4cc057";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT50e16d1263c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e16d1263c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT50e4c0f375a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_0e4c0f375a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT524ddc6e94a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_24ddc6e94a";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT525b4801af0 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_25b4801af0";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT54ee485d1fe = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_4ee485d1fe";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT563a4b35e04 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_63a4b35e04";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT59469c72fa9 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9469c72fa9";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT59bcd382830 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_9bcd382830";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT5C7adee95dd = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_c7adee95dd";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT5Ff65a9fc08 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t5_ff65a9fc08";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT61ef57bc397 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_1ef57bc397";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT632579f0e25 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_32579f0e25";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT63a3bcd69af = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_3a3bcd69af";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT64e584bde60 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_4e584bde60";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT6897f136b73 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_897f136b73";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT68b32f605e4 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_8b32f605e4";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT6B53c024913 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_b53c024913";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT6Bc80a01a49 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_bc80a01a49";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT6Ef539ea408 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_ef539ea408";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT6F7701a2990 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t6_f7701a2990";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT7118e821cbb = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_118e821cbb";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT72b3ab930c5 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2b3ab930c5";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT72c79b475a1 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_2c79b475a1";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT73d67bbb7ec = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_3d67bbb7ec";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT76c486355b3 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_6c486355b3";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT77c755fe61d = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_7c755fe61d";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT78605946c87 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_8605946c87";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT7Bd49e41c2d = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_bd49e41c2d";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT7Fa13d1af3e = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fa13d1af3e";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT7Fab0f857b5 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t7_fab0f857b5";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT92c439b903c = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_2c439b903c";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT9351a001e08 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_351a001e08";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT94251be212f = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_4251be212f";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT950966a5af0 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_50966a5af0";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT9587e1edc42 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_587e1edc42";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT95a54131c80 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_5a54131c80";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT965e0181465 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_65e0181465";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT97fdd915386 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_7fdd915386";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT99a0017b6f8 = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_9a0017b6f8";
-				public const string UserNewSystemDonotuseentityRp53fd1p1ekxpaT9Cab0ac200a = "user_new_system_donotuseentity_rp53fd1p1ekxpa_t9_cab0ac200a";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSol1250835 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_1250835";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSol3aa9185 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_3aa9185";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSol55a3a82 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_55a3a82";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSol95d5b32 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_95d5b32";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAc091e5 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_ac091e5";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSolAdf8474 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_adf8474";
-				public const string UserNewSystemSolDonotuseentityRp53fd1p1ekxpaSolB0a3d13 = "user_new_system_sol_donotuseentity_rp53fd1p1ekxpa_sol_b0a3d13";
+				public const string UserMspcatCatalogsubmissionfiles = "user_mspcat_catalogsubmissionfiles";
+				public const string UserMspcatPackagestore = "user_mspcat_packagestore";
+				public const string UserNlsqregistration = "user_nlsqregistration";
 				public const string UserOpportunityclose = "user_opportunityclose";
 				public const string UserOpportunityproduct = "user_opportunityproduct";
 				public const string UserOrderclose = "user_orderclose";
@@ -10927,23 +13017,44 @@ namespace dgt.power.dataverse
 				public const string UserParentUser = "user_parent_user";
 				public const string UserPdfsetting = "user_pdfsetting";
 				public const string UserPhonecall = "user_phonecall";
+				public const string UserPlannerbusinessscenario = "user_plannerbusinessscenario";
+				public const string UserPlannersyncaction = "user_plannersyncaction";
 				public const string UserPowerbidataset = "user_powerbidataset";
+				public const string UserPowerbidatasetapdx = "user_powerbidatasetapdx";
 				public const string UserPowerbimashupparameter = "user_powerbimashupparameter";
 				public const string UserPowerbireport = "user_powerbireport";
+				public const string UserPowerbireportapdx = "user_powerbireportapdx";
 				public const string UserPowerfxrule = "user_powerfxrule";
+				public const string UserPowerpagecomponent = "user_powerpagecomponent";
+				public const string UserPowerpagesite = "user_powerpagesite";
+				public const string UserPowerpagesitelanguage = "user_powerpagesitelanguage";
+				public const string UserPowerpagesitepublished = "user_powerpagesitepublished";
+				public const string UserPowerpageslog = "user_powerpageslog";
+				public const string UserPowerpagesscanreport = "user_powerpagesscanreport";
 				public const string UserProcessstageparameter = "user_processstageparameter";
 				public const string UserProfilerule = "user_profilerule";
 				public const string UserQuoteclose = "user_quoteclose";
 				public const string UserQuotedetail = "user_quotedetail";
 				public const string UserRatingmodel = "user_ratingmodel";
 				public const string UserRatingvalue = "user_ratingvalue";
+				public const string UserRecentlyused = "user_recentlyused";
+				public const string UserReconciliationentityinfo = "user_reconciliationentityinfo";
+				public const string UserReconciliationentitystepinfo = "user_reconciliationentitystepinfo";
+				public const string UserReconciliationinfo = "user_reconciliationinfo";
 				public const string UserRecurringappointmentmaster = "user_recurringappointmentmaster";
+				public const string UserRetaineddataexcel = "user_retaineddataexcel";
+				public const string UserRetentioncleanupinfo = "user_retentioncleanupinfo";
+				public const string UserRetentioncleanupoperation = "user_retentioncleanupoperation";
+				public const string UserRetentionconfig = "user_retentionconfig";
+				public const string UserRetentionfailuredetail = "user_retentionfailuredetail";
+				public const string UserRetentionoperation = "user_retentionoperation";
 				public const string UserRoutingrule = "user_routingrule";
 				public const string UserRoutingruleitem = "user_routingruleitem";
 				public const string UserSalesorderdetail = "user_salesorderdetail";
 				public const string UserSettings = "user_settings";
 				public const string UserSharepointdocumentlocation = "user_sharepointdocumentlocation";
 				public const string UserSharepointsite = "user_sharepointsite";
+				public const string UserSideloadedaiplugin = "user_sideloadedaiplugin";
 				public const string UserSlabase = "user_slabase";
 				public const string UserSocialactivity = "user_socialactivity";
 				public const string UserSolutioncomponentbatchconfiguration = "user_solutioncomponentbatchconfiguration";
@@ -10951,6 +13062,17 @@ namespace dgt.power.dataverse
 				public const string UserSynapsedatabase = "user_synapsedatabase";
 				public const string UserTask = "user_task";
 				public const string UserTdsmetadata = "user_tdsmetadata";
+				public const string UserUiiAction = "user_uii_action";
+				public const string UserUiiAudit = "user_uii_audit";
+				public const string UserUiiContext = "user_uii_context";
+				public const string UserUiiHostedapplication = "user_uii_hostedapplication";
+				public const string UserUiiNonhostedapplication = "user_uii_nonhostedapplication";
+				public const string UserUiiOption = "user_uii_option";
+				public const string UserUiiSavedsession = "user_uii_savedsession";
+				public const string UserUiiSessiontransfer = "user_uii_sessiontransfer";
+				public const string UserUiiWorkflow = "user_uii_workflow";
+				public const string UserUiiWorkflowWorkflowstepMapping = "user_uii_workflow_workflowstep_mapping";
+				public const string UserUiiWorkflowstep = "user_uii_workflowstep";
 				public const string UserUntrackedemail = "user_untrackedemail";
 				public const string UserUserapplicationmetadata = "user_userapplicationmetadata";
 				public const string UserUserauthztracker = "user_userauthztracker";
@@ -10958,6 +13080,8 @@ namespace dgt.power.dataverse
 				public const string UserUserquery = "user_userquery";
 				public const string UserUserqueryvisualizations = "user_userqueryvisualizations";
 				public const string UserWorkflowbinary = "user_workflowbinary";
+				public const string UserWorkqueue = "user_workqueue";
+				public const string UserWorkqueueitem = "user_workqueueitem";
 				public const string UserentityinstancedataOwningUser = "userentityinstancedata_owning_user";
 				public const string UserentityinstancedataSystemuser = "userentityinstancedata_systemuser";
 				public const string UserentityuisettingsOwningUser = "userentityuisettings_owning_user";
@@ -10971,6 +13095,7 @@ namespace dgt.power.dataverse
 				public const string WorkflowDependencyModifiedonbehalfby = "workflow_dependency_modifiedonbehalfby";
 				public const string WorkflowModifiedby = "workflow_modifiedby";
 				public const string WorkflowModifiedonbehalfby = "workflow_modifiedonbehalfby";
+				public const string WorkqueueitemProcessinguser = "workqueueitem_processinguser";
             }
 
             public static class ManyToOne
@@ -10983,7 +13108,9 @@ namespace dgt.power.dataverse
 				public const string LkSystemuserbaseCreatedby = "lk_systemuserbase_createdby";
 				public const string LkSystemuserbaseModifiedby = "lk_systemuserbase_modifiedby";
 				public const string MobileOfflineProfileSystemUser = "MobileOfflineProfile_SystemUser";
+				public const string MsdynMsdynOcphonenumberSystemuserPhonenumberid = "msdyn_msdyn_ocphonenumber_systemuser_phonenumberid";
 				public const string MsdynMsdynPresenceSystemuser = "msdyn_msdyn_presence_systemuser";
+				public const string MsdyusdConfigurationUsers = "msdyusd_configuration_users";
 				public const string OrganizationSystemUsers = "organization_system_users";
 				public const string PositionUsers = "position_users";
 				public const string ProcessstageSystemusers = "processstage_systemusers";
@@ -11000,7 +13127,10 @@ namespace dgt.power.dataverse
 				public const string MsdynAppconfigurationSystemuser = "msdyn_appconfiguration_systemuser";
 				public const string MsdynCiproviderSystemuserMembership = "msdyn_ciprovider_systemuser_membership";
 				public const string MsdynMsdynAttributevalueSystemuser = "msdyn_msdyn_attributevalue_systemuser";
+				public const string MsdynMsdynLiveworkstreamSystemuser = "msdyn_msdyn_liveworkstream_systemuser";
+				public const string MsdynResourcerequirementSystemuser = "msdyn_resourcerequirement_systemuser";
 				public const string MsdynSystemuserMsdynOmnichannelqueue = "msdyn_systemuser_msdyn_omnichannelqueue";
+				public const string PowerpagecomponentWebroleSystemuser = "powerpagecomponent_webrole_systemuser";
 				public const string QueuemembershipAssociation = "queuemembership_association";
 				public const string SystemuserprofilesAssociation = "systemuserprofiles_association";
 				public const string SystemuserrolesAssociation = "systemuserroles_association";

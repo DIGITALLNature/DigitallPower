@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -64,7 +61,7 @@ namespace dgt.power.dataverse
         #region consts
         public const string EntityLogicalName = "customapirequestparameter";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10022;
+        public const int EntityTypeCode = 10028;
         #endregion
 
         #region Events
@@ -454,33 +451,6 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerId));
-                SetAttributeValue("ownerid", value);
-                OnPropertyChanged(nameof(OwnerId));
-            }
-        }
-
-		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
         }
 
 		/// <summary>
@@ -767,7 +737,6 @@ namespace dgt.power.dataverse
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
@@ -785,7 +754,7 @@ namespace dgt.power.dataverse
 		#region AlternateKeys
 		public static class AlternateKeys
 		{
-				public const string CustomAPIRequestParameterExportKey = "customapirequestparameterexportkey";
+				public const string CustomAPIRequestParameterExportKey = "custom api request parameter export key";
 		}
 		#endregion
 
@@ -807,15 +776,11 @@ namespace dgt.power.dataverse
 
             public static class ManyToOne
             {
-				public const string BusinessUnitCustomapirequestparameter = "business_unit_customapirequestparameter";
 				public const string CustomapiCustomapirequestparameter = "customapi_customapirequestparameter";
 				public const string LkCustomapirequestparameterCreatedby = "lk_customapirequestparameter_createdby";
 				public const string LkCustomapirequestparameterCreatedonbehalfby = "lk_customapirequestparameter_createdonbehalfby";
 				public const string LkCustomapirequestparameterModifiedby = "lk_customapirequestparameter_modifiedby";
 				public const string LkCustomapirequestparameterModifiedonbehalfby = "lk_customapirequestparameter_modifiedonbehalfby";
-				public const string OwnerCustomapirequestparameter = "owner_customapirequestparameter";
-				public const string TeamCustomapirequestparameter = "team_customapirequestparameter";
-				public const string UserCustomapirequestparameter = "user_customapirequestparameter";
             }
 
             public static class ManyToMany

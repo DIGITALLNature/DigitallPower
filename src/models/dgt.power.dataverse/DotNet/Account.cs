@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -1175,6 +1172,78 @@ namespace dgt.power.dataverse
             }
         }
 
+		
+		[AttributeLogicalName("adx_createdbyipaddress")]
+        public string? AdxCreatedByIPAddress
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_createdbyipaddress");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxCreatedByIPAddress));
+                SetAttributeValue("adx_createdbyipaddress", value);
+                OnPropertyChanged(nameof(AdxCreatedByIPAddress));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_createdbyusername")]
+        public string? AdxCreatedByUsername
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_createdbyusername");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxCreatedByUsername));
+                SetAttributeValue("adx_createdbyusername", value);
+                OnPropertyChanged(nameof(AdxCreatedByUsername));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_modifiedbyipaddress")]
+        public string? AdxModifiedByIPAddress
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyipaddress");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxModifiedByIPAddress));
+                SetAttributeValue("adx_modifiedbyipaddress", value);
+                OnPropertyChanged(nameof(AdxModifiedByIPAddress));
+            }
+        }
+
+		
+		[AttributeLogicalName("adx_modifiedbyusername")]
+        public string? AdxModifiedByUsername
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyusername");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(AdxModifiedByUsername));
+                SetAttributeValue("adx_modifiedbyusername", value);
+                OnPropertyChanged(nameof(AdxModifiedByUsername));
+            }
+        }
+
 		/// <summary>
 		/// For system use only.
 		/// </summary>
@@ -1997,6 +2066,26 @@ namespace dgt.power.dataverse
             }
         }
 
+		/// <summary>
+		/// Unique identifier for Account associated with Account.
+		/// </summary>
+		[AttributeLogicalName("msa_managingpartnerid")]
+        public EntityReference? MsaManagingpartnerid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msa_managingpartnerid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsaManagingpartnerid));
+                SetAttributeValue("msa_managingpartnerid", value);
+                OnPropertyChanged(nameof(MsaManagingpartnerid));
+            }
+        }
+
 		
 		[AttributeLogicalName("msdyn_accountkpiid")]
         public EntityReference? MsdynAccountkpiid
@@ -2012,6 +2101,46 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynAccountkpiid));
                 SetAttributeValue("msdyn_accountkpiid", value);
                 OnPropertyChanged(nameof(MsdynAccountkpiid));
+            }
+        }
+
+		/// <summary>
+		/// Reference to an other account to be used for billing (only to be used if billing account differs)
+		/// </summary>
+		[AttributeLogicalName("msdyn_billingaccount")]
+        public EntityReference? MsdynBillingAccount
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_billingaccount");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynBillingAccount));
+                SetAttributeValue("msdyn_billingaccount", value);
+                OnPropertyChanged(nameof(MsdynBillingAccount));
+            }
+        }
+
+		/// <summary>
+		/// External Account ID from other systems.
+		/// </summary>
+		[AttributeLogicalName("msdyn_externalaccountid")]
+        public string? MsdynExternalaccountid
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_externalaccountid");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynExternalaccountid));
+                SetAttributeValue("msdyn_externalaccountid", value);
+                OnPropertyChanged(nameof(MsdynExternalaccountid));
             }
         }
 
@@ -2032,6 +2161,44 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynGdproptout));
                 SetAttributeValue("msdyn_gdproptout", value);
                 OnPropertyChanged(nameof(MsdynGdproptout));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyn_preferredresource")]
+        public EntityReference? MsdynPreferredResource
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_preferredresource");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPreferredResource));
+                SetAttributeValue("msdyn_preferredresource", value);
+                OnPropertyChanged(nameof(MsdynPreferredResource));
+            }
+        }
+
+		/// <summary>
+		/// Indicates the primary time zone that the client works on.
+		/// </summary>
+		[AttributeLogicalName("msdyn_primarytimezone")]
+        public int? MsdynPrimaryTimeZone
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<int?>("msdyn_primarytimezone");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynPrimaryTimeZone));
+                SetAttributeValue("msdyn_primarytimezone", value);
+                OnPropertyChanged(nameof(MsdynPrimaryTimeZone));
             }
         }
 
@@ -2056,6 +2223,26 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
+		/// Default Sales Tax Code
+		/// </summary>
+		[AttributeLogicalName("msdyn_salestaxcode")]
+        public EntityReference? MsdynSalesTaxCode
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_salestaxcode");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynSalesTaxCode));
+                SetAttributeValue("msdyn_salestaxcode", value);
+                OnPropertyChanged(nameof(MsdynSalesTaxCode));
+            }
+        }
+
+		/// <summary>
 		/// Unique identifier for Segment associated with account.
 		/// </summary>
 		[AttributeLogicalName("msdyn_segmentid")]
@@ -2072,6 +2259,197 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(MsdynSegmentid));
                 SetAttributeValue("msdyn_segmentid", value);
                 OnPropertyChanged(nameof(MsdynSegmentid));
+            }
+        }
+
+		/// <summary>
+		/// The Service Territory this account belongs to. This is used to optimize scheduling and routing
+		/// </summary>
+		[AttributeLogicalName("msdyn_serviceterritory")]
+        public EntityReference? MsdynServiceTerritory
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_serviceterritory");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynServiceTerritory));
+                SetAttributeValue("msdyn_serviceterritory", value);
+                OnPropertyChanged(nameof(MsdynServiceTerritory));
+            }
+        }
+
+		/// <summary>
+		/// Select whether the account is tax exempt.
+		/// </summary>
+		[AttributeLogicalName("msdyn_taxexempt")]
+        public bool? MsdynTaxExempt
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<bool?>("msdyn_taxexempt");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynTaxExempt));
+                SetAttributeValue("msdyn_taxexempt", value);
+                OnPropertyChanged(nameof(MsdynTaxExempt));
+            }
+        }
+
+		/// <summary>
+		/// Shows the government tax exempt number.
+		/// </summary>
+		[AttributeLogicalName("msdyn_taxexemptnumber")]
+        public string? MsdynTaxExemptNumber
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_taxexemptnumber");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynTaxExemptNumber));
+                SetAttributeValue("msdyn_taxexemptnumber", value);
+                OnPropertyChanged(nameof(MsdynTaxExemptNumber));
+            }
+        }
+
+		/// <summary>
+		/// Enter the travel charge to include on work orders. This value will be multiplied by the travel charge type.
+		/// </summary>
+		[AttributeLogicalName("msdyn_travelcharge")]
+        public Money? MsdynTravelCharge
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<Money?>("msdyn_travelcharge");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynTravelCharge));
+                SetAttributeValue("msdyn_travelcharge", value);
+                OnPropertyChanged(nameof(MsdynTravelCharge));
+            }
+        }
+
+		/// <summary>
+		/// Value of the Travel Charge in base currency.
+		/// </summary>
+		[AttributeLogicalName("msdyn_travelcharge_base")]
+        public Money? MsdynTravelchargeBase
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<Money?>("msdyn_travelcharge_base");
+            }
+        }
+
+		/// <summary>
+		/// Specify how travel is charged for this account.
+		/// </summary>
+		[AttributeLogicalName("msdyn_travelchargetype")]
+        public OptionSetValue? MsdynTravelChargeType
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<OptionSetValue?>("msdyn_travelchargetype");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynTravelChargeType));
+                SetAttributeValue("msdyn_travelchargetype", value);
+                OnPropertyChanged(nameof(MsdynTravelChargeType));
+            }
+        }
+
+		
+		[AttributeLogicalName("msdyn_workhourtemplate")]
+        public EntityReference? MsdynWorkhourtemplate
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<EntityReference?>("msdyn_workhourtemplate");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynWorkhourtemplate));
+                SetAttributeValue("msdyn_workhourtemplate", value);
+                OnPropertyChanged(nameof(MsdynWorkhourtemplate));
+            }
+        }
+
+		/// <summary>
+		/// Shows the default instructions to show on new work orders.
+		/// </summary>
+		[AttributeLogicalName("msdyn_workorderinstructions")]
+        public string? MsdynWorkOrderInstructions
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyn_workorderinstructions");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdynWorkOrderInstructions));
+                SetAttributeValue("msdyn_workorderinstructions", value);
+                OnPropertyChanged(nameof(MsdynWorkOrderInstructions));
+            }
+        }
+
+		/// <summary>
+		/// Captures the facebook id
+		/// </summary>
+		[AttributeLogicalName("msdyusd_facebook")]
+        public string? MsdyusdFacebook
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyusd_facebook");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdFacebook));
+                SetAttributeValue("msdyusd_facebook", value);
+                OnPropertyChanged(nameof(MsdyusdFacebook));
+            }
+        }
+
+		/// <summary>
+		/// Capture the twitter id
+		/// </summary>
+		[AttributeLogicalName("msdyusd_twitter")]
+        public string? MsdyusdTwitter
+        {
+            [DebuggerNonUserCode]
+			get
+            {
+                return GetAttributeValue<string?>("msdyusd_twitter");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(MsdyusdTwitter));
+                SetAttributeValue("msdyusd_twitter", value);
+                OnPropertyChanged(nameof(MsdyusdTwitter));
             }
         }
 
@@ -2276,24 +2654,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(OwnerId));
                 SetAttributeValue("ownerid", value);
                 OnPropertyChanged(nameof(OwnerId));
-            }
-        }
-
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
             }
         }
 
@@ -3192,6 +3552,66 @@ namespace dgt.power.dataverse
 			}
 		}
 
+		/// <summary>
+		/// 1:N msa_account_managingpartner
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("msa_account_managingpartner")]
+		public System.Collections.Generic.IEnumerable<Account> MsaAccountManagingpartner
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Account>("msa_account_managingpartner", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("MsaAccountManagingpartner");
+				this.SetRelatedEntities<Account>("msa_account_managingpartner", null, value);
+				this.OnPropertyChanged("MsaAccountManagingpartner");
+			}
+		}
+
+		/// <summary>
+		/// 1:N msa_contact_managingpartner
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("msa_contact_managingpartner")]
+		public System.Collections.Generic.IEnumerable<Contact> MsaContactManagingpartner
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Contact>("msa_contact_managingpartner", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("MsaContactManagingpartner");
+				this.SetRelatedEntities<Contact>("msa_contact_managingpartner", null, value);
+				this.OnPropertyChanged("MsaContactManagingpartner");
+			}
+		}
+
+		/// <summary>
+		/// 1:N msdyn_account_account_BillingAccount
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("msdyn_account_account_BillingAccount")]
+		public System.Collections.Generic.IEnumerable<Account> MsdynAccountAccountBillingAccount
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Account>("msdyn_account_account_BillingAccount", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("MsdynAccountAccountBillingAccount");
+				this.SetRelatedEntities<Account>("msdyn_account_account_BillingAccount", null, value);
+				this.OnPropertyChanged("MsdynAccountAccountBillingAccount");
+			}
+		}
+
 		#endregion
 
 		#region Options
@@ -3271,6 +3691,7 @@ namespace dgt.power.dataverse
 					public const int Supplier = 10;
 					public const int Vendor = 11;
 					public const int Other = 12;
+					public const int InsuranceCarrier = 13;
                 }
                 public struct DoNotBulkEMail
                 {
@@ -3362,6 +3783,18 @@ namespace dgt.power.dataverse
                 {
                     public const bool No = false;
                     public const bool Yes = true;
+                }
+                public struct MsdynTaxExempt
+                {
+                    public const bool No = false;
+                    public const bool Yes = true;
+                }
+			    public struct MsdynTravelChargeType
+                {
+					public const int Hourly = 690970000;
+					public const int Mileage = 690970001;
+					public const int Fixed = 690970002;
+					public const int None = 690970003;
                 }
 			    public struct OwnershipCode
                 {
@@ -3483,6 +3916,10 @@ namespace dgt.power.dataverse
 				public const string Address2Telephone3 = "address2_telephone3";
 				public const string Address2UPSZone = "address2_upszone";
 				public const string Address2UTCOffset = "address2_utcoffset";
+				public const string AdxCreatedByIPAddress = "adx_createdbyipaddress";
+				public const string AdxCreatedByUsername = "adx_createdbyusername";
+				public const string AdxModifiedByIPAddress = "adx_modifiedbyipaddress";
+				public const string AdxModifiedByUsername = "adx_modifiedbyusername";
 				public const string Aging30 = "aging30";
 				public const string Aging30Base = "aging30_base";
 				public const string Aging60 = "aging60";
@@ -3532,10 +3969,26 @@ namespace dgt.power.dataverse
 				public const string ModifiedByExternalParty = "modifiedbyexternalparty";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+				public const string MsaManagingpartnerid = "msa_managingpartnerid";
 				public const string MsdynAccountkpiid = "msdyn_accountkpiid";
+				public const string MsdynBillingAccount = "msdyn_billingaccount";
+				public const string MsdynExternalaccountid = "msdyn_externalaccountid";
 				public const string MsdynGdproptout = "msdyn_gdproptout";
+				public const string MsdynPreferredResource = "msdyn_preferredresource";
+				public const string MsdynPrimaryTimeZone = "msdyn_primarytimezone";
 				public const string MsdynSalesaccelerationinsightid = "msdyn_salesaccelerationinsightid";
+				public const string MsdynSalesTaxCode = "msdyn_salestaxcode";
 				public const string MsdynSegmentid = "msdyn_segmentid";
+				public const string MsdynServiceTerritory = "msdyn_serviceterritory";
+				public const string MsdynTaxExempt = "msdyn_taxexempt";
+				public const string MsdynTaxExemptNumber = "msdyn_taxexemptnumber";
+				public const string MsdynTravelCharge = "msdyn_travelcharge";
+				public const string MsdynTravelchargeBase = "msdyn_travelcharge_base";
+				public const string MsdynTravelChargeType = "msdyn_travelchargetype";
+				public const string MsdynWorkhourtemplate = "msdyn_workhourtemplate";
+				public const string MsdynWorkOrderInstructions = "msdyn_workorderinstructions";
+				public const string MsdyusdFacebook = "msdyusd_facebook";
+				public const string MsdyusdTwitter = "msdyusd_twitter";
 				public const string Name = "name";
 				public const string NumberOfEmployees = "numberofemployees";
 				public const string OnHoldTime = "onholdtime";
@@ -3549,7 +4002,6 @@ namespace dgt.power.dataverse
 				public const string OriginatingLeadId = "originatingleadid";
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwnershipCode = "ownershipcode";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
@@ -3604,6 +4056,8 @@ namespace dgt.power.dataverse
 				public const string AccountActioncard = "account_actioncard";
 				public const string AccountActivityParties = "account_activity_parties";
 				public const string AccountActivityPointers = "Account_ActivityPointers";
+				public const string AccountAdxInviteredemptions = "account_adx_inviteredemptions";
+				public const string AccountAdxPortalcomments = "account_adx_portalcomments";
 				public const string AccountAnnotation = "Account_Annotation";
 				public const string AccountAppointments = "Account_Appointments";
 				public const string AccountAsyncOperations = "Account_AsyncOperations";
@@ -3630,8 +4084,13 @@ namespace dgt.power.dataverse
 				public const string AccountLetters = "Account_Letters";
 				public const string AccountMailboxTrackingFolder = "Account_MailboxTrackingFolder";
 				public const string AccountMasterAccount = "account_master_account";
+				public const string AccountMsdynApprovals = "account_msdyn_approvals";
+				public const string AccountMsdynBookingalerts = "account_msdyn_bookingalerts";
+				public const string AccountMsdynCopilottranscripts = "account_msdyn_copilottranscripts";
 				public const string AccountMsdynOcliveworkitems = "account_msdyn_ocliveworkitems";
+				public const string AccountMsdynOcoutboundmessages = "account_msdyn_ocoutboundmessages";
 				public const string AccountMsdynOcsessions = "account_msdyn_ocsessions";
+				public const string AccountMsdynOrgchartnodeMsdynParentrecord = "account_msdyn_orgchartnode_msdyn_parentrecord";
 				public const string AccountMsfpAlerts = "account_msfp_alerts";
 				public const string AccountMsfpSurveyinvites = "account_msfp_surveyinvites";
 				public const string AccountMsfpSurveyresponses = "account_msfp_surveyresponses";
@@ -3653,6 +4112,7 @@ namespace dgt.power.dataverse
 				public const string AccountSocialActivities = "Account_SocialActivities";
 				public const string AccountSyncErrors = "Account_SyncErrors";
 				public const string AccountTasks = "Account_Tasks";
+				public const string AdxInvitationAssigntoaccount = "adx_invitation_assigntoaccount";
 				public const string ContactCustomerAccounts = "contact_customer_accounts";
 				public const string ContractBillingcustomerAccounts = "contract_billingcustomer_accounts";
 				public const string ContractCustomerAccounts = "contract_customer_accounts";
@@ -3662,16 +4122,67 @@ namespace dgt.power.dataverse
 				public const string InvoiceCustomerAccounts = "invoice_customer_accounts";
 				public const string LeadCustomerAccounts = "lead_customer_accounts";
 				public const string LeadParentAccount = "lead_parent_account";
+				public const string MsaAccountManagingpartner = "msa_account_managingpartner";
+				public const string MsaContactManagingpartner = "msa_contact_managingpartner";
+				public const string MsdynAccountAccountBillingAccount = "msdyn_account_account_BillingAccount";
 				public const string MsdynAccountDailyaccountkpiitemEntityid = "msdyn_account_dailyaccountkpiitem_entityid";
 				public const string MsdynAccountMsdynAccountkpiitemAccountid = "msdyn_account_msdyn_accountkpiitem_accountid";
+				public const string MsdynAccountMsdynAccountpricelistAccount = "msdyn_account_msdyn_accountpricelist_Account";
+				public const string MsdynAccountMsdynActualAccountCustomer = "msdyn_account_msdyn_actual_AccountCustomer";
+				public const string MsdynAccountMsdynActualAccountVendor = "msdyn_account_msdyn_actual_AccountVendor";
+				public const string MsdynAccountMsdynActualServiceAccount = "msdyn_account_msdyn_actual_ServiceAccount";
+				public const string MsdynAccountMsdynAgreementBillingAccount = "msdyn_account_msdyn_agreement_BillingAccount";
+				public const string MsdynAccountMsdynAgreementServiceAccount = "msdyn_account_msdyn_agreement_ServiceAccount";
 				public const string MsdynAccountMsdynAicontactsuggestionSourcerecord = "msdyn_account_msdyn_aicontactsuggestion_sourcerecord";
 				public const string MsdynAccountMsdynCustomerassetAccount = "msdyn_account_msdyn_customerasset_Account";
+				public const string MsdynAccountMsdynEntitlementapplicationServiceaccount = "msdyn_account_msdyn_entitlementapplication_serviceaccount";
+				public const string MsdynAccountMsdynEstimatelineAccountCustomer = "msdyn_account_msdyn_estimateline_AccountCustomer";
+				public const string MsdynAccountMsdynEstimatelineAccountVendor = "msdyn_account_msdyn_estimateline_AccountVendor";
+				public const string MsdynAccountMsdynFactAccountCustomer = "msdyn_account_msdyn_fact_AccountCustomer";
+				public const string MsdynAccountMsdynFactAccountVendor = "msdyn_account_msdyn_fact_AccountVendor";
+				public const string MsdynAccountMsdynInsuranceInsuranceCarrier = "msdyn_account_msdyn_insurance_InsuranceCarrier";
+				public const string MsdynAccountMsdynInvoicelinetransactionAccountCustomer = "msdyn_account_msdyn_invoicelinetransaction_AccountCustomer";
+				public const string MsdynAccountMsdynInvoicelinetransactionAccountVendor = "msdyn_account_msdyn_invoicelinetransaction_AccountVendor";
 				public const string MsdynAccountMsdynIotdeviceAccount = "msdyn_account_msdyn_iotdevice_Account";
+				public const string MsdynAccountMsdynJournallineAccountCustomer = "msdyn_account_msdyn_journalline_AccountCustomer";
+				public const string MsdynAccountMsdynJournallineAccountVendor = "msdyn_account_msdyn_journalline_AccountVendor";
 				public const string MsdynAccountMsdynLiveconversationCustomer = "msdyn_account_msdyn_liveconversation_Customer";
 				public const string MsdynAccountMsdynMostcontactedRegardingObjectId = "msdyn_account_msdyn_mostcontacted_regardingObjectId";
 				public const string MsdynAccountMsdynMostcontactedbyRegardingObjectId = "msdyn_account_msdyn_mostcontactedby_regardingObjectId";
+				public const string MsdynAccountMsdynNottoexceedAccount = "msdyn_account_msdyn_nottoexceed_account";
 				public const string MsdynAccountMsdynOcliveworkitemCustomer = "msdyn_account_msdyn_ocliveworkitem_Customer";
+				public const string MsdynAccountMsdynOpportunitylinetransactionAccountCustomer = "msdyn_account_msdyn_opportunitylinetransaction_AccountCustomer";
+				public const string MsdynAccountMsdynOpportunitylinetransactionAccountVendor = "msdyn_account_msdyn_opportunitylinetransaction_AccountVendor";
+				public const string MsdynAccountMsdynOrderlinetransactionAccountCustomer = "msdyn_account_msdyn_orderlinetransaction_AccountCustomer";
+				public const string MsdynAccountMsdynOrderlinetransactionAccountVendor = "msdyn_account_msdyn_orderlinetransaction_AccountVendor";
+				public const string MsdynAccountMsdynPaymentAccount = "msdyn_account_msdyn_payment_Account";
+				public const string MsdynAccountMsdynProjectCustomer = "msdyn_account_msdyn_project_Customer";
+				public const string MsdynAccountMsdynPurchaseorderVendor = "msdyn_account_msdyn_purchaseorder_Vendor";
+				public const string MsdynAccountMsdynQuotelinetransactionAccountCustomer = "msdyn_account_msdyn_quotelinetransaction_AccountCustomer";
+				public const string MsdynAccountMsdynQuotelinetransactionAccountVendor = "msdyn_account_msdyn_quotelinetransaction_AccountVendor";
+				public const string MsdynAccountMsdynRequirementresourcepreferenceAccount = "msdyn_account_msdyn_requirementresourcepreference_Account";
+				public const string MsdynAccountMsdynRmaBillingAccount = "msdyn_account_msdyn_rma_BillingAccount";
+				public const string MsdynAccountMsdynRmaServiceAccount = "msdyn_account_msdyn_rma_ServiceAccount";
+				public const string MsdynAccountMsdynRmaproductChangeownership = "msdyn_account_msdyn_rmaproduct_Changeownership";
+				public const string MsdynAccountMsdynRmaproductReturntoVendor = "msdyn_account_msdyn_rmaproduct_ReturntoVendor";
+				public const string MsdynAccountMsdynRtvVendor = "msdyn_account_msdyn_rtv_Vendor";
+				public const string MsdynAccountMsdynSalesroutingrunTargetobject = "msdyn_account_msdyn_salesroutingrun_targetobject";
+				public const string MsdynAccountMsdynTradecoverageAccount = "msdyn_account_msdyn_tradecoverage_Account";
+				public const string MsdynAccountMsdynWarrantyWarrantyHolder = "msdyn_account_msdyn_warranty_WarrantyHolder";
+				public const string MsdynAccountMsdynWarrantyWarrantyProvider = "msdyn_account_msdyn_warranty_WarrantyProvider";
+				public const string MsdynAccountMsdynWorkorderBillingAccount = "msdyn_account_msdyn_workorder_BillingAccount";
+				public const string MsdynAccountMsdynWorkorderServiceAccount = "msdyn_account_msdyn_workorder_ServiceAccount";
+				public const string MsdynAccountMsdynWorkorderresourcerestrictionAccount = "msdyn_account_msdyn_workorderresourcerestriction_Account";
+				public const string MsdynAccountOpportunityproductServiceAccount = "msdyn_account_opportunityproduct_ServiceAccount";
+				public const string MsdynAccountProductDefaultVendor = "msdyn_account_product_DefaultVendor";
+				public const string MsdynAccountQuoteAccount = "msdyn_account_quote_Account";
+				public const string MsdynAccountQuotedetailServiceAccount = "msdyn_account_quotedetail_ServiceAccount";
+				public const string MsdynAccountSalesorderAccount = "msdyn_account_salesorder_Account";
+				public const string MsdynGeofenceAccount = "msdyn_geofence_account";
+				public const string MsdynMsdynConversationparticipantinsightsAccountMsdynUser = "msdyn_msdyn_conversationparticipantinsights_account_msdyn_User";
+				public const string MsdynMsdynInsurancePolicyHolderAccount = "msdyn_msdyn_insurance_PolicyHolder_account";
 				public const string MsdynMsdynPreferredagentAccountMsdynRecordId = "msdyn_msdyn_preferredagent_account_msdyn_recordId";
+				public const string MsdynMsdynSalescopilotinsightAccountMsdynTargetentityid = "msdyn_msdyn_salescopilotinsight_account_msdyn_targetentityid";
 				public const string MsdynPlaybookinstanceAccount = "msdyn_playbookinstance_account";
 				public const string MsdynSabackupdiagnosticAccountMsdynTarget = "msdyn_sabackupdiagnostic_account_msdyn_target";
 				public const string MsdynSalesaccelerationinsightsAccount = "msdyn_salesaccelerationinsights_account";
@@ -3707,9 +4218,15 @@ namespace dgt.power.dataverse
 				public const string LkExternalpartyAccountCreatedby = "lk_externalparty_account_createdby";
 				public const string LkExternalpartyAccountModifiedby = "lk_externalparty_account_modifiedby";
 				public const string ManualslaAccount = "manualsla_account";
+				public const string MsaAccountManagingpartner = "msa_account_managingpartner";
+				public const string MsdynAccountAccountBillingAccount = "msdyn_account_account_BillingAccount";
+				public const string MsdynBookableresourceAccountPreferredResource = "msdyn_bookableresource_account_PreferredResource";
 				public const string MsdynInsightsidSalesaccelerationinsights = "msdyn_insightsid_salesaccelerationinsights";
 				public const string MsdynMsdynAccountkpiitemAccountAccountkpiid = "msdyn_msdyn_accountkpiitem_account_accountkpiid";
 				public const string MsdynMsdynSegmentAccount = "msdyn_msdyn_segment_account";
+				public const string MsdynMsdynTaxcodeAccountSalesTaxCode = "msdyn_msdyn_taxcode_account_SalesTaxCode";
+				public const string MsdynMsdynWorkhourtemplateAccountWorkhourtemplate = "msdyn_msdyn_workhourtemplate_account_workhourtemplate";
+				public const string MsdynTerritoryAccountServiceTerritory = "msdyn_territory_account_ServiceTerritory";
 				public const string OwnerAccounts = "owner_accounts";
 				public const string PriceLevelAccounts = "price_level_accounts";
 				public const string ProcessstageAccount = "processstage_account";
@@ -3729,6 +4246,8 @@ namespace dgt.power.dataverse
 				public const string CampaignActivityAccounts = "CampaignActivity_Accounts";
 				public const string ListaccountAssociation = "listaccount_association";
 				public const string MsdynMsdynFunctionallocationAccount = "msdyn_msdyn_functionallocation_account";
+				public const string MsdynMsdynWarrantyAccount = "msdyn_msdyn_warranty_account";
+				public const string PowerpagecomponentMsppWebroleAccount = "powerpagecomponent_mspp_webrole_account";
             }
         }
 

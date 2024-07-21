@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,7 +6,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk.Query; 
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -17,7 +14,7 @@ namespace dgt.power.dataverse
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// Enthält alle erforderlichen Informationen zum Verarbeiten einer lösungsfähigen Entität
+	/// Contains all the information required to process a solution aware entity
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("solutioncomponentdefinition")]
@@ -68,8 +65,8 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
 
         [DebuggerNonUserCode]
 		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -106,7 +103,7 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// Eindeutiger Bezeichner der Lösungskomponentendefinition
+		/// Unique identifier of the solution component definition
 		/// </summary>
 		[AttributeLogicalName("solutioncomponentdefinitionid")]
         public Guid? SolutionComponentDefinitionId
@@ -134,7 +131,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Nur zur internen Verwendung.
+		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("solutioncomponentdefinitionidunique")]
         public Guid? SolutionComponentDefinitionIdUnique
@@ -147,7 +144,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner zum Löschen von Basisebenen.
+		/// Boolean identifier for using deleting base layers.
 		/// </summary>
 		[AttributeLogicalName("allowdeletebasesolutionrowandfakedelete")]
         public bool? AllowDeleteBaseSolutionRowAndFakeDelete
@@ -167,7 +164,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Gibt an, ob diese Komponente beim Update der verwalteten Lösung zulässt, dass Anpassungen überschrieben werden
+		/// Whether this component allows Overwrite Customizations when update managed solution
 		/// </summary>
 		[AttributeLogicalName("allowoverwritecustomizations")]
         public bool? AllowOverwriteCustomizations
@@ -187,7 +184,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner für eine Zeile, die in der aktiven Lösung als logisch gelöscht markiert wurde, die jedoch neu erstellt werden soll
+		/// Boolean identifier for a row that is marked as logically deleted in the Active solution and should be re-created back
 		/// </summary>
 		[AttributeLogicalName("allowrecreateforlogicallydeletedrow")]
         public bool? AllowRecreateForLogicallyDeletedRow
@@ -207,7 +204,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Flag, das verwendet wird, um anzugeben, ob die Komponente aktive Anpassungen beim Deinstallieren immer entfernt
+		/// Flag used to indicate whether this component always removes active customizations on uninstall
 		/// </summary>
 		[AttributeLogicalName("alwaysremoveactivecustomizationsonuninstall")]
         public bool? AlwaysRemoveActiveCustomizationsOnUninstall
@@ -227,7 +224,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Gibt an, ob die Unterkomponente direkt zur SolutionComponents-Tabelle hinzugefügt werden kann
+		/// Flag indicating whether the subcomponent can be added directly to the SolutionComponents table
 		/// </summary>
 		[AttributeLogicalName("canbeaddedtosolutioncomponents")]
         public bool? CanBeAddedToSolutionComponents
@@ -247,7 +244,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Gibt an, ob diese Komponente mithilfe der verwalteten IsHidden-Eigenschaft ausgeblendet werden kann
+		/// Whether this component is hidden using an IsHidden managed property
 		/// </summary>
 		[AttributeLogicalName("canbehidden")]
         public bool? CanBeHidden
@@ -267,28 +264,28 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Nur zur internen Verwendung.
+		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("componentstate")]
-        public OptionSetValue ComponentState
+        public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<OptionSetValue>("componentstate");
+                return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
 		/// <summary>
-		/// Pfad zum XML-Knoten der Komponente
+		/// Path to component's XML node
 		/// </summary>
 		[AttributeLogicalName("componentxpath")]
-        public string ComponentXPath
+        public string? ComponentXPath
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("componentxpath");
+                return GetAttributeValue<string?>("componentxpath");
             }
             [DebuggerNonUserCode]
 			set
@@ -300,7 +297,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Flag, das angibt, ob die Komponente ihren Vorgänger als sichtbare Komponente verwendet
+		/// Flag that indicates whether this component uses its descendent as its viewable component
 		/// </summary>
 		[AttributeLogicalName("descendentisviewablecomponent")]
         public bool? DescendentIsViewableComponent
@@ -320,15 +317,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Übergeordneter Gruppenkomponenten-Attributname
+		/// Group Parent Component Attribute Name
 		/// </summary>
 		[AttributeLogicalName("groupparentcomponentattributename")]
-        public string GroupParentComponentAttributeName
+        public string? GroupParentComponentAttributeName
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("groupparentcomponentattributename");
+                return GetAttributeValue<string?>("groupparentcomponentattributename");
             }
             [DebuggerNonUserCode]
 			set
@@ -340,7 +337,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Übergeordneter Gruppenkomponententyp
+		/// Group Parent Component Type
 		/// </summary>
 		[AttributeLogicalName("groupparentcomponenttype")]
         public int? GroupParentComponentType
@@ -360,7 +357,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Wert, der angibt, ob die Komponente ein umbenennbares Attribut hat
+		/// Boolean that indicates if the component has a renamable attribute
 		/// </summary>
 		[AttributeLogicalName("hasisrenameableattribute")]
         public bool? HasIsRenameableAttribute
@@ -380,7 +377,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Eindeutiger Bezeichner des Datenimports oder der Datenmigration, durch den/die dieser Datensatz erstellt wurde.
+		/// Unique identifier of the data import or data migration that created this record.
 		/// </summary>
 		[AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
@@ -400,15 +397,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Version, in der die Komponente eingeführt wird.
+		/// Version in which the component is introduced.
 		/// </summary>
 		[AttributeLogicalName("introducedversion")]
-        public string IntroducedVersion
+        public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("introducedversion");
+                return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
 			set
@@ -420,7 +417,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Abhängigkeit ist für die Komponente deaktiviert
+		/// Is dependency disabled for the component
 		/// </summary>
 		[AttributeLogicalName("isdependencydisabled")]
         public bool? IsDependencyDisabled
@@ -440,7 +437,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Wert, der angibt, ob für die Komponente eine Benutzeroberfläche aktiviert ist
+		/// Boolean that indicates if the component has user interface enabled
 		/// </summary>
 		[AttributeLogicalName("isdisplayable")]
         public bool? IsDisplayable
@@ -460,7 +457,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Wert, der angibt, ob die Komponente verwaltet ist
+		/// Boolean that indicates if the component is managed
 		/// </summary>
 		[AttributeLogicalName("ismanaged")]
         public bool? IsManaged
@@ -480,7 +477,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Gibt an, ob die Komponente eine zusammenführbare Komponente oder Teil einer zusammenführbaren Komponente ist
+		/// Whether this component is either a mergeable component, or part of a mergeable component
 		/// </summary>
 		[AttributeLogicalName("ismergeable")]
         public bool? IsMergeable
@@ -500,7 +497,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner für Metadatenkomponenten
+		/// Boolean identifier for metadata components
 		/// </summary>
 		[AttributeLogicalName("ismetadata")]
         public bool? IsMetadata
@@ -520,7 +517,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Gibt an, ob die Komponente im SDK und in der Benutzeroberfläche angezeigt werden kann
+		/// Whether this component is viewable in the SDK and UI
 		/// </summary>
 		[AttributeLogicalName("isviewable")]
         public bool? IsViewable
@@ -540,7 +537,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Beschriftungstypcode
+		/// Label Type Code
 		/// </summary>
 		[AttributeLogicalName("labeltypecode")]
         public int? LabelTypeCode
@@ -563,12 +560,12 @@ namespace dgt.power.dataverse
 		/// Name
 		/// </summary>
 		[AttributeLogicalName("name")]
-        public string Name
+        public string? Name
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("name");
+                return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
 			set
@@ -580,7 +577,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Objekttypcode
+		/// Object Type Code
 		/// </summary>
 		[AttributeLogicalName("objecttypecode")]
         public int? ObjectTypeCode
@@ -600,7 +597,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Datum und Uhrzeit der Datensatzmigration.
+		/// Date and time that the record was migrated.
 		/// </summary>
 		[AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
@@ -620,7 +617,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Nur zur internen Verwendung.
+		/// For internal use only.
 		/// </summary>
 		[AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
@@ -633,15 +630,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Der Attributname des übergeordneten Attributs
+		/// The attribute name of the parent attribute
 		/// </summary>
 		[AttributeLogicalName("parentattributename")]
-        public string ParentAttributeName
+        public string? ParentAttributeName
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("parentattributename");
+                return GetAttributeValue<string?>("parentattributename");
             }
             [DebuggerNonUserCode]
 			set
@@ -653,15 +650,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Logischer Name der Komponentenentität
+		/// Component Entity Logical Name
 		/// </summary>
 		[AttributeLogicalName("primaryentityname")]
-        public string PrimaryEntityName
+        public string? PrimaryEntityName
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("primaryentityname");
+                return GetAttributeValue<string?>("primaryentityname");
             }
             [DebuggerNonUserCode]
 			set
@@ -673,15 +670,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Entfernen Sie das aktive Anpassungsverhalten.
+		/// Remove Active Customizations Behavior.
 		/// </summary>
 		[AttributeLogicalName("removeactivecustomizationsbehavior")]
-        public OptionSetValue RemoveActiveCustomizationsBehavior
+        public OptionSetValue? RemoveActiveCustomizationsBehavior
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<OptionSetValue>("removeactivecustomizationsbehavior");
+                return GetAttributeValue<OptionSetValue?>("removeactivecustomizationsbehavior");
             }
             [DebuggerNonUserCode]
 			set
@@ -693,15 +690,15 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Typenname der Stammlösungskomponente
+		/// Root Solution Component Type Name
 		/// </summary>
 		[AttributeLogicalName("rootattributename")]
-        public string RootAttributeName
+        public string? RootAttributeName
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string>("rootattributename");
+                return GetAttributeValue<string?>("rootattributename");
             }
             [DebuggerNonUserCode]
 			set
@@ -713,7 +710,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Typ der Stammlösungskomponente
+		/// Root Solution Component Type
 		/// </summary>
 		[AttributeLogicalName("rootcomponent")]
         public int? RootComponent
@@ -733,7 +730,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Lösungskomponententyp
+		/// Solution Component Type
 		/// </summary>
 		[AttributeLogicalName("solutioncomponenttype")]
         public int? SolutionComponentType
@@ -753,7 +750,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Eindeutiger Bezeichner der zugeordneten Lösung.
+		/// Unique identifier of the associated solution.
 		/// </summary>
 		[AttributeLogicalName("solutionid")]
         public Guid? SolutionId
@@ -766,7 +763,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner für erzwungenes Löschen des Lösungsupdates.
+		/// Boolean identifier for forcing delete for solution update.
 		/// </summary>
 		[AttributeLogicalName("useforcedeleteforsolutionupdate")]
         public bool? UseForceDeleteForSolutionUpdate
@@ -786,7 +783,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner für immer erzwungene Updates.
+		/// Boolean identifier for always forcing update.
 		/// </summary>
 		[AttributeLogicalName("useforceupdatealways")]
         public bool? UseForceUpdateAlways
@@ -806,7 +803,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Boolescher Bezeichner für die Verwendung von Sentinel-Zeilen.
+		/// Boolean identifier for using sentine rows.
 		/// </summary>
 		[AttributeLogicalName("usesentinelrowinbasesolution")]
         public bool? UseSentinelRowInBaseSolution
@@ -826,7 +823,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Der Komponententyp des sichtbaren Vorgängers
+		/// The component type of the viewable descendent
 		/// </summary>
 		[AttributeLogicalName("viewabledescendentcomponenttype")]
         public int? ViewableDescendentComponentType
@@ -856,101 +853,101 @@ namespace dgt.power.dataverse
 		{
                 public struct AllowDeleteBaseSolutionRowAndFakeDelete
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct AllowOverwriteCustomizations
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct AllowRecreateForLogicallyDeletedRow
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct AlwaysRemoveActiveCustomizationsOnUninstall
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct CanBeAddedToSolutionComponents
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct CanBeHidden
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
 			    public struct ComponentState
                 {
-					public const int Veröffentlicht = 0;
-					public const int Unveröffentlicht = 1;
-					public const int Gelöscht = 2;
-					public const int NichtVeröffentlichtGelöscht = 3;
+					public const int Published = 0;
+					public const int Unpublished = 1;
+					public const int Deleted = 2;
+					public const int DeletedUnpublished = 3;
                 }
                 public struct DescendentIsViewableComponent
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct HasIsRenameableAttribute
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct IsDependencyDisabled
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct IsDisplayable
                 {
-                    public const bool Nein = false;
-                    public const bool Ja = true;
+                    public const bool No = false;
+                    public const bool Yes = true;
                 }
                 public struct IsManaged
                 {
-                    public const bool NichtVerwaltet = false;
-                    public const bool Verwaltet = true;
+                    public const bool Unmanaged = false;
+                    public const bool Managed = true;
                 }
                 public struct IsMergeable
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct IsMetadata
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct IsViewable
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
 			    public struct RemoveActiveCustomizationsBehavior
                 {
-					public const int Ohne = 0;
-					public const int NichtKaskadieren = 1;
-					public const int Kaskadieren = 2;
+					public const int None = 0;
+					public const int NoCascade = 1;
+					public const int Cascade = 2;
                 }
                 public struct UseForceDeleteForSolutionUpdate
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct UseForceUpdateAlways
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
                 public struct UseSentinelRowInBaseSolution
                 {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
+                    public const bool False = false;
+                    public const bool True = true;
                 }
 		}
 		#endregion
@@ -1021,8 +1018,7 @@ namespace dgt.power.dataverse
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
-            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
-
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
         public static SolutionComponentDefinition Retrieve(IOrganizationService service, Guid id)
@@ -1040,7 +1036,7 @@ namespace dgt.power.dataverse
             if (_trackChanges)
             {
                 var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
                 {
                     attr.Add(attrName,this[attrName]);
                 }

@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -170,64 +167,6 @@ namespace dgt.power.dataverse
                 OnPropertyChanging(nameof(AssignObjectIdModifiedOn));
                 SetAttributeValue("assignobjectidmodifiedon", value);
                 OnPropertyChanged(nameof(AssignObjectIdModifiedOn));
-            }
-        }
-
-		/// <summary>
-		/// Provide the user or team that the item will be assigned to
-		/// </summary>
-		[AttributeLogicalName("assignobjectidname")]
-        public string? AssignObjectIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("assignobjectidname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(AssignObjectIdName));
-                SetAttributeValue("assignobjectidname", value);
-                OnPropertyChanged(nameof(AssignObjectIdName));
-            }
-        }
-
-		
-		[AttributeLogicalName("assignobjectidtype")]
-        public string? AssignObjectIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("assignobjectidtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(AssignObjectIdType));
-                SetAttributeValue("assignobjectidtype", value);
-                OnPropertyChanged(nameof(AssignObjectIdType));
-            }
-        }
-
-		/// <summary>
-		/// Assign Object Yomi Name
-		/// </summary>
-		[AttributeLogicalName("assignobjectidyominame")]
-        public string? AssignObjectIdYomiName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("assignobjectidyominame");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(AssignObjectIdYomiName));
-                SetAttributeValue("assignobjectidyominame", value);
-                OnPropertyChanged(nameof(AssignObjectIdYomiName));
             }
         }
 
@@ -475,26 +414,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
 		/// Unique identifier for the business unit that owns the record
 		/// </summary>
 		[AttributeLogicalName("owningbusinessunit")]
@@ -734,9 +653,6 @@ namespace dgt.power.dataverse
 				public const string RoutingRuleItemId = "routingruleitemid";
 				public const string AssignObjectId = "assignobjectid";
 				public const string AssignObjectIdModifiedOn = "assignobjectidmodifiedon";
-				public const string AssignObjectIdName = "assignobjectidname";
-				public const string AssignObjectIdType = "assignobjectidtype";
-				public const string AssignObjectIdYomiName = "assignobjectidyominame";
 				public const string ComponentState = "componentstate";
 				public const string ConditionXml = "conditionxml";
 				public const string CreatedBy = "createdby";
@@ -753,7 +669,6 @@ namespace dgt.power.dataverse
 				public const string OrganizationId = "organizationid";
 				public const string OverwriteTime = "overwritetime";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningUser = "owninguser";
 				public const string RoutedQueueId = "routedqueueid";
