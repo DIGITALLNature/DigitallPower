@@ -72,7 +72,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         if (_testOutputHelper != null)
         {
             _serviceCollection
-                .AddSingleton<ITestOutputHelper>(_ => _testOutputHelper);
+                .AddSingleton(_ => _testOutputHelper);
         }
 
         var defaultConfiguration = new Dictionary<string, string?>
@@ -85,6 +85,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             .Build();
 
         var command = _serviceCollection
+            .AddScoped(_ => fakedContext.GetAsyncOrganizationService2())
             .AddScoped<IOrganizationService>(_ => fakedContext.GetAsyncOrganizationService2())
             .AddSingleton<TCommand>()
             .AddSingleton<IConfiguration>(configuration)

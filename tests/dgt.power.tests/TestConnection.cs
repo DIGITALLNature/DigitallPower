@@ -3,20 +3,20 @@
 
 using dgt.power.common;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.tests;
 
 public class TestConnection : IXrmConnection
 {
-    private readonly IOrganizationService _service;
+    private readonly IOrganizationServiceAsync2 _service;
 
-    public TestConnection(IOrganizationService service)
+    public TestConnection(IOrganizationServiceAsync2 service)
     {
         _service = service;
     }
 
-    public IOrganizationService Connect()
+    public IOrganizationServiceAsync2 Connect()
     {
         var userId = ((WhoAmIResponse)_service.Execute(new WhoAmIRequest())).UserId;
         Console.WriteLine($"WhoAmI: [bold]{userId:D}[/]");
