@@ -1,0 +1,8 @@
+{
+    "EnvironmentVariables": [
+        {
+            "SchemaName": "test_apply_deployment_settings",
+            "Value": ""
+        }
+    ]
+}
