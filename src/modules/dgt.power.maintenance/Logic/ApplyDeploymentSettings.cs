@@ -61,7 +61,7 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                             Values = { envName },
                         };
                         var envDefionitions = await _organizationService.RetrieveMultipleAsync(envDefinitionQuery);
-                        var envDefinition = (envDefionitions.Entities.FirstOrDefault()?.ToEntity<EnvironmentVariableDefinition>()) ?? throw new InvalidOperationException($"Environment variable definition '{envName}' not found");
+                        var envDefinition = (envDefionitions.Entities.FirstOrDefault()?.ToEntity<EnvironmentVariableDefinition>()) ?? throw new InvalidOperationException($"environment variable definition '{envName}' not found");
 
                         var envValueQuery = new QueryByAttribute
                         {
@@ -86,8 +86,11 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                         else if (existingEnvValue.Value != envValue)
                         {
                             AnsiConsole.MarkupLine($"[grey]{envName}: updating value[/]");
-                            existingEnvValue.Value = envValue;
-                            await _organizationService.UpdateAsync(existingEnvValue);
+                            await _organizationService.UpdateAsync(new EnvironmentVariableValue
+                            {
+                                Id = existingEnvValue.Id,
+                                Value = envValue,
+                            });
                         }
                         else
                         {
