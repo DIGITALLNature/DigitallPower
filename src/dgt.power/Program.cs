@@ -162,6 +162,9 @@ app.Configure(config =>
             maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
                 .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
                 .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
+            maintenance.AddCommand<ApplyDeploymentSettings>("applydeploymentsettings")
+                .WithDescription("Applies deployment settings from a given deployment settings file")
+                .WithExample("maintenance", "applydeploymentsettings", "--settings-file", "./deploymentsettings.json");
 
         });
 
