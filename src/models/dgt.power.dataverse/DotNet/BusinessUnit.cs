@@ -1621,6 +1621,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N business_unit_connectionreference
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_connectionreference")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> BusinessUnitConnectionreference
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("business_unit_connectionreference", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("BusinessUnitConnectionreference");
+				this.SetRelatedEntities<Connectionreference>("business_unit_connectionreference", null, value);
+				this.OnPropertyChanged("BusinessUnitConnectionreference");
+			}
+		}
+
+		/// <summary>
 		/// 1:N business_unit_contacts
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_contacts")]

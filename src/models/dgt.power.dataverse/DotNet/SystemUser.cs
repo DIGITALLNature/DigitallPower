@@ -3456,6 +3456,86 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N lk_connectionreference_createdby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_connectionreference_createdby")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> LkConnectionreferenceCreatedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("lk_connectionreference_createdby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkConnectionreferenceCreatedby");
+				this.SetRelatedEntities<Connectionreference>("lk_connectionreference_createdby", null, value);
+				this.OnPropertyChanged("LkConnectionreferenceCreatedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_connectionreference_createdonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_connectionreference_createdonbehalfby")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> LkConnectionreferenceCreatedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("lk_connectionreference_createdonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkConnectionreferenceCreatedonbehalfby");
+				this.SetRelatedEntities<Connectionreference>("lk_connectionreference_createdonbehalfby", null, value);
+				this.OnPropertyChanged("LkConnectionreferenceCreatedonbehalfby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_connectionreference_modifiedby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_connectionreference_modifiedby")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> LkConnectionreferenceModifiedby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("lk_connectionreference_modifiedby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkConnectionreferenceModifiedby");
+				this.SetRelatedEntities<Connectionreference>("lk_connectionreference_modifiedby", null, value);
+				this.OnPropertyChanged("LkConnectionreferenceModifiedby");
+			}
+		}
+
+		/// <summary>
+		/// 1:N lk_connectionreference_modifiedonbehalfby
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_connectionreference_modifiedonbehalfby")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> LkConnectionreferenceModifiedonbehalfby
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("lk_connectionreference_modifiedonbehalfby", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("LkConnectionreferenceModifiedonbehalfby");
+				this.SetRelatedEntities<Connectionreference>("lk_connectionreference_modifiedonbehalfby", null, value);
+				this.OnPropertyChanged("LkConnectionreferenceModifiedonbehalfby");
+			}
+		}
+
+		/// <summary>
 		/// 1:N lk_contact_createdonbehalfby
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_contact_createdonbehalfby")]
@@ -6052,6 +6132,26 @@ namespace dgt.power.dataverse
 				this.OnPropertyChanging("UserAccounts");
 				this.SetRelatedEntities<Account>("user_accounts", null, value);
 				this.OnPropertyChanged("UserAccounts");
+			}
+		}
+
+		/// <summary>
+		/// 1:N user_connectionreference
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_connectionreference")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> UserConnectionreference
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("user_connectionreference", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("UserConnectionreference");
+				this.SetRelatedEntities<Connectionreference>("user_connectionreference", null, value);
+				this.OnPropertyChanged("UserConnectionreference");
 			}
 		}
 

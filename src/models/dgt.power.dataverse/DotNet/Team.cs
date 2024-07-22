@@ -740,6 +740,26 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
+		/// 1:N team_connectionreference
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_connectionreference")]
+		public System.Collections.Generic.IEnumerable<Connectionreference> TeamConnectionreference
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<Connectionreference>("team_connectionreference", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("TeamConnectionreference");
+				this.SetRelatedEntities<Connectionreference>("team_connectionreference", null, value);
+				this.OnPropertyChanged("TeamConnectionreference");
+			}
+		}
+
+		/// <summary>
 		/// 1:N team_contacts
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_contacts")]
