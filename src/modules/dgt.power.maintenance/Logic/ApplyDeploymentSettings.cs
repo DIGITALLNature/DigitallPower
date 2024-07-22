@@ -36,6 +36,7 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                 {
                     settingsJson = await JsonSerializer.DeserializeAsync<JsonElement>(fs);
                 }
+                loadSettingsFileTask.IsIndeterminate(false).Value(loadSettingsFileTask.MaxValue).StopTask();
 
                 if (!settingsJson.TryGetProperty("EnvironmentVariables", out var envSettingsElement) || envSettingsElement.ValueKind != JsonValueKind.Array)
                 {
@@ -140,6 +141,8 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                             AnsiConsole.MarkupLine($"[grey]{connRefName}: connection id up to date[/]");
                         }
                     });
+
+                    applyConnRefTask.Increment(1);
                 }
 
                 loadSettingsFileTask.StopTask();
