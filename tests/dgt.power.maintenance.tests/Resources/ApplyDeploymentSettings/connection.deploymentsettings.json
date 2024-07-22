@@ -1,0 +1,8 @@
+{
+    "ConnectionReferences": [
+        {
+            "LogicalName": "test_conn",
+            "ConnectionId": "some-connection-id"
+        }
+    ]
+}

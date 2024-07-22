@@ -84,4 +84,55 @@ public class ApplyDeploymentSettingsTests(ITestOutputHelper testOutputHelper) : 
             SettingsFile = GetResourcePath("environment.emptyvalue.deploymentsettings.json"),
         })).Should().Throw<InvalidOperationException>();
     }
+
+    [Fact]
+    private void ConnectionReferenceDeploymentSettings_Should_SetMissingConnectionId()
+    {
+        var connectionReference = new Connectionreference
+        {
+            Id = Guid.NewGuid(),
+            ConnectionReferenceLogicalName = "test_conn",
+        };
+
+        var context = GetBuilder()
+            .WithData(connectionReference)
+            .Build();
+
+        var result = context.Execute(new ApplyDeploymentSettings.Settings
+        {
+            SettingsFile = GetResourcePath("connection.deploymentsettings.json"),
+        });
+
+        result.Should().Succeed();
+
+        context.DataContext.ConnectionreferenceSet.Should().ContainSingle();
+        var resultingConnectionReference = context.DataContext.ConnectionreferenceSet.Single();
+        resultingConnectionReference.ConnectionId.Should().Be("some-connection-id");
+    }
+
+    [Fact]
+    private void ConnectionReferenceDeploymentSettings_Should_UpdateExistingConnectionId()
+    {
+        var connectionReference = new Connectionreference
+        {
+            Id = Guid.NewGuid(),
+            ConnectionReferenceLogicalName = "test_conn",
+            ConnectionId = "old-connection-id",
+        };
+
+        var context = GetBuilder()
+            .WithData(connectionReference)
+            .Build();
+
+        var result = context.Execute(new ApplyDeploymentSettings.Settings
+        {
+            SettingsFile = GetResourcePath("connection.deploymentsettings.json"),
+        });
+
+        result.Should().Succeed();
+
+        context.DataContext.ConnectionreferenceSet.Should().ContainSingle();
+        var resultingConnectionReference = context.DataContext.ConnectionreferenceSet.Single();
+        resultingConnectionReference.ConnectionId.Should().Be("some-connection-id");
+    }
 }

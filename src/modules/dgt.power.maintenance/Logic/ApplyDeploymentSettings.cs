@@ -27,6 +27,7 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
             {
                 var loadSettingsFileTask = context.AddTask("loading settings file").IsIndeterminate();
                 var applyEnvTask = context.AddTask("apply environment settings", false);
+                var applyConnRefTask = context.AddTask("apply connection references", false);
 
                 var settingsFilePath = settings.SettingsFile;
 
@@ -94,6 +95,47 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                         }
 
                         applyEnvTask.Increment(1);
+                    });
+                }
+
+                if (!settingsJson.TryGetProperty("ConnectionReferences", out var connRefElement) || connRefElement.ValueKind != JsonValueKind.Array)
+                {
+                    AnsiConsole.MarkupLine("[orange3]no connection references settings part found in config[/]");
+                    applyConnRefTask.StopTask();
+                }
+                else
+                {
+                    applyConnRefTask.MaxValue(connRefElement.GetArrayLength()).StartTask();
+
+                    await Parallel.ForEachAsync(connRefElement.EnumerateArray(), async (connRefSetting, _) => {
+                        var connRefName = connRefSetting.GetProperty("LogicalName").GetString();
+                        var connRefId = connRefSetting.GetProperty("ConnectionId").GetString();
+
+                        AnsiConsole.MarkupLine($"[grey]handling connection reference: {connRefName}[/]");
+
+                        var connRefQuery = new QueryByAttribute
+                        {
+                            EntityName = Connectionreference.EntityLogicalName,
+                            ColumnSet = new ColumnSet(Connectionreference.LogicalNames.ConnectionId),
+                            Attributes = { Connectionreference.LogicalNames.ConnectionReferenceLogicalName },
+                            Values = { connRefName },
+                        };
+                        var connRefs = await _organizationService.RetrieveMultipleAsync(connRefQuery);
+                        var existingConnRef = connRefs.Entities.FirstOrDefault()?.ToEntity<Connectionreference>() ?? throw new InvalidOperationException($"connection reference '{connRefName}' not found");
+
+                        if (existingConnRef.ConnectionId != connRefId)
+                        {
+                            AnsiConsole.MarkupLine($"[grey]{connRefName}: updating connection id[/]");
+                            await _organizationService.UpdateAsync(new Connectionreference
+                            {
+                                Id = existingConnRef.Id,
+                                ConnectionId = connRefId,
+                            });
+                        }
+                        else
+                        {
+                            AnsiConsole.MarkupLine($"[grey]{connRefName}: connection id up to date[/]");
+                        }
                     });
                 }
 
