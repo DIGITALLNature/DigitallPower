@@ -111,7 +111,8 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                 {
                     applyConnRefTask.MaxValue(connRefElement.GetArrayLength()).StartTask();
 
-                    await Parallel.ForEachAsync(connRefElement.EnumerateArray(), async (connRefSetting, _) => {
+                    await Parallel.ForEachAsync(connRefElement.EnumerateArray(), async (connRefSetting, _) =>
+                    {
                         var connRefName = connRefSetting.GetProperty("LogicalName").GetString();
                         var connRefId = connRefSetting.GetProperty("ConnectionId").GetString();
 
@@ -140,12 +141,14 @@ public class ApplyDeploymentSettings(IOrganizationServiceAsync2 organizationServ
                         {
                             AnsiConsole.MarkupLine($"[grey]{connRefName}: connection id up to date[/]");
                         }
+
+                        applyConnRefTask.Increment(1);
                     });
 
                     applyConnRefTask.Increment(1);
                 }
 
-                loadSettingsFileTask.StopTask();
+                applyConnRefTask.StopTask();
             });
 
         return 0;
