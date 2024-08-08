@@ -1684,26 +1684,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N business_unit_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> BusinessUnitEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("business_unit_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("BusinessUnitEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("business_unit_ec4u_carrier", null, value);
-				this.OnPropertyChanged("BusinessUnitEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N business_unit_parent_business_unit
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_parent_business_unit")]

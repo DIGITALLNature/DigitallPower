@@ -45,6 +45,11 @@
         "attribute",
         "ec4u_carrier",
         "dgt_carrier",
+        "dgt_carrier_constraint",
+        "dgt_carrier_dependency_check",
+        "dgt_carrier_missing_dependency",
+        "dgt_workbench",
+        "dgt_workbench_history",
         "webresource",
         "solutioncomponentdefinition"
     ],

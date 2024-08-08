@@ -11,6 +11,7 @@ using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Model.Serialization;
 using dgt.power.maintenance.Model.Settings;
+using ec4u.solutionconcept;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -68,7 +69,8 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
         if (isSuccessfulOld)
         {
-            carriers = DataContext.Ec4uCarrierSet
+            var ec4uDataContext = new ec4u.solutionconcept.DataContext(OrganizationService);
+            carriers = ec4uDataContext.Ec4uCarrierSet
                 .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.Ec4uCarTransportOrderNo)
                 .Select(x => new Ec4uCarrier

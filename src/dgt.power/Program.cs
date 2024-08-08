@@ -30,8 +30,10 @@ using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
 using dgt.power.push.Logic;
+using dgt.power.solutionconcept;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
@@ -78,8 +80,10 @@ registrations.AddScoped<ITypescriptGenerator, TypescriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetCommand, DotNetCommand>();
 registrations.AddScoped<IFileService, FileService>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
+registrations.AddSingleton(provider => provider.GetRequiredService<IXrmConnection>().Connect());
+registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IOrganizationServiceAsync2>());
 registrations.AddScoped<WebresourcesProcessor>();
+registrations.AddScoped<MigrateToDigitallSolutions>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -153,10 +157,10 @@ app.Configure(config =>
                 .WithExample("maintenance", "workflowstate", "--config", "./config.json");
             maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
                 .WithDescription("Removes solution components that are already existing")
-                .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
+                .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
             maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                 .WithDescription("Add Messagefiltering for PowerFx Plugins")
-                .WithExample("maintenance","filterfxplugins","--config", "./config.json");
+                .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
             maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
                 .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
                 .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
@@ -207,6 +211,11 @@ app.Configure(config =>
     config.AddCommand<PushCommand>("push")
         .WithDescription("Import specific Dataverse Artefacts")
         .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
+
+    config.AddBranch("solution-concept", c =>
+    {
+        c.AddCommand<MigrateToDigitallSolutions>("migrate");
+    });
 
     config.Settings.ApplicationName = "dgtp";
 

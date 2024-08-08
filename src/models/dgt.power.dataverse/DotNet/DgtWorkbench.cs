@@ -1,6 +1,3 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -18,37 +15,37 @@ namespace dgt.power.dataverse
 	/// <inheritdoc />
 	
 	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("ec4u_carrier")]
+	[EntityLogicalNameAttribute("dgt_workbench")]
 	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
-	public partial class Ec4uCarrier : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class DgtWorkbench : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
 		[DebuggerNonUserCode]
-		public Ec4uCarrier() : this(false)
+		public DgtWorkbench() : this(false)
         {
         }
 
         [DebuggerNonUserCode]
-		public Ec4uCarrier(bool trackChanges = false) : base(EntityLogicalName)
-        {
-			_trackChanges = trackChanges;
-        }
-
-        [DebuggerNonUserCode]
-		public Ec4uCarrier(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+		public DgtWorkbench(bool trackChanges = false) : base(EntityLogicalName)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public Ec4uCarrier(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+		public DgtWorkbench(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public Ec4uCarrier(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+		public DgtWorkbench(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        [DebuggerNonUserCode]
+		public DgtWorkbench(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
 			_trackChanges = trackChanges;
         }
@@ -60,9 +57,9 @@ namespace dgt.power.dataverse
         #endregion
 
         #region consts
-        public const string EntityLogicalName = "ec4u_carrier";
-        public const string PrimaryNameAttribute = "ec4u_car_reference";
-        public const int EntityTypeCode = 10740;
+        public const string EntityLogicalName = "dgt_workbench";
+        public const string PrimaryNameAttribute = "dgt_name";
+        public const int EntityTypeCode = 10426;
         #endregion
 
         #region Events
@@ -88,7 +85,7 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Attributes
-		[AttributeLogicalNameAttribute("ec4u_carrierid")]
+		[AttributeLogicalNameAttribute("dgt_workbenchid")]
 		public new System.Guid Id
 		{
 		    [DebuggerNonUserCode]
@@ -99,26 +96,26 @@ namespace dgt.power.dataverse
             [DebuggerNonUserCode]
 			set
 			{
-				Ec4uCarrierId = value;
+				DgtWorkbenchId = value;
 			}
 		}
 
 		/// <summary>
 		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("ec4u_carrierid")]
-        public Guid? Ec4uCarrierId
+		[AttributeLogicalName("dgt_workbenchid")]
+        public Guid? DgtWorkbenchId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Guid?>("ec4u_carrierid");
+                return GetAttributeValue<Guid?>("dgt_workbenchid");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarrierId));
-                SetAttributeValue("ec4u_carrierid", value);
+                OnPropertyChanging(nameof(DgtWorkbenchId));
+                SetAttributeValue("dgt_workbenchid", value);
 				if (value.HasValue)
 				{
 					base.Id = value.Value;
@@ -127,7 +124,7 @@ namespace dgt.power.dataverse
 				{
 					base.Id = System.Guid.Empty;
 				}
-                OnPropertyChanged(nameof(Ec4uCarrierId));
+                OnPropertyChanged(nameof(DgtWorkbenchId));
             }
         }
 
@@ -142,6 +139,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(CreatedBy));
+                SetAttributeValue("createdby", value);
+                OnPropertyChanged(nameof(CreatedBy));
+            }
         }
 
 		/// <summary>
@@ -154,6 +158,13 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<DateTime?>("createdon");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(CreatedOn));
+                SetAttributeValue("createdon", value);
+                OnPropertyChanged(nameof(CreatedOn));
             }
         }
 
@@ -168,187 +179,158 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
-        }
-
-		
-		[AttributeLogicalName("ec4u_car_handshake_ts")]
-        public DateTime? Ec4uCarHandshakeTs
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<DateTime?>("ec4u_car_handshake_ts");
-            }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarHandshakeTs));
-                SetAttributeValue("ec4u_car_handshake_ts", value);
-                OnPropertyChanged(nameof(Ec4uCarHandshakeTs));
+                OnPropertyChanging(nameof(CreatedOnBehalfBy));
+                SetAttributeValue("createdonbehalfby", value);
+                OnPropertyChanged(nameof(CreatedOnBehalfBy));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_locked_opt")]
-        public bool? Ec4uCarLockedOpt
+		[AttributeLogicalName("dgt_carrier_id")]
+        public EntityReference? DgtCarrierId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<bool?>("ec4u_car_locked_opt");
+                return GetAttributeValue<EntityReference?>("dgt_carrier_id");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarLockedOpt));
-                SetAttributeValue("ec4u_car_locked_opt", value);
-                OnPropertyChanged(nameof(Ec4uCarLockedOpt));
+                OnPropertyChanging(nameof(DgtCarrierId));
+                SetAttributeValue("dgt_carrier_id", value);
+                OnPropertyChanged(nameof(DgtCarrierId));
             }
         }
 
 		/// <summary>
-		/// The Carrier Reference
+		/// The Workbench Name.
 		/// </summary>
-		[AttributeLogicalName("ec4u_car_reference")]
-        public string? Ec4uCarReference
+		[AttributeLogicalName("dgt_name")]
+        public string? DgtName
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("ec4u_car_reference");
+                return GetAttributeValue<string?>("dgt_name");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarReference));
-                SetAttributeValue("ec4u_car_reference", value);
-                OnPropertyChanged(nameof(Ec4uCarReference));
+                OnPropertyChanging(nameof(DgtName));
+                SetAttributeValue("dgt_name", value);
+                OnPropertyChanged(nameof(DgtName));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_solutionfriendlyname")]
-        public string? Ec4uCarSolutionfriendlyname
+		[AttributeLogicalName("dgt_nature_set")]
+        public OptionSetValue? DgtNatureSet
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("ec4u_car_solutionfriendlyname");
+                return GetAttributeValue<OptionSetValue?>("dgt_nature_set");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarSolutionfriendlyname));
-                SetAttributeValue("ec4u_car_solutionfriendlyname", value);
-                OnPropertyChanged(nameof(Ec4uCarSolutionfriendlyname));
+                OnPropertyChanging(nameof(DgtNatureSet));
+                SetAttributeValue("dgt_nature_set", value);
+                OnPropertyChanged(nameof(DgtNatureSet));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_solutionid")]
-        public string? Ec4uCarSolutionid
+		[AttributeLogicalName("dgt_solutionfriendlyname")]
+        public string? DgtSolutionfriendlyname
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("ec4u_car_solutionid");
+                return GetAttributeValue<string?>("dgt_solutionfriendlyname");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarSolutionid));
-                SetAttributeValue("ec4u_car_solutionid", value);
-                OnPropertyChanged(nameof(Ec4uCarSolutionid));
+                OnPropertyChanging(nameof(DgtSolutionfriendlyname));
+                SetAttributeValue("dgt_solutionfriendlyname", value);
+                OnPropertyChanged(nameof(DgtSolutionfriendlyname));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_solutionuniquename")]
-        public string? Ec4uCarSolutionuniquename
+		[AttributeLogicalName("dgt_solutionid")]
+        public string? DgtSolutionid
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("ec4u_car_solutionuniquename");
+                return GetAttributeValue<string?>("dgt_solutionid");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarSolutionuniquename));
-                SetAttributeValue("ec4u_car_solutionuniquename", value);
-                OnPropertyChanged(nameof(Ec4uCarSolutionuniquename));
+                OnPropertyChanging(nameof(DgtSolutionid));
+                SetAttributeValue("dgt_solutionid", value);
+                OnPropertyChanged(nameof(DgtSolutionid));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_solutionversion")]
-        public string? Ec4uCarSolutionversion
+		[AttributeLogicalName("dgt_solutionuniquename")]
+        public string? DgtSolutionuniquename
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("ec4u_car_solutionversion");
+                return GetAttributeValue<string?>("dgt_solutionuniquename");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarSolutionversion));
-                SetAttributeValue("ec4u_car_solutionversion", value);
-                OnPropertyChanged(nameof(Ec4uCarSolutionversion));
+                OnPropertyChanging(nameof(DgtSolutionuniquename));
+                SetAttributeValue("dgt_solutionuniquename", value);
+                OnPropertyChanged(nameof(DgtSolutionuniquename));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_transport_order_no")]
-        public int? Ec4uCarTransportOrderNo
+		[AttributeLogicalName("dgt_solutionversion")]
+        public string? DgtSolutionversion
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<int?>("ec4u_car_transport_order_no");
+                return GetAttributeValue<string?>("dgt_solutionversion");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarTransportOrderNo));
-                SetAttributeValue("ec4u_car_transport_order_no", value);
-                OnPropertyChanged(nameof(Ec4uCarTransportOrderNo));
+                OnPropertyChanging(nameof(DgtSolutionversion));
+                SetAttributeValue("dgt_solutionversion", value);
+                OnPropertyChanged(nameof(DgtSolutionversion));
             }
         }
 
 		
-		[AttributeLogicalName("ec4u_car_workbench_id")]
-        public EntityReference? Ec4uCarWorkbenchId
+		[AttributeLogicalName("dgt_target_carrier_id")]
+        public EntityReference? DgtTargetCarrierId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<EntityReference?>("ec4u_car_workbench_id");
+                return GetAttributeValue<EntityReference?>("dgt_target_carrier_id");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Ec4uCarWorkbenchId));
-                SetAttributeValue("ec4u_car_workbench_id", value);
-                OnPropertyChanged(nameof(Ec4uCarWorkbenchId));
-            }
-        }
-
-		
-		[AttributeLogicalName("ec4u_constraint_mset")]
-        public Microsoft.Xrm.Sdk.OptionSetValueCollection? Ec4uConstraintMset
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValueCollection?>("ec4u_constraint_mset");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Ec4uConstraintMset));
-                SetAttributeValue("ec4u_constraint_mset", value);
-                OnPropertyChanged(nameof(Ec4uConstraintMset));
+                OnPropertyChanging(nameof(DgtTargetCarrierId));
+                SetAttributeValue("dgt_target_carrier_id", value);
+                OnPropertyChanged(nameof(DgtTargetCarrierId));
             }
         }
 
@@ -383,6 +365,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ModifiedBy));
+                SetAttributeValue("modifiedby", value);
+                OnPropertyChanged(nameof(ModifiedBy));
+            }
         }
 
 		/// <summary>
@@ -396,6 +385,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ModifiedOn));
+                SetAttributeValue("modifiedon", value);
+                OnPropertyChanged(nameof(ModifiedOn));
+            }
         }
 
 		/// <summary>
@@ -408,6 +404,13 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(ModifiedOnBehalfBy));
+                SetAttributeValue("modifiedonbehalfby", value);
+                OnPropertyChanged(nameof(ModifiedOnBehalfBy));
             }
         }
 
@@ -452,26 +455,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
 		/// Unique identifier for the business unit that owns the record
 		/// </summary>
 		[AttributeLogicalName("owningbusinessunit")]
@@ -481,6 +464,13 @@ namespace dgt.power.dataverse
 			get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
+            }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(OwningBusinessUnit));
+                SetAttributeValue("owningbusinessunit", value);
+                OnPropertyChanged(nameof(OwningBusinessUnit));
             }
         }
 
@@ -495,6 +485,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(OwningTeam));
+                SetAttributeValue("owningteam", value);
+                OnPropertyChanged(nameof(OwningTeam));
+            }
         }
 
 		/// <summary>
@@ -508,50 +505,17 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
             }
-        }
-
-		/// <summary>
-		/// Contains the id of the process associated with the entity.
-		/// </summary>
-		[AttributeLogicalName("processid")]
-        public Guid? Processid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Guid?>("processid");
-            }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(Processid));
-                SetAttributeValue("processid", value);
-                OnPropertyChanged(nameof(Processid));
+                OnPropertyChanging(nameof(OwningUser));
+                SetAttributeValue("owninguser", value);
+                OnPropertyChanged(nameof(OwningUser));
             }
         }
 
 		/// <summary>
-		/// Contains the id of the stage where the entity is located.
-		/// </summary>
-		[AttributeLogicalName("stageid")]
-        public Guid? Stageid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Guid?>("stageid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Stageid));
-                SetAttributeValue("stageid", value);
-                OnPropertyChanged(nameof(Stageid));
-            }
-        }
-
-		/// <summary>
-		/// Status of the Carrier
+		/// Status of the Workbench
 		/// </summary>
 		[AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
@@ -571,7 +535,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Reason for the status of the Carrier
+		/// Reason for the status of the Workbench
 		/// </summary>
 		[AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
@@ -611,26 +575,6 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// A comma separated list of string values representing the unique identifiers of stages in a Business Process Flow Instance in the order that they occur.
-		/// </summary>
-		[AttributeLogicalName("traversedpath")]
-        public string? Traversedpath
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("traversedpath");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(Traversedpath));
-                SetAttributeValue("traversedpath", value);
-                OnPropertyChanged(nameof(Traversedpath));
-            }
-        }
-
-		/// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
 		[AttributeLogicalName("utcconversiontimezonecode")]
@@ -661,6 +605,13 @@ namespace dgt.power.dataverse
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
+            [DebuggerNonUserCode]
+			set
+            {
+                OnPropertyChanging(nameof(VersionNumber));
+                SetAttributeValue("versionnumber", value);
+                OnPropertyChanged(nameof(VersionNumber));
+            }
         }
 
 
@@ -668,22 +619,62 @@ namespace dgt.power.dataverse
 
 		#region NavigationProperties
 		/// <summary>
-		/// 1:N ec4u_carrier_AsyncOperations
+		/// 1:N dgt_workbench_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("ec4u_carrier_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> Ec4uCarrierAsyncOperations
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_workbench_AsyncOperations")]
+		public System.Collections.Generic.IEnumerable<AsyncOperation> DgtWorkbenchAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<AsyncOperation>("ec4u_carrier_AsyncOperations", null);
+				return this.GetRelatedEntities<AsyncOperation>("dgt_workbench_AsyncOperations", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("Ec4uCarrierAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("ec4u_carrier_AsyncOperations", null, value);
-				this.OnPropertyChanged("Ec4uCarrierAsyncOperations");
+				this.OnPropertyChanging("DgtWorkbenchAsyncOperations");
+				this.SetRelatedEntities<AsyncOperation>("dgt_workbench_AsyncOperations", null, value);
+				this.OnPropertyChanged("DgtWorkbenchAsyncOperations");
+			}
+		}
+
+		/// <summary>
+		/// 1:N dgt_workbench_to_carrier_on_workbench
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_workbench_to_carrier_on_workbench")]
+		public System.Collections.Generic.IEnumerable<DgtCarrier> DgtWorkbenchToCarrierOnWorkbench
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtCarrier>("dgt_workbench_to_carrier_on_workbench", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("DgtWorkbenchToCarrierOnWorkbench");
+				this.SetRelatedEntities<DgtCarrier>("dgt_workbench_to_carrier_on_workbench", null, value);
+				this.OnPropertyChanged("DgtWorkbenchToCarrierOnWorkbench");
+			}
+		}
+
+		/// <summary>
+		/// 1:N dgt_workbench_to_workbench_history
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_workbench_to_workbench_history")]
+		public System.Collections.Generic.IEnumerable<DgtWorkbenchHistory> DgtWorkbenchToWorkbenchHistory
+		{
+			[DebuggerNonUserCode]
+			get
+			{
+				return this.GetRelatedEntities<DgtWorkbenchHistory>("dgt_workbench_to_workbench_history", null);
+			}
+			[DebuggerNonUserCode]
+			set
+			{
+				this.OnPropertyChanging("DgtWorkbenchToWorkbenchHistory");
+				this.SetRelatedEntities<DgtWorkbenchHistory>("dgt_workbench_to_workbench_history", null, value);
+				this.OnPropertyChanged("DgtWorkbenchToWorkbenchHistory");
 			}
 		}
 
@@ -692,17 +683,12 @@ namespace dgt.power.dataverse
 		#region Options
 		public static class Options
 		{
-                public struct Ec4uCarLockedOpt
+			    public struct DgtNatureSet
                 {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct Ec4uConstraintMset
-                {
-					public const int PreventFlows = 596030000;
-					public const int PreventManagedEntitiesWithAllAssets = 596030001;
-					public const int PreventItemsWithouthActiveLayer = 596030002;
-					public const int PreventPluginAssemblys = 596030003;
+					public const int Workbench = 283510000;
+					public const int Assembly = 283510001;
+					public const int EnvironmentVariable = 283510002;
+					public const int ConnectionReference = 283510003;
                 }
                 public struct Statecode
                 {
@@ -713,6 +699,10 @@ namespace dgt.power.dataverse
                 {
 					public const int Active = 1;
 					public const int Inactive = 2;
+					public const int Merge = 283510001;
+					public const int Finalize = 283510002;
+					public const int Failure = 283510003;
+					public const int Close = 283510004;
                 }
 		}
 		#endregion
@@ -720,36 +710,30 @@ namespace dgt.power.dataverse
 		#region LogicalNames
 		public static class LogicalNames
 		{
-				public const string Ec4uCarrierId = "ec4u_carrierid";
+				public const string DgtWorkbenchId = "dgt_workbenchid";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Ec4uCarHandshakeTs = "ec4u_car_handshake_ts";
-				public const string Ec4uCarLockedOpt = "ec4u_car_locked_opt";
-				public const string Ec4uCarReference = "ec4u_car_reference";
-				public const string Ec4uCarSolutionfriendlyname = "ec4u_car_solutionfriendlyname";
-				public const string Ec4uCarSolutionid = "ec4u_car_solutionid";
-				public const string Ec4uCarSolutionuniquename = "ec4u_car_solutionuniquename";
-				public const string Ec4uCarSolutionversion = "ec4u_car_solutionversion";
-				public const string Ec4uCarTransportOrderNo = "ec4u_car_transport_order_no";
-				public const string Ec4uCarWorkbenchId = "ec4u_car_workbench_id";
-				public const string Ec4uConstraintMset = "ec4u_constraint_mset";
+				public const string DgtCarrierId = "dgt_carrier_id";
+				public const string DgtName = "dgt_name";
+				public const string DgtNatureSet = "dgt_nature_set";
+				public const string DgtSolutionfriendlyname = "dgt_solutionfriendlyname";
+				public const string DgtSolutionid = "dgt_solutionid";
+				public const string DgtSolutionuniquename = "dgt_solutionuniquename";
+				public const string DgtSolutionversion = "dgt_solutionversion";
+				public const string DgtTargetCarrierId = "dgt_target_carrier_id";
 				public const string ImportSequenceNumber = "importsequencenumber";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
 				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
 				public const string OverriddenCreatedOn = "overriddencreatedon";
 				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
 				public const string OwningBusinessUnit = "owningbusinessunit";
 				public const string OwningTeam = "owningteam";
 				public const string OwningUser = "owninguser";
-				public const string Processid = "processid";
-				public const string Stageid = "stageid";
 				public const string Statecode = "statecode";
 				public const string Statuscode = "statuscode";
 				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string Traversedpath = "traversedpath";
 				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
 				public const string VersionNumber = "versionnumber";
 		}
@@ -760,34 +744,29 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
-				public const string Ec4uCarrierAsyncOperations = "ec4u_carrier_AsyncOperations";
-				public const string Ec4uCarrierBulkDeleteFailures = "ec4u_carrier_BulkDeleteFailures";
-				public const string Ec4uCarrierDuplicateBaseRecord = "ec4u_carrier_DuplicateBaseRecord";
-				public const string Ec4uCarrierDuplicateMatchingRecord = "ec4u_carrier_DuplicateMatchingRecord";
-				public const string Ec4uCarrierMailboxTrackingFolders = "ec4u_carrier_MailboxTrackingFolders";
-				public const string Ec4uCarrierPrincipalObjectAttributeAccesses = "ec4u_carrier_PrincipalObjectAttributeAccesses";
-				public const string Ec4uCarrierProcessSession = "ec4u_carrier_ProcessSession";
-				public const string Ec4uCarrierSyncErrors = "ec4u_carrier_SyncErrors";
-				public const string Ec4uCarrierToCarrierDependencyCheckOnCarrierId = "ec4u_carrier_to_carrier_dependency_check_on_carrier_id";
-				public const string Ec4uCarrierToCarrierMissingDependencyOnCarrierId = "ec4u_carrier_to_carrier_missing_dependency_on_carrier_id";
-				public const string Ec4uCarrierToWorkbenchHistoryOnCarrier = "ec4u_carrier_to_workbench_history_on_carrier";
-				public const string Ec4uCarrierToWorkbenchOnCarrier = "ec4u_carrier_to_workbench_on_carrier";
-				public const string Ec4uCarrierToWorkbenchOnTargetCarrier = "ec4u_carrier_to_workbench_on_target_carrier";
-				public const string Ec4uCarrierUserEntityInstanceDatas = "ec4u_carrier_UserEntityInstanceDatas";
+				public const string DgtWorkbenchAsyncOperations = "dgt_workbench_AsyncOperations";
+				public const string DgtWorkbenchBulkDeleteFailures = "dgt_workbench_BulkDeleteFailures";
+				public const string DgtWorkbenchMailboxTrackingFolders = "dgt_workbench_MailboxTrackingFolders";
+				public const string DgtWorkbenchPrincipalObjectAttributeAccesses = "dgt_workbench_PrincipalObjectAttributeAccesses";
+				public const string DgtWorkbenchProcessSession = "dgt_workbench_ProcessSession";
+				public const string DgtWorkbenchSyncErrors = "dgt_workbench_SyncErrors";
+				public const string DgtWorkbenchToCarrierOnWorkbench = "dgt_workbench_to_carrier_on_workbench";
+				public const string DgtWorkbenchToWorkbenchHistory = "dgt_workbench_to_workbench_history";
+				public const string DgtWorkbenchUserEntityInstanceDatas = "dgt_workbench_UserEntityInstanceDatas";
             }
 
             public static class ManyToOne
             {
-				public const string BusinessUnitEc4uCarrier = "business_unit_ec4u_carrier";
-				public const string Ec4uWorkbenchToCarrierOnWorkbench = "ec4u_workbench_to_carrier_on_workbench";
-				public const string LkEc4uCarrierCreatedby = "lk_ec4u_carrier_createdby";
-				public const string LkEc4uCarrierCreatedonbehalfby = "lk_ec4u_carrier_createdonbehalfby";
-				public const string LkEc4uCarrierModifiedby = "lk_ec4u_carrier_modifiedby";
-				public const string LkEc4uCarrierModifiedonbehalfby = "lk_ec4u_carrier_modifiedonbehalfby";
-				public const string OwnerEc4uCarrier = "owner_ec4u_carrier";
-				public const string ProcessstageEc4uCarrier = "processstage_ec4u_carrier";
-				public const string TeamEc4uCarrier = "team_ec4u_carrier";
-				public const string UserEc4uCarrier = "user_ec4u_carrier";
+				public const string BusinessUnitDgtWorkbench = "business_unit_dgt_workbench";
+				public const string DgtCarrierToWorkbenchOnCarrier = "dgt_carrier_to_workbench_on_carrier";
+				public const string DgtCarrierToWorkbenchOnTargetCarrier = "dgt_carrier_to_workbench_on_target_carrier";
+				public const string LkDgtWorkbenchCreatedby = "lk_dgt_workbench_createdby";
+				public const string LkDgtWorkbenchCreatedonbehalfby = "lk_dgt_workbench_createdonbehalfby";
+				public const string LkDgtWorkbenchModifiedby = "lk_dgt_workbench_modifiedby";
+				public const string LkDgtWorkbenchModifiedonbehalfby = "lk_dgt_workbench_modifiedonbehalfby";
+				public const string OwnerDgtWorkbench = "owner_dgt_workbench";
+				public const string TeamDgtWorkbench = "team_dgt_workbench";
+				public const string UserDgtWorkbench = "user_dgt_workbench";
             }
 
             public static class ManyToMany
@@ -804,17 +783,17 @@ namespace dgt.power.dataverse
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
-        public static Ec4uCarrier Retrieve(IOrganizationService service, Guid id)
+        public static DgtWorkbench Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
         }
 
-        public static Ec4uCarrier Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        public static DgtWorkbench Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
         {
-            return service.Retrieve("ec4u_carrier", id, columnSet).ToEntity<Ec4uCarrier>();
+            return service.Retrieve("dgt_workbench", id, columnSet).ToEntity<DgtWorkbench>();
         }
 
-        public Ec4uCarrier GetChangedEntity()
+        public DgtWorkbench GetChangedEntity()
         {
             if (_trackChanges)
             {
@@ -823,7 +802,7 @@ namespace dgt.power.dataverse
                 {
                     attr.Add(attrName,this[attrName]);
                 }
-                return new  Ec4uCarrier(Id) {Attributes = attr };
+                return new  DgtWorkbench(Id) {Attributes = attr };
             }
             return this;
         }
@@ -833,11 +812,11 @@ namespace dgt.power.dataverse
 	#region Context
 	public partial class DataContext
 	{
-		public IQueryable<Ec4uCarrier> Ec4uCarrierSet
+		public IQueryable<DgtWorkbench> DgtWorkbenchSet
 		{
 			get
 			{
-				return CreateQuery<Ec4uCarrier>();
+				return CreateQuery<DgtWorkbench>();
 			}
 		}
 	}

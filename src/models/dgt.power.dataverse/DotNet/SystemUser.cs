@@ -3899,86 +3899,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdby
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdonbehalfby
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedonbehalfby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedby
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedonbehalfby
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedonbehalfby");
-			}
-		}
-
-		/// <summary>
 		/// 1:N lk_importjobbase_createdby
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_createdby")]
@@ -5835,26 +5755,6 @@ namespace dgt.power.dataverse
 				this.OnPropertyChanging("UserCustomapiresponseproperty");
 				this.SetRelatedEntities<CustomAPIResponseProperty>("user_customapiresponseproperty", null, value);
 				this.OnPropertyChanged("UserCustomapiresponseproperty");
-			}
-		}
-
-		/// <summary>
-		/// 1:N user_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> UserEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("UserEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null, value);
-				this.OnPropertyChanged("UserEc4uCarrier");
 			}
 		}
 

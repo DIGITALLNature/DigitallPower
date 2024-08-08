@@ -15,37 +15,37 @@ namespace dgt.power.dataverse
 	/// <inheritdoc />
 	
 	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("dgt_carrier")]
+	[EntityLogicalNameAttribute("dgt_carrier_dependency_check")]
 	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
-	public partial class DgtCarrier : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class DgtCarrierDependencyCheck : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
 	    #region ctor
 		[DebuggerNonUserCode]
-		public DgtCarrier() : this(false)
+		public DgtCarrierDependencyCheck() : this(false)
         {
         }
 
         [DebuggerNonUserCode]
-		public DgtCarrier(bool trackChanges = false) : base(EntityLogicalName)
-        {
-			_trackChanges = trackChanges;
-        }
-
-        [DebuggerNonUserCode]
-		public DgtCarrier(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+		public DgtCarrierDependencyCheck(bool trackChanges = false) : base(EntityLogicalName)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public DgtCarrier(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+		public DgtCarrierDependencyCheck(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
         {
 			_trackChanges = trackChanges;
         }
 
         [DebuggerNonUserCode]
-		public DgtCarrier(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+		public DgtCarrierDependencyCheck(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        {
+			_trackChanges = trackChanges;
+        }
+
+        [DebuggerNonUserCode]
+		public DgtCarrierDependencyCheck(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
 			_trackChanges = trackChanges;
         }
@@ -57,9 +57,9 @@ namespace dgt.power.dataverse
         #endregion
 
         #region consts
-        public const string EntityLogicalName = "dgt_carrier";
-        public const string PrimaryNameAttribute = "dgt_reference";
-        public const int EntityTypeCode = 10423;
+        public const string EntityLogicalName = "dgt_carrier_dependency_check";
+        public const string PrimaryNameAttribute = "dgt_checkref";
+        public const int EntityTypeCode = 10424;
         #endregion
 
         #region Events
@@ -85,7 +85,7 @@ namespace dgt.power.dataverse
         #endregion
 
 		#region Attributes
-		[AttributeLogicalNameAttribute("dgt_carrierid")]
+		[AttributeLogicalNameAttribute("dgt_carrier_dependency_checkid")]
 		public new System.Guid Id
 		{
 		    [DebuggerNonUserCode]
@@ -96,26 +96,26 @@ namespace dgt.power.dataverse
             [DebuggerNonUserCode]
 			set
 			{
-				DgtCarrierId = value;
+				DgtCarrierDependencyCheckId = value;
 			}
 		}
 
 		/// <summary>
 		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("dgt_carrierid")]
-        public Guid? DgtCarrierId
+		[AttributeLogicalName("dgt_carrier_dependency_checkid")]
+        public Guid? DgtCarrierDependencyCheckId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Guid?>("dgt_carrierid");
+                return GetAttributeValue<Guid?>("dgt_carrier_dependency_checkid");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(DgtCarrierId));
-                SetAttributeValue("dgt_carrierid", value);
+                OnPropertyChanging(nameof(DgtCarrierDependencyCheckId));
+                SetAttributeValue("dgt_carrier_dependency_checkid", value);
 				if (value.HasValue)
 				{
 					base.Id = value.Value;
@@ -124,7 +124,7 @@ namespace dgt.power.dataverse
 				{
 					base.Id = System.Guid.Empty;
 				}
-                OnPropertyChanged(nameof(DgtCarrierId));
+                OnPropertyChanged(nameof(DgtCarrierDependencyCheckId));
             }
         }
 
@@ -189,184 +189,40 @@ namespace dgt.power.dataverse
         }
 
 		
-		[AttributeLogicalName("dgt_constraint_mset")]
-        public Microsoft.Xrm.Sdk.OptionSetValueCollection? DgtConstraintMset
+		[AttributeLogicalName("dgt_carrier_id")]
+        public EntityReference? DgtCarrierId
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValueCollection?>("dgt_constraint_mset");
+                return GetAttributeValue<EntityReference?>("dgt_carrier_id");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(DgtConstraintMset));
-                SetAttributeValue("dgt_constraint_mset", value);
-                OnPropertyChanged(nameof(DgtConstraintMset));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_handshake_ts")]
-        public DateTime? DgtHandshakeTs
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<DateTime?>("dgt_handshake_ts");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtHandshakeTs));
-                SetAttributeValue("dgt_handshake_ts", value);
-                OnPropertyChanged(nameof(DgtHandshakeTs));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_locked_opt")]
-        public bool? DgtLockedOpt
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("dgt_locked_opt");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtLockedOpt));
-                SetAttributeValue("dgt_locked_opt", value);
-                OnPropertyChanged(nameof(DgtLockedOpt));
+                OnPropertyChanging(nameof(DgtCarrierId));
+                SetAttributeValue("dgt_carrier_id", value);
+                OnPropertyChanged(nameof(DgtCarrierId));
             }
         }
 
 		/// <summary>
-		/// The Carrier Reference
+		/// The Carrier Check Ref
 		/// </summary>
-		[AttributeLogicalName("dgt_reference")]
-        public string? DgtReference
+		[AttributeLogicalName("dgt_checkref")]
+        public string? DgtCheckref
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<string?>("dgt_reference");
+                return GetAttributeValue<string?>("dgt_checkref");
             }
             [DebuggerNonUserCode]
 			set
             {
-                OnPropertyChanging(nameof(DgtReference));
-                SetAttributeValue("dgt_reference", value);
-                OnPropertyChanged(nameof(DgtReference));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_solutionfriendlyname")]
-        public string? DgtSolutionfriendlyname
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("dgt_solutionfriendlyname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtSolutionfriendlyname));
-                SetAttributeValue("dgt_solutionfriendlyname", value);
-                OnPropertyChanged(nameof(DgtSolutionfriendlyname));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_solutionid")]
-        public string? DgtSolutionid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("dgt_solutionid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtSolutionid));
-                SetAttributeValue("dgt_solutionid", value);
-                OnPropertyChanged(nameof(DgtSolutionid));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_solutionuniquename")]
-        public string? DgtSolutionuniquename
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("dgt_solutionuniquename");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtSolutionuniquename));
-                SetAttributeValue("dgt_solutionuniquename", value);
-                OnPropertyChanged(nameof(DgtSolutionuniquename));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_solutionversion")]
-        public string? DgtSolutionversion
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("dgt_solutionversion");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtSolutionversion));
-                SetAttributeValue("dgt_solutionversion", value);
-                OnPropertyChanged(nameof(DgtSolutionversion));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_transport_order_no")]
-        public int? DgtTransportOrderNo
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<int?>("dgt_transport_order_no");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtTransportOrderNo));
-                SetAttributeValue("dgt_transport_order_no", value);
-                OnPropertyChanged(nameof(DgtTransportOrderNo));
-            }
-        }
-
-		
-		[AttributeLogicalName("dgt_workbench_id")]
-        public EntityReference? DgtWorkbenchId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("dgt_workbench_id");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DgtWorkbenchId));
-                SetAttributeValue("dgt_workbench_id", value);
-                OnPropertyChanged(nameof(DgtWorkbenchId));
+                OnPropertyChanging(nameof(DgtCheckref));
+                SetAttributeValue("dgt_checkref", value);
+                OnPropertyChanged(nameof(DgtCheckref));
             }
         }
 
@@ -491,7 +347,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Status of the Carrier
+		/// Status of the Carrier Dependency Check
 		/// </summary>
 		[AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
@@ -511,7 +367,7 @@ namespace dgt.power.dataverse
         }
 
 		/// <summary>
-		/// Reason for the status of the Carrier
+		/// Reason for the status of the Carrier Dependency Check
 		/// </summary>
 		[AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
@@ -595,122 +451,42 @@ namespace dgt.power.dataverse
 
 		#region NavigationProperties
 		/// <summary>
-		/// 1:N dgt_carrier_AsyncOperations
+		/// 1:N dgt_carrier_dependency_check_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> DgtCarrierAsyncOperations
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_dependency_check_AsyncOperations")]
+		public System.Collections.Generic.IEnumerable<AsyncOperation> DgtCarrierDependencyCheckAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<AsyncOperation>("dgt_carrier_AsyncOperations", null);
+				return this.GetRelatedEntities<AsyncOperation>("dgt_carrier_dependency_check_AsyncOperations", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("DgtCarrierAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("dgt_carrier_AsyncOperations", null, value);
-				this.OnPropertyChanged("DgtCarrierAsyncOperations");
+				this.OnPropertyChanging("DgtCarrierDependencyCheckAsyncOperations");
+				this.SetRelatedEntities<AsyncOperation>("dgt_carrier_dependency_check_AsyncOperations", null, value);
+				this.OnPropertyChanged("DgtCarrierDependencyCheckAsyncOperations");
 			}
 		}
 
 		/// <summary>
-		/// 1:N dgt_carrier_to_carrier_dependency_check
+		/// 1:N dgt_carrier_dependency_check_to_missing_check
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_to_carrier_dependency_check")]
-		public System.Collections.Generic.IEnumerable<DgtCarrierDependencyCheck> DgtCarrierToCarrierDependencyCheck
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_dependency_check_to_missing_check")]
+		public System.Collections.Generic.IEnumerable<DgtCarrierMissingDependency> DgtCarrierDependencyCheckToMissingCheck
 		{
 			[DebuggerNonUserCode]
 			get
 			{
-				return this.GetRelatedEntities<DgtCarrierDependencyCheck>("dgt_carrier_to_carrier_dependency_check", null);
+				return this.GetRelatedEntities<DgtCarrierMissingDependency>("dgt_carrier_dependency_check_to_missing_check", null);
 			}
 			[DebuggerNonUserCode]
 			set
 			{
-				this.OnPropertyChanging("DgtCarrierToCarrierDependencyCheck");
-				this.SetRelatedEntities<DgtCarrierDependencyCheck>("dgt_carrier_to_carrier_dependency_check", null, value);
-				this.OnPropertyChanged("DgtCarrierToCarrierDependencyCheck");
-			}
-		}
-
-		/// <summary>
-		/// 1:N dgt_carrier_to_carrier_missing_dependency
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_to_carrier_missing_dependency")]
-		public System.Collections.Generic.IEnumerable<DgtCarrierMissingDependency> DgtCarrierToCarrierMissingDependency
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<DgtCarrierMissingDependency>("dgt_carrier_to_carrier_missing_dependency", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("DgtCarrierToCarrierMissingDependency");
-				this.SetRelatedEntities<DgtCarrierMissingDependency>("dgt_carrier_to_carrier_missing_dependency", null, value);
-				this.OnPropertyChanged("DgtCarrierToCarrierMissingDependency");
-			}
-		}
-
-		/// <summary>
-		/// 1:N dgt_carrier_to_workbench_history_on_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_to_workbench_history_on_carrier")]
-		public System.Collections.Generic.IEnumerable<DgtWorkbenchHistory> DgtCarrierToWorkbenchHistoryOnCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<DgtWorkbenchHistory>("dgt_carrier_to_workbench_history_on_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("DgtCarrierToWorkbenchHistoryOnCarrier");
-				this.SetRelatedEntities<DgtWorkbenchHistory>("dgt_carrier_to_workbench_history_on_carrier", null, value);
-				this.OnPropertyChanged("DgtCarrierToWorkbenchHistoryOnCarrier");
-			}
-		}
-
-		/// <summary>
-		/// 1:N dgt_carrier_to_workbench_on_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_to_workbench_on_carrier")]
-		public System.Collections.Generic.IEnumerable<DgtWorkbench> DgtCarrierToWorkbenchOnCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<DgtWorkbench>("dgt_carrier_to_workbench_on_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("DgtCarrierToWorkbenchOnCarrier");
-				this.SetRelatedEntities<DgtWorkbench>("dgt_carrier_to_workbench_on_carrier", null, value);
-				this.OnPropertyChanged("DgtCarrierToWorkbenchOnCarrier");
-			}
-		}
-
-		/// <summary>
-		/// 1:N dgt_carrier_to_workbench_on_target_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dgt_carrier_to_workbench_on_target_carrier")]
-		public System.Collections.Generic.IEnumerable<DgtWorkbench> DgtCarrierToWorkbenchOnTargetCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<DgtWorkbench>("dgt_carrier_to_workbench_on_target_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("DgtCarrierToWorkbenchOnTargetCarrier");
-				this.SetRelatedEntities<DgtWorkbench>("dgt_carrier_to_workbench_on_target_carrier", null, value);
-				this.OnPropertyChanged("DgtCarrierToWorkbenchOnTargetCarrier");
+				this.OnPropertyChanging("DgtCarrierDependencyCheckToMissingCheck");
+				this.SetRelatedEntities<DgtCarrierMissingDependency>("dgt_carrier_dependency_check_to_missing_check", null, value);
+				this.OnPropertyChanged("DgtCarrierDependencyCheckToMissingCheck");
 			}
 		}
 
@@ -719,18 +495,6 @@ namespace dgt.power.dataverse
 		#region Options
 		public static class Options
 		{
-                public struct DgtConstraintMset
-                {
-					public const int PreventFlows = 283510000;
-					public const int PreventManagedEntitiesWithAllAssets = 283510001;
-					public const int PreventItemsWithouthActiveLayer = 283510002;
-					public const int PreventPluginAssemblys = 283510003;
-                }
-                public struct DgtLockedOpt
-                {
-                    public const bool Nein = false;
-                    public const bool Ja = true;
-                }
                 public struct Statecode
                 {
 					public const int Active = 0;
@@ -747,20 +511,12 @@ namespace dgt.power.dataverse
 		#region LogicalNames
 		public static class LogicalNames
 		{
-				public const string DgtCarrierId = "dgt_carrierid";
+				public const string DgtCarrierDependencyCheckId = "dgt_carrier_dependency_checkid";
 				public const string CreatedBy = "createdby";
 				public const string CreatedOn = "createdon";
 				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string DgtConstraintMset = "dgt_constraint_mset";
-				public const string DgtHandshakeTs = "dgt_handshake_ts";
-				public const string DgtLockedOpt = "dgt_locked_opt";
-				public const string DgtReference = "dgt_reference";
-				public const string DgtSolutionfriendlyname = "dgt_solutionfriendlyname";
-				public const string DgtSolutionid = "dgt_solutionid";
-				public const string DgtSolutionuniquename = "dgt_solutionuniquename";
-				public const string DgtSolutionversion = "dgt_solutionversion";
-				public const string DgtTransportOrderNo = "dgt_transport_order_no";
-				public const string DgtWorkbenchId = "dgt_workbench_id";
+				public const string DgtCarrierId = "dgt_carrier_id";
+				public const string DgtCheckref = "dgt_checkref";
 				public const string ImportSequenceNumber = "importsequencenumber";
 				public const string ModifiedBy = "modifiedby";
 				public const string ModifiedOn = "modifiedon";
@@ -780,35 +536,28 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
-				public const string DgtCarrierAsyncOperations = "dgt_carrier_AsyncOperations";
-				public const string DgtCarrierBulkDeleteFailures = "dgt_carrier_BulkDeleteFailures";
-				public const string DgtCarrierDuplicateBaseRecord = "dgt_carrier_DuplicateBaseRecord";
-				public const string DgtCarrierDuplicateMatchingRecord = "dgt_carrier_DuplicateMatchingRecord";
-				public const string DgtCarrierMailboxTrackingFolders = "dgt_carrier_MailboxTrackingFolders";
-				public const string DgtCarrierPrincipalObjectAttributeAccesses = "dgt_carrier_PrincipalObjectAttributeAccesses";
-				public const string DgtCarrierProcessSession = "dgt_carrier_ProcessSession";
-				public const string DgtCarrierSyncErrors = "dgt_carrier_SyncErrors";
-				public const string DgtCarrierToCarrierDependencyCheck = "dgt_carrier_to_carrier_dependency_check";
-				public const string DgtCarrierToCarrierMissingDependency = "dgt_carrier_to_carrier_missing_dependency";
-				public const string DgtCarrierToWorkbenchHistoryOnCarrier = "dgt_carrier_to_workbench_history_on_carrier";
-				public const string DgtCarrierToWorkbenchOnCarrier = "dgt_carrier_to_workbench_on_carrier";
-				public const string DgtCarrierToWorkbenchOnTargetCarrier = "dgt_carrier_to_workbench_on_target_carrier";
-				public const string DgtCarrierUserEntityInstanceDatas = "dgt_carrier_UserEntityInstanceDatas";
+				public const string DgtCarrierDependencyCheckAsyncOperations = "dgt_carrier_dependency_check_AsyncOperations";
+				public const string DgtCarrierDependencyCheckBulkDeleteFailures = "dgt_carrier_dependency_check_BulkDeleteFailures";
+				public const string DgtCarrierDependencyCheckMailboxTrackingFolders = "dgt_carrier_dependency_check_MailboxTrackingFolders";
+				public const string DgtCarrierDependencyCheckPrincipalObjectAttributeAccesses = "dgt_carrier_dependency_check_PrincipalObjectAttributeAccesses";
+				public const string DgtCarrierDependencyCheckProcessSession = "dgt_carrier_dependency_check_ProcessSession";
+				public const string DgtCarrierDependencyCheckSyncErrors = "dgt_carrier_dependency_check_SyncErrors";
+				public const string DgtCarrierDependencyCheckToMissingCheck = "dgt_carrier_dependency_check_to_missing_check";
+				public const string DgtCarrierDependencyCheckUserEntityInstanceDatas = "dgt_carrier_dependency_check_UserEntityInstanceDatas";
             }
 
             public static class ManyToOne
             {
-				public const string DgtWorkbenchToCarrierOnWorkbench = "dgt_workbench_to_carrier_on_workbench";
-				public const string LkDgtCarrierCreatedby = "lk_dgt_carrier_createdby";
-				public const string LkDgtCarrierCreatedonbehalfby = "lk_dgt_carrier_createdonbehalfby";
-				public const string LkDgtCarrierModifiedby = "lk_dgt_carrier_modifiedby";
-				public const string LkDgtCarrierModifiedonbehalfby = "lk_dgt_carrier_modifiedonbehalfby";
-				public const string OrganizationDgtCarrier = "organization_dgt_carrier";
+				public const string DgtCarrierToCarrierDependencyCheck = "dgt_carrier_to_carrier_dependency_check";
+				public const string LkDgtCarrierDependencyCheckCreatedby = "lk_dgt_carrier_dependency_check_createdby";
+				public const string LkDgtCarrierDependencyCheckCreatedonbehalfby = "lk_dgt_carrier_dependency_check_createdonbehalfby";
+				public const string LkDgtCarrierDependencyCheckModifiedby = "lk_dgt_carrier_dependency_check_modifiedby";
+				public const string LkDgtCarrierDependencyCheckModifiedonbehalfby = "lk_dgt_carrier_dependency_check_modifiedonbehalfby";
+				public const string OrganizationDgtCarrierDependencyCheck = "organization_dgt_carrier_dependency_check";
             }
 
             public static class ManyToMany
             {
-				public const string DgtCarrierConstraintDgtCarrierDgtCarrier = "dgt_carrier_constraint_dgt_carrier_dgt_carrier";
             }
         }
 
@@ -821,17 +570,17 @@ namespace dgt.power.dataverse
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
-        public static DgtCarrier Retrieve(IOrganizationService service, Guid id)
+        public static DgtCarrierDependencyCheck Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service,id, new ColumnSet(true));
         }
 
-        public static DgtCarrier Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        public static DgtCarrierDependencyCheck Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
         {
-            return service.Retrieve("dgt_carrier", id, columnSet).ToEntity<DgtCarrier>();
+            return service.Retrieve("dgt_carrier_dependency_check", id, columnSet).ToEntity<DgtCarrierDependencyCheck>();
         }
 
-        public DgtCarrier GetChangedEntity()
+        public DgtCarrierDependencyCheck GetChangedEntity()
         {
             if (_trackChanges)
             {
@@ -840,7 +589,7 @@ namespace dgt.power.dataverse
                 {
                     attr.Add(attrName,this[attrName]);
                 }
-                return new  DgtCarrier(Id) {Attributes = attr };
+                return new  DgtCarrierDependencyCheck(Id) {Attributes = attr };
             }
             return this;
         }
@@ -850,11 +599,11 @@ namespace dgt.power.dataverse
 	#region Context
 	public partial class DataContext
 	{
-		public IQueryable<DgtCarrier> DgtCarrierSet
+		public IQueryable<DgtCarrierDependencyCheck> DgtCarrierDependencyCheckSet
 		{
 			get
 			{
-				return CreateQuery<DgtCarrier>();
+				return CreateQuery<DgtCarrierDependencyCheck>();
 			}
 		}
 	}

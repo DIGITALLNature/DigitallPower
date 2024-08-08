@@ -1,0 +1,14 @@
+{
+    "NameSpace": "ec4u.solutionconcept",
+    "Entities": [
+        "ec4u_carrier",
+        "ec4u_carrier_dependency_check",
+        "ec4u_carrier_missing_dependency",
+        "ec4u_workbench",
+        "ec4u_workbench_history"
+    ],
+    "SuppressTypeScript": true,
+    "SuppressMetaData": true,
+    "SuppressActions": true,
+    "UseBaseLanguage": true
+}

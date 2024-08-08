@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.profile", "src\mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.push.tests", "tests\dgt.power.push.tests\dgt.power.push.tests.csproj", "{5DA38430-4E0B-47F8-AD02-44E02D62E453}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dgt.power.solutionconcept", "src\modules\dgt.power.solutionconcept\dgt.power.solutionconcept.csproj", "{21770186-922B-4676-BB2B-1063BA440581}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21770186-922B-4676-BB2B-1063BA440581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21770186-922B-4676-BB2B-1063BA440581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21770186-922B-4676-BB2B-1063BA440581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21770186-922B-4676-BB2B-1063BA440581}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +158,7 @@ Global
 		{4B94256F-7AF4-4B87-B18C-787E8434E811} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
 		{EF8B79F3-C727-41C3-8B5C-B8655FD7AEE9} = {C4781DC1-7787-4DCB-8B42-347B608E3A5A}
 		{5DA38430-4E0B-47F8-AD02-44E02D62E453} = {24DA5ED4-0B63-42F5-A275-EF645527CE17}
+		{21770186-922B-4676-BB2B-1063BA440581} = {C4781DC1-7787-4DCB-8B42-347B608E3A5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DFA2A630-CC5F-44E5-8092-8734549E678C}

@@ -5,6 +5,7 @@ using System.Net;
 using dgt.power.common.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
@@ -13,7 +14,7 @@ namespace dgt.power.common.Logic;
 public class XrmConnection(IProfileManager profileManager, IConfiguration configuration)
     : IXrmConnection
 {
-    public IOrganizationService Connect()
+    public IOrganizationServiceAsync2 Connect()
     {
         var xrmConfiguration = configuration.GetSection("xrm").GetChildren().ToList();
 
@@ -30,7 +31,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         throw new MissingConnectionException();
     }
 
-    private  IOrganizationService ConnectWithConfiguration()
+    private IOrganizationServiceAsync2 ConnectWithConfiguration()
     {
         var protocol = configuration.GetValue<SecurityProtocolType>("xrm:securityprotocol");
 
@@ -56,7 +57,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         }
     }
 
-    private IOrganizationService ConnectWithProfile(Identity identity)
+    private IOrganizationServiceAsync2 ConnectWithProfile(Identity identity)
     {
         Enum.TryParse(identity.SecurityProtocol, true, out SecurityProtocolType value);
         ServicePointManager.SecurityProtocol = value;

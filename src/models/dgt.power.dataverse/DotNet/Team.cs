@@ -843,26 +843,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N team_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> TeamEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("TeamEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null, value);
-				this.OnPropertyChanged("TeamEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N team_routingrule
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_routingrule")]

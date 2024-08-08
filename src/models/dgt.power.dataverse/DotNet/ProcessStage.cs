@@ -470,26 +470,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N processstage_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("ProcessstageEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null, value);
-				this.OnPropertyChanged("ProcessstageEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N processstage_parentprocessstage
 		/// </summary>	
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_parentprocessstage")]
