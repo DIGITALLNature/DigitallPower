@@ -3,6 +3,7 @@ using dgt.power.dataverse;
 using ec4u.solutionconcept;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -11,7 +12,10 @@ namespace dgt.power.solutionconcept;
 
 public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) : AsyncCommand, IDisposable
 {
-    private readonly ec4u.solutionconcept.DataContext _dataContext = new(orgService);
+    private readonly ec4u.solutionconcept.DataContext _dataContext = new(orgService)
+    {
+        MergeOption = MergeOption.NoTracking,
+    };
 
     public override async Task<int> ExecuteAsync(CommandContext context)
     {
@@ -89,15 +93,17 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
                 var carrierTask = MigrateCarriers((message) => updateProgressTask(carrierProgressTask, message));
 
-                var workbenchTask = carrierTask.ContinueWith(_ => MigrateWorkbenches((message) => updateProgressTask(workbenchProgressTask, message)));
-                var workbenchHistoryTask = workbenchTask.ContinueWith(_ => MigrateWorkbenchHistories((message) => updateProgressTask(workbenchHistoryProgressTask, message)));
-                var workbenchCarrierRefTask = workbenchTask.ContinueWith(_ => MigrateWorkbenchCarrierReferences((message) => updateProgressTask(workbenchCarrierRefProgressTask, message)));
+                var workbenchTask = await carrierTask.ContinueWith(_ => MigrateWorkbenches((message) => updateProgressTask(workbenchProgressTask, message)));
+                var workbenchHistoryTask = await workbenchTask.ContinueWith(_ => MigrateWorkbenchHistories((message) => updateProgressTask(workbenchHistoryProgressTask, message)));
+                var workbenchCarrierRefTask = await workbenchTask.ContinueWith(_ => MigrateWorkbenchCarrierReferences((message) => updateProgressTask(workbenchCarrierRefProgressTask, message)));
 
-                var carrierDependencyTask = carrierTask
+                var carrierDependencyTask = await carrierTask
                     .ContinueWith(_ => MigrateCarrierDependencies((message) => updateProgressTask(carrierDependencyCheckProgressTask, message)))
                     .ContinueWith(_ => MigrateCarrierDependencyChecks((message) => updateProgressTask(carrierMissingDependencyProgressTask, message)));
 
                 await Task.WhenAll(carrierTask, workbenchTask, carrierDependencyTask, workbenchHistoryTask, workbenchCarrierRefTask);
+
+                AnsiConsole.MarkupLine($"Migration completed {carrierTask.IsFaulted} {workbenchTask.IsFaulted} {carrierDependencyTask.IsFaulted} {workbenchHistoryTask.IsFaulted} {workbenchCarrierRefTask.IsFaulted}");
             });
 
         return 0;
@@ -191,7 +197,26 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(workbenchHistories, async (workbenchHistory, cancellationToken) =>
         {
+            var deactivateWorkbenchHistory = false;
+
+            if (workbenchHistory.Statecode!.Value == Ec4uWorkbenchHistory.Options.Statecode.Inactive)
+            {
+                deactivateWorkbenchHistory = true;
+                workbenchHistory.Statecode = new OptionSetValue(DgtWorkbenchHistory.Options.Statecode.Active);
+                workbenchHistory.Statuscode = new OptionSetValue(DgtWorkbenchHistory.Options.Statuscode.Active);
+            }
+
             await orgService.CreateAsync(new DgtWorkbenchHistory { Attributes = workbenchHistory.Attributes }, cancellationToken);
+
+            if (deactivateWorkbenchHistory)
+            {
+                await orgService.UpdateAsync(new DgtWorkbenchHistory(workbenchHistory.Id)
+                {
+                    Statecode = new OptionSetValue(DgtWorkbenchHistory.Options.Statecode.Inactive),
+                    Statuscode = new OptionSetValue(DgtWorkbenchHistory.Options.Statuscode.Success),
+                });
+            }
+
             progress($"workbench history migrated: {workbenchHistory.DgtWorkbenchHistoryId}");
         });
 
@@ -220,7 +245,48 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(workbenches, async (workbench, cancellationToken) =>
         {
+            var deactivateWorkbench = false;
+
+            workbench.Statuscode = new OptionSetValue(workbench.Statuscode!.Value switch
+            {
+                Ec4uWorkbench.Options.Statuscode.Active => DgtWorkbench.Options.Statuscode.Active,
+                Ec4uWorkbench.Options.Statuscode.Close => DgtWorkbench.Options.Statuscode.Close,
+                Ec4uWorkbench.Options.Statuscode.Finalize => DgtWorkbench.Options.Statuscode.Finalize,
+                Ec4uWorkbench.Options.Statuscode.Failure => DgtWorkbench.Options.Statuscode.Failure,
+                Ec4uWorkbench.Options.Statuscode.Merge => DgtWorkbench.Options.Statuscode.Merge,
+                Ec4uWorkbench.Options.Statuscode.Inactive => DgtWorkbench.Options.Statuscode.Inactive,
+                _ => DgtWorkbench.Options.Statuscode.Active,
+            });
+
+            if (workbench.Statecode!.Value == Ec4uWorkbench.Options.Statecode.Inactive)
+            {
+                deactivateWorkbench = true;
+                workbench.Statecode = new OptionSetValue(DgtWorkbench.Options.Statecode.Active);
+                workbench.Statuscode = new OptionSetValue(DgtWorkbench.Options.Statuscode.Active);
+            }
+
+            if (workbench.DgtNatureSet != null)
+            {
+                workbench.DgtNatureSet = new OptionSetValue(workbench.DgtNatureSet.Value switch
+                {
+                    Ec4uWorkbench.Options.Ec4uWbNatureSet.Assembly => DgtWorkbench.Options.DgtNatureSet.Assembly,
+                    Ec4uWorkbench.Options.Ec4uWbNatureSet.EnvironmentVariable => DgtWorkbench.Options.DgtNatureSet.EnvironmentVariable,
+                    Ec4uWorkbench.Options.Ec4uWbNatureSet.ConnectionReference => DgtWorkbench.Options.DgtNatureSet.ConnectionReference,
+                    _ => DgtWorkbench.Options.DgtNatureSet.Workbench,
+                });
+            }
+
             await orgService.CreateAsync(new DgtWorkbench { Attributes = workbench.Attributes }, cancellationToken);
+
+            if (deactivateWorkbench)
+            {
+                await orgService.UpdateAsync(new DgtWorkbench(workbench.Id)
+                {
+                    Statecode = new OptionSetValue(DgtWorkbench.Options.Statecode.Active),
+                    Statuscode = new OptionSetValue(DgtWorkbench.Options.Statuscode.Close),
+                });
+            }
+
             progress($"workbench migrated: {workbench.DgtName} ({workbench.DgtWorkbenchId})");
         });
 
@@ -249,6 +315,15 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(carriers, async (carrier, cancellationToken) =>
         {
+            var deactivateCarrier = false;
+
+            if (carrier.Statecode!.Value == Ec4uCarrier.Options.Statecode.Inactive)
+            {
+                deactivateCarrier = true;
+                carrier.Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active);
+                carrier.Statuscode = new OptionSetValue(DgtCarrier.Options.Statuscode.Active);
+            }
+
             if (carrier.DgtConstraintMset != null)
             {
                 carrier.DgtConstraintMset = new OptionSetValueCollection(carrier.DgtConstraintMset.Select(o => o.Value switch
@@ -262,6 +337,15 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
             }
 
             await orgService.CreateAsync(new DgtCarrier { Attributes = carrier.Attributes, }, cancellationToken);
+
+            if (deactivateCarrier)
+            {
+                await orgService.UpdateAsync(new DgtCarrier(carrier.Id)
+                {
+                    Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Inactive),
+                    Statuscode = new OptionSetValue(DgtCarrier.Options.Statuscode.Inactive),
+                });
+            };
 
             var constraintRecordRefs = carrier.DgtConstraintMset?.Select(constraint => constraint.Value switch
                 {
