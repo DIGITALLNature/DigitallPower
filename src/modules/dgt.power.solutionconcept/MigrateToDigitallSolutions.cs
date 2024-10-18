@@ -4,6 +4,7 @@ using ec4u.solutionconcept;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -49,7 +50,7 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
                     );
                 }
 
-                return recordCounts.All(kvp => kvp.Value == 0);
+                return recordCounts.Where(c => c.Key != "dgt_carrier_constraint").All(kvp => kvp.Value == 0);
             });
 
         if (!runMigration)
@@ -88,7 +89,7 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
                 static void updateProgressTask(ProgressTask progressTask, string message)
                 {
                     progressTask.Increment(1);
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[grey]{0}[/]", message);
+                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[grey]{0}[/]", message.EscapeMarkup());
                 };
 
                 var carrierTask = MigrateCarriers((message) => updateProgressTask(carrierProgressTask, message));
@@ -120,7 +121,7 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(carriers, async (carrier, cancellationToken) =>
         {
-            await orgService.UpdateAsync(new DgtCarrier { Attributes = carrier.Attributes, }, cancellationToken);
+            await orgService.UpdateAsyncBypassingPlugins(new DgtCarrier { Attributes = carrier.Attributes, }, cancellationToken);
             progress($"carrier workbench ref migrated: {carrier.DgtReference} ({carrier.DgtCarrierId})");
         });
 
@@ -142,7 +143,7 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(carrierDependencyChecks, async (carrierDependencyCheck, cancellationToken) =>
         {
-            await orgService.CreateAsync(new DgtCarrierDependencyCheck { Attributes = carrierDependencyCheck.Attributes }, cancellationToken);
+            await orgService.CreateAsyncBypassingPlugins(new DgtCarrierDependencyCheck { Attributes = carrierDependencyCheck.Attributes }, cancellationToken);
             progress($"carrier dependency check migrated: {carrierDependencyCheck.DgtCarrierDependencyCheckId}");
         });
 
@@ -169,7 +170,7 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
 
         await Parallel.ForEachAsync(carrierDependencies, async (carrierDependency, cancellationToken) =>
         {
-            await orgService.CreateAsync(new DgtCarrierMissingDependency { Attributes = carrierDependency.Attributes }, cancellationToken);
+            await orgService.CreateAsyncBypassingPlugins(new DgtCarrierMissingDependency { Attributes = carrierDependency.Attributes }, cancellationToken);
             progress($"carrier dependency migrated: {carrierDependency.DgtCarrierMissingDependencyId}");
         });
 
@@ -206,15 +207,15 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
                 workbenchHistory.Statuscode = new OptionSetValue(DgtWorkbenchHistory.Options.Statuscode.Active);
             }
 
-            await orgService.CreateAsync(new DgtWorkbenchHistory { Attributes = workbenchHistory.Attributes }, cancellationToken);
+            await orgService.CreateAsyncBypassingPlugins(new DgtWorkbenchHistory { Attributes = workbenchHistory.Attributes }, cancellationToken);
 
             if (deactivateWorkbenchHistory)
             {
-                await orgService.UpdateAsync(new DgtWorkbenchHistory(workbenchHistory.Id)
+                await orgService.UpdateAsyncBypassingPlugins(new DgtWorkbenchHistory(workbenchHistory.Id)
                 {
                     Statecode = new OptionSetValue(DgtWorkbenchHistory.Options.Statecode.Inactive),
                     Statuscode = new OptionSetValue(DgtWorkbenchHistory.Options.Statuscode.Success),
-                });
+                }, cancellationToken);
             }
 
             progress($"workbench history migrated: {workbenchHistory.DgtWorkbenchHistoryId}");
@@ -276,15 +277,15 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
                 });
             }
 
-            await orgService.CreateAsync(new DgtWorkbench { Attributes = workbench.Attributes }, cancellationToken);
+            await orgService.CreateAsyncBypassingPlugins(new DgtWorkbench { Attributes = workbench.Attributes }, cancellationToken);
 
             if (deactivateWorkbench)
             {
-                await orgService.UpdateAsync(new DgtWorkbench(workbench.Id)
+                await orgService.UpdateAsyncBypassingPlugins(new DgtWorkbench(workbench.Id)
                 {
-                    Statecode = new OptionSetValue(DgtWorkbench.Options.Statecode.Active),
-                    Statuscode = new OptionSetValue(DgtWorkbench.Options.Statuscode.Close),
-                });
+                    Statecode = new OptionSetValue(DgtWorkbench.Options.Statecode.Inactive),
+                    Statuscode = new OptionSetValue(DgtWorkbench.Options.Statuscode.Inactive),
+                }, cancellationToken);
             }
 
             progress($"workbench migrated: {workbench.DgtName} ({workbench.DgtWorkbenchId})");
@@ -336,15 +337,15 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
                 }).Where(ov => ov != null).ToList());
             }
 
-            await orgService.CreateAsync(new DgtCarrier { Attributes = carrier.Attributes, }, cancellationToken);
+            await orgService.CreateAsyncBypassingPlugins(new DgtCarrier { Attributes = carrier.Attributes, }, cancellationToken);
 
             if (deactivateCarrier)
             {
-                await orgService.UpdateAsync(new DgtCarrier(carrier.Id)
+                await orgService.UpdateAsyncBypassingPlugins(new DgtCarrier(carrier.Id)
                 {
                     Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Inactive),
                     Statuscode = new OptionSetValue(DgtCarrier.Options.Statuscode.Inactive),
-                });
+                }, cancellationToken);
             };
 
             var constraintRecordRefs = carrier.DgtConstraintMset?.Select(constraint => constraint.Value switch
@@ -411,5 +412,25 @@ public class MigrateToDigitallSolutions(IOrganizationServiceAsync2 orgService) :
     {
         _dataContext.Dispose();
         GC.SuppressFinalize(this);
+    }
+}
+
+public static class OrganizationServiceExtensions
+{
+    public static async Task<Guid> CreateAsyncBypassingPlugins(this IOrganizationServiceAsync2 orgService, Entity entity, CancellationToken cancellationToken)
+    {
+        var createRequest = new CreateRequest { Target = entity };
+        createRequest.Parameters.Add("BypassCustomPluginExecution", true);
+
+        var createResponse = (CreateResponse)await orgService.ExecuteAsync(createRequest, cancellationToken);
+        return createResponse.id;
+    }
+
+    public static async Task UpdateAsyncBypassingPlugins(this IOrganizationServiceAsync2 orgService, Entity entity, CancellationToken cancellationToken = default)
+    {
+        var updateRequest = new UpdateRequest { Target = entity };
+        updateRequest.Parameters.Add("BypassCustomPluginExecution", true);
+
+        await orgService.ExecuteAsync(updateRequest, cancellationToken);
     }
 }
