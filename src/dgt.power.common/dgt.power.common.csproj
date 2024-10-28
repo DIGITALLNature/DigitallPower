@@ -26,8 +26,4 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\models\dgt.power.dataverse\dgt.power.dataverse.csproj" />
-  </ItemGroup>
-
 </Project>

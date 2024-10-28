@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
-    <ProjectReference Include="..\..\models\dgt.power.dto\dgt.power.dto.csproj" />
   </ItemGroup>
 
 </Project>

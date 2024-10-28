@@ -1166,8 +1166,7 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.0.1, )",
-          "dgt.power.common": "[2.0.1-beta.2, )",
-          "dgt.power.dto": "[2.0.1-beta.2, )"
+          "dgt.power.common": "[2.0.1-beta.2, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -1186,32 +1185,20 @@
           "Microsoft.AspNetCore.DataProtection": "[8.0.10, )",
           "Microsoft.AspNetCore.DataProtection.Extensions": "[8.0.10, )",
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.32, )",
-          "Spectre.Console.Cli": "[0.49.1, )",
-          "dgt.power.dataverse": "[2.0.1-beta.2, )"
+          "Spectre.Console.Cli": "[0.49.1, )"
         }
-      },
-      "dgt.power.dataverse": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.1.32, )"
-        }
-      },
-      "dgt.power.dto": {
-        "type": "Project"
       },
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.0.1-beta.2, )",
-          "dgt.power.dto": "[2.0.1-beta.2, )"
+          "dgt.power.common": "[2.0.1-beta.2, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.1.1, )",
-          "dgt.power.common": "[2.0.1-beta.2, )",
-          "dgt.power.dto": "[2.0.1-beta.2, )"
+          "dgt.power.common": "[2.0.1-beta.2, )"
         }
       },
       "dgt.power.maintenance": {
