@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\dgt.power.common\dgt.power.common.csproj" />
     <ProjectReference Include="..\..\src\modules\dgt.power.import\dgt.power.import.csproj" />
     <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
   </ItemGroup>
