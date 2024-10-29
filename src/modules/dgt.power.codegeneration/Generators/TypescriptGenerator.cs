@@ -155,28 +155,21 @@ public class TypescriptGenerator : ITypescriptGenerator
         }
     }
 
-    public void GenerateEntityFormsFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
         foreach (var entity in config.Entities)
         {
-            var metadata =
-                _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
-            var forms = config.OnlyFormsFromSolutions
-                ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName,
-                    config.Solutions)
+            var forms = config.OnlyFormsFromSolutions ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions)
                 : _metadataService.RetrieveFormsDetails(metadata.LogicalName);
 
             foreach (var formDetail in forms)
             {
-                var form =
-                    $"{metadata.LogicalName}.{
-                        Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')
-                    }.{Typescript.Form}";
-                var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
+                var form = $"{metadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{Typescript.Form}";
                 if (config.Forms.Any())
                 {
                     config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
@@ -193,17 +186,27 @@ public class TypescriptGenerator : ITypescriptGenerator
                     continue;
                 }
 
-                using var file = File.CreateText(fileName);
-                AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-                //TODO: not smart, but works
-                var content = new D365EntityFormTemplate(config.TypingPath, form,
-                    formDetail.Key
-                        .Replace(".main", "Main").Replace(".quickview", "QuickView")
-                        .Replace(".quickcreate", "QuickCreate"),
-                    formDetail.Value, metadata, config,
-                    _metadataService.RetrieveOrganizationLanguage()).TransformText();
+                var formname = formDetail.Key
+                    .Replace(".main", "Main").Replace(".quickview", "QuickView")
+                    .Replace(".quickcreate", "QuickCreate");
 
-                file.Write(content);
+                // Determine the template to use based on the TypeScript generator version
+                if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
+                {
+                    var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
+                    using var file = File.CreateText(fileName);
+                    AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
+                    //TODO: not smart, but works
+                    var content = new D365EntityFormTemplate(config.TypingPath, form,
+                        formname, formDetail.Value, metadata, config,
+                        _metadataService.RetrieveOrganizationLanguage()).TransformText();
+
+                    file.Write(content);                }
+                else
+                {
+                    var template = new EntityLightFormTemplate(config.TypingPath,form, formname, formDetail.Value, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+                    CreateTemplateFile(template, form, args);
+                }
             }
         }
     }

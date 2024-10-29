@@ -99,6 +99,15 @@
       <LastGenOutput>OptionSetsLightTemplate.cs</LastGenOutput>
     </Content>
     <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
+    <Content Update="Templates\tsl\EntityLightFormTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\EntityLightFormTemplate.tt" />
+    <Content Include="Templates\tsl\EntityLightFormTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightFormTemplate.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -110,10 +119,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -211,6 +216,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OptionSetsLightTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Update="Templates\tsl\EntityLightFormTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityLightFormTemplate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>
 
 </Project>

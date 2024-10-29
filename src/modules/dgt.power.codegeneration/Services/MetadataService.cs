@@ -75,10 +75,11 @@ public class MetadataService : IMetadataService
 
             foreach (var solution in config.Solutions)
             {
+                var solutionId = FetchSolution(solution)!.Id;
                 solutionFilter.Conditions.Clear();
                 solutionFilter.AddCondition(new ConditionExpression(SolutionComponent.LogicalNames.SolutionId,
                     ConditionOperator.Equal,
-                    solution));
+                    solutionId));
 
                 var entityComponents = _connection.RetrieveMultiple(componentsQuery).Entities;
 
@@ -92,6 +93,21 @@ public class MetadataService : IMetadataService
 
         config.Entities = entitySet;
     }
+
+    public Solution? FetchSolution(string uniqueName) =>
+        _connection.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId, Solution.LogicalNames.FriendlyName, Solution.LogicalNames.UniqueName, Solution.LogicalNames.Version, Solution.LogicalNames.IsManaged),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Solution.LogicalNames.UniqueName,
+                        ConditionOperator.Equal, uniqueName)
+                }
+            }
+        }).Entities.SingleOrDefault()?.ToEntity<Solution>();
 
     private static string WildCardToRegular(string value)
     {
