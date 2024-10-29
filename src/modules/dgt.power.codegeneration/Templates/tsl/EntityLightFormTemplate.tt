@@ -4,7 +4,7 @@
 ///<reference path="<#= typingPath #>" />
 
 // Entity <#= entityMetadata.SchemaName #> FormContext for  Form "<#= formName #>"
-export interface <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #>FormContext extends Xrm.FormContext {
+export interface <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formName,true)) #>FormContext extends Xrm.FormContext {
     getAttribute(): Xrm.Attributes.Attribute[];
     getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
     getAttribute(attributeName: string): Xrm.Attributes.Attribute;
@@ -47,8 +47,8 @@ export const <#= entityMetadata.SchemaName #>Metadata = {
   }
 };
 
-// <#= entityMetadata.SchemaName #> Attribute constants
-export const enum <#= entityMetadata.SchemaName #>Attributes {
+// <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #> Attribute constants
+export const enum <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #>Attributes {
 <# foreach(var attr in Filter(entityMetadata.Attributes))
 {
 		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
@@ -78,4 +78,28 @@ export const enum <#= attrName #>Code {
 <#
 } // End Attribute loop
 #>
+
+// <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #> Tabs
+export const <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formName,true)) #>Tabs = {
+<# foreach(var tab in formDetail.Tabs)
+{
+    var tabName = Unique(CamelCase(Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
+#>
+    <#= tabName #>: "<#= tab.Key #>",
+    <#= tabName #>Sections: {
+            SectionInstitution1: "section_institution_1",
+            SectionAddress: "section_address",
+<# foreach(var section in tab.Value)
+{
+    var sectionName = Unique(CamelCase(Sanitize(section)),"T"+entityMetadata.LogicalName+"S"+tabName);
+#>
+        public static <#= sectionName #>: "<#= section #>",
+<#
+} // End Section loop
+#>
+    },
+<#
+} // End Tab loop
+#>
+}
 
