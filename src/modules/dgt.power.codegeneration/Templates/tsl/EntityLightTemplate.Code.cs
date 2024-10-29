@@ -9,107 +9,10 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl;
 
-public partial class EntityLightTemplate(string typingPath, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) : ITemplate
+public partial class EntityLightTemplate(string typingPath, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) :BaseTemplate(entityMetadata, systemLanguage,cfg.UseBaseLanguage), ITemplate
 {
-    private readonly Dictionary<string, List<string>> _usedTokens = new();
     private readonly bool _useBaseLanguage = cfg.UseBaseLanguage;
 
-    private static string Summary(string description, int indent)
-    {
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            return string.Empty;
-        }
-
-        return "/// <summary>" +
-               $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// {description.Replace("\n", $"\n{new string('\t', indent)}/// ").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Trim()}" +
-               $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// </summary>";
-    }
-    private string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, _useBaseLanguage, systemLanguage);
-
-    private TypeScriptType GetTypeScriptTypes(AttributeMetadata attr)
-    {
-        // TODO: Add other types @MICHA
-        switch (attr.AttributeType)
-        {
-           case AttributeTypeCode.Boolean:
-               return new TypeScriptType
-               {
-                   DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute",
-                   DefinitelyTypedControlType = "Xrm.Controls.BooleanAttribute",
-                   DefinitelyType = "Optionset"
-               };
-            case AttributeTypeCode.DateTime:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.DateAttribute",
-                    DefinitelyType = GetDateTimeType(attr as DateTimeAttributeMetadata)
-                };
-            case AttributeTypeCode.Decimal:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Decimal"
-                };
-            case AttributeTypeCode.Double:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Double"
-                };
-            case AttributeTypeCode.Integer:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Integer"
-                };
-            case AttributeTypeCode.BigInt:
-                return new TypeScriptType
-            {
-                DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                DefinitelyType ="BigInt"
-            };
-            case AttributeTypeCode.Lookup:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.LookupAttribute",
-                    DefinitelyType ="Lookup"
-                };
-            default:
-                return new TypeScriptType
-                {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.Attribute",
-                    DefinitelyType ="Attribute"
-                };
-
-        }
-    }
-
-    private string GetDateTimeType(DateTimeAttributeMetadata? attr)
-    {
-        if (attr.DateTimeBehavior == DateTimeBehavior.DateOnly)
-        {
-            if(attr.Format == DateTimeFormat.DateOnly) return "DateOnly:DateOnly";
-            return "DateOnly:UserLocal";
-        }
-
-        if (attr.DateTimeBehavior == DateTimeBehavior.TimeZoneIndependent)
-        {
-            return "DateOnly:TimeZoneIndependent";
-        }
-
-        return "DateAndTime:UserLocal";
-
-    }
 
     private IEnumerable<AttributeMetadata> Filter(AttributeMetadata[] attributes)
     {
@@ -120,22 +23,6 @@ public partial class EntityLightTemplate(string typingPath, EntityMetadata entit
 
         return filter.OrderBy(a => a.LogicalName);
     }
-
-    private static string CamelCase(string phrase) => Formatter.CamelCase(phrase);
-
-
-    private string Unique(string value, string scope)
-    {
-        if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
-
-        if (_usedTokens[scope].Contains(value) || value == $"{CamelCase(entityMetadata.SchemaName)}")
-            return Unique(value + "_", scope);
-
-        _usedTokens[scope].Add(value);
-        return value;
-    }
-
-    private static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false) =>  Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
 
     public string GenerateTemplate() => TransformText();
 
