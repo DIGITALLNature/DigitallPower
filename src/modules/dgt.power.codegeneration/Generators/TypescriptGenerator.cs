@@ -205,7 +205,7 @@ public class TypescriptGenerator : ITypescriptGenerator
                 else
                 {
                     var template = new EntityLightFormTemplate(config.TypingPath,form, formname, formDetail.Value, metadata, config, _metadataService.RetrieveOrganizationLanguage());
-                    CreateTemplateFile(template, form, args);
+                    CreateTemplateFile(template, $"{metadata.LogicalName}.{Typescript.Form}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}", args);
                 }
             }
         }
