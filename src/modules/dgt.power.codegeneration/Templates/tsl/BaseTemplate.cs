@@ -28,7 +28,7 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
 
     protected EntityLightFormTemplate.TypeScriptType GetTypeScriptTypes(AttributeMetadata attr)
     {
-        // TODO: Add other types @MICHA
+        // TODO: Detect multiselect optionsets
         switch (attr.AttributeType)
         {
            case AttributeTypeCode.Boolean:
@@ -59,6 +59,7 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                     DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
                     DefinitelyType ="Double"
                 };
+            case AttributeTypeCode.Money:
             case AttributeTypeCode.Integer:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
@@ -73,6 +74,9 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                 DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
                 DefinitelyType ="BigInt"
             };
+            case AttributeTypeCode.Customer:
+            case AttributeTypeCode.PartyList:
+            case AttributeTypeCode.Owner:
             case AttributeTypeCode.Lookup:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
@@ -86,6 +90,15 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                     DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute",
                     DefinitelyTypedControlType = "Xrm.Controls.StringAttribute",
                     DefinitelyType ="String"
+                };
+            case AttributeTypeCode.State:
+            case AttributeTypeCode.Status:
+            case AttributeTypeCode.Picklist:
+                return new EntityLightFormTemplate.TypeScriptType
+                {
+                    DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute",
+                    DefinitelyTypedControlType = "Xrm.Controls.OptionSetAttribute",
+                    DefinitelyType = "OptionSet"
                 };
             default:
                 return new EntityLightFormTemplate.TypeScriptType
