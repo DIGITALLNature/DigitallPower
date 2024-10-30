@@ -4,7 +4,7 @@
 ///<reference path="<#= typingPath #>" />
 
 // Entity <#= entityMetadata.SchemaName #> FormContext for  Form "<#= formName #>"
-export interface <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formName,true)) #>FormContext extends Xrm.FormContext {
+export interface <#= entityMetadata.SchemaName #>_<#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>FormContext extends Xrm.FormContext {
     getAttribute(): Xrm.Attributes.Attribute[];
     getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
     getAttribute(attributeName: string): Xrm.Attributes.Attribute;
@@ -17,11 +17,11 @@ export interface <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formNam
 
 <# foreach(var attr in Filter(entityMetadata.Attributes))
 {
-		var attrType = GetTypeScriptTypes(attr);
+		var attrType = BaseTemplate.GetTypeScriptTypes(attr);
 #>
-    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),1) #>
     getAttribute(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedAttributeType#>;
-    <#= Summary(GetLocalizedLabel(attr.Description),1) #>
+    <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),1) #>
     getControl(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedControlType#>;
 <#
 } // End Attribute loop
@@ -37,8 +37,8 @@ export const <#= entityMetadata.SchemaName #>Metadata = {
   attributeTypes: {
 <# foreach(var attr in Filter(entityMetadata.Attributes))
 {
-		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
-		var attrType = GetTypeScriptTypes(attr);
+		var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
+		var attrType = BaseTemplate.GetTypeScriptTypes(attr);
 #>
     <#= attrName #>: "<#= attrType.DefinitelyType#>",
 <#
@@ -47,11 +47,11 @@ export const <#= entityMetadata.SchemaName #>Metadata = {
   }
 };
 
-// <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #> Attribute constants
-export const enum <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #>Attributes {
+// <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #> Attribute constants
+export const enum <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>Attributes {
 <# foreach(var attr in Filter(entityMetadata.Attributes))
 {
-		var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
+		var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
 #>
     <#= attrName #> = "<#= attr.LogicalName#>",
 <#
@@ -62,7 +62,7 @@ export const enum <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formNam
 
 <# foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
 {
-    var attrName = Unique(CamelCase(Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
+    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
 		var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
 #>
 // Enum <#= attrName #>
@@ -70,7 +70,7 @@ export const enum <#= attrName #>Code {
     <# foreach(var option in options)
         {
     #>
-    <#= Sanitize(CamelCase(GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
+    <#= BaseTemplate.Sanitize(BaseTemplate.CamelCase(BaseTemplate.GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
     <#
     } // End Option loop
     #>
@@ -79,11 +79,11 @@ export const enum <#= attrName #>Code {
 } // End Attribute loop
 #>
 
-// <#= entityMetadata.SchemaName #><#= CamelCase(Sanitize(formName,true)) #> Tabs
-export const <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formName,true)) #>Tabs = {
+// <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #> Tabs
+export const <#= entityMetadata.SchemaName #>_<#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>Tabs = {
 <# foreach(var tab in formDetail.Tabs)
 {
-    var tabName = Unique(CamelCase(Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
+    var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
 #>
     <#= tabName #>: "<#= tab.Key #>",
     <#= tabName #>Sections: {
@@ -91,7 +91,7 @@ export const <#= entityMetadata.SchemaName #>_<#= CamelCase(Sanitize(formName,tr
             SectionAddress: "section_address",
 <# foreach(var section in tab.Value)
 {
-    var sectionName = Unique(CamelCase(Sanitize(section)),"T"+entityMetadata.LogicalName+"S"+tabName);
+    var sectionName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(section)),"T"+entityMetadata.LogicalName+"S"+tabName);
 #>
         public static <#= sectionName #>: "<#= section #>",
 <#

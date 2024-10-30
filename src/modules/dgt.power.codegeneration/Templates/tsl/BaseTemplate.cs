@@ -7,11 +7,11 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl;
 
-public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, bool useBaseLanguage) :TemplateBase
+public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, bool useBaseLanguage)
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
 
-     protected static string Summary(string description, int indent)
+    internal static string Summary(string description, int indent)
     {
         if (string.IsNullOrWhiteSpace(description))
         {
@@ -24,9 +24,9 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                $"{Environment.NewLine}" +
                $"{new string('\t', indent)}/// </summary>";
     }
-    protected string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, useBaseLanguage, systemLanguage);
+    internal string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, useBaseLanguage, systemLanguage);
 
-    protected EntityLightFormTemplate.TypeScriptType GetTypeScriptTypes(AttributeMetadata attr)
+    internal EntityLightFormTemplate.TypeScriptType GetTypeScriptTypes(AttributeMetadata attr)
     {
         // TODO: Detect multiselect optionsets
         switch (attr.AttributeType)
@@ -111,7 +111,7 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
         }
     }
 
-    protected string GetDateTimeType(DateTimeAttributeMetadata? attr)
+    internal string GetDateTimeType(DateTimeAttributeMetadata? attr)
     {
         if (attr.DateTimeBehavior == DateTimeBehavior.DateOnly)
         {
@@ -129,10 +129,10 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
     }
 
 
-    protected static string CamelCase(string phrase) => Formatter.CamelCase(phrase);
+    internal static string CamelCase(string phrase) => Formatter.CamelCase(phrase);
 
 
-    protected string Unique(string value, string scope)
+    internal string Unique(string value, string scope)
     {
         if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
 
@@ -143,6 +143,6 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
         return value;
     }
 
-    protected static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false) =>  Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
+    internal static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false) =>  Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
 
 }

@@ -11,8 +11,10 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl;
 
-public partial class EntityLightFormTemplate(string typingPath,string form, string formName, FormDetail formDetail, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) : BaseTemplate(entityMetadata, systemLanguage,cfg.UseBaseLanguage), ITemplate
+public partial class EntityLightFormTemplate(string typingPath,string form, string formName, FormDetail formDetail, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) : ITemplate
 {
+    private BaseTemplate BaseTemplate = new(entityMetadata, systemLanguage, cfg.UseBaseLanguage);
+
     private IEnumerable<AttributeMetadata> Filter(AttributeMetadata[] attributes)
     {
         var filter = attributes

@@ -9,8 +9,9 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl;
 
-public partial class EntityLightTemplate(string typingPath, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) :BaseTemplate(entityMetadata, systemLanguage,cfg.UseBaseLanguage), ITemplate
+public partial class EntityLightTemplate(string typingPath, EntityMetadata entityMetadata, CodeGenerationConfig cfg, int systemLanguage) : ITemplate
 {
+    private BaseTemplate BaseTemplate = new(entityMetadata, systemLanguage, cfg.UseBaseLanguage);
     private readonly bool _useBaseLanguage = cfg.UseBaseLanguage;
 
 
