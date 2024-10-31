@@ -1,0 +1,6 @@
+﻿{
+    "Entities": [
+        "account"
+    ],
+    "SuppressDotNet": true
+}

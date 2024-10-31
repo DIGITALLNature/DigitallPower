@@ -467,6 +467,60 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
             .BeTrue();
     }
 
+    [Theory]
+    [MemberData(nameof(GetTestScenariosDirectories))]
+    public void ShouldGenerateExactFiles(string directoryName)
+    {
+        var args = new CodeGenerationVerb
+        {
+            Config = Path.Combine(directoryName, "model.config.json"),
+            TargetDirectory = ArtifactDirectory,
+        };
+
+        var context = GetBuilder()
+            .Build();
+
+        context
+            .Execute(args)
+            .Should().BeTrue();
+
+        var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
+
+        var expectedFiles = new DirectoryInfo(directoryName).GetFiles("*.ts").Select(f => new { f.Name, f.FullName }).ToList();
+        var actualFiles = new DirectoryInfo(typescriptPath).GetFiles("*.ts").Select(f => new { f.Name, f.FullName }).ToList();
+
+        actualFiles.Select(f => f.Name).Should().BeEquivalentTo(expectedFiles.Select(f => f.Name));
+
+        foreach (var expectedFile in expectedFiles)
+        {
+            var actualFile = actualFiles.Single(f => f.Name == expectedFile.Name);
+
+            var expectedFileLines = File.ReadAllLines(expectedFile.FullName);
+            var actualFileLines = File.ReadAllLines(actualFile.FullName);
+
+            for (var i = 0; i < expectedFileLines.Length; i++)
+            {
+                var expectedFileLine = expectedFileLines[i];
+                var actualFileLine = actualFileLines.Length >= i ? actualFileLines[i] : default;
+
+                actualFileLine?.Trim().Should().Be(expectedFileLine?.Trim(), "files should be the same in line {0}", i + 1);
+            }
+
+            if (actualFileLines.Length > expectedFileLines.Length)
+            {
+                actualFileLines[expectedFileLines.Length].Should().BeNull();
+            }
+        }
+    }
+
+    public static IEnumerable<object[]> GetTestScenariosDirectories()
+    {
+        var testScenariosDirectory = new DirectoryInfo(Path.Combine("Resources", nameof(TypescriptCommand), "TestScenarios"));
+
+        return testScenariosDirectory.EnumerateDirectories()
+            .Select(d => new object[]{d.FullName});
+    }
+
     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()
     {
         var mainForm = new SystemForm(Guid.NewGuid())
