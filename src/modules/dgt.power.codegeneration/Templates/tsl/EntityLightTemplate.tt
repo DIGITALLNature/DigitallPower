@@ -2,10 +2,8 @@
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 <#@ import namespace="Logic" #>
 /* eslint-disable */
-///<reference path="<#= typingPath #>" />
 
 declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #> {
-    // Entity <#= entityMetadata.SchemaName #> FormContext
     export interface FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Attributes.Attribute[];
         getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
@@ -32,7 +30,6 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     #>
     }
 
-    // Entity <#= entityMetadata.SchemaName #>
     export const Metadata = {
       typeName: "mscrm.<#= entityMetadata.LogicalName #>",
       logicalName: "<#= entityMetadata.LogicalName #>",
@@ -51,7 +48,6 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
       }
     };
 
-    // <#= entityMetadata.SchemaName #> Attribute constants
     export const enum Attributes {
     <# foreach(var attr in Filter(entityMetadata.Attributes))
     {
@@ -63,13 +59,11 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     #>
     }
 
-
     <# foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
     {
         var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
 		    var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
     #>
-    // Enum <#= attrName #>
     export const enum <#= attrName #>Code {
         <# foreach(var option in options)
             {
@@ -79,6 +73,7 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
         } // End Option loop
         #>
     }
+
     <#
     } // End Attribute loop
     #>

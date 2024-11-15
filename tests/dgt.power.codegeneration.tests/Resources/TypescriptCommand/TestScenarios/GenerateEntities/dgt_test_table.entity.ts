@@ -1,8 +1,6 @@
 ﻿/* eslint-disable */
-///<reference path="""../../Typings/Xrm/index.d.ts""" />
 
 declare namespace XrmTable.DgtTestTable {
-    // Entity dgt_test_table FormContext
     export interface FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Attributes.Attribute[];
         getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
@@ -370,7 +368,6 @@ declare namespace XrmTable.DgtTestTable {
 
     }
 
-    // Entity dgt_test_table
     export const Metadata = {
         typeName: "mscrm.dgt_test_table",
         logicalName: "dgt_test_table",
@@ -437,7 +434,6 @@ declare namespace XrmTable.DgtTestTable {
         }
     };
 
-    // dgt_test_table Attribute constants
     export const enum Attributes {
         CreatedBy = "createdby",
         CreatedOn = "createdon",
@@ -498,13 +494,12 @@ declare namespace XrmTable.DgtTestTable {
         VersionNumber = "versionnumber",
     }
 
-
-    // Enum DgtChoiceSingle
     export const enum DgtChoiceSingleCode {
         Value = 283510000,
     }
-    // Enum DgtChoiceSingleGlobal
+
     export const enum DgtChoiceSingleGlobalCode {
         Value = 283510000,
     }
+
 }
