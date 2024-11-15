@@ -10,6 +10,7 @@
 namespace dgt.power.codegeneration.Templates.tsl
 {
     using Microsoft.Xrm.Sdk.Metadata;
+    using Logic;
     using System;
     
     /// <summary>
@@ -29,19 +30,19 @@ namespace dgt.power.codegeneration.Templates.tsl
             
             #line default
             #line hidden
-            this.Write("\" />\r\n\r\ndeclare namespace XrmTable {\r\n    // Entity ");
+            this.Write("\" />\r\n\r\ndeclare namespace XrmTable.");
+            
+            this.Write(this.ToStringHelper.ToStringWithCulture(Formatter.CamelCase(entityMetadata.SchemaName)));
+            
+            #line default
+            #line hidden
+            this.Write(" {\r\n    // Entity ");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
             
             #line default
             #line hidden
-            this.Write(" FormContext\r\n    export interface ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write("FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
+            this.Write(" FormContext\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
@@ -92,13 +93,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             
             #line default
             #line hidden
-            this.Write("\r\n    export const ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write("Metadata = {\r\n      typeName: \"mscrm.");
+            this.Write("\r\n    export const Metadata = {\r\n      typeName: \"mscrm.");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
@@ -150,13 +145,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             
             #line default
             #line hidden
-            this.Write(" Attribute constants\r\n    export const enum ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write("Attributes {\r\n    ");
+            this.Write(" Attribute constants\r\n    export const enum Attributes {\r\n    ");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
