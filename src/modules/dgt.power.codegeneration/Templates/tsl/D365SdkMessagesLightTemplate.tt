@@ -1,0 +1,14 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
+/* eslint-disable */
+
+declare namespace XrmMetadata {
+    const enum SdkMessageNames {
+        <# foreach(var sdkMessages in Filter(SdkMessages))
+{
+#>
+	    <#= sdkMessages.Item1 #> = "<#= sdkMessages.Item2  #>",
+<#
+}
+#>
+    }
+}

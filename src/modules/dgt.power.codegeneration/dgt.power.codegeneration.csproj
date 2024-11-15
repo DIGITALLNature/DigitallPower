@@ -13,6 +13,10 @@
     <None Remove="Templates\ts\D365ServicesTemplate.tt" />
     <None Remove="Templates\ts\D365UtilsTemplate.tt" />
     <None Remove="Templates\ts\D365WebApiTemplate.tt" />
+    <None Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 	<ItemGroup Condition="$(Configuration) != 'Release'">
@@ -107,6 +111,10 @@
     <Content Include="Templates\tsl\EntityLightFormTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>EntityLightFormTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
     </Content>
   </ItemGroup>
 
@@ -220,6 +228,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EntityLightFormTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\D365SdkMessagesLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>D365SdkMessagesLightTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
