@@ -22,7 +22,8 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                $"{Environment.NewLine}" +
                $"{new string('\t', indent)}/// {description.Replace("\n", $"\n{new string('\t', indent)}/// ").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Trim()}" +
                $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// </summary>";
+               $"{new string('\t', indent)}/// </summary>" +
+               $"{Environment.NewLine}";
     }
     internal string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, useBaseLanguage, systemLanguage);
 
