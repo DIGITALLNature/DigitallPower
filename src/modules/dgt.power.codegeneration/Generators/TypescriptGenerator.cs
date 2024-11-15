@@ -127,7 +127,7 @@ public class TypescriptGenerator : ITypescriptGenerator
             }
 
             // Create the template file
-            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
+            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.d", args);
         }
     }
 
