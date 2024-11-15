@@ -75,25 +75,25 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Attribute loop
     
-            this.Write("    }\r\n\r\n    export const enum Metadata {\r\n      typeName = \"mscrm.");
+            this.Write("    }\r\n\r\n    export const enum Metadata {\r\n      TypeName = \"mscrm.");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      logicalName = \"");
+            this.Write("\",\r\n      LogicalName = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      collectionName = \"");
+            this.Write("\",\r\n      CollectionName = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalCollectionName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      primaryIdAttribute = \"");
+            this.Write("\",\r\n      PrimaryIdAttribute = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.PrimaryIdAttribute));
             

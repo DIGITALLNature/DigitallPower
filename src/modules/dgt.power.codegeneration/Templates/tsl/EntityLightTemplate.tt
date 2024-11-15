@@ -31,10 +31,10 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     }
 
     export const enum Metadata {
-      typeName = "mscrm.<#= entityMetadata.LogicalName #>",
-      logicalName = "<#= entityMetadata.LogicalName #>",
-      collectionName = "<#= entityMetadata.LogicalCollectionName #>",
-      primaryIdAttribute = "<#= entityMetadata.PrimaryIdAttribute #>",
+      TypeName = "mscrm.<#= entityMetadata.LogicalName #>",
+      LogicalName = "<#= entityMetadata.LogicalName #>",
+      CollectionName = "<#= entityMetadata.LogicalCollectionName #>",
+      PrimaryIdAttribute = "<#= entityMetadata.PrimaryIdAttribute #>",
     }
 
     export const enum AttributeTypes {

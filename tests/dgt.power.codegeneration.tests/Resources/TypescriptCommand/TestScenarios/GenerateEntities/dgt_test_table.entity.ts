@@ -369,10 +369,10 @@ declare namespace XrmTable.DgtTestTable {
     }
 
     export const enum Metadata {
-        typeName = "mscrm.dgt_test_table",
-        logicalName = "dgt_test_table",
-        collectionName = "dgt_test_tables",
-        primaryIdAttribute = "dgt_test_tableid",
+        TypeName = "mscrm.dgt_test_table",
+        LogicalName = "dgt_test_table",
+        CollectionName = "dgt_test_tables",
+        PrimaryIdAttribute = "dgt_test_tableid",
     }
 
     export const enum AttributeTypes {
