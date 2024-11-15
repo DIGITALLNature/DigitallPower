@@ -7,11 +7,15 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
+using DiffPlex;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using FluentAssertions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using Xunit.Abstractions;
+using ChangeType = DiffPlex.DiffBuilder.Model.ChangeType;
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
@@ -495,21 +499,25 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         {
             var actualFile = actualFiles.Single(f => f.Name == expectedFile.Name);
 
-            var expectedFileLines = File.ReadAllLines(expectedFile.FullName);
-            var actualFileLines = File.ReadAllLines(actualFile.FullName);
+            var expectedFileContent = File.ReadAllText(expectedFile.FullName);
+            var actualFileContent = File.ReadAllText(actualFile.FullName);
 
-            for (var i = 0; i < expectedFileLines.Length; i++)
+            if (expectedFileContent == actualFileContent)
             {
-                var expectedFileLine = expectedFileLines[i];
-                var actualFileLine = actualFileLines.Length >= i ? actualFileLines[i] : default;
-
-                actualFileLine?.Trim().Should().Be(expectedFileLine?.Trim(), "files should be the same in line {0}", i + 1);
+                continue;
             }
 
-            if (actualFileLines.Length > expectedFileLines.Length)
+            var diffBuidler = new InlineDiffBuilder(new Differ());
+            var diff = diffBuidler.BuildDiffModel(expectedFileContent, actualFileContent);
+
+            if (diff.HasDifferences == false)
             {
-                actualFileLines[expectedFileLines.Length].Should().BeNull();
+                continue;
             }
+
+            var diffOutput = GenerateDiffOutput(diff);
+
+            Assert.Fail($"File {expectedFile.Name} is different:\n{diffOutput}");
         }
     }
 
@@ -518,7 +526,7 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         var testScenariosDirectory = new DirectoryInfo(Path.Combine("Resources", nameof(TypescriptCommand), "TestScenarios"));
 
         return testScenariosDirectory.EnumerateDirectories()
-            .Select(d => new object[]{d.FullName});
+            .Select(d => new object[] { d.FullName });
     }
 
     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()
@@ -548,5 +556,60 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
         };
         return (mainForm, quickCreateForm, quickViewForm);
+    }
+
+    private string GenerateDiffOutput(DiffPaneModel diff, int contextLines = 2)
+    {
+        List<string> output = new List<string>();
+        int lastChangeLine = -1;
+        int maxDigits = diff.Lines.Count.ToString().Length;
+
+        for (int i = 0; i < diff.Lines.Count; i++)
+        {
+            var line = diff.Lines[i];
+            if (line.Type != ChangeType.Unchanged)
+            {
+                // Add context lines before the change
+                if (lastChangeLine != -1 && i - lastChangeLine > contextLines)
+                {
+                    output.Add("...");
+                }
+
+                for (int j = Math.Max(lastChangeLine + 1, i - contextLines); j < i; j++)
+                {
+                    if (diff.Lines[j].Type == ChangeType.Unchanged)
+                    {
+                        output.Add($"{(j + 1).ToString().PadLeft(maxDigits, '0')}: {diff.Lines[j].Text}");
+                    }
+                }
+                // Add the changed line with line number
+                switch (line.Type)
+                {
+                    case ChangeType.Inserted:
+                        output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: + {line.Text}");
+                        break;
+                    case ChangeType.Deleted:
+                        output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: - {line.Text}");
+                        break;
+                    case ChangeType.Modified:
+                        output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: {line.Text}");
+                        break;
+                }
+
+                lastChangeLine = i;
+            }
+        }
+
+        // Add context lines after the last change
+        for (int i = lastChangeLine + 1; i < Math.Min(lastChangeLine + 1 + contextLines, diff.Lines.Count); i++)
+        {
+            if (diff.Lines[i].Type == ChangeType.Unchanged)
+            {
+                output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: {diff.Lines[i].Text}");
+            }
+        }
+
+        // Print the output
+        return string.Join(Environment.NewLine, output);
     }
 }
