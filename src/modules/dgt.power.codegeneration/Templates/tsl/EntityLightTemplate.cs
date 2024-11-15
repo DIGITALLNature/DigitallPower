@@ -24,25 +24,13 @@ namespace dgt.power.codegeneration.Templates.tsl
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n///<reference path=\"");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(typingPath));
-            
-            #line default
-            #line hidden
-            this.Write("\" />\r\n\r\ndeclare namespace XrmTable.");
+            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmTable.");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(Formatter.CamelCase(entityMetadata.SchemaName)));
             
             #line default
             #line hidden
-            this.Write(" {\r\n    // Entity ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write(" FormContext\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
+            this.Write(" {\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
@@ -87,65 +75,53 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Attribute loop
     
-            this.Write("    }\r\n\r\n    // Entity ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n    export const Metadata = {\r\n      typeName: \"mscrm.");
+            this.Write("    }\r\n\r\n    export const enum Metadata {\r\n      typeName = \"mscrm.");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      logicalName: \"");
+            this.Write("\",\r\n      logicalName = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      collectionName: \"");
+            this.Write("\",\r\n      collectionName = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalCollectionName));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      primaryIdAttribute: \"");
+            this.Write("\",\r\n      primaryIdAttribute = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.PrimaryIdAttribute));
             
             #line default
             #line hidden
-            this.Write("\",\r\n      attributeTypes: {\r\n    ");
+            this.Write("\",\r\n    }\r\n\r\n    export const enum AttributeTypes {\r\n        ");
  foreach(var attr in Filter(entityMetadata.Attributes))
-    {
+        {
 		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-    
+        
             this.Write("        ");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
-            this.Write(": \"");
+            this.Write(" = \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyType));
             
             #line default
             #line hidden
-            this.Write("\",\r\n    ");
+            this.Write("\",\r\n        ");
 
-    } // End Attribute loop
-    
-            this.Write("      }\r\n    };\r\n\r\n    // ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName));
-            
-            #line default
-            #line hidden
-            this.Write(" Attribute constants\r\n    export const enum Attributes {\r\n    ");
+        } // End Attribute loop
+        
+            this.Write("    }\r\n\r\n    export const enum Attributes {\r\n    ");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
@@ -166,19 +142,13 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Attribute loop
     
-            this.Write("    }\r\n\r\n\r\n    ");
+            this.Write("    }\r\n\r\n    ");
  foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
     {
         var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
 		    var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
     
-            this.Write("    // Enum ");
-            
-            this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n    export const enum ");
+            this.Write("    export const enum ");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
@@ -204,7 +174,7 @@ namespace dgt.power.codegeneration.Templates.tsl
 
         } // End Option loop
         
-            this.Write("    }\r\n    ");
+            this.Write("    }\r\n\r\n    ");
 
     } // End Attribute loop
     

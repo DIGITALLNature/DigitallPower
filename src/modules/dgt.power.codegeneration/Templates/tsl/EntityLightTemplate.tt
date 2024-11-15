@@ -30,23 +30,24 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     #>
     }
 
-    export const Metadata = {
-      typeName: "mscrm.<#= entityMetadata.LogicalName #>",
-      logicalName: "<#= entityMetadata.LogicalName #>",
-      collectionName: "<#= entityMetadata.LogicalCollectionName #>",
-      primaryIdAttribute: "<#= entityMetadata.PrimaryIdAttribute #>",
-      attributeTypes: {
-    <# foreach(var attr in Filter(entityMetadata.Attributes))
-    {
+    export const enum Metadata {
+      typeName = "mscrm.<#= entityMetadata.LogicalName #>",
+      logicalName = "<#= entityMetadata.LogicalName #>",
+      collectionName = "<#= entityMetadata.LogicalCollectionName #>",
+      primaryIdAttribute = "<#= entityMetadata.PrimaryIdAttribute #>",
+    }
+
+    export const enum AttributeTypes {
+        <# foreach(var attr in Filter(entityMetadata.Attributes))
+        {
 		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-    #>
-        <#= attrName #>: "<#= attrType.DefinitelyType#>",
-    <#
-    } // End Attribute loop
-    #>
-      }
-    };
+        #>
+        <#= attrName #> = "<#= attrType.DefinitelyType#>",
+        <#
+        } // End Attribute loop
+        #>
+    }
 
     export const enum Attributes {
     <# foreach(var attr in Filter(entityMetadata.Attributes))
