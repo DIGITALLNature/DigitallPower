@@ -23,10 +23,12 @@ namespace dgt.power.codegeneration.tests;
 public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCommand>
 {
     private readonly EntityMetadata _accountMetadata;
+    private readonly EntityMetadata _testTableMetadata;
 
     public TypescriptCommandLightTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
         _accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
+        _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
     }
 
     protected override CommandTestContextBuilder<TypescriptCommand, CodeGenerationVerb> GetBuilder()
@@ -37,6 +39,7 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         };
         return base.GetBuilder()
             .WithMetaData(_accountMetadata)
+            .WithMetaData(_testTableMetadata)
             .WithData(organization);
     }
 
@@ -498,6 +501,7 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         foreach (var expectedFile in expectedFiles)
         {
             var actualFile = actualFiles.Single(f => f.Name == expectedFile.Name);
+            actualFiles.Remove(actualFile);
 
             var expectedFileContent = File.ReadAllText(expectedFile.FullName);
             var actualFileContent = File.ReadAllText(actualFile.FullName);

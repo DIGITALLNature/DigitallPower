@@ -1,6 +1,6 @@
 ﻿{
     "Entities": [
-        "account"
+        "dgt_test_table"
     ],
     "SuppressDotNet": true
 }
