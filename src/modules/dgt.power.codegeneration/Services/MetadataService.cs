@@ -691,6 +691,15 @@ public class MetadataService : IMetadataService
                 }
             }
 
+            var headerControls = doc.SelectNodes("./form/header/rows/row/cell/control");
+            foreach (XmlNode headerControl in headerControls)
+            {
+                if (headerControl != null && headerControl.Attributes["datafieldname"] != null)
+                {
+                    result.Fields.Add(headerControl.Attributes["datafieldname"].Value);
+                }
+            }
+
             var tabName = tab.Attributes["name"] != null ? tab.Attributes["name"].Value : tab.Attributes["id"].Value;
 #pragma warning restore CS8602
 

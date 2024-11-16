@@ -138,6 +138,16 @@ declare namespace XrmTable.DgtTestTable {
         /// </summary>
         getControl(name: "ownerid"): Xrm.Controls.LookupAttribute;
 
+        /// <summary>
+        /// Reason for the status of the TestTable
+        /// </summary>
+        getAttribute(name: "statuscode"): Xrm.Attributes.OptionSetAttribute;
+
+        /// <summary>
+        /// Reason for the status of the TestTable
+        /// </summary>
+        getControl(name: "statuscode"): Xrm.Controls.OptionSetAttribute;
+
         ui: TestTableMainUi;
     }
 
