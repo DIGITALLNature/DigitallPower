@@ -2,5 +2,6 @@
     "Entities": [
         "dgt_test_table"
     ],
-    "SuppressDotNet": true
+    "SuppressDotNet": true,
+    "SuppressSdkMessages": true
 }
