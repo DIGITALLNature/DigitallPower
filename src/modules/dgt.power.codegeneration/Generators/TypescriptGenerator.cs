@@ -247,7 +247,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         else
         {
             // Use the EntityLightTemplate for other TypeScript generator versions
-            template = new D365SdkMessagesLightTemplate(sdkMessages, config);
+            template = new D365SdkMessagesLightTemplate(sdkMessages);
 
             // Create the template file
             CreateTemplateFile(template, $"{Typescript.SdkMessageNames}.d", args);

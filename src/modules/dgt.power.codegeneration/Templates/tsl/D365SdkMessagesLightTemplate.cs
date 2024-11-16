@@ -22,26 +22,22 @@ namespace dgt.power.codegeneration.Templates.tsl
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmMetadata {\r\n    const enum SdkMessageNames {\r\n        ");
- foreach(var sdkMessages in Filter(SdkMessages))
-{
-
+            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmMetadata {\r\n    const enum SdkMessageNames {\r\n    ");
+ foreach(var sdkMessages in SdkMessages) { 
             this.Write("\t    ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Item1));
+            this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Name));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Item2));
+            this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Message));
             
             #line default
             #line hidden
-            this.Write("\",\r\n");
-
+            this.Write("\",\r\n    ");
 }
-
             this.Write("    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }

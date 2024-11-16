@@ -376,9 +376,9 @@ public class MetadataService : IMetadataService
             _ => "object"
         };
 
-    public IEnumerable<Tuple<string, string>> RetrieveSdkMessageNames(CodeGenerationConfig config)
+    public IEnumerable<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
-        var result = new List<Tuple<string, string>>();
+        var result = new List<(string Name, string Message)>();
         if (config.Hints)
         {
             var rule = new Rule("[red]Generating ALL sdk messages by default is deprecated![/]");
@@ -391,18 +391,18 @@ public class MetadataService : IMetadataService
             AnsiConsole.Write(panel);
         }
 
-        result.Add(Tuple.Create("Assign", "Assign"));
-        result.Add(Tuple.Create("Create", "Create"));
-        result.Add(Tuple.Create("Delete", "Delete"));
-        result.Add(Tuple.Create("GrantAccess", "GrantAccess"));
-        result.Add(Tuple.Create("ModifyAccess", "ModifyAccess"));
-        result.Add(Tuple.Create("Retrieve", "Retrieve"));
-        result.Add(Tuple.Create("RetrieveMultiple", "RetrieveMultiple"));
-        result.Add(Tuple.Create("RetrievePrincipalAccess", "RetrievePrincipalAccess"));
-        result.Add(Tuple.Create("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"));
-        result.Add(Tuple.Create("RevokeAccess", "RevokeAccess"));
-        result.Add(Tuple.Create("SetState", "SetState"));
-        result.Add(Tuple.Create("Update", "Update"));
+        result.Add(("Assign", "Assign"));
+        result.Add(("Create", "Create"));
+        result.Add(("Delete", "Delete"));
+        result.Add(("GrantAccess", "GrantAccess"));
+        result.Add(("ModifyAccess", "ModifyAccess"));
+        result.Add(("Retrieve", "Retrieve"));
+        result.Add(("RetrieveMultiple", "RetrieveMultiple"));
+        result.Add(("RetrievePrincipalAccess", "RetrievePrincipalAccess"));
+        result.Add(("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"));
+        result.Add(("RevokeAccess", "RevokeAccess"));
+        result.Add(("SetState", "SetState"));
+        result.Add(("Update", "Update"));
 
         var names = new List<string>();
         if (config.AdditionalSdkMessages.Any())
@@ -447,7 +447,7 @@ public class MetadataService : IMetadataService
             }
 
             hashSet.Add(name);
-            result.Add(Tuple.Create(name, message));
+            result.Add((name, message));
         }
 
         hashSet.Clear();

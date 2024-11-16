@@ -3,12 +3,8 @@
 
 declare namespace XrmMetadata {
     const enum SdkMessageNames {
-        <# foreach(var sdkMessages in Filter(SdkMessages))
-{
-#>
-	    <#= sdkMessages.Item1 #> = "<#= sdkMessages.Item2  #>",
-<#
-}
-#>
+    <# foreach(var sdkMessages in SdkMessages) { #>
+	    <#= sdkMessages.Name #> = "<#= sdkMessages.Message #>",
+    <#}#>
     }
 }
