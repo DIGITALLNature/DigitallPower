@@ -119,15 +119,18 @@ public class TypescriptGenerator : ITypescriptGenerator
             {
                 // Use the D365EntityTemplate for the full TypeScript generator version
                 template = new D365EntityTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+
+                // Create the template file
+                CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
             }
             else
             {
                 // Use the EntityLightTemplate for other TypeScript generator versions
                 template = new EntityLightTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
-            }
 
-            // Create the template file
-            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.d", args);
+                // Create the template file
+                CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.d", args);
+            }
         }
     }
 
@@ -205,7 +208,7 @@ public class TypescriptGenerator : ITypescriptGenerator
                 else
                 {
                     var template = new EntityLightFormTemplate(config.TypingPath,form, formname, formDetail.Value, metadata, config, _metadataService.RetrieveOrganizationLanguage());
-                    CreateTemplateFile(template, $"{metadata.LogicalName}.{Typescript.Form}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}", args);
+                    CreateTemplateFile(template, $"{metadata.LogicalName}.{Typescript.Form}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.d", args);
                 }
             }
         }
