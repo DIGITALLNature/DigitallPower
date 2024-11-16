@@ -102,6 +102,16 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                     DefinitelyType = "OptionSet"
                 };
             default:
+                if (attr is MultiSelectPicklistAttributeMetadata)
+                {
+                    return new EntityLightFormTemplate.TypeScriptType
+                    {
+                        DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute",
+                        DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetAttribute",
+                        DefinitelyType = "MultiSelectOptionSet"
+                    };
+                }
+
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute",

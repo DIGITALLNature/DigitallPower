@@ -20,13 +20,13 @@ declare namespace XrmTable.DgtTestTable {
 
         getControl(name: "dgt_choice_bool"): Xrm.Controls.BooleanAttribute;
 
-        getAttribute(name: "dgt_choice_multiple"): Xrm.Attributes.Attribute;
+        getAttribute(name: "dgt_choice_multiple"): Xrm.Attributes.MultiSelectOptionSetAttribute;
 
-        getControl(name: "dgt_choice_multiple"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_choice_multiple"): Xrm.Controls.MultiSelectOptionSetAttribute;
 
-        getAttribute(name: "dgt_choice_multiple_global"): Xrm.Attributes.Attribute;
+        getAttribute(name: "dgt_choice_multiple_global"): Xrm.Attributes.MultiSelectOptionSetAttribute;
 
-        getControl(name: "dgt_choice_multiple_global"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_choice_multiple_global"): Xrm.Controls.MultiSelectOptionSetAttribute;
 
         getAttribute(name: "dgt_choice_single"): Xrm.Attributes.OptionSetAttribute;
 
