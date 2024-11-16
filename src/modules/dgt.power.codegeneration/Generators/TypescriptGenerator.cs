@@ -277,15 +277,18 @@ public class TypescriptGenerator : ITypescriptGenerator
         {
             // Use the D365EntityTemplate for the full TypeScript generator version
             template = new D365OptionSetsTemplate(optionSets, config);
+
+            // Create the template file
+            CreateTemplateFile(template, $"{Typescript.OptionSetValues}", args);
         }
         else
         {
             // Use the EntityLightTemplate for other TypeScript generator versions
             template = new OptionSetsLightTemplate(optionSets, config.TypingPath);
-        }
 
-        // Create the template file
-        CreateTemplateFile(template, $"{Typescript.OptionSetValues}", args);
+            // Create the template file
+            CreateTemplateFile(template, $"{Typescript.OptionSetValues}.d", args);
+        }
     }
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)

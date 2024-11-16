@@ -14,79 +14,44 @@ namespace dgt.power.codegeneration.Templates.tsl
     /// <summary>
     /// Class to produce the template output
     /// </summary>
-    
-    #line 1 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class OptionSetsLightTemplate : OptionSetsLightTemplateBase
     {
-#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\n///<reference path=\"");
-            
-            #line 3 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(typingPath));
-            
-            #line default
-            #line hidden
-            this.Write("\" />\n\n// Enum account_account_accountcategorycode\nexport const enum account_account_accountcategorycode {\n  PreferredCustomer = 1,\n  Standard = 2,\n}\n\n// This module contains global option sets which are used in more than one entity!\n");
-            
-            #line 12 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
+            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmEnum {\r\n    // This module contains global option sets which are used in more than one entity!\r\n    ");
  foreach(var optionSet in optionSets) { 
+            this.Write("    export const enum ");
             
-            #line default
-            #line hidden
-            this.Write("export const enum ");
-            
-            #line 13 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(optionSet.Key)));
             
             #line default
             #line hidden
-            this.Write(" {\n");
-            
-            #line 14 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
+            this.Write(" {\r\n    ");
  foreach(var option in optionSet.Value) { 
+            this.Write("        ");
             
-            #line default
-            #line hidden
-            this.Write("    ");
-            
-            #line 15 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(option.Label))));
             
             #line default
             #line hidden
-            this.Write(" = { value: ");
+            this.Write(" = ");
             
-            #line 15 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
-            this.Write(" },\n");
-            
-            #line 16 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
+            this.Write(",\r\n    ");
  }
-            
-            #line default
-            #line hidden
-            this.Write("}\n");
-            
-            #line 18 "/Users/raaa/GitHub/DigitallPower/src/modules/dgt.power.codegeneration/Templates/tsl/OptionSetsLightTemplate.tt"
+            this.Write("    }\r\n    ");
 } 
-            
-            #line default
-            #line hidden
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
-    
-    #line default
-    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation
