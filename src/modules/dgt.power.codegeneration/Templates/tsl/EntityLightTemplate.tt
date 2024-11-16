@@ -3,7 +3,7 @@
 <#@ import namespace="Logic" #>
 /* eslint-disable */
 
-declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #> {
+declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
     export interface FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Attributes.Attribute[];
         getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
@@ -40,7 +40,7 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     export const enum AttributeTypes {
         <# foreach(var attr in Filter(entityMetadata.Attributes))
         {
-		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
+		    var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"M"+entityMetadata.LogicalName);
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
         #>
         <#= attrName #> = "<#= attrType.DefinitelyType#>",
@@ -52,7 +52,7 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
     export const enum Attributes {
     <# foreach(var attr in Filter(entityMetadata.Attributes))
     {
-		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
+		    var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"A"+entityMetadata.LogicalName);
     #>
         <#= attrName #> = "<#= attr.LogicalName#>",
     <#
@@ -62,14 +62,14 @@ declare namespace XrmTable.<#= Formatter.CamelCase(entityMetadata.SchemaName) #>
 
     <# foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
     {
-        var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
+        var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"PL"+entityMetadata.LogicalName);
 		    var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
     #>
     export const enum <#= attrName #>Code {
         <# foreach(var option in options)
             {
         #>
-        <#= BaseTemplate.Sanitize(BaseTemplate.CamelCase(BaseTemplate.GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
+        <#= BaseTemplate.GetLocalizedLabel(option.Label).Sanitize().ToCamelCase() #> = <#= option.Value#>,
         <#
         } // End Option loop
         #>

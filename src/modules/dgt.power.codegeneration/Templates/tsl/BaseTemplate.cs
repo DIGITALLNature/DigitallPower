@@ -139,21 +139,14 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
 
     }
 
-
-    internal static string CamelCase(string phrase) => Formatter.CamelCase(phrase);
-
-
     internal string Unique(string value, string scope)
     {
         if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
 
-        if (_usedTokens[scope].Contains(value) || value == $"{CamelCase(entityMetadata.SchemaName)}")
+        if (_usedTokens[scope].Contains(value) || value == $"{entityMetadata.SchemaName.ToCamelCase()}")
             return Unique(value + "_", scope);
 
         _usedTokens[scope].Add(value);
         return value;
     }
-
-    internal static string Sanitize(string value, bool allowWhitespace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false) =>  Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
-
 }

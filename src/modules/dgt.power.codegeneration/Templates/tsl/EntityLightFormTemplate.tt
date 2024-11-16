@@ -7,7 +7,6 @@
     var tableName = entityMetadata.SchemaName.ToCamelCase();
     var tableFormName = formName.Sanitize().ToCamelCase();
 #>
-
 declare namespace XrmTable.<#= tableName #> {
     export interface <#= tableFormName #>FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Attributes.Attribute[];
@@ -41,7 +40,7 @@ declare namespace XrmTable.<#= tableName #> {
 
     <# foreach(var tab in formDetail.Tabs)
     {
-        var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
+        var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
     #>
     export interface <#= tableFormName #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
         get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
