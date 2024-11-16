@@ -1,105 +1,76 @@
 <#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
 /* eslint-disable */
-///<reference path="<#= typingPath #>" />
 
-// Entity <#= entityMetadata.SchemaName #> FormContext for  Form "<#= formName #>"
-export interface <#= entityMetadata.SchemaName #>_<#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>FormContext extends Xrm.FormContext {
-    getAttribute(): Xrm.Attributes.Attribute[];
-    getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
-    getAttribute(attributeName: string): Xrm.Attributes.Attribute;
-    getAttribute(index: number): Xrm.Attributes.Attribute;
+declare namespace XrmTable.<#= BaseTemplate.CamelCase(entityMetadata.SchemaName) #> {
+    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>FormContext extends Xrm.FormContext {
+        getAttribute(): Xrm.Attributes.Attribute[];
+        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
+        getAttribute(attributeName: string): Xrm.Attributes.Attribute;
+        getAttribute(index: number): Xrm.Attributes.Attribute;
 
-    getControl(): Xrm.Controls.Control[];
-    getControl<T extends Xrm.Controls.Control>(controlName: string): T;
-    getControl(controlName: string): Xrm.Controls.Control;
-    getControl(index: number): Xrm.Controls.Control;
+        getControl(): Xrm.Controls.Control[];
+        getControl<T extends Xrm.Controls.Control>(controlName: string): T;
+        getControl(controlName: string): Xrm.Controls.Control;
+        getControl(index: number): Xrm.Controls.Control;
 
-<# foreach(var attr in Filter(entityMetadata.Attributes))
-{
-		var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-#>
-    <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),1) #>
-    getAttribute(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedAttributeType#>;
-    <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),1) #>
-    getControl(name: '<#= attr.LogicalName #>'): <#= attrType.DefinitelyTypedControlType#>;
-<#
-} // End Attribute loop
-#>
-}
-
-// Entity <#= entityMetadata.SchemaName #>
-export const <#= entityMetadata.SchemaName #>Metadata = {
-  typeName: "mscrm.<#= entityMetadata.LogicalName #>",
-  logicalName: "<#= entityMetadata.LogicalName #>",
-  collectionName: "<#= entityMetadata.LogicalCollectionName #>",
-  primaryIdAttribute: "<#= entityMetadata.PrimaryIdAttribute #>",
-  attributeTypes: {
-<# foreach(var attr in Filter(entityMetadata.Attributes))
-{
-		var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
-		var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-#>
-    <#= attrName #>: "<#= attrType.DefinitelyType#>",
-<#
-} // End Attribute loop
-#>
-  }
-};
-
-// <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #> Attribute constants
-export const enum <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>Attributes {
-<# foreach(var attr in Filter(entityMetadata.Attributes))
-{
-		var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
-#>
-    <#= attrName #> = "<#= attr.LogicalName#>",
-<#
-} // End Attribute loop
-#>
-}
-
-
-<# foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
-{
-    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
-		var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
-#>
-// Enum <#= attrName #>
-export const enum <#= attrName #>Code {
-    <# foreach(var option in options)
-        {
+    <# foreach(var attr in Filter(entityMetadata.Attributes))
+    {
+		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
     #>
-    <#= BaseTemplate.Sanitize(BaseTemplate.CamelCase(BaseTemplate.GetLocalizedLabel(option.Label))) #> = <#= option.Value#>,
+        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)
+#>      getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
+
+        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)
+#>      getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
+
     <#
-    } // End Option loop
+    } // End Attribute loop
+#>      ui: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Ui;
+    }
+
+    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Ui extends Xrm.Ui {
+        tabs: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Tabs;
+    }
+
+    <# foreach(var tab in formDetail.Tabs)
+    {
+        var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
+    #>
+    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
+        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
+        get(itemNumber: number): Xrm.Controls.Tab;
+        get<TSubType extends Xrm.Controls.Tab>(itemNumber: number): TSubType;
+        get(itemName: string): Xrm.Controls.Tab;
+        get<TSubType extends Xrm.Controls.Tab>(attributeName: string): TSubType;
+        get(): Xrm.Controls.Tab[];
+
+        sections: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections;
+
+        get(itemName: "<#= tab.Key #>"): <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>;
+    }
+
+    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #> extends Xrm.Controls.Tab {
+        sections: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections;
+    }
+
+    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
+        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
+        get(itemNumber: number): Xrm.Controls.Section;
+        get<TSubType extends Xrm.Controls.Section>(itemNumber: number): TSubType;
+        get(itemName: string): Xrm.Controls.Section;
+        get<TSubType extends Xrm.Controls.Section>(attributeName: string): TSubType;
+        get(): Xrm.Controls.Section[];
+
+        <# foreach(var section in tab.Value)
+        {
+        #>
+        get(itemName: "<#= section #>"): Xrm.Controls.Section;
+        <#
+        } // End Section loop
+        #>
+    }
+    <#
+    } // End Tab loop
     #>
 }
-<#
-} // End Attribute loop
-#>
-
-// <#= entityMetadata.SchemaName #><#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #> Tabs
-export const <#= entityMetadata.SchemaName #>_<#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName,true)) #>Tabs = {
-<# foreach(var tab in formDetail.Tabs)
-{
-    var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
-#>
-    <#= tabName #>: "<#= tab.Key #>",
-    <#= tabName #>Sections: {
-            SectionInstitution1: "section_institution_1",
-            SectionAddress: "section_address",
-<# foreach(var section in tab.Value)
-{
-    var sectionName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(section)),"T"+entityMetadata.LogicalName+"S"+tabName);
-#>
-        public static <#= sectionName #>: "<#= section #>",
-<#
-} // End Section loop
-#>
-    },
-<#
-} // End Tab loop
-#>
-}
-

@@ -485,6 +485,7 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         };
 
         var context = GetBuilder()
+            .WithData(GetTestTableForm())
             .Build();
 
         context
@@ -522,6 +523,11 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
             var diffOutput = GenerateDiffOutput(diff);
 
             Assert.Fail($"File {expectedFile.Name} is different:\n{diffOutput}");
+        }
+
+        foreach (var actualFile in actualFiles)
+        {
+            Assert.Fail($"File {actualFile.Name} should not be generated");
         }
     }
 
@@ -561,6 +567,16 @@ public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCom
         };
         return (mainForm, quickCreateForm, quickViewForm);
     }
+
+    private SystemForm GetTestTableForm() =>
+        new(Guid.NewGuid())
+        {
+            Name = "Test Table",
+            FormXml = GetResourceAsString("dgt_test_table.main.form.xml"),
+            ObjectTypeCode = "dgt_test_table",
+            Type = new OptionSetValue(SystemForm.Options.Type.Main),
+            FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
+        };
 
     private string GenerateDiffOutput(DiffPaneModel diff, int contextLines = 2)
     {

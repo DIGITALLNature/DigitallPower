@@ -39,6 +39,9 @@
 
   <ItemGroup>
     <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\TypescriptCommand\dgt_test_table.main.form.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
