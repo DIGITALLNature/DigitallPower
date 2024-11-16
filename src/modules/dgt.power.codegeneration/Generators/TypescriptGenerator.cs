@@ -287,7 +287,7 @@ public class TypescriptGenerator : ITypescriptGenerator
         else
         {
             // Use the EntityLightTemplate for other TypeScript generator versions
-            template = new OptionSetsLightTemplate(optionSets, config.TypingPath);
+            template = new OptionSetsLightTemplate(optionSets);
 
             // Create the template file
             CreateTemplateFile(template, $"{Typescript.OptionSetValues}.d", args);

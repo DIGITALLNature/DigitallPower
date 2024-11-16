@@ -9,6 +9,7 @@
 // ------------------------------------------------------------------------------
 namespace dgt.power.codegeneration.Templates.tsl
 {
+    using Logic;
     using System;
     
     /// <summary>
@@ -22,11 +23,11 @@ namespace dgt.power.codegeneration.Templates.tsl
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmEnum {\r\n    // This module contains global option sets which are used in more than one entity!\r\n    ");
+            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmEnum {\r\n    // This module contains global option sets which are used in more than one entity\r\n");
  foreach(var optionSet in optionSets) { 
             this.Write("    export const enum ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(CamelCase(optionSet.Key)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(optionSet.Key.ToCamelCase()));
             
             #line default
             #line hidden
@@ -34,7 +35,7 @@ namespace dgt.power.codegeneration.Templates.tsl
  foreach(var option in optionSet.Value) { 
             this.Write("        ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(Sanitize(CamelCase(option.Label))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(option.Label.Sanitize().ToCamelCase()));
             
             #line default
             #line hidden
@@ -45,9 +46,9 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line default
             #line hidden
             this.Write(",\r\n    ");
- }
-            this.Write("    }\r\n    ");
-} 
+}
+            this.Write("    }\r\n");
+}
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
