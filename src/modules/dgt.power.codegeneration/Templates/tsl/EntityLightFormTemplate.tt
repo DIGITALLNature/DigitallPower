@@ -1,9 +1,15 @@
 <#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
 <#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
+<#@ import namespace="dgt.power.codegeneration.Logic" #>
 /* eslint-disable */
 
-declare namespace XrmTable.<#= BaseTemplate.CamelCase(entityMetadata.SchemaName) #> {
-    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>FormContext extends Xrm.FormContext {
+<#
+    var tableName = entityMetadata.SchemaName.ToCamelCase();
+    var tableFormName = formName.Sanitize().ToCamelCase();
+#>
+
+declare namespace XrmTable.<#= tableName #> {
+    export interface <#= tableFormName #>FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Attributes.Attribute[];
         getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
         getAttribute(attributeName: string): Xrm.Attributes.Attribute;
@@ -26,18 +32,18 @@ declare namespace XrmTable.<#= BaseTemplate.CamelCase(entityMetadata.SchemaName)
 
     <#
     } // End Attribute loop
-#>      ui: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Ui;
+#>      ui: <#= tableFormName #>Ui;
     }
 
-    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Ui extends Xrm.Ui {
-        tabs: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Tabs;
+    export interface <#= tableFormName #>Ui extends Xrm.Ui {
+        tabs: <#= tableFormName #>Tabs;
     }
 
     <# foreach(var tab in formDetail.Tabs)
     {
         var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
     #>
-    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
+    export interface <#= tableFormName #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
         get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
         get(itemNumber: number): Xrm.Controls.Tab;
         get<TSubType extends Xrm.Controls.Tab>(itemNumber: number): TSubType;
@@ -45,16 +51,16 @@ declare namespace XrmTable.<#= BaseTemplate.CamelCase(entityMetadata.SchemaName)
         get<TSubType extends Xrm.Controls.Tab>(attributeName: string): TSubType;
         get(): Xrm.Controls.Tab[];
 
-        sections: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections;
+        sections: <#= tableFormName #><#= tabName #>Sections;
 
-        get(itemName: "<#= tab.Key #>"): <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>;
+        get(itemName: "<#= tab.Key #>"): <#= tableFormName #><#= tabName #>;
     }
 
-    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #> extends Xrm.Controls.Tab {
-        sections: <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections;
+    export interface <#= tableFormName #><#= tabName #> extends Xrm.Controls.Tab {
+        sections: <#= tableFormName #><#= tabName #>Sections;
     }
 
-    export interface <#= BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName)) #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
+    export interface <#= tableFormName #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
         get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
         get(itemNumber: number): Xrm.Controls.Section;
         get<TSubType extends Xrm.Controls.Section>(itemNumber: number): TSubType;

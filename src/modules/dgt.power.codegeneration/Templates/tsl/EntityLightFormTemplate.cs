@@ -10,6 +10,7 @@
 namespace dgt.power.codegeneration.Templates.tsl
 {
     using Microsoft.Xrm.Sdk.Metadata;
+    using dgt.power.codegeneration.Logic;
     using System;
     
     /// <summary>
@@ -23,15 +24,20 @@ namespace dgt.power.codegeneration.Templates.tsl
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmTable.");
+            this.Write("/* eslint-disable */\r\n\r\n");
+
+    var tableName = entityMetadata.SchemaName.ToCamelCase();
+    var tableFormName = formName.Sanitize().ToCamelCase();
+
+            this.Write("\r\ndeclare namespace XrmTable.");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(entityMetadata.SchemaName)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default
             #line hidden
             this.Write(" {\r\n    export interface ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -82,19 +88,19 @@ namespace dgt.power.codegeneration.Templates.tsl
 
             this.Write("      ui: ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Ui;\r\n    }\r\n\r\n    export interface ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Ui extends Xrm.Ui {\r\n        tabs: ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -105,13 +111,13 @@ namespace dgt.power.codegeneration.Templates.tsl
     
             this.Write("    export interface ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {\r\n        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];\r\n        get(itemNumber: number): Xrm.Controls.Tab;\r\n        get<TSubType extends Xrm.Controls.Tab>(itemNumber: number): TSubType;\r\n        get(itemName: string): Xrm.Controls.Tab;\r\n        get<TSubType extends Xrm.Controls.Tab>(attributeName: string): TSubType;\r\n        get(): Xrm.Controls.Tab[];\r\n\r\n        sections: ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -128,7 +134,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("\"): ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -139,7 +145,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write(";\r\n    }\r\n\r\n    export interface ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -150,7 +156,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write(" extends Xrm.Controls.Tab {\r\n        sections: ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
@@ -161,7 +167,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write("Sections;\r\n    }\r\n\r\n    export interface ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.CamelCase(BaseTemplate.Sanitize(formName))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
