@@ -174,6 +174,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         {
             case Workflow.Options.Category.ModernFlow:
             case Workflow.Options.Category.Workflow_:
+            case Workflow.Options.Category.WebClientAPIFlow:
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflow.Category?.Value}) has no name");
                 if (workflowConfig.Flows?.TryGetValue(workflowName, out var flowConfig) == true)
                 {
