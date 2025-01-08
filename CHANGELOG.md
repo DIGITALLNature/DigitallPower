@@ -1,3 +1,15 @@
+# [2.1.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.2...v2.1.0-beta.1) (2025-01-08)
+
+
+### Bug Fixes
+
+* add necessary test data ([3e4b373](https://github.com/DIGITALLNature/DigitallPower/commit/3e4b37396f08ac335ad5f7a479b326afe5aa7504))
+
+
+### Features
+
+* treat macro as workflow with normal name ([6e6a8db](https://github.com/DIGITALLNature/DigitallPower/commit/6e6a8db8dc1952747f5092ab479f303050412876))
+
 ## [2.0.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.1...v2.0.1-beta.2) (2024-06-20)
 
 
