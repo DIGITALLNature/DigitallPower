@@ -1,3 +1,10 @@
+# [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* use home account identifier for msal token ([b05ac7c](https://github.com/DIGITALLNature/DigitallPower/commit/b05ac7c7d9c2fab555dcae1205c9df213dae8479))
+
 # [2.1.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.2...v2.1.0-beta.1) (2025-01-08)
 
 
