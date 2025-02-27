@@ -53,7 +53,7 @@ Feel free to **file a new issue** with a respective title and description on the
 
 ## ✅&nbsp; Requirements
 
-DigitallPower CLI requires DOTNET7 to be used.
+DigitallPower CLI requires DOTNET8 to be used.
 
 
 ## 📘&nbsp; License
