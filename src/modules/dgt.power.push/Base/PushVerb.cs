@@ -30,6 +30,10 @@ public class PushVerb : BaseProgramSettings
     [Description("Publish changed objects")]
     public bool Publish { get; set; }
 
+    [CommandOption("--delete-on-upgrade")]
+    [Description("Delete old pluginsteps on Upgrade of PluginAssembly")]
+    public bool DeleteOnUpgrade { get; set; }
+
     [CommandOption("--config")]
     [Description("Configuration file for webressources mapping")]
     public string Config { get; set; }
