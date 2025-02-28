@@ -203,6 +203,58 @@ internal class AssemblyModelBuilder
         return result;
     }
 
+    /// <summary>
+    /// Builds the list of outdated assembly content from CRM.
+    /// </summary>
+    /// <param name="name">The name of the assembly.</param>
+    /// <returns>The list of outdated assembly content.</returns>
+    public List<Model.AssemblyContent> BuildOutdatedAssemblyContentFromCrm(string name)
+    {
+        // Get the list of plugin assemblies from CRM
+        var assemblies = GetPluginAssemblies(name);
+
+        // Create a list to store the outdated assembly content
+        var results = new List<Model.AssemblyContent>();
+
+        // Iterate over the plugin assemblies except the first one which is the latest one
+        foreach (var pluginAssembly in assemblies.Skip(1))
+        {
+            // Create a new assembly content model
+            var result = new Model.AssemblyContent();
+            result.Id = pluginAssembly.Id;
+
+            // Get the list of plugin types from CRM
+            var pluginTypes = GetPluginTypes(pluginAssembly.ToEntityReference());
+
+            // Iterate over the plugin types
+            foreach (var pluginType in pluginTypes)
+            {
+                // Create a new plugin type model
+                var type = new Model.PluginType
+                {
+                    Name = pluginType.Name!,
+                    TypeName = pluginType.TypeName!,
+                    FriendlyName = pluginType.FriendlyName!,
+                    Id = pluginType.PluginTypeId!.Value,
+                    ParentId = pluginAssembly.Id,
+                    ParentName = pluginAssembly!.Name
+                };
+
+                // Get the list of plugin steps from CRM
+                type.PluginSteps.AddRange(GetPluginSteps(pluginType.ToEntityReference(), pluginType.Name!));
+
+                // Add the plugin type to the assembly content model
+                result.PluginTypes.Add(type);
+            }
+
+            // Add the assembly content model to the results list
+            results.Add(result);
+        }
+
+        // Return the list of outdated assembly content
+        return results;
+    }
+
     #region Package
 
     private AssemblyState GetPluginPackage(string name, string version, out PluginPackage? pluginPackage)
@@ -311,23 +363,13 @@ internal class AssemblyModelBuilder
     private AssemblyState GetPluginAssembly(string name, string version, out PluginAssembly? pluginAssembly)
     {
         pluginAssembly = default;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var assemblies = (from pa in _context.PluginAssemblySet
-            where pa.SourceType != null
-            where pa.SourceType.Value == PluginAssembly.Options.SourceType.Database ||
-                  pa.SourceType.Value == PluginAssembly.Options.SourceType.FileStore
-            where pa.IsolationMode != null
-            where pa.IsolationMode.Value == PluginAssembly.Options.IsolationMode.Sandbox
-            where pa.Name == name
-            orderby pa.Version
-            select pa).ToList();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        var assemblies = GetPluginAssemblies(name);
         if (assemblies.Count == 0)
         {
             return AssemblyState.Create;
         }
 
-        pluginAssembly = assemblies.Single();
+        pluginAssembly = assemblies.First();
 
         if (pluginAssembly.PackageId != null)
         {
@@ -353,6 +395,21 @@ internal class AssemblyModelBuilder
             where pt.IsWorkflowActivity == false
             where pt.PluginAssemblyId.Equals(pluginAssembly)
             select pt).ToList();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+    }
+
+    private List<PluginAssembly> GetPluginAssemblies(string name)
+    {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        return (from pa in _context.PluginAssemblySet
+            where pa.SourceType != null
+            where pa.SourceType.Value == PluginAssembly.Options.SourceType.Database ||
+                  pa.SourceType.Value == PluginAssembly.Options.SourceType.FileStore
+            where pa.IsolationMode != null
+            where pa.IsolationMode.Value == PluginAssembly.Options.IsolationMode.Sandbox
+            where pa.Name == name
+            orderby pa.Version descending
+            select pa).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
@@ -773,4 +830,5 @@ internal class AssemblyModelBuilder
     }
 
     #endregion
+
 }
