@@ -10,7 +10,7 @@ using dgt.power.dataverse;
 namespace dgt.power.push.Model;
 
 [DataContract]
-public class Assembly : IEquatable<Assembly>
+public class Assembly : AssemblyContent, IEquatable<Assembly>
 {
     [DataMember(Name = "name", IsRequired = true)]
     [Required]
@@ -30,16 +30,11 @@ public class Assembly : IEquatable<Assembly>
 
     [IgnoreDataMember] public string? Content { get; set; }
 
-    [DataMember(Name = "plugin_types", IsRequired = false, EmitDefaultValue = false)]
-    public List<PluginType> PluginTypes { get; set; } = new();
-
     [DataMember(Name = "workflow_types", IsRequired = false, EmitDefaultValue = false)]
     public List<WorkflowType> WorkflowTypes { get; set; } = new();
 
     [DataMember(Name = "solutions", IsRequired = false)]
     public List<string> Solutions { get; set; } = new();
-
-    [IgnoreDataMember] public Guid Id { get; set; }
 
     [IgnoreDataMember] public string TypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 
