@@ -82,7 +82,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
-            if (packageCrm.State == AssemblyState.Create)
+            if (packageCrm.State == AssemblyState.Create || packageCrm.State == AssemblyState.Upgrade)
             {
                 ctx.Status("CreatePluginPackage");
                 if (solutionPrefix == "new")
@@ -126,7 +126,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             ctx.Status("BuildFromCrm");
             var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
 
-            if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type.HasFlag(AssemblyType.Workflow)))
+            if (crmAssembly.State == AssemblyState.Create || crmAssembly.State == AssemblyState.Upgrade)
             {
                 ctx.Status("CreatePluginAssembly");
                 crmAssembly = processor.CreatePluginAssembly(localAssembly, settings.Solution);
@@ -155,6 +155,11 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     ctx.Status("UpsertAndPurgePluginStepImages");
                     processor.UpsertAndPurgePluginStepImages(localAssembly, crmAssembly);
                 }
+            }
+
+            if (settings.DeleteOnUpgrade  && crmAssembly.State == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin))
+            {
+                // TODO abräumen wenn gew+ünscht
             }
         }
     }
