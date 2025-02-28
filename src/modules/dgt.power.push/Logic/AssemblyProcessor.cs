@@ -211,6 +211,16 @@ internal class AssemblyProcessor
         return crm;
     }
 
+    /// <summary>
+    /// Deletes a plugin assembly from the CRM system based on the provided assembly ID.
+    /// </summary>
+    /// <param name="assemblyId">The unique identifier of the plugin assembly to be deleted.</param>
+    public void DeletePluginAssembly(Guid assemblyId)
+    {
+        // Delete the plugin assembly using the CRM service
+        _service.Delete(PluginAssembly.EntityLogicalName, assemblyId);
+    }
+
     private void AddPluginAssemblyToSolution(PluginAssembly pluginAssembly, string solution)
     {
         // PluginAssembly = 91
@@ -318,7 +328,7 @@ internal class AssemblyProcessor
         };
     }
 
-    private PluginType DeletePluginType(PluginType pluginType)
+    internal PluginType DeletePluginType(PluginType pluginType)
     {
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
             " Delete PluginType [green]{0}[/] for Assembly [bold]{1}[/] first", pluginType.Name,

@@ -125,6 +125,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
             ctx.Status("BuildFromCrm");
             var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
+            var state = crmAssembly.State;
 
             if (crmAssembly.State == AssemblyState.Create || crmAssembly.State == AssemblyState.Upgrade)
             {
@@ -157,9 +158,19 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 }
             }
 
-            if (settings.DeleteOnUpgrade  && crmAssembly.State == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin))
+            if (settings.DeleteOnUpgrade  && state == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin))
             {
-                // TODO abräumen wenn gew+ünscht
+                ctx.Status("Purge outdated plugin types");
+                var outdated = modelBuilder.BuildOutdatedAssemblyContentFromCrm(localAssembly.Name);
+                foreach (var assemblyContent in outdated)
+                {
+                    foreach (var pluginType in assemblyContent.PluginTypes)
+                    {
+                        processor.DeletePluginType(pluginType);
+                    }
+
+                    processor.DeletePluginAssembly(assemblyContent.Id);
+                }
             }
         }
     }
