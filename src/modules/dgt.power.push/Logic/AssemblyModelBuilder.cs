@@ -593,7 +593,7 @@ internal class AssemblyModelBuilder
                 PrimaryEntityName = primaryEntityName,
                 SecondaryEntityName = secondaryEntityName,
                 FilterAttributes = GetArrayValues(customAttribute, "FilterAttributes"),
-                ExecutionOrder = GetValue<int>(customAttribute, "ExecutionOrder"),
+                ExecutionOrder = GetValue<int?>(customAttribute, "ExecutionOrder"),
                 ParentName = pluginType.FullName!,
                 Configuration = GetValue<string>(customAttribute, "Configuration")
             };
@@ -668,8 +668,23 @@ internal class AssemblyModelBuilder
         return mappedRegistration;
     }
 
-    private static string GetStepName(PluginStep step) =>
-        $"{step.ParentName}|{(!string.IsNullOrEmpty(step.PrimaryEntityName) ? step.PrimaryEntityName : "entity")}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}|{step.ExecutionOrder}";
+    /// <summary>
+    /// Generates a step name for a plugin step based on its properties.
+    /// </summary>
+    /// <param name="step">The plugin step for which the name is generated.</param>
+    /// <returns>A string representing the generated step name.</returns>
+    private static string GetStepName(PluginStep step)
+    {
+        // Check if the execution order has value
+        if (step.ExecutionOrder.HasValue)
+        {
+            // Return formatted step name including execution order
+            return $"{step.ParentName}|{(!string.IsNullOrEmpty(step.PrimaryEntityName) ? step.PrimaryEntityName : "entity")}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}|{step.ExecutionOrder}";
+        }
+
+        // Return formatted step name without execution order
+        return $"{step.ParentName}|{(!string.IsNullOrEmpty(step.PrimaryEntityName) ? step.PrimaryEntityName : "entity")}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}";
+    }
 
 
     private static string GetMessagePropertyName(string messageName)
