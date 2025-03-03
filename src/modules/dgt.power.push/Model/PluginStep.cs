@@ -61,7 +61,7 @@ public class PluginStep : IEquatable<PluginStep>
     /// <summary>
     /// </summary>
     [DataMember(Name = "execution_order", IsRequired = false)]
-    public int ExecutionOrder { get; set; } = 100;
+    public int? ExecutionOrder { get; set; } = 100;
 
     [DataMember(Name = "plugin_step_imagess", IsRequired = false, EmitDefaultValue = false)]
     public List<PluginStepImage> PluginStepImages { get; init; } = new();
