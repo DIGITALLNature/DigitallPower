@@ -343,7 +343,7 @@ internal class AssemblyModelBuilder
 
                     if (customAttribute.AttributeType.Name == nameof(CustomApiRegistrationAttribute))
                     {
-                        type.CustomApi = GetValue<string>(customAttribute, "MessageName")!;
+                        type.CustomApi = GetValue<string>(customAttribute, "messageName")!;
                     }
                 }
 
