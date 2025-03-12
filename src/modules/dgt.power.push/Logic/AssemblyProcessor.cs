@@ -62,7 +62,7 @@ internal class AssemblyProcessor
         {
             Id = packageCrm.Id,
             Content = packageLocal.Content,
-            Version = packageLocal.Version
+            Version = packageCrm.Version
         };
 
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
@@ -85,7 +85,7 @@ internal class AssemblyProcessor
        return new Package
         {
             Name = package.Name,
-            Version = package.Version,
+            Version = packageCrm.Version,
             Content = package.Content,
             Id = package.Id
         };

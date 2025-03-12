@@ -82,7 +82,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
-            if (packageCrm.State == AssemblyState.Create || packageCrm.State == AssemblyState.Upgrade)
+            if (packageCrm.State == AssemblyState.Create)
             {
                 ctx.Status("CreatePluginPackage");
                 if (solutionPrefix == "new")
