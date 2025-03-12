@@ -44,6 +44,11 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         [Description("Print a table report to the console after the config file has been created")]
         [DefaultValue(true)]
         public bool TableReport { get; init; }
+
+        [CommandOption("--detailed")]
+        [Description("If set to true, a full config of all processes will be created instead of only listing processes that are disabled or where the owner is changed")]
+        [DefaultValue(false)]
+        public bool Detailed { get; init; }
     }
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
@@ -70,7 +75,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         var publishers = args.Publishers?.Split(',');
 
         // Do the actual work
-        var task = CollectWorkflowStates(solutions, publishers, args.Config);
+        var task = CollectWorkflowStates(solutions, publishers, args.Config, args.Detailed);
         task.Wait();
 
         // Print table report if requested
@@ -82,7 +87,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         return Tracer.End(this, true);
     }
 
-    private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile)
+    private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile, bool detailed)
     {
         await AnsiConsole.Progress()
             .StartAsync(async ctx =>
@@ -139,7 +144,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? flow.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (disabled || owner != default)
+                    if (detailed || disabled || owner != default)
                     {
                         config.Flows.TryAdd(flow.Name!, new WorkflowConfig.FlowConfig
                         {
@@ -155,7 +160,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = action.OwnerId?.Id != defaultOwnerId ? action.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (disabled || owner != default)
+                    if (detailed || disabled || owner != default)
                     {
                         config.Actions.TryAdd(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
                         {
@@ -175,7 +180,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                         var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
                         var owner = rule.OwnerId?.Id != defaultOwnerId ? rule.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                        if (disabled || owner != default)
+                        if (detailed || disabled || owner != default)
                         {
                             tableEntries.TryAdd(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
                             {
