@@ -32,7 +32,7 @@ declare namespace XrmTable.<#= tableName #> {
         tabs: <#= tableFormName #>Tabs;
     }
 
-    <# foreach(var tab in formDetail.Tabs)
+    <# foreach(var tab in formDetail.TabDetails)
     {
         var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
     #>
@@ -47,12 +47,38 @@ declare namespace XrmTable.<#= tableName #> {
         sections: <#= tableFormName #><#= tabName #>Sections;
     }
 
+    <# foreach(var section in tab.Value.Sections)
+    {
+    #>
+        export interface <#= tableFormName #><#= tabName #><#= section.Key #>Section extends Xrm.Controls.Section {
+            controls: <#= tableFormName #><#= tabName #><#= section.Key #>ControlCollection;
+        }
+
+        export interface <#= tableFormName #><#= tabName #><#= section.Key #>ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
+
+        <# foreach(var control in section.Value.Controls)
+        {
+            var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
+            var attrType = BaseTemplate.GetTypeScriptTypes(attr);
+        #>
+            get(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
+        <#
+        } // End Section loop
+        #>
+        }
+
+    <#
+    } // End Section loop
+    #>
+
+
     export interface <#= tableFormName #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
 
-        <# foreach(var section in tab.Value)
+        <# foreach(var section in tab.Value.Sections)
         {
         #>
-        get(itemName: "<#= section #>"): Xrm.Controls.Section;
+        
+        get(itemName: "<#= section.Key #>"): <#= tableFormName #><#= tabName #><#= section.Key #>Section;
         <#
         } // End Section loop
         #>

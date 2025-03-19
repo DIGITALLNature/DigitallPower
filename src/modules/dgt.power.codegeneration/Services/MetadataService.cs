@@ -656,6 +656,7 @@ public class MetadataService : IMetadataService
 
         foreach (XmlNode tab in tabs)
         {
+            var tabDetail = new TabDetail();
             var sectionlist = new List<string>();
             var columns = tab.SelectNodes(".//columns/column[*]");
 #pragma warning disable CS8602
@@ -669,6 +670,9 @@ public class MetadataService : IMetadataService
                         : section.Attributes["id"].Value;
                     sectionlist.Add(sectionName);
 
+                    var sectionDetail = new SectionDetail();
+                    tabDetail.Sections.Add(sectionName, sectionDetail);
+
                     var rows = section.SelectNodes(".//rows/row[*]");
                     foreach (XmlNode row in rows)
                     {
@@ -679,6 +683,8 @@ public class MetadataService : IMetadataService
                             if (control != null && control.Attributes["datafieldname"] != null)
                             {
                                 result.Fields.Add(control.Attributes["datafieldname"].Value);
+
+                                sectionDetail.Controls.Add(control.Attributes["datafieldname"].Value);
                             }
 
                             if (control != null && control.Attributes["id"] != null &&
@@ -704,6 +710,7 @@ public class MetadataService : IMetadataService
 #pragma warning restore CS8602
 
             result.Tabs.Add(tabName, sectionlist);
+            result.TabDetails.Add(tabName, tabDetail);
         }
 
         return result;
