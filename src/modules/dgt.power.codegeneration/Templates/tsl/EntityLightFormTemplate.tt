@@ -65,7 +65,7 @@ declare namespace XrmTable.<#= tableName #> {
         var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
         var attrType = BaseTemplate.GetTypeScriptTypes(attr);
 #>
-        get(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
+        get(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
 <#
     } // End Section loop
 #>

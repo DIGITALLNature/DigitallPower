@@ -115,7 +115,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write("        get(name: \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             this.Write("\"): ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));
             this.Write(";\r\n");
 
     } // End Section loop
