@@ -24,12 +24,12 @@ namespace dgt.power.codegeneration.Templates.tsl
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace Xrm.Events {\r\n  export interface EventC" +
-                    "ontext {\r\n    getFormContext<");
+            this.Write("/* eslint-disable */\r\n\r\ndeclare namespace Xrm.Events {\r\n    export interface Even" +
+                    "tContext {\r\n        getFormContext<");
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName.ToCamelCase()));
-            this.Write("FormContext>() : ");
+            this.Write("FormContext>(): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName.ToCamelCase()));
-            this.Write("FormContext;\r\n  }\r\n}\r\n\r\ndeclare namespace XrmTable.");
+            this.Write("FormContext;\r\n    }\r\n}\r\n\r\ndeclare namespace XrmTable.");
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName.ToCamelCase()));
             this.Write(" {\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttrib" +
                     "ute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;\r\n\r\n        ge" +
@@ -38,15 +38,15 @@ namespace dgt.power.codegeneration.Templates.tsl
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
     
-            this.Write("        ");
+            this.Write("    ");
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
-            this.Write("      getAttribute(name: \"");
+            this.Write("        getAttribute(name: \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             this.Write("\"): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
-            this.Write(";\r\n\r\n        ");
+            this.Write(";\r\n\r\n          ");
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
-            this.Write("      getControl(name: \"");
+            this.Write("        getControl(name: \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             this.Write("\"): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));

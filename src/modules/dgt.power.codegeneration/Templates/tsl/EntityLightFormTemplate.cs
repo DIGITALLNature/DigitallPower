@@ -32,7 +32,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write("declare namespace Xrm.Events {\r\n  export interface EventContext {\r\n    getFormCon" +
                     "text<");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
-            this.Write("FormContext>() : ");
+            this.Write("FormContext>(): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write("FormContext;\r\n  }\r\n}\r\n\r\ndeclare namespace XrmTable.");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
@@ -40,11 +40,11 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write("FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Collection.Ite" +
                     "mCollection<Attributes.Attribute> | null;\r\n\r\n        getControl(): Xrm.Collectio" +
-                    "n.ItemCollection<Controls.Control> | null;\r\n\r\n    ");
+                    "n.ItemCollection<Controls.Control> | null;\r\n\r\n");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-    
+
             this.Write("        ");
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)));
             this.Write("      getAttribute(name: \"");
@@ -57,7 +57,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             this.Write("\"): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));
-            this.Write(";\r\n\r\n    ");
+            this.Write(";\r\n\r\n");
 
     } // End Attribute loop
 
@@ -67,15 +67,15 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write("Ui extends Xrm.Ui {\r\n        tabs: ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
-            this.Write("Tabs;\r\n    }\r\n\r\n    ");
+            this.Write("Tabs;\r\n    }\r\n\r\n");
  foreach(var tab in formDetail.TabDetails)
     {
         var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
-    
+
             this.Write("    export interface ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
-            this.Write("Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {\r\n\r\n        section" +
-                    "s: ");
+            this.Write("Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {\r\n        sections:" +
+                    " ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             this.Write("Sections;\r\n\r\n        get(itemName: \"");
@@ -89,63 +89,62 @@ namespace dgt.power.codegeneration.Templates.tsl
             this.Write(" extends Xrm.Controls.Tab {\r\n        sections: ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            this.Write("Sections;\r\n    }\r\n\r\n    ");
+            this.Write("Sections;\r\n    }\r\n\r\n");
  foreach(var section in tab.Value.Sections)
     {
-    
-            this.Write("        export interface ");
+
+            this.Write("    export interface ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
-            this.Write("Section extends Xrm.Controls.Section {\r\n            controls: ");
+            this.Write("Section extends Xrm.Controls.Section {\r\n        controls: ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
-            this.Write("ControlCollection;\r\n        }\r\n\r\n        export interface ");
+            this.Write("ControlCollection;\r\n    }\r\n\r\n    export interface ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
             this.Write("ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {\r\n" +
-                    "\r\n        ");
+                    "");
  foreach(var control in section.Value.Controls)
-        {
-            var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
-            var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-        
-            this.Write("            get(name: \"");
+    {
+        var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
+        var attrType = BaseTemplate.GetTypeScriptTypes(attr);
+
+            this.Write("        get(name: \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             this.Write("\"): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
-            this.Write(";\r\n        ");
-
-        } // End Section loop
-        
-            this.Write("        }\r\n\r\n    ");
+            this.Write(";\r\n");
 
     } // End Section loop
-    
+
+            this.Write("    }\r\n\r\n");
+
+    } // End Section loop
+
             this.Write("\r\n\r\n    export interface ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
-            this.Write("Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {\r\n\r\n       " +
-                    " ");
+            this.Write("Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {\r\n");
  foreach(var section in tab.Value.Sections)
-        {
-        
-            this.Write("        \r\n        get(itemName: \"");
+    {
+
+            this.Write("    get(itemName: \"");
             this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
             this.Write("\"): ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
-            this.Write("Section;\r\n        ");
+            this.Write("Section;\r\n");
 
-        } // End Section loop
-        
-            this.Write("    }\r\n    ");
+    } // End Section loop
+
+            this.Write("    }\r\n");
 
     } // End Tab loop
-    
+
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }

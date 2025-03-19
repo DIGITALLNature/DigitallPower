@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 declare namespace Xrm.Events {
-  export interface EventContext {
-    getFormContext<<#= entityMetadata.SchemaName.ToCamelCase() #>FormContext>() : <#= entityMetadata.SchemaName.ToCamelCase() #>FormContext;
-  }
+    export interface EventContext {
+        getFormContext<<#= entityMetadata.SchemaName.ToCamelCase() #>FormContext>(): <#= entityMetadata.SchemaName.ToCamelCase() #>FormContext;
+    }
 }
 
 declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
@@ -19,11 +19,11 @@ declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
     #>
-        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
-#>      getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
+    <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
+#>        getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
 
-        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
-#>      getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
+          <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
+#>        getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
 
     <#
     } // End Attribute loop

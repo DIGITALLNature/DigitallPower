@@ -1,16 +1,16 @@
 ﻿/* eslint-disable */
 
+declare namespace Xrm.Events {
+    export interface EventContext {
+        getFormContext<DgtTestTableFormContext>(): DgtTestTableFormContext;
+    }
+}
+
 declare namespace XrmTable.DgtTestTable {
     export interface FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Attributes.Attribute[];
-        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
-        getAttribute(attributeName: string): Xrm.Attributes.Attribute;
-        getAttribute(index: number): Xrm.Attributes.Attribute;
+        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
 
-        getControl(): Xrm.Controls.Control[];
-        getControl<T extends Xrm.Controls.Control>(controlName: string): T;
-        getControl(controlName: string): Xrm.Controls.Control;
-        getControl(index: number): Xrm.Controls.Control;
+        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
 
         /// <summary>
         /// Unique identifier of the user who created the record.
@@ -20,7 +20,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier of the user who created the record.
         /// </summary>
-        getControl(name: "createdby"): Xrm.Controls.LookupAttribute;
+        getControl(name: "createdby"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Date and time when the record was created.
@@ -30,7 +30,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Date and time when the record was created.
         /// </summary>
-        getControl(name: "createdon"): Xrm.Controls.DateAttribute;
+        getControl(name: "createdon"): Xrm.Controls.DateControl;
 
         /// <summary>
         /// Unique identifier of the delegate user who created the record.
@@ -40,35 +40,35 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier of the delegate user who created the record.
         /// </summary>
-        getControl(name: "createdonbehalfby"): Xrm.Controls.LookupAttribute;
+        getControl(name: "createdonbehalfby"): Xrm.Controls.LookupControl;
 
         getAttribute(name: "dgt_autonumber"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_autonumber"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_autonumber"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_choice_bool"): Xrm.Attributes.BooleanAttribute;
 
-        getControl(name: "dgt_choice_bool"): Xrm.Controls.BooleanAttribute;
+        getControl(name: "dgt_choice_bool"): Xrm.Controls.BooleanControl;
 
         getAttribute(name: "dgt_choice_multiple"): Xrm.Attributes.MultiSelectOptionSetAttribute;
 
-        getControl(name: "dgt_choice_multiple"): Xrm.Controls.MultiSelectOptionSetAttribute;
+        getControl(name: "dgt_choice_multiple"): Xrm.Controls.MultiSelectOptionSetControl;
 
         getAttribute(name: "dgt_choice_multiple_global"): Xrm.Attributes.MultiSelectOptionSetAttribute;
 
-        getControl(name: "dgt_choice_multiple_global"): Xrm.Controls.MultiSelectOptionSetAttribute;
+        getControl(name: "dgt_choice_multiple_global"): Xrm.Controls.MultiSelectOptionSetControl;
 
         getAttribute(name: "dgt_choice_single"): Xrm.Attributes.OptionSetAttribute;
 
-        getControl(name: "dgt_choice_single"): Xrm.Controls.OptionSetAttribute;
+        getControl(name: "dgt_choice_single"): Xrm.Controls.OptionSetControl;
 
         getAttribute(name: "dgt_choice_single_global"): Xrm.Attributes.OptionSetAttribute;
 
-        getControl(name: "dgt_choice_single_global"): Xrm.Controls.OptionSetAttribute;
+        getControl(name: "dgt_choice_single_global"): Xrm.Controls.OptionSetControl;
 
         getAttribute(name: "dgt_currency"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_currency"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_currency"): Xrm.Controls.NumberControl;
 
         /// <summary>
         /// Value of the Currency in base currency.
@@ -78,91 +78,91 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Value of the Currency in base currency.
         /// </summary>
-        getControl(name: "dgt_currency_base"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_currency_base"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_date_and_time"): Xrm.Attributes.DateAttribute;
 
-        getControl(name: "dgt_date_and_time"): Xrm.Controls.DateAttribute;
+        getControl(name: "dgt_date_and_time"): Xrm.Controls.DateControl;
 
         getAttribute(name: "dgt_date_only"): Xrm.Attributes.DateAttribute;
 
-        getControl(name: "dgt_date_only"): Xrm.Controls.DateAttribute;
+        getControl(name: "dgt_date_only"): Xrm.Controls.DateControl;
 
         getAttribute(name: "dgt_file"): Xrm.Attributes.Attribute;
 
-        getControl(name: "dgt_file"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_file"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_file_image"): Xrm.Attributes.Attribute;
 
-        getControl(name: "dgt_file_image"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_file_image"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_file_image_partial"): Xrm.Attributes.Attribute;
 
-        getControl(name: "dgt_file_image_partial"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_file_image_partial"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_file_image_partial_timestamp"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_file_image_partial_timestamp"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_file_image_partial_timestamp"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_file_image_partial_url"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_file_image_partial_url"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_file_image_partial_url"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_file_image_partialid"): Xrm.Attributes.Attribute;
 
-        getControl(name: "dgt_file_image_partialid"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_file_image_partialid"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_file_image_timestamp"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_file_image_timestamp"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_file_image_timestamp"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_file_image_url"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_file_image_url"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_file_image_url"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_file_imageid"): Xrm.Attributes.Attribute;
 
-        getControl(name: "dgt_file_imageid"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_file_imageid"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_file_name"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_file_name"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_file_name"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_lookup"): Xrm.Attributes.LookupAttribute;
 
-        getControl(name: "dgt_lookup"): Xrm.Controls.LookupAttribute;
+        getControl(name: "dgt_lookup"): Xrm.Controls.LookupControl;
 
         getAttribute(name: "dgt_lookup_customer"): Xrm.Attributes.LookupAttribute;
 
-        getControl(name: "dgt_lookup_customer"): Xrm.Controls.LookupAttribute;
+        getControl(name: "dgt_lookup_customer"): Xrm.Controls.LookupControl;
 
         getAttribute(name: "dgt_number_decimal"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_decimal"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_decimal"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_number_duration"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_duration"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_duration"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_number_float"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_float"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_float"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_number_language_code"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_language_code"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_language_code"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_number_time_zone"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_time_zone"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_time_zone"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_number_whole"): Xrm.Attributes.NumberAttribute;
 
-        getControl(name: "dgt_number_whole"): Xrm.Controls.NumberAttribute;
+        getControl(name: "dgt_number_whole"): Xrm.Controls.NumberControl;
 
         getAttribute(name: "dgt_primaryname"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_primaryname"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_primaryname"): Xrm.Controls.StringControl;
 
         /// <summary>
         /// Unique identifier for entity instances
@@ -172,39 +172,39 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier for entity instances
         /// </summary>
-        getControl(name: "dgt_test_tableid"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_test_tableid"): Xrm.Controls.Control;
 
         getAttribute(name: "dgt_text_area"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_area"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_text_area"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_text_email"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_email"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_text_email"): Xrm.Controls.StringControl;
 
-        getAttribute(name: "dgt_text_multiline"): Xrm.Attributes.Attribute;
+        getAttribute(name: "dgt_text_multiline"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_multiline"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_text_multiline"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_text_rich"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_rich"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_text_rich"): Xrm.Controls.StringControl;
 
-        getAttribute(name: "dgt_text_rich_multiline"): Xrm.Attributes.Attribute;
+        getAttribute(name: "dgt_text_rich_multiline"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_rich_multiline"): Xrm.Controls.Attribute;
+        getControl(name: "dgt_text_rich_multiline"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_text_ticker_symbol"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_ticker_symbol"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_text_ticker_symbol"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_text_url"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_text_url"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_text_url"): Xrm.Controls.StringControl;
 
         getAttribute(name: "dgt_textphonenumber"): Xrm.Attributes.StringAttribute;
 
-        getControl(name: "dgt_textphonenumber"): Xrm.Controls.StringAttribute;
+        getControl(name: "dgt_textphonenumber"): Xrm.Controls.StringControl;
 
         /// <summary>
         /// Exchange rate for the currency associated with the entity with respect to the base currency.
@@ -214,7 +214,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Exchange rate for the currency associated with the entity with respect to the base currency.
         /// </summary>
-        getControl(name: "exchangerate"): Xrm.Controls.NumberAttribute;
+        getControl(name: "exchangerate"): Xrm.Controls.NumberControl;
 
         /// <summary>
         /// Sequence number of the import that created this record.
@@ -224,7 +224,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Sequence number of the import that created this record.
         /// </summary>
-        getControl(name: "importsequencenumber"): Xrm.Controls.NumberAttribute;
+        getControl(name: "importsequencenumber"): Xrm.Controls.NumberControl;
 
         /// <summary>
         /// Unique identifier of the user who modified the record.
@@ -234,7 +234,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier of the user who modified the record.
         /// </summary>
-        getControl(name: "modifiedby"): Xrm.Controls.LookupAttribute;
+        getControl(name: "modifiedby"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Date and time when the record was modified.
@@ -244,7 +244,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Date and time when the record was modified.
         /// </summary>
-        getControl(name: "modifiedon"): Xrm.Controls.DateAttribute;
+        getControl(name: "modifiedon"): Xrm.Controls.DateControl;
 
         /// <summary>
         /// Unique identifier of the delegate user who modified the record.
@@ -254,7 +254,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier of the delegate user who modified the record.
         /// </summary>
-        getControl(name: "modifiedonbehalfby"): Xrm.Controls.LookupAttribute;
+        getControl(name: "modifiedonbehalfby"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Date and time that the record was migrated.
@@ -264,7 +264,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Date and time that the record was migrated.
         /// </summary>
-        getControl(name: "overriddencreatedon"): Xrm.Controls.DateAttribute;
+        getControl(name: "overriddencreatedon"): Xrm.Controls.DateControl;
 
         /// <summary>
         /// Owner Id
@@ -274,7 +274,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Owner Id
         /// </summary>
-        getControl(name: "ownerid"): Xrm.Controls.LookupAttribute;
+        getControl(name: "ownerid"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Unique identifier for the business unit that owns the record
@@ -284,7 +284,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier for the business unit that owns the record
         /// </summary>
-        getControl(name: "owningbusinessunit"): Xrm.Controls.LookupAttribute;
+        getControl(name: "owningbusinessunit"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Unique identifier for the team that owns the record.
@@ -294,7 +294,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier for the team that owns the record.
         /// </summary>
-        getControl(name: "owningteam"): Xrm.Controls.LookupAttribute;
+        getControl(name: "owningteam"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Unique identifier for the user that owns the record.
@@ -304,7 +304,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier for the user that owns the record.
         /// </summary>
-        getControl(name: "owninguser"): Xrm.Controls.LookupAttribute;
+        getControl(name: "owninguser"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Status of the TestTable
@@ -314,7 +314,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Status of the TestTable
         /// </summary>
-        getControl(name: "statecode"): Xrm.Controls.OptionSetAttribute;
+        getControl(name: "statecode"): Xrm.Controls.OptionSetControl;
 
         /// <summary>
         /// Reason for the status of the TestTable
@@ -324,7 +324,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Reason for the status of the TestTable
         /// </summary>
-        getControl(name: "statuscode"): Xrm.Controls.OptionSetAttribute;
+        getControl(name: "statuscode"): Xrm.Controls.OptionSetControl;
 
         /// <summary>
         /// For internal use only.
@@ -334,7 +334,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// For internal use only.
         /// </summary>
-        getControl(name: "timezoneruleversionnumber"): Xrm.Controls.NumberAttribute;
+        getControl(name: "timezoneruleversionnumber"): Xrm.Controls.NumberControl;
 
         /// <summary>
         /// Unique identifier of the currency associated with the entity.
@@ -344,7 +344,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Unique identifier of the currency associated with the entity.
         /// </summary>
-        getControl(name: "transactioncurrencyid"): Xrm.Controls.LookupAttribute;
+        getControl(name: "transactioncurrencyid"): Xrm.Controls.LookupControl;
 
         /// <summary>
         /// Time zone code that was in use when the record was created.
@@ -354,7 +354,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Time zone code that was in use when the record was created.
         /// </summary>
-        getControl(name: "utcconversiontimezonecode"): Xrm.Controls.NumberAttribute;
+        getControl(name: "utcconversiontimezonecode"): Xrm.Controls.NumberControl;
 
         /// <summary>
         /// Version Number
@@ -364,7 +364,7 @@ declare namespace XrmTable.DgtTestTable {
         /// <summary>
         /// Version Number
         /// </summary>
-        getControl(name: "versionnumber"): Xrm.Controls.NumberAttribute;
+        getControl(name: "versionnumber"): Xrm.Controls.NumberControl;
 
     }
 
@@ -394,10 +394,10 @@ declare namespace XrmTable.DgtTestTable {
         DgtFileImagePartial = "Attribute",
         DgtFileImagePartialTimestamp = "BigInt",
         DgtFileImagePartialURL = "String",
-        DgtFileImagePartialId = "Attribute",
+        DgtFileImagePartialId = "Guid",
         DgtFileImageTimestamp = "BigInt",
         DgtFileImageURL = "String",
-        DgtFileImageId = "Attribute",
+        DgtFileImageId = "Guid",
         DgtFileName = "String",
         DgtLookup = "Lookup",
         DgtLookupCustomer = "Lookup",
@@ -408,12 +408,12 @@ declare namespace XrmTable.DgtTestTable {
         DgtNumberTimeZone = "Integer",
         DgtNumberWhole = "Integer",
         DgtPrimaryName = "String",
-        DgtTestTableId = "Attribute",
+        DgtTestTableId = "Guid",
         DgtTextArea = "String",
         DgtTextEmail = "String",
-        DgtTextMultiline = "Attribute",
+        DgtTextMultiline = "String",
         DgtTextRich = "String",
-        DgtTextRichMultiline = "Attribute",
+        DgtTextRichMultiline = "String",
         DgtTextTickerSymbol = "String",
         DgtTextUrl = "String",
         DgtTextPhoneNumber = "String",

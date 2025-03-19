@@ -665,9 +665,9 @@ public class MetadataService : IMetadataService
                 var sections = column.SelectNodes(".//sections/section[*]");
                 foreach (XmlNode section in sections)
                 {
-                    var sectionName = section.Attributes["name"] != null
-                        ? section.Attributes["name"].Value
-                        : section.Attributes["id"].Value;
+                    var sectionName = section.Attributes["name"]?.Value;
+                    if (string.IsNullOrWhiteSpace(sectionName)) continue;
+
                     sectionlist.Add(sectionName);
 
                     var sectionDetail = new SectionDetail();

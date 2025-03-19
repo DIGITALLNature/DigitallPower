@@ -20,9 +20,9 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
 
         return "/// <summary>" +
                $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// {description.Replace("\n", $"\n{new string('\t', indent)}/// ").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Trim()}" +
+               $"{new string(' ', 4 * indent)}/// {description.Replace("\n", $"\n{new string(' ', 4 * indent)}/// ").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Trim()}" +
                $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// </summary>" +
+               $"{new string(' ', 4 * indent)}/// </summary>" +
                $"{Environment.NewLine}";
     }
     internal string GetLocalizedLabel(Label label) => Formatter.GetLocalizedLabel(label, useBaseLanguage, systemLanguage);
