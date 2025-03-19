@@ -15,44 +15,73 @@ namespace dgt.power.codegeneration.Templates.tsl
     /// <summary>
     /// Class to produce the template output
     /// </summary>
+    
+    #line 1 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class OptionSetsLightTemplate : OptionSetsLightTemplateBase
     {
+#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmEnum {\r\n    // This module contains global option sets which are used in more than one entity\r\n");
+            
+            #line 7 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
  foreach(var optionSet in optionSets) { 
+            
+            #line default
+            #line hidden
             this.Write("    export const enum ");
             
+            #line 8 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(optionSet.Key.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" {\r\n    ");
+            
+            #line 9 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
  foreach(var option in optionSet.Value) { 
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
+            #line 10 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Label.Sanitize().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" = ");
             
+            #line 10 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n    ");
+            
+            #line 11 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
 }
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n");
+            
+            #line 13 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\OptionSetsLightTemplate.tt"
 }
+            
+            #line default
+            #line hidden
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
+    
+    #line default
+    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

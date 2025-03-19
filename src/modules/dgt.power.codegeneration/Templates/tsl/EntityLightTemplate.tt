@@ -5,15 +5,9 @@
 
 declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
     export interface FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Attributes.Attribute[];
-        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
-        getAttribute(attributeName: string): Xrm.Attributes.Attribute;
-        getAttribute(index: number): Xrm.Attributes.Attribute;
+        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
 
-        getControl(): Xrm.Controls.Control[];
-        getControl<T extends Xrm.Controls.Control>(controlName: string): T;
-        getControl(controlName: string): Xrm.Controls.Control;
-        getControl(index: number): Xrm.Controls.Control;
+        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
 
     <# foreach(var attr in Filter(entityMetadata.Attributes))
     {

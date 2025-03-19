@@ -9,15 +9,9 @@
 #>
 declare namespace XrmTable.<#= tableName #> {
     export interface <#= tableFormName #>FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Attributes.Attribute[];
-        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;
-        getAttribute(attributeName: string): Xrm.Attributes.Attribute;
-        getAttribute(index: number): Xrm.Attributes.Attribute;
+        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
 
-        getControl(): Xrm.Controls.Control[];
-        getControl<T extends Xrm.Controls.Control>(controlName: string): T;
-        getControl(controlName: string): Xrm.Controls.Control;
-        getControl(index: number): Xrm.Controls.Control;
+        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
 
     <# foreach(var attr in Filter(entityMetadata.Attributes))
     {
@@ -43,12 +37,6 @@ declare namespace XrmTable.<#= tableName #> {
         var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
     #>
     export interface <#= tableFormName #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
-        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
-        get(itemNumber: number): Xrm.Controls.Tab;
-        get<TSubType extends Xrm.Controls.Tab>(itemNumber: number): TSubType;
-        get(itemName: string): Xrm.Controls.Tab;
-        get<TSubType extends Xrm.Controls.Tab>(attributeName: string): TSubType;
-        get(): Xrm.Controls.Tab[];
 
         sections: <#= tableFormName #><#= tabName #>Sections;
 
@@ -60,12 +48,6 @@ declare namespace XrmTable.<#= tableName #> {
     }
 
     export interface <#= tableFormName #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
-        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
-        get(itemNumber: number): Xrm.Controls.Section;
-        get<TSubType extends Xrm.Controls.Section>(itemNumber: number): TSubType;
-        get(itemName: string): Xrm.Controls.Section;
-        get<TSubType extends Xrm.Controls.Section>(attributeName: string): TSubType;
-        get(): Xrm.Controls.Section[];
 
         <# foreach(var section in tab.Value)
         {

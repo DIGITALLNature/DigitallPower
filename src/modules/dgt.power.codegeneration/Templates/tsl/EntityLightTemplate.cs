@@ -16,9 +16,12 @@ namespace dgt.power.codegeneration.Templates.tsl
     /// <summary>
     /// Class to produce the template output
     /// </summary>
+    
+    #line 1 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class EntityLightTemplate : EntityLightTemplateBase
     {
+#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
@@ -26,162 +29,233 @@ namespace dgt.power.codegeneration.Templates.tsl
         {
             this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmTable.");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(Formatter.CamelCase(entityMetadata.SchemaName)));
+            #line 6 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.SchemaName.ToCamelCase()));
             
             #line default
             #line hidden
-            this.Write(" {\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
+            this.Write(" {\r\n    export interface FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;\r\n\r\n        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;\r\n\r\n    ");
+            
+            #line 12 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
     
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
+            #line 16 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
             
             #line default
             #line hidden
             this.Write("      getAttribute(name: \"");
             
+            #line 17 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\"): ");
             
+            #line 17 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\n        ");
             
+            #line 19 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
             
             #line default
             #line hidden
             this.Write("      getControl(name: \"");
             
+            #line 20 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\"): ");
             
+            #line 20 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\n    ");
+            
+            #line 22 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
 
     } // End Attribute loop
     
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n\r\n    export const enum Metadata {\r\n      TypeName = \"mscrm.");
             
+            #line 28 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\r\n      LogicalName = \"");
             
+            #line 29 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\r\n      CollectionName = \"");
             
+            #line 30 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.LogicalCollectionName));
             
             #line default
             #line hidden
             this.Write("\",\r\n      PrimaryIdAttribute = \"");
             
+            #line 31 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityMetadata.PrimaryIdAttribute));
             
             #line default
             #line hidden
             this.Write("\",\r\n    }\r\n\r\n    export const enum AttributeTypes {\r\n        ");
+            
+            #line 35 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
  foreach(var attr in Filter(entityMetadata.Attributes))
         {
-		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"M"+entityMetadata.LogicalName);
+		    var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"M"+entityMetadata.LogicalName);
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
         
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
+            #line 40 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
+            #line 40 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyType));
             
             #line default
             #line hidden
             this.Write("\",\r\n        ");
+            
+            #line 41 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
 
         } // End Attribute loop
         
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n\r\n    export const enum Attributes {\r\n    ");
+            
+            #line 47 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
-		    var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"A"+entityMetadata.LogicalName);
+		    var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"A"+entityMetadata.LogicalName);
     
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
+            #line 51 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
+            #line 51 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\",\r\n    ");
+            
+            #line 52 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
 
     } // End Attribute loop
     
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n\r\n    ");
+            
+            #line 57 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
  foreach(var attr in Filter(entityMetadata.Attributes).Where(e => e.AttributeType == AttributeTypeCode.Picklist))
     {
-        var attrName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(attr.SchemaName)),"PL"+entityMetadata.LogicalName);
+        var attrName = BaseTemplate.Unique(attr.SchemaName.Sanitize().ToCamelCase(),"PL"+entityMetadata.LogicalName);
 		    var options = ((PicklistAttributeMetadata)attr).OptionSet.Options;
     
+            
+            #line default
+            #line hidden
             this.Write("    export const enum ");
             
+            #line 62 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrName));
             
             #line default
             #line hidden
             this.Write("Code {\r\n        ");
+            
+            #line 63 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
  foreach(var option in options)
             {
         
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Sanitize(BaseTemplate.CamelCase(BaseTemplate.GetLocalizedLabel(option.Label)))));
+            #line 66 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.GetLocalizedLabel(option.Label).Sanitize().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" = ");
             
+            #line 66 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(option.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n        ");
+            
+            #line 67 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
 
         } // End Option loop
         
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n\r\n    ");
+            
+            #line 72 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightTemplate.tt"
 
     } // End Attribute loop
     
+            
+            #line default
+            #line hidden
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
+    
+    #line default
+    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

@@ -14,34 +14,52 @@ namespace dgt.power.codegeneration.Templates.tsl
     /// <summary>
     /// Class to produce the template output
     /// </summary>
+    
+    #line 1 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\D365SdkMessagesLightTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class D365SdkMessagesLightTemplate : D365SdkMessagesLightTemplateBase
     {
+#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n\r\ndeclare namespace XrmMetadata {\r\n    const enum SdkMessageNames {\r\n    ");
+            
+            #line 6 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\D365SdkMessagesLightTemplate.tt"
  foreach(var sdkMessages in SdkMessages) { 
+            
+            #line default
+            #line hidden
             this.Write("\t    ");
             
+            #line 7 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\D365SdkMessagesLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Name));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
+            #line 7 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\D365SdkMessagesLightTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sdkMessages.Message));
             
             #line default
             #line hidden
             this.Write("\",\r\n    ");
+            
+            #line 8 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\D365SdkMessagesLightTemplate.tt"
 }
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
+    
+    #line default
+    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

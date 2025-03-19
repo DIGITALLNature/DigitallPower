@@ -16,188 +16,253 @@ namespace dgt.power.codegeneration.Templates.tsl
     /// <summary>
     /// Class to produce the template output
     /// </summary>
+    
+    #line 1 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class EntityLightFormTemplate : EntityLightFormTemplateBase
     {
+#line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
         public virtual string TransformText()
         {
             this.Write("/* eslint-disable */\r\n\r\n");
+            
+            #line 6 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
 
     var tableName = entityMetadata.SchemaName.ToCamelCase();
     var tableFormName = formName.Sanitize().ToCamelCase();
 
-            this.Write("\r\ndeclare namespace XrmTable.");
             
+            #line default
+            #line hidden
+            this.Write("declare namespace XrmTable.");
+            
+            #line 10 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             
             #line default
             #line hidden
             this.Write(" {\r\n    export interface ");
             
+            #line 11 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
-            this.Write("FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Attributes.Attribute[];\r\n        getAttribute<T extends Xrm.Attributes.Attribute>(attributeName: string): T;\r\n        getAttribute(attributeName: string): Xrm.Attributes.Attribute;\r\n        getAttribute(index: number): Xrm.Attributes.Attribute;\r\n\r\n        getControl(): Xrm.Controls.Control[];\r\n        getControl<T extends Xrm.Controls.Control>(controlName: string): T;\r\n        getControl(controlName: string): Xrm.Controls.Control;\r\n        getControl(index: number): Xrm.Controls.Control;\r\n\r\n    ");
+            this.Write("FormContext extends Xrm.FormContext {\r\n        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;\r\n\r\n        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;\r\n\r\n    ");
+            
+            #line 16 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
     
+            
+            #line default
+            #line hidden
             this.Write("        ");
             
+            #line 20 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)));
             
             #line default
             #line hidden
             this.Write("      getAttribute(name: \"");
             
+            #line 21 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\"): ");
             
+            #line 21 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedAttributeType));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\n        ");
             
+            #line 23 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)));
             
             #line default
             #line hidden
             this.Write("      getControl(name: \"");
             
+            #line 24 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
             #line default
             #line hidden
             this.Write("\"): ");
             
+            #line 24 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attrType.DefinitelyTypedControlType));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\n    ");
+            
+            #line 26 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
 
     } // End Attribute loop
 
+            
+            #line default
+            #line hidden
             this.Write("      ui: ");
             
+            #line 28 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Ui;\r\n    }\r\n\r\n    export interface ");
             
+            #line 31 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Ui extends Xrm.Ui {\r\n        tabs: ");
             
+            #line 32 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             this.Write("Tabs;\r\n    }\r\n\r\n    ");
+            
+            #line 35 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
  foreach(var tab in formDetail.Tabs)
     {
-        var tabName = BaseTemplate.Unique(BaseTemplate.CamelCase(BaseTemplate.Sanitize(tab.Key)),"T"+entityMetadata.LogicalName);
+        var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
     
+            
+            #line default
+            #line hidden
             this.Write("    export interface ");
             
+            #line 39 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
-            this.Write("Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {\r\n        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];\r\n        get(itemNumber: number): Xrm.Controls.Tab;\r\n        get<TSubType extends Xrm.Controls.Tab>(itemNumber: number): TSubType;\r\n        get(itemName: string): Xrm.Controls.Tab;\r\n        get<TSubType extends Xrm.Controls.Tab>(attributeName: string): TSubType;\r\n        get(): Xrm.Controls.Tab[];\r\n\r\n        sections: ");
+            this.Write("Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {\r\n\r\n        sections: ");
             
+            #line 41 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             
+            #line 41 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             
             #line default
             #line hidden
             this.Write("Sections;\r\n\r\n        get(itemName: \"");
             
+            #line 43 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tab.Key));
             
             #line default
             #line hidden
             this.Write("\"): ");
             
+            #line 43 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             
+            #line 43 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             
             #line default
             #line hidden
             this.Write(";\r\n    }\r\n\r\n    export interface ");
             
+            #line 46 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             
+            #line 46 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             
             #line default
             #line hidden
             this.Write(" extends Xrm.Controls.Tab {\r\n        sections: ");
             
+            #line 47 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             
+            #line 47 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             
             #line default
             #line hidden
             this.Write("Sections;\r\n    }\r\n\r\n    export interface ");
             
+            #line 50 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
             #line default
             #line hidden
             
+            #line 50 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tabName));
             
             #line default
             #line hidden
-            this.Write("Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {\r\n        get(delegate: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];\r\n        get(itemNumber: number): Xrm.Controls.Section;\r\n        get<TSubType extends Xrm.Controls.Section>(itemNumber: number): TSubType;\r\n        get(itemName: string): Xrm.Controls.Section;\r\n        get<TSubType extends Xrm.Controls.Section>(attributeName: string): TSubType;\r\n        get(): Xrm.Controls.Section[];\r\n\r\n        ");
+            this.Write("Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {\r\n\r\n        ");
+            
+            #line 52 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
  foreach(var section in tab.Value)
         {
         
+            
+            #line default
+            #line hidden
             this.Write("        get(itemName: \"");
             
+            #line 55 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(section));
             
             #line default
             #line hidden
             this.Write("\"): Xrm.Controls.Section;\r\n        ");
+            
+            #line 56 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
 
         } // End Section loop
         
+            
+            #line default
+            #line hidden
             this.Write("    }\r\n    ");
+            
+            #line 60 "C:\Users\Micha.Oberstein\repos\digitall\DigitallPower-simpleTypescript\src\modules\dgt.power.codegeneration\Templates\tsl\EntityLightFormTemplate.tt"
 
     } // End Tab loop
     
+            
+            #line default
+            #line hidden
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
+    
+    #line default
+    #line hidden
     #region Base class
     /// <summary>
     /// Base class for this transformation

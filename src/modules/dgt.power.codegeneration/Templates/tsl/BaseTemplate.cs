@@ -36,44 +36,44 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                return new EntityLightFormTemplate.TypeScriptType
                {
                    DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute",
-                   DefinitelyTypedControlType = "Xrm.Controls.BooleanAttribute",
-                   DefinitelyType = "Optionset"
+                   DefinitelyTypedControlType = "Xrm.Controls.BooleanControl",
+                   DefinitelyType = "Optionset",
                };
             case AttributeTypeCode.DateTime:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.DateAttribute",
-                    DefinitelyType = GetDateTimeType(attr as DateTimeAttributeMetadata)
+                    DefinitelyTypedControlType = "Xrm.Controls.DateControl",
+                    DefinitelyType = GetDateTimeType(attr as DateTimeAttributeMetadata),
                 };
             case AttributeTypeCode.Decimal:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Decimal"
+                    DefinitelyTypedControlType = "Xrm.Controls.NumberControl",
+                    DefinitelyType ="Decimal",
                 };
             case AttributeTypeCode.Double:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Double"
+                    DefinitelyTypedControlType = "Xrm.Controls.NumberControl",
+                    DefinitelyType ="Double",
                 };
             case AttributeTypeCode.Money:
             case AttributeTypeCode.Integer:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                    DefinitelyType ="Integer"
+                    DefinitelyTypedControlType = "Xrm.Controls.NumberControl",
+                    DefinitelyType ="Integer",
                 };
             case AttributeTypeCode.BigInt:
                 return new EntityLightFormTemplate.TypeScriptType
             {
                 DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute",
-                DefinitelyTypedControlType = "Xrm.Controls.NumberAttribute",
-                DefinitelyType ="BigInt"
+                DefinitelyTypedControlType = "Xrm.Controls.NumberControl",
+                DefinitelyType ="BigInt",
             };
             case AttributeTypeCode.Customer:
             case AttributeTypeCode.PartyList:
@@ -82,24 +82,32 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.LookupAttribute",
-                    DefinitelyType ="Lookup"
+                    DefinitelyTypedControlType = "Xrm.Controls.LookupControl",
+                    DefinitelyType ="Lookup",
                 };
             case AttributeTypeCode.String:
+            case AttributeTypeCode.Memo:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.StringAttribute",
-                    DefinitelyType ="String"
+                    DefinitelyTypedControlType = "Xrm.Controls.StringControl",
+                    DefinitelyType = "String",
                 };
+           case AttributeTypeCode.Uniqueidentifier:
+               return new EntityLightFormTemplate.TypeScriptType
+               {
+                   DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute",
+                   DefinitelyTypedControlType = "Xrm.Controls.Control",
+                   DefinitelyType = "Guid",
+               };
             case AttributeTypeCode.State:
             case AttributeTypeCode.Status:
             case AttributeTypeCode.Picklist:
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.OptionSetAttribute",
-                    DefinitelyType = "OptionSet"
+                    DefinitelyTypedControlType = "Xrm.Controls.OptionSetControl",
+                    DefinitelyType = "OptionSet",
                 };
             default:
                 if (attr is MultiSelectPicklistAttributeMetadata)
@@ -107,16 +115,16 @@ public class BaseTemplate(EntityMetadata entityMetadata, int systemLanguage, boo
                     return new EntityLightFormTemplate.TypeScriptType
                     {
                         DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute",
-                        DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetAttribute",
-                        DefinitelyType = "MultiSelectOptionSet"
+                        DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetControl",
+                        DefinitelyType = "MultiSelectOptionSet",
                     };
                 }
 
                 return new EntityLightFormTemplate.TypeScriptType
                 {
                     DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute",
-                    DefinitelyTypedControlType = "Xrm.Controls.Attribute",
-                    DefinitelyType ="Attribute"
+                    DefinitelyTypedControlType = "Xrm.Controls.Control",
+                    DefinitelyType ="Attribute",
                 };
 
         }
