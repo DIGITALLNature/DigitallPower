@@ -29,7 +29,12 @@ namespace dgt.power.codegeneration.Templates.tsl
     var tableName = entityMetadata.SchemaName.ToCamelCase();
     var tableFormName = formName.Sanitize().ToCamelCase();
 
-            this.Write("declare namespace XrmTable.");
+            this.Write("declare namespace Xrm.Events {\r\n  export interface EventContext {\r\n    getFormCon" +
+                    "text<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
+            this.Write("FormContext>() : ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
+            this.Write("FormContext;\r\n  }\r\n}\r\n\r\ndeclare namespace XrmTable.");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableName));
             this.Write(" {\r\n    export interface ");
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));

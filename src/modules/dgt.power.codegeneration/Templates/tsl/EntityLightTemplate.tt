@@ -3,6 +3,12 @@
 <#@ import namespace="Logic" #>
 /* eslint-disable */
 
+declare namespace Xrm.Events {
+  export interface EventContext {
+    getFormContext<<#= entityMetadata.SchemaName.ToCamelCase() #>FormContext>() : <#= entityMetadata.SchemaName.ToCamelCase() #>FormContext;
+  }
+}
+
 declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
     export interface FormContext extends Xrm.FormContext {
         getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
