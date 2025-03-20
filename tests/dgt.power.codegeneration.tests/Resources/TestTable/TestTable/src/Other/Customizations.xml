@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.24102.182" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.24103.00216">
+  <Entities />
+  <Roles />
+  <Workflows />
+  <FieldSecurityProfiles />
+  <Templates />
+  <EntityImageConfigs>
+    <EntityImageConfig>
+      <parententitylogicalname>dgt_test_table</parententitylogicalname>
+      <primaryimageattribute>dgt_file_image</primaryimageattribute>
+    </EntityImageConfig>
+  </EntityImageConfigs>
+  <AttributeImageConfigs>
+    <AttributeImageConfig>
+      <attributelogicalname>dgt_file_image</attributelogicalname>
+      <parententitylogicalname>dgt_test_table</parententitylogicalname>
+      <canstorefullimage>1</canstorefullimage>
+    </AttributeImageConfig>
+    <AttributeImageConfig>
+      <attributelogicalname>dgt_file_image_partial</attributelogicalname>
+      <parententitylogicalname>dgt_test_table</parententitylogicalname>
+      <canstorefullimage>0</canstorefullimage>
+    </AttributeImageConfig>
+  </AttributeImageConfigs>
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <Languages>
+    <Language>1033</Language>
+    <Language>1031</Language>
+  </Languages>
+</ImportExportXml>

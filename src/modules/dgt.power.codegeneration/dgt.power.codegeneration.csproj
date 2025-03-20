@@ -13,6 +13,10 @@
     <None Remove="Templates\ts\D365ServicesTemplate.tt" />
     <None Remove="Templates\ts\D365UtilsTemplate.tt" />
     <None Remove="Templates\ts\D365WebApiTemplate.tt" />
+    <None Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 	<ItemGroup Condition="$(Configuration) != 'Release'">
@@ -86,21 +90,43 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365WebApiTemplate.cs</LastGenOutput>
     </Content>
+    <None Remove="Templates\tsl\EntityLightTemplate.tt" />
+    <Content Include="Templates\tsl\EntityLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\FunctionsLightTemplate.tt" />
+    <None Remove="Templates\tsl\OptionSetsLightTemplate.tt" />
+    <Content Include="Templates\tsl\OptionSetsLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>OptionSetsLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
+    <Content Update="Templates\tsl\EntityLightFormTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
+    </Content>
+    <None Remove="Templates\tsl\EntityLightFormTemplate.tt" />
+    <Content Include="Templates\tsl\EntityLightFormTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>EntityLightFormTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.22" />
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.1.22" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.1.32" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
     <PackageReference Include="System.CodeDom" Version="8.0.0" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -188,6 +214,30 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>D365WebApiTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Update="Templates\tsl\EntityLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityLightTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\OptionSetsLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OptionSetsLightTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\EntityLightFormTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityLightFormTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\tsl\D365SdkMessagesLightTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>D365SdkMessagesLightTemplate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
   </ItemGroup>
 
 </Project>

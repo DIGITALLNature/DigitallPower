@@ -5,9 +5,9 @@ export class D365SdkMessages {
 	constructor() {
 	}
 <# foreach(var sdkMessages in Filter(SdkMessages))
-{ 
+{
 #>
-	public static <#= sdkMessages.Item1 #>: string = "<#= sdkMessages.Item2  #>";
+	public static <#= sdkMessages.Name #>: string = "<#= sdkMessages.Message #>";
 <#
 }
 #>

@@ -50,7 +50,8 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
     {
         var config = new CodeGenerationConfig
         {
-            TypingPath = "../node_modules/@types/xrm/index.d.ts"
+            TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
         };
         var args = new CodeGenerationVerb
         {
@@ -70,7 +71,8 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
     {
         var config = new CodeGenerationConfig
         {
-            TypingPath = "../node_modules/@types/xrm/index.d.ts"
+            TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
         };
         var args = new CodeGenerationVerb
         {
@@ -101,7 +103,8 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
     {
         var config = new CodeGenerationConfig
         {
-            TypingPath = "../node_modules/@types/xrm/index.d.ts"
+            TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full
         };
         var args = new CodeGenerationVerb
         {
@@ -143,6 +146,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Entities = new[]
             {
                 _accountMetadata.LogicalName
@@ -178,6 +182,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Entities = new[]
             {
                 _accountMetadata.LogicalName
@@ -224,6 +229,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Entities = new[]
             {
                 _accountMetadata.LogicalName
@@ -272,6 +278,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Entities = new[]
             {
                 _accountMetadata.LogicalName
@@ -328,6 +335,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Entities = new[]
             {
                 _accountMetadata.LogicalName
@@ -379,6 +387,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
         };
         var args = new CodeGenerationVerb
         {
@@ -416,6 +425,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             Actions = new[]
             {
                 action.Name
@@ -465,6 +475,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             SuppressSdkMessages = true
         };
         var args = new CodeGenerationVerb
@@ -497,6 +508,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             GlobalOptionSets = new HashSet<string>
             {
                 globalOptionSet.Name
@@ -540,6 +552,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
             BusinessProcessFlows = new HashSet<string>
             {
                 businessProcessFlow.UniqueName

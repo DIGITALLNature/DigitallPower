@@ -75,10 +75,11 @@ public class MetadataService : IMetadataService
 
             foreach (var solution in config.Solutions)
             {
+                var solutionId = FetchSolution(solution)!.Id;
                 solutionFilter.Conditions.Clear();
                 solutionFilter.AddCondition(new ConditionExpression(SolutionComponent.LogicalNames.SolutionId,
                     ConditionOperator.Equal,
-                    solution));
+                    solutionId));
 
                 var entityComponents = _connection.RetrieveMultiple(componentsQuery).Entities;
 
@@ -92,6 +93,21 @@ public class MetadataService : IMetadataService
 
         config.Entities = entitySet;
     }
+
+    public Solution? FetchSolution(string uniqueName) =>
+        _connection.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId, Solution.LogicalNames.FriendlyName, Solution.LogicalNames.UniqueName, Solution.LogicalNames.Version, Solution.LogicalNames.IsManaged),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Solution.LogicalNames.UniqueName,
+                        ConditionOperator.Equal, uniqueName)
+                }
+            }
+        }).Entities.SingleOrDefault()?.ToEntity<Solution>();
 
     private static string WildCardToRegular(string value)
     {
@@ -360,9 +376,9 @@ public class MetadataService : IMetadataService
             _ => "object"
         };
 
-    public IEnumerable<Tuple<string, string>> RetrieveSdkMessageNames(CodeGenerationConfig config)
+    public IEnumerable<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
-        var result = new List<Tuple<string, string>>();
+        var result = new List<(string Name, string Message)>();
         if (config.Hints)
         {
             var rule = new Rule("[red]Generating ALL sdk messages by default is deprecated![/]");
@@ -375,18 +391,18 @@ public class MetadataService : IMetadataService
             AnsiConsole.Write(panel);
         }
 
-        result.Add(Tuple.Create("Assign", "Assign"));
-        result.Add(Tuple.Create("Create", "Create"));
-        result.Add(Tuple.Create("Delete", "Delete"));
-        result.Add(Tuple.Create("GrantAccess", "GrantAccess"));
-        result.Add(Tuple.Create("ModifyAccess", "ModifyAccess"));
-        result.Add(Tuple.Create("Retrieve", "Retrieve"));
-        result.Add(Tuple.Create("RetrieveMultiple", "RetrieveMultiple"));
-        result.Add(Tuple.Create("RetrievePrincipalAccess", "RetrievePrincipalAccess"));
-        result.Add(Tuple.Create("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"));
-        result.Add(Tuple.Create("RevokeAccess", "RevokeAccess"));
-        result.Add(Tuple.Create("SetState", "SetState"));
-        result.Add(Tuple.Create("Update", "Update"));
+        result.Add(("Assign", "Assign"));
+        result.Add(("Create", "Create"));
+        result.Add(("Delete", "Delete"));
+        result.Add(("GrantAccess", "GrantAccess"));
+        result.Add(("ModifyAccess", "ModifyAccess"));
+        result.Add(("Retrieve", "Retrieve"));
+        result.Add(("RetrieveMultiple", "RetrieveMultiple"));
+        result.Add(("RetrievePrincipalAccess", "RetrievePrincipalAccess"));
+        result.Add(("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"));
+        result.Add(("RevokeAccess", "RevokeAccess"));
+        result.Add(("SetState", "SetState"));
+        result.Add(("Update", "Update"));
 
         var names = new List<string>();
         if (config.AdditionalSdkMessages.Any())
@@ -431,7 +447,7 @@ public class MetadataService : IMetadataService
             }
 
             hashSet.Add(name);
-            result.Add(Tuple.Create(name, message));
+            result.Add((name, message));
         }
 
         hashSet.Clear();
@@ -640,6 +656,7 @@ public class MetadataService : IMetadataService
 
         foreach (XmlNode tab in tabs)
         {
+            var tabDetail = new TabDetail();
             var sectionlist = new List<string>();
             var columns = tab.SelectNodes(".//columns/column[*]");
 #pragma warning disable CS8602
@@ -648,10 +665,13 @@ public class MetadataService : IMetadataService
                 var sections = column.SelectNodes(".//sections/section[*]");
                 foreach (XmlNode section in sections)
                 {
-                    var sectionName = section.Attributes["name"] != null
-                        ? section.Attributes["name"].Value
-                        : section.Attributes["id"].Value;
+                    var sectionName = section.Attributes["name"]?.Value;
+                    if (string.IsNullOrWhiteSpace(sectionName)) continue;
+
                     sectionlist.Add(sectionName);
+
+                    var sectionDetail = new SectionDetail();
+                    tabDetail.Sections.Add(sectionName, sectionDetail);
 
                     var rows = section.SelectNodes(".//rows/row[*]");
                     foreach (XmlNode row in rows)
@@ -663,6 +683,8 @@ public class MetadataService : IMetadataService
                             if (control != null && control.Attributes["datafieldname"] != null)
                             {
                                 result.Fields.Add(control.Attributes["datafieldname"].Value);
+
+                                sectionDetail.Controls.Add(control.Attributes["datafieldname"].Value);
                             }
 
                             if (control != null && control.Attributes["id"] != null &&
@@ -675,10 +697,20 @@ public class MetadataService : IMetadataService
                 }
             }
 
+            var headerControls = doc.SelectNodes("./form/header/rows/row/cell/control");
+            foreach (XmlNode headerControl in headerControls)
+            {
+                if (headerControl != null && headerControl.Attributes["datafieldname"] != null)
+                {
+                    result.Fields.Add(headerControl.Attributes["datafieldname"].Value);
+                }
+            }
+
             var tabName = tab.Attributes["name"] != null ? tab.Attributes["name"].Value : tab.Attributes["id"].Value;
 #pragma warning restore CS8602
 
             result.Tabs.Add(tabName, sectionlist);
+            result.TabDetails.Add(tabName, tabDetail);
         }
 
         return result;

@@ -103,6 +103,8 @@ public class CodeGenerationConfig
 
     public bool Hints { get; init; } = true;
 
+    public TypescriptGeneratorVersion TypescriptGeneratorVersion { get; init; } = TypescriptGeneratorVersion.Light;
+
     /// <summary>
     ///     DotNet & TypeScript
     /// </summary>

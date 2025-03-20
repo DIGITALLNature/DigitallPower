@@ -11,7 +11,7 @@ namespace <#= NameSpace #>
 <# foreach(var sdkMessage in Filter(SdkMessages))
 {
 #>
-        public const string <#= sdkMessage.Item1 #> = "<#= sdkMessage.Item2 #>";
+        public const string <#= sdkMessage.Name #> = "<#= sdkMessage.Message #>";
 <#
 }
 #>
