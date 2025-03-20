@@ -1,3 +1,10 @@
+# [2.1.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2025-03-20)
+
+
+### Features
+
+* lighter typescript model generation ([#79](https://github.com/DIGITALLNature/DigitallPower/issues/79)) ([978678b](https://github.com/DIGITALLNature/DigitallPower/commit/978678bea4b2babfdbaef1137f2aae40d96d0c07))
+
 # [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-27)
 
 
