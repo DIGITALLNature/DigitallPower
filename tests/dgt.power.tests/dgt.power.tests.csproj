@@ -12,16 +12,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.5.0" />
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.5.1" />
-    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.5.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.49.1" />
+    <PackageReference Include="AwesomeAssertions" Version="8.2.0" />
+    <PackageReference Include="AwesomeAssertions.Analyzers" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.6.0" />
+    <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.6.0" />
+    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.7" />
+    <PackageReference Include="Spectre.Console.Testing" Version="0.50.0" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
