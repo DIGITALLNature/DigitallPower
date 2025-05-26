@@ -1,3 +1,10 @@
+# [2.1.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.3...v2.1.0-beta.4) (2025-05-26)
+
+
+### Bug Fixes
+
+* link plugin to custom api ([#100](https://github.com/DIGITALLNature/DigitallPower/issues/100)) ([56a1d2a](https://github.com/DIGITALLNature/DigitallPower/commit/56a1d2abb007999af0305a964a0119b89bcb7e4b))
+
 # [2.1.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2025-03-20)
 
 
