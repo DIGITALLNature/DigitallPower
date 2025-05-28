@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
@@ -22,8 +23,8 @@ namespace dgt.power.import.Logic;
 
 public sealed class DocumentTemplateImport : BaseImport
 {
-    public DocumentTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public DocumentTemplateImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(
+        tracer, xrmConnectionFactory, configResolver)
     {
     }
 

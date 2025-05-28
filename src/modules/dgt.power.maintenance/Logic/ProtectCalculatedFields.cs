@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -13,7 +14,7 @@ namespace dgt.power.maintenance.Logic
 {
     public sealed class ProtectCalculatedFields : BaseMaintenance
     {
-        public ProtectCalculatedFields(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+        public ProtectCalculatedFields(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
         {
         }
 

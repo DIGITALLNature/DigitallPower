@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.push.Base;
 using dgt.power.push.Logic;
@@ -17,7 +18,7 @@ namespace dgt.power.push;
 
 public class PushCommand : BasePush, IPowerLogic
 {
-    public PushCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public PushCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

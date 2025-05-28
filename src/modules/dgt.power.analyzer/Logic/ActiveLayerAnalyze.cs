@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
@@ -16,7 +17,7 @@ namespace dgt.power.analyzer.Logic;
 
 public sealed class ActiveLayerAnalyze : BaseAnalyze
 {
-    public ActiveLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public ActiveLayerAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

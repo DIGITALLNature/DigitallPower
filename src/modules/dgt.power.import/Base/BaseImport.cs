@@ -3,14 +3,14 @@
 
 using System.Diagnostics;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dto;
-using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.import.Base;
 
 public abstract class BaseImport : PowerLogic<ImportVerb>
 {
-    protected BaseImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    protected BaseImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

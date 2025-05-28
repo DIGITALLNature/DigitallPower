@@ -5,14 +5,14 @@ using System.Globalization;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : BaseAnalyze(tracer, connection, configResolver)
+public class RedundantPatchAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : BaseAnalyze(tracer, xrmConnectionFactory, configResolver)
 {
     protected override bool Invoke(AnalyzeVerb args)
     {

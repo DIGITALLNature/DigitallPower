@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
@@ -14,8 +15,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class RoutingRuleConfigExport : BaseExport
 {
-    public RoutingRuleConfigExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public RoutingRuleConfigExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

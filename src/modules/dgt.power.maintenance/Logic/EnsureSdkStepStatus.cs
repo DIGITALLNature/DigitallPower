@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -13,8 +14,8 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic
 {
-    public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver)
-        : PowerLogic<EnsureSdkStepStatus.Settings>(tracer, connection, configResolver)
+    public class EnsureSdkStepStatus(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver)
+        : PowerLogic<EnsureSdkStepStatus.Settings>(tracer, xrmConnectionFactory, configResolver)
     {
         public class Settings : BaseProgramSettings
         {
