@@ -80,7 +80,7 @@ declare namespace XrmTable.<#= tableName #> {
 <# foreach(var section in tab.Value.Sections)
     {
 #>
-    get(itemName: "<#= section.Key #>"): <#= tableFormName #><#= tabName #><#= section.Key #>Section;
+    get(itemName: "<#= section.Key #>"): <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>Section;
 <#
     } // End Section loop
 #>

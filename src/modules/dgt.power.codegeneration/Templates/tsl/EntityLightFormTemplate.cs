@@ -288,7 +288,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line default
             #line hidden
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(section.Key));
+            this.Write(this.ToStringHelper.ToStringWithCulture(section.Key.Sanitize().ToCamelCase()));
             
             #line default
             #line hidden
