@@ -4,7 +4,6 @@
 using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
-using dgt.power.common.Logic;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Xrm.Sdk.Messages;

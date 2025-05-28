@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Text.Json;
 using CsvHelper;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;

@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;

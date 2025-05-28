@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;

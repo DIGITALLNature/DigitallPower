@@ -5,7 +5,6 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
-using dgt.power.common.Logic;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;

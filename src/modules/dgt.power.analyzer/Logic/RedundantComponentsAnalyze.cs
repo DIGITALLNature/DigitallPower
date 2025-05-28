@@ -6,7 +6,6 @@ using System.Text;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;

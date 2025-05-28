@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using dgt.power.common.Logic;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Cli;
 

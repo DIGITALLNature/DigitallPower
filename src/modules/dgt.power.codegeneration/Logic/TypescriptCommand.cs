@@ -5,7 +5,6 @@ using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.common;
-using dgt.power.common.Logic;
 
 namespace dgt.power.codegeneration.Logic;
 
