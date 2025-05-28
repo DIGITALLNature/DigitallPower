@@ -5,7 +5,7 @@ using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.common;
-using Microsoft.Xrm.Sdk;
+using dgt.power.common.Logic;
 
 namespace dgt.power.codegeneration.Logic;
 
@@ -13,8 +13,8 @@ public class DotNetCommand : PowerLogic<CodeGenerationVerb>
 {
     private readonly IDotNetGenerator _generator;
 
-    public DotNetCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IDotNetGenerator generator)
-        : base(tracer, connection, configResolver)
+    public DotNetCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IDotNetGenerator generator)
+        : base(tracer, xrmConnectionFactory, configResolver)
     {
         _generator = generator;
     }

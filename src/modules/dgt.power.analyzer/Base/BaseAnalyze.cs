@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Text.Json;
 using CsvHelper;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
@@ -18,7 +19,7 @@ namespace dgt.power.analyzer.Base;
 #pragma warning disable S1200
 public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 {
-    protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    protected BaseAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();

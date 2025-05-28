@@ -3,10 +3,10 @@
 
 using System.Diagnostics;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -14,8 +14,8 @@ namespace dgt.power.maintenance.Logic;
 
 public class FilterPowerFxPluginSteps : BaseMaintenance
 {
-    public FilterPowerFxPluginSteps(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) :
-        base(tracer, connection, configResolver)
+    public FilterPowerFxPluginSteps(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) :
+        base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

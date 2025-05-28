@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
@@ -16,8 +17,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport : BaseExport
 {
-    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public UserRoleExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

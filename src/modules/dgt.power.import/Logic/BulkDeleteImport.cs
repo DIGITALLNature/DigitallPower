@@ -5,19 +5,19 @@ using System.Diagnostics;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.import.Logic;
 
 public sealed class BulkDeleteImport : BaseImport
 {
-    public BulkDeleteImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
-        connection, configResolver)
+    public BulkDeleteImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer,
+        xrmConnectionFactory, configResolver)
     {
     }
 

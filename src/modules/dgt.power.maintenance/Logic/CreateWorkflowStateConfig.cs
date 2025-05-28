@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -49,7 +50,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly WorkflowStateTracker _workflowStateTracker;
 
-    public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
+    public CreateWorkflowStateConfig(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, xrmConnectionFactory, configResolver)
     {
         _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
         _workflowStateTracker = new WorkflowStateTracker();

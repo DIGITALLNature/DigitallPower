@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
@@ -13,9 +14,9 @@ public class MetadataCommand : PowerLogic<CodeGenerationVerb>
 {
     private readonly IMetadataGenerator _generator;
 
-    public MetadataCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
+    public MetadataCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver,
         IMetadataGenerator generator)
-        : base(tracer,connection, configResolver)
+        : base(tracer,xrmConnectionFactory, configResolver)
     {
         _generator = generator;
     }

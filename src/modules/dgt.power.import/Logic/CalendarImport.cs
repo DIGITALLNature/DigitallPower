@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
@@ -15,7 +16,7 @@ namespace dgt.power.import.Logic;
 
 public sealed class CalendarImport : BaseImport
 {
-    public CalendarImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public CalendarImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

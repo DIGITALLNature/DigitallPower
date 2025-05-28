@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
+using dgt.power.common.Logic;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
@@ -16,8 +17,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class DocumentTemplateExport : BaseExport
 {
-    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public DocumentTemplateExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

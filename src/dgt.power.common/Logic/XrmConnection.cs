@@ -99,3 +99,29 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 }
+
+public interface IXrmConnectionFactory
+{
+    IXrmConnection GetDefault();
+    IXrmConnection GetWithProfile(string profile);
+}
+
+public class XrmConnectionFactory(IProfileManager profileManager, IConfiguration configuration) : IXrmConnectionFactory
+{
+    public IXrmConnection GetDefault() => new XrmConnection(profileManager, configuration);
+
+    public IXrmConnection GetWithProfile(string profile)
+    {
+        var identities = profileManager.LoadIdentities();
+        if (!identities.Contains(profile.ToUpperInvariant()))
+        {
+            AnsiConsole.MarkupLine($"[Red]Identity {profile} not found![/]");
+            throw new MissingConnectionException($"Profile {profile} not found.");
+        }
+
+        identities.SetCurrent(profile.ToUpperInvariant());
+        return new XrmConnection(profileManager, configuration);
+    }
+}
+
+

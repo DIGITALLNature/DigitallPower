@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using dgt.power.common;
+using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Crm.Sdk.Messages;
@@ -35,7 +36,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
     private readonly Dictionary<string, SystemUser> _userTable;
     private readonly WorkflowStateTracker _workflowStateTracker;
 
-    public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public UpdateWorkflowState(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
         _userTable = new Dictionary<string, SystemUser>();
         _workflowStateTracker = new WorkflowStateTracker();
