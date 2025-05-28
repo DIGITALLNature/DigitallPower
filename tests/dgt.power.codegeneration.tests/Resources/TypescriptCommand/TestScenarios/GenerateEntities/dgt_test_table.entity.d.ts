@@ -8,9 +8,9 @@ declare namespace Xrm.Events {
 
 declare namespace XrmTable.DgtTestTable {
     export interface FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
+        getAttribute(): Xrm.Collection.ItemCollection<Xrm.Attributes.Attribute> | null;
 
-        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
+        getControl(): Xrm.Collection.ItemCollection<Xrm.Controls.Control> | null;
 
         /// <summary>
         /// Unique identifier of the user who created the record.
