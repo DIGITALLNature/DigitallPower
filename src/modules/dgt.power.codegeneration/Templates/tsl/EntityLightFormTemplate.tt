@@ -1,6 +1,5 @@
 <#@ template debug="false" hostspecific="false" language="C#" linePragmas="false" #>
-<#@ import namespace="Microsoft.Xrm.Sdk.Metadata" #>
-<#@ import namespace="dgt.power.codegeneration.Logic" #>
+<#@ import namespace="Logic" #>
 /* eslint-disable */
 
 <#
@@ -15,23 +14,21 @@ declare namespace Xrm.Events {
 
 declare namespace XrmTable.<#= tableName #> {
     export interface <#= tableFormName #>FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
-
-        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
 
 <# foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
 #>
-        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)
-#>      getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
+        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
+#>       getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
 
-        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)
-#>      getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
+        <#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
+#>        getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
 
 <#
     } // End Attribute loop
-#>      ui: <#= tableFormName #>Ui;
+#>
+        ui: <#= tableFormName #>Ui;
     }
 
     export interface <#= tableFormName #>Ui extends Xrm.Ui {
@@ -46,6 +43,7 @@ declare namespace XrmTable.<#= tableName #> {
         sections: <#= tableFormName #><#= tabName #>Sections;
 
         get(itemName: "<#= tab.Key #>"): <#= tableFormName #><#= tabName #>;
+        get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
     }
 
     export interface <#= tableFormName #><#= tabName #> extends Xrm.Controls.Tab {
@@ -69,6 +67,13 @@ declare namespace XrmTable.<#= tableName #> {
 <#
     } // End Section loop
 #>
+<#
+   if (section.Value.Controls.Any())
+   {
+       #>
+    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
+<#
+   }#>
     }
 
 <#
@@ -84,6 +89,8 @@ declare namespace XrmTable.<#= tableName #> {
 <#
     } // End Section loop
 #>
+    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
+
     }
 <#
     } // End Tab loop

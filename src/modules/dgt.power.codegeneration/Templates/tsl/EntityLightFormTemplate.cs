@@ -9,8 +9,7 @@
 // ------------------------------------------------------------------------------
 namespace dgt.power.codegeneration.Templates.tsl
 {
-    using Microsoft.Xrm.Sdk.Metadata;
-    using dgt.power.codegeneration.Logic;
+    using Logic;
     using System;
     
     /// <summary>
@@ -53,18 +52,18 @@ namespace dgt.power.codegeneration.Templates.tsl
             
             #line default
             #line hidden
-            this.Write("FormContext extends Xrm.FormContext {\n        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;\n\n        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;\n\n");
+            this.Write("FormContext extends Xrm.FormContext {\n\n");
  foreach(var attr in Filter(entityMetadata.Attributes))
     {
 		    var attrType = BaseTemplate.GetTypeScriptTypes(attr);
 
             this.Write("        ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
             
             #line default
             #line hidden
-            this.Write("      getAttribute(name: \"");
+            this.Write("       getAttribute(name: \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
@@ -78,11 +77,11 @@ namespace dgt.power.codegeneration.Templates.tsl
             #line hidden
             this.Write(";\n\n        ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),3)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)));
             
             #line default
             #line hidden
-            this.Write("      getControl(name: \"");
+            this.Write("        getControl(name: \"");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.LogicalName));
             
@@ -98,7 +97,7 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Attribute loop
 
-            this.Write("      ui: ");
+            this.Write("        ui: ");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
@@ -155,7 +154,7 @@ namespace dgt.power.codegeneration.Templates.tsl
             
             #line default
             #line hidden
-            this.Write(";\n    }\n\n    export interface ");
+            this.Write(";\n        get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];\n    }\n\n    export interface ");
             
             this.Write(this.ToStringHelper.ToStringWithCulture(tableFormName));
             
@@ -251,6 +250,13 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Section loop
 
+
+   if (section.Value.Controls.Any())
+   {
+       
+            this.Write("    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];\n");
+
+   }
             this.Write("    }\n\n");
 
     } // End Section loop
@@ -296,7 +302,7 @@ namespace dgt.power.codegeneration.Templates.tsl
 
     } // End Section loop
 
-            this.Write("    }\n");
+            this.Write("    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];\n\n    }\n");
 
     } // End Tab loop
 
