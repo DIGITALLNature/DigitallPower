@@ -23,6 +23,7 @@ public class MetadataService : IMetadataService
 {
     private readonly IOrganizationService _connection;
     private readonly ObjectCache _metadataCache;
+    private readonly Dictionary<string, List<string>> _usedTokens = new();
 
     public MetadataService(IOrganizationService connection, ObjectCache metadataCache)
     {
@@ -624,7 +625,7 @@ public class MetadataService : IMetadataService
         return allForms.Entities
             .ToDictionary(
                 form =>
-                    $"{form.GetAttributeValue<string>(SystemForm.LogicalNames.Name)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
+                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name),entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
                 ParseForms);
     }
 
@@ -735,5 +736,16 @@ public class MetadataService : IMetadataService
             SystemForm.Options.FormActivationState.Active);
 
         return _connection.RetrieveMultiple(query);
+    }
+
+    internal string Unique(string value, string scope)
+    {
+        if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
+
+        if (_usedTokens[scope].Contains(value))
+            return Unique(value + "_", scope);
+
+        _usedTokens[scope].Add(value);
+        return value;
     }
 }

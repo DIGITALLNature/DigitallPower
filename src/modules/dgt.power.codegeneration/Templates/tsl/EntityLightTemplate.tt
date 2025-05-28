@@ -11,9 +11,8 @@ declare namespace Xrm.Events {
 
 declare namespace XrmTable.<#= entityMetadata.SchemaName.ToCamelCase() #> {
     export interface FormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
-
-        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
+        getAttribute():  Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
+        getControl(): Xrm.Controls.Control[];
 
     <# foreach(var attr in Filter(entityMetadata.Attributes))
     {
