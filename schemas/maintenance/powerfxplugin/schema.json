@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "title": "PowerFxPluginsConfigs",
+    "description": "Collection of PowerFx plugin configurations",
+    "items": {
+        "$ref": "#/$defs/PowerFxPluginsConfig"
+    },
+    "$defs": {
+        "PowerFxPluginsConfig": {
+            "type": "object",
+            "title": "PowerFxPluginsConfig",
+            "description": "Configuration for PowerFx plugin",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Plugin name"
+                },
+                "filter": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Filter attributes array",
+                    "default": []
+                },
+                "message": {
+                    "type": "string",
+                    "enum": [
+                        "Create",
+                        "Update",
+                        "Delete"
+                    ],
+                    "description": "Message type for the plugin"
+                }
+            },
+            "required": [
+                "name",
+                "filter",
+                "message"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

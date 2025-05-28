@@ -1,213 +1,224 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "title": "CodeGenerationConfig",
-    "description": "Configuration for code generation",
-    "properties": {
-        "NameSpace": {
-            "type": "string",
-            "default": "Digitall.APower.Model",
-            "description": "The namespace for generated code"
-        },
-        "Entities": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Collection of entity names"
-        },
-        "Actions": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Array of action names"
-        },
-        "CustomAPIs": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Array of custom API names"
-        },
-        "AdditionalSdkMessages": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Additional SDK messages"
-        },
-        "Solutions": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Array of solution names"
-        },
-        "Forms": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "Array of form names"
-        },
-        "EntityMask": {
-            "type": [
-                "string",
-                "null"
-            ],
-            "description": "Entity mask pattern"
-        },
-        "SuppressDotNet": {
-            "type": "boolean",
-            "default": false,
-            "description": "Suppress .NET code generation"
-        },
-        "SuppressTypeScript": {
-            "type": "boolean",
-            "default": false,
-            "description": "Suppress TypeScript code generation"
-        },
-        "SuppressMetaData": {
-            "type": "boolean",
-            "default": false,
-            "description": "Suppress metadata generation"
-        },
-        "Hints": {
-            "type": "boolean",
-            "default": true,
-            "description": "Enable hints"
-        },
-        "TypescriptGeneratorVersion": {
-            "type": "string",
-            "enum": [
-                "Light",
-                "Full"
-            ],
-            "default": "Light",
-            "description": "TypeScript generator version"
-        },
-        "SuppressOptions": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet & TypeScript - Suppress options"
-        },
-        "SuppressLogicalNames": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress logical names"
-        },
-        "SuppressContext": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress context"
-        },
-        "SuppressActions": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress actions"
-        },
-        "SuppressSdkMessages": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet & TypeScript - Suppress SDK messages"
-        },
-        "SuppressRelations": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress relations"
-        },
-        "SuppressNavigationProperties": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress navigation properties"
-        },
-        "SuppressEntityTypeCode": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress entity type code"
-        },
-        "SuppressAlternateKeys": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress alternate keys"
-        },
-        "Virtual": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Make generated properties virtual"
-        },
-        "UseBaseLanguage": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Use base language"
-        },
-        "NonDebuggerNonUserCode": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Skip annotation of generated properties with 'DebuggerNonUserCode'"
-        },
-        "EditableReadOnlyProperties": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Make generated readonly properties editable"
-        },
-        "TypingPath": {
-            "type": "string",
-            "default": "\"\"../../Typings/Xrm/index.d.ts\"\"",
-            "description": "TypeScript only - Path to typing definitions"
-        },
-        "OnlyFormsFromSolutions": {
-            "type": "boolean",
-            "default": false,
-            "description": "TypeScript only - Only include forms from solutions"
-        },
-        "EntityFilters": {
-            "type": "array",
-            "items": {
-                "type": "object"
-            },
-            "description": "TypeScript only - Entity filters"
-        },
-        "EntityRefFilters": {
-            "type": "array",
-            "items": {
-                "type": "object"
-            },
-            "description": "TypeScript only - Entity reference filters"
-        },
-        "EntityFormFilters": {
-            "type": "array",
-            "items": {
-                "type": "object"
-            },
-            "description": "TypeScript only - Entity form filters"
-        },
-        "SdkMessageFilters": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "DotNet & TypeScript - SDK message filters"
-        },
-        "GlobalOptionSets": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "DotNet & TypeScript - Global option sets"
-        },
-        "BusinessProcessFlows": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "TypeScript only - Business process flows"
-        },
-        "SuppressNullableSupport": {
-            "type": "boolean",
-            "default": false,
-            "description": "DotNet only - Suppress nullable support"
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "CodeGenerationConfig",
+  "description": "Configuration for code generation",
+  "properties": {
+    "NameSpace": {
+      "type": "string",
+      "description": "Namespace for generated code",
+      "default": "Digitall.APower.Model"
+    },
+    "Entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Collection of entity names to include"
+    },
+    "Actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of actions to include"
+    },
+    "CustomAPIs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of custom APIs to include"
+    },
+    "AdditionalSdkMessages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional SDK messages to include"
+    },
+    "Solutions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of solutions to include"
+    },
+    "Forms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of forms to include"
+    },
+    "EntityMask": {
+      "type": ["string", "null"],
+      "description": "Entity mask pattern"
+    },
+    "SuppressDotNet": {
+      "type": "boolean",
+      "description": "Suppress .NET code generation",
+      "default": false
+    },
+    "SuppressTypeScript": {
+      "type": "boolean",
+      "description": "Suppress TypeScript code generation",
+      "default": false
+    },
+    "SuppressMetaData": {
+      "type": "boolean",
+      "description": "Suppress metadata generation",
+      "default": false
+    },
+    "Hints": {
+      "type": "boolean",
+      "description": "Include hints in generated code",
+      "default": true
+    },
+    "TypescriptGeneratorVersion": {
+      "type": "string",
+      "enum": ["Light", "Full"],
+      "description": "TypeScript generator version",
+      "default": "Light"
+    },
+    "SuppressOptions": {
+      "type": "boolean",
+      "description": "Suppress options generation",
+      "default": false
+    },
+    "SuppressLogicalNames": {
+      "type": "boolean",
+      "description": "Suppress logical names",
+      "default": false
+    },
+    "SuppressContext": {
+      "type": "boolean",
+      "description": "Suppress context generation",
+      "default": false
+    },
+    "SuppressActions": {
+      "type": "boolean",
+      "description": "Suppress actions generation",
+      "default": false
+    },
+    "SuppressSdkMessages": {
+      "type": "boolean",
+      "description": "Suppress SDK messages generation",
+      "default": false
+    },
+    "SuppressRelations": {
+      "type": "boolean",
+      "description": "Suppress relations generation",
+      "default": false
+    },
+    "SuppressNavigationProperties": {
+      "type": "boolean",
+      "description": "Suppress navigation properties",
+      "default": false
+    },
+    "SuppressEntityTypeCode": {
+      "type": "boolean",
+      "description": "Suppress entity type code",
+      "default": false
+    },
+    "SuppressAlternateKeys": {
+      "type": "boolean",
+      "description": "Suppress alternate keys",
+      "default": false
+    },
+    "Virtual": {
+      "type": "boolean",
+      "description": "Generate virtual entities",
+      "default": false
+    },
+    "UseBaseLanguage": {
+      "type": "boolean",
+      "description": "Use base language",
+      "default": false
+    },
+    "NonDebuggerNonUserCode": {
+      "type": "boolean",
+      "description": "Non-debugger non-user code",
+      "default": false
+    },
+    "EditableReadOnlyProperties": {
+      "type": "boolean",
+      "description": "Editable read-only properties",
+      "default": false
+    },
+    "TypingPath": {
+      "type": "string",
+      "description": "Path to TypeScript typings",
+      "default": "\"\"../../Typings/Xrm/index.d.ts\"\""
+    },
+    "OnlyFormsFromSolutions": {
+      "type": "boolean",
+      "description": "Only generate forms from solutions",
+      "default": false
+    },
+    "EntityFilters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EntityFilter"
+      },
+      "description": "Entity filters"
+    },
+    "EntityRefFilters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EntityRefFilter"
+      },
+      "description": "Entity reference filters"
+    },
+    "EntityFormFilters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EntityFormFilter"
+      },
+      "description": "Entity form filters"
+    },
+    "SdkMessageFilters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SDK message filters"
+    },
+    "GlobalOptionSets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Global option sets"
+    },
+    "BusinessProcessFlows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Business process flows"
+    },
+    "SuppressNullableSupport": {
+      "type": "boolean",
+      "description": "Suppress nullable support",
+      "default": false
     }
+  },
+  "$defs": {
+    "EntityFilter": {
+      "type": "object",
+      "title": "EntityFilter",
+      "description": "Filter configuration for entities"
+    },
+    "EntityRefFilter": {
+      "type": "object",
+      "title": "EntityRefFilter", 
+      "description": "Filter configuration for entity references"
+    },
+    "EntityFormFilter": {
+      "type": "object",
+      "title": "EntityFormFilter",
+      "description": "Filter configuration for entity forms"
+    }
+  }
 }
