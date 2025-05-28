@@ -3,7 +3,6 @@
 
 using System.ComponentModel;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;

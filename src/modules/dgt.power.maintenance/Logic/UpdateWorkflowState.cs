@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Crm.Sdk.Messages;

@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
-using dgt.power.common.Logic;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.push.Base;
