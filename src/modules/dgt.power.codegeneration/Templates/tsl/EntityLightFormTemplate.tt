@@ -55,11 +55,11 @@ declare namespace XrmTable.<#= tableName #> {
 <# foreach(var section in tab.Value.Sections)
     {
 #>
-    export interface <#= tableFormName #><#= tabName #><#= section.Key #>Section extends Xrm.Controls.Section {
-        controls: <#= tableFormName #><#= tabName #><#= section.Key #>ControlCollection;
+    export interface <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>Section extends Xrm.Controls.Section {
+        controls: <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>ControlCollection;
     }
 
-    export interface <#= tableFormName #><#= tabName #><#= section.Key #>ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
+    export interface <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
 <# foreach(var control in section.Value.Controls)
     {
         var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
