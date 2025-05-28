@@ -20,7 +20,7 @@ public abstract class PowerLogic<TConfig>(
 
     protected IConfigResolver ConfigResolver { get; } = configResolver;
 
-    protected IOrganizationService? Connection { get; private set; }
+    protected IOrganizationService Connection { get; private set; } = null!;
     protected ITracer Tracer { get; } = tracer;
 
     public override int Execute(CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
