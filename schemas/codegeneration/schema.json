@@ -52,7 +52,10 @@
       "description": "Array of forms to include"
     },
     "EntityMask": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Entity mask pattern"
     },
     "SuppressDotNet": {
@@ -77,83 +80,86 @@
     },
     "TypescriptGeneratorVersion": {
       "type": "string",
-      "enum": ["Light", "Full"],
+      "enum": [
+        "Light",
+        "Full"
+      ],
       "description": "TypeScript generator version",
       "default": "Light"
     },
     "SuppressOptions": {
       "type": "boolean",
-      "description": "Suppress options generation",
+      "description": "Suppress options generation (DotNet & TypeScript)",
       "default": false
     },
     "SuppressLogicalNames": {
       "type": "boolean",
-      "description": "Suppress logical names",
+      "description": "Suppress logical names (DotNet only)",
       "default": false
     },
     "SuppressContext": {
       "type": "boolean",
-      "description": "Suppress context generation",
+      "description": "Suppress context generation (DotNet only)",
       "default": false
     },
     "SuppressActions": {
       "type": "boolean",
-      "description": "Suppress actions generation",
+      "description": "Suppress actions generation (DotNet only)",
       "default": false
     },
     "SuppressSdkMessages": {
       "type": "boolean",
-      "description": "Suppress SDK messages generation",
+      "description": "Suppress SDK messages generation (DotNet & TypeScript)",
       "default": false
     },
     "SuppressRelations": {
       "type": "boolean",
-      "description": "Suppress relations generation",
+      "description": "Suppress relations generation (DotNet only)",
       "default": false
     },
     "SuppressNavigationProperties": {
       "type": "boolean",
-      "description": "Suppress navigation properties",
+      "description": "Suppress navigation properties (DotNet only)",
       "default": false
     },
     "SuppressEntityTypeCode": {
       "type": "boolean",
-      "description": "Suppress entity type code",
+      "description": "Suppress entity type code (DotNet only)",
       "default": false
     },
     "SuppressAlternateKeys": {
       "type": "boolean",
-      "description": "Suppress alternate keys",
+      "description": "Suppress alternate keys (DotNet only)",
       "default": false
     },
     "Virtual": {
       "type": "boolean",
-      "description": "Generate virtual entities",
+      "description": "Make generated properties virtual (DotNet only)",
       "default": false
     },
     "UseBaseLanguage": {
       "type": "boolean",
-      "description": "Use base language",
+      "description": "Use base language (DotNet only)",
       "default": false
     },
     "NonDebuggerNonUserCode": {
       "type": "boolean",
-      "description": "Non-debugger non-user code",
+      "description": "Skip annotation of generated properties with 'DebuggerNonUserCode' (DotNet only)",
       "default": false
     },
     "EditableReadOnlyProperties": {
       "type": "boolean",
-      "description": "Editable read-only properties",
+      "description": "Make generated readonly properties editable (DotNet only)",
       "default": false
     },
     "TypingPath": {
       "type": "string",
-      "description": "Path to TypeScript typings",
+      "description": "Path to TypeScript typings (TypeScript only)",
       "default": "\"\"../../Typings/Xrm/index.d.ts\"\""
     },
     "OnlyFormsFromSolutions": {
       "type": "boolean",
-      "description": "Only generate forms from solutions",
+      "description": "Only generate forms from solutions (TypeScript only)",
       "default": false
     },
     "EntityFilters": {
@@ -161,46 +167,46 @@
       "items": {
         "$ref": "#/$defs/EntityFilter"
       },
-      "description": "Entity filters"
+      "description": "Entity filters (TypeScript only)"
     },
     "EntityRefFilters": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/EntityRefFilter"
       },
-      "description": "Entity reference filters"
+      "description": "Entity reference filters (TypeScript only)"
     },
     "EntityFormFilters": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/EntityFormFilter"
       },
-      "description": "Entity form filters"
+      "description": "Entity form filters (TypeScript only)"
     },
     "SdkMessageFilters": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "SDK message filters"
+      "description": "SDK message filters (DotNet & TypeScript)"
     },
     "GlobalOptionSets": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Global option sets"
+      "description": "Global option sets (DotNet & TypeScript)"
     },
     "BusinessProcessFlows": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Business process flows"
+      "description": "Business process flows (TypeScript only)"
     },
     "SuppressNullableSupport": {
       "type": "boolean",
-      "description": "Suppress nullable support",
+      "description": "Suppress nullable support (DotNet only)",
       "default": false
     }
   },
@@ -208,17 +214,83 @@
     "EntityFilter": {
       "type": "object",
       "title": "EntityFilter",
-      "description": "Filter configuration for entities"
+      "description": "Filter configuration for entities",
+      "properties": {
+        "EntityName": {
+          "type": "string",
+          "description": "Name of the entity to filter"
+        },
+        "Attributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Attributes to include/exclude"
+        },
+        "Include": {
+          "type": "boolean",
+          "description": "Whether this is an include or exclude filter",
+          "default": true
+        }
+      },
+      "required": [
+        "EntityName"
+      ],
+      "additionalProperties": false
     },
     "EntityRefFilter": {
       "type": "object",
-      "title": "EntityRefFilter", 
-      "description": "Filter configuration for entity references"
+      "title": "EntityRefFilter",
+      "description": "Filter configuration for entity references",
+      "properties": {
+        "EntityName": {
+          "type": "string",
+          "description": "Name of the entity to filter references for"
+        },
+        "References": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Reference attributes to include/exclude"
+        },
+        "Include": {
+          "type": "boolean",
+          "description": "Whether this is an include or exclude filter",
+          "default": true
+        }
+      },
+      "required": [
+        "EntityName"
+      ],
+      "additionalProperties": false
     },
     "EntityFormFilter": {
       "type": "object",
       "title": "EntityFormFilter",
-      "description": "Filter configuration for entity forms"
+      "description": "Filter configuration for entity forms",
+      "properties": {
+        "EntityName": {
+          "type": "string",
+          "description": "Name of the entity to filter forms for"
+        },
+        "Forms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Form names to include/exclude"
+        },
+        "Include": {
+          "type": "boolean",
+          "description": "Whether this is an include or exclude filter",
+          "default": true
+        }
+      },
+      "required": [
+        "EntityName"
+      ],
+      "additionalProperties": false
     }
   }
 }
