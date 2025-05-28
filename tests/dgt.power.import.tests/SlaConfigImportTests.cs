@@ -6,7 +6,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using Calendar = dgt.power.dataverse.Calendar;
@@ -86,7 +86,7 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
         postSla2.BusinessHoursId.Should().BeNull();
         postSla2.OwnerId.Id.Should().Be(data.owner.Id);
     }
-    
+
     [Fact]
     public void ShouldntCreateSlaIfNotExist()
     {
@@ -111,7 +111,7 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
 
         context.Get<SLA>().Should().BeEmpty();
     }
-    
+
 
     private static (SystemUser owner, Calendar calendar, SLA slaWithBusinessHours, SLA slaWithoutBusinessHours)
         GetData()

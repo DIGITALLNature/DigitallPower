@@ -2,5 +2,5 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 global using Xunit;
-global using FluentAssertions;
+global using AwesomeAssertions;
 global using Xunit.Abstractions;

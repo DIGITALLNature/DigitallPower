@@ -7,7 +7,7 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 using Spectre.Console.Cli;
 using Xunit.Abstractions;
 

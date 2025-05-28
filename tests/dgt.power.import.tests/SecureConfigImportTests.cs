@@ -7,7 +7,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Xunit.Abstractions;
@@ -20,7 +20,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
     public SecureConfigImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
-    
+
     [Fact]
     public void ShouldFailOnWrongConfiguration() =>
         GetContext().Execute(new ImportVerb

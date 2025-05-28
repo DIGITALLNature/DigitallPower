@@ -7,7 +7,7 @@ using dgt.power.push.Logic;
 using dgt.power.push.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;

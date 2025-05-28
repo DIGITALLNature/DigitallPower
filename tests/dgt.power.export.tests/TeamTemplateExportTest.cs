@@ -7,7 +7,7 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk.Messages;
 using Xunit.Abstractions;
 using TeamTemplate = dgt.power.dataverse.TeamTemplate;

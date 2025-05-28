@@ -6,7 +6,7 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk.Metadata;
 using Xunit.Abstractions;
 
