@@ -111,6 +111,16 @@
           "System.IO.Packaging": "8.0.1"
         }
       },
+      "Fluid.Core": {
+        "type": "Transitive",
+        "resolved": "2.24.0",
+        "contentHash": "R6O35JPDkqpj3rA7DBoGIzj03xxW5cORRX0kscoA1DnA3F8UnLNbuSVvrPa2CVblh28xMQlgqd0K0aFmwu5TAQ==",
+        "dependencies": {
+          "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
+          "Parlot": "1.3.5",
+          "TimeZoneConverter": "7.0.0"
+        }
+      },
       "Microsoft.AspNetCore.Cryptography.Internal": {
         "type": "Transitive",
         "resolved": "9.0.5",
@@ -532,6 +542,11 @@
         "type": "Transitive",
         "resolved": "6.14.0",
         "contentHash": "4v4blkhCv8mpKtfx+z0G/X0daVCzdIaHSC51GkUspugi5JIMn2Bo8xm5PdZYF0U68gOBfz/+aPWMnpRd85Jbow=="
+      },
+      "Parlot": {
+        "type": "Transitive",
+        "resolved": "1.3.5",
+        "contentHash": "F22bBSTGJgzJBBngX7SmgPzbCjrzwt4sPIOUlQ/K9p3mvau+o0mGnDxYTTik7ODOjXBDalpsZacaa8eSnPoEFw=="
       },
       "ReflectionMagic": {
         "type": "Transitive",
@@ -1185,6 +1200,11 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "TimeZoneConverter": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "sFbY65N/5GdsHx7nkdHFHUG+5Ar4W0w6Aks7Y2X+Q4NOTw6XyX2Il7jm+4tPkc//4mA3nG0RdxI8gKgoJitdLw=="
+      },
       "UiPath.Workflow": {
         "type": "Transitive",
         "resolved": "6.0.3",
@@ -1214,6 +1234,7 @@
       "dgt.power.codegeneration": {
         "type": "Project",
         "dependencies": {
+          "Fluid.Core": "[2.24.0, )",
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.7, )",
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.7, )",
           "Spectre.Console.Cli": "[0.50.0, )",

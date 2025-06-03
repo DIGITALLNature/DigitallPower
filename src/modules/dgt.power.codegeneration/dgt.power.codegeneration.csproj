@@ -119,6 +119,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fluid.Core" Version="2.24.0" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.7" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.7" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.50.0" />
@@ -238,6 +239,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\tsl\EntityLight.liquid" />
+    <EmbeddedResource Include="Templates\tsl\EntityLight.liquid" />
   </ItemGroup>
 
 </Project>

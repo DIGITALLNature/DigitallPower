@@ -2,6 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Security.Policy;
+using System.Threading.Tasks.Sources;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
@@ -9,6 +13,10 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
 using dgt.power.codegeneration.Templates.tsl;
+using dgt.power.codegeneration.Templates.tsl.ViewModels;
+using dgt.power.dataverse;
+using Fluid;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using static dgt.power.codegeneration.Constants.FileNames;
@@ -97,6 +105,28 @@ public class TypescriptGenerator : ITypescriptGenerator
     }
 
     /// <summary>
+    /// Creates a TypeScript file with the specified content and name in the target directory.
+    /// </summary>
+    /// <param name="content">The content to be written into the file.</param>
+    /// <param name="name">The name of the file to be created.</param>
+    /// <param name="args">The code generation arguments, including target directory and folder configuration.</param>
+    public void CreateFile(string content, string name, CodeGenerationVerb args)
+    {
+        // Ensure that the template and args are not null
+        Debug.Assert(content != null, nameof(content) + " != null");
+        Debug.Assert(args != null, nameof(args) + " != null");
+
+        // Combine the target directory, folder, and file name to create the full path
+        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
+        // Create a text file at the specified path
+        using var file = File.CreateText(path);
+        // Print a message indicating the file creation
+        AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
+        // Write the generated content to the file
+        file.Write(content);
+    }
+
+    /// <summary>
     /// Generates TypeScript entities based on the provided code generation arguments and configuration.
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
@@ -107,7 +137,23 @@ public class TypescriptGenerator : ITypescriptGenerator
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        // Iterate through each entity in the configuration
+        StreamReader reader = new StreamReader( Assembly.GetCallingAssembly().GetManifestResourceStream("dgt.power.codegeneration.Templates.tsl.EntityLight.liquid") );
+
+        var parser = new FluidParser();
+
+        var liquidTemplate =parser.Parse(reader.ReadToEnd());
+
+
+        var options = new TemplateOptions();
+        options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
+        options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
+        options.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
+        options.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
+        options.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
+        options.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
+        options.MemberAccessStrategy.Register<OptionMetadataViewModel>();
+
+       // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
         {
             // Retrieve the metadata for the entity
@@ -125,11 +171,22 @@ public class TypescriptGenerator : ITypescriptGenerator
             }
             else
             {
-                // Use the EntityLightTemplate for other TypeScript generator versions
-                template = new EntityLightTemplate(config.TypingPath, metadata, config, _metadataService.RetrieveOrganizationLanguage());
+                var viewModel = new MainViewModel
+                {
+                    SchemaName = metadata.SchemaName,
+                    Attributes = metadata.Attributes
+                        .Where(a =>
+                            (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute == true ||
+                             a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
+                                                        a.IsValidForRead == true))
+                        .Where(a => !a.LogicalName.Contains("entityimage"))
+                        .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
+                        .OrderBy(a => a.LogicalName).ToList()
+                };
+                var context = new TemplateContext(viewModel, options);
+                var content = liquidTemplate.Render(context);
 
-                // Create the template file
-                CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}.d", args);
+                CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant()}.{Typescript.Entity}", args);
             }
         }
     }
