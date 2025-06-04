@@ -1,0 +1,36 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "title": "AutoNumberFormats",
+    "description": "Collection of auto number format configurations",
+    "items": {
+        "$ref": "#/$defs/AutoNumberFormat"
+    },
+    "$defs": {
+        "AutoNumberFormat": {
+            "type": "object",
+            "title": "AutoNumberFormat",
+            "description": "Configuration for auto number format",
+            "properties": {
+                "entity": {
+                    "type": "string",
+                    "description": "Entity name"
+                },
+                "field": {
+                    "type": "string",
+                    "description": "Field name"
+                },
+                "format": {
+                    "type": "string",
+                    "description": "Number format pattern"
+                }
+            },
+            "required": [
+                "entity",
+                "field",
+                "format"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
