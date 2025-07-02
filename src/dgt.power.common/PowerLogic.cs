@@ -26,18 +26,10 @@ public abstract class PowerLogic<TConfig>(
 
     private bool Execute(TConfig args)
     {
-        try
-        {
-            Connection = string.IsNullOrWhiteSpace(args.Profile)
-                ? xrmConnectionFactory.GetDefault().Connect()
-                : xrmConnectionFactory.GetWithProfile(args.Profile).Connect();
-            return Invoke(args);
-        }
-        catch (Exception e)
-        {
-            Tracer.Exception(e, TraceEventType.Error);
-            return false;
-        }
+        Connection = string.IsNullOrWhiteSpace(args.Profile)
+            ? xrmConnectionFactory.GetDefault().Connect()
+            : xrmConnectionFactory.GetWithProfile(args.Profile).Connect();
+        return Invoke(args);
     }
 
     protected abstract bool Invoke(TConfig args);

@@ -221,12 +221,16 @@ app.Configure(config =>
             errorMessage = innerException!.Message;
         }
 
+#if RELEASE
         AnsiConsole.MarkupLineInterpolated($"[red]{errorMessage}[/]");
+#elif DEBUG
+        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
+#endif
+
         return (int)ExitCode.Error;
     });
-#endif
+
 #if DEBUG
-    config.PropagateExceptions();
     config.ValidateExamples();
 #endif
 });
