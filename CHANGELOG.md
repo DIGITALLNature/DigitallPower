@@ -1,3 +1,10 @@
+# [2.1.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.4...v2.1.0-beta.5) (2025-07-02)
+
+
+### Features
+
+* add semi global profile parameter to run commands against specific profile ([#102](https://github.com/DIGITALLNature/DigitallPower/issues/102)) ([e368247](https://github.com/DIGITALLNature/DigitallPower/commit/e3682472e5878ca7047252ef26e8740c6d92b77a)), closes [#103](https://github.com/DIGITALLNature/DigitallPower/issues/103)
+
 # [2.1.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.3...v2.1.0-beta.4) (2025-05-26)
 
 
