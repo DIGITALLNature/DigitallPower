@@ -2,6 +2,16 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
+      "Microsoft.Extensions.Configuration.CommandLine": {
+        "type": "Direct",
+        "requested": "[9.0.6, )",
+        "resolved": "9.0.6",
+        "contentHash": "DC5I4Y1nK35jY4piDqQCzWjDXzT6ECMctBAxgAJoc6pn0k6uyxcDeOuVDRooFui/N65ptn9xT5mk9eO4mSTj/g==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "9.0.6",
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.6"
+        }
+      },
       "Microsoft.Extensions.Configuration.EnvironmentVariables": {
         "type": "Direct",
         "requested": "[8.0.0, )",
@@ -228,19 +238,19 @@
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "0J/9YNXTMWSZP2p2+nvl8p71zpSwokZXZuJW+VjdErkegAnFdO1XlqtA62SJtgVYHdKu3uPxJHcMR/r35HwFBA==",
+        "resolved": "9.0.6",
+        "contentHash": "VWB5jdkxHsRiuoniTqwOL32R4OWyp5If/bAucLjRJczRVNcwb8iCXKLjn3Inv8fv+jHMVMnvQLg7xhSys+y5PA==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Primitives": "8.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.6",
+          "Microsoft.Extensions.Primitives": "9.0.6"
         }
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "3lE/iLSutpgX1CC0NOW70FJoGARRHbyKmG7dc0klnUZ9Dd9hS6N/POPWhKhMLCEuNN5nXEY5agmlFtH562vqhQ==",
+        "resolved": "9.0.6",
+        "contentHash": "3GgMIi2jP8g1fBW93Z9b9Unamc0SIsgyhiCmC91gq4loTixK9vQMuxxUsfJ1kRGwn+/FqLKwOHqmn0oYWn3Fvw==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "8.0.0"
+          "Microsoft.Extensions.Primitives": "9.0.6"
         }
       },
       "Microsoft.Extensions.Configuration.Binder": {
@@ -365,8 +375,8 @@
       },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "bXJEZrW9ny8vjMF1JV253WeLhpEVzFo1lyaZu1vQ4ZxWUlVvknZ/+ftFgVheLubb4eZPSwwxBeqS1JkCOjxd8g=="
+        "resolved": "9.0.6",
+        "contentHash": "BHniU24QV67qp1pJknqYSofAPYGmijGI8D+ci9yfw33iuFdyOeB9lWTg78ThyYLyQwZw3s0vZ36VMb0MqbUuLw=="
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
@@ -1153,7 +1163,7 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.0.1, )",
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -1163,7 +1173,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.7, )",
           "Spectre.Console.Cli": "[0.50.0, )",
           "System.CodeDom": "[8.0.0, )",
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.common": {
@@ -1178,26 +1188,26 @@
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.3.0, )",
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.3, )"
+          "dgt.power.common": "[2.1.0-beta.5, )"
         }
       },
       "dgt.power.push": {
@@ -1206,7 +1216,7 @@
           "NuGet.Packaging": "[6.14.0, )",
           "System.Reflection.MetadataLoadContext": "[8.0.1, )",
           "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[2.1.0-beta.3, )",
+          "dgt.power.common": "[2.1.0-beta.5, )",
           "dgt.registration": "[1.0.1, )"
         }
       }
