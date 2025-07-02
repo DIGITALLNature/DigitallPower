@@ -13,7 +13,7 @@ namespace dgt.power.maintenance.Logic
 {
     public sealed class ProtectCalculatedFields : BaseMaintenance
     {
-        public ProtectCalculatedFields(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+        public ProtectCalculatedFields(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
         {
         }
 

@@ -35,7 +35,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
     private readonly Dictionary<string, SystemUser> _userTable;
     private readonly WorkflowStateTracker _workflowStateTracker;
 
-    public UpdateWorkflowState(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         _userTable = new Dictionary<string, SystemUser>();
         _workflowStateTracker = new WorkflowStateTracker();

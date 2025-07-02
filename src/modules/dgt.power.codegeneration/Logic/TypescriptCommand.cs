@@ -5,6 +5,7 @@ using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.common;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
@@ -12,8 +13,8 @@ public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
 {
     private readonly ITypescriptGenerator _generator;
 
-    public TypescriptCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver,
-        ITypescriptGenerator generator) : base(tracer, xrmConnectionFactory, configResolver)
+    public TypescriptCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
+        ITypescriptGenerator generator) : base(tracer,connection, configResolver)
     {
         _generator = generator;
     }

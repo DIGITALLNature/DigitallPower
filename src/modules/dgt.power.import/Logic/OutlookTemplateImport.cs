@@ -11,6 +11,7 @@ using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Xrm.Sdk;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.import.Logic;
@@ -19,8 +20,8 @@ public sealed class OutlookTemplateImport : BaseImport
 {
     private readonly int _sleepTime;
 
-    public OutlookTemplateImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IConfiguration configuration) : base(
-        tracer, xrmConnectionFactory, configResolver)
+    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(
+        tracer, connection, configResolver)
     {
         _sleepTime = configuration.GetValue<int>("pollrate");
     }

@@ -16,8 +16,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport : BaseExport
 {
-    public UserRoleExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, xrmConnectionFactory, configResolver, fileService)
+    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, connection, configResolver, fileService)
     {
     }
 

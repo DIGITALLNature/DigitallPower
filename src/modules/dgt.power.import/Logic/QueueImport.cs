@@ -15,7 +15,7 @@ namespace dgt.power.import.Logic;
 
 public sealed class QueueImport : BaseImport
 {
-    public QueueImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public QueueImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
     }
 

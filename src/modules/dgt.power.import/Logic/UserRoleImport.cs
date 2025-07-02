@@ -14,8 +14,8 @@ namespace dgt.power.import.Logic;
 
 public sealed class UserRoleImport : BaseImport
 {
-    public UserRoleImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer,
-        xrmConnectionFactory, configResolver)
+    public UserRoleImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
+        connection, configResolver)
     {
     }
 
