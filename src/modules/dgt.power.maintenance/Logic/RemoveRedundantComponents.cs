@@ -20,7 +20,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
 {
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
 
-    public RemoveRedundantComponents(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public RemoveRedundantComponents(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();

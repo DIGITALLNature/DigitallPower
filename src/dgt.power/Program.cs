@@ -48,6 +48,7 @@ var configuration = new ConfigurationBuilder()
     .AddInMemoryCollection(defaultConfiguration)
     .AddJsonFile("dgtp.json", optional: true)
     .AddEnvironmentVariables("dgtp:")
+    .AddCommandLine(args)
     .Build();
 
 var registrations = new ServiceCollection();
@@ -59,7 +60,6 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<ITracer, Tracer>();
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
-registrations.AddSingleton<IXrmConnectionFactory, XrmConnectionFactory>();
 registrations.AddSingleton<TypescriptCommand, TypescriptCommand>();
 registrations.AddSingleton<MetadataCommand, MetadataCommand>();
 registrations.AddSingleton<IProfileManager, ProfileManager>();
@@ -154,10 +154,10 @@ app.Configure(config =>
                 .WithExample("maintenance", "workflowstate", "--config", "./config.json");
             maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
                 .WithDescription("Removes solution components that are already existing")
-                .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
+                .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
             maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                 .WithDescription("Add Messagefiltering for PowerFx Plugins")
-                .WithExample("maintenance","filterfxplugins","--config", "./config.json");
+                .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
             maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
                 .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
                 .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
@@ -211,7 +211,6 @@ app.Configure(config =>
 
     config.Settings.ApplicationName = "dgtp";
 
-#if RELEASE
     config.SetExceptionHandler((exception, _) =>
     {
         var errorMessage = exception.Message;
@@ -221,12 +220,16 @@ app.Configure(config =>
             errorMessage = innerException!.Message;
         }
 
+#if RELEASE
         AnsiConsole.MarkupLineInterpolated($"[red]{errorMessage}[/]");
+#elif DEBUG
+        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
+#endif
+
         return (int)ExitCode.Error;
     });
-#endif
+
 #if DEBUG
-    config.PropagateExceptions();
     config.ValidateExamples();
 #endif
 });

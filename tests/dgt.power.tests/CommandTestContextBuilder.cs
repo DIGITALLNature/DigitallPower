@@ -19,7 +19,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using NSubstitute;
 using Spectre.Console.Cli;
 using Xunit.Abstractions;
 
@@ -85,16 +84,8 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             .AddInMemoryCollection(defaultConfiguration)
             .Build();
 
-        var fakedXrmConnection = Substitute.For<IXrmConnection>();
-        fakedXrmConnection.Connect().Returns(fakedContext.GetAsyncOrganizationService2());
-
-        var fakedXrmConnectionFactory = Substitute.For<IXrmConnectionFactory>();
-        fakedXrmConnectionFactory.GetWithProfile(Arg.Any<string>()).Returns(fakedXrmConnection);
-        fakedXrmConnectionFactory.GetDefault().Returns(fakedXrmConnection);
-
         var command = _serviceCollection
             .AddScoped<IOrganizationService>(_ => fakedContext.GetAsyncOrganizationService2())
-            .AddSingleton(fakedXrmConnectionFactory)
             .AddSingleton<TCommand>()
             .AddSingleton<IConfiguration>(configuration)
             .BuildServiceProvider()
@@ -128,7 +119,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     /// </summary>
     /// <param name="data">The entity to add</param>
     /// <returns>self</returns>
-    public CommandTestContextBuilder<TCommand, TCommandSettings> WithData(Entity data) => WithData(new[] { data });
+    public CommandTestContextBuilder<TCommand, TCommandSettings> WithData(Entity data) => WithData(new[] {data});
 
     /// <summary>
     /// Adds the given entities as data to the xrm context.
@@ -165,7 +156,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     /// <returns>self</returns>
     public CommandTestContextBuilder<TCommand, TCommandSettings> WithMetaData(EntityMetadata metadata)
     {
-        return WithMetaData(new[] { metadata });
+        return WithMetaData(new[] {metadata});
     }
 
     /// <summary>

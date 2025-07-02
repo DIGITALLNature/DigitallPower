@@ -10,13 +10,13 @@ using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console;
+ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
 public sealed class ActiveLayerAnalyze : BaseAnalyze
 {
-    public ActiveLayerAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public ActiveLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
     }
 
