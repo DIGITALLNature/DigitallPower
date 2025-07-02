@@ -15,7 +15,7 @@ namespace dgt.power.import.Logic;
 
 public sealed class CalendarImport : BaseImport
 {
-    public CalendarImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public CalendarImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
     }
 

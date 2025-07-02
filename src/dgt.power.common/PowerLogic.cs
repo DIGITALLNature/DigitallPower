@@ -10,7 +10,7 @@ namespace dgt.power.common;
 
 public abstract class PowerLogic<TConfig>(
     ITracer tracer,
-    IXrmConnectionFactory xrmConnectionFactory,
+    IOrganizationService connection,
     IConfigResolver configResolver)
     : Command<TConfig>, IPowerLogic
     where TConfig : BaseProgramSettings
@@ -19,16 +19,13 @@ public abstract class PowerLogic<TConfig>(
 
     protected IConfigResolver ConfigResolver { get; } = configResolver;
 
-    protected IOrganizationService Connection { get; private set; } = null!;
+    protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
     public override int Execute(CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
 
     private bool Execute(TConfig args)
     {
-        Connection = string.IsNullOrWhiteSpace(args.Profile)
-            ? xrmConnectionFactory.GetDefault().Connect()
-            : xrmConnectionFactory.GetWithProfile(args.Profile).Connect();
         return Invoke(args);
     }
 

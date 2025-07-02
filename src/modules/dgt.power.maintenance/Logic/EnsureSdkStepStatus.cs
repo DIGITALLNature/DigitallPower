@@ -13,8 +13,8 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic
 {
-    public class EnsureSdkStepStatus(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver)
-        : PowerLogic<EnsureSdkStepStatus.Settings>(tracer, xrmConnectionFactory, configResolver)
+    public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver)
+        : PowerLogic<EnsureSdkStepStatus.Settings>(tracer, connection, configResolver)
     {
         public class Settings : BaseProgramSettings
         {

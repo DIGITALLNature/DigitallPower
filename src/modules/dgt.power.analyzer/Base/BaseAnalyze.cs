@@ -18,7 +18,7 @@ namespace dgt.power.analyzer.Base;
 #pragma warning disable S1200
 public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 {
-    protected BaseAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();

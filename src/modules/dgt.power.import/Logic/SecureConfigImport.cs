@@ -6,6 +6,7 @@ using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -14,8 +15,8 @@ namespace dgt.power.import.Logic;
 
 public sealed class SecureConfigImport : BaseImport
 {
-    public SecureConfigImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer,
-        xrmConnectionFactory, configResolver)
+    public SecureConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
+        connection, configResolver)
     {
     }
 

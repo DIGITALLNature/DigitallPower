@@ -7,6 +7,7 @@ using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -15,7 +16,7 @@ namespace dgt.power.analyzer.Logic;
 
 public sealed class NoActiveLayerAnalyze : BaseAnalyze
 {
-    public NoActiveLayerAnalyze(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
+    public NoActiveLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
     {
     }
 

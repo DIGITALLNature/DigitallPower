@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.export.Base;
 
@@ -21,8 +22,8 @@ public abstract class BaseExport : PowerLogic<ExportVerb>
         }
     };
 
-    protected BaseExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService) : base(tracer,
-        xrmConnectionFactory, configResolver)
+    protected BaseExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService) : base(tracer,
+        connection, configResolver)
     {
         _fileService = fileService;
     }

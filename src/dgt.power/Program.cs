@@ -60,7 +60,6 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<ITracer, Tracer>();
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
-registrations.AddSingleton<IXrmConnectionFactory, XrmConnectionFactory>();
 registrations.AddSingleton<TypescriptCommand, TypescriptCommand>();
 registrations.AddSingleton<MetadataCommand, MetadataCommand>();
 registrations.AddSingleton<IProfileManager, ProfileManager>();
