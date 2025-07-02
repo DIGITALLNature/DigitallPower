@@ -1,3 +1,10 @@
+# [2.1.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.5...v2.1.0-beta.6) (2025-07-02)
+
+
+### Features
+
+* add msal example ([fb594d7](https://github.com/DIGITALLNature/DigitallPower/commit/fb594d7140b684fe12668251309e4e350c4b1645))
+
 # [2.1.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.4...v2.1.0-beta.5) (2025-07-02)
 
 
