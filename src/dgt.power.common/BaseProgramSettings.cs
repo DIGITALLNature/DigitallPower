@@ -7,4 +7,6 @@ namespace dgt.power.common;
 
 public abstract class BaseProgramSettings : CommandSettings
 {
+    [CommandOption("--profile")]
+    public string? Profile { get; set; }
 }

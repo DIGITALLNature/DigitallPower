@@ -8,7 +8,7 @@ namespace dgt.power.push.Base;
 
 public abstract class BasePush : PowerLogic<PushVerb>
 {
-    protected BasePush(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    protected BasePush(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 }

@@ -8,15 +8,14 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk;
-using Microsoft.Xrm.Sdk;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.export.Logic;
 
 public sealed class OutlookTemplateExport : BaseExport
 {
-    public OutlookTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public OutlookTemplateExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

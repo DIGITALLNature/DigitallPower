@@ -6,15 +6,14 @@ using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 
 namespace dgt.power.maintenance.Logic;
 
 public sealed class AutoNumberFormatAction : BaseMaintenance
 {
-    public AutoNumberFormatAction(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public AutoNumberFormatAction(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(
+        tracer, xrmConnectionFactory, configResolver)
     {
     }
 
