@@ -15,8 +15,8 @@ namespace dgt.power.import.Logic;
 
 public sealed class RoutingRuleConfigImport : BaseImport
 {
-    public RoutingRuleConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public RoutingRuleConfigImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(
+        tracer, xrmConnectionFactory, configResolver)
     {
     }
 

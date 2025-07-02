@@ -7,7 +7,6 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using TeamTemplate = dgt.power.dto.TeamTemplate;
@@ -16,7 +15,7 @@ namespace dgt.power.import.Logic;
 
 public sealed class TeamTemplateImport : BaseImport
 {
-    public TeamTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public TeamTemplateImport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
     }
 

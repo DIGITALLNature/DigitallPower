@@ -14,8 +14,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class TeamTemplateExport : BaseExport
 {
-    public TeamTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public TeamTemplateExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

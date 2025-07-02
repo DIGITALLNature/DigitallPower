@@ -13,9 +13,9 @@ public class MetadataCommand : PowerLogic<CodeGenerationVerb>
 {
     private readonly IMetadataGenerator _generator;
 
-    public MetadataCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
+    public MetadataCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver,
         IMetadataGenerator generator)
-        : base(tracer,connection, configResolver)
+        : base(tracer,xrmConnectionFactory, configResolver)
     {
         _generator = generator;
     }

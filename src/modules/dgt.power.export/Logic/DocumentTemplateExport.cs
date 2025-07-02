@@ -16,8 +16,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class DocumentTemplateExport : BaseExport
 {
-    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public DocumentTemplateExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService)
+        : base(tracer, xrmConnectionFactory, configResolver, fileService)
     {
     }
 

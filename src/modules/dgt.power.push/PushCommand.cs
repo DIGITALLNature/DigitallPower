@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -12,27 +11,19 @@ using dgt.power.push.Logic;
 using dgt.power.push.Model;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
-using Spectre.Console.Cli;
 using Assembly = dgt.power.push.Model.Assembly;
 
 namespace dgt.power.push;
 
-public class PushCommand : Command<PushVerb>, IPowerLogic
+public class PushCommand : BasePush, IPowerLogic
 {
-    private readonly IOrganizationService _connection;
-    private readonly WebresourcesProcessor _webresourcesProcessor;
-    private readonly ITracer _tracer;
-
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor)
+    public PushCommand(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver) : base(tracer, xrmConnectionFactory, configResolver)
     {
-        _tracer = tracer;
-        _connection = connection;
-        _webresourcesProcessor = webresourcesProcessor;
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings)
+    protected override bool Invoke(PushVerb args)
     {
-        _tracer.Start(this);
+        Tracer.Start(this);
 
         AnsiConsole.Status()
             .Spinner(Spinner.Known.Pong)
@@ -42,18 +33,18 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 // ReSharper disable once ObjectCreationAsStatement - Justification:  Set Earlybound Resolution fixed
 #pragma warning disable CA1806
 #pragma warning disable S1848
-                new DataContext(_connection);
+                new DataContext(Connection);
 #pragma warning restore S1848
 #pragma warning restore CA1806
 
 
-                if (File.Exists(settings.Target))
+                if (File.Exists(args.Target))
                 {
-                    ProcessAssemblyFile(settings, ctx);
+                    ProcessAssemblyFile(args, ctx);
                 }
-                else if (Directory.Exists(settings.Target))
+                else if (Directory.Exists(args.Target))
                 {
-                    ProcessWebresourcesFolder(settings, ctx);
+                    ProcessWebresourcesFolder(args, ctx);
                 }
                 else
                 {
@@ -63,14 +54,14 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 ctx.Status("Finishing");
             });
 
-        return _tracer.End(this, true) ? 0 : -1;
+        return Tracer.End(this, true);
     }
 
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
         List<Assembly?> assemblies;
-        var modelBuilder = new AssemblyModelBuilder(_connection);
-        var processor = new AssemblyProcessor(_connection);
+        var modelBuilder = new AssemblyModelBuilder(Connection);
+        var processor = new AssemblyProcessor(Connection);
 
         var solutionPrefix = processor.GetSolutionPrefix(settings.Solution);
 
@@ -165,6 +156,6 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             ctx.Status(status);
         };
 
-        _webresourcesProcessor.Process(settings, statusCallback);
+        new WebresourcesProcessor(Connection, ConfigResolver).Process(settings, statusCallback);
     }
 }

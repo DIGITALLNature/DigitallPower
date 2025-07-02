@@ -15,8 +15,8 @@ namespace dgt.power.export.Logic;
 
 public sealed class CalendarExport : BaseExport
 {
-    public CalendarExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService) : base(tracer,
-        connection, configResolver, fileService)
+    public CalendarExport(ITracer tracer, IXrmConnectionFactory xrmConnectionFactory, IConfigResolver configResolver, IFileService fileService) : base(tracer,
+        xrmConnectionFactory, configResolver, fileService)
     {
     }
 
