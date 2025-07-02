@@ -3,15 +3,13 @@
 
 using System.Text.Json.Serialization;
 
-#pragma warning disable CS8618
-
 namespace dgt.power.maintenance.Base.Config;
 
 public class AutoNumberFormat
 {
-    [JsonPropertyName("entity")] public string Entity { get; set; }
+    [JsonPropertyName("entity")] public required string Entity { get; set; }
 
-    [JsonPropertyName("field")] public string Field { get; set; }
+    [JsonPropertyName("field")] public required string Field { get; set; }
 
-    [JsonPropertyName("format")] public string Format { get; set; }
+    [JsonPropertyName("format")] public required string Format { get; set; }
 }
