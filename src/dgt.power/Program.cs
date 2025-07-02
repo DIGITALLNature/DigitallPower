@@ -93,7 +93,8 @@ app.Configure(config =>
     {
         profile.SetDescription("Handles Authentication");
         profile.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
-        profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile");
+        profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
+            .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
         profile.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
         profile.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
         profile.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
