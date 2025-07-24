@@ -4,7 +4,7 @@
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Templates.ts;
 
-namespace dgt.power.codegeneration.Generators;
+namespace dgt.power.codegeneration.Generators.Contracts;
 
 public interface ITypescriptGenerator
 {

@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.common;
 using Microsoft.Xrm.Sdk;
 
@@ -11,12 +12,12 @@ namespace dgt.power.codegeneration.Logic;
 
 public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
 {
-    private readonly ITypescriptGenerator _generator;
+    private readonly ITypescriptGeneratorFascade _generatorFascade;
 
     public TypescriptCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
-        ITypescriptGenerator generator) : base(tracer,connection, configResolver)
+        ITypescriptGeneratorFascade generatorFascade) : base(tracer,connection, configResolver)
     {
-        _generator = generator;
+        _generatorFascade = generatorFascade;
     }
 
     protected override bool Invoke(CodeGenerationVerb args)
@@ -27,17 +28,18 @@ public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
             return Tracer.End(this, false);
         }
 
-        _generator.PrepareDirectory(args);
-        _generator.GenerateEntities(args, config);
-        _generator.GenerateEntityForms(args, config);
-        _generator.GenerateOptionSets(args, config);
-        _generator.GenerateSdkMessages(args, config);
+        _generatorFascade.SetGenerationVersion(config.TypescriptGeneratorVersion);
+        _generatorFascade.PrepareDirectory(args);
+        _generatorFascade.GenerateEntities(args, config);
+        _generatorFascade.GenerateEntityForms(args, config);
+        _generatorFascade.GenerateOptionSets(args, config);
+        _generatorFascade.GenerateSdkMessages(args, config);
 
         if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
         {
-            _generator.GenerateBoilerPlateFull(args, config);
-            _generator.GenerateEntityRefsFull(args, config);
-            _generator.GenerateBusinessProcessFlowsFull(args, config);
+            _generatorFascade.GenerateBoilerPlateFull(args, config);
+            _generatorFascade.GenerateEntityRefsFull(args, config);
+            _generatorFascade.GenerateBusinessProcessFlowsFull(args, config);
         }
 
 

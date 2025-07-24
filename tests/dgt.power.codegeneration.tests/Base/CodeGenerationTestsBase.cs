@@ -7,6 +7,7 @@ using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.tests;
@@ -31,7 +32,7 @@ public abstract class CodeGenerationTestsBase<TCommand> : CommandTestsBase<TComm
     {
         ServiceCollection = new TestServiceCollection()
             .AddScoped<IMetadataGenerator, MetadataGenerator>()
-            .AddScoped<ITypescriptGenerator, TypescriptGenerator>()
+            .AddScoped<ITypescriptGenerator, TypescriptGeneratorFascade>()
             .AddScoped<IDotNetGenerator, DotNetGenerator>()
             .AddScoped<ObjectCache>(_ => MemoryCache.Default)
             .AddScoped<IMetadataService, MetadataService>();

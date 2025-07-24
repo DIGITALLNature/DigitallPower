@@ -10,6 +10,7 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.codegeneration;
 using dgt.power.codegeneration.Generators;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
@@ -75,7 +76,7 @@ registrations.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUser
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
-registrations.AddScoped<ITypescriptGenerator, TypescriptGenerator>();
+registrations.AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetCommand, DotNetCommand>();
 registrations.AddScoped<IFileService, FileService>();
