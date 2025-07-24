@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Reflection;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
@@ -10,15 +9,14 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
-using dgt.power.codegeneration.Templates.tsl;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
-namespace dgt.power.codegeneration.Generators;
+namespace dgt.power.codegeneration.Generators.Worker;
 
-public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
+public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
     : TypescriptGeneratorWorker, ITypescriptGenerator
 {
     #region ITypescriptGenerator Members
@@ -73,13 +71,6 @@ public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var reader = new StreamReader(Assembly.GetCallingAssembly().GetManifestResourceStream("dgt.power.codegeneration.Templates.tsl.EntityLight.liquid"));
-
-        var parser = new FluidParser();
-
-        var liquidTemplate = parser.Parse(reader.ReadToEnd());
-
-
         var options = new TemplateOptions();
         options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
         options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
@@ -97,22 +88,11 @@ public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
                 metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
 
-            var viewModel = new MainViewModel
-            {
-                SchemaName = metadata.SchemaName,
-                Attributes = metadata.Attributes
-                    .Where(a =>
-                        (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
-                         a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
-                                                    a.IsValidForRead == true))
-                    .Where(a => !a.LogicalName.Contains("entityimage"))
-                    .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
-                    .OrderBy(a => a.LogicalName).ToList()
-            };
-            var context = new TemplateContext(viewModel, options);
-            var content = liquidTemplate.Render(context);
-
-            CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.Entity}", args);
+            ITemplate template =
+                new D365EntityTemplate(config.TypingPath, metadata, config,
+                metadataService.RetrieveOrganizationLanguage());
+            // Create the template file
+            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.Entity}", args);
         }
     }
 
@@ -182,11 +162,15 @@ public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
                     .Replace(".quickcreate", "QuickCreate");
 
 
-                var template = new EntityLightFormTemplate(config.TypingPath, form, formname, formDetail.Value,
-                    metadata, config, metadataService.RetrieveOrganizationLanguage());
-                CreateTemplateFile(template,
-                    $"{metadata.LogicalName}.{FileNames.Typescript.Form}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.d",
-                    args);
+                var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
+                using var file = File.CreateText(fileName);
+                AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
+                //TODO: not smart, but works
+                var content = new D365EntityFormTemplate(config.TypingPath, form,
+                    formname, formDetail.Value, metadata, config,
+                    metadataService.RetrieveOrganizationLanguage()).TransformText();
+
+                file.Write(content);
             }
         }
     }
@@ -214,11 +198,11 @@ public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
         // Determine the template to use based on the TypeScript generator version
         ITemplate template;
 
-        // Use the EntityLightTemplate for other TypeScript generator versions
-        template = new D365SdkMessagesLightTemplate(sdkMessages);
+        // Use the D365EntityTemplate for the full TypeScript generator version
+        template = new D365SdkMessagesTemplate(sdkMessages, config);
 
         // Create the template file
-        CreateTemplateFile(template, $"{FileNames.Typescript.SdkMessageNames}.d", args);
+        CreateTemplateFile(template, $"{FileNames.Typescript.SdkMessageNames}", args);
     }
 
     /// <summary>
@@ -244,11 +228,11 @@ public class TypescriptGeneratorWorkerLight(IMetadataService metadataService)
         // Determine the template to use based on the TypeScript generator version
         ITemplate template;
 
-        // Use the EntityLightTemplate for other TypeScript generator versions
-        template = new OptionSetsLightTemplate(optionSets);
+        // Use the D365EntityTemplate for the full TypeScript generator version
+        template = new D365OptionSetsTemplate(optionSets, config);
 
         // Create the template file
-        CreateTemplateFile(template, $"{FileNames.Typescript.OptionSetValues}.d", args);
+        CreateTemplateFile(template, $"{FileNames.Typescript.OptionSetValues}", args);
     }
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)

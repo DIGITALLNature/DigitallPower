@@ -1,0 +1,12 @@
+/* eslint-disable */
+
+// This module contains global option sets which are used in more than one entity
+declare namespace XrmEnum {
+{% for optionSet in OptionSets  %}
+    export const enum {{ optionSet.Name | camelcase }} {
+    {%- for option in optionSet.Options  %}
+        {{ option.Label  | sanitize | camelcase }} = {{ option.Value | camelcase }},
+    {%- endfor %}
+    }
+{% endfor %}
+}

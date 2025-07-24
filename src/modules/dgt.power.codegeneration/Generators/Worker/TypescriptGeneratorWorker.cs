@@ -6,7 +6,7 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using Spectre.Console;
 
-namespace dgt.power.codegeneration.Generators;
+namespace dgt.power.codegeneration.Generators.Worker;
 
 public abstract class TypescriptGeneratorWorker
 {
@@ -23,7 +23,7 @@ public abstract class TypescriptGeneratorWorker
         Debug.Assert(args != null, nameof(args) + " != null");
 
         // Combine the target directory, folder, and file name to create the full path
-        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
+        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.d.ts");
         // Create a text file at the specified path
         using var file = File.CreateText(path);
         // Print a message indicating the file creation

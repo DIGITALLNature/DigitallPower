@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
+using dgt.power.codegeneration.Generators.Worker;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates.ts;
 
@@ -39,23 +40,6 @@ public class TypescriptGeneratorFascade : ITypescriptGeneratorFascade
 
         _generator.GenerateBoilerPlateFull(args, config);
     }
-
-    /// <summary>
-    ///     Creates a template file using the provided template, name, and code generation arguments.
-    /// </summary>
-    /// <param name="template">The template to use for generating the file content.</param>
-    /// <param name="name">The name of the file to be created.</param>
-    /// <param name="args">The code generation arguments, including the target directory and folder.</param>
-    public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
-    {
-        // Ensure that the template and args are not null
-        Debug.Assert(template != null, nameof(template) + " != null");
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
-
-        _generator.CreateTemplateFile(template, name, args);
-    }
-
 
     /// <summary>
     ///     Generates TypeScript entities based on the provided code generation arguments and configuration.

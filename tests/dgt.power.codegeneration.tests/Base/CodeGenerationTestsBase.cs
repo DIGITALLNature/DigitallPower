@@ -32,7 +32,7 @@ public abstract class CodeGenerationTestsBase<TCommand> : CommandTestsBase<TComm
     {
         ServiceCollection = new TestServiceCollection()
             .AddScoped<IMetadataGenerator, MetadataGenerator>()
-            .AddScoped<ITypescriptGenerator, TypescriptGeneratorFascade>()
+            .AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>()
             .AddScoped<IDotNetGenerator, DotNetGenerator>()
             .AddScoped<ObjectCache>(_ => MemoryCache.Default)
             .AddScoped<IMetadataService, MetadataService>();
