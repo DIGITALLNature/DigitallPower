@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
@@ -31,11 +32,17 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
+        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, TabDetail> td ? new TabDetailsViewModel(td) : null);
+        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetaisViewModel(td) : null);
         _templateOptions.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
         _templateOptions.MemberAccessStrategy.Register<OptionMetadataViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<OptionSetViewModel>();
         _templateOptions.MemberAccessStrategy.Register<OptionViewModel>();
         _templateOptions.MemberAccessStrategy.Register<Option>();
+        _templateOptions.MemberAccessStrategy.Register<SdkMessageViewModel>();
+        _templateOptions.MemberAccessStrategy.Register<FormDetail>();
+        _templateOptions.MemberAccessStrategy.Register<TabDetail>();
+        _templateOptions.MemberAccessStrategy.Register<TabDetailsViewModel>();
+        _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
     }
 
     private static IFluidTemplate InitializeLiquidTemplate(string templateName)
@@ -127,12 +134,25 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                     .Replace(".main", "Main").Replace(".quickview", "QuickView")
                     .Replace(".quickcreate", "QuickCreate");
 
-                // var viewModel = new FormViewModel();
-                //
-                // var context = new TemplateContext(viewModel, _templateOptions);
-                // var content = liquidTemplate.Render(context);
-                //
-                // CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.Form}.{formname}", args);
+                var viewModel = new FormViewModel
+                {
+                    FormName = formname,
+                    FormDetail = formDetail.Value,
+                    SchemaName = metadata.SchemaName,
+                    Attributes = metadata.Attributes
+                        .Where(a =>
+                            (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
+                             a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
+                                                        a.IsValidForRead == true))
+                        .Where(a => !a.LogicalName.Contains("entityimage"))
+                        .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
+                        .OrderBy(a => a.LogicalName).ToList()
+                };
+
+                var context = new TemplateContext(viewModel, _templateOptions);
+                var content = liquidTemplate.Render(context);
+
+                CreateFile(content, form, args);
 
                 // var template = new EntityLightFormTemplate(config.TypingPath, form, formname, formDetail.Value,
                 //     metadata, config, _metadataService.RetrieveOrganizationLanguage());
@@ -165,13 +185,15 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         // Retrieve SDK message names from the metadata service
         var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
 
+        var viewModel = new SdkMessagesViewModel
+        {
+            SdkMessages = sdkMessages.Select(sdkm => new SdkMessageViewModel(sdkm)).ToList()
+        };
 
-        // var viewModel = new SdkMessageViewModel();
-        //
-        // var context = new TemplateContext(viewModel, _templateOptions);
-        // var content = liquidTemplate.Render(context);
-        //
-        // CreateFile(content, FileNames.Typescript.SdkMessageNames, args);
+        var context = new TemplateContext(viewModel, _templateOptions);
+        var content = liquidTemplate.Render(context);
+
+        CreateFile(content, FileNames.Typescript.SdkMessageNames, args);
     }
 
     /// <summary>

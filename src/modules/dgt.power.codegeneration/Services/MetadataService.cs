@@ -672,7 +672,7 @@ public class MetadataService : IMetadataService
                     sectionlist.Add(sectionName);
 
                     var sectionDetail = new SectionDetail();
-                    tabDetail.Sections.Add(sectionName, sectionDetail);
+                    tabDetail.Sections.Add(new KeyValuePair<string, SectionDetail>(sectionName, sectionDetail));
 
                     var rows = section.SelectNodes(".//rows/row[*]");
                     foreach (XmlNode row in rows)
@@ -711,7 +711,7 @@ public class MetadataService : IMetadataService
 #pragma warning restore CS8602
 
             result.Tabs.Add(tabName, sectionlist);
-            result.TabDetails.Add(tabName, tabDetail);
+            result.TabDetails.Add(new KeyValuePair<string, TabDetail>(tabName, tabDetail));
         }
 
         return result;

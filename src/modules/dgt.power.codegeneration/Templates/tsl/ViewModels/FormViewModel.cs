@@ -6,9 +6,12 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
-public record EntityViewModel
+public record FormViewModel
 {
     public required string SchemaName { get; init; }
+
     public required List<AttributeMetadata> Attributes { get; init; }
-    public IEnumerable<PicklistAttributeMetadata> PicklistAttributes => Attributes.OfType<PicklistAttributeMetadata>();
+    public required string FormName { get; init; }
+    public required FormDetail FormDetail { get; init; }
+
 }

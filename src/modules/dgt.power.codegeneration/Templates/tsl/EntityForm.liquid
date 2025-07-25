@@ -1,96 +1,42 @@
 /* eslint-disable */
 
-<#
-var tableName = entityMetadata.SchemaName.ToCamelCase();
-var tableFormName = formName.Sanitize().ToCamelCase();
-#>
 declare namespace Xrm.Events {
-export interface EventContext {
-getFormContext<<#= tableFormName #>FormContext>(): <#= tableFormName #>FormContext;
-}
-}
-
-declare namespace XrmTable.<#= tableName #> {
-export interface <#= tableFormName #>FormContext extends Xrm.FormContext {
-
-<# foreach(var attr in Filter(entityMetadata.Attributes))
-{
-var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-#>
-<#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
-#>       getAttribute(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedAttributeType#>;
-
-<#= BaseTemplate.Summary(BaseTemplate.GetLocalizedLabel(attr.Description),2)
-#>        getControl(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
-
-<#
-} // End Attribute loop
-#>
-ui: <#= tableFormName #>Ui;
+    export interface EventContext {
+        getFormContext<{{ FormName  | sanitize | camelcase }}FormContext>(): {{ FormName  | sanitize | camelcase }}FormContext;
+    }
 }
 
-export interface <#= tableFormName #>Ui extends Xrm.Ui {
-tabs: <#= tableFormName #>Tabs;
+declare namespace XrmTable.{{ SchemaName | camelcase }} {
+    export interface {{ FormName  | sanitize | camelcase }}FormContext extends Xrm.FormContext {
+        getAttribute():  Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
+        getControl(): Xrm.Controls.Control[];
+    {% for attr in Attributes  %}
+        getAttribute(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedAttributeType  }};
+        getControl(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedControlType  }};
+    {% endfor %}
+        ui: {{ FormName  | sanitize | camelcase }}Ui;
+    }
+
+    export interface {{ FormName  | sanitize | camelcase }}Ui extends Xrm.Ui {
+        tabs: {{ FormName  | sanitize | camelcase }}Tabs;
+    }
+
+    {% for tab in FormDetail.TabDetails  %}
+    export interface {{ FormName  | sanitize | camelcase }}Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
+        sections: {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "T" }}Sections;
+
+        get(itemName: "{{ tab.Name }}"): {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "TI" }};
+        get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
+    }
+
+    export interface {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "TC" }} extends Xrm.Controls.Tab {
+        sections: {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "TCI" }}Sections;
+    }
+        {% for section in tab.Detail.Sections  %}
+    export interface {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "TS" }}{{ section.Key | sanitize | camelcase }}Section extends Xrm.Controls.Section {
+        controls: {{ FormName  | sanitize | camelcase }}{{ tab.Name  | sanitize | camelcase | unique: "TSI" }}{{ section.Key | sanitize | camelcase }}ControlCollection;
+    }
+        {% endfor %}
+
+    {% endfor %}
 }
-
-<# foreach(var tab in formDetail.TabDetails)
-{
-var tabName = BaseTemplate.Unique(tab.Key.Sanitize().ToCamelCase(),"T"+entityMetadata.LogicalName);
-#>
-export interface <#= tableFormName #>Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
-    sections: <#= tableFormName #><#= tabName #>Sections;
-
-    get(itemName: "<#= tab.Key #>"): <#= tableFormName #><#= tabName #>;
-    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
-        }
-
-        export interface <#= tableFormName #><#= tabName #> extends Xrm.Controls.Tab {
-        sections: <#= tableFormName #><#= tabName #>Sections;
-        }
-
-        <# foreach(var section in tab.Value.Sections)
-        {
-        #>
-        export interface <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>Section extends Xrm.Controls.Section {
-        controls: <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>ControlCollection;
-        }
-
-        export interface <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
-            <# foreach(var control in section.Value.Controls)
-            {
-            var attr = entityMetadata.Attributes.Single(c => c.LogicalName == control);
-            var attrType = BaseTemplate.GetTypeScriptTypes(attr);
-            #>
-            get(name: "<#= attr.LogicalName #>"): <#= attrType.DefinitelyTypedControlType#>;
-            <#
-            } // End Section loop
-            #>
-            <#
-            if (section.Value.Controls.Any())
-            {
-            #>
-            get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
-                <#
-                }#>
-                }
-
-                <#
-                } // End Section loop
-                #>
-
-
-                export interface <#= tableFormName #><#= tabName #>Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
-                    <# foreach(var section in tab.Value.Sections)
-                    {
-                    #>
-                    get(itemName: "<#= section.Key #>"): <#= tableFormName #><#= tabName #><#= section.Key.Sanitize().ToCamelCase() #>Section;
-                    <#
-                    } // End Section loop
-                    #>
-                    get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
-
-                        }
-                        <#
-                        } // End Tab loop
-                        #>
-                        }

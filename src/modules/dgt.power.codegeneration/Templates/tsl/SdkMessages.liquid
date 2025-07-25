@@ -1,9 +1,9 @@
 /* eslint-disable */
 
 declare namespace XrmMetadata {
-const enum SdkMessageNames {
-<# foreach(var sdkMessages in SdkMessages) { #>
-<#= sdkMessages.Name #> = "<#= sdkMessages.Message #>",
-<#}#>
-}
+    const enum SdkMessageNames {
+    {%- for sdkMessage in SdkMessages  %}
+        {{ sdkMessage.Name  }} = {{ sdkMessage.Message }},
+    {%- endfor %}
+    }
 }
