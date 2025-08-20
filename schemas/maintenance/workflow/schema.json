@@ -1,0 +1,121 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "WorkflowConfig",
+    "description": "Configuration for workflow management",
+    "properties": {
+        "solutionfilter": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "description": "Solution filter array"
+        },
+        "publisherfilter": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": "string"
+            },
+            "description": "Publisher filter array"
+        },
+        "flows": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "additionalProperties": {
+                "$ref": "#/$defs/FlowConfig"
+            },
+            "description": "Dictionary of flow configurations"
+        },
+        "actions": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "additionalProperties": {
+                "$ref": "#/$defs/BaseWorkflowConfig"
+            },
+            "description": "Dictionary of action configurations"
+        },
+        "businessrules": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/$defs/BaseWorkflowConfig"
+                }
+            },
+            "description": "Nested dictionary of business rule configurations"
+        },
+        "owner": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "description": "Default owner"
+        },
+        "impersonate": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "description": "Default impersonate user"
+        }
+    },
+    "$defs": {
+        "BaseWorkflowConfig": {
+            "type": "object",
+            "title": "BaseWorkflowConfig",
+            "description": "Base workflow configuration",
+            "properties": {
+                "disabled": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "description": "Whether the workflow is disabled"
+                },
+                "owner": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Owner of the workflow"
+                }
+            },
+            "additionalProperties": false
+        },
+        "FlowConfig": {
+            "type": "object",
+            "title": "FlowConfig",
+            "description": "Flow configuration extending base workflow config",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/BaseWorkflowConfig"
+                },
+                {
+                    "properties": {
+                        "impersonate": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Impersonate user for this flow"
+                        }
+                    }
+                }
+            ],
+            "additionalProperties": false
+        }
+    }
+}

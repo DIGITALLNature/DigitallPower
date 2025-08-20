@@ -7,18 +7,18 @@ namespace dgt.power.codegeneration.Templates.dotnet
 {
     public partial class SdkMessagesTemplate
     {
-        private readonly IEnumerable<Tuple<string, string>> SdkMessages;
+        private readonly IEnumerable<(string Name, string Message)> SdkMessages;
         private readonly CodeGenerationConfig _cfg;
         private readonly string NameSpace;
 
-        public SdkMessagesTemplate(IEnumerable<Tuple<string, string>> sdkMessages, CodeGenerationConfig cfg)
+        public SdkMessagesTemplate(IEnumerable<(string Name, string Message)> sdkMessages, CodeGenerationConfig cfg)
         {
             SdkMessages = sdkMessages;
             _cfg = cfg;
             NameSpace = _cfg.NameSpace;
         }
 
-        private IEnumerable<Tuple<string, string>> Filter(IEnumerable<Tuple<string, string>> sdkMessages)
+        private IEnumerable<(string Name, string Message)> Filter(IEnumerable<(string Name, string Message)> sdkMessages)
         {
             if (_cfg.SdkMessageFilters != null && _cfg.SdkMessageFilters.Any())
             {

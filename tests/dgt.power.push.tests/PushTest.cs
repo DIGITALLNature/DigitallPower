@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.dataverse;
 using dgt.power.push.Base;
 using dgt.power.push.Logic;
 using dgt.power.push.tests.Base;
@@ -27,6 +28,12 @@ public class PushTest : PushTestsBase<PushCommand>
         return GetBuilder()
             .WithServiceCollection(serviceCollection)
             .WithFakeMessageExecutor<AddSolutionComponentRequest>(new AddSolutionComponentExecutor())
+            .WithData(new SolutionComponentDefinition
+            {
+                Id = Guid.NewGuid(),
+                SolutionComponentType = 10119,
+                PrimaryEntityName = PluginPackage.EntityLogicalName,
+            })
             .Build();
     }
 

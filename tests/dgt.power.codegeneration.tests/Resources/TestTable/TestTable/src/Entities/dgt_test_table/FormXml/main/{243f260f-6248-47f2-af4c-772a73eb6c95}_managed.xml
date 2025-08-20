@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{243f260f-6248-47f2-af4c-772a73eb6c95}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form headerdensity="HighWithControls">
+      <tabs>
+        <tab verticallayout="true" id="{381eabba-5e55-425d-a69a-bd052e952938}" IsUserDefined="1">
+          <labels>
+            <label description="Allgemein" languagecode="1031" />
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{de07a47a-5b49-4f20-9c4e-9db58fc26ea5}">
+                  <labels>
+                    <label description="Allgemein" languagecode="1031" />
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{f552c76e-bb01-4653-96a4-6910db480144}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_primaryname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="dgt_primaryname" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{89409ef2-3c7f-4b76-9c10-615868791acf}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{62416bdf-62fa-4ab0-bc0f-a4417342acaa}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_area" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="dgt_text_area" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{2e6c0ec8-0bf5-42d3-ba8f-5ca47c7b812c}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_email" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="dgt_text_email" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{31842d88-6bd8-43b4-96fa-3dc482bf8359}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_textphonenumber" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="dgt_textphonenumber" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{87948c43-4ac2-4bfa-87a6-17a266f8ef8d}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_ticker_symbol" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="dgt_text_ticker_symbol" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{25bf2e58-1160-437e-84fc-f0d6389ddfdd}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_url" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="dgt_text_url" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{ba081152-6143-4e26-956f-83dc2004f265}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_multiline" classid="{e0dece4b-6fc8-4a8f-a065-082708572369}" datafieldname="dgt_text_multiline" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0d5692b1-06df-44fa-b038-447b14c09835}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_whole" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="dgt_number_whole" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{9fb50819-ccf1-4080-8a50-c7a839c7f405}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_decimal" classid="{c3efe0c3-0ec6-42be-8349-cbd9079dfd8e}" datafieldname="dgt_number_decimal" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c4313bc5-f569-404b-9317-ab4d9e7d1832}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_float" classid="{0d2c745a-e5a8-4c8f-ba63-c6d3bb604660}" datafieldname="dgt_number_float" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{79aa17e4-4375-40b5-aa0d-5611a4a04f9c}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_language_code" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="dgt_number_language_code" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{a3ba401d-0acd-4b0d-a216-7bc48afd0877}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_duration" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="dgt_number_duration" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{563ed000-fcb1-4e3e-ad86-8bd60d565ff0}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_number_time_zone" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="dgt_number_time_zone" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{8a130125-ad67-419f-a830-92bc6db98d9e}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_date_and_time" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="dgt_date_and_time" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0515c9cf-c62f-4013-8dad-f252340ff17b}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_date_only" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="dgt_date_only" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{79f687a9-e8e8-4f46-a5ae-8d05dc54e8ab}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_lookup" classid="{270bd3db-d9af-4782-9025-509e298dec0a}" datafieldname="dgt_lookup" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c8aad622-3bc9-4d30-b049-6025ca65d131}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_choice_single" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="dgt_choice_single" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{d85b5f53-b11f-427e-b974-48f014ad51c1}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_choice_multiple" classid="{4aa28ab7-9c13-4f57-a73d-ad894d048b5f}" datafieldname="dgt_choice_multiple" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f80d2bf8-89e7-421d-839d-6d78baedce7f}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_choice_bool" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="dgt_choice_bool" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0fc88fa7-56a3-4a48-bab6-255de5cff831}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_currency" classid="{533b9e00-756b-4312-95a0-dc888637ac78}" datafieldname="dgt_currency" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{25af61da-2833-4eac-9136-5bdf5a7ef857}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_choice_single_global" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="dgt_choice_single_global" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{92d09249-e4dc-49f7-870a-40eef906ece8}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_choice_multiple_global" classid="{4AA28AB7-9C13-4F57-A73D-AD894D048B5F}" datafieldname="dgt_choice_multiple_global" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1d3efe6f-4db1-4789-a524-3ab152cb764d}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_rich" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="dgt_text_rich" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e5e0a61c-ef0b-463d-8d3b-4981d4ce99fd}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_text_rich_multiline" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="dgt_text_rich_multiline" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{72e1fbd8-f112-49e7-8a11-caa2b742f4f9}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_lookup_customer" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="dgt_lookup_customer" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{487185d6-2fc4-4137-9015-2acb36f53cad}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_autonumber" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="dgt_autonumber" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{97397e01-c7cc-4456-885c-cb91eef015d5}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_file" classid="{0A7FF475-B016-4687-9CE5-042BFDBD6519}" datafieldname="dgt_file" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7ab8b677-9b34-40e5-b4ef-0648b1cc6359}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_file_image" classid="{7E548B0D-209C-477B-9DCD-F0F44472381D}" datafieldname="dgt_file_image" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f64d365b-63a8-4128-9c14-2f7c15ff4de1}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="dgt_file_image_partial" classid="{7E548B0D-209C-477B-9DCD-F0F44472381D}" datafieldname="dgt_file_image_partial" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+      <header id="{4da879a5-ceda-400a-9d19-d4daabe651df}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{545752db-70b8-4925-a312-6818c6bd14cc}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{b7356844-895b-4d03-ba24-4bc775549937}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{c52670f9-540b-45f9-b98e-350da2206021}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{bea9f138-a73a-4b56-b26f-cd40aa846f3f}" locklevel="0" colspan="1" rowspan="1">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+              <control id="header_statuscode" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="statuscode" disabled="false" />
+            </cell>
+          </row>
+        </rows>
+      </header>
+      <footer id="{549fe69d-2ce6-4253-a418-386028bf4b94}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{ba860dfe-8cdd-4609-983e-91c54ce1452d}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{d749875e-4af8-45f6-a411-4f0bc4bfefd0}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{fd2b39ac-1dd4-4a03-9e3a-ddea0f55fdbc}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+          </row>
+        </rows>
+      </footer>
+      <DisplayConditions Order="0" FallbackForm="true">
+        <Everyone />
+      </DisplayConditions>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EntityRelationship Name="business_unit_dgt_test_table" />
+  <EntityRelationship Name="dgt_account_dgt_test_table_662" />
+  <EntityRelationship Name="dgt_contact_dgt_test_table_662" />
+  <EntityRelationship Name="dgt_test_table_lookup_dgt_test_table" />
+  <EntityRelationship Name="FileAttachment_dgt_test_table_dgt_file" />
+  <EntityRelationship Name="lk_dgt_test_table_createdby" />
+  <EntityRelationship Name="lk_dgt_test_table_modifiedby" />
+  <EntityRelationship Name="owner_dgt_test_table" />
+  <EntityRelationship Name="team_dgt_test_table" />
+  <EntityRelationship Name="TransactionCurrency_dgt_test_table" />
+  <EntityRelationship Name="user_dgt_test_table" />
+</EntityRelationships>

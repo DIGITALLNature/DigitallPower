@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{89c64006-1d71-4725-833a-ed15008fabad}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="dgt_primaryname" select="1" icon="1" preview="1">
+        <row name="result" id="dgt_test_tableid">
+          <cell name="dgt_primaryname" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="dgt_test_table">
+          <attribute name="dgt_test_tableid" />
+          <attribute name="dgt_primaryname" />
+          <attribute name="createdon" />
+          <order attribute="dgt_primaryname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="1" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Inactive TestTables" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

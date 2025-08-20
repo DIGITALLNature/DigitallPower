@@ -1,3 +1,58 @@
+# [2.1.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.5...v2.1.0-beta.6) (2025-07-02)
+
+
+### Features
+
+* add msal example ([fb594d7](https://github.com/DIGITALLNature/DigitallPower/commit/fb594d7140b684fe12668251309e4e350c4b1645))
+
+# [2.1.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.4...v2.1.0-beta.5) (2025-07-02)
+
+
+### Features
+
+* add semi global profile parameter to run commands against specific profile ([#102](https://github.com/DIGITALLNature/DigitallPower/issues/102)) ([e368247](https://github.com/DIGITALLNature/DigitallPower/commit/e3682472e5878ca7047252ef26e8740c6d92b77a)), closes [#103](https://github.com/DIGITALLNature/DigitallPower/issues/103)
+
+# [2.1.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.3...v2.1.0-beta.4) (2025-05-26)
+
+
+### Bug Fixes
+
+* link plugin to custom api ([#100](https://github.com/DIGITALLNature/DigitallPower/issues/100)) ([56a1d2a](https://github.com/DIGITALLNature/DigitallPower/commit/56a1d2abb007999af0305a964a0119b89bcb7e4b))
+
+# [2.1.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2025-03-20)
+
+
+### Features
+
+* lighter typescript model generation ([#79](https://github.com/DIGITALLNature/DigitallPower/issues/79)) ([978678b](https://github.com/DIGITALLNature/DigitallPower/commit/978678bea4b2babfdbaef1137f2aae40d96d0c07))
+
+# [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-27)
+
+
+### Bug Fixes
+
+* update dotnet version mentioned ([af0dd1c](https://github.com/DIGITALLNature/DigitallPower/commit/af0dd1c8c9e8b46a7a180b16890a565424fdd3c4))
+* use home account identifier for msal token ([b05ac7c](https://github.com/DIGITALLNature/DigitallPower/commit/b05ac7c7d9c2fab555dcae1205c9df213dae8479))
+
+# [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* use home account identifier for msal token ([b05ac7c](https://github.com/DIGITALLNature/DigitallPower/commit/b05ac7c7d9c2fab555dcae1205c9df213dae8479))
+
+# [2.1.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.2...v2.1.0-beta.1) (2025-01-08)
+
+
+### Bug Fixes
+
+* add necessary test data ([3e4b373](https://github.com/DIGITALLNature/DigitallPower/commit/3e4b37396f08ac335ad5f7a479b326afe5aa7504))
+
+
+### Features
+
+* treat macro as workflow with normal name ([6e6a8db](https://github.com/DIGITALLNature/DigitallPower/commit/6e6a8db8dc1952747f5092ab479f303050412876))
+
 ## [2.0.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.1...v2.0.1-beta.2) (2024-06-20)
 
 

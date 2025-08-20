@@ -57,7 +57,7 @@ internal class TokenConnector : IConnector
                 .WithClaims(ex.Claims)
                 .ExecuteAsync();
 
-            _identity.Username = interactive.Account.Username;
+            _identity.Username = interactive.Account.HomeAccountId.Identifier;
             _account = interactive.Account;
             _profileManager.Save();
 

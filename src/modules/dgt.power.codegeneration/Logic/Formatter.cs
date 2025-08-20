@@ -13,16 +13,10 @@ public static class Formatter
     public static readonly Regex NewlineRegex = new (@"\r\n|\r|\n", RegexOptions.Compiled);
 
     // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
-    public static string CamelCase(string? phrase)
-    {
-        return ConvertCaseString(phrase, Case.CamelCase);
-    }
+    public static string CamelCase(string? phrase) => ConvertCaseString(phrase, Case.CamelCase);
 
     // TODO: This method is not really pascal casing. It is actually camel casing.
-    public static string PascalCase(string? phrase)
-    {
-        return ConvertCaseString(phrase, Case.PascalCase);
-    }
+    public static string PascalCase(string? phrase) => ConvertCaseString(phrase, Case.PascalCase);
 
     private static string ConvertCaseString(string? phrase, Case cases)
     {
@@ -128,4 +122,13 @@ public static class Formatter
     }
 
     #endregion
+}
+
+public static class FormatterExtensions
+{
+    public static string ToCamelCase(this string? phrase) => Formatter.CamelCase(phrase);
+    public static string ToPascalCase(this string? phrase) => Formatter.PascalCase(phrase);
+    public static string Sanitize(this string? value, bool allowWhitespace = false, bool allowSafeStringChars = false,
+        bool allowFirstNumber = false)
+        => Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
 }

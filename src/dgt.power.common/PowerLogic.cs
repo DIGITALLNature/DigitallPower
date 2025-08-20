@@ -26,15 +26,7 @@ public abstract class PowerLogic<TConfig>(
 
     private bool Execute(TConfig args)
     {
-        try
-        {
-            return Invoke(args);
-        }
-        catch (Exception e)
-        {
-            Tracer.Exception(e, TraceEventType.Error);
-            return false;
-        }
+        return Invoke(args);
     }
 
     protected abstract bool Invoke(TConfig args);
