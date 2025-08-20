@@ -48,6 +48,7 @@ var configuration = new ConfigurationBuilder()
     .AddInMemoryCollection(defaultConfiguration)
     .AddJsonFile("dgtp.json", optional: true)
     .AddEnvironmentVariables("dgtp:")
+    .AddCommandLine(args)
     .Build();
 
 var registrations = new ServiceCollection();
@@ -92,7 +93,8 @@ app.Configure(config =>
     {
         profile.SetDescription("Handles Authentication");
         profile.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
-        profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile");
+        profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
+            .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
         profile.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
         profile.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
         profile.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
@@ -153,10 +155,10 @@ app.Configure(config =>
                 .WithExample("maintenance", "workflowstate", "--config", "./config.json");
             maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
                 .WithDescription("Removes solution components that are already existing")
-                .WithExample("maintenance","removeredundantcomponents","deploysolution","tmpsolution","--dryrun");
+                .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
             maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                 .WithDescription("Add Messagefiltering for PowerFx Plugins")
-                .WithExample("maintenance","filterfxplugins","--config", "./config.json");
+                .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
             maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
                 .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
                 .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
@@ -210,7 +212,6 @@ app.Configure(config =>
 
     config.Settings.ApplicationName = "dgtp";
 
-#if RELEASE
     config.SetExceptionHandler((exception, _) =>
     {
         var errorMessage = exception.Message;
@@ -220,12 +221,16 @@ app.Configure(config =>
             errorMessage = innerException!.Message;
         }
 
+#if RELEASE
         AnsiConsole.MarkupLineInterpolated($"[red]{errorMessage}[/]");
+#elif DEBUG
+        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
+#endif
+
         return (int)ExitCode.Error;
     });
-#endif
+
 #if DEBUG
-    config.PropagateExceptions();
     config.ValidateExamples();
 #endif
 });

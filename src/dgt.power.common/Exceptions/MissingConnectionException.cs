@@ -12,6 +12,10 @@ public class MissingConnectionException : AbstractPowerException
     {
     }
 
+    public MissingConnectionException(string message) : base(message)
+    {
+    }
+
     public MissingConnectionException(Exception innerException) : base(ErrorMessage, innerException)
     {
     }

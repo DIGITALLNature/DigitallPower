@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.24102.182" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.24102.182" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.24103.00216">
+  <SolutionManifest>
+    <UniqueName>TestTable</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="TestTable" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Test table containing a variety of different columns" languagecode="1033" />
+    </Descriptions>
+    <Version>1.0.0.0</Version>
+    <Managed>2</Managed>
+    <Publisher>
+      <UniqueName>digitall</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="DIGITALL" languagecode="1031" />
+        <LocalizedName description="DIGITALL" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description description="We are DIGITALL – a digital leader born from two technology and business driven consulting companies with more than 20 years of success and experiences on the global market. By joining forces, we deliver the next generation Digital Transformation &amp; Digital Cloud Experience to enterprises. We digitalize and protect customers, employees and data. Our customers rely on us to transform their core business processes in a secure way in the digital world. And we achieve this by leveraging best-in-class partner technologies and own innovative solutions, implemented by experienced teams. In this way, we empower our customers to be among the leaders in their industry and scale globally.  visit us on: https://digitall.com follow us on: https://www.linkedin.com/company/digitall-gmbh" languagecode="1031" />
+        <Description description="We are DIGITALL – a digital leader born from two technology and business driven consulting companies with more than 20 years of success and experiences on the global market. By joining forces, we deliver the next generation Digital Transformation &amp; Digital Cloud Experience to enterprises.&#xA;We digitalize and protect customers, employees and data. Our customers rely on us to transform their core business processes in a secure way in the digital world.&#xA;And we achieve this by leveraging best-in-class partner technologies and own innovative solutions, implemented by experienced teams. In this way, we empower our customers to be among the leaders in their industry and scale globally.&#xA;&#xA;visit us on: https://digitall.com&#xA;follow us on: https://www.linkedin.com/company/digitall-gmbh" languagecode="1033" />
+      </Descriptions>
+      <EMailAddress>info@digitall.com</EMailAddress>
+      <SupportingWebsiteUrl>https://digitall.com</SupportingWebsiteUrl>
+      <CustomizationPrefix>dgt</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>28351</CustomizationOptionValuePrefix>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City>Karlsruhe</City>
+          <County xsi:nil="true"></County>
+          <Country>Germany</Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1>Zur Giesserei 19-27B</Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode>76227</PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1>+49 721 46 476-100</Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+        <Address>
+          <AddressNumber>2</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+      </Addresses>
+    </Publisher>
+    <RootComponents>
+      <RootComponent type="1" schemaName="dgt_test_table" behavior="0" />
+      <RootComponent type="431" schemaName="dgt_test_table dgt_file_image" behavior="0" />
+      <RootComponent type="431" schemaName="dgt_test_table dgt_file_image_partial" behavior="0" />
+      <RootComponent type="432" schemaName="dgt_test_table" behavior="0" />
+      <RootComponent type="9" schemaName="dgt_choice_global" behavior="0" />
+    </RootComponents>
+    <MissingDependencies />
+  </SolutionManifest>
+</ImportExportXml>

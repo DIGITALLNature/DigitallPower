@@ -17,9 +17,16 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     {
         var xrmConfiguration = configuration.GetSection("xrm").GetChildren().ToList();
 
+        var profile = configuration.GetValue<string>("profile");
+
         if (xrmConfiguration.Count != 0)
         {
             return ConnectWithConfiguration();
+        }
+
+        if (!string.IsNullOrEmpty(profile))
+        {
+            return ConnectWithProfileName(profile);
         }
 
         if (profileManager.CurrentIdentity != null)
@@ -54,6 +61,18 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         {
             throw new FailedConnectionException("xrm:connection", e);
         }
+    }
+
+    public IOrganizationService ConnectWithProfileName(string profileName)
+    {
+        var identities = profileManager.LoadIdentities();
+        if (!identities.Contains(profileName.ToUpperInvariant()))
+        {
+            throw new MissingConnectionException($"Profile {profileName} not found!");
+        }
+
+        identities.SetCurrent(profileName.ToUpperInvariant());
+        return ConnectWithProfile(profileManager.CurrentIdentity!);
     }
 
     private IOrganizationService ConnectWithProfile(Identity identity)
