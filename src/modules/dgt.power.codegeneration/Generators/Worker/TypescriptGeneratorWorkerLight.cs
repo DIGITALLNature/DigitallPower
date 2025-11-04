@@ -29,6 +29,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
         _templateOptions.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
         _templateOptions.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
+        _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
@@ -43,6 +44,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.MemberAccessStrategy.Register<TabDetail>();
         _templateOptions.MemberAccessStrategy.Register<TabDetailsViewModel>();
         _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
+        _templateOptions.MemberAccessStrategy.Register<SectionDetaisViewModel>();
     }
 
     private static IFluidTemplate InitializeLiquidTemplate(string templateName)
@@ -136,7 +138,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
                 var viewModel = new FormViewModel
                 {
-                    FormName = formname,
+                    Name = formname,
                     FormDetail = formDetail.Value,
                     SchemaName = metadata.SchemaName,
                     Attributes = metadata.Attributes

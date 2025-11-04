@@ -11,7 +11,8 @@ public record FormViewModel
     public required string SchemaName { get; init; }
 
     public required List<AttributeMetadata> Attributes { get; init; }
-    public required string FormName { get; init; }
+
+    public required string Name { get; init; }
     public required FormDetail FormDetail { get; init; }
 
 }

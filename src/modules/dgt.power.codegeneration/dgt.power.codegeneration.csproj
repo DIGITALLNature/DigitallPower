@@ -96,10 +96,6 @@
       <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
     </Content>
     <None Remove="Templates\tsl\EntityLightFormTemplate.tt" />
-    <Content Include="Templates\tsl\EntityLightFormTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>EntityLightFormTemplate.cs</LastGenOutput>
-    </Content>
     <Content Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
@@ -202,11 +198,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>D365WebApiTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\tsl\EntityLightFormTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EntityLightFormTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

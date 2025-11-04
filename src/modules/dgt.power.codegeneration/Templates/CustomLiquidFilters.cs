@@ -2,8 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Fluid.Values;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates;
 
@@ -40,5 +42,16 @@ public static class CustomLiquidFilters
 
         s_usedTokens[contextId][scope].Add(value);
         return new StringValue(value);
+    }
+
+    public static ValueTask<FluidValue> Controltype(FluidValue input, FilterArguments arguments, TemplateContext context)
+    {
+        var contextId = context.GetHashCode();
+        var scope = arguments.At(0).ToObjectValue();
+        var value = input.ToStringValue();
+
+        var attr = new List<AttributeMetadataViewModel>(((object[])scope).Cast<AttributeMetadataViewModel>());
+
+        return new StringValue(attr.Single(s => s.LogicalName == value).DefinitelyTypedControlType);
     }
 }
