@@ -35,7 +35,7 @@ public class CodeGenerationCommandTests
             new CodeGenerationVerb
             {
                 Config = "Resources/CodeGenerationCommand/config.json"
-            }
+            },CancellationToken.None
         ).Should().Be(0);
 
     [Fact]
@@ -44,6 +44,6 @@ public class CodeGenerationCommandTests
             new CodeGenerationVerb
             {
                 Config = "missing.json"
-            }
+            },CancellationToken.None
         ).Should().Be(-1);
 }

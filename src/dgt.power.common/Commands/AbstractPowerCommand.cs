@@ -14,7 +14,7 @@ public abstract class AbstractPowerCommand<TCommandSettings> : Command<TCommandS
 
     protected CommandContext? CommandContext { get; private set; }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] TCommandSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] TCommandSettings settings, CancellationToken cancellationToken)
     {
         CommandContext = context;
 

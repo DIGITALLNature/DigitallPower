@@ -37,7 +37,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
         _metadataService = metadataService;
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb)
+    public override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
         if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
@@ -54,17 +54,17 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 
                     if (!config.SuppressDotNet)
                     {
-                        _dotNetCommand.Execute(context, verb);
+                        _dotNetCommand.Execute(context, verb, cancellationToken);
                     }
 
                     if (!config.SuppressTypeScript)
                     {
-                        _typescriptCommand.Execute(context, verb);
+                        _typescriptCommand.Execute(context, verb, cancellationToken);
                     }
 
                     if (!config.SuppressMetaData)
                     {
-                        _metadataCommand.Execute(context, verb);
+                        _metadataCommand.Execute(context, verb, cancellationToken);
                     }
                 }
             );

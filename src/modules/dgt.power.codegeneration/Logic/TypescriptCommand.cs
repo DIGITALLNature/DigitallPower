@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.common;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.Logic;
 
