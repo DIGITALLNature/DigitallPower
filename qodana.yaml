@@ -13,7 +13,6 @@ profile:
 include:
   - name: CheckDependencyLicenses
 
-
 #Enable inspections
 #include:
 #  - name: <SomeEnabledInspectionId>
