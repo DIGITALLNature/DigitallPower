@@ -83,7 +83,7 @@ public sealed class ActiveLayerAnalyze : BaseAnalyze
                         if (first.MsdynSolutionname == "Active")
                         {
                             var componentName = GetComponentName(component, entities, first);
-                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName,
+                            table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName.EscapeMarkup(),
                                 uniqueName);
 
                             resultTable.Add(new ActiveLayerLine

@@ -1,3 +1,10 @@
+# [2.1.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.6...v2.1.0-beta.7) (2025-08-27)
+
+
+### Bug Fixes
+
+* escape markup for component name ([#105](https://github.com/DIGITALLNature/DigitallPower/issues/105)) ([4d9bf34](https://github.com/DIGITALLNature/DigitallPower/commit/4d9bf341ada770a1e031a740327468f48c97a340))
+
 # [2.1.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.5...v2.1.0-beta.6) (2025-07-02)
 
 
