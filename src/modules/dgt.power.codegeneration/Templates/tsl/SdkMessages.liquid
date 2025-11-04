@@ -1,0 +1,9 @@
+/* eslint-disable */
+
+declare namespace XrmMetadata {
+    const enum SdkMessageNames {
+    {%- for sdkMessage in SdkMessages  %}
+        {{ sdkMessage.Name  }} = {{ sdkMessage.Message }},
+    {%- endfor %}
+    }
+}

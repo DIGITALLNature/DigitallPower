@@ -12,7 +12,7 @@ public class FormDetail
         Grids = new HashSet<string>();
     }
 
-    public Dictionary<string, TabDetail> TabDetails { get; } = [];
+    public List<KeyValuePair<string, TabDetail>> TabDetails { get; } = [];
     public Dictionary<string, List<string>> Tabs { get; }
     public HashSet<string> Fields { get; }
     public HashSet<string> Grids { get; }
@@ -20,7 +20,7 @@ public class FormDetail
 
 public class TabDetail
 {
-    public Dictionary<string, SectionDetail> Sections { get; } = [];
+    public List<KeyValuePair<string, SectionDetail>> Sections { get; } = [];
 }
 
 public class SectionDetail

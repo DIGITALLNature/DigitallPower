@@ -6,7 +6,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using Queue = dgt.power.dataverse.Queue;
@@ -86,7 +86,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
                 }
             }
         };
-        
+
         teamRuleItem.AssignObjectId = null;
         queueRuleItem.RoutedQueueId = null;
         userRuleItem.AssignObjectId = null;
@@ -119,7 +119,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
         var teamRuleItem = data.teamRuleItem;
         var queueRuleItem = data.queueRuleItem;
         var userRuleItem = data.userRuleItem;
-        
+
         var context = GetBuilder()
             .WithData(routingRule)
             .WithData(queueRuleItem)
@@ -169,7 +169,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
         var updatedRule = context.GetById<RoutingRule>(routingRule.Id);
         updatedRule.OwnerId.Id.Should().Be(routingRule.OwnerId.Id);
     }
-    
+
     [Fact]
     public void ShouldDeactivateActiveRoutingRule()
     {

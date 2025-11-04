@@ -6,7 +6,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;

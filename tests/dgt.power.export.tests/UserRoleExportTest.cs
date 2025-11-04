@@ -8,7 +8,7 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 

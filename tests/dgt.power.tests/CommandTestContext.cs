@@ -36,7 +36,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 
     public bool Execute(TCommandSettings settings)
     {
-        return _command.Execute(GetCommandContext(), settings).GetAwaiter().GetResult() == 0;
+        return _command.ExecuteAsync(GetCommandContext(), settings,CancellationToken.None).GetAwaiter().GetResult() == 0;
     }
 
     public ValidationResult Validate(TCommandSettings settings) => _command.Validate(GetCommandContext(), settings);

@@ -9,7 +9,7 @@ using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Extensions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Xunit.Abstractions;
@@ -142,7 +142,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         postTemplate.ModifiedOn.Should().Be(existingTemplate.ModifiedOn);
     }
 
-    
+
     [Fact]
     public void ShouldSkipUpdateIfUnchanged()
     {
@@ -198,7 +198,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         _testEntityMetadata.SetSealedPropertyValue(nameof(_testEntityMetadata.ObjectTypeCode), null);
         var context = GetBuilder()
             .Build();
-        
+
         var teamTemplateConfig = new TeamTemplate
         {
             Entity = TestEntity.EntityLogicalName,

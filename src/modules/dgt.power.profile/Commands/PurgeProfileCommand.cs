@@ -17,7 +17,7 @@ public class PurgeProfileCommand : Command<ProfileSettings>
 
     public PurgeProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings, CancellationToken cancellationToken)
     {
         _profileManager.Purge();
 

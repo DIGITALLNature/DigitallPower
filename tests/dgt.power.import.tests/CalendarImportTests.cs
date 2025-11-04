@@ -7,7 +7,7 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using Calendar = dgt.power.dataverse.Calendar;
@@ -84,7 +84,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
             .WithData(existingInnerCalendar)
             .WithData(existingCalendarRules)
             .Build();
-        
+
         context.Execute(new ImportVerb
             {
                 FileName = "update-calendar.json",
@@ -94,10 +94,10 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
 
         var updatedCalendars = context.GetSingle<Calendar>(c => c.Id == existingCalendar.Id);
         updatedCalendars.Name.Should().Be(existingCalendar.Name);
-        
+
         var calendarRules = context.Get<CalendarRule>(x => x.CalendarId.Id == calendarToBeUpdated.CalendarId);
         calendarRules.Should().HaveCount(calendarToBeUpdated.Rules.Count);
-        
+
         var innerCalendar = context.GetById<Calendar>(innerCalendarRule.InnerCalendar.CalendarId);
         innerCalendar.Name.Should().Be(innerCalendarRule.InnerCalendar.Name);
     }

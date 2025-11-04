@@ -8,7 +8,7 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit.Abstractions;
 #pragma warning disable CS8601
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -32,7 +32,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
                 IntersectEntity = SystemUserRoles.EntityLogicalName,
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany
             });
-    
+
     [Fact]
     public void ShouldFailOnWrongConfiguration() =>
         GetContext().Execute(new ImportVerb
@@ -204,7 +204,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
         context.Get<SystemUserRoles>().Should()
             .ContainSingle(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id);
     }
-    
+
     [Fact]
     public void ShouldUpdateBusinessUnitOfUserToSpecified()
     {

@@ -7,7 +7,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
@@ -117,7 +117,7 @@ public class QueueImportTests : ImportTestBase<QueueImport>
             .WithData(owner)
             .WithData(existingQueue)
             .Build();
-        
+
         var queueToBeUpdated = GetExistingConfig(existingQueue);
         queueToBeUpdated.Name += " Updated";
         queueToBeUpdated.ViewType = Queue.QueueViewType.Private;

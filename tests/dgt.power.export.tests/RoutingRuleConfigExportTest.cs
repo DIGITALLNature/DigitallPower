@@ -6,7 +6,7 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Xunit.Abstractions;
 using Queue = dgt.power.dataverse.Queue;

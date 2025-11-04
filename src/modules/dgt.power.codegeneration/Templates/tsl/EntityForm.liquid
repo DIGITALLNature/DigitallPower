@@ -1,0 +1,58 @@
+{%- assign FormName = Name  | sanitize | camelcase -%}
+/* eslint-disable */
+
+declare namespace Xrm.Events {
+    export interface EventContext {
+        getFormContext<{{ FormName }}FormContext>(): {{ FormName }}FormContext;
+    }
+}
+
+declare namespace XrmTable.{{ SchemaName | camelcase }} {
+    export interface {{ FormName }}FormContext extends Xrm.FormContext {
+        getAttribute():  Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
+        getControl(): Xrm.Controls.Control[];
+    {% for attr in Attributes  %}
+        getAttribute(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedAttributeType  }};
+        getControl(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedControlType  }};
+    {% endfor %}
+        ui: {{ FormName }}Ui;
+    }
+
+    export interface {{ FormName  }}Ui extends Xrm.Ui {
+        tabs: {{ FormName }}Tabs;
+    }
+
+    {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.Name  | sanitize | camelcase | unique: "T" -%}
+    export interface {{ FormName }}Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
+        sections: {{ FormName }}{{ TabName }}Sections;
+
+        get(itemName: "{{ tab.Name }}"): {{ FormName }}{{ TabName }};
+        get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
+    }
+
+    export interface {{ FormName }}{{ TabName }} extends Xrm.Controls.Tab {
+        sections: {{ FormName }}{{ TabName }}Sections;
+    }
+        {% for section in tab.Detail.Sections  %}{%- assign SectionName = section.Name  | sanitize | camelcase %}
+    export interface {{ FormName }}{{ TabName }}{{ SectionName }}Section extends Xrm.Controls.Section {
+        controls: {{ FormName }}{{ TabName }}{{ SectionName }}ControlCollection;
+    }
+
+    export interface {{ FormName }}{{ TabName }}{{ SectionName }}ControlCollection extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
+        {%- for control in section.SectionDetail.Controls  %}
+        get(name: "{{ control }}"): {{ control | controltype: Attributes }};
+        {%- endfor %}
+        get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
+    }
+        {% endfor %}
+
+                        export interface EventEmbeddedMainTab2Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
+                            get(itemName: "tab_2_section_1"): EventEmbeddedMainTab2Tab2Section1Section;
+                            get(itemName: "tab_2_section_2"): EventEmbeddedMainTab2Tab2Section2Section;
+                            get(itemName: "tab_2_section_4"): EventEmbeddedMainTab2Tab2Section4Section;
+                            get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Section>): Xrm.Controls.Section[];
+
+                                }
+
+    {% endfor %}
+}

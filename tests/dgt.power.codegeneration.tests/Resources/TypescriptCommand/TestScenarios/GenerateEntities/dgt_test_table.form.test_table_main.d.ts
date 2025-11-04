@@ -8,9 +8,9 @@ declare namespace Xrm.Events {
 
 declare namespace XrmTable.DgtTestTable {
     export interface TestTableMainFormContext extends Xrm.FormContext {
-        getAttribute(): Xrm.Collection.ItemCollection<Attributes.Attribute> | null;
+        getAttribute(): Xrm.Collection.ItemCollection<Xrm.Attributes.Attribute> | null;
 
-        getControl(): Xrm.Collection.ItemCollection<Controls.Control> | null;
+        getControl(): Xrm.Collection.ItemCollection<Xrm.Controls.Control> | null;
 
         /// <summary>
         /// Reason for the status of the TestTable

@@ -7,7 +7,7 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 using Spectre.Console.Cli;
 using Xunit.Abstractions;
 
@@ -35,7 +35,7 @@ public class CodeGenerationCommandTests
             new CodeGenerationVerb
             {
                 Config = "Resources/CodeGenerationCommand/config.json"
-            }
+            },CancellationToken.None
         ).Should().Be(0);
 
     [Fact]
@@ -44,6 +44,6 @@ public class CodeGenerationCommandTests
             new CodeGenerationVerb
             {
                 Config = "missing.json"
-            }
+            },CancellationToken.None
         ).Should().Be(-1);
 }

@@ -15,7 +15,7 @@ public class DeleteProfileCommand : Command<NamedProfileSettings>
 
     public DeleteProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] NamedProfileSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] NamedProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
