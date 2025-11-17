@@ -1,3 +1,10 @@
+# [2.1.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.8...v2.1.0-beta.9) (2025-11-17)
+
+
+### Features
+
+* **tsl:** add Typescript Light DTO generation for Entites ([3c66950](https://github.com/DIGITALLNature/DigitallPower/commit/3c6695093282dd5f591bfa23df978b523a1efa16))
+
 # [2.1.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.7...v2.1.0-beta.8) (2025-11-04)
 
 
