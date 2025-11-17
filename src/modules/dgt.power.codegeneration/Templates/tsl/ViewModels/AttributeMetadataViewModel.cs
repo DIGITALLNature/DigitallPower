@@ -18,32 +18,38 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
                 DefinitelyType = "Optionset";
+                NativeType = "number";
                 break;
             case AttributeTypeCode.DateTime:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.DateControl";
                 DefinitelyType = GetDateTimeType(attributeMetadata as DateTimeAttributeMetadata);
+                NativeType = "string";
                 break;
             case AttributeTypeCode.Decimal:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
                 DefinitelyType = "Decimal";
+                NativeType = "number";
                 break;
             case AttributeTypeCode.Double:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
                 DefinitelyType = "Double";
+                NativeType = "number";
                 break;
             case AttributeTypeCode.Money:
             case AttributeTypeCode.Integer:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
                 DefinitelyType = "Integer";
+                NativeType = "number";
                 break;
             case AttributeTypeCode.BigInt:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
                 DefinitelyType = "BigInt";
+                NativeType = "number";
                 break;
             case AttributeTypeCode.Customer:
             case AttributeTypeCode.PartyList:
@@ -52,6 +58,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
                 DefinitelyType = "Lookup";
+                NativeType = "object";
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
@@ -59,11 +66,13 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.StringControl";
                 DefinitelyType = "String";
+                NativeType = "string";
                 break;
             case AttributeTypeCode.Uniqueidentifier:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
                 DefinitelyTypedControlType = "Xrm.Controls.Control";
                 DefinitelyType = "Guid";
+                NativeType = "string";
                 break;
             case AttributeTypeCode.State:
             case AttributeTypeCode.Status:
@@ -71,6 +80,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.OptionSetControl";
                 DefinitelyType = "OptionSet";
+                NativeType = "number";
                 break;
             default:
                 if (attributeMetadata is MultiSelectPicklistAttributeMetadata)
@@ -84,6 +94,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
                 DefinitelyTypedControlType = "Xrm.Controls.Control";
                 DefinitelyType = "Attribute";
+                NativeType = "object";
 
                 break;
         }
@@ -93,6 +104,8 @@ public record AttributeMetadataViewModel
             Options = picklistAttributeMetadata.OptionSet.Options;
         }
     }
+
+    public string NativeType { get; set; }
 
     public OptionMetadataCollection Options { get; set; }
 

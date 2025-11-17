@@ -16,6 +16,12 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
     {% endfor -%}
     }
 
+    export interface DTO {
+    {%- for attr in Attributes  %}
+        {{ attr.LogicalName }}? =  "{{ attr.NativeType }}",
+    {%- endfor %}
+    }
+
     export const enum AttributeTypes {
     {%- for attr in Attributes  %}
         {{ attr.SchemaName | sanitize | camelcase | unique: "M"  }} =  "{{ attr.DefinitelyType }}",
