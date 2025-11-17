@@ -1,3 +1,10 @@
+# [2.1.0-beta.10](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.9...v2.1.0-beta.10) (2025-11-17)
+
+
+### Bug Fixes
+
+* incompatible update of Microsoft.AspNetCore.DataProtection ([4c75604](https://github.com/DIGITALLNature/DigitallPower/commit/4c75604c6275951ea809a894408974f1e1cc5462))
+
 # [2.1.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.8...v2.1.0-beta.9) (2025-11-17)
 
 
