@@ -1,3 +1,10 @@
+# [2.1.0-beta.12](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.11...v2.1.0-beta.12) (2025-11-18)
+
+
+### Bug Fixes
+
+* dto properties formatting ([a664ded](https://github.com/DIGITALLNature/DigitallPower/commit/a664ded55a92cf2d9cfbd873b0064a2264a3d163))
+
 # [2.1.0-beta.11](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.10...v2.1.0-beta.11) (2025-11-18)
 
 
