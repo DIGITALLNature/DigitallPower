@@ -23,7 +23,7 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         {% if attr.DefinitelyType == "Lookup" %}
             _{{ attr.LogicalName }}_value?:  string;
         {% endif %}
-        {{ attr.LogicalName }}?: {{ attr.NativeType }}
+        {{ attr.LogicalName }}?: {{ attr.NativeType }};
     {%- endfor %}
     }
 
