@@ -16,9 +16,14 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
     {% endfor -%}
     }
 
+    export const EntityLogicalName = "{{ SchemaName }}";
+
     export interface DTO {
     {%- for attr in Attributes  %}
-        {{ attr.LogicalName }}? =  "{{ attr.NativeType }}",
+        {% if attr.DefinitelyType == "Lookup" %}
+            _{{ attr.LogicalName }}_value?:  string;
+        {% endif %}
+        {{ attr.LogicalName }}?: {{ attr.NativeType }};
     {%- endfor %}
     }
 

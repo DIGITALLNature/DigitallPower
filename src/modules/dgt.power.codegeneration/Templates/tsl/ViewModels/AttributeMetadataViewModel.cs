@@ -58,7 +58,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
                 DefinitelyType = "Lookup";
-                NativeType = "object";
+                NativeType = "any";
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
@@ -94,7 +94,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
                 DefinitelyTypedControlType = "Xrm.Controls.Control";
                 DefinitelyType = "Attribute";
-                NativeType = "object";
+                NativeType = "any";
 
                 break;
         }
