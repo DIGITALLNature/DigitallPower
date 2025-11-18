@@ -1,3 +1,10 @@
+# [2.1.0-beta.11](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.10...v2.1.0-beta.11) (2025-11-18)
+
+
+### Features
+
+* **tsl:** enhance generated types ([#107](https://github.com/DIGITALLNature/DigitallPower/issues/107)) ([8cdd380](https://github.com/DIGITALLNature/DigitallPower/commit/8cdd38093f8181f0b8466cd74640c5b06b26c2ce))
+
 # [2.1.0-beta.10](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.9...v2.1.0-beta.10) (2025-11-17)
 
 
