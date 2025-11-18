@@ -1,3 +1,10 @@
+# [2.1.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.12...v2.1.0-beta.13) (2025-11-18)
+
+
+### Features
+
+* **tsl:** improve dto generation ([060ccb2](https://github.com/DIGITALLNature/DigitallPower/commit/060ccb2dee511acb3ef3ad2369326efaaf799075))
+
 # [2.1.0-beta.12](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.11...v2.1.0-beta.12) (2025-11-18)
 
 
