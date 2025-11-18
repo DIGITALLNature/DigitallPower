@@ -12,6 +12,8 @@ public record AttributeMetadataViewModel
         LogicalName = attributeMetadata.LogicalName;
         SchemaName = attributeMetadata.SchemaName;
 
+        IsPrimaryId = attributeMetadata.IsPrimaryId.GetValueOrDefault();
+
         switch (attributeMetadata.AttributeType)
         {
             case AttributeTypeCode.Boolean:
@@ -138,4 +140,6 @@ public record AttributeMetadataViewModel
     public string LogicalName { get; init; }
 
     public string DefinitelyTypedAttributeType { get; init; }
+
+    public bool IsPrimaryId { get; init; }
 }

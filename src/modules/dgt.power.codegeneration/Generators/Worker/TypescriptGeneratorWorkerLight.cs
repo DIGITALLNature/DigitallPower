@@ -80,6 +80,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var viewModel = new EntityViewModel
             {
                 SchemaName = metadata.SchemaName,
+                LogicalName = metadata.LogicalName,
                 Attributes = metadata.Attributes
                     .Where(a =>
                         (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
