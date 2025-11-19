@@ -90,6 +90,7 @@ public record AttributeMetadataViewModel
                     DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute";
                     DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetControl";
                     DefinitelyType = "MultiSelectOptionSet";
+                    NativeType = "string";
                     break;
                 }
 
