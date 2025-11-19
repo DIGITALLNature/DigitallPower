@@ -19,8 +19,8 @@ public record AttributeMetadataViewModel
             case AttributeTypeCode.Boolean:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
-                DefinitelyType = "Optionset";
-                NativeType = "number";
+                DefinitelyType = "Boolean";
+                NativeType = "boolean";
                 break;
             case AttributeTypeCode.DateTime:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute";
