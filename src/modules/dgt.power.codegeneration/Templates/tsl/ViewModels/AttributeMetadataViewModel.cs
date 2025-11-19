@@ -101,9 +101,9 @@ public record AttributeMetadataViewModel
                 break;
         }
 
-        if (attributeMetadata is PicklistAttributeMetadata picklistAttributeMetadata)
+        if (attributeMetadata is EnumAttributeMetadata enumAttributeMetadata)
         {
-            Options = picklistAttributeMetadata.OptionSet.Options;
+            Options = enumAttributeMetadata.OptionSet.Options;
         }
     }
 

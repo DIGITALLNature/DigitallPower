@@ -40,9 +40,9 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         {{ attr.SchemaName | sanitize | camelcase | unique: "A"  }} =  "{{ attr.LogicalName }}",
     {%- endfor %}
     }
-{% for pattr in PicklistAttributes  %}
-    export const enum {{ pattr.SchemaName | sanitize | camelcase | unique: "O"  }}Code {
-    {%- for option in pattr.Options  %}
+{% for attr in EnumAttributes  %}
+    export const enum {{ attr.SchemaName | sanitize | camelcase | unique: "O"  }} {
+    {%- for option in attr.Options  %}
         {{ option.Label | sanitize | camelcase   }} =  {{ option.Value }},
     {%- endfor %}
     }
