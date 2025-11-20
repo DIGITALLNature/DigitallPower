@@ -21,11 +21,24 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
     export interface DTO {
     {%- for attr in Attributes  %}
         {%- if attr.DefinitelyType == "Lookup" %}
-        _{{ attr.LogicalName }}_value?: string;
-        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
         "_{{ attr.LogicalName }}_value@OData.Community.Display.V1.FormattedValue"?: string;
-        {%- endif %}
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.associatednavigationproperty"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
+        _{{ attr.LogicalName }}_value?: string;
+        {{ attr.LogicalName }}?: any;
+        "{{ attr.LogicalName }}@odata.bind"?: string | null;
+        {%- elsif attr.DefinitelyType == "Customer" %}
+        "_{{ attr.LogicalName }}_value@OData.Community.Display.V1.FormattedValue"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.associatednavigationproperty"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
+        _{{ attr.LogicalName }}_value?: string;
+        {{ attr.LogicalName }}_account?: any;
+        "{{ attr.LogicalName }}_account@odata.bind"?: string | null;
+        {{ attr.LogicalName }}_contact?: any;
+        "{{ attr.LogicalName }}_contact@odata.bind"?: string | null;
+        {%- else %}
         {{ attr.LogicalName }}{%- unless attr.IsPrimaryId %}?{%- endunless %}: {{ attr.NativeType }};
+        {%- endif %}
     {%- endfor %}
     }
 
