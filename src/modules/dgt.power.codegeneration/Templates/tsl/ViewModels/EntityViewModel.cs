@@ -11,5 +11,5 @@ public record EntityViewModel
     public required string SchemaName { get; init; }
     public required string LogicalName { get; init; }
     public required List<AttributeMetadata> Attributes { get; init; }
-    public IEnumerable<PicklistAttributeMetadata> PicklistAttributes => Attributes.OfType<PicklistAttributeMetadata>();
+    public IEnumerable<EnumAttributeMetadata> EnumAttributes => Attributes.OfType<EnumAttributeMetadata>();
 }

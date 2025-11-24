@@ -19,8 +19,8 @@ public record AttributeMetadataViewModel
             case AttributeTypeCode.Boolean:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
-                DefinitelyType = "Optionset";
-                NativeType = "number";
+                DefinitelyType = "Boolean";
+                NativeType = "boolean";
                 break;
             case AttributeTypeCode.DateTime:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute";
@@ -54,13 +54,16 @@ public record AttributeMetadataViewModel
                 NativeType = "number";
                 break;
             case AttributeTypeCode.Customer:
+                DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
+                DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
+                DefinitelyType = "Customer";
+                break;
             case AttributeTypeCode.PartyList:
             case AttributeTypeCode.Owner:
             case AttributeTypeCode.Lookup:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
                 DefinitelyType = "Lookup";
-                NativeType = "any";
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
@@ -90,6 +93,7 @@ public record AttributeMetadataViewModel
                     DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute";
                     DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetControl";
                     DefinitelyType = "MultiSelectOptionSet";
+                    NativeType = "string";
                     break;
                 }
 
@@ -101,9 +105,9 @@ public record AttributeMetadataViewModel
                 break;
         }
 
-        if (attributeMetadata is PicklistAttributeMetadata picklistAttributeMetadata)
+        if (attributeMetadata is EnumAttributeMetadata enumAttributeMetadata)
         {
-            Options = picklistAttributeMetadata.OptionSet.Options;
+            Options = enumAttributeMetadata.OptionSet.Options;
         }
     }
 
