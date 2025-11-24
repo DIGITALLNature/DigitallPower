@@ -1,3 +1,10 @@
+# [2.1.0-beta.14](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.13...v2.1.0-beta.14) (2025-11-24)
+
+
+### Features
+
+* **tsl:** further improvements to TypeScript models ([#108](https://github.com/DIGITALLNature/DigitallPower/issues/108)) ([ff898ac](https://github.com/DIGITALLNature/DigitallPower/commit/ff898ac320eefed2cf137d6183f5d5aa2e3c49c9))
+
 # [2.1.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.12...v2.1.0-beta.13) (2025-11-18)
 
 
