@@ -593,27 +593,96 @@ public class MetadataService : IMetadataService
     public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName,
         string[] configSolutions)
     {
-        // 1.) Retrieve "allowed§ Forms
-        var querySolutionForms = new QueryExpression(SolutionComponent.EntityLogicalName);
-        querySolutionForms.ColumnSet.AddColumns(SolutionComponent.LogicalNames.ObjectId);
-        querySolutionForms.Criteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal,
-            SolutionComponent.Options.ComponentType.SystemForm);
-        var solutionLink = querySolutionForms.AddLink(Solution.EntityLogicalName,
-            SolutionComponent.LogicalNames.SolutionId, Solution.LogicalNames.SolutionId);
-        solutionLink.LinkCriteria.FilterOperator = LogicalOperator.Or;
-        foreach (var configSolution in configSolutions)
+        var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
+        querySystemForm.ColumnSet.AddColumns(
+            SystemForm.LogicalNames.ObjectTypeCode,
+            SystemForm.LogicalNames.FormXml,
+            SystemForm.LogicalNames.Name,
+            SystemForm.LogicalNames.FormId,
+            SystemForm.LogicalNames.Type);
+        querySystemForm.Criteria.AddCondition(SystemForm.LogicalNames.ObjectTypeCode, ConditionOperator.Equal, entityLogicalName);
+        querySystemForm.Criteria.AddCondition(
+            SystemForm.LogicalNames.Type,
+            ConditionOperator.In,
+            SystemForm.Options.Type.Main,
+            SystemForm.Options.Type.QuickViewForm,
+            SystemForm.Options.Type.QuickCreate);
+        querySystemForm.Criteria.AddCondition(
+            SystemForm.LogicalNames.FormActivationState,
+            ConditionOperator.Equal,
+            SystemForm.Options.FormActivationState.Active);
+
+        // System form linked through the solution component
+        var query_Or = new FilterExpression(LogicalOperator.Or);
+        querySystemForm.Criteria.AddFilter(query_Or);
+        var query_Or_Or1 = new FilterExpression(LogicalOperator.Or);
+        query_Or.AddFilter(query_Or_Or1);
+        var query_Or_Or1_solutioncomponent = new LinkEntity(
+            SystemForm.EntityLogicalName,
+            SolutionComponent.EntityLogicalName,
+            SystemForm.LogicalNames.FormId,
+            SolutionComponent.LogicalNames.ObjectId,
+            JoinOperator.Any);
+        query_Or_Or1.AnyAllFilterLinkEntity = query_Or_Or1_solutioncomponent;
+        query_Or_Or1_solutioncomponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.SystemForm);  
+
+        var query_Or_Or1_solutioncomponent_And = new FilterExpression();
+        query_Or_Or1_solutioncomponent.LinkCriteria = query_Or_Or1_solutioncomponent_And;
+        var query_Or_Or1_solutioncomponent_And_solution = new LinkEntity(
+            SystemForm.EntityLogicalName,
+            Solution.EntityLogicalName,
+            SystemForm.LogicalNames.SolutionId,
+            Solution.LogicalNames.SolutionId,
+            JoinOperator.Any);
+        query_Or_Or1_solutioncomponent_And.AnyAllFilterLinkEntity = query_Or_Or1_solutioncomponent_And_solution;
+
+        foreach (var solutionName in configSolutions)
         {
-            solutionLink.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal,
-                configSolution);
+            query_Or_Or1_solutioncomponent_And_solution.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
-        var formIds = _connection.RetrieveMultiple(querySolutionForms).Entities
-            .Select(x => x.ToEntity<SolutionComponent>())
-            .Select(x => x.ObjectId);
-        var allForms = RetrieveFormsForEntity(entityLogicalName);
+        // System form linked through the entity component
+        var query_Or_Or2 = new FilterExpression(LogicalOperator.Or);
+        query_Or.AddFilter(query_Or_Or2);
+        var query_Or_Or2_entity = new LinkEntity(
+            SystemForm.EntityLogicalName,
+            "entity",
+            SystemForm.LogicalNames.ObjectTypeCode,
+            "objecttypecode",
+            JoinOperator.Any);
+        query_Or_Or2.AnyAllFilterLinkEntity = query_Or_Or2_entity;
 
-        return allForms.Entities.Where(e => formIds.Contains(e.Id))
-            .ToDictionary(
+        var query_Or_Or2_entity_And = new FilterExpression();
+        query_Or_Or2_entity.LinkCriteria = query_Or_Or2_entity_And;
+        var query_Or_Or2_entity_And_solutioncomponent = new LinkEntity(
+            SystemForm.EntityLogicalName,
+            SolutionComponent.EntityLogicalName,
+            "entityid",
+            SolutionComponent.LogicalNames.ObjectId,
+            JoinOperator.Any);
+        query_Or_Or2_entity_And.AnyAllFilterLinkEntity = query_Or_Or2_entity_And_solutioncomponent;
+
+        query_Or_Or2_entity_And_solutioncomponent.LinkCriteria.AddCondition(
+            SolutionComponent.LogicalNames.RootComponentBehavior,
+            ConditionOperator.Equal,
+            SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents);
+        var query_Or_Or2_entity_And_solutioncomponent_And = new FilterExpression();
+        query_Or_Or2_entity_And_solutioncomponent.LinkCriteria.AddFilter(query_Or_Or2_entity_And_solutioncomponent_And);
+        var query_Or_Or2_entity_And_solutioncomponent_And_solution = new LinkEntity(
+             SystemForm.EntityLogicalName,
+            Solution.EntityLogicalName,
+            SystemForm.LogicalNames.SolutionId,
+            Solution.LogicalNames.SolutionId,
+            JoinOperator.Any);
+        query_Or_Or2_entity_And_solutioncomponent_And.AnyAllFilterLinkEntity = query_Or_Or2_entity_And_solutioncomponent_And_solution;
+        foreach (var solutionName in configSolutions)
+        {
+            query_Or_Or2_entity_And_solutioncomponent_And_solution.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
+        }
+
+        var allForms = _connection.RetrieveMultiple(querySystemForm).Entities.Select(x => x.ToEntity<SystemForm>());
+
+        return allForms.ToDictionary(
                 form =>
                     $"{form.GetAttributeValue<string>(SystemForm.LogicalNames.Name)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
                 ParseForms);
