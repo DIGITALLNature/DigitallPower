@@ -1,3 +1,10 @@
+# [2.1.0-beta.17](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.16...v2.1.0-beta.17) (2025-12-10)
+
+
+### Features
+
+* **tsl:** support base language option for enums ([#109](https://github.com/DIGITALLNature/DigitallPower/issues/109)) ([1477cba](https://github.com/DIGITALLNature/DigitallPower/commit/1477cba16b316d573658722c8d3af0439299cf83))
+
 # [2.1.0-beta.16](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.15...v2.1.0-beta.16) (2025-11-27)
 
 
