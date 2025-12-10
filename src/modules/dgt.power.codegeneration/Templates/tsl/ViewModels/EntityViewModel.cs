@@ -12,4 +12,5 @@ public record EntityViewModel
     public required string LogicalName { get; init; }
     public required List<AttributeMetadata> Attributes { get; init; }
     public IEnumerable<EnumAttributeMetadata> EnumAttributes => Attributes.OfType<EnumAttributeMetadata>();
+    public int? LanguageCode { get; set; }
 }
