@@ -30,6 +30,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
         _templateOptions.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
         _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
+        _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
@@ -71,6 +72,13 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         var liquidTemplate = InitializeLiquidTemplate("Entity.liquid");
 
+        int? languageCode = null;
+        if (config.UseBaseLanguage)
+        {
+            languageCode = _metadataService.RetrieveOrganizationLanguage();
+            AnsiConsole.MarkupLine($"Using Base Language: {languageCode}");
+        }
+
         // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
         {
@@ -81,6 +89,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             {
                 SchemaName = metadata.SchemaName,
                 LogicalName = metadata.LogicalName,
+                LanguageCode = languageCode,
                 Attributes = metadata.Attributes
                     .Where(a =>
                         (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
