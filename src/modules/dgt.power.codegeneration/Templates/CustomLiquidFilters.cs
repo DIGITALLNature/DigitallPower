@@ -2,12 +2,12 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
+using dgt.power.codegeneration.Extensions;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Fluid.Values;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates;
 

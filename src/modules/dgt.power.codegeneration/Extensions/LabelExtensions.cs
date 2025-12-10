@@ -3,7 +3,7 @@
 
 using Microsoft.Xrm.Sdk;
 
-namespace dgt.power.codegeneration;
+namespace dgt.power.codegeneration.Extensions;
 
 public static class LabelExtensions
 {
