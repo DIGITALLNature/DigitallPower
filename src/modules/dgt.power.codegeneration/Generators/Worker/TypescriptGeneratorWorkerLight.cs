@@ -30,6 +30,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
         _templateOptions.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
         _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
+        _templateOptions.Filters.AddFilter("attributetype", CustomLiquidFilters.Attributetype);
         _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
@@ -105,7 +106,6 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.Entity}", args);
         }
     }
-
 
     public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
     {
