@@ -51,13 +51,13 @@ public static class CustomLiquidFilters
     public static ValueTask<FluidValue> Controltype(FluidValue input, FilterArguments arguments,
         TemplateContext context)
     {
-        var contextId = context.GetHashCode();
-        var scope = arguments.At(0).ToObjectValue();
-        var value = input.ToStringValue();
+        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedControlType);
+    }
 
-        var attr = new List<AttributeMetadataViewModel>(((object[])scope).Cast<AttributeMetadataViewModel>());
-
-        return new StringValue(attr.Single(s => s.LogicalName == value).DefinitelyTypedControlType);
+    public static ValueTask<FluidValue> Attributetype(FluidValue input, FilterArguments arguments,
+       TemplateContext context)
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedAttributeType);
     }
 
     public static ValueTask<FluidValue> Localize(FluidValue input, FilterArguments arguments, TemplateContext context)
@@ -68,5 +68,16 @@ public static class CustomLiquidFilters
         return languageCode == null
             ? new StringValue(label.GetLocalizedLabel())
             : new StringValue(label.GetLocalizedLabel(Convert.ToInt32(languageCode, CultureInfo.InvariantCulture)));
+    }
+
+    private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments,
+       TemplateContext context)
+    {
+        var contextId = context.GetHashCode();
+        var scope = arguments.At(0).ToObjectValue();
+        var value = input.ToStringValue();
+
+        var attr = new List<AttributeMetadataViewModel>(((object[])scope).Cast<AttributeMetadataViewModel>());
+        return attr.Single(s => s.LogicalName == value);
     }
 }
