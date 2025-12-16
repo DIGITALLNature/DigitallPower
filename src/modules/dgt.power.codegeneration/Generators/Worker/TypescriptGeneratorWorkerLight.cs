@@ -90,14 +90,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 SchemaName = metadata.SchemaName,
                 LogicalName = metadata.LogicalName,
                 LanguageCode = languageCode,
-                Attributes = metadata.Attributes
-                    .Where(a =>
-                        (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
-                         a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
-                                                    a.IsValidForRead == true))
-                    .Where(a => !a.LogicalName.Contains("entityimage"))
-                    .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
-                    .OrderBy(a => a.LogicalName).ToList()
+                Attributes = FilterEntityMetadataAttributes(metadata),
             };
             var context = new TemplateContext(viewModel, _templateOptions);
             var content = liquidTemplate.Render(context);
@@ -117,6 +110,11 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         foreach (var entity in config.Entities)
         {
             var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            // do not create forms for bpf entities
+            if (metadata.IsBPFEntity == true)
+            {
+                break;
+            }
 
             var forms = config.OnlyFormsFromSolutions
                 ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions)
@@ -124,47 +122,14 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
             foreach (var formDetail in forms)
             {
-                var form =  $"{metadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{FileNames.Typescript.Form}";
-                if (config.Forms.Length != 0)
+                var formName =  $"{metadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{FileNames.Typescript.Form}";
+                if (ShouldSkipFormForConfig(config.Forms, formName))
                 {
-                    config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
-                        .ToList()
-                        .ForEach(e => AnsiConsole.MarkupLine(Warnings.TsExtensionDeprecation));
-                    config.Forms = config.Forms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
-                                ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
-                                : e)
-                        .ToArray();
-                }
-
-                if (config.Forms.Length != 0 && !config.Forms.Contains(form))
-                {
-                    AnsiConsole.MarkupLine($"Skip: {form}");
+                    AnsiConsole.MarkupLine($"Skip: {formName}");
                     continue;
                 }
 
-                var formname = formDetail.Key
-                    .Replace(".main", "Main").Replace(".quickview", "QuickView")
-                    .Replace(".quickcreate", "QuickCreate");
-
-                var viewModel = new FormViewModel
-                {
-                    Name = formname,
-                    FormDetail = formDetail.Value,
-                    SchemaName = metadata.SchemaName,
-                    Attributes = metadata.Attributes
-                        .Where(a =>
-                            (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
-                             a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
-                                                        a.IsValidForRead == true))
-                        .Where(a => !a.LogicalName.Contains("entityimage"))
-                        .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
-                        .OrderBy(a => a.LogicalName).ToList()
-                };
-
-                var context = new TemplateContext(viewModel, _templateOptions);
-                var content = liquidTemplate.Render(context);
-
-                CreateFile(content, form, args);
+                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName);
 
                 // var template = new EntityLightFormTemplate(config.TypingPath, form, formname, formDetail.Value,
                 //     metadata, config, _metadataService.RetrieveOrganizationLanguage());
@@ -239,6 +204,75 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var content = liquidTemplate.Render(context);
 
         CreateFile(content, FileNames.Typescript.OptionSetValues, args);
+    }
+
+    /// <summary>
+    /// Wrapper function that maps the model and creates the form file
+    /// </summary>
+    /// <param name="formDetail"></param>
+    /// <param name="metadata"></param>
+    /// <param name="liquidTemplate"></param>
+    /// <param name="args"></param>
+    /// <param name="form"></param>
+    private void CreateFormFile(KeyValuePair<string, FormDetail> formDetail, EntityMetadata metadata, IFluidTemplate liquidTemplate, CodeGenerationVerb args, string form)
+    {
+        var formname = formDetail.Key
+                    .Replace(".main", "Main").Replace(".quickview", "QuickView")
+                    .Replace(".quickcreate", "QuickCreate");
+
+        var viewModel = new FormViewModel
+        {
+            Name = formname,
+            FormDetail = formDetail.Value,
+            SchemaName = metadata.SchemaName,
+            Attributes = FilterEntityMetadataAttributes(metadata),
+        };
+
+        var context = new TemplateContext(viewModel, _templateOptions);
+        var content = liquidTemplate.Render(context);
+
+        CreateFile(content, form, args);
+    }
+
+
+    /// <summary>
+    /// Checks given the configu and the form name if the form should be skipped for some reason or not
+    /// </summary>
+    /// <param name="configForms"></param>
+    /// <param name="form"></param>
+    /// <returns></returns>
+    private static bool ShouldSkipFormForConfig(string[] configForms, string form)
+    {
+        if (configForms.Length == 0)
+        {
+            return false;
+        }
+        configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
+            .ToList()
+            .ForEach(e => AnsiConsole.MarkupLine(Warnings.TsExtensionDeprecation));
+        configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
+                    ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
+                    : e)
+            .ToArray();
+
+        return !configForms.Contains(form);
+    }
+
+    /// <summary>
+    /// Filter metadata attributes before mapping them to entity or form models
+    /// </summary>
+    /// <param name="metadata"></param>
+    /// <returns></returns>
+    private static List<AttributeMetadata> FilterEntityMetadataAttributes(EntityMetadata metadata)
+    {
+        return metadata.Attributes
+            .Where(a =>
+                (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
+                    a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
+                                            a.IsValidForRead == true))
+            .Where(a => !a.LogicalName.Contains("entityimage"))
+            .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
+            .OrderBy(a => a.LogicalName).ToList();
     }
 
     #endregion

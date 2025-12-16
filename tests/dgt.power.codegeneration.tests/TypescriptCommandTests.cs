@@ -12,6 +12,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using Xunit.Abstractions;
+using FakeXrmEasy.Abstractions;
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
@@ -321,16 +322,17 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
     public void ShouldGenerateFormsFromSolution()
     {
         var forms = GetForms();
-        var solution = new Solution(Guid.NewGuid())
+        var solution = new Solution
         {
+            Id = Guid.NewGuid(),
             UniqueName = "Test"
         };
-        var formComponent = new SolutionComponent(Guid.NewGuid())
+        var solutionFormComponent = new SolutionComponent
         {
+            Id = Guid.NewGuid(),
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
             [SolutionComponent.LogicalNames.ObjectId] = forms.mainForm.Id,
-            [SolutionComponent.LogicalNames.ComponentType] =
-                new OptionSetValue(SolutionComponent.Options.ComponentType.SystemForm)
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.SystemForm)
         };
         var config = new CodeGenerationConfig
         {
@@ -355,12 +357,21 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
         var context = GetBuilder()
             .WithData(forms)
             .WithData(solution)
-            .WithData(formComponent)
+            .WithData(solutionFormComponent)            
+            .WithRelationship("system_form_entity", new XrmFakedRelationship
+            {
+                Entity1LogicalName = SystemForm.EntityLogicalName,
+                Entity1Attribute = SystemForm.LogicalNames.ObjectTypeCode,
+                Entity2LogicalName = "entity",
+                Entity2Attribute = "objecttypecode",
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+            })
             .Build();
 
         context
             .Execute(args)
-            .Should().BeTrue();
+            .Should()
+            .BeTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
@@ -582,24 +593,27 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()
     {
-        var mainForm = new SystemForm(Guid.NewGuid())
+        var mainForm = new SystemForm
         {
+            Id = Guid.NewGuid(),
             Name = "Account",
             FormXml = GetResourceAsString("account.main.form.xml"),
             ObjectTypeCode = Account.EntityLogicalName,
             Type = new OptionSetValue(SystemForm.Options.Type.Main),
             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
         };
-        var quickCreateForm = new SystemForm(Guid.NewGuid())
+        var quickCreateForm = new SystemForm
         {
+            Id = Guid.NewGuid(),
             Name = "Account Quick Create",
             FormXml = GetResourceAsString("account.quick.create.form.xml"),
             ObjectTypeCode = Account.EntityLogicalName,
             Type = new OptionSetValue(SystemForm.Options.Type.QuickCreate),
             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
         };
-        var quickViewForm = new SystemForm(Guid.NewGuid())
+        var quickViewForm = new SystemForm
         {
+            Id = Guid.NewGuid(),
             Name = "App for Outlook Account Quick View",
             FormXml = GetResourceAsString("account.quick.view.form.xml"),
             ObjectTypeCode = Account.EntityLogicalName,
