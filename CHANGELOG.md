@@ -1,3 +1,10 @@
+# [2.1.0-beta.18](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.17...v2.1.0-beta.18) (2025-12-16)
+
+
+### Features
+
+* **tsl:** form template missed subgrid and creates controls for all attributes even not in form ([#113](https://github.com/DIGITALLNature/DigitallPower/issues/113)) ([edd1fd9](https://github.com/DIGITALLNature/DigitallPower/commit/edd1fd924d3f4a2a33cefac8406b384b621b980b))
+
 # [2.1.0-beta.17](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.16...v2.1.0-beta.17) (2025-12-10)
 
 
