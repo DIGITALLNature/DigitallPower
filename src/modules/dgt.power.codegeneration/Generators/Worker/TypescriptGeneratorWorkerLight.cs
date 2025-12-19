@@ -113,7 +113,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             // do not create forms for bpf entities
             if (metadata.IsBPFEntity == true)
             {
-                break;
+                AnsiConsole.MarkupLine($"Skip form generation for BPF Entity {metadata.LogicalName}");
+                continue;
             }
 
             var forms = config.OnlyFormsFromSolutions
