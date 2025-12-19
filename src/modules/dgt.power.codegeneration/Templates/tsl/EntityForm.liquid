@@ -50,6 +50,7 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         get(name: "{{ field }}"): {{ field | controltype: Attributes }};
         {% endfor %}
         get(name: string): Xrm.Controls.Control | null;
+        get(delegate?: MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
     }
 
     {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.Name  | sanitize | camelcase | unique: "T" -%}
