@@ -1,3 +1,10 @@
+# [2.1.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.18...v2.1.0-beta.19) (2025-12-19)
+
+
+### Bug Fixes
+
+* **tsl:** correctly skip form generation for bpf entities ([2d3fa95](https://github.com/DIGITALLNature/DigitallPower/commit/2d3fa95f001ebb2a4a5f9c6a7a6735599cbe422e))
+
 # [2.1.0-beta.18](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.17...v2.1.0-beta.18) (2025-12-16)
 
 
