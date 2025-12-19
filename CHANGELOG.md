@@ -1,3 +1,10 @@
+# [2.1.0-beta.20](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.19...v2.1.0-beta.20) (2025-12-19)
+
+
+### Bug Fixes
+
+* **tsl:** add delegate overload to form control collection ([24a8bbc](https://github.com/DIGITALLNature/DigitallPower/commit/24a8bbc254e7a3e0610d828f5c67958ebdae289f))
+
 # [2.1.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.18...v2.1.0-beta.19) (2025-12-19)
 
 
