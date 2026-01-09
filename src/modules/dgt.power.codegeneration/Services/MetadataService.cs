@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.IO;
 using System.Runtime.Caching;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -684,7 +685,7 @@ public class MetadataService : IMetadataService
 
         return allForms.ToDictionary(
                 form =>
-                    $"{form.GetAttributeValue<string>(SystemForm.LogicalNames.Name)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
+                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
                 ParseForms);
     }
 
