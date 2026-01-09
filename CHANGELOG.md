@@ -1,3 +1,10 @@
+# [2.1.0-beta.21](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.20...v2.1.0-beta.21) (2026-01-09)
+
+
+### Bug Fixes
+
+* **tsl:** use unique for solution form creation ([#114](https://github.com/DIGITALLNature/DigitallPower/issues/114)) ([f78579c](https://github.com/DIGITALLNature/DigitallPower/commit/f78579c02440a880361872858570ee8756207885))
+
 # [2.1.0-beta.20](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.19...v2.1.0-beta.20) (2025-12-19)
 
 
