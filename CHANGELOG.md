@@ -1,3 +1,10 @@
+# [2.1.0-beta.22](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.21...v2.1.0-beta.22) (2026-01-14)
+
+
+### Features
+
+* **tsl:** header bpf field mapping logic ([#115](https://github.com/DIGITALLNature/DigitallPower/issues/115)) ([293c36f](https://github.com/DIGITALLNature/DigitallPower/commit/293c36f94af5997ddf83246852a60fea1ac5b918))
+
 # [2.1.0-beta.21](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.20...v2.1.0-beta.21) (2026-01-09)
 
 
