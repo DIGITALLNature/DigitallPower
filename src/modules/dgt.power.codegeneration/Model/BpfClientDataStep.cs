@@ -11,7 +11,7 @@ namespace dgt.power.codegeneration.Model
         public required string Class { get; init; }
 
         [JsonPropertyName("description")]
-        public required string Description { get; init; }
+        public required string Description { get; set; }
 
         [JsonPropertyName("id")]
         public required string Id { get; init; }

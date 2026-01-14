@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using dgt.power.codegeneration.Base;
@@ -76,7 +77,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         var liquidTemplate = InitializeLiquidTemplate("Entity.liquid");
 
-        int? languageCode = null;
+        int? languageCode = 1031;
         if (config.UseBaseLanguage)
         {
             languageCode = _metadataService.RetrieveOrganizationLanguage();
@@ -84,8 +85,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         }
 
         // Iterate through each entity in the configuration
-        foreach (var entity in config.Entities)
-        {
+        foreach (var entity in config.Entities.OrderBy(entityName => entityName))
+        {           
             // Retrieve the metadata for the entity
             var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
@@ -99,7 +100,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var context = new TemplateContext(viewModel, _templateOptions);
             var content = liquidTemplate.Render(context);
 
-            CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.Entity}", args);
+            CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant().Trim()}.{FileNames.Typescript.Entity}", args);
         }
     }
 
@@ -109,6 +110,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         Debug.Assert(config != null, nameof(config) + " != null");
 
         var liquidTemplate = InitializeLiquidTemplate("EntityForm.liquid");
+
+        Dictionary<string, List<BpfControlDetail>> bpfControls = GetCompleteEntityBpfControlList(config);
 
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
@@ -120,28 +123,22 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 continue;
             }
 
-            var bpfControls = _metadataService.RetrieveBusinessProcessFlowControlsForEntity(config, entity);
+            var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
             var forms = config.OnlyFormsFromSolutions
-                ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions)
-                : _metadataService.RetrieveFormsDetails(metadata.LogicalName);
+                ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions, bpfControlsForEntity)
+                : _metadataService.RetrieveFormsDetails(metadata.LogicalName, bpfControlsForEntity);
 
             foreach (var formDetail in forms)
             {
-                var formName =  $"{metadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{FileNames.Typescript.Form}";
+                var formName =  $"{metadata.LogicalName.Trim()}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.Form}";
                 if (ShouldSkipFormForConfig(config.Forms, formName))
                 {
                     AnsiConsole.MarkupLine($"Skip: {formName}");
                     continue;
                 }
 
-                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName, bpfControls);
-
-                // var template = new EntityLightFormTemplate(config.TypingPath, form, formname, formDetail.Value,
-                //     metadata, config, _metadataService.RetrieveOrganizationLanguage());
-                // CreateTemplateFile(template,
-                //     $"{metadata.LogicalName}.{FileNames.Typescript.Form}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.d",
-                //     args);
+                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName, bpfControlsForEntity);
             }
         }
     }
@@ -235,13 +232,31 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             Attributes = FilterEntityMetadataAttributes(metadata),
             BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList(),
         };
-
         var context = new TemplateContext(viewModel, _templateOptions);
         var content = liquidTemplate.Render(context);
-
         CreateFile(content, form, args);
     }
 
+    private Dictionary<string, List<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
+    {
+        var bpfControls = new Dictionary<string, List<BpfControlDetail>>();
+        foreach (var entityName in config.Entities.OrderBy(entityName => entityName))
+        {
+            var bpfControlsForEntityMain = _metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config, entityName);
+            foreach(var bpfControlForEntityMain in bpfControlsForEntityMain)
+            {
+                if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
+                {
+                    value.Add(bpfControlForEntityMain);
+                }
+                else
+                {
+                    bpfControls.Add(bpfControlForEntityMain.EntityName, [bpfControlForEntityMain]);
+                }
+            }
+        }
+        return bpfControls;
+    }
 
     /// <summary>
     /// Checks given the configu and the form name if the form should be skipped for some reason or not

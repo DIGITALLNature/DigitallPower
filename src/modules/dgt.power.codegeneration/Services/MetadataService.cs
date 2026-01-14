@@ -549,9 +549,9 @@ public class MetadataService : IMetadataService
         return result;
     }
 
-    public IEnumerable<BpfControlDetail> RetrieveBusinessProcessFlowControlsForEntity(CodeGenerationConfig config, string entityName)
+    public List<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName)
     {
-        var query = new QueryExpression(Workflow.EntityLogicalName)
+        var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
         {
             ColumnSet = new ColumnSet(
                 Workflow.LogicalNames.WorkflowId,
@@ -573,9 +573,30 @@ public class MetadataService : IMetadataService
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
+        if (config.OnlyFormsFromSolutions && config.Solutions.Length > 0)
+        {
+            var queryAnd = new FilterExpression(LogicalOperator.And);
+            var querySolutionComponent = new LinkEntity(
+                Workflow.EntityLogicalName,
+                SolutionComponent.EntityLogicalName,
+                Workflow.LogicalNames.WorkflowId,
+                SolutionComponent.LogicalNames.ObjectId,
+                JoinOperator.Any);
+            queryAnd.AnyAllFilterLinkEntity = querySolutionComponent;
+            querySolutionComponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.Workflow);
+
+            var querySolutionAndSolutionComponent = querySolutionComponent.AddLink(Solution.EntityLogicalName, Solution.LogicalNames.SolutionId, SolutionComponent.LogicalNames.SolutionId);
+            querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions);
+            
+            queryWorkflow.Criteria.AddFilter(queryAnd);
+        }
         List<Workflow> returnList = _connection
-            .RetrieveMultiple(query)?
-            .Entities.Select(x => x.ToEntity<Workflow>()).OrderBy(x => x.Name).ToList() ?? [];
+            .RetrieveMultiple(queryWorkflow)?
+            .Entities
+            .Select(x => x.ToEntity<Workflow>())
+            .OrderBy(x => x.Name)
+            .ToList() ?? [];
+
 
         if (returnList.Count == 0)
         {
@@ -583,7 +604,7 @@ public class MetadataService : IMetadataService
         }
 
         return returnList
-            .Select(ParseBpfClientDetail)
+            .Select(w => ParseBpfClientDetail(w, entityName))
             .SelectMany(x => x)
             .OrderBy(x => x.WorkflowName)
             .ThenBy(x => x.DataFieldName)
@@ -632,8 +653,7 @@ public class MetadataService : IMetadataService
         return result;
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName,
-        string[] configSolutions)
+    public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, List<BpfControlDetail>? bpfControls)
     {
         var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
         querySystemForm.ColumnSet.AddColumns(
@@ -726,18 +746,18 @@ public class MetadataService : IMetadataService
 
         return allForms.ToDictionary(
                 form =>
-                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
-                ParseForms);
+                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
+                (form) => ParseForms(form, bpfControls));
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName)
+    public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, List<BpfControlDetail>? bpfControls)
     {
         var allForms = RetrieveFormsForEntity(entityLogicalName);
         return allForms.Entities
             .ToDictionary(
                 form =>
-                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name),entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
-                ParseForms);
+                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
+                (form) => ParseForms(form, bpfControls));
     }
 
     private static string GetFormType(int type)
@@ -751,9 +771,10 @@ public class MetadataService : IMetadataService
     }
 
     // TODO: Extract to FormParser.cs
-    private static FormDetail ParseForms(Entity form)
+    private static FormDetail ParseForms(Entity form, IEnumerable<BpfControlDetail>? bpfControls)
     {
         var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
+        var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type);
         var doc = new XmlDocument();
         doc.LoadXml(formxml);
 
@@ -794,8 +815,8 @@ public class MetadataService : IMetadataService
                             var control = cell.SelectSingleNode(".//control");
                             if (control != null && control.Attributes["datafieldname"] != null)
                             {
-                                result.Fields.Add(control.Attributes["datafieldname"].Value);
-
+                                result.Attributes.Add(control.Attributes["datafieldname"].Value);
+                                result.FormControls.Add(control.Attributes["datafieldname"].Value);
                                 sectionDetail.Controls.Add(control.Attributes["datafieldname"].Value);
                             }
 
@@ -814,17 +835,33 @@ public class MetadataService : IMetadataService
             {
                 if (headerControl != null && headerControl.Attributes["datafieldname"] != null)
                 {
-                    result.Fields.Add(headerControl.Attributes["datafieldname"].Value);
+                    result.HeaderControlFields.Add(headerControl.Attributes["datafieldname"].Value);
+                    if (!result.Attributes.Contains(headerControl.Attributes["datafieldname"].Value))
+                    {
+                        // header controls should be added to the attributes list only if they are not arleady there
+                        result.Attributes.Add(headerControl.Attributes["datafieldname"].Value);
+                    }
                 }
             }
 
             var tabName = tab.Attributes["name"] != null ? tab.Attributes["name"].Value : tab.Attributes["id"].Value;
 #pragma warning restore CS8602
-
             result.Tabs.Add(tabName, sectionlist);
             result.TabDetails.Add(new KeyValuePair<string, TabDetail>(tabName, tabDetail));
         }
 
+        // Exclude header process controls in case of quick view forms
+        if( bpfControls != null && formType?.Value != SystemForm.Options.Type.QuickViewForm)
+        {
+            foreach(var bpfControl in bpfControls)
+            {
+                if (!result.Attributes.Contains(bpfControl.DataFieldName))
+                {
+                    // bpf process controls should be added to the optional attributes only if not in attributes already
+                    result.OptionalAttributes.Add(bpfControl.DataFieldName);
+                }
+            }
+        }
         return result;
     }  
 
@@ -849,7 +886,7 @@ public class MetadataService : IMetadataService
         return _connection.RetrieveMultiple(query);
     }
 
-    private static List<BpfControlDetail> ParseBpfClientDetail(Workflow worflow)
+    private static List<BpfControlDetail> ParseBpfClientDetail(Workflow worflow, string entityName)
     {
         var clientDetail = worflow.GetAttributeValue<string>(Workflow.LogicalNames.ClientData);
         var doc = JsonSerializer.Deserialize<BpfClientData>(clientDetail);
@@ -862,16 +899,17 @@ public class MetadataService : IMetadataService
 
         return entitySteps
             .Where(x => !string.IsNullOrWhiteSpace(x.ClassId) && !string.IsNullOrWhiteSpace(x.DataFieldName))
-            .Select(x => MapControlStepToControlDetail(x, worflow.Name ?? string.Empty ))
+            .Select(x => MapControlStepToControlDetail(x, worflow.Name ?? string.Empty, entityName))
             .ToList();
     }
 
-    private static BpfControlDetail MapControlStepToControlDetail(BpfClientDataStep clientStep, string workflowName)
+    private static BpfControlDetail MapControlStepToControlDetail(BpfClientDataStep clientStep, string workflowName, string mainEntityName)
     {
         return new BpfControlDetail
         {
             WorkflowName = workflowName,
-            ClassId = clientStep.ClassId?.ToUpper() ?? string.Empty,
+            EntityName = string.IsNullOrWhiteSpace(clientStep.Description) ? mainEntityName : clientStep.Description,
+            ClassId = clientStep.ClassId?.ToUpperInvariant() ?? string.Empty,
             DataFieldName = clientStep.DataFieldName ?? string.Empty,
         };
     }
@@ -887,23 +925,32 @@ public class MetadataService : IMetadataService
 
     private static List<BpfClientDataStep> FilterRelevantSteps(List<BpfClientDataStep> listOfSteps)
     {
-        var recurringStepClass = new[] { "PageStep", "StageStep", "StepStep", "ControlStep"};
-
         return listOfSteps
             .Where(x => x.Class.StartsWith("EntityStep", StringComparison.InvariantCulture))
-            .SelectMany(x => x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList))
+            .SelectMany(x => x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList, x.Description))
             .ToList();
     }
 
-    private static List<BpfClientDataStep> RecurringFilterRelevantSteps(List<BpfClientDataStep> clientDataSteps)
+    private static List<BpfClientDataStep> RecurringFilterRelevantSteps(List<BpfClientDataStep> clientDataSteps, string entityStepEntityName )
     {
         var controlStepClass = "ControlStep";
         var recurringStepClass = new[] { "PageStep", "StageStep", "StepStep" };
 
         return clientDataSteps
-            .SelectMany(x => recurringStepClass.Any(rt => x.Class.StartsWith(rt, StringComparison.InvariantCulture)) ?
-                (x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList)) :
-                (x.Steps == null ? [x] : x.Steps.StepList.Prepend(x)))
+            .SelectMany(x => {
+                if(recurringStepClass.Any(rt => x.Class.StartsWith(rt, StringComparison.InvariantCulture)))
+                {
+                    return x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList, entityStepEntityName);
+                }
+                // Copy parent entity step name to the control step for easier mapping as multiple different entity steps
+                // might exist in a bpf for a primary entity name
+                x.Description = entityStepEntityName;
+                if (x.Steps == null)
+                {
+                    return [x];
+                }
+                return x.Steps.StepList.Prepend(x);
+             })
             .Where(x => x.Class.StartsWith(controlStepClass, StringComparison.InvariantCulture))
             .ToList();
     }
