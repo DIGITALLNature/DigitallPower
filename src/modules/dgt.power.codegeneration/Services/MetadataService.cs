@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.IO;
 using System.Runtime.Caching;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -16,6 +15,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using System.Text.Json;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
@@ -549,6 +549,47 @@ public class MetadataService : IMetadataService
         return result;
     }
 
+    public IEnumerable<BpfControlDetail> RetrieveBusinessProcessFlowControlsForEntity(CodeGenerationConfig config, string entityName)
+    {
+        var query = new QueryExpression(Workflow.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                Workflow.LogicalNames.WorkflowId,
+                Workflow.LogicalNames.Name,
+                Workflow.LogicalNames.UniqueName,
+                Workflow.LogicalNames.ClientData,
+                Workflow.LogicalNames.Category,
+                Workflow.LogicalNames.PrimaryEntity
+            ),
+            NoLock = true,
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessProcessFlow),
+                    new ConditionExpression(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.Equal, entityName),
+                    new ConditionExpression(Workflow.LogicalNames.ClientData, ConditionOperator.NotNull),
+                }
+            },
+            Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
+        };
+        List<Workflow> returnList = _connection
+            .RetrieveMultiple(query)?
+            .Entities.Select(x => x.ToEntity<Workflow>()).OrderBy(x => x.Name).ToList() ?? [];
+
+        if (returnList.Count == 0)
+        {
+            return [];
+        }
+
+        return returnList
+            .Select(ParseBpfClientDetail)
+            .SelectMany(x => x)
+            .OrderBy(x => x.WorkflowName)
+            .ThenBy(x => x.DataFieldName)
+            .ToList();
+    }
+
     public List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
     {
         var result = new List<Tuple<string, string, List<Guid>>>();
@@ -717,7 +758,7 @@ public class MetadataService : IMetadataService
         doc.LoadXml(formxml);
 
         var result = new FormDetail();
-
+        result.FormType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value;
 
         var tabs = doc.SelectNodes("/form/tabs/tab[*]");
         if (tabs == null)
@@ -785,7 +826,7 @@ public class MetadataService : IMetadataService
         }
 
         return result;
-    }
+    }  
 
     private EntityCollection RetrieveFormsForEntity(string logicalName)
     {
@@ -806,6 +847,65 @@ public class MetadataService : IMetadataService
             SystemForm.Options.FormActivationState.Active);
 
         return _connection.RetrieveMultiple(query);
+    }
+
+    private static List<BpfControlDetail> ParseBpfClientDetail(Workflow worflow)
+    {
+        var clientDetail = worflow.GetAttributeValue<string>(Workflow.LogicalNames.ClientData);
+        var doc = JsonSerializer.Deserialize<BpfClientData>(clientDetail);
+        if (doc?.Steps == null)
+        {
+            return [];
+        }
+
+        var entitySteps = FilterRelevantSteps(doc.Steps?.StepList.ToList() ?? new List<BpfClientDataStep>());
+
+        return entitySteps
+            .Where(x => !string.IsNullOrWhiteSpace(x.ClassId) && !string.IsNullOrWhiteSpace(x.DataFieldName))
+            .Select(x => MapControlStepToControlDetail(x, worflow.Name ?? string.Empty ))
+            .ToList();
+    }
+
+    private static BpfControlDetail MapControlStepToControlDetail(BpfClientDataStep clientStep, string workflowName)
+    {
+        return new BpfControlDetail
+        {
+            WorkflowName = workflowName,
+            ClassId = clientStep.ClassId?.ToUpper() ?? string.Empty,
+            DataFieldName = clientStep.DataFieldName ?? string.Empty,
+        };
+    }
+
+    private static string MapClassId(string? classId)
+    {
+        if (string.IsNullOrWhiteSpace(classId))
+        {
+            return string.Empty;
+        }
+        return Regex.Replace(classId.ToUpperInvariant(), "[{}]", "", RegexOptions.NonBacktracking);
+    }
+
+    private static List<BpfClientDataStep> FilterRelevantSteps(List<BpfClientDataStep> listOfSteps)
+    {
+        var recurringStepClass = new[] { "PageStep", "StageStep", "StepStep", "ControlStep"};
+
+        return listOfSteps
+            .Where(x => x.Class.StartsWith("EntityStep", StringComparison.InvariantCulture))
+            .SelectMany(x => x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList))
+            .ToList();
+    }
+
+    private static List<BpfClientDataStep> RecurringFilterRelevantSteps(List<BpfClientDataStep> clientDataSteps)
+    {
+        var controlStepClass = "ControlStep";
+        var recurringStepClass = new[] { "PageStep", "StageStep", "StepStep" };
+
+        return clientDataSteps
+            .SelectMany(x => recurringStepClass.Any(rt => x.Class.StartsWith(rt, StringComparison.InvariantCulture)) ?
+                (x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList)) :
+                (x.Steps == null ? [x] : x.Steps.StepList.Prepend(x)))
+            .Where(x => x.Class.StartsWith(controlStepClass, StringComparison.InvariantCulture))
+            .ToList();
     }
 
     internal string Unique(string value, string scope)

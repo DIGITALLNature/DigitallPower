@@ -7,11 +7,28 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public record AttributeMetadataViewModel
 {
-    public AttributeMetadataViewModel(AttributeMetadata attributeMetadata)
+    public string NativeType { get; set; }
+
+    public OptionMetadataCollection Options { get; set; }
+
+    public string SchemaName { get; set; }
+
+    public string DefinitelyType { get; set; }
+
+    public string DefinitelyTypedControlType { get; set; }
+
+    public string LogicalName { get; set; }
+
+    public string DefinitelyTypedAttributeType { get; set; }
+
+    public bool IsPrimaryId { get; set; }
+
+    public AttributeMetadataViewModel(AttributeMetadata attributeMetadata) => ToViewModel(attributeMetadata);
+
+    public AttributeMetadataViewModel ToViewModel(AttributeMetadata attributeMetadata)
     {
         LogicalName = attributeMetadata.LogicalName;
         SchemaName = attributeMetadata.SchemaName;
-
         IsPrimaryId = attributeMetadata.IsPrimaryId.GetValueOrDefault();
 
         switch (attributeMetadata.AttributeType)
@@ -109,13 +126,9 @@ public record AttributeMetadataViewModel
         {
             Options = enumAttributeMetadata.OptionSet.Options;
         }
+        return this;
     }
 
-    public string NativeType { get; set; }
-
-    public OptionMetadataCollection Options { get; set; }
-
-    public string SchemaName { get; set; }
 
     private string GetDateTimeType(DateTimeAttributeMetadata? attr)
     {
@@ -137,13 +150,5 @@ public record AttributeMetadataViewModel
         return "DateAndTime:UserLocal";
     }
 
-    public string DefinitelyType { get; init; }
-
-    public string DefinitelyTypedControlType { get; init; }
-
-    public string LogicalName { get; init; }
-
-    public string DefinitelyTypedAttributeType { get; init; }
-
-    public bool IsPrimaryId { get; init; }
 }
+

@@ -15,4 +15,5 @@ public record FormViewModel
     public required string Name { get; init; }
     public required FormDetail FormDetail { get; init; }
 
+    public required List<BpfControlDetail> BpfControls { get; init; }
 }

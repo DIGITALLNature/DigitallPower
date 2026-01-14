@@ -60,6 +60,18 @@ public static class CustomLiquidFilters
         return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedAttributeType);
     }
 
+    public static ValueTask<FluidValue> GetBpfControltype(FluidValue input, FilterArguments arguments,
+        TemplateContext context)
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedControlType);
+    }
+
+    public static ValueTask<FluidValue> GetBpfAttributetype(FluidValue input, FilterArguments arguments,
+        TemplateContext context)
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedAttributeType);
+    }
+
     public static ValueTask<FluidValue> Localize(FluidValue input, FilterArguments arguments, TemplateContext context)
     {
         var label = (Label)input.ToObjectValue();

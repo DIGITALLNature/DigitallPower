@@ -15,6 +15,10 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         getAttribute(name: "{{ field }}"): {{ field | attributetype: Attributes }};
         getControl(name: "{{ field }}"): {{ field | controltype: Attributes }};
         {% endfor %}
+        {% for bpfControl in BpfControls %}
+        getAttribute(name: "header_process_{{ bpfControl.DataFieldName }}"): {{ bpfControl.DefinitelyTypedAttributeType }};
+        getControl(name: "header_process_{{ bpfControl.DataFieldName }}"): {{ bpfControl.DefinitelyTypedControlType }};
+        {% endfor %}
         getAttribute(name: string): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | null;
         getControl(name: string): Xrm.Controls.Control | null;
         {% for subgrid in FormDetail.Grids %}
