@@ -12,6 +12,7 @@ public class FormDetail
         Grids = new HashSet<string>();
     }
 
+    public int FormType { get; set; }
     public List<KeyValuePair<string, TabDetail>> TabDetails { get; } = [];
     public Dictionary<string, List<string>> Tabs { get; }
     public HashSet<string> Fields { get; }

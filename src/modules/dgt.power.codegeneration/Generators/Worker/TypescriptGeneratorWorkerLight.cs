@@ -11,6 +11,7 @@ using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
+using dgt.power.dataverse;
 using Fluid;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -34,6 +35,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
+        _templateOptions.ValueConverters.Add(o => o is BpfControlDetail r ? new BpfControlViewModel(r): null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, TabDetail> td ? new TabDetailsViewModel(td) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetaisViewModel(td) : null);
@@ -43,6 +45,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.MemberAccessStrategy.Register<Option>();
         _templateOptions.MemberAccessStrategy.Register<SdkMessageViewModel>();
         _templateOptions.MemberAccessStrategy.Register<FormDetail>();
+        _templateOptions.MemberAccessStrategy.Register<BpfControlViewModel>();
         _templateOptions.MemberAccessStrategy.Register<TabDetail>();
         _templateOptions.MemberAccessStrategy.Register<TabDetailsViewModel>();
         _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
@@ -107,7 +110,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         var liquidTemplate = InitializeLiquidTemplate("EntityForm.liquid");
 
-        foreach (var entity in config.Entities)
+        foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
             var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
             // do not create forms for bpf entities
@@ -116,6 +119,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 AnsiConsole.MarkupLine($"Skip form generation for BPF Entity {metadata.LogicalName}");
                 continue;
             }
+
+            var bpfControls = _metadataService.RetrieveBusinessProcessFlowControlsForEntity(config, entity);
 
             var forms = config.OnlyFormsFromSolutions
                 ? _metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions)
@@ -130,7 +135,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                     continue;
                 }
 
-                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName);
+                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName, bpfControls);
 
                 // var template = new EntityLightFormTemplate(config.TypingPath, form, formname, formDetail.Value,
                 //     metadata, config, _metadataService.RetrieveOrganizationLanguage());
@@ -215,10 +220,11 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="liquidTemplate"></param>
     /// <param name="args"></param>
     /// <param name="form"></param>
-    private void CreateFormFile(KeyValuePair<string, FormDetail> formDetail, EntityMetadata metadata, IFluidTemplate liquidTemplate, CodeGenerationVerb args, string form)
+    private void CreateFormFile(KeyValuePair<string, FormDetail> formDetail, EntityMetadata metadata, IFluidTemplate liquidTemplate, CodeGenerationVerb args, string form, IEnumerable<BpfControlDetail> bpfControls)
     {
         var formname = formDetail.Key
-                    .Replace(".main", "Main").Replace(".quickview", "QuickView")
+                    .Replace(".main", "Main")
+                    .Replace(".quickview", "QuickView")
                     .Replace(".quickcreate", "QuickCreate");
 
         var viewModel = new FormViewModel
@@ -227,6 +233,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             FormDetail = formDetail.Value,
             SchemaName = metadata.SchemaName,
             Attributes = FilterEntityMetadataAttributes(metadata),
+            BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList(),
         };
 
         var context = new TemplateContext(viewModel, _templateOptions);
@@ -274,7 +281,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             .Where(a => !a.LogicalName.Contains("entityimage"))
             .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
             .OrderBy(a => a.LogicalName).ToList();
-    }
+    }  
 
     #endregion
 

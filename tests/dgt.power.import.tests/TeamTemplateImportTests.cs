@@ -50,11 +50,14 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
 
     [Fact]
     public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+        GetContext()
+        .Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates()).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })
+        .Should()
+        .BeFalse();
 
     [Fact]
     public void ShouldDeleteMissingTeamTemplate()

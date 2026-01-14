@@ -22,5 +22,6 @@ public interface IMetadataService
     Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions);
 
     Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName);
+    IEnumerable<BpfControlDetail> RetrieveBusinessProcessFlowControlsForEntity(CodeGenerationConfig config, string entityName);
     void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
 }
