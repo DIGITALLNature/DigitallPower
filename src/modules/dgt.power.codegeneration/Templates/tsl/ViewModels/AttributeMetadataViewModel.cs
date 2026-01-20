@@ -84,7 +84,6 @@ public record AttributeMetadataViewModel
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
-
                 DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.StringControl";
                 DefinitelyType = "String";
@@ -113,7 +112,14 @@ public record AttributeMetadataViewModel
                     NativeType = "string";
                     break;
                 }
-
+                if (attributeMetadata is FileAttributeMetadata)
+                {
+                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
+                    DefinitelyTypedControlType = "Xrm.Controls.StandardControl";
+                    DefinitelyType = "Attribute";
+                    NativeType = "string";
+                    break;
+                }
                 DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
                 DefinitelyTypedControlType = "Xrm.Controls.Control";
                 DefinitelyType = "Attribute";
@@ -121,7 +127,6 @@ public record AttributeMetadataViewModel
 
                 break;
         }
-
         if (attributeMetadata is EnumAttributeMetadata enumAttributeMetadata)
         {
             Options = enumAttributeMetadata.OptionSet.Options;

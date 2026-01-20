@@ -5,6 +5,7 @@ namespace dgt.power.codegeneration.Model
 {
     public class BpfControlDetail
     {
+        public required string EntityName { get; set; }
         public required string WorkflowName { get; set; }
         public required string ClassId { get; set; }
 

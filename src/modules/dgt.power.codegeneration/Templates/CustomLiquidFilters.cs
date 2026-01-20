@@ -8,6 +8,7 @@ using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Fluid.Values;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.codegeneration.Templates;
 

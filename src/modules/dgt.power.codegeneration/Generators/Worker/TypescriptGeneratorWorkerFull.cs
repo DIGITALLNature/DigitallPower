@@ -131,8 +131,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
                 metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
             var forms = config.OnlyFormsFromSolutions
-                ? metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions)
-                : metadataService.RetrieveFormsDetails(metadata.LogicalName);
+                ? metadataService.RetrieveFormsDetailsFromSolutions(metadata.LogicalName, config.Solutions, null)
+                : metadataService.RetrieveFormsDetails(metadata.LogicalName, null);
 
             foreach (var formDetail in forms)
             {
