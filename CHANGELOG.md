@@ -1,3 +1,10 @@
+# [2.1.0-beta.23](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.22...v2.1.0-beta.23) (2026-01-20)
+
+
+### Features
+
+* **tsl:** small corrections on ts generation ([#116](https://github.com/DIGITALLNature/DigitallPower/issues/116)) ([7f19ccb](https://github.com/DIGITALLNature/DigitallPower/commit/7f19ccb7e92d381603ccd04a37b3c1ea6a4394a4))
+
 # [2.1.0-beta.22](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.21...v2.1.0-beta.22) (2026-01-14)
 
 
