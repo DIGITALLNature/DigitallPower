@@ -18,13 +18,6 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
             DataFieldName = bpfControlDetail.DataFieldName;
             switch (bpfControlDetail.ClassId)
             {
-                case "1E1FC551-F7A8-43AF-AC34-A8DC35C7B6D4": //TickerSymbol?
-                case "62B0DF79-0464-470F-8AF7-4483CFEA0C7D": //Map
-                case "E7A81278-8635-4D9E-8D4D-59480B391C5B": //Subgrid?
-                case "9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E": //Timer?
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
-                    DefinitelyTypedControlType = "Xrm.Controls.StandardControl";
-                    return this;
                 case "B0C6723A-8503-4FD7-BB28-C8A06AC933C2": //CheckBox
                     DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
                     DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
@@ -43,7 +36,6 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
                     return this;
                 case "ADA2203E-B4CD-49BE-9DDF-234642B43B52": //EmailAddress
                 case "6F3FB987-393B-4D2D-859F-9D0F0349B6AD": //EmailBody
-                case "671A9387-CA5A-4D1E-8AB7-06E39DDCF6B5": //Language
                 case "06375649-C143-495E-A496-C962E5B4488E": //Notes
                 case "E0DECE4B-6FC8-4A8F-A065-082708572369": //TextArea
                 case "4273EDBD-AC1D-40D3-9FB2-095C621B552D": //TextBox
@@ -57,15 +49,13 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
                     return this;
                 case "270BD3DB-D9AF-4782-9025-509E298DEC0A": //Lookup
                 case "CBFB742C-14E7-4A17-96BB-1A13F7F64AA2": //PartyListLookup
-                case "3EF39988-22BB-4F0B-BBBE-64B5A3748AEE": //Picklist
                 case "F3015350-44A2-4AA0-97B5-00166532B5E9": //RegardingLookup
                     DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
                     DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
                     return this;
+                case "3EF39988-22BB-4F0B-BBBE-64B5A3748AEE": //Picklist
                 case "67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED": //Radio buttons
                 case "5D68B988-0661-4DB2-BC3E-17598AD3BE6C": //StatusReason
-                case "7C624A0B-F59E-493D-9583-638D34759266": //TimeZonePicklist
-                case "5C5600E0-1D6E-4205-A272-BE80DA87FD42": //QuickView?
                     DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute";
                     DefinitelyTypedControlType = "Xrm.Controls.OptionSetControl";
                     return this;
@@ -76,6 +66,15 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
                 case "E616A57F-20E0-4534-8662-A101B5DDF4E0": //KnowledgeBaseSearch?
                     DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
                     DefinitelyTypedControlType = "Xrm.Controls.KbSearchControl";
+                    return this;
+                case "9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E": //Timer
+                case "671A9387-CA5A-4D1E-8AB7-06E39DDCF6B5": //Language
+                case "5C5600E0-1D6E-4205-A272-BE80DA87FD42": //QuickView
+                case "1E1FC551-F7A8-43AF-AC34-A8DC35C7B6D4": //TickerSymbol
+                case "62B0DF79-0464-470F-8AF7-4483CFEA0C7D": //Map
+                case "7C624A0B-F59E-493D-9583-638D34759266": //TimeZonePicklist
+                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
+                    DefinitelyTypedControlType = "Xrm.Controls.StandardControl";
                     return this;
                 default:
                     DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";

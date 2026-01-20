@@ -4,6 +4,7 @@
 using System.Globalization;
 using dgt.power.codegeneration.Extensions;
 using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Fluid.Values;
@@ -16,12 +17,16 @@ public static class CustomLiquidFilters
 {
     private static readonly Dictionary<int, Dictionary<string, List<string>>> s_usedTokens = new();
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> CamelCase(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
         return new StringValue(Formatter.CamelCase(input.ToStringValue()));
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> Sanitize(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
         var allowWhiteSpace = arguments.HasNamed("allowWhiteSpace") && arguments["allowWhiteSpace"].ToBooleanValue();
         var allowSafeStringChars = arguments.HasNamed("allowSafeStringChars") &&
@@ -32,7 +37,9 @@ public static class CustomLiquidFilters
             allowFirstNumber));
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> Unique(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
         var contextId = context.GetHashCode();
         var scope = arguments.At(0).ToStringValue();
@@ -49,31 +56,37 @@ public static class CustomLiquidFilters
         return new StringValue(value);
     }
 
-    public static ValueTask<FluidValue> Controltype(FluidValue input, FilterArguments arguments,
-        TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> Controltype(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
-        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedControlType);
+        return new StringValue(GetAttributeByLogicalName(input, arguments).DefinitelyTypedControlType);
     }
 
-    public static ValueTask<FluidValue> Attributetype(FluidValue input, FilterArguments arguments,
-       TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> Attributetype(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
-        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedAttributeType);
+        return new StringValue(GetAttributeByLogicalName(input, arguments).DefinitelyTypedAttributeType);
     }
 
-    public static ValueTask<FluidValue> GetBpfControltype(FluidValue input, FilterArguments arguments,
-        TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> GetBpfControltype(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
-        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedControlType);
+        return new StringValue(GetAttributeByLogicalName(input, arguments).DefinitelyTypedControlType);
     }
 
-    public static ValueTask<FluidValue> GetBpfAttributetype(FluidValue input, FilterArguments arguments,
-        TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> GetBpfAttributetype(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
     {
-        return new StringValue(GetAttributeByLogicalName(input, arguments, context).DefinitelyTypedAttributeType);
+        return new StringValue(GetAttributeByLogicalName(input, arguments).DefinitelyTypedAttributeType);
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> Localize(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
         var label = (Label)input.ToObjectValue();
         var languageCode = arguments.At(0).ToObjectValue();
@@ -83,10 +96,24 @@ public static class CustomLiquidFilters
             : new StringValue(label.GetLocalizedLabel(Convert.ToInt32(languageCode, CultureInfo.InvariantCulture)));
     }
 
-    private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments,
-       TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> GetControlTypeFromFormControl(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
-        var contextId = context.GetHashCode();
+        return new StringValue(GetControlByControlName(input, arguments).DefinitelyTypedControlType);
+    }
+
+    private static FormControlViewModel GetControlByControlName(FluidValue input, FilterArguments arguments)
+    {
+        var scope = arguments.At(0).ToObjectValue();
+        var value = input.ToStringValue();
+
+        var controlList = new List<FormControlViewModel>(((object[])scope).Cast<FormControlViewModel>());
+        return controlList.Single(s => s.ControlName == value);
+    }
+
+    private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
+    {
         var scope = arguments.At(0).ToObjectValue();
         var value = input.ToStringValue();
 
