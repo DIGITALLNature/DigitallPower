@@ -113,7 +113,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         var liquidTemplate = InitializeLiquidTemplate("EntityForm.liquid");
 
-        Dictionary<string, List<BpfControlDetail>> bpfControls = GetCompleteEntityBpfControlList(config);
+        Dictionary<string, SortedSet<BpfControlDetail>> bpfControls = GetCompleteEntityBpfControlList(config);
 
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
@@ -219,7 +219,13 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="liquidTemplate"></param>
     /// <param name="args"></param>
     /// <param name="form"></param>
-    private void CreateFormFile(KeyValuePair<string, FormDetail> formDetail, EntityMetadata metadata, IFluidTemplate liquidTemplate, CodeGenerationVerb args, string form, IEnumerable<BpfControlDetail> bpfControls)
+    private void CreateFormFile(
+        KeyValuePair<string, FormDetail> formDetail,
+        EntityMetadata metadata,
+        IFluidTemplate liquidTemplate,
+        CodeGenerationVerb args,
+        string form,
+        SortedSet<BpfControlDetail> bpfControls)
     {
         var formname = formDetail.Key
                     .Replace(".main", "Main")
@@ -239,9 +245,9 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         CreateFile(content, form, args);
     }
 
-    private Dictionary<string, List<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
+    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
     {
-        var bpfControls = new Dictionary<string, List<BpfControlDetail>>();
+        var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.OrderBy(entityName => entityName))
         {
             var bpfControlsForEntityMain = _metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config, entityName);
