@@ -1,3 +1,10 @@
+# [2.1.0-beta.24](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.23...v2.1.0-beta.24) (2026-01-21)
+
+
+### Features
+
+* **tsl:** rewrite form control loop from form xml ([#117](https://github.com/DIGITALLNature/DigitallPower/issues/117)) ([1489dee](https://github.com/DIGITALLNature/DigitallPower/commit/1489dee2d694b80d24107d376987144d556c154c))
+
 # [2.1.0-beta.23](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.22...v2.1.0-beta.23) (2026-01-20)
 
 
