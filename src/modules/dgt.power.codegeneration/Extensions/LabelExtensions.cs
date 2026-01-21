@@ -10,5 +10,6 @@ public static class LabelExtensions
     public static string GetLocalizedLabel(this Label label, int? languageCode = null) =>
         languageCode == null
             ? label.UserLocalizedLabel.Label
-            : label.LocalizedLabels.Single(l => l.LanguageCode == languageCode).Label;
+            : label.LocalizedLabels.SingleOrDefault(l => l.LanguageCode == languageCode)?.Label ??
+              label.UserLocalizedLabel.Label;
 }
