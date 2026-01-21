@@ -9,6 +9,7 @@ using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Fluid.Values;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Templates;
@@ -109,15 +110,22 @@ public static class CustomLiquidFilters
         var value = input.ToStringValue();
 
         var controlList = new List<FormControlViewModel>(((object[])scope).Cast<FormControlViewModel>());
-        return controlList.Single(s => s.ControlName == value);
+        return controlList.SingleOrDefault(s => s.ControlName == value);
     }
 
-    private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
+    private static AttributeMetadataViewModel? GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
     {
         var scope = arguments.At(0).ToObjectValue();
         var value = input.ToStringValue();
 
         var attr = new List<AttributeMetadataViewModel>(((object[])scope).Cast<AttributeMetadataViewModel>());
-        return attr.Single(s => s.LogicalName == value);
+        var result = attr.SingleOrDefault(s => s.LogicalName == value);
+        if (result != null)
+        {
+            return result;
+        }
+
+        AnsiConsole.MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
+        return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value});
     }
 }
