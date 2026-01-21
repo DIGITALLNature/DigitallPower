@@ -72,7 +72,7 @@ namespace dgt.power.codegeneration.Templates.ts
                 .Where(a => (a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true))
                 .Where(a => !a.LogicalName.Contains("entityimage"))
                 .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
-                .Where(a => FormDetail.Attributes.Contains(a.LogicalName));
+                .Where(a => FormDetail.Attributes.Any(x => x.DataFieldName == a.LogicalName));
 
             if (_cfg.EntityFormFilters.Any())
             {
@@ -94,7 +94,7 @@ namespace dgt.power.codegeneration.Templates.ts
                                 a.AttributeType == AttributeTypeCode.Status || a.AttributeType == AttributeTypeCode.Boolean ||
                                 a.AttributeType == AttributeTypeCode.Virtual &&
                                 a.AttributeTypeName?.Value == "MultiSelectPicklistType"))
-                .Where(a => FormDetail.Attributes.Contains(a.LogicalName))
+                .Where(a => FormDetail.Attributes.Any(x => x.DataFieldName == a.LogicalName))
                 .Select(o => new Templates.OptionField(o, _cfg.UseBaseLanguage, _systemLanguage));
 
 

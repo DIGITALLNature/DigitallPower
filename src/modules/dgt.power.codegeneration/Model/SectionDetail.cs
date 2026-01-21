@@ -5,6 +5,6 @@ namespace dgt.power.codegeneration.Model
 {
     public class SectionDetail
     {
-        public HashSet<string> Controls { get; } = [];
+        public SortedSet<string> ControlNames { get; set; } = [];
     }
 }

@@ -34,23 +34,25 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
         _templateOptions.Filters.AddFilter("attributetype", CustomLiquidFilters.Attributetype);
         _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
+        _templateOptions.Filters.AddFilter("formControlType", CustomLiquidFilters.GetControlTypeFromFormControl);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is BpfControlDetail r ? new BpfControlViewModel(r): null);
+        _templateOptions.ValueConverters.Add(o => o is FormXmlControlData r ? new FormControlViewModel(r) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
-        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, TabDetail> td ? new TabDetailsViewModel(td) : null);
-        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetaisViewModel(td) : null);
+        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetailsViewModel(td) : null);
         _templateOptions.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
         _templateOptions.MemberAccessStrategy.Register<OptionMetadataViewModel>();
         _templateOptions.MemberAccessStrategy.Register<OptionViewModel>();
         _templateOptions.MemberAccessStrategy.Register<Option>();
         _templateOptions.MemberAccessStrategy.Register<SdkMessageViewModel>();
         _templateOptions.MemberAccessStrategy.Register<FormDetail>();
+        _templateOptions.MemberAccessStrategy.Register<FormAttributeData>();
+        _templateOptions.MemberAccessStrategy.Register<FormControlViewModel>();
         _templateOptions.MemberAccessStrategy.Register<BpfControlViewModel>();
         _templateOptions.MemberAccessStrategy.Register<TabDetail>();
-        _templateOptions.MemberAccessStrategy.Register<TabDetailsViewModel>();
+        _templateOptions.MemberAccessStrategy.Register<SectionDetailsViewModel>();
         _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
-        _templateOptions.MemberAccessStrategy.Register<SectionDetaisViewModel>();
     }
 
     private static IFluidTemplate InitializeLiquidTemplate(string templateName)
