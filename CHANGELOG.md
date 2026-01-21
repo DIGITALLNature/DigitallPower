@@ -1,3 +1,10 @@
+# [2.1.0-beta.25](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.24...v2.1.0-beta.25) (2026-01-21)
+
+
+### Bug Fixes
+
+* **tsl:** graceful fallback when no localized label found ([9de4a6a](https://github.com/DIGITALLNature/DigitallPower/commit/9de4a6a0e623a44ca402da08f8a2a485cad97e74))
+
 # [2.1.0-beta.24](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.23...v2.1.0-beta.24) (2026-01-21)
 
 
