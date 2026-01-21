@@ -1,3 +1,10 @@
+# [2.1.0-beta.26](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.25...v2.1.0-beta.26) (2026-01-21)
+
+
+### Bug Fixes
+
+* **tsl:** resolving of Attribute via logicalname in filters now returns generic one when not found ([809568a](https://github.com/DIGITALLNature/DigitallPower/commit/809568a3d65d62e9f7d37427a991ed26575a407e))
+
 # [2.1.0-beta.25](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.24...v2.1.0-beta.25) (2026-01-21)
 
 
