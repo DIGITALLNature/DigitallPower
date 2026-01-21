@@ -104,7 +104,7 @@ public static class CustomLiquidFilters
         return new StringValue(GetControlByControlName(input, arguments).DefinitelyTypedControlType);
     }
 
-    private static FormControlViewModel GetControlByControlName(FluidValue input, FilterArguments arguments)
+    private static FormControlViewModel? GetControlByControlName(FluidValue input, FilterArguments arguments)
     {
         var scope = arguments.At(0).ToObjectValue();
         var value = input.ToStringValue();
@@ -113,7 +113,7 @@ public static class CustomLiquidFilters
         return controlList.SingleOrDefault(s => s.ControlName == value);
     }
 
-    private static AttributeMetadataViewModel? GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
+    private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
     {
         var scope = arguments.At(0).ToObjectValue();
         var value = input.ToStringValue();

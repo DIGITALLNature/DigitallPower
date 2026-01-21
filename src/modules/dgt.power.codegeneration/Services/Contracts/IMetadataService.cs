@@ -19,9 +19,9 @@ public interface IMetadataService
     List<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
     List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, List<BpfControlDetail>? bpfControls);
+    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, List<BpfControlDetail>? bpfControls);
+    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
     List<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
     void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
 }

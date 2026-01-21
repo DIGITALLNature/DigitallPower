@@ -21,7 +21,7 @@ namespace dgt.power.codegeneration.Model
             {
                 return -1;
             }
-            return string.Compare(ControlId, otherForm.ControlId, StringComparison.Ordinal);
+            return string.Compare(ControlId, otherForm.ControlId, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object? obj)

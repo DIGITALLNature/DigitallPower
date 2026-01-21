@@ -12,7 +12,7 @@ namespace dgt.power.codegeneration.Services
 {
     public static class FormParser
     {
-        public static FormDetail ParseForms(Entity form, List<BpfControlDetail>? bpfControls)
+        public static FormDetail ParseForms(Entity form, SortedSet<BpfControlDetail>? bpfControls)
         {
             var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
             var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type);
@@ -167,20 +167,23 @@ namespace dgt.power.codegeneration.Services
             }
             if (controlId != null)
             {
-                var formControl = MapSectionControlToFormXmlControl(control, doc, controlId, fieldName);
+                var newFormControl = MapSectionControlToFormXmlControl(control, doc, controlId, fieldName);
                 
-                if (formControl != null)
+                if (newFormControl != null)
                 {
                     // Map as web resource control
-                    var counter = formDetail.FormControls.Count(control => control.DataFieldName == formControl.DataFieldName);
-                    if (counter > 0)
+                    var countRepeatedControlFields = formDetail.FormControls
+                        .Count(formControl => !string.IsNullOrWhiteSpace(formControl.DataFieldName) &&
+                            !string.IsNullOrWhiteSpace(formControl.ControlId) &&
+                            formControl.ControlId == newFormControl.ControlId);
+                    if (countRepeatedControlFields > 0)
                     {
-                        formControl.RepeatedControl = counter;
-                        formControl.ControlId += formControl.RepeatedControl.ToString(CultureInfo.InvariantCulture);
+                        newFormControl.RepeatedControl = countRepeatedControlFields;
+                        newFormControl.ControlId += newFormControl.RepeatedControl.ToString(CultureInfo.InvariantCulture);
                     }
-                    formDetail.FormControls.Add(formControl);
-                    sectionDetail.ControlNames.Add(formControl.ControlId);
-                    if (formControl.IsSubgrid)
+                    formDetail.FormControls.Add(newFormControl);
+                    sectionDetail.ControlNames.Add(newFormControl.ControlId);
+                    if (newFormControl.IsSubgrid)
                     {
                         // Map controls as subgrid
                         formDetail.Grids.Add(controlId);
@@ -195,7 +198,7 @@ namespace dgt.power.codegeneration.Services
             var uniqueId = control.Attributes?["uniqueid"]?.Value;
             var isSubgrid = control.Attributes?["indicationOfSubgrid"]?.Value == "true";
             var classId = MapClassId(control.Attributes?["classid"]?.Value);
-            var isWebResource = controlId.StartsWith("WebResource_", StringComparison.InvariantCulture);           
+            var isWebResource = controlId.StartsWith("WebResource_", StringComparison.InvariantCulture);
             // Map control as normal control
             return new FormXmlControlData
             {
@@ -249,7 +252,7 @@ namespace dgt.power.codegeneration.Services
         /// <param name="formDetail"></param>
         /// <param name="formType"></param>
         /// <param name="bpfControls"></param>
-        private static void MapBpfControlsAttributesIntoFormDetail(FormDetail formDetail, OptionSetValue? formType, List<BpfControlDetail>? bpfControls)
+        private static void MapBpfControlsAttributesIntoFormDetail(FormDetail formDetail, OptionSetValue? formType, SortedSet<BpfControlDetail>? bpfControls)
         {
             // Exclude header process controls in case of quick view forms
             if (bpfControls != null && formType?.Value != SystemForm.Options.Type.QuickViewForm)

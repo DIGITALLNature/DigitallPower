@@ -655,7 +655,7 @@ public class MetadataService : IMetadataService
         return result;
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, List<BpfControlDetail>? bpfControls)
+    public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls)
     {
         var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
         querySystemForm.ColumnSet.AddColumns(
@@ -752,7 +752,7 @@ public class MetadataService : IMetadataService
                 (form) => FormParser.ParseForms(form, bpfControls));
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, List<BpfControlDetail>? bpfControls)
+    public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
     {
         var allForms = RetrieveFormsForEntity(entityLogicalName);
         return allForms.Entities
