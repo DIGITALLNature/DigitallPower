@@ -1,3 +1,10 @@
+# [2.1.0-beta.27](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.26...v2.1.0-beta.27) (2026-01-21)
+
+
+### Features
+
+* **tsl:** add quick view mapping sort header process controls ([#118](https://github.com/DIGITALLNature/DigitallPower/issues/118)) ([28e06d4](https://github.com/DIGITALLNature/DigitallPower/commit/28e06d4688e080f237bcf039c148f22359f9864f))
+
 # [2.1.0-beta.26](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.25...v2.1.0-beta.26) (2026-01-21)
 
 
