@@ -16,6 +16,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
+using static dgt.power.dataverse.CustomAPIRequestParameter.Options;
 
 namespace dgt.power.codegeneration.Services;
 
@@ -205,7 +206,9 @@ public class MetadataService : IMetadataService
                     UniqueName = ext.Name,
                     Description = ext.Description,
                     Entityname = ext.EntityName,
-                    Type = ext.Type!.Split(':')[1].TrimEnd(')')
+                    Type = ext.Type!.Split(':')[1].TrimEnd(')'),
+                    IsOptional = false, // Not used for actions,
+                    IsOutput = ext.Direction == "Output" ? true : false,
                 };
 
                 switch (ext.Direction)
@@ -280,7 +283,9 @@ public class MetadataService : IMetadataService
                         UniqueName = "Target",
                         Description = "bound Target",
                         Entityname = target,
-                        Type = nameof(EntityReference)
+                        Type = nameof(EntityReference),
+                        IsOptional = false, // Bound parameters will be required parameters
+                        IsOutput = false,
                     });
             }
 
@@ -292,7 +297,8 @@ public class MetadataService : IMetadataService
                     CustomAPIRequestParameter.LogicalNames.UniqueName,
                     CustomAPIRequestParameter.LogicalNames.Name,
                     CustomAPIRequestParameter.LogicalNames.Description,
-                    CustomAPIRequestParameter.LogicalNames.Type
+                    CustomAPIRequestParameter.LogicalNames.Type,
+                    CustomAPIRequestParameter.LogicalNames.IsOptional
                 ),
                 Criteria = new FilterExpression(LogicalOperator.And)
                 {
@@ -311,11 +317,13 @@ public class MetadataService : IMetadataService
                 ia.InParameters.Add(
                     new WfParameter
                     {
-                        Name = (string)inparam["name"],
-                        UniqueName = (string)inparam["uniquename"],
-                        Description = inparam.GetAttributeValue<string>("description"),
+                        Name = (string)inparam[CustomAPIRequestParameter.LogicalNames.Name],
+                        UniqueName = (string)inparam[CustomAPIRequestParameter.LogicalNames.UniqueName],
+                        Description = inparam.GetAttributeValue<string>(CustomAPIRequestParameter.LogicalNames.Description),
                         Entityname = "",
-                        Type = type
+                        Type = type,
+                        IsOptional = (bool?)inparam[CustomAPIRequestParameter.LogicalNames.IsOptional] ?? false,
+                        IsOutput = false,
                     });
             }
 
@@ -347,11 +355,13 @@ public class MetadataService : IMetadataService
                 ia.OutParameters.Add(
                     new WfParameter
                     {
-                        Name = (string)outparam["name"],
-                        UniqueName = (string)outparam["uniquename"],
-                        Description = outparam.GetAttributeValue<string>("description"),
+                        Name = (string)outparam[CustomAPIResponseProperty.LogicalNames.Name],
+                        UniqueName = (string)outparam[CustomAPIResponseProperty.LogicalNames.UniqueName],
+                        Description = outparam.GetAttributeValue<string>(CustomAPIResponseProperty.LogicalNames.Description),
                         Entityname = "",
-                        Type = type
+                        Type = type,
+                        IsOptional = true, // assume all responses can be optional
+                        IsOutput = true,
                     });
             }
 

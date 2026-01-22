@@ -15,15 +15,16 @@ public static class FileNames
 
     public static class Typescript
     {
-        public static string Model => "model";
-        public static string Services => "services";
-        public static string Webapi => "webapi";
-        public static string Utils => "utils";
-        public static string Odata => "odata";
+        public static string CustomApi => "customapi";
         public static string Entity => "entity";
         public static string EntityRef => "entityref";
         public static string Form => "form";
-        public static string SdkMessageNames => "sdkmessagenames";
+        public static string Model => "model";
+        public static string Odata => "odata";
         public static string OptionSetValues => "optionsetvalues";
+        public static string SdkMessageNames => "sdkmessagenames";
+        public static string Services => "services";
+        public static string Utils => "utils";
+        public static string Webapi => "webapi";
     }
 }

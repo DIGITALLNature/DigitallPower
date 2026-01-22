@@ -3,11 +3,9 @@
 
 using System.Diagnostics;
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.common;
 using Microsoft.Xrm.Sdk;
-using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.Logic;
 
@@ -43,6 +41,10 @@ public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
             _generatorFascade.GenerateBusinessProcessFlowsFull(args, config);
         }
 
+        if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Light)
+        {
+            _generatorFascade.GenerateCustomApis(args, config);
+        }
 
         return true;
     }

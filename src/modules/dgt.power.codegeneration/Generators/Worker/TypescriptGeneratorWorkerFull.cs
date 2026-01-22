@@ -261,4 +261,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
     }
 
     #endregion
+
+    #region NotImplemented
+    public void GenerateCustomApis(CodeGenerationVerb arg, CodeGenerationConfig config) => throw new NotImplementedException();
+    #endregion
 }

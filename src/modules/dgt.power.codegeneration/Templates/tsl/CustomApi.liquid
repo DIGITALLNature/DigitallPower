@@ -1,0 +1,21 @@
+﻿{%- assign CustomApiName = Name  | sanitize | camelcase -%}
+
+declare namespace XrmCustomApi.{{ CustomApiName }} {
+    export const enum CustomApiEnums {
+        LogicalName = "{{ Name }}"
+    }
+    
+    {%- if InParameters.size > 0 %}
+    export interface Request extends XrmWebApi.ExecuteRequest {
+        {% for inParameter in InParameters  %}
+        {{ inParameter.ParameterName }}{%- if inParameter.IsOptional %}?{%- endif %}: {{ inParameter.ParameterType }};{% endfor %}
+    }
+    {%- endif %}
+
+    {%- if OutParameters.size > 0 %}
+    export interface Response {
+        {% for outParameter in OutParameters  %}
+        {{ outParameter.ParameterName }}{%- if outParameter.IsOptional %}?{%- endif %}: {{ outParameter.ParameterType }};{% endfor %}
+    }
+    {%- endif %}
+}

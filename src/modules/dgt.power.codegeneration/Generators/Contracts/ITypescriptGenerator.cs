@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Templates.ts;
 
 namespace dgt.power.codegeneration.Generators.Contracts;
 
@@ -16,4 +15,5 @@ public interface ITypescriptGenerator
     void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config);
     void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config);
     void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config);
+    void GenerateCustomApis(CodeGenerationVerb arg, CodeGenerationConfig config);
 }

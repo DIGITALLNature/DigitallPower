@@ -10,4 +10,7 @@ public class WfParameter
     public string? Type { get; set; }
     public string? Description { get; set; }
     public string? Entityname { get; set; }
+    public required bool IsOptional { get; set; }
+
+    public required bool IsOutput { get; set; }
 }
