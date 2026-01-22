@@ -210,7 +210,8 @@ public class DotNetCommandTests : CodeGenerationTestsBase<DotNetCommand>
             Name = "String Parameter",
             Description = "String",
             Type = new OptionSetValue(CustomAPIRequestParameter.Options.Type.String),
-            CustomAPIId = customApi.ToEntityReference()
+            CustomAPIId = customApi.ToEntityReference(),
+            IsOptional = false,
         };
         var customApiResponseProperty = new CustomAPIResponseProperty(Guid.NewGuid())
         {

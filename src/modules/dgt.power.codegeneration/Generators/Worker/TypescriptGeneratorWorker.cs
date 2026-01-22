@@ -2,6 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.Reflection;
+using System.Xml.Linq;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using Spectre.Console;
@@ -32,8 +34,23 @@ public abstract class TypescriptGeneratorWorker
         file.Write(content);
     }
 
+    public void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
+    {
+        // Ensure that the template and args are not null
+        Debug.Assert(templateFileName != null, nameof(templateFileName) + " != null");
+        Debug.Assert(templateFileName != null, nameof(templateFileName) + " != null");
+        Debug.Assert(args != null, nameof(args) + " != null");
+
+        var reader = new StreamReader(Assembly.GetCallingAssembly()
+            .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
+
+        var content = reader.ReadToEnd();
+
+        CreateFile(content, templateFileName, args);
+    }
+
     /// <summary>
-    ///     Prepares the directory for code generation.
+    /// Prepares the directory for code generation.
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
     public void PrepareDirectory(CodeGenerationVerb args)

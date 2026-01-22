@@ -6,7 +6,6 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Generators.Worker;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.codegeneration.Templates.ts;
 
 namespace dgt.power.codegeneration.Generators;
 
@@ -111,6 +110,15 @@ public class TypescriptGeneratorFascade : ITypescriptGeneratorFascade
         Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
         _generator.GenerateBusinessProcessFlowsFull(args, config);
+    }
+
+    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+        Debug.Assert(_generator != null, nameof(_generator) + " != null");
+
+        _generator.GenerateCustomApis(args, config);
     }
 
     public void SetGenerationVersion(TypescriptGeneratorVersion generatorVersion)

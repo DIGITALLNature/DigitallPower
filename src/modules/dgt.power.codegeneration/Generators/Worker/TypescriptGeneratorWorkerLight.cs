@@ -39,6 +39,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is BpfControlDetail r ? new BpfControlViewModel(r): null);
         _templateOptions.ValueConverters.Add(o => o is FormXmlControlData r ? new FormControlViewModel(r) : null);
+        _templateOptions.ValueConverters.Add(o => o is WfParameter wp ? new CustomApiParameterViewModel(wp) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
         _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetailsViewModel(td) : null);
         _templateOptions.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
@@ -50,6 +51,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.MemberAccessStrategy.Register<FormAttributeData>();
         _templateOptions.MemberAccessStrategy.Register<FormControlViewModel>();
         _templateOptions.MemberAccessStrategy.Register<BpfControlViewModel>();
+        _templateOptions.MemberAccessStrategy.Register<CustomApiParameterViewModel>();
         _templateOptions.MemberAccessStrategy.Register<TabDetail>();
         _templateOptions.MemberAccessStrategy.Register<SectionDetailsViewModel>();
         _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
@@ -179,6 +181,43 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     }
 
     /// <summary>
+    /// Generates Custom Apis type for code generation
+    /// </summary>
+    /// <param name="args"></param>
+    /// <param name="config"></param>
+    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
+    {
+        // Check if the arguments and configuration are not null
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        // Check if SDK messages should be suppressed
+        if (config.CustomAPIs == null || config.CustomAPIs.Length < 1)
+        {
+            return;
+        }
+
+       var customApis = _metadataService.RetrieveCustomAPIs(config);
+        CopyTemplateFileContent(args, "xrm_webapi_ext", "d.ts");
+       var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
+
+        foreach (var customApi in customApis)
+        {
+            var viewModel = new CustomApiViewModel()
+            {
+                Name = customApi.LogicalName,
+                InParameters = customApi.InParameters,
+                OutParameters = customApi.OutParameters
+            };
+            var context = new TemplateContext(viewModel, _templateOptions);
+            var content = liquidTemplate.Render(context);
+
+            var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.CustomApi}";
+            CreateFile(content, customApiName, args);
+        }
+    }
+
+    /// <summary>
     ///     Generates option sets based on the provided arguments and configuration
     /// </summary>
     /// <param name="args">The code generation verb</param>
@@ -304,7 +343,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             .Where(a => !a.LogicalName.Contains("entityimage"))
             .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
             .OrderBy(a => a.LogicalName).ToList();
-    }  
+    }
 
     #endregion
 
