@@ -1,3 +1,10 @@
+# [2.1.0-beta.28](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.27...v2.1.0-beta.28) (2026-01-22)
+
+
+### Features
+
+* **tsl:** extra adaptations for ts custom api generation ([#119](https://github.com/DIGITALLNature/DigitallPower/issues/119)) ([79e1735](https://github.com/DIGITALLNature/DigitallPower/commit/79e1735bf6fec291ca96ccc521785bb8c8e9ee06))
+
 # [2.1.0-beta.27](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.26...v2.1.0-beta.27) (2026-01-21)
 
 
