@@ -1,3 +1,10 @@
+# [2.1.0-beta.30](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.29...v2.1.0-beta.30) (2026-01-23)
+
+
+### Features
+
+* **tsl:** add hierarchical namespaces to the form and entities ([#121](https://github.com/DIGITALLNature/DigitallPower/issues/121)) ([4ce3692](https://github.com/DIGITALLNature/DigitallPower/commit/4ce3692c59cfb4ef27600b2e8105113f9e2f6526))
+
 # [2.1.0-beta.29](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.28...v2.1.0-beta.29) (2026-01-23)
 
 
