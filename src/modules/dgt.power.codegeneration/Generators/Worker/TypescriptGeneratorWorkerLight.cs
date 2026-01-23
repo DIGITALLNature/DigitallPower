@@ -103,8 +103,9 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             };
             var context = new TemplateContext(viewModel, _templateOptions);
             var content = liquidTemplate.Render(context);
+            var formEntityName = metadata.LogicalName.ToLowerInvariant().Trim();
 
-            CreateFile(content, $"{metadata.LogicalName.ToLowerInvariant().Trim()}.{FileNames.Typescript.Entity}", args);
+            CreateFile(content, $"{formEntityName}.{FileNames.Typescript.Entity}", args, GetEntityFolderName(metadata.LogicalName));
         }
     }
 
@@ -213,7 +214,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var content = liquidTemplate.Render(context);
 
             var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.CustomApi}";
-            CreateFile(content, customApiName, args);
+            CreateFile(content, customApiName, args, [Folders.TypescriptCustomApis]);
         }
     }
 
@@ -281,7 +282,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         };
         var context = new TemplateContext(viewModel, _templateOptions);
         var content = liquidTemplate.Render(context);
-        CreateFile(content, form, args);
+        CreateFile(content, form, args, GetEntityFolderName(metadata.LogicalName));
     }
 
     private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
@@ -343,6 +344,17 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             .Where(a => !a.LogicalName.Contains("entityimage"))
             .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
             .OrderBy(a => a.LogicalName).ToList();
+    }
+
+    /// <summary>
+    /// Given the entity logical name calculates a folder name for the given ts files
+    /// </summary>
+    /// <param name="entityLogicalName"></param>
+    /// <returns></returns>
+    private static string[] GetEntityFolderName(string entityLogicalName)
+    {
+        var formEntityName = entityLogicalName.ToLowerInvariant().Trim();
+        return [Folders.TypescriptEntityForms, Formatter.CamelCase(Formatter.Sanitize(formEntityName))];
     }
 
     #endregion

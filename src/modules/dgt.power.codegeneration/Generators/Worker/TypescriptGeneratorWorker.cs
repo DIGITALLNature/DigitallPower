@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using System.Xml.Linq;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using Spectre.Console;
@@ -12,20 +11,32 @@ namespace dgt.power.codegeneration.Generators.Worker;
 
 public abstract class TypescriptGeneratorWorker
 {
+
+    private const string NOT_NULL = "!= null";
     /// <summary>
     ///     Creates a TypeScript file with the specified content and name in the target directory.
     /// </summary>
     /// <param name="content">The content to be written into the file.</param>
     /// <param name="name">The name of the file to be created.</param>
     /// <param name="args">The code generation arguments, including target directory and folder configuration.</param>
-    public void CreateFile(string content, string name, CodeGenerationVerb args)
+    /// <param name="outputPath">Additional path in the output ts script folder</param>
+    public void CreateFile(string content, string name, CodeGenerationVerb args, string[]? outputPath = null)
     {
         // Ensure that the template and args are not null
-        Debug.Assert(content != null, nameof(content) + " != null");
-        Debug.Assert(args != null, nameof(args) + " != null");
-
+        Debug.Assert(content != null, $"{nameof(content)} {NOT_NULL}");
+        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
+        Debug.Assert(name != null, $"{nameof(name)} + { NOT_NULL}");
         // Combine the target directory, folder, and file name to create the full path
-        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.d.ts");
+        var path = Path.Combine([
+            args.TargetDirectory,
+            args.Folder,
+            Folders.Typescript,
+            ..(outputPath ?? ([])),
+            $"{name}.d.ts"
+        ]);
+
+        // Create directly if needed
+        CreateDirectoryWhenNeeded(Path.GetDirectoryName(path));
         // Create a text file at the specified path
         using var file = File.CreateText(path);
         // Print a message indicating the file creation
@@ -37,9 +48,9 @@ public abstract class TypescriptGeneratorWorker
     public void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
     {
         // Ensure that the template and args are not null
-        Debug.Assert(templateFileName != null, nameof(templateFileName) + " != null");
-        Debug.Assert(templateFileName != null, nameof(templateFileName) + " != null");
-        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} {NOT_NULL}");
+        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
+        Debug.Assert(extension != null, $"{nameof(extension)} {NOT_NULL}");
 
         var reader = new StreamReader(Assembly.GetCallingAssembly()
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
@@ -56,29 +67,43 @@ public abstract class TypescriptGeneratorWorker
     public void PrepareDirectory(CodeGenerationVerb args)
     {
         // Ensure that the arguments are not null
-        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
 
         // Create the main folder if it doesn't exist
         var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
-        if (!Directory.Exists(mainFolderPath))
-        {
-            Directory.CreateDirectory(mainFolderPath);
-        }
+        CreateDirectoryWhenNeeded(mainFolderPath);
 
         // Create the Typescript folder if it doesn't exist
         var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
-        if (!Directory.Exists(typescriptFolderPath))
-        {
-            Directory.CreateDirectory(typescriptFolderPath);
-        }
-        else
-        {
-            // Delete all .ts files in the Typescript folder
-            var typescriptFiles = Directory.GetFiles(typescriptFolderPath, "*.ts");
-            foreach (var file in typescriptFiles)
+        if (!CreateDirectoryWhenNeeded(typescriptFolderPath)) {
+            // Delete all files and folders in the directory file
+            var directory = new DirectoryInfo(typescriptFolderPath);
+            // Delete files in ts folder
+            foreach (var file in directory.GetFiles())
             {
-                File.Delete(file);
+                file.Delete();
+            }
+            // Delete all subfolders
+            foreach (var dir in directory.GetDirectories())
+            {
+                dir.Delete(true);
             }
         }
+    }
+
+    /// <summary>
+    /// Auxiliary function given a path creates missed directory folders and returns true, false when folder already exists
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private static bool CreateDirectoryWhenNeeded(string? directoryPath)
+    {
+        Debug.Assert(directoryPath != null, $"{nameof(directoryPath)} {NOT_NULL}");
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+            return true;
+        }
+        return false;
     }
 }
