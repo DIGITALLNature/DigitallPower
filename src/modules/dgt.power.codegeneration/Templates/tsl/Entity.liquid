@@ -53,16 +53,18 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
     {%- endfor %}
     }
 
-    export const enum Attributes {
+    export const enum LogicalNames {
     {%- for attr in Attributes  %}
         {{ attr.SchemaName | sanitize | camelcase | unique: "A"  }} =  "{{ attr.LogicalName }}",
     {%- endfor %}
     }
-{% for attr in EnumAttributes  %}
-    export const enum {{ attr.SchemaName | sanitize | camelcase | unique: "O"  }} {
-    {%- for option in attr.Options  %}
-        {{ option.Label | localize: LanguageCode | sanitize | camelcase   }} =  {{ option.Value }},
-    {%- endfor %}
+
+    namespace Options {
+    {% for attr in EnumAttributes  %}
+        export const enum {{ attr.SchemaName | sanitize | camelcase | unique: "O"  }} {
+        {%- for option in attr.Options  %}
+            {{ option.Label | localize: LanguageCode | sanitize | camelcase   }} =  {{ option.Value }},
+        {%- endfor %}
+        }{% endfor %}
     }
-{% endfor %}
 }

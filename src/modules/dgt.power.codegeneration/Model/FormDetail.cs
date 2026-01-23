@@ -5,18 +5,22 @@ namespace dgt.power.codegeneration.Model;
 
 public class FormDetail
 {
-    public SortedSet<string> HeaderControlFields { get; }
-    public SortedSet<string> Grids { get; }
     public SortedSet<FormAttributeData> Attributes { get; }
     public SortedSet<FormXmlControlData> FormControls { get; }
-    public SortedSet<TabDetail> TabDetails { get; }
+    public string FormUniqueName { get; set; }
     public int FormType { get; set; }
+    public string FormTypeName { get; set; }
+    public SortedSet<string> Grids { get; }
+    public SortedSet<string> HeaderControlFields { get; }
+    public SortedSet<TabDetail> TabDetails { get; }
     public SortedDictionary<string, List<string>> Tabs { get; }
 
     public FormDetail()
     {
         Attributes = [];
         FormControls = [];
+        FormUniqueName = string.Empty;
+        FormTypeName = string.Empty;
         Grids = [];
         HeaderControlFields = [];
         TabDetails = [];

@@ -16,7 +16,6 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
-using static dgt.power.dataverse.CustomAPIRequestParameter.Options;
 
 namespace dgt.power.codegeneration.Services;
 
@@ -109,12 +108,7 @@ public class MetadataService : IMetadataService
                         ConditionOperator.Equal, uniqueName)
                 }
             }
-        }).Entities.SingleOrDefault()?.ToEntity<Solution>();
-
-    private static string WildCardToRegular(string value)
-    {
-        return "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
-    }
+        }).Entities.SingleOrDefault()?.ToEntity<Solution>();   
 
     public IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config)
     {
@@ -371,25 +365,6 @@ public class MetadataService : IMetadataService
         return result;
     }
 
-    private static string GetParamType(int paramType) =>
-        paramType switch
-        {
-            0 => "bool",
-            1 => "DateTime",
-            2 => "decimal",
-            3 => "Entity",
-            4 => "EntityCollection",
-            5 => "EntityReference",
-            6 => "float",
-            7 => "int",
-            8 => "Money",
-            9 => "OptionSetValue",
-            10 => "string",
-            11 => "string[]",
-            12 => "Guid",
-            _ => "object"
-        };
-
     public IEnumerable<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
         var result = new List<(string Name, string Message)>();
@@ -622,7 +597,6 @@ public class MetadataService : IMetadataService
             .ThenBy(x => x.DataFieldName)
             .ToList();
     }
-
     public List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
     {
         var result = new List<Tuple<string, string, List<Guid>>>();
@@ -754,33 +728,30 @@ public class MetadataService : IMetadataService
             query_Or_Or2_entity_And_solutioncomponent_And_solution.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
-        var allForms = _connection.RetrieveMultiple(querySystemForm).Entities.Select(x => x.ToEntity<SystemForm>());
+        var systemForms = _connection.RetrieveMultiple(querySystemForm);
 
-        return allForms.ToDictionary(
-                form =>
-                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
-                (form) => FormParser.ParseForms(form, bpfControls));
+        return ParseSystemFormsCollectionToFormDetails(systemForms, entityLogicalName, bpfControls);
     }
 
     public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
     {
-        var allForms = RetrieveFormsForEntity(entityLogicalName);
-        return allForms.Entities
-            .ToDictionary(
-                form =>
-                    $"{Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), entityLogicalName)}.{GetFormType(form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value)}",
-                (form) => FormParser.ParseForms(form, bpfControls));
+        var systemForms = RetrieveFormsForEntity(entityLogicalName);
+        return ParseSystemFormsCollectionToFormDetails(systemForms, entityLogicalName, bpfControls);
     }
 
-    private static string GetFormType(int type)
+    private Dictionary<string, FormDetail> ParseSystemFormsCollectionToFormDetails(EntityCollection forms, string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
     {
-        return type switch
+        var allForms = forms.Entities.Select(x => x.ToEntity<SystemForm>());
+        return allForms.Select(form =>
         {
-            2 => "main",
-            6 => "quickview",
-            _ => "quickcreate"
-        };
-    }   
+            // Made unique name with scope by entity and form type
+            var formScope = $"{entityLogicalName}.{form.Type?.Value}";
+            return FormParser.ParseForm(form,
+                Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), formScope),
+                bpfControls);
+        })
+       .ToDictionary(formDetail => $"{formDetail.FormUniqueName}.{FormParser.GetFormType(formDetail.FormType)}", formDetail => formDetail);
+    }    
 
     private EntityCollection RetrieveFormsForEntity(string logicalName)
     {
@@ -803,7 +774,7 @@ public class MetadataService : IMetadataService
         return _connection.RetrieveMultiple(query);
     }
 
-    internal string Unique(string value, string scope)
+    private string Unique(string value, string scope)
     {
         if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
 
@@ -813,4 +784,28 @@ public class MetadataService : IMetadataService
         _usedTokens[scope].Add(value);
         return value;
     }
+
+    private static string WildCardToRegular(string value)
+    {
+        return "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+    }
+
+    private static string GetParamType(int paramType) =>
+        paramType switch
+        {
+            0 => "bool",
+            1 => "DateTime",
+            2 => "decimal",
+            3 => "Entity",
+            4 => "EntityCollection",
+            5 => "EntityReference",
+            6 => "float",
+            7 => "int",
+            8 => "Money",
+            9 => "OptionSetValue",
+            10 => "string",
+            11 => "string[]",
+            12 => "Guid",
+            _ => "object"
+        };
 }

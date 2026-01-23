@@ -12,15 +12,19 @@ namespace dgt.power.codegeneration.Services
 {
     public static class FormParser
     {
-        public static FormDetail ParseForms(Entity form, SortedSet<BpfControlDetail>? bpfControls)
+        public static FormDetail ParseForm(Entity form, string formUniqueName, SortedSet<BpfControlDetail>? bpfControls)
         {
             var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
-            var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type);
+            var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value;
             var doc = new XmlDocument();
             doc.LoadXml(formxml);
 
-            var formDetail = new FormDetail();
-            formDetail.FormType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value;
+            var formDetail = new FormDetail()
+            {
+                FormType = formType,
+                FormTypeName = FormatFormType(GetFormType(formType)),
+                FormUniqueName = formUniqueName,
+            };
 
             var tabs = doc.SelectNodes("/form/tabs/tab[*]");
             if (tabs == null)
@@ -252,10 +256,10 @@ namespace dgt.power.codegeneration.Services
         /// <param name="formDetail"></param>
         /// <param name="formType"></param>
         /// <param name="bpfControls"></param>
-        private static void MapBpfControlsAttributesIntoFormDetail(FormDetail formDetail, OptionSetValue? formType, SortedSet<BpfControlDetail>? bpfControls)
+        private static void MapBpfControlsAttributesIntoFormDetail(FormDetail formDetail, int formType, SortedSet<BpfControlDetail>? bpfControls)
         {
             // Exclude header process controls in case of quick view forms
-            if (bpfControls != null && formType?.Value != SystemForm.Options.Type.QuickViewForm)
+            if (bpfControls != null && formType != SystemForm.Options.Type.QuickViewForm)
             {
                 var bfControlFieldNames = bpfControls
                     .Where(bpfControl => !formDetail.Attributes.Any(x => x.DataFieldName == bpfControl.DataFieldName))
@@ -306,6 +310,24 @@ namespace dgt.power.codegeneration.Services
                 return string.Empty;
             }
             return Regex.Replace(classId.ToUpperInvariant(), "[{}]", "", RegexOptions.NonBacktracking);
+        }
+
+        public static string FormatFormType(string formType)
+        {
+             return formType
+                .Replace("main", "Main")
+                .Replace("quickview", "Quick View")
+                .Replace("quickcreate", "Quick Create");
+        }
+
+        public static string GetFormType(int type)
+        {
+            return type switch
+            {
+                2 => "main",
+                6 => "quickview",
+                _ => "quickcreate"
+            };
         }
     }
 }
