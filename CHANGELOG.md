@@ -1,3 +1,10 @@
+# [2.1.0-beta.29](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.28...v2.1.0-beta.29) (2026-01-23)
+
+
+### Features
+
+* **tsl:** adapt logic so ts files have a folder structure ([#120](https://github.com/DIGITALLNature/DigitallPower/issues/120)) ([d3a70f6](https://github.com/DIGITALLNature/DigitallPower/commit/d3a70f6f8ff48af31b201bc26cbe764ed4c8b3b2))
+
 # [2.1.0-beta.28](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.27...v2.1.0-beta.28) (2026-01-22)
 
 
