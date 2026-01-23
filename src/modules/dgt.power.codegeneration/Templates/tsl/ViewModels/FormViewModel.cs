@@ -8,12 +8,9 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public record FormViewModel
 {
-    public required string SchemaName { get; init; }
-
     public required List<AttributeMetadata> Attributes { get; init; }
-
-    public required string Name { get; init; }
-    public required FormDetail FormDetail { get; init; }
-
     public required List<BpfControlDetail> BpfControls { get; init; }
+    public required string EntitySchemaName { get; init; }
+    public required FormDetail FormDetail { get; init; }
+    public required string Name { get; init; }
 }

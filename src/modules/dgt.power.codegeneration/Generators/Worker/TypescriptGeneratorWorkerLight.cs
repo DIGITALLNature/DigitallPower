@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using dgt.power.codegeneration.Base;
@@ -276,7 +275,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         {
             Name = formname,
             FormDetail = formDetail.Value,
-            SchemaName = metadata.SchemaName,
+            EntitySchemaName = metadata.SchemaName,
             Attributes = FilterEntityMetadataAttributes(metadata),
             BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList(),
         };
