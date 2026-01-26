@@ -1,6 +1,8 @@
-{%- assign FormName = FormDetail.FormUniqueName  | sanitize | camelcase -%}
-{%- assign FormType = FormDetail.FormTypeName  | sanitize | camelcase -%}
+// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
 /* eslint-disable */
+
+{% assign FormName = FormDetail.FormUniqueName  | sanitize | camelcase -%}
+{%- assign FormType = FormDetail.FormTypeName  | sanitize | camelcase -%}
 
 declare namespace Xrm.Events {
     export interface EventContext {
@@ -30,6 +32,7 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
         export interface Ui extends Xrm.Ui {
             tabs: Tabs;
             controls: Controls;
+            quickForms: QuickForms;
         }
 
         export interface Data extends Xrm.Data {
@@ -70,13 +73,22 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
             {% for section in tab.Sections  %}
             {%- assign SectionName = section.SectionName | sanitize | camelcase %}get(name: "{{ section.SectionName }}"): {{ TabName }}{{ SectionName }};{%- endfor %}
             get(name: string): undefined;
+            get(): Xrm.Controls.Section[];
         }
         {% for section in tab.Sections  %}{%- assign SectionName = section.SectionName | sanitize | camelcase %}
         export interface {{ TabName }}{{ SectionName }} extends Xrm.Controls.Section {
             {%- for controlName in section.ControlNames %}
             get(name: "{{ controlName }}"): {{ controlName | formControlType: FormDetail.FormControls }}; {%- endfor %}
             get(name: string): undefined;
+            get(): Xrm.Controls.Control[];
         }
         {% endfor %}{% endfor %}
+
+        export interface QuickForms extends Xrm.Collection.ItemCollection<Xrm.Controls.QuickFormControl> {
+            get(name: string): undefined;
+            get(): Xrm.Controls.QuickFormControl[];
+            {%- for quickViewName in FormDetail.QuickViews %}
+            get(name: "{{ quickViewName }}"): Xrm.Control.QuickFormControl;{% endfor %}
+        }
     }
 }

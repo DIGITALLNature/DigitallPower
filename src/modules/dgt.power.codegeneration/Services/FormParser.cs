@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
+using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
@@ -192,11 +193,23 @@ namespace dgt.power.codegeneration.Services
                         // Map controls as subgrid
                         formDetail.Grids.Add(controlId);
                     }
+
+                    if(newFormControl.ClassId == ControlClassIds.QuickView)
+                    {
+                        MapFormXmlQuickViewControlsIntoFormDetailQuickViews(formDetail, control, controlId);
+                    }
                 }
             }
         }
 
-
+        /// <summary>
+        /// Map Section control to form xml control
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="doc"></param>
+        /// <param name="controlId"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         private static FormXmlControlData? MapSectionControlToFormXmlControl(XmlNode control, XmlDocument doc, string controlId, string? fieldName)
         {
             var uniqueId = control.Attributes?["uniqueid"]?.Value;
@@ -214,6 +227,22 @@ namespace dgt.power.codegeneration.Services
                 CustomControlClass = GetCustomControlClass(doc, classId, uniqueId),
                 RepeatedControl = 0,
             };
+        }
+
+        /// <summary>
+        /// Map form quick view controls into form detail quick view names
+        /// </summary>
+        /// <param name="formDetail"></param>
+        /// <param name="control"></param>
+        /// <param name="controlId"></param>
+        private static void MapFormXmlQuickViewControlsIntoFormDetailQuickViews(FormDetail formDetail, XmlNode control, string controlId)
+        {
+            var quickFormParameters = control.SelectNodes(".//parameters/QuickForms");
+            if (quickFormParameters != null && quickFormParameters.Count > 0 && quickFormParameters[0]?.InnerText != null)
+            {
+                formDetail.QuickViews.Add(controlId);
+            }
+
         }
 
         /// <summary>
@@ -287,11 +316,17 @@ namespace dgt.power.codegeneration.Services
         private static string GetCustomControlClass(XmlDocument doc, string classId, string? uniqueId)
         {
             // If custom control, the control type is found in the form xml control descriptions
-            if (classId == "F9A8A302-114E-466A-B582-6771B2AE0D92" && !string.IsNullOrWhiteSpace(uniqueId))
+            if (classId == ControlClassIds.CustomControl && !string.IsNullOrWhiteSpace(uniqueId))
             {
                 var customControl = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl[@id[not(.='')]]");
+                var customControlQuickView = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl/parameters/QuickForms");
                 if (customControl != null && customControl.Count == 1)
                 {
+                    if(customControlQuickView != null &&
+                        customControlQuickView.Count > 1 &&
+                        customControlQuickView[0]?.InnerText != null) {
+                        return ControlClassIds.QuickView;
+                    }
                     return MapClassId(customControl[0]?.Attributes?["id"]?.Value);
                 }
             }
