@@ -1,3 +1,10 @@
+# [2.1.0-beta.31](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.30...v2.1.0-beta.31) (2026-01-26)
+
+
+### Features
+
+* **tsl:** ts generation of ui.quickviews in form context ([#122](https://github.com/DIGITALLNature/DigitallPower/issues/122)) ([1e29ebf](https://github.com/DIGITALLNature/DigitallPower/commit/1e29ebf047dafee438bae75a890bb0757f92b4ab))
+
 # [2.1.0-beta.30](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.29...v2.1.0-beta.30) (2026-01-23)
 
 
