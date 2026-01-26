@@ -12,6 +12,7 @@ public class FormDetail
     public string FormTypeName { get; set; }
     public SortedSet<string> Grids { get; }
     public SortedSet<string> HeaderControlFields { get; }
+    public SortedSet<string> QuickViews { get; }
     public SortedSet<TabDetail> TabDetails { get; }
     public SortedDictionary<string, List<string>> Tabs { get; }
 
@@ -25,5 +26,6 @@ public class FormDetail
         HeaderControlFields = [];
         TabDetails = [];
         Tabs = [];
+        QuickViews = [];
     }
 }
