@@ -13,10 +13,15 @@ declare namespace Xrm.Events {
 declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
     namespace {{ FormType }}.{{ FormName }} {
         export interface FormContext extends Xrm.FormContext {
-            getAttribute(name: string): undefined;
+            getAttribute<T extends Xrm.Attributes.Attribute>(name: string): T | null;
+            getAttribute(name: string): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | null;
+            getAttribute(delegateFunction?: Xrm.Collection.MatchingDelegate<Xrm.Attributes.Attribute>): Xrm.Attributes.Attribute[];
             {% for attribute in FormDetail.Attributes  %}
             getAttribute(name: "{{ attribute.DataFieldName }}"): {{ attribute.DataFieldName | attributetype: Attributes }}{%- if attribute.IsOptionalAttribute %} | null{%- endif %};{% endfor %}
-            getControl(name: string): undefined;
+
+            getControl<T extends Xrm.Controls.Control>(name: string): T | null;
+            getControl(delegateFunction?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
+            getControl(name: string): Xrm.Controls.Control | null;
             {% for formControl in FormDetail.FormControls  %}
             getControl(name: "{{ formControl.ControlName }}"): {{ formControl.DefinitelyTypedControlType }};{% endfor %}
             {% for headerField in FormDetail.HeaderControlFields  %}
@@ -36,6 +41,7 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
         }
 
         export interface Data extends Xrm.Data {
+            attributes: Attributes;
             entity: Entity;
         }
 
@@ -44,16 +50,18 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
         }
 
         export interface Attributes extends Xrm.Collection.ItemCollection<Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>> {
-            {% for attribute in FormDetail.Attributes  %}
+            {%- for attribute in FormDetail.Attributes  %}
             get(name: "{{ attribute.DataFieldName }}"): {{ attribute.DataFieldName | attributetype: Attributes }};{% endfor %}
-            get(name: string): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | undefined;
+            get<T extends Xrm.Attributes.Attribute>(name: string): T | null;
+            get(name: string): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | null;
             get(delegate?: MatchingDelegate<Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>>): Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>[];
         }
 
         export interface Controls extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
-            {% for formControl in FormDetail.FormControls  %}
+            {%- for formControl in FormDetail.FormControls  %}
             get(name: "{{ formControl.ControlName }}"): {{ formControl.DefinitelyTypedControlType }};{% endfor %}
-            get(name: string): Xrm.Controls.Control | undefined;
+            get<T extends Xrm.Controls.Control>(name: string): T | null;
+            get(name: string): Xrm.Controls.Control | null;
             get(delegate?: MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
         }
 
@@ -61,7 +69,8 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
             {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.TabName | sanitize | camelcase -%}
             get(itemName: "{{ tab.TabName }}"): {{ TabName }};
             {% endfor %}
-            get(name: string): undefined;
+            get<T extends Xrm.Controls.Tab>(name: string): T | null;
+            get(name: string): Xrm.Controls.Tab | null;
             get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
         }
         {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.TabName | sanitize | camelcase -%}
@@ -72,23 +81,40 @@ declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
         export interface {{ TabName }}Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
             {% for section in tab.Sections  %}
             {%- assign SectionName = section.SectionName | sanitize | camelcase %}get(name: "{{ section.SectionName }}"): {{ TabName }}{{ SectionName }};{%- endfor %}
-            get(name: string): undefined;
+            get<T extends Xrm.Controls.Section>(name: string): T | null;
+            get(name: string): Xrm.Controls.Section | null;
             get(): Xrm.Controls.Section[];
         }
         {% for section in tab.Sections  %}{%- assign SectionName = section.SectionName | sanitize | camelcase %}
         export interface {{ TabName }}{{ SectionName }} extends Xrm.Controls.Section {
             {%- for controlName in section.ControlNames %}
             get(name: "{{ controlName }}"): {{ controlName | formControlType: FormDetail.FormControls }}; {%- endfor %}
-            get(name: string): undefined;
+            get<T extends Xrm.Controls.Control>(name: string): T | null;
+            get(name: string): Xrm.Controls.Control | null;
             get(): Xrm.Controls.Control[];
         }
         {% endfor %}{% endfor %}
 
         export interface QuickForms extends Xrm.Collection.ItemCollection<Xrm.Controls.QuickFormControl> {
-            get(name: string): undefined;
+            get<T extends Xrm.Controls.QuickFormControl>(name: string): T | null;
+            get(name: string): Xrm.Controls.QuickFormControl | null;
             get(): Xrm.Controls.QuickFormControl[];
             {%- for quickViewName in FormDetail.QuickViews %}
-            get(name: "{{ quickViewName }}"): Xrm.Control.QuickFormControl;{% endfor %}
+            get(name: "{{ quickViewName }}"): Xrm.Controls.QuickFormControl;{% endfor %}
         }
+
+        {%- if FormType == "QuickView" %}
+
+        export interface QuickFormControl extends Xrm.Controls.QuickFormControl {
+            {%- for formControl in FormDetail.FormControls  %}
+            getControl(name: "{{ formControl.ControlName }}"): {{ formControl.DefinitelyTypedControlType }};{% endfor %}
+            {%- for headerField in FormDetail.HeaderControlFields  %}
+            getControl(name: "header_{{ headerField }}"): {{ headerField | controltype: Attributes }};{% endfor %}
+            {%- for bpfControl in BpfControls %}
+            getControl(name: "header_process_{{ bpfControl.DataFieldName }}"): {{ bpfControl.DefinitelyTypedControlType }} | null;{% endfor %}
+            {%- for subgrid in FormDetail.Grids %}
+            getControl(name: "{{ subgrid }}"): Xrm.Controls.GridControl;{% endfor %}
+        }
+        {%- endif %}
     }
 }
