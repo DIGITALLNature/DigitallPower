@@ -1,3 +1,10 @@
+# [2.1.0-beta.32](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.31...v2.1.0-beta.32) (2026-01-27)
+
+
+### Features
+
+* **tsl:** fix issue with generics and random string inputs ([#123](https://github.com/DIGITALLNature/DigitallPower/issues/123)) ([a0d9046](https://github.com/DIGITALLNature/DigitallPower/commit/a0d904699550681b3f50cd9c51bbea58c5ca414b))
+
 # [2.1.0-beta.31](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.30...v2.1.0-beta.31) (2026-01-26)
 
 
