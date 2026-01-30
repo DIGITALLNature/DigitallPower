@@ -1,3 +1,10 @@
+# [2.1.0-beta.33](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.32...v2.1.0-beta.33) (2026-01-30)
+
+
+### Features
+
+* **tsl:** include formid in the generated classes for frontend logic to use ([#124](https://github.com/DIGITALLNature/DigitallPower/issues/124)) ([fe79624](https://github.com/DIGITALLNature/DigitallPower/commit/fe796246327930aea0f0b58dc6079e8918c15a30))
+
 # [2.1.0-beta.32](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.31...v2.1.0-beta.32) (2026-01-27)
 
 
