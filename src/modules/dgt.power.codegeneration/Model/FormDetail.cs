@@ -7,6 +7,7 @@ public class FormDetail
 {
     public SortedSet<FormAttributeData> Attributes { get; }
     public SortedSet<FormXmlControlData> FormControls { get; }
+    public string FormId { get; set; }
     public string FormUniqueName { get; set; }
     public int FormType { get; set; }
     public string FormTypeName { get; set; }

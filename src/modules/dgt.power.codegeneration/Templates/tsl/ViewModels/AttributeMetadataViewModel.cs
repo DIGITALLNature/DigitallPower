@@ -7,21 +7,14 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public record AttributeMetadataViewModel
 {
-    public string NativeType { get; set; }
-
-    public OptionMetadataCollection Options { get; set; }
-
-    public string SchemaName { get; set; }
-
     public string DefinitelyType { get; set; }
-
-    public string DefinitelyTypedControlType { get; set; }
-
-    public string LogicalName { get; set; }
-
     public string DefinitelyTypedAttributeType { get; set; }
-
+    public string DefinitelyTypedControlType { get; set; }
     public bool IsPrimaryId { get; set; }
+    public string LogicalName { get; set; }
+    public string NativeType { get; set; }
+    public OptionMetadataCollection Options { get; set; }
+    public string SchemaName { get; set; }
 
     public AttributeMetadataViewModel(AttributeMetadata attributeMetadata) => ToViewModel(attributeMetadata);
 
@@ -69,18 +62,15 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
                 DefinitelyType = "BigInt";
                 NativeType = "number";
-                break;
+                break;                
             case AttributeTypeCode.Customer:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
-                DefinitelyType = "Customer";
-                break;
             case AttributeTypeCode.PartyList:
             case AttributeTypeCode.Owner:
             case AttributeTypeCode.Lookup:
                 DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
                 DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
                 DefinitelyType = "Lookup";
+                NativeType = "any";
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
@@ -135,19 +125,15 @@ public record AttributeMetadataViewModel
     }
 
 
-    private string GetDateTimeType(DateTimeAttributeMetadata? attr)
+    private static string GetDateTimeType(DateTimeAttributeMetadata? attr)
     {
-        if (attr.DateTimeBehavior == DateTimeBehavior.DateOnly)
-        {
-            if (attr.Format == DateTimeFormat.DateOnly)
-            {
-                return "DateOnly:DateOnly";
-            }
 
-            return "DateOnly:UserLocal";
+        if (attr?.DateTimeBehavior == DateTimeBehavior.DateOnly && attr?.Format == DateTimeFormat.DateOnly)
+        {
+            return "DateOnly:DateOnly";
         }
 
-        if (attr.DateTimeBehavior == DateTimeBehavior.TimeZoneIndependent)
+        if (attr?.DateTimeBehavior == DateTimeBehavior.TimeZoneIndependent)
         {
             return "DateOnly:TimeZoneIndependent";
         }

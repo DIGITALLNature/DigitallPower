@@ -12,6 +12,9 @@ declare namespace Xrm.Events {
 
 declare namespace XrmForm.{{ EntitySchemaName | camelcase }} {
     namespace {{ FormType }}.{{ FormName }} {
+        export const enum FormData {
+            FormId = "{{ FormDetail.FormId }}",
+        }
         export interface FormContext extends Xrm.FormContext {
             getAttribute<T extends Xrm.Attributes.Attribute>(name: string): T | null;
             getAttribute(name: string): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | null;

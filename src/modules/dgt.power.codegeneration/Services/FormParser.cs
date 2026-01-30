@@ -15,6 +15,7 @@ namespace dgt.power.codegeneration.Services
     {
         public static FormDetail ParseForm(Entity form, string formUniqueName, SortedSet<BpfControlDetail>? bpfControls)
         {
+            var formId = form.GetAttributeValue<Guid>(SystemForm.LogicalNames.FormId).ToString();
             var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
             var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value;
             var doc = new XmlDocument();
@@ -25,6 +26,7 @@ namespace dgt.power.codegeneration.Services
                 FormType = formType,
                 FormTypeName = FormatFormType(GetFormType(formType)),
                 FormUniqueName = formUniqueName,
+                FormId = formId,
             };
 
             var tabs = doc.SelectNodes("/form/tabs/tab[*]");
@@ -44,6 +46,7 @@ namespace dgt.power.codegeneration.Services
 
             // Map bp process controls that will be mapped as "header_process_"
             MapBpfControlsAttributesIntoFormDetail(formDetail, formType, bpfControls);
+
             return formDetail;
         }
 
