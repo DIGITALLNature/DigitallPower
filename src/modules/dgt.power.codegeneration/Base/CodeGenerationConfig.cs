@@ -183,6 +183,11 @@ public class CodeGenerationConfig
     /// <summary>
     ///     TypeScript only
     /// </summary>
+    public bool XrmMockFormHelpers { get; init; }
+
+    /// <summary>
+    ///     TypeScript only
+    /// </summary>
     public HashSet<EntityFilter> EntityFilters { get; init; } = new ();
 
     /// <summary>

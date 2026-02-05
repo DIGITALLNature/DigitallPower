@@ -217,9 +217,19 @@
     <None Remove="Templates\tsl\EntityForm.liquid" />
     <EmbeddedResource Include="Templates\tsl\EntityForm.liquid" />
     <None Remove="Templates\tsl\Entity.liquid" />
+    <EmbeddedResource Include="Templates\tsl\EntityFormTestHelper.liquid" />
+    <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
     <EmbeddedResource Include="Templates\tsl\Entity.liquid" />
+    <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
     <EmbeddedResource Include="Templates\tsl\CustomApi.liquid" />
+    <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
     <EmbeddedResource Include="Templates\tsl\xrm_webapi_ext.d.ts" />
+    <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
+    <EmbeddedResource Include="Templates\tsl\xrm_mock_form.d.ts" />
+    <EmbeddedResource Include="Templates\tsl\xrm_mock_form_test_context_types.ts" />
+    <None Remove="Templates\tsl\xrm_mock_form_test_context_types.ts" />
+    <EmbeddedResource Include="Templates\tsl\xrm_mock_form_test_context_builder.ts" />
+    <None Remove="Templates\tsl\xrm_mock_form_test_context_builder.ts" />
   </ItemGroup>
 
 </Project>

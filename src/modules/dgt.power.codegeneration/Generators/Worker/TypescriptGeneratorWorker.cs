@@ -19,8 +19,9 @@ public abstract class TypescriptGeneratorWorker
     /// <param name="content">The content to be written into the file.</param>
     /// <param name="name">The name of the file to be created.</param>
     /// <param name="args">The code generation arguments, including target directory and folder configuration.</param>
+    /// <param name="extension">Extension of the file</param>
     /// <param name="outputPath">Additional path in the output ts script folder</param>
-    public void CreateFile(string content, string name, CodeGenerationVerb args, string[]? outputPath = null)
+    public static void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
     {
         // Ensure that the template and args are not null
         Debug.Assert(content != null, $"{nameof(content)} {NOT_NULL}");
@@ -32,7 +33,7 @@ public abstract class TypescriptGeneratorWorker
             args.Folder,
             Folders.Typescript,
             ..(outputPath ?? ([])),
-            $"{name}.d.ts"
+            $"{name}.{extension}"
         ]);
 
         // Create directly if needed
@@ -57,7 +58,7 @@ public abstract class TypescriptGeneratorWorker
 
         var content = reader.ReadToEnd();
 
-        CreateFile(content, templateFileName, args);
+        CreateFile(content, templateFileName, args, extension);
     }
 
     /// <summary>

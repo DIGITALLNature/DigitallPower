@@ -34,6 +34,9 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.Filters.AddFilter("attributetype", CustomLiquidFilters.Attributetype);
         _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
         _templateOptions.Filters.AddFilter("formControlType", CustomLiquidFilters.GetControlTypeFromFormControl);
+        _templateOptions.Filters.AddFilter("xrmMockAttributeType", CustomLiquidFilters.XrmMockAttributetype);
+        _templateOptions.Filters.AddFilter("xrmMockControlType", CustomLiquidFilters.GetControlXrmMockFormFromAttribute);
+        _templateOptions.Filters.AddFilter("requiredAttributeLevel", CustomLiquidFilters.GetRequiredAttributeLevel);
         _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
         _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
         _templateOptions.ValueConverters.Add(o => o is BpfControlDetail r ? new BpfControlViewModel(r): null);
@@ -104,7 +107,11 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var content = liquidTemplate.Render(context);
             var formEntityName = metadata.LogicalName.ToLowerInvariant().Trim();
 
-            CreateFile(content, $"{formEntityName}.{FileNames.Typescript.Entity}", args, GetEntityFolderName(metadata.LogicalName));
+            CreateFile(content,
+                $"{formEntityName}.{FileNames.Typescript.Entity}",
+                args,
+                FileNames.Typescript.TsTypeExtension,
+                GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntity));
         }
     }
 
@@ -113,7 +120,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var liquidTemplate = InitializeLiquidTemplate("EntityForm.liquid");
+        var liquidTemplateForm = InitializeLiquidTemplate("EntityForm.liquid");
+        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate("EntityFormTestHelper.liquid");
 
         Dictionary<string, SortedSet<BpfControlDetail>> bpfControls = GetCompleteEntityBpfControlList(config);
 
@@ -142,8 +150,19 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                     continue;
                 }
 
-                CreateFormFile(formDetail, metadata, liquidTemplate, args, formName, bpfControlsForEntity);
+                CreateFormFile(formDetail, metadata, liquidTemplateForm, args, formName, bpfControlsForEntity);
+                if (config.XrmMockFormHelpers)
+                {
+                    CreateFormTestHelperFile(formDetail, metadata, liquidTemplateFormTestHelpers, args, $"{formName}.{FileNames.Typescript.TestHelper}", bpfControlsForEntity);
+                }
             }
+        }
+
+        if (config.XrmMockFormHelpers)
+        {
+            CopyTemplateFileContent(args, FileNames.Typescript.XrmMockFormContextBuilder, FileNames.Typescript.TsExtension);
+            CopyTemplateFileContent(args, FileNames.Typescript.XrmMockFormContextTypes, FileNames.Typescript.TsExtension);
+            CopyTemplateFileContent(args, FileNames.Typescript.XrmMockTypingsFileName, FileNames.Typescript.TsTypeExtension);
         }
     }
 
@@ -177,7 +196,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var context = new TemplateContext(viewModel, _templateOptions);
         var content = liquidTemplate.Render(context);
 
-        CreateFile(content, FileNames.Typescript.SdkMessageNames, args);
+        CreateFile(content, FileNames.Typescript.SdkMessageNames, args, FileNames.Typescript.TsTypeExtension);
     }
 
     /// <summary>
@@ -198,7 +217,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         }
 
        var customApis = _metadataService.RetrieveCustomAPIs(config);
-        CopyTemplateFileContent(args, "xrm_webapi_ext", "d.ts");
+       CopyTemplateFileContent(args, FileNames.Typescript.XrmWebApiTypingsFileName, FileNames.Typescript.TsTypeExtension);
        var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
 
         foreach (var customApi in customApis)
@@ -213,7 +232,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var content = liquidTemplate.Render(context);
 
             var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.CustomApi}";
-            CreateFile(content, customApiName, args, [Folders.TypescriptCustomApis]);
+            CreateFile(content, customApiName, args, FileNames.Typescript.TsTypeExtension, [Folders.TypescriptCustomApis]);
         }
     }
 
@@ -247,7 +266,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var context = new TemplateContext(viewModel, _templateOptions);
         var content = liquidTemplate.Render(context);
 
-        CreateFile(content, FileNames.Typescript.OptionSetValues, args);
+        CreateFile(content, FileNames.Typescript.OptionSetValues, args, FileNames.Typescript.TsTypeExtension);
     }
 
     /// <summary>
@@ -265,6 +284,47 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         CodeGenerationVerb args,
         string form,
         SortedSet<BpfControlDetail> bpfControls)
+    {        
+        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, bpfControls);
+        CreateFile(content, form, args, FileNames.Typescript.TsTypeExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityForms));
+    }
+
+    /// <summary>
+    /// Wrapper function that maps the model and creates the form file
+    /// </summary>
+    /// <param name="formDetail"></param>
+    /// <param name="metadata"></param>
+    /// <param name="liquidTemplate"></param>
+    /// <param name="args"></param>
+    /// <param name="form"></param>
+    private void CreateFormTestHelperFile(
+        KeyValuePair<string, FormDetail> formDetail,
+        EntityMetadata metadata,
+        IFluidTemplate liquidTemplate,
+        CodeGenerationVerb args,
+        string form,
+        SortedSet<BpfControlDetail> bpfControls)
+    {
+        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, bpfControls);
+        CreateFile(content, form, args, FileNames.Typescript.TsExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityTestHelper));
+    }
+
+
+    /// <summary>
+    /// Create form content for input form and the input template
+    /// </summary>
+    /// <param name="formDetail"></param>
+    /// <param name="metadata"></param>
+    /// <param name="liquidTemplate"></param>
+    /// <param name="args"></param>
+    /// <param name="form"></param>
+    /// <param name="bpfControls"></param>
+    /// <returns></returns>
+    private string CreateFormFileContent(
+      KeyValuePair<string, FormDetail> formDetail,
+      EntityMetadata metadata,
+      IFluidTemplate liquidTemplate,
+      SortedSet<BpfControlDetail> bpfControls)
     {
         var formname = formDetail.Key
                     .Replace(".main", "Main")
@@ -280,9 +340,10 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList(),
         };
         var context = new TemplateContext(viewModel, _templateOptions);
-        var content = liquidTemplate.Render(context);
-        CreateFile(content, form, args, GetEntityFolderName(metadata.LogicalName));
+        return liquidTemplate.Render(context);
     }
+
+
 
     private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
     {
@@ -350,10 +411,10 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// </summary>
     /// <param name="entityLogicalName"></param>
     /// <returns></returns>
-    private static string[] GetEntityFolderName(string entityLogicalName)
+    private static string[] GetEntityFolderName(string entityLogicalName, string subFolder)
     {
         var formEntityName = entityLogicalName.ToLowerInvariant().Trim();
-        return [Folders.TypescriptEntityForms, Formatter.CamelCase(Formatter.Sanitize(formEntityName))];
+        return [Formatter.CamelCase(Formatter.Sanitize(formEntityName)), subFolder];
     }
 
     #endregion
