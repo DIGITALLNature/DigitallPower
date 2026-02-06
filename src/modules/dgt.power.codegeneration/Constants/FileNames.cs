@@ -26,5 +26,19 @@ public static class FileNames
         public static string Services => "services";
         public static string Utils => "utils";
         public static string Webapi => "webapi";
+
+        public static string TestHelper => "mock.form";
+
+        public static string TsTypeExtension => "d.ts";
+
+        public static string TsExtension => "ts";
+
+        public static string XrmWebApiTypingsFileName => "xrm_webapi_ext";
+        public static string XrmMockTypingsFileName => "xrm_mock_form";
+
+        public static string XrmMockFormContextBuilder => "xrm_mock_form_test_context_builder";
+
+        public static string XrmMockFormContextTypes => "xrm_mock_form_test_context_types";
+
     }
 }

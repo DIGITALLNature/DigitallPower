@@ -1,0 +1,81 @@
+// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
+/* eslint-disable */
+
+{% assign FormName = FormDetail.FormUniqueName  | sanitize | camelcase -%}
+{%- assign FormType = FormDetail.FormTypeName  | sanitize | camelcase -%}
+
+
+export namespace XrmForm{{ EntitySchemaName | camelcase }}{{FormType}}{{FormName}}TestHelper {
+    export const FormControlNames: string[] = [
+        {%- for formControl in FormDetail.FormControls  %}
+        "{{ formControl.ControlName }}",{% endfor %}
+        {% for headerField in FormDetail.HeaderControlFields  %}
+        "header_{{ headerField }}",{% endfor -%}
+        {% for bpfControl in BpfControls %}
+        "header_process_{{ bpfControl.DataFieldName }}",{% endfor %}
+    ] as const;
+
+    export const FormControlTypesConfig: XrmForm.Tester.XrmFormMockControl[] = [
+        {%- for formControl in FormDetail.FormControls  %}
+        {
+            name: "{{ formControl.ControlName }}",
+            type: "{{ formControl.MockXrmControlType }}", // formControl
+            isVisible: {{ formControl.IsVisible }},
+            isDisabled: {{ formControl.IsDisabled }},
+        },{% endfor %}{% for headerField in FormDetail.HeaderControlFields  %}
+        {
+            name: "header_{{ headerField }}",
+            type: "{{ headerField | xrmMockControlType: Attributes }}", // HeaderControl
+            attributeName: "{{ headerField }}",
+        },{% endfor -%}{% for bpfControl in BpfControls %}
+        {
+            name: "header_process_{{ bpfControl.DataFieldName }}",
+            type: "{{ bpfControl.XrmMockControlType }}",//bpfControl
+        },{% endfor %}
+    ] as const;
+
+    export const FormAttributeNames: string[] = [
+        {%- for attribute in FormDetail.Attributes  %}
+        "{{ attribute.DataFieldName }}",{% endfor %}
+    ] as const;
+
+    export const FormAttributeTypesConfig: XrmForm.Tester.XrmFormMockAttribute[] = [
+        {%- for attribute in FormDetail.Attributes  %}{
+            name: "{{ attribute.DataFieldName }}",
+            type: "{{ attribute.DataFieldName | xrmMockAttributeType: Attributes }}",
+            requiredLevel: "{{ attribute.DataFieldName | requiredAttributeLevel: Attributes }}",
+        },{% endfor %}
+    ];
+
+    export const TabNames: string[] = [
+        {% for tab in FormDetail.TabDetails  %}"{{ tab.TabName }}",
+        {% endfor %}
+    ] as const;
+
+    export const TabSectionControlsConfig: XrmForm.Tester.XrmFormMockTab[] = [
+        {% for tab in FormDetail.TabDetails  %}
+        {
+            name: "{{ tab.TabName }}",
+            sectionNames: [{%- for section in tab.Sections  %}"{{section.SectionName}}"{% if tab.Sections.size > 1 %},{% endif %}{% endfor -%}],
+            sections: [
+                {% for section in tab.Sections  %}
+                {
+                    name: "{{section.SectionName}}",
+                    controlNames: [
+                        {%- for controlName in section.ControlNames %}
+                        "{{ controlName }}",{% endfor %}
+                    ],
+                },{% endfor %}
+            ],
+        },{% endfor %}        
+    ];
+
+    export const SectionNames: string[] = [{% for tab in FormDetail.TabDetails  %}{% for section in tab.Sections  %}
+        "{{section.SectionName}}",{% endfor %}{% endfor %}
+    ];
+
+    export type ControlNameType = typeof FormControlNames[number];
+    export type AttributeNameType = typeof FormAttributeNames[number];
+    export type TabNameType = typeof TabNames[number];
+    export type SectionNameType = typeof SectionNames[number];
+}

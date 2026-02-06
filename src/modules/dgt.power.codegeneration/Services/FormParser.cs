@@ -8,6 +8,7 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
+using static dgt.power.dataverse.SdkMessageFilter.Options;
 
 namespace dgt.power.codegeneration.Services
 {
@@ -197,7 +198,7 @@ namespace dgt.power.codegeneration.Services
                         formDetail.Grids.Add(controlId);
                     }
 
-                    if(newFormControl.ClassId == ControlClassIds.QuickView)
+                    if(newFormControl.ClassId == ControlClassNames.XrmClassId.QuickView)
                     {
                         MapFormXmlQuickViewControlsIntoFormDetailQuickViews(formDetail, control, controlId);
                     }
@@ -219,6 +220,8 @@ namespace dgt.power.codegeneration.Services
             var isSubgrid = control.Attributes?["indicationOfSubgrid"]?.Value == "true";
             var classId = MapClassId(control.Attributes?["classid"]?.Value);
             var isWebResource = controlId.StartsWith("WebResource_", StringComparison.InvariantCulture);
+            var isVisible = control.ParentNode?.Attributes?["visible"]?.Value == "false";
+            var isDisabled = control.Attributes?["disabled"]?.Value == "true";
             // Map control as normal control
             return new FormXmlControlData
             {
@@ -226,6 +229,8 @@ namespace dgt.power.codegeneration.Services
                 ControlId = controlId,
                 IsSubgrid = isSubgrid,
                 IsWebResource = isWebResource,
+                IsVisible = isVisible,
+                IsDisabled = isDisabled,
                 ClassId = MapClassId(classId),
                 CustomControlClass = GetCustomControlClass(doc, classId, uniqueId),
                 RepeatedControl = 0,
@@ -319,7 +324,7 @@ namespace dgt.power.codegeneration.Services
         private static string GetCustomControlClass(XmlDocument doc, string classId, string? uniqueId)
         {
             // If custom control, the control type is found in the form xml control descriptions
-            if (classId == ControlClassIds.CustomControl && !string.IsNullOrWhiteSpace(uniqueId))
+            if (classId == ControlClassNames.XrmClassId.CustomControl && !string.IsNullOrWhiteSpace(uniqueId))
             {
                 var customControl = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl[@id[not(.='')]]");
                 var customControlQuickView = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl/parameters/QuickForms");
@@ -328,7 +333,7 @@ namespace dgt.power.codegeneration.Services
                     if(customControlQuickView != null &&
                         customControlQuickView.Count > 1 &&
                         customControlQuickView[0]?.InnerText != null) {
-                        return ControlClassIds.QuickView;
+                        return ControlClassNames.XrmClassId.QuickView;
                     }
                     return MapClassId(customControl[0]?.Attributes?["id"]?.Value);
                 }

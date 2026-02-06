@@ -70,6 +70,23 @@ public static class CustomLiquidFilters
         return new StringValue(GetAttributeByLogicalName(input, arguments).DefinitelyTypedAttributeType);
     }
 
+    public static ValueTask<FluidValue> GetControlXrmMockFormFromAttribute(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning restore IDE0060 // Remove unused parameter
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments).XrmMockControlType);
+    }
+
+    public static ValueTask<FluidValue> GetRequiredAttributeLevel(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning restore IDE0060 // Remove unused parameter
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments).RequiredLevel);
+    }    
+    public static ValueTask<FluidValue> XrmMockAttributetype(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    {
+        return new StringValue(GetAttributeByLogicalName(input, arguments).XrmMockTypeAttributeType);
+    }
+
 #pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> GetBpfControltype(FluidValue input, FilterArguments arguments, TemplateContext context)
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -101,7 +118,7 @@ public static class CustomLiquidFilters
 #pragma warning restore IDE0060 // Remove unused parameter
     {
         return new StringValue(GetControlByControlName(input, arguments).DefinitelyTypedControlType);
-    }
+    }  
 
     private static FormControlViewModel? GetControlByControlName(FluidValue input, FilterArguments arguments)
     {

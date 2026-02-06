@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.codegeneration.Constants;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
@@ -13,6 +14,11 @@ public record AttributeMetadataViewModel
     public bool IsPrimaryId { get; set; }
     public string LogicalName { get; set; }
     public string NativeType { get; set; }
+    public string XrmMockTypeAttributeType { get; set; }
+    public string XrmMockControlType { get; set; }
+
+    public string RequiredLevel { get; set; }
+
     public OptionMetadataCollection Options { get; set; }
     public string SchemaName { get; set; }
 
@@ -23,97 +29,124 @@ public record AttributeMetadataViewModel
         LogicalName = attributeMetadata.LogicalName;
         SchemaName = attributeMetadata.SchemaName;
         IsPrimaryId = attributeMetadata.IsPrimaryId.GetValueOrDefault();
+        RequiredLevel = MapAttributeRequiredLevel(attributeMetadata.RequiredLevel);
 
         switch (attributeMetadata.AttributeType)
         {
             case AttributeTypeCode.Boolean:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.BooleanAttr;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.BooleanCtl;
                 DefinitelyType = "Boolean";
                 NativeType = "boolean";
+                XrmMockTypeAttributeType = XrmMock.Attributes.BooleanAttribute;
+                XrmMockControlType = XrmMock.Control.BooleanControl;
                 break;
             case AttributeTypeCode.DateTime:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.DateControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.DateAttr;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.DateCtl;
                 DefinitelyType = GetDateTimeType(attributeMetadata as DateTimeAttributeMetadata);
                 NativeType = "string";
+                XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                XrmMockControlType = XrmMock.Control.StringControl;
                 break;
             case AttributeTypeCode.Decimal:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
                 DefinitelyType = "Decimal";
                 NativeType = "number";
+                XrmMockTypeAttributeType = XrmMock.Attributes.NumberAttribute;
+                XrmMockControlType = XrmMock.Control.NumberControl;
                 break;
             case AttributeTypeCode.Double:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
                 DefinitelyType = "Double";
                 NativeType = "number";
+                XrmMockTypeAttributeType = XrmMock.Attributes.NumberAttribute;
+                XrmMockControlType = XrmMock.Control.NumberControl;
                 break;
             case AttributeTypeCode.Money:
             case AttributeTypeCode.Integer:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
                 DefinitelyType = "Integer";
                 NativeType = "number";
+                XrmMockTypeAttributeType = XrmMock.Attributes.NumberAttribute;
+                XrmMockControlType = XrmMock.Control.NumberControl;
                 break;
             case AttributeTypeCode.BigInt:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
                 DefinitelyType = "BigInt";
                 NativeType = "number";
+                XrmMockTypeAttributeType = XrmMock.Attributes.NumberAttribute;
+                XrmMockControlType = XrmMock.Control.NumberControl;
                 break;                
             case AttributeTypeCode.Customer:
             case AttributeTypeCode.PartyList:
             case AttributeTypeCode.Owner:
             case AttributeTypeCode.Lookup:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
                 DefinitelyType = "Lookup";
                 NativeType = "any";
+                XrmMockTypeAttributeType = XrmMock.Attributes.LookupAttribute;
+                XrmMockControlType = XrmMock.Control.LookupControl;
                 break;
             case AttributeTypeCode.String:
             case AttributeTypeCode.Memo:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.StringControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.StringAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.StringCtl;
                 DefinitelyType = "String";
                 NativeType = "string";
+                XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                XrmMockControlType = XrmMock.Control.StringControl;
                 break;
             case AttributeTypeCode.Uniqueidentifier:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
-                DefinitelyTypedControlType = "Xrm.Controls.Control";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeWithNoVal;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.ControlWithNoVal;
                 DefinitelyType = "Guid";
                 NativeType = "string";
+                XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                XrmMockControlType = XrmMock.Control.StringControl;
                 break;
             case AttributeTypeCode.State:
             case AttributeTypeCode.Status:
             case AttributeTypeCode.Picklist:
-                DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute";
-                DefinitelyTypedControlType = "Xrm.Controls.OptionSetControl";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.OptionAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.OptionCtl;
                 DefinitelyType = "OptionSet";
                 NativeType = "number";
+                XrmMockTypeAttributeType = XrmMock.Attributes.OptionSetAttribute;
+                XrmMockControlType = XrmMock.Control.OptionSetControl;
                 break;
             default:
                 if (attributeMetadata is MultiSelectPicklistAttributeMetadata)
                 {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetControl";
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.MultiselectAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.MultiselectCtl;
                     DefinitelyType = "MultiSelectOptionSet";
                     NativeType = "string";
+                    XrmMockTypeAttributeType = XrmMock.Attributes.MultiSetAttribute;
+                    XrmMockControlType = XrmMock.Control.MultiSetControl;
                     break;
                 }
                 if (attributeMetadata is FileAttributeMetadata)
                 {
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
-                    DefinitelyTypedControlType = "Xrm.Controls.StandardControl";
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeGeneric;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.StandardControl;
                     DefinitelyType = "Attribute";
                     NativeType = "string";
+                    XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                    XrmMockControlType = XrmMock.Control.StringControl;
                     break;
                 }
-                DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute";
-                DefinitelyTypedControlType = "Xrm.Controls.Control";
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeWithNoVal;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.ControlWithNoVal;
                 DefinitelyType = "Attribute";
                 NativeType = "any";
+                XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                XrmMockControlType = XrmMock.Control.StringControl;
 
                 break;
         }
@@ -124,6 +157,20 @@ public record AttributeMetadataViewModel
         return this;
     }
 
+    private static string MapAttributeRequiredLevel(AttributeRequiredLevelManagedProperty requiredLevel)
+    {
+        switch(requiredLevel.Value)
+        {
+            case AttributeRequiredLevel.None:
+                return XrmMock.RequiredLevel.None;
+            case AttributeRequiredLevel.ApplicationRequired:
+            case AttributeRequiredLevel.SystemRequired:
+                return XrmMock.RequiredLevel.Required;
+            case AttributeRequiredLevel.Recommended:
+                return XrmMock.RequiredLevel.Recommended;
+        }
+        return XrmMock.RequiredLevel.None;
+    }
 
     private static string GetDateTimeType(DateTimeAttributeMetadata? attr)
     {

@@ -7,6 +7,8 @@ namespace dgt.power.codegeneration.Model
     {
         public required bool IsSubgrid { get; set; }
         public required bool IsWebResource { get; set; }
+        public required bool IsVisible { get; set; }
+        public required bool IsDisabled { get; set; }
         public required string ClassId { get; set; }
 
         public string CustomControlClass { get; set; } = string.Empty;

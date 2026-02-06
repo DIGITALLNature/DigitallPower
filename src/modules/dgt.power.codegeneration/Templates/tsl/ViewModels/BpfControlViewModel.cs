@@ -12,6 +12,9 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
         public string DefinitelyTypedControlType { get; set; }
         public string DefinitelyTypedAttributeType { get; set; }
 
+        public string XrmMockControlType { get; set; }
+        public string XrmMockAttributeType { get; set; }
+
         public BpfControlViewModel(BpfControlDetail bpfControlDetail) => ToViewModel(bpfControlDetail);
 
         public BpfControlViewModel ToViewModel(BpfControlDetail bpfControlDetail)
@@ -19,67 +22,87 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels
             DataFieldName = bpfControlDetail.DataFieldName;
             switch (bpfControlDetail.ClassId)
             {
-                case ControlClassIds.CheckBox: //CheckBox
-                    DefinitelyTypedControlType = "Xrm.Controls.BooleanControl";
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.BooleanAttribute";
+                case ControlClassNames.XrmClassId.CheckBox: //CheckBox
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.BooleanCtl;
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.BooleanAttr; 
+                    XrmMockControlType = XrmMock.Control.BooleanControl;
+                    XrmMockAttributeType = XrmMock.Attributes.BooleanAttribute;
                     return this;
-                case ControlClassIds.DateTime: // DateTime)
-                    DefinitelyTypedControlType = "Xrm.Controls.DateControl";
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.DateAttribute";
+                case ControlClassNames.XrmClassId.DateTime: // DateTime)
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.DateCtl;
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.DateAttr;
+                    XrmMockControlType = XrmMock.Control.DateControl;
+                    XrmMockAttributeType = XrmMock.Attributes.DateAttribute;
                     return this;
-                case ControlClassIds.DecimalClass: //Decimal
-                case ControlClassIds.Duration: //Duration
-                case ControlClassIds.FloatClass: //Float
-                case ControlClassIds.IntegerClass: //Integer
-                case ControlClassIds.MoneyClass: //MoneyValue
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.NumberAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.NumberControl";
+                case ControlClassNames.XrmClassId.DecimalClass: //Decimal
+                case ControlClassNames.XrmClassId.Duration: //Duration
+                case ControlClassNames.XrmClassId.FloatClass: //Float
+                case ControlClassNames.XrmClassId.IntegerClass: //Integer
+                case ControlClassNames.XrmClassId.MoneyClass: //MoneyValue
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
+                    XrmMockControlType = XrmMock.Control.NumberControl;
+                    XrmMockAttributeType = XrmMock.Attributes.NumberAttribute;
                     return this;
-                case ControlClassIds.EmailAddress: //EmailAddress
-                case ControlClassIds.EmailBody: //EmailBody
-                case ControlClassIds.Notes: //Notes
-                case ControlClassIds.TextArea: //TextArea
-                case ControlClassIds.TextBox: //TextBox
-                case ControlClassIds.Url: //Url
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.StringControl";
+                case ControlClassNames.XrmClassId.EmailAddress: //EmailAddress
+                case ControlClassNames.XrmClassId.EmailBody: //EmailBody
+                case ControlClassNames.XrmClassId.Notes: //Notes
+                case ControlClassNames.XrmClassId.TextArea: //TextArea
+                case ControlClassNames.XrmClassId.TextBox: //TextBox
+                case ControlClassNames.XrmClassId.Url: //Url
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.StringAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.StringCtl;
+                    XrmMockControlType = XrmMock.Control.StringControl;
+                    XrmMockAttributeType = XrmMock.Attributes.StringAttribute;
                     return this;
-                case ControlClassIds.Iframe: //IFrame?
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.StringAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.IframeControl";
+                case ControlClassNames.XrmClassId.Iframe: //IFrame?
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.StringAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.IframeControl;
+                    XrmMockControlType = XrmMock.Control.StringControl;
+                    XrmMockAttributeType = XrmMock.Attributes.StringAttribute;
                     return this;
-                case ControlClassIds.LookUp: //Lookup
-                case ControlClassIds.PartyListLookup: //PartyListLookup
-                case ControlClassIds.RegardingLookup: //RegardingLookup
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.LookupAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.LookupControl";
+                case ControlClassNames.XrmClassId.LookUp: //Lookup
+                case ControlClassNames.XrmClassId.PartyListLookup: //PartyListLookup
+                case ControlClassNames.XrmClassId.RegardingLookup: //RegardingLookup
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
+                    XrmMockControlType = XrmMock.Control.LookupControl;
+                    XrmMockAttributeType = XrmMock.Attributes.LookupAttribute;
                     return this;
-                case ControlClassIds.PickList: //Picklist
-                case ControlClassIds.RadioButton: //Radio buttons
-                case ControlClassIds.StatusReason: //StatusReason
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.OptionSetAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.OptionSetControl";
+                case ControlClassNames.XrmClassId.PickList: //Picklist
+                case ControlClassNames.XrmClassId.RadioButton: //Radio buttons
+                case ControlClassNames.XrmClassId.StatusReason: //StatusReason
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.OptionAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.OptionCtl;
+                    XrmMockControlType = XrmMock.Control.OptionSetControl;
+                    XrmMockAttributeType = XrmMock.Attributes.OptionSetAttribute;
                     return this;
-                case ControlClassIds.MultiPickList: //MultiPicklist
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.MultiSelectOptionSetAttribute";
-                    DefinitelyTypedControlType = "Xrm.Controls.MultiSelectOptionSetControl";
+                case ControlClassNames.XrmClassId.MultiPickList: //MultiPicklist
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.MultiselectAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.MultiselectCtl;
+                    XrmMockControlType = XrmMock.Control.MultiSetControl;
+                    XrmMockAttributeType = XrmMock.Attributes.MultiSetAttribute;
                     return this;
-                case ControlClassIds.KnowledgeBaseSearch: //KnowledgeBaseSearch?
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
-                    DefinitelyTypedControlType = "Xrm.Controls.KbSearchControl";
+                case ControlClassNames.XrmClassId.KnowledgeBaseSearch: //KnowledgeBaseSearch?
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeGeneric;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.KbSearchControl;
                     return this;
-                case ControlClassIds.Timer: //Timer
-                case ControlClassIds.Language: //Language
-                case ControlClassIds.QuickView: //QuickView
-                case ControlClassIds.TickerSymbol: //TickerSymbol
-                case ControlClassIds.MapClass: //Map
-                case ControlClassIds.TimeZonePicklist: //TimeZonePicklist
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
-                    DefinitelyTypedControlType = "Xrm.Controls.StandardControl";
+                case ControlClassNames.XrmClassId.Timer: //Timer
+                case ControlClassNames.XrmClassId.Language: //Language
+                case ControlClassNames.XrmClassId.QuickView: //QuickView
+                case ControlClassNames.XrmClassId.TickerSymbol: //TickerSymbol
+                case ControlClassNames.XrmClassId.MapClass: //Map
+                case ControlClassNames.XrmClassId.TimeZonePicklist: //TimeZonePicklist
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeGeneric;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.StandardControl;
+                    XrmMockControlType = XrmMock.Control.QuickViewControl;
+                    XrmMockAttributeType = XrmMock.Attributes.StringAttribute;
                     return this;
                 default:
-                    DefinitelyTypedAttributeType = "Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>";
-                    DefinitelyTypedControlType = "Xrm.Controls.Control";
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.AttributeGeneric;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.ControlWithNoVal;
+                    XrmMockControlType = XrmMock.Control.StringControl;
+                    XrmMockAttributeType = XrmMock.Attributes.StringAttribute;
                     return this;
             }
         }

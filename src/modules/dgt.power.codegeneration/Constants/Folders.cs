@@ -9,7 +9,9 @@ public static class Folders
     public const string Model = "Model";
 #pragma warning restore S2339
     public static string Typescript => "TypeScript";
-    public static string TypescriptEntityForms => "EntityForms";
+    public static string TypescriptEntity => "Entity";
+    public static string TypescriptEntityForms => "Forms";
+    public static string TypescriptEntityTestHelper => "TestHelper";
     public static string TypescriptCustomApis => "CustomApi";
     public static string Metadata => "MetaData";
     public static string DotNet => "DotNet";
