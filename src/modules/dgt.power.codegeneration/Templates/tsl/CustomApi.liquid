@@ -1,6 +1,6 @@
 ﻿// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
 /* eslint-disable */
-{%- assign CustomApiName = Name  | sanitize | camelcase -%}
+{%- assign CustomApiName = Name  | sanitize | camelcase %}
 declare namespace XrmCustomApi.{{ CustomApiName }} {
     export const enum CustomApiEnums {
         LogicalName = "{{ Name }}"
@@ -14,7 +14,7 @@ declare namespace XrmCustomApi.{{ CustomApiName }} {
     {%- endif %}
 
     {%- if OutParameters.size > 0 %}
-    export interface Response {
+    export interface Response extends XrmWebApi.ExecuteResponse {
         {% for outParameter in OutParameters  %}
         {{ outParameter.ParameterName }}{%- if outParameter.IsOptional %}?{%- endif %}: {{ outParameter.ParameterType }};{% endfor %}
     }

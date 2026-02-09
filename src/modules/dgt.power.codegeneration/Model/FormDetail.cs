@@ -7,18 +7,20 @@ public class FormDetail
 {
     public SortedSet<FormAttributeData> Attributes { get; }
     public SortedSet<FormXmlControlData> FormControls { get; }
-    public string FormId { get; set; }
+    public string? FormId { get; set; }
     public string FormUniqueName { get; set; }
+    public string FormEntityName { get; set; }
     public int FormType { get; set; }
     public string FormTypeName { get; set; }
     public SortedSet<string> Grids { get; }
     public SortedSet<string> HeaderControlFields { get; }
-    public SortedSet<string> QuickViews { get; }
+    public SortedSet<QuickViewFormControl> QuickViews { get; }
     public SortedSet<TabDetail> TabDetails { get; }
     public SortedDictionary<string, List<string>> Tabs { get; }
 
     public FormDetail()
     {
+        FormId = null;
         Attributes = [];
         FormControls = [];
         FormUniqueName = string.Empty;

@@ -51,6 +51,8 @@
         getMetadata(): WebApiMetadataObject;
     }
 
+    export interface ExecuteResponse { }
+
     export const enum WebApiOperationType {
         Action = 0,
         Function = 1,

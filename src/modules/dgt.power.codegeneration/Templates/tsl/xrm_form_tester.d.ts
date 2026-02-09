@@ -11,11 +11,11 @@ declare namespace XrmForm.Tester {
         | "string";
     export type XrmFormMockAttributeType = "boolean" | "date" | "lookup" | "multiSet" | "number" | "optionSet" | "string";
 
-    export interface XrmFormMockControl {
-        attributeName?: string;
+    export interface XrmFormMockControl<CtlNames extends string, AttNames extends string> {
+        attributeName?: AttNames;
         isVisible?: boolean;
         isDisabled?: boolean;
-        name: string;
+        name: CtlNames;
         type: XrmFormMockControlType;
     }
 
@@ -24,38 +24,31 @@ declare namespace XrmForm.Tester {
         valueString?: string;
         valueNumber?: number;
         valueDate?: Date;
-        valueLookup?: Xrm.LookupValue | Xrm.LookupValue[];
+        valueLookup?: Xrm.LookupValue[];
     }
 
-    export interface XrmFormMockAttributeControlUpdateBase {
-        isDisabled?: boolean;
-        isVisible?: boolean;
-        controlAttributeName: string;
-        controlSpecificName?: string;
-        requiredLevel?: XrmEnum.RequirementLevel;
+    export interface XrmFormMockAttribute<AttNames extends string> {
+        name: AttNames;
         value?: XrmMockAttributeValue;
-    }
-
-    export interface XrmFormMockAttribute {
-        name: string;
-        value?: XrmMockAttributeValue;
-        requiredLevel?: XrmEnum.RequirementLevel;
+        requiredLevel?: Xrm.Attributes.RequirementLevel;
         type: XrmFormMockAttributeType;
+        options?: Xrm.OptionSetValue[];
+        isDirty?: boolean;
     }
 
-    export interface XrmFormMockTabSection {
-        name: string;
+    export interface XrmFormMockTabSection<SectionNames extends string, CtlNames extends string> {
+        name: SectionNames;
         label?: string;
         isVisible?: boolean;
-        controlNames: string[];
+        controlNames: CtlNames[];
     }
-    export interface XrmFormMockTab {
-        name: string;
+    export interface XrmFormMockTab<TabNames extends string, SectionNames extends string, CtlNames extends string> {
+        name: TabNames;
         label?: string;
         isVisible?: boolean;
         displayState?: Xrm.DisplayState;
         parent?: Xrm.Ui;
-        sectionNames: string[];
-        sections: XrmFormMockTabSection[];
+        sectionNames: SectionNames[];
+        sections: XrmFormMockTabSection<SectionNames, CtlNames>[];
     }
 }

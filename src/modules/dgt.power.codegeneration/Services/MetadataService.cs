@@ -748,6 +748,7 @@ public class MetadataService : IMetadataService
             var formScope = $"{entityLogicalName}.{form.Type?.Value}";
             return FormParser.ParseForm(form,
                 Unique(form.GetAttributeValue<string>(SystemForm.LogicalNames.Name).Trim(), formScope),
+                entityLogicalName,
                 bpfControls);
         })
        .ToDictionary(formDetail => $"{formDetail.FormUniqueName}.{FormParser.GetFormType(formDetail.FormType)}", formDetail => formDetail);

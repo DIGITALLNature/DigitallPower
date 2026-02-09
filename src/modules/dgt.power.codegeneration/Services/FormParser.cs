@@ -2,19 +2,27 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
+using dgt.power.codegeneration.Logic;
 using System.Text.RegularExpressions;
 using System.Xml;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
-using static dgt.power.dataverse.SdkMessageFilter.Options;
 
 namespace dgt.power.codegeneration.Services
 {
     public static class FormParser
     {
-        public static FormDetail ParseForm(Entity form, string formUniqueName, SortedSet<BpfControlDetail>? bpfControls)
+        /// <summary>
+        /// Parse form values
+        /// </summary>
+        /// <param name="form"></param>
+        /// <param name="formUniqueName"></param>
+        /// <param name="entityLogicalName"></param>
+        /// <param name="bpfControls"></param>
+        /// <returns></returns>
+        public static FormDetail ParseForm(Entity form, string formUniqueName, string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
         {
             var formId = form.GetAttributeValue<Guid>(SystemForm.LogicalNames.FormId).ToString();
             var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
@@ -27,6 +35,7 @@ namespace dgt.power.codegeneration.Services
                 FormType = formType,
                 FormTypeName = FormatFormType(GetFormType(formType)),
                 FormUniqueName = formUniqueName,
+                FormEntityName = entityLogicalName,
                 FormId = formId,
             };
 
@@ -47,8 +56,22 @@ namespace dgt.power.codegeneration.Services
 
             // Map bp process controls that will be mapped as "header_process_"
             MapBpfControlsAttributesIntoFormDetail(formDetail, formType, bpfControls);
-
             return formDetail;
+
+        }
+
+        /// <summary>
+        /// Map quick form id to generated form class
+        /// </summary>
+        /// <param name="formDetail"></param>
+        /// <param name="allForms"></param>
+        /// <returns></returns>
+        public static void MapQuickFormId(FormDetail formDetail, List<FormDetail> allForms)
+        {
+            foreach(var quickView in formDetail.QuickViews)
+            {
+                quickView.QuickViewFormClass = GetQuickViewFormClass(quickView.QuickViewFormId, allForms) ?? quickView.QuickViewFormClass ?? "Xrm.Controls.QuickFormControl";
+            }
         }
 
         /// <summary>
@@ -248,11 +271,32 @@ namespace dgt.power.codegeneration.Services
             var quickFormParameters = control.SelectNodes(".//parameters/QuickForms");
             if (quickFormParameters != null && quickFormParameters.Count > 0 && quickFormParameters[0]?.InnerText != null)
             {
-                formDetail.QuickViews.Add(controlId);
+                var quickViewFormId = RetrieveQuickViewFormId(quickFormParameters[0]?.InnerText);
+                var quickControl = new QuickViewFormControl
+                {
+                    ControlName = controlId,
+                    QuickViewFormId = quickViewFormId,
+                    QuickViewFormClass = "Xrm.Controls.QuickFormControl",
+                };
+                formDetail.QuickViews.Add(quickControl);
             }
-
         }
 
+        /// <summary>
+        /// Retrieve quick view form id from the inner xml
+        /// </summary>
+        /// <param name="quickViewFormIdNodeText"></param>
+        /// <returns></returns>
+        private static string RetrieveQuickViewFormId(string? quickViewFormIdNodeText)
+        {
+            if(string.IsNullOrWhiteSpace(quickViewFormIdNodeText))
+            {
+                return string.Empty;
+            }
+            var doc = new XmlDocument();
+            doc.LoadXml(quickViewFormIdNodeText);
+            return doc.SelectSingleNode("//QuickFormIds/QuickFormId")?.InnerText?.ToLowerInvariant() ?? string.Empty;
+        }
         /// <summary>
         /// Map form xml header controls into the attributes and header controls
         /// </summary>
@@ -355,6 +399,35 @@ namespace dgt.power.codegeneration.Services
             return Regex.Replace(classId.ToUpperInvariant(), "[{}]", "", RegexOptions.NonBacktracking);
         }
 
+        /// <summary>
+        /// Generate quick view form class so it matches with the mapped form name
+        /// </summary>
+        /// <param name="quickViewFormId"></param>
+        /// <param name="allForms"></param>
+        /// <returns></returns>
+        private static string GetQuickViewFormClass(string quickViewFormId, List<FormDetail> allForms)
+        {
+            var quickViewForm = allForms.FirstOrDefault(x => x.FormId != null && x.FormId.ToString() == quickViewFormId);
+            if (quickViewForm != null)
+            {
+                return MapFormClass(quickViewForm);
+            }
+            return "Xrm.Controls.QuickFormControl";
+        }
+
+        /// <summary>
+        /// Map quick view form class name
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
+        private static string MapFormClass(FormDetail form)
+        {
+            var schemaName = Formatter.CamelCase(form.FormEntityName);
+            var formType = Formatter.CamelCase(Formatter.Sanitize((form.FormTypeName)));
+            var formName = Formatter.CamelCase(Formatter.Sanitize(form.FormUniqueName));
+            return $"XrmForm.{schemaName}.{formType}.{formName}.QuickFormControl";
+        }
+
         public static string FormatFormType(string formType)
         {
              return formType
@@ -363,7 +436,7 @@ namespace dgt.power.codegeneration.Services
                 .Replace("quickcreate", "Quick Create");
         }
 
-        public static string GetFormType(int type)
+        public static string GetFormType(int? type)
         {
             return type switch
             {
