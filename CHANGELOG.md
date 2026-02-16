@@ -1,3 +1,10 @@
+# [2.1.0-beta.35](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.34...v2.1.0-beta.35) (2026-02-16)
+
+
+### Bug Fixes
+
+* **tsl:** proper default value when Attributemetadata is nowhere to be found ([7af645e](https://github.com/DIGITALLNature/DigitallPower/commit/7af645e82ef6f070fce6c09c02d22050e5dffded))
+
 # [2.1.0-beta.34](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.33...v2.1.0-beta.34) (2026-02-16)
 
 
