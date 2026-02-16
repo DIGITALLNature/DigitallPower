@@ -1,3 +1,11 @@
+# [2.1.0-beta.34](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.33...v2.1.0-beta.34) (2026-02-16)
+
+
+### Features
+
+* **tsl:** create initial test helper classes ([#125](https://github.com/DIGITALLNature/DigitallPower/issues/125)) ([884f934](https://github.com/DIGITALLNature/DigitallPower/commit/884f934d6ddc4199304d7ba9f7cbf03bd2079336))
+* **tsl:** improve test helper class generation ([#126](https://github.com/DIGITALLNature/DigitallPower/issues/126)) ([0958642](https://github.com/DIGITALLNature/DigitallPower/commit/09586420115d32c1b19ef01ca8a737bec64016ed))
+
 # [2.1.0-beta.33](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.32...v2.1.0-beta.33) (2026-01-30)
 
 
