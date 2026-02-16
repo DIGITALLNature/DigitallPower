@@ -107,8 +107,8 @@
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.10" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
-    <PackageReference Include="System.CodeDom" Version="10.0.1" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
+    <PackageReference Include="System.CodeDom" Version="10.0.3" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -225,11 +225,16 @@
     <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
     <EmbeddedResource Include="Templates\tsl\xrm_webapi_ext.d.ts" />
     <None Remove="Templates\tsl\EntityFormTestHelper.liquid" />
-    <EmbeddedResource Include="Templates\tsl\xrm_mock_form.d.ts" />
+    <EmbeddedResource Include="Templates\tsl\xrm_types_ext.d.ts" />
+    <None Remove="Templates\tsl\xrm_types_ext.ts" />
+    <EmbeddedResource Include="Templates\tsl\xrm_form_tester.d.ts" />
+    <None Remove="Templates\tsl\xrm_form_tester.ts" />
     <EmbeddedResource Include="Templates\tsl\xrm_mock_form_test_context_types.ts" />
     <None Remove="Templates\tsl\xrm_mock_form_test_context_types.ts" />
     <EmbeddedResource Include="Templates\tsl\xrm_mock_form_test_context_builder.ts" />
     <None Remove="Templates\tsl\xrm_mock_form_test_context_builder.ts" />
+    <EmbeddedResource Include="Templates\tsl\xrm_mock_form_odata_filter.ts" />
+    <None Remove="Templates\tsl\xrm_mock_form_odata_filter.ts" />
   </ItemGroup>
-
+ 
 </Project>

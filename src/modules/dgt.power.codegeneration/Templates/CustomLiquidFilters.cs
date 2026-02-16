@@ -80,7 +80,7 @@ public static class CustomLiquidFilters
 #pragma warning restore IDE0060 // Remove unused parameter
     {
         return new StringValue(GetAttributeByLogicalName(input, arguments).RequiredLevel);
-    }    
+    }
     public static ValueTask<FluidValue> XrmMockAttributetype(FluidValue input, FilterArguments arguments, TemplateContext context)
 #pragma warning disable IDE0060 // Remove unused parameter
     {
@@ -117,8 +117,23 @@ public static class CustomLiquidFilters
     public static ValueTask<FluidValue> GetControlTypeFromFormControl(FluidValue input, FilterArguments arguments, TemplateContext context)
 #pragma warning restore IDE0060 // Remove unused parameter
     {
-        return new StringValue(GetControlByControlName(input, arguments).DefinitelyTypedControlType);
-    }  
+        return new StringValue(GetControlByControlName(input, arguments)?.DefinitelyTypedControlType);
+    }
+
+    public static ValueTask<FluidValue> IsAttributeInList(FluidValue input, FilterArguments arguments, TemplateContext context)
+    {
+        var value = input.ToStringValue();
+        var result = QueryAttributeByLogicalName(value, arguments);
+        return BooleanValue.Create(result != null);
+    }
+
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static ValueTask<FluidValue> GetAttributeItem(FluidValue input, FilterArguments arguments, TemplateContext context)
+#pragma warning disable IDE0060 // Remove unused parameter
+    {
+        return new ObjectValue(GetAttributeByLogicalName(input, arguments));
+    }
+
 
     private static FormControlViewModel? GetControlByControlName(FluidValue input, FilterArguments arguments)
     {
@@ -131,8 +146,19 @@ public static class CustomLiquidFilters
 
     private static AttributeMetadataViewModel GetAttributeByLogicalName(FluidValue input, FilterArguments arguments)
     {
-        var scope = arguments.At(0).ToObjectValue();
         var value = input.ToStringValue();
+        var result = QueryAttributeByLogicalName(value, arguments);
+        if (result != null)
+        {
+            return result;
+        }
+        AnsiConsole.MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
+        return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value});
+    }  
+
+    private static AttributeMetadataViewModel? QueryAttributeByLogicalName(string? value, FilterArguments arguments)
+    {
+        var scope = arguments.At(0).ToObjectValue();
 
         var attr = new List<AttributeMetadataViewModel>(((object[])scope).Cast<AttributeMetadataViewModel>());
         var result = attr.SingleOrDefault(s => s.LogicalName == value);
@@ -140,8 +166,6 @@ public static class CustomLiquidFilters
         {
             return result;
         }
-
-        AnsiConsole.MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
-        return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value});
+        return null;
     }
 }

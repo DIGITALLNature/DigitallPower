@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
@@ -52,6 +53,8 @@ public abstract class TypescriptGeneratorWorker
         Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} {NOT_NULL}");
         Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
         Debug.Assert(extension != null, $"{nameof(extension)} {NOT_NULL}");
+
+        AnsiConsole.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
         var reader = new StreamReader(Assembly.GetCallingAssembly()
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);

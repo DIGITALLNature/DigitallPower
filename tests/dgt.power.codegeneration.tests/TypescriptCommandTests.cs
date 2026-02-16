@@ -118,25 +118,24 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
             .Execute(args)
             .Should().BeTrue();
 
-        var servicePath = $"{typescriptPath}/{FileNames.Typescript.Services}.ts";
+        var servicePath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Services}.ts";
         File.Exists(servicePath);
         File.ReadAllText(servicePath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
 
 
-        var odataPath = $"{typescriptPath}/{FileNames.Typescript.Odata}.ts";
+        var odataPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Odata}.ts";
         File.Exists(odataPath);
         File.ReadAllText(odataPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
 
-        var webapiPath = $"{typescriptPath}/{FileNames.Typescript.Webapi}.ts";
+        var webapiPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Webapi}.ts";
         File.Exists(webapiPath);
         File.ReadAllText(webapiPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
 
-        var modelPath = $"{typescriptPath}/{FileNames.Typescript.Model}.ts";
+        var modelPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Model}.ts";
         File.Exists(modelPath);
         File.ReadAllText(modelPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
 
-
-        var utilsPath = $"{typescriptPath}/{FileNames.Typescript.Utils}.ts";
+        var utilsPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Utils}.ts";
         File.Exists(utilsPath);
         File.ReadAllText(utilsPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
     }
@@ -168,9 +167,9 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.Entity}.ts").Should()
+        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts").Should()
             .BeTrue();
-        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.EntityRef}.ts").Should()
+        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.EntityRef}.ts").Should()
             .BeTrue();
     }
 
@@ -415,7 +414,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.SdkMessageNames}.ts").Should().BeTrue();
+        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts").Should().BeTrue();
     }
 
     [Fact]
@@ -468,7 +467,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        var messagesPath = $"{typescriptPath}/{FileNames.Typescript.SdkMessageNames}.ts";
+        var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
         File.Exists(messagesPath).Should().BeTrue();
         var messagesCode = File.ReadAllText(messagesPath);
         messagesCode.Should().Contain($"public static {Formatter.CamelCase(action.Name)}: string = \"{action.Name}\";");
@@ -504,7 +503,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.SdkMessageNames}.ts")
+        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")
             .Should()
             .BeFalse();
     }
@@ -541,7 +540,7 @@ public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.OptionSetValues}.ts")
+        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts")
             .Should()
             .BeTrue();
     }
