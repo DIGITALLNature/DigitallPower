@@ -153,8 +153,8 @@ public static class CustomLiquidFilters
             return result;
         }
         AnsiConsole.MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
-        return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value});
-    }  
+        return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value, RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None)});
+    }
 
     private static AttributeMetadataViewModel? QueryAttributeByLogicalName(string? value, FilterArguments arguments)
     {
