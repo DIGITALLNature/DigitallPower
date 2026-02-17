@@ -50,7 +50,7 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         {{ attr.LogicalName }}_account?: any;
         "{{ attr.LogicalName }}_account@odata.bind"?: string | null;
         {{ attr.LogicalName }}_contact?: any;
-        "{{ attr.LogicalName }}_contact@odata.bind"?: string | null;
+        "{{ attr.LogicalName }}_contact@odata.bind"?: string | null;        
         {%- elsif attr.DefinitelyType == "OptionSet" %}
         {{ attr.LogicalName }}?: {{ attr.NativeType }};
         "{{ attr.LogicalName }}@OData.Community.Display.V1.FormattedValue"?: string;
