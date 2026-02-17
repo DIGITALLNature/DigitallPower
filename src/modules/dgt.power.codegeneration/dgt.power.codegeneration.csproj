@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -15,13 +15,13 @@
     <None Remove="Templates\ts\D365WebApiTemplate.tt" />
   </ItemGroup>
 
-	<ItemGroup Condition="$(Configuration) != 'Release'">
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>dgt.power.codegeneration.tests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+  <ItemGroup Condition="$(Configuration) != 'Release'">
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>dgt.power.codegeneration.tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <Content Include="Templates\dotnet\ActionTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>ActionTemplate.cs</LastGenOutput>
@@ -236,5 +236,5 @@
     <EmbeddedResource Include="Templates\tsl\xrm_mock_form_odata_filter.ts" />
     <None Remove="Templates\tsl\xrm_mock_form_odata_filter.ts" />
   </ItemGroup>
- 
+
 </Project>
