@@ -83,8 +83,22 @@ public record AttributeMetadataViewModel
                 XrmMockControlType = XrmMock.Control.NumberControl;
                 break;                
             case AttributeTypeCode.Customer:
-            case AttributeTypeCode.PartyList:
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
+                DefinitelyType = "Customer";
+                NativeType = "any";
+                XrmMockTypeAttributeType = XrmMock.Attributes.LookupAttribute;
+                XrmMockControlType = XrmMock.Control.LookupControl;
+                break;
             case AttributeTypeCode.Owner:
+                DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
+                DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
+                DefinitelyType = "Lookup";
+                NativeType = "any";
+                XrmMockTypeAttributeType = XrmMock.Attributes.LookupAttribute;
+                XrmMockControlType = XrmMock.Control.LookupControl;
+                break;
+            case AttributeTypeCode.PartyList:
             case AttributeTypeCode.Lookup:
                 DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;

@@ -9,6 +9,8 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
+using Newtonsoft.Json.Linq;
+using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services
 {
@@ -84,6 +86,10 @@ namespace dgt.power.codegeneration.Services
         {
             var tabId = Regex.Replace(tab.Attributes?["id"]?.Value?.ToUpperInvariant() ?? "", "[{}]", "", RegexOptions.NonBacktracking);
             var tabName = tab.Attributes?["name"]?.Value;
+            if (string.IsNullOrWhiteSpace(tabName) && formDetail.FormType != SystemForm.Options.Type.QuickViewForm)
+            {
+                AnsiConsole.MarkupLine($"[bold red]Warning:[/] tabName empty for form: {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
+            }
             var tabDetailName = !string.IsNullOrWhiteSpace(tabName) ? tabName : tabId;
             if (tabDetailName != null)
             {
@@ -130,8 +136,9 @@ namespace dgt.power.codegeneration.Services
             foreach (XmlNode section in sections)
             {
                 var sectionName = section.Attributes?["name"]?.Value;
-                if (string.IsNullOrWhiteSpace(sectionName))
+                if (string.IsNullOrWhiteSpace(sectionName) && formDetail.FormType != SystemForm.Options.Type.QuickViewForm)
                 {
+                    AnsiConsole.MarkupLine($"[bold red]Warning:[/] section name is empty for tab {tabDetail.TabName} in form {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
                     continue;
                 }
                 MapFormXmlSectionIntoFormDetail(formDetail, doc, tabDetail, sectionList, section, sectionName);
@@ -147,12 +154,14 @@ namespace dgt.power.codegeneration.Services
         /// <param name="sectionList"></param>
         /// <param name="section"></param>
         /// <param name="sectionName"></param>
-        private static void MapFormXmlSectionIntoFormDetail(FormDetail formDetail, XmlDocument doc, TabDetail tabDetail, List<string> sectionList, XmlNode section, string sectionName)
+        private static void MapFormXmlSectionIntoFormDetail(FormDetail formDetail, XmlDocument doc, TabDetail tabDetail, List<string> sectionList, XmlNode section, string? sectionName)
         {
-            sectionList.Add(sectionName);
-
             var sectionDetail = new SectionDetail();
-            tabDetail.Sections.Add(new KeyValuePair<string, SectionDetail>(sectionName, sectionDetail));
+            if(!string.IsNullOrWhiteSpace(sectionName))
+            {
+                sectionList.Add(sectionName);
+                tabDetail.Sections.Add(new KeyValuePair<string, SectionDetail>(sectionName, sectionDetail));
+            }
 
             var rows = section.SelectNodes(".//rows/row[*]");
             if(rows == null)
