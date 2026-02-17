@@ -1,3 +1,10 @@
+# [2.1.0-beta.36](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.35...v2.1.0-beta.36) (2026-02-17)
+
+
+### Features
+
+* **tsl:** small correction for empty section names and customer type attributess mapping ([#127](https://github.com/DIGITALLNature/DigitallPower/issues/127)) ([741b5b5](https://github.com/DIGITALLNature/DigitallPower/commit/741b5b592eed2aa90b795880bb73413383d67c91))
+
 # [2.1.0-beta.35](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.34...v2.1.0-beta.35) (2026-02-16)
 
 
