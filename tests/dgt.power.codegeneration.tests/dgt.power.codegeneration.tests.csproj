@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -25,7 +25,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
+    <PackageReference Include="coverlet.collector" Version="8.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -33,7 +33,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\dgt.power.common\dgt.power.common.csproj" />
-    <ProjectReference Include="..\..\src\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
+    <ProjectReference
+      Include="..\..\src\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
     <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
   </ItemGroup>
 
@@ -42,16 +43,20 @@
     <None Update="Resources\TypescriptCommand\dgt_test_table.main.form.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\model.config.json">
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\model.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\model.config.json">
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\model.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\sdkmessagenames.d.ts">
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\sdkmessagenames.d.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\optionsetvalues.d.ts">
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\optionsetvalues.d.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

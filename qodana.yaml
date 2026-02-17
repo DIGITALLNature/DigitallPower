@@ -29,3 +29,7 @@ include:
 #Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
 #plugins:
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
+exclude:
+  - name: All
+    paths:
+      - tests/dgt.power.codegeneration.tests/Resources
