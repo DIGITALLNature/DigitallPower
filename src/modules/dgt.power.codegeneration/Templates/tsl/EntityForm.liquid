@@ -23,11 +23,11 @@ declare namespace XrmForm.{{ FormEntityName }} {
 
         {% if HasAnyControl == true -%}
         export type ControlName =
-            {% for formControl in FormDetail.FormControls  %}
+            {%- for formControl in FormDetail.FormControls  %}
             | "{{ formControl.ControlName }}"{%- endfor %}
-            {% for headerField in FormDetail.HeaderControlFields  %}
+            {%- for headerField in FormDetail.HeaderControlFields  %}
             | "header_{{ headerField }}"{%- endfor %}
-            {% for bpfControl in BpfControls %}
+            {%- for bpfControl in BpfControls %}
             | "header_process_{{ bpfControl.DataFieldName }}"{%- endfor -%};{%- endif %}
         {% if HasAnyAttribute == true %}
         export type AttributeName = 
@@ -93,69 +93,69 @@ declare namespace XrmForm.{{ FormEntityName }} {
             get<T>(name: string): T | null;
             get(delegate?: MatchingDelegate<Xrm.Controls.Control>): Xrm.Controls.Control[];
         }
-
-        {% if FormDetail.TabDetails.size > 0 %}
+        {%- if FormType != "QuickView" and FormDetail.TabDetails.size > 0 %}
+        
         export type TabName = 
             {%- for tab in FormDetail.TabDetails  %}
-            | "{{ tab.TabName }}"{% endfor %};{%- endif %}
+            | "{{ tab.TabName }}"{% endfor %};
+        {%- if HasAnySection == true %}
 
-        {% if HasAnySection == true -%}
         export type SectionNames = 
             {%- for tab in FormDetail.TabDetails  %}{% for section in tab.Sections  %}
-            | "{{section.SectionName}}"{% endfor %}{% endfor %};
-        {% endif %}
+            | "{{section.SectionName}}"{% endfor %}{% endfor %};{%- endif -%}{%- endif %}
 
         export interface Tabs extends Xrm.Collection.ItemCollection<Xrm.Controls.Tab> {
-            {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.TabName | sanitize | camelcase -%}
+            {%- if FormType != "QuickView" -%}{% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.TabName | sanitize | camelcase -%}
             get(itemName: "{{ tab.TabName }}"): {{ TabName }};
-            {% endfor %}
-            {% if FormDetail.TabDetails.size > 0 %}
+            {% endfor -%}
+            {% if FormDetail.TabDetails.size > 0 -%}
             get(name: TabName): Xrm.Controls.Tab | null;
             get<T extends Xrm.Controls.Tab>(name: TabName): T | null;
             get<T>(name: string): T | null;
-            {%- endif %}
+            {%- endif %}{%- endif %}
             get(delegate?: Xrm.Collection.MatchingDelegate<Xrm.Controls.Tab>): Xrm.Controls.Tab[];
         }
-
-        {% for tab in FormDetail.TabDetails  %}{%- assign TabName = tab.TabName | sanitize | camelcase -%}
+        {%- if FormType != "QuickView" -%}
+        {%- for tab in FormDetail.TabDetails %}{%- assign TabName = tab.TabName | sanitize | camelcase %}
+        
         export interface {{ TabName }} extends Xrm.Controls.Tab {
             sections: {{ TabName }}Sections;
         }
-
+        
         export interface {{ TabName }}Sections extends Xrm.Collection.ItemCollection<Xrm.Controls.Section> {
-            {% for section in tab.Sections  %}
-            {%- assign SectionName = section.SectionName | sanitize | camelcase %}
-            get(name: "{{ section.SectionName }}"): {{ TabName }}{{ SectionName }};{% endfor -%}
+            {%- for section in tab.Sections  %}{%- assign SectionName = section.SectionName | sanitize | camelcase %}
+            get(name: "{{ section.SectionName }}"): {{ TabName }}{{ SectionName }};{%- endfor %}
             get<T extends Xrm.Controls.Section>(name: string): T | null;
             get(name: string): Xrm.Controls.Section | null;
             get(): Xrm.Controls.Section[];
         }
-        {% for section in tab.Sections  %}{%- assign SectionName = section.SectionName | sanitize | camelcase %}
-        {% if section.ControlNames.size > 0 %}
+        {%- for section in tab.Sections  %}{%- assign SectionName = section.SectionName | sanitize | camelcase %}
+        {%- if section.ControlNames.size > 0 %}
+
         export type {{ TabName }}{{ SectionName }}ControlName = 
             {%- for sectionControlName in section.ControlNames  %}
-            | "{{ sectionControlName }}"{% endfor %};{%- endif %}
+            | "{{ sectionControlName }}"{%- endfor %};
 
+        {% endif -%}
         export interface {{ TabName }}{{ SectionName }} extends Xrm.Controls.Section {
             {%- for controlName in section.ControlNames %}
             get(name: "{{ controlName }}"): {{ controlName | formControlType: FormDetail.FormControls }}; {%- endfor %}
-            {% if section.ControlNames.size > 0 %}
+            {%- if section.ControlNames.size > 0 %}
             get(name: {{ TabName }}{{ SectionName }}ControlName): T | null;
             get<T extends Xrm.Controls.Control>(name: {{ TabName }}{{ SectionName }}ControlName): T | null;
             get<T>(name: string): T | null;
             {%- endif %}
             get(): Xrm.Controls.Control[];
-        }
-        {% endfor %}{% endfor %}
+        }{% endfor %}{% endfor %}{% endif %}        
+        {%- if FormDetail.QuickViews.size > 0 %}
 
-        {% if FormDetail.QuickViews.size > 0 %}
         export type QuickFormControlNames = 
             {%- for quickViewControl in FormDetail.QuickViews  %}
-            | "{{ quickViewControl.ControlName }}"{% endfor %};{%- endif %}
+            | "{{ quickViewControl.ControlName }}"{%- endfor %};{% endif %}
 
         export interface QuickForms extends Xrm.Collection.ItemCollection<Xrm.Controls.QuickFormControl> {
             {%- for quickViewControl in FormDetail.QuickViews %}
-            get(name: "{{ quickViewControl.ControlName }}"): {{ quickViewControl.QuickViewFormClass }};{% endfor %}
+            get(name: "{{ quickViewControl.ControlName }}"): {{ quickViewControl.QuickViewFormClass }};{% endfor -%}
             {% if FormDetail.QuickViews.size > 0 %}
             get(name: QuickFormControlNames): Xrm.Controls.QuickFormControl | null;
             get<T extends Xrm.Controls.QuickFormControl>(name: QuickFormControlNames): T | null;
@@ -163,8 +163,8 @@ declare namespace XrmForm.{{ FormEntityName }} {
             get<T>(name: string): T | null;
             get(): Xrm.Controls.QuickFormControl[];
         }
-
         {%- if FormType == "QuickView" %}
+
         export interface QuickFormControl extends Xrm.Controls.QuickFormControl {
             {%- for formControl in FormDetail.FormControls  %}
             getControl(name: "{{ formControl.ControlName }}"): {{ formControl.DefinitelyTypedControlType }};{% endfor %}
@@ -179,7 +179,6 @@ declare namespace XrmForm.{{ FormEntityName }} {
             getControl<T extends Xrm.Controls.Control>(name: ControlName): T | null;{%- endif %}
             getControl<T>(name: string): T | null;
             getControl(): Xrm.Control.Control[] | null;
-        }
-        {%- endif %}
+        }{% endif %}
     }
 }

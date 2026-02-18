@@ -69,6 +69,7 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
             ],{% endif %}
         },{% endfor %}
     ];{%- endif %}
+    {%- if FormType != "QuickView" -%}
     {% if HasAnyTab == true %}
     export const TabNames: string[] = [
         {% for tab in FormDetail.TabDetails  %}"{{ tab.TabName }}",{% endfor %}
@@ -102,5 +103,5 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
                 },{% endfor %}
             ],
         },{% endfor -%}
-    ];{%- endif %}
+    ];{%- endif %}{%- endif %}
 }
