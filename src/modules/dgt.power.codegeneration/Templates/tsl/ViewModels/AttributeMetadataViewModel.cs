@@ -19,6 +19,8 @@ public record AttributeMetadataViewModel
 
     public string RequiredLevel { get; set; }
 
+    public string[] TargetEntityNames { get; set; }
+
     public OptionMetadataCollection Options { get; set; }
     public string SchemaName { get; set; }
 
@@ -30,6 +32,7 @@ public record AttributeMetadataViewModel
         SchemaName = attributeMetadata.SchemaName;
         IsPrimaryId = attributeMetadata.IsPrimaryId.GetValueOrDefault();
         RequiredLevel = MapAttributeRequiredLevel(attributeMetadata.RequiredLevel);
+        TargetEntityNames = [];
 
         switch (attributeMetadata.AttributeType)
         {
@@ -100,6 +103,17 @@ public record AttributeMetadataViewModel
                 break;
             case AttributeTypeCode.PartyList:
             case AttributeTypeCode.Lookup:
+                if (attributeMetadata is LookupAttributeMetadata lookupMetada)
+                {
+                    DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
+                    DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
+                    DefinitelyType = "Lookup";
+                    NativeType = "any";
+                    XrmMockTypeAttributeType = XrmMock.Attributes.LookupAttribute;
+                    XrmMockControlType = XrmMock.Control.LookupControl;
+                    TargetEntityNames = lookupMetada.Targets;
+                    break;
+                }
                 DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
                 DefinitelyType = "Lookup";

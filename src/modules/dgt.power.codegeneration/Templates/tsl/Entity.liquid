@@ -11,10 +11,9 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
     export interface FormContext extends Xrm.FormContext {
         getAttribute():  Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
         getControl(): Xrm.Controls.Control[];
-    {% for attr in Attributes  %}
+        {%- for attr in Attributes %}
         getAttribute(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedAttributeType  }};
-        getControl(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedControlType  }};
-    {% endfor -%}
+        getControl(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedControlType  }};{%- endfor %}
     }
 
     export const enum AttributeTypes {
@@ -41,7 +40,10 @@ declare namespace XrmTable.{{ SchemaName | camelcase }} {
         "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
         _{{ attr.LogicalName }}_value?: string;
         {{ attr.LogicalName }}?: any;
+        {%- if attr.TargetEntityNames.size < 2  %}
         "{{ attr.LogicalName }}@odata.bind"?: string | null;
+        {%- else %}{%- for targetEntity in attr.TargetEntityNames %}
+        "{{ attr.LogicalName }}_{{ targetEntity }}@odata.bind"?: string | null;{%- endfor %}{%- endif %}
         {%- elsif attr.DefinitelyType == "Customer" %}
         "_{{ attr.LogicalName }}_value@OData.Community.Display.V1.FormattedValue"?: string;
         "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.associatednavigationproperty"?: string;
