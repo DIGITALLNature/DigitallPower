@@ -1,3 +1,10 @@
+# [2.1.0-beta.37](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.36...v2.1.0-beta.37) (2026-02-18)
+
+
+### Features
+
+* **tsl:** skip tabs and sections for quick view forms ([#129](https://github.com/DIGITALLNature/DigitallPower/issues/129)) ([a375433](https://github.com/DIGITALLNature/DigitallPower/commit/a375433ef26515c197e04001bce283d3702bab9e))
+
 # [2.1.0-beta.36](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.35...v2.1.0-beta.36) (2026-02-17)
 
 
