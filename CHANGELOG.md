@@ -1,3 +1,10 @@
+# [2.1.0-beta.38](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.37...v2.1.0-beta.38) (2026-02-19)
+
+
+### Features
+
+* **tsl:** added extra handling for lookup with multiple targets polymorphic ones ([#130](https://github.com/DIGITALLNature/DigitallPower/issues/130)) ([43634ce](https://github.com/DIGITALLNature/DigitallPower/commit/43634cecbbd51da5fefaea38a0d8a985de1f9311))
+
 # [2.1.0-beta.37](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.36...v2.1.0-beta.37) (2026-02-18)
 
 
