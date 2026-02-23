@@ -7,6 +7,9 @@ linter: jetbrains/qodana-cdnet:2025.3-eap
 profile:
   name: qodana.recommended
 
+dot-net:
+  solution: DigitallPower.sln
+
 exclude:
   - name: All
     paths:

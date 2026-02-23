@@ -68,7 +68,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: "https://qodana.cloud"
         with:
-          args: "--no-build --solution=DigitallPower.sln"
+          args: "--no-build"
           # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
           use-caches: true
