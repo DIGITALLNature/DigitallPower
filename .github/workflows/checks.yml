@@ -70,6 +70,7 @@ jobs:
         with:
           args:
             --no-build
+            --solution DigitallPower.sln
             # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
           use-caches: true
