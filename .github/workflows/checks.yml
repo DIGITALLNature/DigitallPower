@@ -68,7 +68,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
           args:
-            "--linter,jetbrains/qodana-cdnet:2025.3-eap"
+            "--no-build,--linter,jetbrains/qodana-cdnet:2025.3-eap"
             # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
           use-caches: true
