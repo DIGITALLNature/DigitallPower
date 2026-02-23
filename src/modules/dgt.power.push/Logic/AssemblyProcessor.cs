@@ -18,6 +18,7 @@ internal class AssemblyProcessor
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
+    private static readonly string[] separator = [","];
 
     public AssemblyProcessor(IOrganizationService service)
     {
@@ -478,7 +479,7 @@ internal class AssemblyProcessor
         foreach (var dllPluginType in dll.PluginTypes)
         {
             var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
-            if (!dllPluginType.PluginSteps.Any())
+            if (dllPluginType.PluginSteps.Count == 0)
             {
                 AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
                     dllPluginType.Name);
@@ -675,7 +676,7 @@ internal class AssemblyProcessor
         }
         else if (!string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
         {
-            var crmFilteringAttributes = crmFilter.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            var crmFilteringAttributes = crmFilter.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             var dllFilteringAttributes = dllPluginStep.FilterAttributes;
             Array.Sort(crmFilteringAttributes);
             Array.Sort(dllFilteringAttributes!);
@@ -741,7 +742,7 @@ internal class AssemblyProcessor
         foreach (var dllPluginType in dll.PluginTypes)
         {
             var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
-            if (!dllPluginType.PluginSteps.Any())
+            if (dllPluginType.PluginSteps.Count == 0)
             {
                 //Custom API
                 continue;

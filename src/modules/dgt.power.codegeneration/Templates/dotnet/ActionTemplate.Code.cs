@@ -61,7 +61,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
                 sb.Append(item[0].ToString(CultureInfo.InvariantCulture).ToUpperInvariant());
                 if (item.Length > 1)
                 {
-                    sb.Append(item.Substring(1));
+                    sb.Append(item.AsSpan(1));
                 }
             }
             return sb.ToString();

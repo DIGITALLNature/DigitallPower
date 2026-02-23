@@ -33,3 +33,6 @@ exclude:
   - name: All
     paths:
       - tests/dgt.power.codegeneration.tests/Resources
+      - README.md
+  - name: HeapView.DelegateAllocation
+  - name: HeapView.ObjectAllocation

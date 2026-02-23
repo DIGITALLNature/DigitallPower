@@ -70,7 +70,7 @@ public sealed class ActiveLayerAnalyze : BaseAnalyze
                     {
                         var component = components[index];
 
-                        table.AddRow(component.ObjectId.ToString(), $"{index}/{components.Count}", "", "Checking");
+                        table.AddRow(component.ObjectId.ToString() ?? Guid.Empty.ToString(), $"{index}/{components.Count}", "", "Checking");
                         ctx.Refresh();
                         var layers = GetSolutionLayers(component);
                         table.RemoveRow(table.Rows.Count - 1);

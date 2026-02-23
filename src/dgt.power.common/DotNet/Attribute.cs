@@ -9,14 +9,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
 	/// <inheritdoc />
-	
+
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("attribute")]
 	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
@@ -194,7 +194,7 @@ namespace dgt.power.dataverse
 		/// The logical name of this attribute.
 		/// </summary>
 		[AttributeLogicalName("logicalname")]
-        public string? LogicalName
+        public new string? LogicalName
         {
             [DebuggerNonUserCode]
 			get
