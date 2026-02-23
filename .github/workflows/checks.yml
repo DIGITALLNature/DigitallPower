@@ -68,7 +68,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
           args:
-            "-i,NET/coverlet,--linter,jetbrains/qodana-dotnet:latest"
+            "--linter,jetbrains/qodana-dotnet:latest"
             # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
           use-caches: true
