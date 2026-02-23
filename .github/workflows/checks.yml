@@ -66,9 +66,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_ENDPOINT: "https://qodana.cloud"
         with:
           args:
-            "--no-build,--linter,jetbrains/qodana-cdnet:2025.3-eap"
+            --no-build
             # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
           use-caches: true
