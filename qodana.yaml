@@ -7,8 +7,11 @@ linter: jetbrains/qodana-cdnet:2025.3-eap
 profile:
   name: qodana.recommended
 
-dot-net:
+dotnet:
   solution: DigitallPower.sln
+
+include:
+  - name: CheckDependencyLicenses
 
 exclude:
   - name: All
