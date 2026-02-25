@@ -20,11 +20,12 @@ declare namespace XrmForm.Tester {
     }
 
     export interface XrmMockAttributeValue {
-        valueBoolean?: boolean;
-        valueString?: string;
-        valueNumber?: number;
-        valueDate?: Date;
-        valueLookup?: Xrm.LookupValue[];
+        valueBoolean?: boolean | null;
+        valueString?: string | null;
+        valueNumber?: number | null;
+        valueNumberMset?: number[] | null;
+        valueDate?: Date | null;
+        valueLookup?: Xrm.LookupValue[] | null;
     }
 
     export interface XrmFormMockAttribute<AttNames extends string> {

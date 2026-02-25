@@ -13,27 +13,25 @@
 
 export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
     {% if HasAnyControl == true %}
-    export const FormControlNames: string[] = [
-        {% for formControl in FormDetail.FormControls  %}
+    export const FormControlNames: string[] = [{%- for formControl in FormDetail.FormControls  %}
         "{{ formControl.ControlName }}",{%- endfor %}
-        {% for headerField in FormDetail.HeaderControlFields  %}
+        {%- for headerField in FormDetail.HeaderControlFields  %}
         "header_{{ headerField }}",{%- endfor %}
-        {% for bpfControl in BpfControls %}
+        {%- for bpfControl in BpfControls %}
         "header_process_{{ bpfControl.DataFieldName }}",{%- endfor %}
     ] as const;{% endif %}
 
     {% if HasAnyAttribute == true -%}
-    export const FormAttributeNames: string[] = [
-        {% for attribute in FormDetail.Attributes  %}
+    export const FormAttributeNames: string[] = [{%- for attribute in FormDetail.Attributes  %}
         "{{ attribute.DataFieldName }}",{%- endfor %}
-    ] as const;{%- endif %}
+    ] as const;{% endif %}
+    {% if HasAnyControl == true %}{% if HasAnyAttribute == true %}
 
-    {% if HasAnyControl == true %}{% if HasAnyAttribute == true -%}
     export const FormControlTypesConfig: XrmForm.Tester.XrmFormMockControl<{{FormClassNamespace}}.ControlName, {{FormClassNamespace}}.AttributeName>[] = [
-    {%- else -%}
+    {%- else %}
+
     export const FormControlTypesConfig: XrmForm.Tester.XrmFormMockControl<{{FormClassNamespace}}.ControlName, string>[] = [{%- endif %}
-        {%- for formControl in FormDetail.FormControls  %}
-        {
+        {% for formControl in FormDetail.FormControls  %}{
             name: "{{ formControl.ControlName }}",
             {%- if formControl.AttributeName != blank %}
             attributeName: "{{ formControl.AttributeName }}",
@@ -54,8 +52,8 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
         },{% endfor %}
     ] as const;{%- endif %}
     {% if HasAnyAttribute == true %}
-    export const FormAttributeTypesConfig: XrmForm.Tester.XrmFormMockAttribute<{{FormClassNamespace}}.AttributeName>[] = [
-        {%- for attribute in FormDetail.Attributes  %}{
+    export const FormAttributeTypesConfig: XrmForm.Tester.XrmFormMockAttribute<{{FormClassNamespace}}.AttributeName>[] = [{% for attribute in FormDetail.Attributes  %}
+        {
             {% assign AtttributeType = attribute.DataFieldName | xrmMockAttributeType: Attributes -%}
             name: "{{ attribute.DataFieldName }}",
             type: "{{ AtttributeType }}",
@@ -67,8 +65,8 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
                 value: {{ option.Value }},
             }, {% endfor %}
             ],{% endif %}
-        },{% endfor %}
-    ];{%- endif %}
+        },{%- endfor %}
+    ] as const;{%- endif %}
     {%- if FormType != "QuickView" -%}
     {% if HasAnyTab == true %}
     export const TabNames: string[] = [
@@ -103,5 +101,5 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
                 },{% endfor %}
             ],
         },{% endfor -%}
-    ];{%- endif %}{%- endif %}
+    ] as const;{%- endif %}{%- endif %}
 }
