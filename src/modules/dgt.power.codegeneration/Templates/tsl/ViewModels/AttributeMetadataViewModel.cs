@@ -49,7 +49,7 @@ public record AttributeMetadataViewModel
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.DateCtl;
                 DefinitelyType = GetDateTimeType(attributeMetadata as DateTimeAttributeMetadata);
                 NativeType = "string";
-                XrmMockTypeAttributeType = XrmMock.Attributes.StringAttribute;
+                XrmMockTypeAttributeType = XrmMock.Attributes.DateAttribute;
                 XrmMockControlType = XrmMock.Control.StringControl;
                 break;
             case AttributeTypeCode.Decimal:
