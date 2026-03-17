@@ -1,3 +1,10 @@
+# [2.1.0-beta.39](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.38...v2.1.0-beta.39) (2026-03-17)
+
+
+### Features
+
+* **tsl:** fix date attribute generation ([#133](https://github.com/DIGITALLNature/DigitallPower/issues/133)) ([f6d4fd5](https://github.com/DIGITALLNature/DigitallPower/commit/f6d4fd5111487ef5668f4da1dd85b21c85e4e031))
+
 # [2.1.0-beta.38](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.37...v2.1.0-beta.38) (2026-02-19)
 
 
