@@ -35,6 +35,7 @@ declare namespace XrmForm.{{ FormEntityName }} {
             | "{{ attribute.DataFieldName }}"{% endfor %};{%- endif %}
 
         export interface FormContext extends Xrm.FormContext {
+            __type: "{{FormEntityName}}.{{FormType}}.{{FormName}}";
             {%- for attribute in FormDetail.Attributes  %}
             getAttribute(name: "{{ attribute.DataFieldName }}"): {{ attribute.DataFieldName | attributetype: Attributes }}{%- if attribute.IsOptionalAttribute %} | null{%- endif %};{% endfor %}
             {%- if HasAnyAttribute == true -%}
