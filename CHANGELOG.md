@@ -1,3 +1,10 @@
+# [2.1.0-beta.40](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.39...v2.1.0-beta.40) (2026-04-17)
+
+
+### Features
+
+* **tsl:** add type as branding property to distinguish them ([#134](https://github.com/DIGITALLNature/DigitallPower/issues/134)) ([108c468](https://github.com/DIGITALLNature/DigitallPower/commit/108c468d2f7fae622b4f5946239bd83b4d3bc85e))
+
 # [2.1.0-beta.39](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.38...v2.1.0-beta.39) (2026-03-17)
 
 
