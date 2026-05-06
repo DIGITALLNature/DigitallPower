@@ -25,6 +25,7 @@ import {
     GridRowDataMock,
     GridRowMock,
     ContextMock,
+    FormSelectorMock,
 } from "xrm-mock";
 import { EventContextWithEventArgsMock } from "xrm-mock/dist/xrm-mock/events/eventcontextwitheventargs.mock";
 import {
@@ -53,6 +54,9 @@ import {
     XrmLookupControlMockStubs,
     XrmFormTabUpdateBase,
     XrmStandardControlMockStubs,
+    XrmFormMockFormItem,
+    XrmFormSelectorMockStubs,
+    XrmOptionSetControlMockStubs,
 } from "./xrm_mock_form_test_context_types";
 import { XrmMockFormODataFilter } from "./xrm_mock_form_odata_filter";
 import Context from "xrm-mock/dist/xrm-mock-generator/context";
@@ -73,11 +77,14 @@ export class XrmMockFormTestContextBuilder<
     public xrmUtilityApiMockStubs: XrmUtilityApiMockStubs = {};
     public xrmFormAttributeMethodMockStubs: XrmFormAttributeMethodMockStubs<TAttributeNames> = {};
     public xrmSubGridControlMockStubs: XrmSubGridControlMockStubs<TControlName> = {};
+    public xrmFormSelectorMockStub: XrmFormSelectorMockStubs = {};
     public xrmStandardControlMockStubs: XrmStandardControlMockStubs<TControlName> = {};
+    public xrmOptionSetControlMockStubs: XrmOptionSetControlMockStubs<TControlName> = {};
     public xrmLookupControlMockStubs: XrmLookupControlMockStubs<TControlName> = {};
     public xrmTabEventsStub: XrmFormContextTabEventsStub<TTabNames> = {};
     public xrmFormDataMockStubs: XrmFormContextDataMockStubs = {};
     public xrmConsoleMockStubs: XrmConsoleMockStubs = {};
+    public xrmFetchMockStubs: jest.Mock | null = null;
     public xrmPreSaveEvent: jest.Mock | null = null;
     public formEntity: IEntityComponents = {};
 
@@ -102,6 +109,9 @@ export class XrmMockFormTestContextBuilder<
     private saveErrorMessage: string | null = null;
     private userRoles: Xrm.LookupValue[] = [];
     private languageId: number = 1033;
+    private clientUrl: string | null = null;
+    private formSelectorItems: XrmFormMockFormItem[] = [];
+    private serverMockDateError: string | null = null;
     private readonly mockAttributes: Map<TAttributeNames, XrmMockAttributeType>;
     private readonly mockControls: Map<TControlName, XrmMockControlType>;
     private readonly controlConfig: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>[];
@@ -166,6 +176,14 @@ export class XrmMockFormTestContextBuilder<
     }
 
     /**
+     * Get mock form context with specific provided type
+     * @returns
+     */
+    public getMockFormContext<T extends Xrm.FormContext>(): T {
+        return <T>this.getLoadExecutionContext().getFormContext();
+    }
+
+    /**
      * Generate an form even execution context with a input control source event
      * @param source
      * @returns
@@ -216,7 +234,6 @@ export class XrmMockFormTestContextBuilder<
             entity: this.formEntity,
             process: undefined,
         });
-        (XrmMockGenerator.formContext.ui.formSelector.getCurrentItem() as FormItemMock).formType = this.formType;
 
         // If sub grid mock config, then init subGrid row mocks before controls as controls mocks use it
         if (this.isSubGridMethodsMock && this.xrmSubGridConfig.size > 0) {
@@ -226,6 +243,7 @@ export class XrmMockFormTestContextBuilder<
         this.InitTabs();
         this.InitXrmNavigationApiMocks();
         this.InitXrmUtilityMocks();
+        this.InitFormUiSelector();
 
         if (this.isMockFormDateEvent) {
             this.InitMockFormDataEvent();
@@ -296,6 +314,16 @@ export class XrmMockFormTestContextBuilder<
      */
     public withServerData(data: XrmFormMockServerData): this {
         Object.assign(this.serverMockData, data);
+        return this;
+    }
+
+    /**
+     * With error message when calling server retrieve
+     * @param erroMsg
+     * @returns
+     */
+    public withServerDataError(erroMsg: string): this {
+        this.serverMockDateError = erroMsg;
         return this;
     }
 
@@ -400,6 +428,16 @@ export class XrmMockFormTestContextBuilder<
     }
 
     /**
+     * Set form context client url
+     * @param clientUrl
+     * @returns
+     */
+    public withClientUrl(clientUrl: string): this {
+        this.clientUrl = clientUrl;
+        return this;
+    }
+
+    /**
      * Set form context user roles to be returned by the getGlobalContext
      * @param roles
      * @returns
@@ -470,6 +508,38 @@ export class XrmMockFormTestContextBuilder<
     }
 
     /**
+     * Add a mock for a simple fetch with a certain response
+     * @param statusCode
+     * @param response
+     */
+    public withFetchResponse(statusCode: number, response: string): this {
+        this.xrmFetchMockStubs = jest.fn((_url: URL | RequestInfo): Promise<Response> => {
+            const isOK = statusCode >= 200 && statusCode <= 299;
+            return Promise.resolve(
+                new Response(response, {
+                    status: statusCode,
+                    statusText: isOK ? "OK" : "Internal Error",
+                })
+            );
+        });
+        globalThis.fetch = this.xrmFetchMockStubs;
+        return this;
+    }
+
+    /**
+     * Add a mock for a simple fetch with a certain response
+     * @param statusCode
+     * @param response
+     */
+    public withFetchException(errorMsg: string): this {
+        this.xrmFetchMockStubs = jest.fn((_url: URL | RequestInfo): Promise<Response> => {
+            throw new Error(errorMsg);
+        });
+        globalThis.fetch = this.xrmFetchMockStubs;
+        return this;
+    }
+
+    /**
      * Configure sub grid mocks to be able to interact with the sub grid rows attributes
      * @param name
      * @param updateGridRows
@@ -497,8 +567,25 @@ export class XrmMockFormTestContextBuilder<
         return this;
     }
 
+    /**
+     * Configure if form mocks the control lookup methods
+     * @param name
+     * @param updateGridRows
+     * @returns
+     */
     public withLookupControlMethodEventMock(isLookupControlMock: boolean): this {
         this.isControlLookupMethodMock = isLookupControlMock;
+        return this;
+    }
+
+    /**
+     * Configure if form mocks contains other form selectors
+     * @param currentForm
+     * @param otherItems
+     * @returns
+     */
+    public withFormSelectorItems(currentForm: XrmFormMockFormItem, otherItems: XrmFormMockFormItem[]): this {
+        this.formSelectorItems = [...otherItems.map((x) => ({ ...x, isCurrent: false })), { ...currentForm, isCurrent: true }];
         return this;
     }
 
@@ -630,11 +717,85 @@ export class XrmMockFormTestContextBuilder<
         jest.spyOn(Xrm.Utility, "showProgressIndicator").mockImplementation(this.xrmUtilityApiMockStubs.showProgressIndicator);
     }
 
+    private InitFormUiSelector(): void {
+        const currentForm = this.CreateCurrentFormMockItem();
+        const formSelectorMock = XrmMockGenerator.formContext.ui.formSelector as FormSelectorMock;
+        formSelectorMock.items = new ItemCollectionMock<FormItemMock>([currentForm]);
+        for (const otherItem of this.formSelectorItems.filter((x) => !x.isCurrent)) {
+            formSelectorMock.items.push(
+                new FormItemMock({
+                    id: otherItem.id,
+                    label: otherItem.label ?? "",
+                    currentItem: false,
+                    formType: otherItem.formType ?? XrmEnum.FormType.Update,
+                })
+            );
+        }
+        this.AddFormSelectorStubs(formSelectorMock.items.get());
+    }
+
+    private CreateCurrentFormMockItem(): FormItemMock {
+        const currentFormSelector = this.formSelectorItems.find((x) => x.isCurrent);
+        if (currentFormSelector) {
+            // Add with explicitly set data
+            return new FormItemMock({
+                id: currentFormSelector.id,
+                label: currentFormSelector.label ?? "",
+                currentItem: true,
+                formType: currentFormSelector.formType ?? this.formType,
+            });
+        } else {
+            return new FormItemMock({
+                id: "{00000000-0000-0000-0000-000000000000}",
+                label: "current-form",
+                currentItem: true,
+                formType: this.formType,
+            });
+        }
+    }
+
+    private AddFormSelectorStubs(formItemMocks: FormItemMock[]): void {
+        for (const formItemMock of formItemMocks) {
+            const methodMockStub = {
+                navigate: jest.fn(),
+                setVisible: jest.fn((isVisible: boolean): boolean => this.SetFormSelectorItemVisible(isVisible, formItemMock)),
+                getVisible: jest.fn((): boolean => this.GetFormSelectorItemVisible(formItemMock)),
+            };
+            this.xrmFormSelectorMockStub[formItemMock.id] = methodMockStub;
+            formItemMock.navigate = methodMockStub.navigate;
+            formItemMock.setVisible = methodMockStub.setVisible;
+            formItemMock.getVisible = methodMockStub.getVisible;
+        }
+    }
+
+    private GetFormSelectorItemVisible(formItemMock: FormItemMock): boolean {
+        const formItem = this.formSelectorItems.find((x) => x.id === formItemMock.id);
+        if (!formItem) {
+            throw new Error(`Form item with ${formItemMock.id} not found!`);
+        }
+        // if not explicitly set assume visible
+        return formItem.visible ?? true;
+    }
+
+    private SetFormSelectorItemVisible(isVisible: boolean, formItemMock: FormItemMock): boolean {
+        const formItem = this.formSelectorItems.find((x) => x.id === formItemMock.id);
+        if (!formItem) {
+            throw new Error(`Form item with ${formItemMock.id} not found!`);
+        }
+        formItem.visible = isVisible;
+        return true;
+    }
+
     private RetrieveMultipleRecords(
         entityLogicalName: string,
         options?: string,
         _maxPageSize?: number
     ): Xrm.Async.PromiseLike<Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>> {
+        if (this.serverMockDateError) {
+            return Promise.reject(new Error(this.serverMockDateError)) as unknown as Xrm.Async.PromiseLike<
+                Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
+            >;
+        }
         const entityDTOs = this.serverMockData[entityLogicalName];
         if (!entityDTOs) {
             return Promise.resolve({
@@ -850,6 +1011,7 @@ export class XrmMockFormTestContextBuilder<
         formContext.data = dataMock;
         formContext.data.attributes = attributeCollection;
         formContext.data.getIsDirty = this.getIsDirty.bind(this);
+        formContext.data.entity.getId = () => this.formEntity.id ?? "";
     }
 
     private InitAttributeMock(
@@ -896,13 +1058,19 @@ export class XrmMockFormTestContextBuilder<
                 this.xrmLookupControlMockStubs[control.name] = lookupControlMock;
             }
             if (this.isControlMethodMock && !this.isGridControl(controlMock)) {
-                const notificationControl = {
+                const standardControl = {
                     addNotification: jest.fn(),
                     clearNotification: jest.fn(),
+                    clearOptions: jest.fn(),
                 };
-                controlMock.addNotification = notificationControl.addNotification;
-                controlMock.clearNotification = notificationControl.clearNotification;
-                this.xrmStandardControlMockStubs[control.name] = notificationControl;
+                controlMock.addNotification = standardControl.addNotification;
+                controlMock.clearNotification = standardControl.clearNotification;
+                if (this.isOptionSetControl(controlMock)) {
+                    controlMock.clearOptions = standardControl.clearOptions;
+                    this.xrmOptionSetControlMockStubs[control.name] = standardControl;
+                } else {
+                    this.xrmStandardControlMockStubs[control.name] = standardControl;
+                }
             }
             this.mockControls.set(control.name, controlMock);
         }
@@ -1277,6 +1445,7 @@ export class XrmMockFormTestContextBuilder<
 
     private MapFormContext(): ContextMock {
         const context = Context.createContext();
+        context.clientUrl = this.clientUrl ?? "";
         context.userSettings.languageId = this.languageId;
         context.userSettings.roles = new ItemCollectionMock(this.userRoles);
         return context;
@@ -1300,5 +1469,13 @@ export class XrmMockFormTestContextBuilder<
         }
         const controlType = control.getControlType();
         return controlType === "lookup";
+    }
+
+    private isOptionSetControl(control: XrmMockControlType | null): control is OptionSetControlMock {
+        if (!control) {
+            return false;
+        }
+        const controlType = control.getControlType();
+        return controlType === "optionset";
     }
 }
