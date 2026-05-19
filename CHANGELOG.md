@@ -1,3 +1,10 @@
+# [2.1.0-beta.42](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.41...v2.1.0-beta.42) (2026-05-19)
+
+
+### Features
+
+* **tsl:** extra auxiliary tester functions ([#136](https://github.com/DIGITALLNature/DigitallPower/issues/136)) ([a69fe7f](https://github.com/DIGITALLNature/DigitallPower/commit/a69fe7fd58d39b2457a930721af5ff81b1c42ad7))
+
 # [2.1.0-beta.41](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.40...v2.1.0-beta.41) (2026-05-19)
 
 
