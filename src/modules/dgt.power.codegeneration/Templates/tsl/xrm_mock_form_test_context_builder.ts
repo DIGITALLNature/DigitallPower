@@ -1062,9 +1062,11 @@ export class XrmMockFormTestContextBuilder<
                     addNotification: jest.fn(),
                     clearNotification: jest.fn(),
                     clearOptions: jest.fn(),
+                    setFocus: jest.fn(),
                 };
                 controlMock.addNotification = standardControl.addNotification;
                 controlMock.clearNotification = standardControl.clearNotification;
+                controlMock.setFocus = standardControl.setFocus;
                 if (this.isOptionSetControl(controlMock)) {
                     controlMock.clearOptions = standardControl.clearOptions;
                     this.xrmOptionSetControlMockStubs[control.name] = standardControl;
