@@ -38,6 +38,14 @@ export interface XrmMockConfirmDialogResponses {
     executed: boolean;
 }
 
+export interface XrmFormMockFormItem {
+    id: string;
+    label?: string;
+    visible?: boolean;
+    formType?: XrmEnum.FormType;
+    isCurrent?: boolean;
+}
+
 export interface XrmFormMockAttributeControlUpdateBase<CtlNames extends string, AttNames extends string> {
     isDisabled?: boolean;
     isVisible?: boolean;
@@ -94,8 +102,10 @@ export type XrmSubGridMethodName = jest.FunctionPropertyNames<Required<Xrm.Contr
 export type XrmLookupControlMethodName = jest.FunctionPropertyNames<Required<Xrm.Controls.LookupControl>>;
 export type XrmFormTabMethodNames = jest.FunctionPropertyNames<Required<Xrm.Controls.Tab>>;
 export type XrmFormControlMethodNames = jest.FunctionPropertyNames<Required<Xrm.Controls.StandardControl>>;
+export type XrmOptionSetControlMethodNames = jest.FunctionPropertyNames<Required<Xrm.Controls.OptionSetControl>>;
 export type XrmFormAttributeMethods = jest.FunctionPropertyNames<Required<Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>>>;
 export type XrmConsoleStubMethod = jest.FunctionPropertyNames<Required<typeof console>>;
+export type XrmFormSelectorItemStubMethod = jest.FunctionPropertyNames<Required<Xrm.Controls.FormItem>>;
 
 export type XrmWebApiMockStubs = Partial<Record<XrmWebApiMockStubMethods, jest.Mock>>;
 export type XrmWebApiOnlineMockStubs = Partial<Record<XrmWebApiOnlineMockStubMethod, jest.Mock>>;
@@ -103,9 +113,11 @@ export type XrmNavigationMockStubs = Partial<Record<XrmNavigationApiMockStubMeth
 export type XrmUtilityApiMockStubs = Partial<Record<XrmUtilityApiMockStubMethod, jest.Mock>>;
 export type XrmFormContextUiMockStubs = Partial<Record<XrmFormContextUiNotificationMethods, jest.Mock>>;
 export type XrmFormContextDataMockStubs = Partial<Record<XrmFormContextDataStubMethod, jest.Mock>>;
+export type XrmFormSelectorItemMockStubs = Partial<Record<XrmFormSelectorItemStubMethod, jest.Mock>>;
 export type XrmConsoleMockStubs = Partial<Record<XrmConsoleStubMethod, jest.Mock>>;
 export type XrmSubGridMockStubs = Partial<Record<XrmSubGridMethodName, jest.Mock>>;
 export type XrmStandardMockStubs = Partial<Record<XrmFormControlMethodNames, jest.Mock>>;
+export type XrmOptionSetMockStubs = Partial<Record<XrmOptionSetControlMethodNames, jest.Mock>>;
 export type XrmLookupMockStubs = Partial<Record<XrmLookupControlMethodName, jest.Mock>>;
 
 export type XrmTabEventMockStubs = Partial<Record<XrmFormTabMethodNames, jest.Mock>>;
@@ -113,8 +125,10 @@ export type XrmFormAttributeMockStubs = Partial<Record<XrmFormAttributeMethods, 
 
 export type XrmFormAttributeMethodMockStubs<TAttributeNames extends string> = Partial<Record<TAttributeNames, XrmFormAttributeMockStubs>>;
 export type XrmSubGridControlMockStubs<TControlName extends string> = Partial<Record<TControlName, XrmSubGridMockStubs>>;
+export type XrmFormSelectorMockStubs = Partial<Record<string, XrmFormSelectorItemMockStubs>>;
 export type XrmLookupControlMockStubs<TControlName extends string> = Partial<Record<TControlName, XrmLookupMockStubs>>;
 export type XrmStandardControlMockStubs<TControlName extends string> = Partial<Record<TControlName, XrmStandardMockStubs>>;
+export type XrmOptionSetControlMockStubs<TControlName extends string> = Partial<Record<TControlName, XrmOptionSetMockStubs>>;
 export type XrmFormContextTabEventsStub<TTabNames extends string> = Partial<Record<TTabNames, XrmTabEventMockStubs>>;
 export type XrmFormTabUpdateData<TTabNames extends string, TTabSectionNames extends string> = Partial<
     Record<TTabNames, XrmFormTabUpdateBase<TTabSectionNames>>
@@ -132,18 +146,23 @@ export interface IXrmMockFormTestContextBuilder<
     getExecutionContextWithSource(
         source: Xrm.Attributes.Attribute | Xrm.Controls.Control | Xrm.Entity
     ): EventContextWithEventArgsMock<Xrm.Events.EventContext>;
+    getMockFormContext<T extends Xrm.FormContext>(): T;
     getLoadExecutionContext(): EventContextWithEventArgsMock<Xrm.Events.LoadEventArguments>;
     withAttributeMockChange(isMockAttributeChanges: boolean): this;
+    withClientUrl(clientUrl: string): this;
     withConsoleMocked(isConsoleMocked: boolean): this;
     WithControlMethodMock(isControlMethodMock: boolean): this;
     withCustomApi<T extends XrmWebApi.ExecuteResponse>(name: string, response: T): this;
     withCustomApiException(name: string, errorMsg: string): this;
     withCustomApis(data: XrmCustomApiMockData): this;
     withEntity(entityName: string, entityId: string): this;
+    withFetchResponse(statusCode: number, response: string): this;
+    withFetchException(errorMsg: string): this;
     withFormAttributeControlData(updateData: XrmFormMockAttributeControlUpdateBase<TControlName, TAttributeNames>[]): this;
     withFormDataDirty(isDirty: boolean): this;
     withFormDataEventMock(isMockFormDateEventMock: boolean): this;
     withFormDataValid(isValid: boolean): this;
+    withFormSelectorItems(currentForm: XrmFormMockFormItem, otherItems: XrmFormMockFormItem[]): this;
     withFormTabData(updateData: XrmFormTabUpdateData<TTabNames, TSectionNames>): this;
     withFormType(type: XrmEnum.FormType): this;
     withFormUiEventMock(isMockFormUiEvent: boolean): this;
@@ -153,6 +172,7 @@ export interface IXrmMockFormTestContextBuilder<
     withRegisterTabEventsMocks(isMockTabEvents: boolean): this;
     withSaveErrorMessage(errorMsg: string | null): this;
     withServerData(data: XrmFormMockServerData): this;
+    withServerDataError(erroMsg: string): this;
     withSubGridMethodsMock(isSubGridLoad: boolean): this;
     withSubGridMockRows<TGridAttributeNames extends string>(
         name: TControlName,
