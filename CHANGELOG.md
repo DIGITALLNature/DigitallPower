@@ -1,3 +1,10 @@
+# [2.1.0-beta.41](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.40...v2.1.0-beta.41) (2026-05-19)
+
+
+### Features
+
+* **tsl:** add extra test mock util functions ([#135](https://github.com/DIGITALLNature/DigitallPower/issues/135)) ([d1be7d0](https://github.com/DIGITALLNature/DigitallPower/commit/d1be7d0625646c312bbe3a7f0ac829c99daa13a3))
+
 # [2.1.0-beta.40](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.39...v2.1.0-beta.40) (2026-04-17)
 
 
