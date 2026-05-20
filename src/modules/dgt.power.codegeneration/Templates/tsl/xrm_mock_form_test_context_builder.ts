@@ -1337,7 +1337,7 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): StringControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createString({
                 name: control.name,
                 attribute: <StringAttributeMock>mockAttribute,
@@ -1351,9 +1351,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): BooleanControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createBoolean({
-                name: control.attributeName,
+                name: control.name,
                 attribute: <BooleanAttributeMock>mockAttribute,
                 visible: control.isVisible,
             });
@@ -1365,9 +1365,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): DateControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createDate({
-                name: control.attributeName,
+                name: control.name,
                 attribute: <DateAttributeMock>mockAttribute,
                 visible: control.isVisible,
             });
@@ -1379,9 +1379,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): NumberControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createNumber({
-                name: control.attributeName,
+                name: control.name,
                 attribute: <NumberAttributeMock>mockAttribute,
                 visible: control.isVisible,
             });
@@ -1393,9 +1393,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): LookupControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createLookup({
-                name: control.attributeName,
+                name: control.name,
                 attribute: <LookupAttributeMock>mockAttribute,
                 visible: control.isVisible,
             });
@@ -1407,9 +1407,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): OptionSetControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createOptionSet({
-                name: control.attributeName,
+                name: control.name,
                 attribute: <OptionSetAttributeMock>mockAttribute,
                 visible: control.isVisible,
             });
@@ -1421,9 +1421,9 @@ export class XrmMockFormTestContextBuilder<
         mockAttribute: XrmMockAttributeType | null | undefined,
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): OptionSetControlMock | null {
-        if (mockAttribute && control.attributeName) {
+        if (mockAttribute && control.name) {
             return XrmMockGenerator.Control.createOptionSet({
-                name: control.attributeName,
+                name: control.name,
                 attribute: mockAttribute as any,
                 visible: control.isVisible,
             });
