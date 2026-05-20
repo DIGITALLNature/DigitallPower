@@ -107,6 +107,7 @@ export class XrmMockFormTestContextBuilder<
     private isConsoleMocked: boolean = false;
     private isControlLookupMethodMock: boolean = false;
     private saveErrorMessage: string | null = null;
+    private refreshErrorMessage: string | null = null;
     private userRoles: Xrm.LookupValue[] = [];
     private languageId: number = 1033;
     private clientUrl: string | null = null;
@@ -498,6 +499,16 @@ export class XrmMockFormTestContextBuilder<
     }
 
     /**
+     * Configure form data refresh returns an error message
+     * @param errorMsg 
+     * @returns 
+     */
+    public withRefreshErrorMessage(errorMsg: string | null): this {
+        this.refreshErrorMessage = errorMsg;
+        return this;
+    }
+
+    /**
      * Configure a console log mock to assertions on to of console statements
      * @param isConsoleMocked
      * @returns
@@ -609,20 +620,36 @@ export class XrmMockFormTestContextBuilder<
 
     private InitXrmWebApiServerMocks(): void {
         this.xrmWebApiMockStubs = {
-            retrieveMultipleRecords: jest.fn((entityLogicalName: string, options?: string, maxPageSize?: number) =>
-                this.RetrieveMultipleRecords(entityLogicalName, options, maxPageSize)
-            ),
+            createRecord: jest.fn((entityLogicalName: string, record: XrmTable.DTO.Table<string>): Xrm.Async.PromiseLike<Xrm.CreateResponse> => {
+                return Promise.resolve({
+                    entityType: entityLogicalName,
+                    id: crypto.randomUUID(),
+                }) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
+            }),
+            deleteRecord: jest.fn((entityLogicalName: string, id: string): Xrm.Async.PromiseLike<any> => {
+                return Promise.resolve({
+                    entityType: entityLogicalName,
+                    id,
+                    name: "deleteRecordName"
+                }) as unknown as Xrm.Async.PromiseLike<any>;
+            }),
             retrieveRecord: jest.fn((entityLogicalName: string, id: string, options?: string) =>
                 this.RetrieveSingleStubRecord(entityLogicalName, id, options)
             ),
-            createRecord: jest.fn((entityLogicalName: string, record: XrmTable.DTO.Table<string>) => ({
-                entityLogicalName,
-                id: crypto.randomUUID(),
-            })),
+            retrieveMultipleRecords: jest.fn((entityLogicalName: string, options?: string, maxPageSize?: number) =>
+                this.RetrieveMultipleRecords(entityLogicalName, options, maxPageSize)
+            ),
+            updateRecord: jest.fn((entityLogicalName: string, id: string, _data: any): Xrm.Async.PromiseLike<Xrm.UpdateResponse> => {
+                return Promise.resolve(
+                    { entityType: entityLogicalName, id },
+                ) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
+            }),
         };
-        jest.spyOn(Xrm.WebApi, "retrieveRecord").mockImplementation(this.xrmWebApiMockStubs.retrieveRecord);
-        jest.spyOn(Xrm.WebApi, "retrieveMultipleRecords").mockImplementation(this.xrmWebApiMockStubs.retrieveMultipleRecords);
         jest.spyOn(Xrm.WebApi, "createRecord").mockImplementation(this.xrmWebApiMockStubs.createRecord);
+        jest.spyOn(Xrm.WebApi, "deleteRecord").mockImplementation(this.xrmWebApiMockStubs.deleteRecord);
+        jest.spyOn(Xrm.WebApi, "retrieveMultipleRecords").mockImplementation(this.xrmWebApiMockStubs.retrieveMultipleRecords);
+        jest.spyOn(Xrm.WebApi, "retrieveRecord").mockImplementation(this.xrmWebApiMockStubs.retrieveRecord);
+        jest.spyOn(Xrm.WebApi, "updateRecord").mockImplementation(this.xrmWebApiMockStubs.updateRecord);
     }
 
     private InitXrmWebApiOnlineMocks(): void {
@@ -630,12 +657,25 @@ export class XrmMockFormTestContextBuilder<
             execute: jest.fn(
                 (request: XrmWebApi.ExecuteRequest): Xrm.Async.PromiseLike<Response> => this.GetCustomApiMockResponse(request)
             ),
+            executeMultiple: jest.fn(
+                // only empty response from now
+                (request: XrmWebApi.ExecuteRequest[]): Xrm.Async.PromiseLike<Response[]> => Promise.resolve([]) as unknown as Xrm.Async.PromiseLike<Response[]>
+            ),
         };
         jest.spyOn(Xrm.WebApi.online, "execute").mockImplementation(this.xrmWebApiOnlineMockStubs.execute);
     }
 
     private InitXrmNavigationApiMocks(): void {
         this.xrmNavigationMockStubs = {
+            navigateTo: jest.fn((_pageInput: | Xrm.Navigation.PageInputEntityRecord
+                | Xrm.Navigation.PageInputEntityList
+                | Xrm.Navigation.CustomPage
+                | Xrm.Navigation.PageInputHtmlWebResource
+                | Xrm.Navigation.Dashboard,
+                _navigationOptions?: Xrm.Navigation.NavigationOptions
+            ) => {
+                return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
+            }),
             openAlertDialog: jest.fn((_alertStrings: Xrm.Navigation.AlertStrings, _alertOptions?: Xrm.Navigation.DialogSizeOptions) => {
                 return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
             }),
@@ -651,21 +691,35 @@ export class XrmMockFormTestContextBuilder<
                     }) as unknown as Xrm.Async.PromiseLike<Xrm.Navigation.ConfirmResult>;
                 }
             ),
+            openErrorDialog: jest.fn((_errorOptions: Xrm.Navigation.ErrorDialogOptions) => {
+                return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
+            }),
+            openFile: jest.fn(),
+            openForm: jest.fn(),
+            openUrl: jest.fn(),
+            openWebResource: jest.fn(),
+
         };
+        jest.spyOn(Xrm.Navigation, "navigateTo").mockImplementation(this.xrmNavigationMockStubs.navigateTo);
         jest.spyOn(Xrm.Navigation, "openAlertDialog").mockImplementation(this.xrmNavigationMockStubs.openAlertDialog);
         jest.spyOn(Xrm.Navigation, "openConfirmDialog").mockImplementation(this.xrmNavigationMockStubs.openConfirmDialog);
+        jest.spyOn(Xrm.Navigation, "openErrorDialog").mockImplementation(this.xrmNavigationMockStubs.openErrorDialog);
+        jest.spyOn(Xrm.Navigation, "openFile").mockImplementation(this.xrmNavigationMockStubs.openFile);
+        jest.spyOn(Xrm.Navigation, "openForm").mockImplementation(this.xrmNavigationMockStubs.openForm);
+        jest.spyOn(Xrm.Navigation, "openUrl").mockImplementation(this.xrmNavigationMockStubs.openUrl);
+        jest.spyOn(Xrm.Navigation, "openWebResource").mockImplementation(this.xrmNavigationMockStubs.openWebResource);
     }
 
     private InitMockFormDataEvent(): void {
         this.xrmFormDataMockStubs = {
+            getIsDirty: jest.fn(() => this.isFormDataDirty),
+            isValid: jest.fn(() => this.isFormDataValid),
             refresh: jest.fn((refresh?: boolean): Xrm.Async.PromiseLike<void> => {
-                if (this.saveErrorMessage) {
-                    throw new Error(this.saveErrorMessage);
+                if (this.refreshErrorMessage) {
+                    throw new Error(this.refreshErrorMessage);
                 }
                 return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
             }),
-            isValid: jest.fn(() => this.isFormDataValid),
-            getIsDirty: jest.fn(() => this.isFormDataDirty),
             save: jest.fn((): Xrm.Async.PromiseLike<void> => {
                 if (this.saveErrorMessage) {
                     throw new Error(this.saveErrorMessage);
@@ -674,9 +728,9 @@ export class XrmMockFormTestContextBuilder<
             }),
         };
 
-        jest.spyOn(XrmMockGenerator.getFormContext().data, "refresh").mockImplementation(this.xrmFormDataMockStubs.refresh);
-        jest.spyOn(XrmMockGenerator.getFormContext().data, "isValid").mockImplementation(this.xrmFormDataMockStubs.isValid);
         jest.spyOn(XrmMockGenerator.getFormContext().data, "getIsDirty").mockImplementation(this.xrmFormDataMockStubs.getIsDirty);
+        jest.spyOn(XrmMockGenerator.getFormContext().data, "isValid").mockImplementation(this.xrmFormDataMockStubs.isValid);
+        jest.spyOn(XrmMockGenerator.getFormContext().data, "refresh").mockImplementation(this.xrmFormDataMockStubs.refresh);
         jest.spyOn(XrmMockGenerator.getFormContext().data, "save").mockImplementation(this.xrmFormDataMockStubs.save);
     }
 
@@ -693,28 +747,29 @@ export class XrmMockFormTestContextBuilder<
 
     private InitFormUiMocks(): void {
         this.xrmUiFormMocksStubs = {
+            clearFormNotification: jest.fn((_uniqueId: string): void => { }),
+            close: jest.fn((): void => { }),
+            refreshRibbon: jest.fn((_refreshAll?: boolean): void => { }),
             setFormNotification: jest.fn((_message: string, _level: Xrm.FormNotificationLevel, _uniqueId: string): boolean => {
                 return true;
             }),
-            clearFormNotification: jest.fn((_uniqueId: string): void => { }),
-            refreshRibbon: jest.fn((_refreshAll?: boolean): void => { }),
         };
-        jest.spyOn(XrmMockGenerator.getFormContext().ui, "setFormNotification").mockImplementation(
-            this.xrmUiFormMocksStubs.setFormNotification
-        );
-        jest.spyOn(XrmMockGenerator.getFormContext().ui, "clearFormNotification").mockImplementation(
-            this.xrmUiFormMocksStubs.clearFormNotification
-        );
+
+        jest.spyOn(XrmMockGenerator.getFormContext().ui, "clearFormNotification").mockImplementation(this.xrmUiFormMocksStubs.clearFormNotification);
+        jest.spyOn(XrmMockGenerator.getFormContext().ui, "close").mockImplementation(this.xrmUiFormMocksStubs.close);
         jest.spyOn(XrmMockGenerator.getFormContext().ui, "refreshRibbon").mockImplementation(this.xrmUiFormMocksStubs.refreshRibbon);
+        jest.spyOn(XrmMockGenerator.getFormContext().ui, "setFormNotification").mockImplementation(this.xrmUiFormMocksStubs.setFormNotification);
     }
 
     private InitXrmUtilityMocks(): void {
         this.xrmUtilityApiMockStubs = {
             closeProgressIndicator: jest.fn(),
             showProgressIndicator: jest.fn(),
+            refreshParentGrid: jest.fn(),
         };
         jest.spyOn(Xrm.Utility, "closeProgressIndicator").mockImplementation(this.xrmUtilityApiMockStubs.closeProgressIndicator);
         jest.spyOn(Xrm.Utility, "showProgressIndicator").mockImplementation(this.xrmUtilityApiMockStubs.showProgressIndicator);
+        jest.spyOn(Xrm.Utility, "refreshParentGrid").mockImplementation(this.xrmUtilityApiMockStubs.refreshParentGrid);
     }
 
     private InitFormUiSelector(): void {
@@ -810,7 +865,7 @@ export class XrmMockFormTestContextBuilder<
             }) as unknown as Xrm.Async.PromiseLike<Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>>;
         }
         const oDataQueryString = options?.startsWith("?") ? options.substring(1) : options;
-        const mockFilterResults = XrmMockFormODataFilter.executeRetrieveMultipleRecord(entityDTOs, oDataQueryString);
+        const mockFilterResults = XrmMockFormODataFilter.executeRetrieveMultipleRecord(entityLogicalName, entityDTOs, oDataQueryString);
         return Promise.resolve({
             entities: [...mockFilterResults],
             nextLink: "",
@@ -832,8 +887,12 @@ export class XrmMockFormTestContextBuilder<
         }
         if (options) {
             const oDataQueryString = options?.startsWith("?") ? options.substring(1) : options;
+            const item = XrmMockFormODataFilter.executeSelectSingleRecord(record, oDataQueryString)
+            item[`${entityLogicalName}id`] = id;
             return Promise.resolve(
-                XrmMockFormODataFilter.executeSelectSingleRecord(record, oDataQueryString)
+                {
+                    ...item,
+                }
             ) as unknown as Xrm.Async.PromiseLike<Partial<XrmTable.DTO.Table<string>>>;
         }
         return Promise.resolve(record) as unknown as Xrm.Async.PromiseLike<Partial<XrmTable.DTO.Table<string>>>;
@@ -1011,7 +1070,7 @@ export class XrmMockFormTestContextBuilder<
         formContext.data = dataMock;
         formContext.data.attributes = attributeCollection;
         formContext.data.getIsDirty = this.getIsDirty.bind(this);
-        formContext.data.entity.getId = () => this.formEntity.id ?? "";
+        formContext.data.entity.getId = () => this.formEntity.id ? `{${this.formEntity.id}}` : "";
     }
 
     private InitAttributeMock(
@@ -1052,22 +1111,34 @@ export class XrmMockFormTestContextBuilder<
                 const lookupControlMock = {
                     removePreSearch: jest.fn(),
                     addPreSearch: jest.fn(),
+                    setEntityTypes: jest.fn((entityType: string[]) => { controlMock.entityTypes = entityType; })
                 };
                 controlMock.removePreSearch = lookupControlMock.removePreSearch;
                 controlMock.addPreSearch = lookupControlMock.addPreSearch;
+                controlMock.setEntityTypes = lookupControlMock.setEntityTypes
                 this.xrmLookupControlMockStubs[control.name] = lookupControlMock;
             }
             if (this.isControlMethodMock && !this.isGridControl(controlMock)) {
                 const standardControl = {
                     addNotification: jest.fn(),
                     clearNotification: jest.fn(),
-                    clearOptions: jest.fn(),
                     setFocus: jest.fn(),
+                    clearOptions: jest.fn(),
                 };
                 controlMock.addNotification = standardControl.addNotification;
                 controlMock.clearNotification = standardControl.clearNotification;
                 controlMock.setFocus = standardControl.setFocus;
                 if (this.isOptionSetControl(controlMock)) {
+                    standardControl.clearOptions = jest.fn().mockImplementation(function (this: OptionSetControlMock) {
+                        const optLength = this.options.length;
+                        if (optLength) {
+                            this.options.splice(0, optLength);
+                        }
+                        const attOptLength = this.attribute.options.length
+                        if (attOptLength) {
+                            this.attribute.options.splice(0, attOptLength);
+                        }
+                    });
                     controlMock.clearOptions = standardControl.clearOptions;
                     this.xrmOptionSetControlMockStubs[control.name] = standardControl;
                 } else {
@@ -1408,10 +1479,12 @@ export class XrmMockFormTestContextBuilder<
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): OptionSetControlMock | null {
         if (mockAttribute && control.name) {
+            const mockOptions = (<OptionSetAttributeMock>mockAttribute).options ?? [];
             return XrmMockGenerator.Control.createOptionSet({
                 name: control.name,
                 attribute: <OptionSetAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                options: mockOptions.map(opt => ({ ...opt })),
             });
         }
         return null;
@@ -1422,10 +1495,12 @@ export class XrmMockFormTestContextBuilder<
         control: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>
     ): OptionSetControlMock | null {
         if (mockAttribute && control.name) {
+            const mockOptions = (<OptionSetAttributeMock>mockAttribute).options ?? [];
             return XrmMockGenerator.Control.createOptionSet({
                 name: control.name,
                 attribute: mockAttribute as any,
                 visible: control.isVisible,
+                options: mockOptions.map(opt => ({ ...opt })),
             });
         }
         return null;

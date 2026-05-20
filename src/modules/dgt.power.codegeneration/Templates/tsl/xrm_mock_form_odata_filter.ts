@@ -41,12 +41,13 @@ export class XrmMockFormODataFilter {
         },
     };
 
-    public static executeRetrieveMultipleRecord(list: XrmTable.DTO.Table<string>[], oDataString: string): XrmTable.DTO.Table<string>[] {
+    public static executeRetrieveMultipleRecord(entityLogicalName: string, list: XrmTable.DTO.Table<string>[], oDataString: string): XrmTable.DTO.Table<string>[] {
         try {
             console.log(`Run next query in mock data ${oDataString}`);
             const astObject = defaultParser.query(oDataString);
             const astOptions = astObject.value.options ?? [];
             const selectFields = XrmMockFormODataFilter.getSelectFieldNamesFromAstObject(astOptions);
+            selectFields.push(`${entityLogicalName}id`);
             const filterOption = XrmMockFormODataFilter.getFilterFromAstObject(astOptions);
             if (!filterOption) {
                 return list.map((x) => XrmMockFormODataFilter.selectProperties(x, selectFields));
