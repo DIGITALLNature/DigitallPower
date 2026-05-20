@@ -1,3 +1,10 @@
+# [2.1.0-beta.43](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.42...v2.1.0-beta.43) (2026-05-20)
+
+
+### Features
+
+* **tsl:** correct issue with the generation of control form when name not attribute ([#137](https://github.com/DIGITALLNature/DigitallPower/issues/137)) ([8b6cde7](https://github.com/DIGITALLNature/DigitallPower/commit/8b6cde766f1fcab261221b40218c7b77788ebcef))
+
 # [2.1.0-beta.42](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.41...v2.1.0-beta.42) (2026-05-19)
 
 
