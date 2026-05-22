@@ -106,9 +106,9 @@
     <PackageReference Include="Fluid.Core" Version="2.31.0" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.10" />
-    <PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
-    <PackageReference Include="System.CodeDom" Version="10.0.3" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103">
+    <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
+    <PackageReference Include="System.CodeDom" Version="10.0.8" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

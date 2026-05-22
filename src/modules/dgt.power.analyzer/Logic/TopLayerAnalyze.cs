@@ -55,8 +55,8 @@ public sealed class TopLayerAnalyze : BaseAnalyze
 
             var components = GetSolutionComponents(context, uniqueName);
 
-            var table = new Table().Centered();
-            AnsiConsole.Live(table)
+            var table = new Table();
+            AnsiConsole.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");

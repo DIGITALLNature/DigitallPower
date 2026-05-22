@@ -30,7 +30,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         _webresourcesProcessor = webresourcesProcessor;
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings, CancellationToken cancellationToken)
+    protected override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
 

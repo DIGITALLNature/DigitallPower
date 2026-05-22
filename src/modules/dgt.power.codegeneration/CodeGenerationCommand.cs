@@ -37,7 +37,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
         _metadataService = metadataService;
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
+    protected override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
         if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
