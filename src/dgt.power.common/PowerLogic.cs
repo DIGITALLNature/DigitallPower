@@ -22,7 +22,7 @@ public abstract class PowerLogic<TConfig>(
     protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
-    public override int Execute(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken) => Execute(settings) ? 0 : 1;
+    protected override int Execute(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken) => Execute(settings) ? 0 : 1;
 
     private bool Execute(TConfig args)
     {

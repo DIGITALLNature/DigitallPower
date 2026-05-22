@@ -18,7 +18,7 @@ public class ListProfileCommand : Command<ProfileSettings>
 
     public ListProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings, CancellationToken cancellationToken)
+    protected override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings, CancellationToken cancellationToken)
     {
         var identities = _profileManager.LoadIdentities();
 

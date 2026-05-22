@@ -30,7 +30,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         _fileService = fileService;
     }
 
-    public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
+    protected override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
     {
         var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {

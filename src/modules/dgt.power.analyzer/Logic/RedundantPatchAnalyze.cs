@@ -47,8 +47,8 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
 
-        var table = new Table().Centered();
-        AnsiConsole.Live(table)
+        var table = new Table();
+        AnsiConsole.Live(Align.Center(table))
             .Start(ctx =>
             {
                 table.AddColumn("Solution");
