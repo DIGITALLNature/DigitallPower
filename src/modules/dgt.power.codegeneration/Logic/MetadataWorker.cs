@@ -9,11 +9,11 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public class MetadataCommand : PowerLogic<CodeGenerationVerb>
+public class MetadataWorker : PowerWorker<CodeGenerationVerb>
 {
     private readonly IMetadataGenerator _generator;
 
-    public MetadataCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
+    public MetadataWorker(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
         IMetadataGenerator generator)
         : base(tracer,connection, configResolver)
     {
@@ -21,7 +21,7 @@ public class MetadataCommand : PowerLogic<CodeGenerationVerb>
     }
 
 
-    protected override bool Invoke(CodeGenerationVerb args)
+    protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))

@@ -12,9 +12,9 @@ using Xunit.Abstractions;
 
 namespace dgt.power.codegeneration.tests;
 
-public class MetadataCommandTests : CodeGenerationTestsBase<MetadataCommand>
+public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
 {
-    public MetadataCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public MetadataWorkerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
 

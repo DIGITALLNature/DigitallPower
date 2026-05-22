@@ -17,16 +17,16 @@ using FakeXrmEasy.Abstractions;
 
 namespace dgt.power.codegeneration.tests;
 
-public class TypescriptCommandTests : CodeGenerationTestsBase<TypescriptCommand>
+public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 {
     private readonly EntityMetadata _accountMetadata;
 
-    public TypescriptCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public TypescriptWorkerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
         _accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
     }
 
-    protected override CommandTestContextBuilder<TypescriptCommand, CodeGenerationVerb> GetBuilder()
+    protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
     {
         var organization = new Organization(Guid.NewGuid())
         {

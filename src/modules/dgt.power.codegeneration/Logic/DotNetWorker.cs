@@ -9,17 +9,17 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public class DotNetCommand : PowerLogic<CodeGenerationVerb>
+public class DotNetWorker : PowerWorker<CodeGenerationVerb>
 {
     private readonly IDotNetGenerator _generator;
 
-    public DotNetCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IDotNetGenerator generator)
+    public DotNetWorker(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IDotNetGenerator generator)
         : base(tracer, connection, configResolver)
     {
         _generator = generator;
     }
 
-    protected override bool Invoke(CodeGenerationVerb args)
+    protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))

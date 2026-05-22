@@ -9,17 +9,17 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public class TypescriptCommand : PowerLogic<CodeGenerationVerb>
+public class TypescriptWorker : PowerWorker<CodeGenerationVerb>
 {
     private readonly ITypescriptGeneratorFascade _generatorFascade;
 
-    public TypescriptCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
+    public TypescriptWorker(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
         ITypescriptGeneratorFascade generatorFascade) : base(tracer,connection, configResolver)
     {
         _generatorFascade = generatorFascade;
     }
 
-    protected override bool Invoke(CodeGenerationVerb args)
+    protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))

@@ -15,35 +15,35 @@ namespace dgt.power.codegeneration.tests;
 
 public class CodeGenerationCommandTests
 {
-    private readonly CodeGenerationCommand _command;
+    private readonly ICommand<CodeGenerationVerb> _command;
 
     public CodeGenerationCommandTests(ITestOutputHelper testOutputHelper)
     {
         var tracer = new TestTracer(testOutputHelper);
         var configResolver = new ConfigResolver(tracer);
-        var dotNetCommand = A.Fake<DotNetCommand>();
-        var typescriptCommand = A.Fake<TypescriptCommand>();
-        var metadataCommand = A.Fake<MetadataCommand>();
+        var dotNetWorker = A.Fake<DotNetWorker>();
+        var typescriptWorker = A.Fake<TypescriptWorker>();
+        var metadataWorker = A.Fake<MetadataWorker>();
         var metadataService = A.Fake<IMetadataService>();
         _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetCommand, typescriptCommand, metadataCommand, metadataService);
+            dotNetWorker, typescriptWorker, metadataWorker, metadataService);
     }
 
     [Fact]
     public void ShouldExecuteALlCommands() =>
-        _command.Execute(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
+        _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
             new CodeGenerationVerb
             {
                 Config = "Resources/CodeGenerationCommand/config.json"
             },CancellationToken.None
-        ).Should().Be(0);
+        ).GetAwaiter().GetResult().Should().Be(0);
 
     [Fact]
     public void ShouldFailOnMissingConfiguration() =>
-        _command.Execute(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
+        _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
             new CodeGenerationVerb
             {
                 Config = "missing.json"
             },CancellationToken.None
-        ).Should().Be(-1);
+        ).GetAwaiter().GetResult().Should().Be(-1);
 }
