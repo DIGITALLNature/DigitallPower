@@ -17,7 +17,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
     protected override CommandTestContext<TeamTemplateExport, ExportVerb> GetContext()
     {
         return GetBuilder()
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithData(new[]
                 {
                     new TeamTemplate(Guid.NewGuid())

@@ -1,26 +1,20 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.tests.FakeExecutor
 {
-    public class AddSolutionComponentExecutor : IFakeMessageExecutor
+    public class AddSolutionComponentExecutor : IOrganizationRequestFake
     {
-        public Type GetResponsibleRequestType() => typeof(AddSolutionComponentRequest);
+        public Type ForType => typeof(AddSolutionComponentRequest);
 
-        public bool CanExecute(OrganizationRequest request) => request is AddSolutionComponentRequest;
-
-        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
         {
-            var typed = (AddSolutionComponentRequest)request;
-
-
             return new AddSolutionComponentResponse();
         }
-
     }
 }

@@ -1,34 +1,24 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class BulkDeleteExecutor : IFakeMessageExecutor
+public class BulkDeleteExecutor : IOrganizationRequestFake
 {
-    private static readonly Random Random = new Random(12345);
-
     public int ExpectedStatusCode { get; set; } = AsyncOperation.Options.StatusCode.Succeeded;
 
-    public bool CanExecute(OrganizationRequest request)
-    {
-        return request is BulkDeleteRequest;
-    }
+    public Type ForType => typeof(BulkDeleteRequest);
 
-    public Type GetResponsibleRequestType()
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
     {
-        return typeof(BulkDeleteRequest);
-    }
-
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        var typed = (BulkDeleteRequest) request;
-        var asyncOperationId = ctx.GetOrganizationService().Create(new AsyncOperation
+        var typed = (BulkDeleteRequest)organizationRequest;
+        var asyncOperationId = state.Create(new AsyncOperation
         {
             Name = typed.JobName,
             OperationType = new OptionSetValue(AsyncOperation.Options.OperationType.BulkDelete),
@@ -42,7 +32,7 @@ public class BulkDeleteExecutor : IFakeMessageExecutor
         Task.Run(() =>
         {
             Thread.Sleep(TestFixtures.FakeCallDurations);
-            ctx.GetOrganizationService().Update(new AsyncOperation
+            state.Update(new AsyncOperation
             {
                 Id = asyncOperationId,
                 StatusCode = new OptionSetValue(ExpectedStatusCode)

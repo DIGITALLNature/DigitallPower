@@ -41,7 +41,7 @@ public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker
     {
         return base.GetBuilder()
             .WithServiceCollection(ServiceCollection)
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor());
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor());
     }
 
     protected string GetMetadataArtifactPath(string entityLogicalName) =>

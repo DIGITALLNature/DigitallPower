@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -18,8 +18,8 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
     protected override CommandTestContextBuilder<BulkDeleteImport, ImportVerb> GetBuilder()
     {
         return base.GetBuilder()
-            .WithFakeMessageExecutor<WhoAmIRequest>(new WhoAmIExecutor())
-            .WithFakeMessageExecutor<BulkDeleteRequest>(new BulkDeleteExecutor());
+            .WithFakeMessageExecutor(new WhoAmIExecutor())
+            .WithFakeMessageExecutor(new BulkDeleteExecutor());
     }
 
 

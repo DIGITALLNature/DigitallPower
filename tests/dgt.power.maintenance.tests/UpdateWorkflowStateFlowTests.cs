@@ -5,7 +5,6 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Logic;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
-using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests;

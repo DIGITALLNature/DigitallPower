@@ -1,31 +1,23 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class PublishDuplicateRuleExecutor : IFakeMessageExecutor
+public class PublishDuplicateRuleExecutor : IOrganizationRequestFake
 {
-    public bool CanExecute(OrganizationRequest request)
-    {
-        return request is PublishDuplicateRuleRequest;
-    }
+    public Type ForType => typeof(PublishDuplicateRuleRequest);
 
-    public Type GetResponsibleRequestType()
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
     {
-        return typeof(PublishDuplicateRuleRequest);
-    }
+        var typed = (PublishDuplicateRuleRequest)organizationRequest;
 
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        var typed = (PublishDuplicateRuleRequest)request;
-
-        ctx.GetOrganizationService().Update(new DuplicateRule(typed.DuplicateRuleId)
+        state.Update(new DuplicateRule(typed.DuplicateRuleId)
         {
             Attributes =
             {

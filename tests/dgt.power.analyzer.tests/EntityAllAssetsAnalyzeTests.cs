@@ -7,7 +7,7 @@ using dgt.power.analyzer.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -69,17 +69,17 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
                 }
             })
             .WithData(PrepareData)
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
-        var testEntityMetadata = context.GetEntityMetadataByName(TestEntity.EntityLogicalName);
-        var userMetadata = context.GetEntityMetadataByName(SystemUser.EntityLogicalName);
-        var teamMetadata = context.GetEntityMetadataByName(Team.EntityLogicalName);
-        var queueMetadata = context.GetEntityMetadataByName(Queue.EntityLogicalName);
-        var contactMetadata = context.GetEntityMetadataByName(Contact.EntityLogicalName);
+        var testEntityMetadata = service.State.EntityMetadata[TestEntity.EntityLogicalName];
+        var userMetadata = service.State.EntityMetadata[SystemUser.EntityLogicalName];
+        var teamMetadata = service.State.EntityMetadata[Team.EntityLogicalName];
+        var queueMetadata = service.State.EntityMetadata[Queue.EntityLogicalName];
+        var contactMetadata = service.State.EntityMetadata[Contact.EntityLogicalName];
 
         var solution = new Solution(Guid.NewGuid())
         {

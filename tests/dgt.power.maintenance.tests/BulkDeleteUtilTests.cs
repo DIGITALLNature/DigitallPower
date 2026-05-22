@@ -7,7 +7,6 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 #pragma warning disable CS8602
 
@@ -19,8 +18,7 @@ public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
 
     protected override CommandTestContext<BulkDeleteUtil, MaintenanceVerb> GetContext() =>
         GetBuilder()
-            .WithFakeMessageExecutor<FetchXmlToQueryExpressionRequest>(new FetchXmlToQueryExpressionRequestExecutor())
-            .WithFakeMessageExecutor<BulkDeleteRequest>(_bulkDeleteExecutor)
+            .WithFakeMessageExecutor(_bulkDeleteExecutor)
             .Build();
 
     [Test]

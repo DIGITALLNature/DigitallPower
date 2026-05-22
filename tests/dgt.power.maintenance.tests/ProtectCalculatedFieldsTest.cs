@@ -6,11 +6,11 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
 using dgt.power.tests.FakeExecutor;
 using dgt.power.tests;
+using dgt.power.tests.Extensions;
 using Microsoft.Xrm.Sdk.Messages;
 using Spectre.Console;
 using Microsoft.Xrm.Sdk.Metadata;
 using dgt.power.dataverse;
-using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests
@@ -20,8 +20,8 @@ namespace dgt.power.maintenance.tests
         protected override CommandTestContext<ProtectCalculatedFields, MaintenanceVerb> GetContext()
         {
             return GetBuilder()
-                .WithFakeMessageExecutor<UpdateAttributeRequest>(new UpdateAttributeExecutor())
-                .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+                .WithFakeMessageExecutor(new UpdateAttributeExecutor())
+                .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
                 .WithMetaData(BuildTestMetadata())
                 .Build();
 

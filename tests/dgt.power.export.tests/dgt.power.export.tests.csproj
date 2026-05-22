@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="TUnit" Version="1.45.29" />
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.9.1" />
   </ItemGroup>
 
   <ItemGroup>

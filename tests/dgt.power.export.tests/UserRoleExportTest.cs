@@ -7,8 +7,8 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.export.tests;
 
@@ -98,14 +98,14 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         };
 
         return GetBuilder()
-            .WithRelationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation,
-                new XrmFakedRelationship
+            .WithRelationship(new ManyToManyRelationshipMetadata
                 {
-                    IntersectEntity = SystemUserRoles.EntityLogicalName,
+                    SchemaName = SystemUser.Relations.ManyToMany.SystemuserrolesAssociation,
+                    IntersectEntityName = SystemUserRoles.EntityLogicalName,
                     Entity1LogicalName = SystemUser.EntityLogicalName,
-                    Entity1Attribute = SystemUser.LogicalNames.SystemUserId,
+                    Entity1IntersectAttribute = SystemUser.LogicalNames.SystemUserId,
                     Entity2LogicalName = Role.EntityLogicalName,
-                    Entity2Attribute = Role.LogicalNames.RoleId
+                    Entity2IntersectAttribute = Role.LogicalNames.RoleId
                 }
             )
             .WithData(new Entity[]

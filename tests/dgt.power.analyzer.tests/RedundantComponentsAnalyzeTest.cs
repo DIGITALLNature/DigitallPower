@@ -7,8 +7,7 @@ using dgt.power.analyzer.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
 using Microsoft.Xrm.Sdk;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Extensions;
+using Digitall.Dataverse.Testing;
 
 namespace dgt.power.analyzer.tests;
 
@@ -26,7 +25,7 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -36,7 +35,8 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
         var solutionPatch = new Solution(Guid.NewGuid())
         {
             UniqueName = SolutionPatchUniqueName
-        }.AddAttribute(Solution.LogicalNames.ParentSolutionId, solution.ToEntityReference());
+        };
+        solutionPatch[Solution.LogicalNames.ParentSolutionId] = solution.ToEntityReference();
 
         var parallelSolution = new Solution(Guid.NewGuid())
         {
@@ -50,7 +50,7 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
         //    [SolutionComponent.LogicalNames.RootComponentBehavior] =
         //        new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents),
         //    [SolutionComponent.LogicalNames.ObjectId] =
-        //        context.GetEntityMetadataByName(TestEntity.EntityLogicalName).MetadataId,
+        //        service.State.EntityMetadata[TestEntity.EntityLogicalName].MetadataId,
         //    [SolutionComponent.LogicalNames.IsMetadata] = true,
         //    [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
         //    FormattedValues =

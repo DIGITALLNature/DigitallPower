@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ServiceModel;
@@ -21,7 +21,7 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
     protected override CommandTestContextBuilder<OutlookTemplateImport, ImportVerb> GetBuilder()
     {
         return base.GetBuilder()
-            .WithFakeMessageExecutor<QueryExpressionToFetchXmlRequest>(new QueryExpressionToFetchXmlExecutor());
+            .WithFakeMessageExecutor(new QueryExpressionToFetchXmlExecutor());
     }
 
     [Test]

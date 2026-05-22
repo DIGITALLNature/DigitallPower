@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dto;
@@ -6,8 +6,9 @@ using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 #pragma warning disable CS8602
@@ -18,21 +19,21 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
 {
     protected override CommandTestContextBuilder<CalendarImport, ImportVerb> GetBuilder() =>
         base.GetBuilder()
-            .WithRelationship(Calendar.Relations.OneToMany.InnerCalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.InnerCalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.InnerCalendarCalendarRules,
+                ReferencingEntity = CalendarRule.EntityLogicalName,
+                ReferencingAttribute = CalendarRule.LogicalNames.InnerCalendarId,
+                ReferencedEntity = Calendar.EntityLogicalName,
+                ReferencedAttribute = Calendar.LogicalNames.CalendarId
             })
-            .WithRelationship(Calendar.Relations.OneToMany.CalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.CalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.CalendarCalendarRules,
+                ReferencingEntity = CalendarRule.EntityLogicalName,
+                ReferencingAttribute = CalendarRule.LogicalNames.CalendarId,
+                ReferencedEntity = Calendar.EntityLogicalName,
+                ReferencedAttribute = Calendar.LogicalNames.CalendarId
             });
 
     [Test]

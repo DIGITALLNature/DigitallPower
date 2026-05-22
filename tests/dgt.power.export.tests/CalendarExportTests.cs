@@ -6,8 +6,8 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 
@@ -34,13 +34,13 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
 
         };
         return GetBuilder()
-            .WithRelationship(Calendar.Relations.OneToMany.CalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.CalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.CalendarCalendarRules,
+                ReferencingEntity = Calendar.EntityLogicalName,
+                ReferencingAttribute = Calendar.LogicalNames.CalendarId,
+                ReferencedEntity = CalendarRule.EntityLogicalName,
+                ReferencedAttribute = CalendarRule.LogicalNames.CalendarId,
             })
             .WithData(new Entity[]
             {

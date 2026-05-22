@@ -5,8 +5,8 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Logic;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -128,7 +128,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(suspendedBusinessRule)
             .WithData(activatedBusinessRule)
             .WithData(ignoredBusinessRule)
-            .WithFakeMessageExecutor<RetrieveEntityRequest>(new FakeRetrieveEntityRequest())
+            .WithFakeMessageExecutor(new FakeRetrieveEntityRequest())
             .Build();
 
         await context.Execute(new UpdateWorkflowState.Settings
@@ -391,16 +391,15 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
         await Assert.That(otherBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    class FakeRetrieveEntityRequest : IFakeMessageExecutor
+    class FakeRetrieveEntityRequest : IOrganizationRequestFake
     {
-        public bool CanExecute(OrganizationRequest request) => request is IFakeMessageExecutor;
-        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx) => new RetrieveEntityResponse
+        public Type ForType => typeof(RetrieveEntityRequest);
+        public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state) => new RetrieveEntityResponse
         {
             Results = new ParameterCollection
             {
                 { "EntityMetadata", new EntityMetadata { LogicalName = "test-table" } },
             },
         };
-        public Type GetResponsibleRequestType() => typeof(RetrieveEntityRequest);
     }
 }
