@@ -21,7 +21,7 @@ public class PushTest : PushTestsBase<PushCommand>
 
         return GetBuilder()
             .WithServiceCollection(serviceCollection)
-            .WithFakeMessageExecutor<AddSolutionComponentRequest>(new AddSolutionComponentExecutor())
+            .WithFakeMessageExecutor(new AddSolutionComponentExecutor())
             .WithData(new SolutionComponentDefinition
             {
                 Id = Guid.NewGuid(),

@@ -14,10 +14,7 @@
   <ItemGroup>
     <PackageReference Include="TUnit.Assertions" Version="1.45.29" />
     <PackageReference Include="TUnit.Core" Version="1.45.29" />
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.9.1" />
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.9.1" />
-    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.9.1" />
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
+    <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0-beta.4" />
     <PackageReference Include="Spectre.Console.Testing" Version="0.55.2" />
     <PackageReference Include="System.Runtime.Caching" Version="10.0.8" />
   </ItemGroup>

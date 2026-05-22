@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -7,8 +7,9 @@ using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
+using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.Extensions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using TeamTemplate = dgt.power.dto.TeamTemplate;
@@ -34,7 +35,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
 
     protected override CommandTestContextBuilder<TeamTemplateImport, ImportVerb> GetBuilder() =>
         base.GetBuilder()
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithMetaData(_testEntityMetadata);
 
     [Test]

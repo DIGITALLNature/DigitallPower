@@ -4,7 +4,7 @@
 using System.Linq.Expressions;
 using dgt.power.common;
 using dgt.power.dataverse;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -20,14 +20,14 @@ public class WorkerTestContext<TWorker, TWorkerSettings>
 {
     private readonly TWorker _worker;
     public DataContext DataContext { get; }
-    public IXrmFakedContext FakedContext { get; }
+    public FakeOrganizationServiceAsync FakedService { get; }
     public IConfigResolver ConfigResolver { get; }
 
-    internal WorkerTestContext(TWorker worker, IXrmFakedContext fakedContext, IConfigResolver configResolver)
+    internal WorkerTestContext(TWorker worker, FakeOrganizationServiceAsync fakedService, IConfigResolver configResolver)
     {
         _worker = worker;
-        DataContext = new DataContext(fakedContext.GetOrganizationService());
-        FakedContext = fakedContext;
+        DataContext = new DataContext(fakedService);
+        FakedService = fakedService;
         ConfigResolver = configResolver;
     }
 
@@ -38,7 +38,7 @@ public class WorkerTestContext<TWorker, TWorkerSettings>
             ? DataContext.CreateQuery<TEntity>().ToList()
             : DataContext.CreateQuery<TEntity>().Where(query).ToList();
 
-    public TEntity GetById<TEntity>(Guid id) where TEntity : Entity, new() => FakedContext.GetOrganizationService()
+    public TEntity GetById<TEntity>(Guid id) where TEntity : Entity, new() => FakedService
         .Retrieve(new TEntity().LogicalName, id, new ColumnSet(true)).ToEntity<TEntity>();
 
     public TEntity GetSingle<TEntity>(Expression<Func<TEntity, bool>>? query = null) where TEntity : Entity =>

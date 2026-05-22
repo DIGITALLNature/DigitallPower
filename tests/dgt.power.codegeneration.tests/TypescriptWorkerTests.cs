@@ -10,7 +10,6 @@ using dgt.power.tests;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
-using FakeXrmEasy.Abstractions;
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
@@ -330,13 +329,13 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(forms)
             .WithData(solution)
             .WithData(solutionFormComponent)            
-            .WithRelationship("system_form_entity", new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = SystemForm.EntityLogicalName,
-                Entity1Attribute = SystemForm.LogicalNames.ObjectTypeCode,
-                Entity2LogicalName = "entity",
-                Entity2Attribute = "objecttypecode",
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = "system_form_entity",
+                ReferencingEntity = SystemForm.EntityLogicalName,
+                ReferencingAttribute = SystemForm.LogicalNames.ObjectTypeCode,
+                ReferencedEntity = "entity",
+                ReferencedAttribute = "objecttypecode",
             })
             .Build();
 

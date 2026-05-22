@@ -26,5 +26,5 @@ jobs:
           use-caches: true
           args: --baseline baseline.sarif.json
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_DGTP }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: "https://qodana.cloud"

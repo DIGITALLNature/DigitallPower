@@ -12,7 +12,7 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -28,7 +28,7 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
     protected override CommandTestContext<NoActiveLayerAnalyze, AnalyzeVerb> GetContext()
     {
         return GetBuilder()
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithData(PrepareData)
             .WithMetaData(new[]
             {
@@ -45,7 +45,7 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -58,7 +58,7 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             [SolutionComponent.LogicalNames.RootComponentBehavior] =
                 new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents),
             [SolutionComponent.LogicalNames.ObjectId] =
-                context.GetEntityMetadataByName(TestEntity.EntityLogicalName).MetadataId,
+                service.State.EntityMetadata[TestEntity.EntityLogicalName].MetadataId,
             [SolutionComponent.LogicalNames.IsMetadata] = true,
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
             FormattedValues =

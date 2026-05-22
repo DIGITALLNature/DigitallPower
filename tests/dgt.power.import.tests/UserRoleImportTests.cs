@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -7,7 +7,8 @@ using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
+using Microsoft.Xrm.Sdk.Metadata;
 #pragma warning disable CS8601
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -17,14 +18,14 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 {
     protected override CommandTestContextBuilder<UserRoleImport, ImportVerb> GetBuilder() =>
         base.GetBuilder()
-            .WithRelationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation, new XrmFakedRelationship
+            .WithRelationship(new ManyToManyRelationshipMetadata
             {
+                SchemaName = SystemUser.Relations.ManyToMany.SystemuserrolesAssociation,
                 Entity1LogicalName = SystemUser.EntityLogicalName,
+                Entity1IntersectAttribute = SystemUser.LogicalNames.SystemUserId,
                 Entity2LogicalName = Role.EntityLogicalName,
-                Entity1Attribute = SystemUser.LogicalNames.SystemUserId,
-                Entity2Attribute = Role.LogicalNames.RoleId,
-                IntersectEntity = SystemUserRoles.EntityLogicalName,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany
+                Entity2IntersectAttribute = Role.LogicalNames.RoleId,
+                IntersectEntityName = SystemUserRoles.EntityLogicalName
             });
 
     [Test]

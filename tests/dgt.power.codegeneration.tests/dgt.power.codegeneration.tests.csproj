@@ -17,9 +17,7 @@
   <ItemGroup>
     <PackageReference Include="TUnit" Version="1.45.29" />
     <PackageReference Include="DiffPlex" Version="1.9.0" />
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.9.1" />
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.9.1" />
-    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.9.1" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
 
   <ItemGroup>

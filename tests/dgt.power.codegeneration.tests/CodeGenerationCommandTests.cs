@@ -6,7 +6,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
-using FakeItEasy;
+using NSubstitute;
 using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.tests;
@@ -19,10 +19,10 @@ public class CodeGenerationCommandTests
     {
         var tracer = new TestTracer();
         var configResolver = new ConfigResolver(tracer);
-        var dotNetWorker = A.Fake<DotNetWorker>();
-        var typescriptWorker = A.Fake<TypescriptWorker>();
-        var metadataWorker = A.Fake<MetadataWorker>();
-        var metadataService = A.Fake<IMetadataService>();
+        var dotNetWorker = Substitute.For<DotNetWorker>(null!, null!, null!, null!);
+        var typescriptWorker = Substitute.For<TypescriptWorker>(null!, null!, null!, null!);
+        var metadataWorker = Substitute.For<MetadataWorker>(null!, null!, null!, null!);
+        var metadataService = Substitute.For<IMetadataService>();
         _command = new CodeGenerationCommand(tracer, configResolver,
             dotNetWorker, typescriptWorker, metadataWorker, metadataService);
     }
@@ -30,7 +30,7 @@ public class CodeGenerationCommandTests
     [Test]
     public async Task ShouldExecuteALlCommands() =>
         await Assert.That(
-            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
+            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb
                 {
                     Config = "Resources/CodeGenerationCommand/config.json"
@@ -40,7 +40,7 @@ public class CodeGenerationCommandTests
     [Test]
     public async Task ShouldFailOnMissingConfiguration() =>
         await Assert.That(
-            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
+            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb
                 {
                     Config = "missing.json"
