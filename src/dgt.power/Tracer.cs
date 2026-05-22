@@ -83,7 +83,11 @@ internal sealed class Tracer : ITracer
     {
         if (_currentActivity == null) return;
         _currentActivity.SetTag("dgtp.success", success);
-        _currentActivity.SetStatus(success ? ActivityStatusCode.Ok : ActivityStatusCode.Error);
+        // Only update status if not already set to Error (preserves Exception's description)
+        if (_currentActivity.Status != ActivityStatusCode.Error)
+        {
+            _currentActivity.SetStatus(success ? ActivityStatusCode.Ok : ActivityStatusCode.Error);
+        }
         _currentActivity.Dispose();
         _currentActivity = null;
     }
