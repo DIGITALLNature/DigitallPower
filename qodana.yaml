@@ -3,20 +3,38 @@
 #             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
 #-------------------------------------------------------------------------------#
 version: "1.0"
-linter: jetbrains/qodana-cdnet:2025.3-eap
+
+linter: jetbrains/qodana-cdnet:2026.1-eap
+
+#Specify inspection profile for code analysis
 profile:
   name: qodana.recommended
 
 dotnet:
-  solution: DigitallPower.sln
+  solution: ./DigitallPower.slnx
+  configuration: Debug
 
+#Enable inspections
 include:
-  - name: CheckDependencyLicenses
+  - name: VulnerableLibrariesLocal
 
 exclude:
   - name: All
     paths:
       - tests/dgt.power.codegeneration.tests/Resources
       - README.md
-  - name: HeapView.DelegateAllocation
-  - name: HeapView.ObjectAllocation
+
+#Execute shell command before Qodana execution (Applied in CI/CD pipeline)
+bootstrap: dotnet restore ./DigitallPower.slnx && dotnet build ./DigitallPower.slnx --configuration Debug
+
+# Quality gate. Will fail the CI/CD pipeline if any condition is not met
+# severityThresholds - configures maximum thresholds for different problem severities
+# testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+# Code Coverage is available in Ultimate and Ultimate Plus plans
+failureConditions:
+  severityThresholds:
+    any: 15
+    critical: 5
+  testCoverageThresholds:
+    fresh: 70
+    total: 50
