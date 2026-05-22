@@ -16,7 +16,6 @@ using dgt.power.tests.FakeExecutor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Xunit.Abstractions;
 
 namespace dgt.power.codegeneration.tests.Base;
 
@@ -28,7 +27,7 @@ public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker
     private readonly DataContractSerializer _metadataSerializer = new(typeof(EntityMetadata));
     protected readonly IServiceCollection ServiceCollection;
 
-    protected CodeGenerationTestsBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    protected CodeGenerationTestsBase()
     {
         ServiceCollection = new TestServiceCollection()
             .AddScoped<IMetadataGenerator, MetadataGenerator>()

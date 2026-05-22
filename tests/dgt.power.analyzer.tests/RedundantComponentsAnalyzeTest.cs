@@ -12,16 +12,12 @@ using FakeXrmEasy.Extensions;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponentsAnalyze>
 {
     private const string SolutionUniqueName = "customizations";
     private const string SolutionPatchUniqueName = "customizations_Patch_ABC123";
     private const string ParallelSolutionUniqueName = "customizations_parallel";
-
-    public RedundantComponentsAnalyzeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
 
     protected override CommandTestContext<RedundantComponentsAnalyze, AnalyzeVerb> GetContext()
     {
@@ -125,11 +121,11 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
     }
 
 
-    [Fact]
-    public void ShouldFailOnMissingInlineData() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingInlineData() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = string.Empty
-            }).Should().BeFalse();
+            })).IsFalse();
 }

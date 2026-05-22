@@ -7,21 +7,16 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
-using Xunit.Abstractions;
 using Attribute = dgt.power.dataverse.Attribute;
 
 namespace dgt.power.codegeneration.tests;
 
+[NotInParallel("AnsiConsole")]
 public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 {
-
-    public DotNetWorkerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
 
     protected override WorkerTestContextBuilder<DotNetWorker, CodeGenerationVerb> GetBuilder()
     {
@@ -30,14 +25,13 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .WithData(organization);
     }
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        GetContext()
-            .Execute(new CodeGenerationVerb {Config = "missing.json"})
-            .Should().BeFalse();
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(GetContext()
+            .Execute(new CodeGenerationVerb {Config = "missing.json"})).IsFalse();
 
-    [Fact]
-    public void ShouldUseDefaultOptionLabelsWhenLabelNotSet()
+    [Test]
+    public async Task ShouldUseDefaultOptionLabelsWhenLabelNotSet()
     {
         var attributeMetadata = GetEntityMetadataResource(Attribute.EntityLogicalName);
 
@@ -48,8 +42,8 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .OfType<BooleanAttributeMetadata>()
             .Select(x => x.OptionSet)
             .Single();
-        validForReadOptionMetadata.TrueOption.Should().BeNull();
-        validForReadOptionMetadata.FalseOption.Should().BeNull();
+        await Assert.That(validForReadOptionMetadata.TrueOption).IsNull();
+        await Assert.That(validForReadOptionMetadata.FalseOption).IsNull();
 
         var context = GetBuilder()
             .WithMetaData(attributeMetadata)
@@ -63,36 +57,33 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             }).FullName,
             TargetDirectory = ArtifactDirectory
         };
-        context.Execute(args).Should().BeTrue();
+        await Assert.That(context.Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
 
         var attributePath = Path.Combine(dotNetPath, "Attribute.cs");
-        File.Exists(attributePath)
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(attributePath)).IsTrue();
         var attributeCode = File.ReadAllText(attributePath);
 
         // TODO: Use Analyzer or compiler to assert this
-        attributeCode.Should().Contain($"public const bool {Labels.DefaultFalse} = false;");
-        attributeCode.Should().Contain($"public const bool {Labels.DefaultTrue} = true;");
+        await Assert.That(attributeCode).Contains($"public const bool {Labels.DefaultFalse} = false;");
+        await Assert.That(attributeCode).Contains($"public const bool {Labels.DefaultTrue} = true;");
     }
 
-    [Fact]
-    public void ShouldCreateModelDirectoryStructureIfNotExistent()
+    [Test]
+    public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
     {
         var config = new CodeGenerationConfig();
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
-        GetContext()
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(GetContext()
+            .Execute(args)).IsTrue();
 
-        Directory.Exists(GetArtifactPath(args.Folder)).Should().BeTrue();
-        Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.DotNet}").Should().BeTrue();
+        await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
+        await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.DotNet}")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldDeleteAllExistingFilesInModelFolder()
+    [Test]
+    public async Task ShouldDeleteAllExistingFilesInModelFolder()
     {
         var config = new CodeGenerationConfig();
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
@@ -104,19 +95,17 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var existingFilePath = $"{dotNetPath}/Testentity.cs";
         File.WriteAllText(existingFilePath, "public class TestEntity : Entity { }");
 
-        GetContext()
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(GetContext()
+            .Execute(args)).IsTrue();
 
-        Directory.Exists(modelPath).Should().BeTrue();
-        Directory.Exists(dotNetPath).Should().BeTrue();
-        Directory.GetFileSystemEntries(dotNetPath).Should()
-            .HaveCount(3); // SdkMessageNames.cs, Actions.cs, Context.cs
-        File.Exists(existingFilePath).Should().BeFalse();
+        await Assert.That(Directory.Exists(modelPath)).IsTrue();
+        await Assert.That(Directory.Exists(dotNetPath)).IsTrue();
+        await Assert.That(Directory.GetFileSystemEntries(dotNetPath)).HasCount().EqualTo(3); // SdkMessageNames.cs, Actions.cs, Context.cs
+        await Assert.That(File.Exists(existingFilePath)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldSuppressSdkMessagesGeneration()
+    [Test]
+    public async Task ShouldSuppressSdkMessagesGeneration()
     {
         var config = new CodeGenerationConfig {SuppressSdkMessages = true};
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
@@ -124,19 +113,16 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
-        File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateDataContext()
+    [Test]
+    public async Task ShouldGenerateDataContext()
     {
         var config = new CodeGenerationConfig {SuppressSdkMessages = true, SuppressActions = true,};
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
@@ -144,19 +130,16 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
-        File.Exists($"{dotNetPath}/{FileNames.DotNet.Context}.cs")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.Context}.cs")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldGenerateAdditionalSdkMessages()
+    [Test]
+    public async Task ShouldGenerateAdditionalSdkMessages()
     {
         var customApi = new SdkMessage(Guid.NewGuid()) {Name = "Custom API Message"};
         var action = new SdkMessage(Guid.NewGuid()) {Name = "Action"};
@@ -173,25 +156,21 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .WithData(additionalMessage)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
-        File.Exists(messagesPath).Should().BeTrue();
+        await Assert.That(File.Exists(messagesPath)).IsTrue();
         var messagesCode = File.ReadAllText(messagesPath);
-        messagesCode.Should().Contain($"public const string {Formatter.CamelCase(action.Name)} = \"{action.Name}\";");
-        messagesCode.Should()
-            .Contain($"public const string {Formatter.CamelCase(customApi.Name)} = \"{customApi.Name}\";");
-        messagesCode.Should()
-            .Contain(
-                $"public const string {Formatter.CamelCase(additionalMessage.Name)} = \"{additionalMessage.Name}\";");
+        await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(action.Name)} = \"{action.Name}\";");
+        await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(customApi.Name)} = \"{customApi.Name}\";");
+        await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(additionalMessage.Name)} = \"{additionalMessage.Name}\";");
     }
 
-    [Fact]
-    public void ShouldGenerateActionsAndCustomApis()
+    [Test]
+    public async Task ShouldGenerateActionsAndCustomApis()
     {
         var actionMessage = new SdkMessage(Guid.NewGuid()) {Name = "Action"};
         var actionProcess = new Workflow(Guid.NewGuid())
@@ -233,23 +212,20 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .WithData(customApiResponseProperty)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
-        File.Exists(messagesPath).Should().BeTrue();
+        await Assert.That(File.Exists(messagesPath)).IsTrue();
         var messagesCode = File.ReadAllText(messagesPath);
-        messagesCode.Should()
-            .Contain($"public class {Formatter.CamelCase(actionProcess.UniqueName)}Request : OrganizationRequest");
-        messagesCode.Should()
-            .Contain($"public class {Formatter.CamelCase(customApi.UniqueName)}Request : OrganizationRequest");
+        await Assert.That(messagesCode).Contains($"public class {Formatter.CamelCase(actionProcess.UniqueName)}Request : OrganizationRequest");
+        await Assert.That(messagesCode).Contains($"public class {Formatter.CamelCase(customApi.UniqueName)}Request : OrganizationRequest");
     }
 
-    [Fact]
-    public void ShouldSuppressGenerationOfActions()
+    [Test]
+    public async Task ShouldSuppressGenerationOfActions()
     {
         var config = new CodeGenerationConfig {SuppressActions = true};
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
@@ -257,18 +233,17 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
-        File.Exists(messagesPath).Should().BeFalse();
+        await Assert.That(File.Exists(messagesPath)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateSpecifiedGlobalOptionSets()
+    [Test]
+    public async Task ShouldGenerateSpecifiedGlobalOptionSets()
     {
         var activityPointerMetadata = GetEntityMetadataResource("activitypointer");
         var globalOptionSet = activityPointerMetadata.Attributes.OfType<PicklistAttributeMetadata>()
@@ -281,19 +256,16 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .WithMetaData(activityPointerMetadata)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var dotnetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var optionSetPath = Path.Combine(dotnetPath, $"{FileNames.DotNet.OptionSetValues}.cs");
-        File.Exists(optionSetPath)
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(optionSetPath)).IsTrue();
     }
 
-    [Fact]
-    public void ShouldGenerateSpecificEntity()
+    [Test]
+    public async Task ShouldGenerateSpecificEntity()
     {
         var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
         var config = new CodeGenerationConfig {Entities = new[] {accountMetadata.LogicalName}};
@@ -305,16 +277,13 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             .WithMetaData(accountMetadata)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
 
         var accountPath = Path.Combine(typescriptPath, "Account.cs");
 
-        File.Exists(accountPath)
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(accountPath)).IsTrue();
     }
 }

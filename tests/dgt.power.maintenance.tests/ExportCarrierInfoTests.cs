@@ -14,12 +14,8 @@ namespace dgt.power.maintenance.tests;
 
 public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, CarrierInfoSettings>
 {
-    public ExportCarrierInfoTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldFailValidationOnNotExistingCarrierEntity()
+    [Test]
+    public async Task ShouldFailValidationOnNotExistingCarrierEntity()
     {
         // Arrange
         var context = GetBuilder()
@@ -33,30 +29,30 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
         var validationResult = context.Validate(new CarrierInfoSettings());
 
         // Assert
-        validationResult.Successful.Should().BeFalse();
-        validationResult.Message.Should().Be(ExportCarrierInfo.ValidationErrorMessage);
+        await Assert.That(validationResult.Successful).IsFalse();
+        await Assert.That(validationResult.Message).IsEqualTo(ExportCarrierInfo.ValidationErrorMessage);
     }
 
-    [Fact]
-    public void ShouldSucceedValidation()
+    [Test]
+    public async Task ShouldSucceedValidation()
     {
         var context = GetContext();
 
         var validationResult = context.Validate(new CarrierInfoSettings());
 
-        validationResult.Successful.Should().BeTrue();
+        await Assert.That(validationResult.Successful).IsTrue();
     }
 
-    [Fact]
-    public void ShouldFailOnMissingActiveCarriers()
+    [Test]
+    public async Task ShouldFailOnMissingActiveCarriers()
     {
         var context = GetContext();
 
-        context.Execute(new CarrierInfoSettings()).Should().Fail();
+        await context.Execute(new CarrierInfoSettings()).Fail();
     }
 
-    [Fact]
-    public void ShouldExportCarrierInfoInAscendingOrder()
+    [Test]
+    public async Task ShouldExportCarrierInfoInAscendingOrder()
     {
         var carrierSolution1 = new Solution(Guid.NewGuid())
         {
@@ -99,25 +95,25 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
         {
             FileDir = ArtifactDirectory
         };
-        context.Execute(settings).Should().Succeed();
+        await context.Execute(settings).Succeed();
 
         var carriers = GetConfigurationTestArtifact<Carriers>(settings.FileName);
 
-        carriers.Should().HaveCount(2);
-        carriers.Should().BeInAscendingOrder(x => x.Order);
-        carriers.Should().Contain(x =>
+        await Assert.That(carriers).HasCount().EqualTo(2);
+        await Assert.That(carriers.SequenceEqual(carriers.OrderBy(x => x.Order))).IsTrue();
+        await Assert.That(carriers.Any(x =>
             x.UniqueName == carrierSolution1.UniqueName
             && x.FriendlyName == carrierSolution1.FriendlyName
             && x.Version == carrierSolution1.Version
             && x.SolutionId == carrierSolution1.SolutionId
             && x.CarrierId == activeCarrier1.Id
-        );
-        carriers.Should().Contain(x =>
+        )).IsTrue();
+        await Assert.That(carriers.Any(x =>
             x.UniqueName == carrierSolution2.UniqueName
             && x.FriendlyName == carrierSolution2.FriendlyName
             && x.Version == carrierSolution2.Version
             && x.SolutionId == carrierSolution2.SolutionId
             && x.CarrierId == activeCarrier2.Id
-        );
+        )).IsTrue();
     }
 }

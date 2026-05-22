@@ -8,21 +8,17 @@ using dgt.power.tests.Extensions;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class PurgeProfileCommandTests : ProfileTestsBase<PurgeProfileCommand, ProfileSettings>
 {
-    public PurgeProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldPurgeAllProfiles()
+    [Test]
+    public async Task ShouldPurgeAllProfiles()
     {
         AddIdentity("some", "some");
-        GetIdentities().Infos.Should().HaveCount(1);
+        await Assert.That(GetIdentities().Infos).HasCount().EqualTo(1);
 
-        GetContext().Execute(new ProfileSettings()).Should().Succeed();
+        await GetContext().Execute(new ProfileSettings()).Succeed();
 
-        GetIdentities().Infos.Should().BeEmpty();
+        await Assert.That(GetIdentities().Infos).IsEmpty();
     }
 }

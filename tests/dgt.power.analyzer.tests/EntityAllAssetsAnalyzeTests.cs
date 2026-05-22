@@ -14,13 +14,9 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnalyze>
 {
-    public EntityAllAssetsAnalyzeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<EntityAllAssetsAnalyze, AnalyzeVerb> GetContext()
     {
         return GetBuilder()
@@ -151,48 +147,48 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
         };
     }
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = "missing.json"
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("empty.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldApproveAllEntityAssetsAnalysis() =>
-        GetContext()
+    [Test]
+    public async Task ShouldApproveAllEntityAssetsAnalysis() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("approved.json")
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
-    [Fact]
-    public void ShouldNotApproveAllEntityAssetsAnalysis() =>
-        GetContext()
+    [Test]
+    public async Task ShouldNotApproveAllEntityAssetsAnalysis() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("unapproved.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldApproveAllEntityAssetsWithWarning() =>
-        GetContext()
+    [Test]
+    public async Task ShouldApproveAllEntityAssetsWithWarning() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("approved-not-strict.json")
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 }

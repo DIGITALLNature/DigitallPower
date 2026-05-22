@@ -6,18 +6,12 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Crm.Sdk;
-using Xunit.Abstractions;
 
 namespace dgt.power.export.tests;
 
 public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
 {
-    public OutlookTemplatesExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<OutlookTemplateExport, ExportVerb> GetContext() =>
         GetBuilder()
             .WithData(new[]
@@ -42,32 +36,32 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
             )
             .Build();
 
-    [Fact]
-    public void ShouldExportOutlookTemplatesWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportOutlookTemplatesWithDefaultConfiguration()
     {
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
                     FileDir = ArtifactDirectory,
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>(GetTestFileName());
-        templates.DisabledOutlookTemplates.Should().ContainSingle();
-        templates.OutlookTemplates.Should().ContainSingle();
+        await Assert.That(templates.DisabledOutlookTemplates).HasCount().EqualTo(1);
+        await Assert.That(templates.OutlookTemplates).HasCount().EqualTo(1);
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>("outlooktemplate.json");
-        templates.DisabledOutlookTemplates.Should().ContainSingle();
-        templates.OutlookTemplates.Should().ContainSingle();
+        await Assert.That(templates.DisabledOutlookTemplates).HasCount().EqualTo(1);
+        await Assert.That(templates.OutlookTemplates).HasCount().EqualTo(1);
     }
 }

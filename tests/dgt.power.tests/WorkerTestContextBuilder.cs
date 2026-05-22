@@ -19,7 +19,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
@@ -32,7 +31,6 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    private readonly ITestOutputHelper? _testOutputHelper;
     private readonly IMiddlewareBuilder _builder;
     private IServiceCollection _serviceCollection;
     private IEnumerable<Entity> _data = new List<Entity>();
@@ -43,9 +41,8 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
 
     private Func<IXrmFakedContext, IEnumerable<Entity>>? _dataPreparer;
 
-    public WorkerTestContextBuilder(ITestOutputHelper? testOutputHelper = null)
+    public WorkerTestContextBuilder()
     {
-        _testOutputHelper = testOutputHelper;
         _serviceCollection = new TestServiceCollection();
         _builder = MiddlewareBuilder
             .New()
@@ -62,12 +59,6 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
             .UseMessages()
             .UseCrud()
             .Build();
-
-        if (_testOutputHelper != null)
-        {
-            _serviceCollection
-                .AddSingleton<ITestOutputHelper>(_ => _testOutputHelper);
-        }
 
         var defaultConfiguration = new Dictionary<string, string?>
         {

@@ -20,14 +20,10 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
 {
     private const string SolutionUniqueName = "customizations";
-
-    public NoActiveLayerAnalyzeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
 
     protected override CommandTestContext<NoActiveLayerAnalyze, AnalyzeVerb> GetContext()
     {
@@ -130,44 +126,43 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
         };
     }
 
-    [Fact]
-    public void ShouldFailOnMissingInlineData() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingInlineData() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = string.Empty
-            }).Should().BeFalse();
+            })).IsFalse();
 
-    [Fact]
-    public void ShouldAnalyzeNoActiveLayer()
+    [Test]
+    public async Task ShouldAnalyzeNoActiveLayer()
     {
         AnsiConsole.Record();
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = SolutionUniqueName,
                 GenerateSummaryFile = true,
                 GenerateReportFile = true
-            })
-            .Should().BeTrue();
+            })).IsTrue();
 
         var output = AnsiConsole.ExportText();
-        Assert.StartsWith("── solution unique name: customizations ──", output);
-        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-summary.json")));
-        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-result.csv")));
+        await Assert.That(output).StartsWith("── solution unique name: customizations ──");
+        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-summary.json"))).IsTrue();
+        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-result.csv"))).IsTrue();
 
         // Check Summary
         var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
-        Assert.Equal(1,summary.Anomalies);
+        await Assert.That(summary.Anomalies).IsEqualTo(1);
 
         // Check Result
         using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv"));
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         var results = csv.GetRecords<ActiveLayerLine>().ToArray();
-        Assert.Equal(1,results.Length);
-        Assert.Equal("SystemForm", results[0].Component);
-        Assert.Equal("Test Formular (testentity)", results[0].Name);
-        Assert.Equal(SolutionUniqueName, results[0].Solution);
-        Assert.Equal(1, results[0].Order);
+        await Assert.That(results.Length).IsEqualTo(1);
+        await Assert.That(results[0].Component).IsEqualTo("SystemForm");
+        await Assert.That(results[0].Name).IsEqualTo("Test Formular (testentity)");
+        await Assert.That(results[0].Solution).IsEqualTo(SolutionUniqueName);
+        await Assert.That(results[0].Order).IsEqualTo(1);
     }
 }

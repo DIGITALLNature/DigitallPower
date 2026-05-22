@@ -8,18 +8,12 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 
 namespace dgt.power.export.tests;
 
 public class UserRoleExportTest : ExportTestBase<UserRoleExport>
 {
-    public UserRoleExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<UserRoleExport, ExportVerb> GetContext()
     {
         var businessUnit = new BusinessUnit(Guid.NewGuid())
@@ -132,64 +126,64 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
             .Build();
     }
 
-    [Fact]
-    public void ShouldFailOnInvalidInlineDataFilter()
+    [Test]
+    public async Task ShouldFailOnInvalidInlineDataFilter()
     {
         const string fetchXml = @"<filter>
       <condition attribute=""wrongattribute"" operator=""eq"" value=""1"" />
     </filter>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeFalse();
+        )).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFilterUsersWithInlineDataFilter()
+    [Test]
+    public async Task ShouldFilterUsersWithInlineDataFilter()
     {
         const string domainName = "process.owner@devlab.onmicrosoft.com";
         const string fetchXml = $@"<filter>
       <condition attribute=""domainname"" operator=""eq"" value=""{domainName}"" />
     </filter>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        userRoles.Should().ContainSingle();
-        userRoles.Single().UserName.Should().Be(domainName);
+        await Assert.That(userRoles).HasCount().EqualTo(1);
+        await Assert.That(userRoles.Single().UserName).IsEqualTo(domainName);
     }
 
-    [Fact]
-    public void ShouldExportUserRolesWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportUserRolesWithDefaultConfiguration()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        userRoles.Should().HaveCount(6);
+        await Assert.That(userRoles).HasCount().EqualTo(6);
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>("userrole.json");
-        userRoles.Should().HaveCount(6);
+        await Assert.That(userRoles).HasCount().EqualTo(6);
     }
 }

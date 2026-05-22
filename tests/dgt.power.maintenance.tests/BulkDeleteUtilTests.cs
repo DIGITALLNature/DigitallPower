@@ -15,11 +15,7 @@ namespace dgt.power.maintenance.tests;
 
 public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
 {
-    private readonly BulkDeleteExecutor _bulkDeleteExecutor;
-    public BulkDeleteUtilTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-        _bulkDeleteExecutor = new BulkDeleteExecutor();
-    }
+    private readonly BulkDeleteExecutor _bulkDeleteExecutor = new();
 
     protected override CommandTestContext<BulkDeleteUtil, MaintenanceVerb> GetContext() =>
         GetBuilder()
@@ -27,60 +23,60 @@ public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
             .WithFakeMessageExecutor<BulkDeleteRequest>(_bulkDeleteExecutor)
             .Build();
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("       ")]
-    [InlineData(null)]
-    public void ShouldSkipIfInlineDataIsNullOrWhitespace(string? inlineData) =>
-        GetContext()
+    [Test]
+    [Arguments("")]
+    [Arguments("       ")]
+    [Arguments(null)]
+    public async Task ShouldSkipIfInlineDataIsNullOrWhitespace(string? inlineData) =>
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     InlineData = inlineData!
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
-    [Fact]
-    public void ShouldExecuteBulkDeleteJob()
+    [Test]
+    public async Task ShouldExecuteBulkDeleteJob()
     {
         // Arrange
         var context = GetContext();
-        context.Execute(new MaintenanceVerb
+        await Assert.That(context.Execute(new MaintenanceVerb
             {
                 InlineData = File.ReadAllText(GetResourcePath("fetch.xml"))
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         // Assert
         var asyncOperation = context.GetSingle<AsyncOperation>();
-        asyncOperation.OperationType.Value.Should().Be(AsyncOperation.Options.OperationType.BulkDelete);
-        asyncOperation.StatusCode.Value.Should().Be(AsyncOperation.Options.StatusCode.Succeeded);
+        await Assert.That(asyncOperation.OperationType.Value).IsEqualTo(AsyncOperation.Options.OperationType.BulkDelete);
+        await Assert.That(asyncOperation.StatusCode.Value).IsEqualTo(AsyncOperation.Options.StatusCode.Succeeded);
     }
 
-    [Fact]
-    public void ShouldFailOnInvalidFetchXml()
+    [Test]
+    public async Task ShouldFailOnInvalidFetchXml()
     {
         // Arrange
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     InlineData = "<non-fetch/>"
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFailOnIfBulkDeleteJobExecutionFails()
+    [Test]
+    public async Task ShouldFailOnIfBulkDeleteJobExecutionFails()
     {
         // Arrange
         _bulkDeleteExecutor.ExpectedStatusCode = AsyncOperation.Options.StatusCode.Failed;
         var context = GetContext();
-        context.Execute(new MaintenanceVerb
+        await Assert.That(context.Execute(new MaintenanceVerb
             {
                 InlineData = File.ReadAllText(GetResourcePath("fetch.xml"))
             }
-        ).Should().BeFalse();
+        )).IsFalse();
         var asyncOperation = context.GetSingle<AsyncOperation>();
-        asyncOperation.OperationType.Value.Should().Be(AsyncOperation.Options.OperationType.BulkDelete);
-        asyncOperation.StatusCode.Value.Should().Be(AsyncOperation.Options.StatusCode.Failed);
+        await Assert.That(asyncOperation.OperationType.Value).IsEqualTo(AsyncOperation.Options.OperationType.BulkDelete);
+        await Assert.That(asyncOperation.StatusCode.Value).IsEqualTo(AsyncOperation.Options.StatusCode.Failed);
     }
 }

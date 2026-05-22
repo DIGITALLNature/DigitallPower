@@ -9,15 +9,11 @@ using Spectre.Console;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class ListProfileCommandTests : ProfileTestsBase<ListProfileCommand, ProfileSettings>
 {
-    public ListProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldListProfiles()
+    [Test]
+    public async Task ShouldListProfiles()
     {
         const string identity1 = "FIRST";
         AddIdentity(identity1, "connection");
@@ -26,10 +22,10 @@ public class ListProfileCommandTests : ProfileTestsBase<ListProfileCommand, Prof
 
         AnsiConsole.Record();
 
-        GetContext().Execute(new ProfileSettings()).Should().Succeed();
+        await GetContext().Execute(new ProfileSettings()).Succeed();
 
         var consoleOutput = AnsiConsole.ExportText();
-        consoleOutput.Should().Contain(identity1);
-        consoleOutput.Should().Contain(identity2);
+        await Assert.That(consoleOutput).Contains(identity1);
+        await Assert.That(consoleOutput).Contains(identity2);
     }
 }

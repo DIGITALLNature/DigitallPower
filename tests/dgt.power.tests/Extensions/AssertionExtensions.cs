@@ -1,13 +1,13 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using AwesomeAssertions;
-using AwesomeAssertions.Primitives;
+using TUnit.Assertions;
+using TUnit.Assertions.Extensions;
 
 namespace dgt.power.tests.Extensions;
 
 public static class AssertionExtensions
 {
-    public static AndConstraint<BooleanAssertions> Succeed(this BooleanAssertions assertion) => assertion.BeTrue();
-    public static AndConstraint<BooleanAssertions> Fail(this BooleanAssertions assertion) => assertion.BeFalse();
+    public static async Task Succeed(this bool result) => await Assert.That(result).IsTrue();
+    public static async Task Fail(this bool result) => await Assert.That(result).IsFalse();
 }

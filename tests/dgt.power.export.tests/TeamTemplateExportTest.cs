@@ -7,19 +7,13 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk.Messages;
-using Xunit.Abstractions;
 using TeamTemplate = dgt.power.dataverse.TeamTemplate;
 
 namespace dgt.power.export.tests;
 
 public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
 {
-    public TeamTemplateExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<TeamTemplateExport, ExportVerb> GetContext()
     {
         return GetBuilder()
@@ -45,32 +39,32 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
             .Build();
     }
 
-    [Fact]
-    public void ShouldExportAccessTeamsWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportAccessTeamsWithDefaultConfiguration()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>(GetTestFileName());
-        teamTemplates.Should().HaveCount(2);
+        await Assert.That(teamTemplates).HasCount().EqualTo(2);
     }
 
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>("teamtemplate.json");
-        teamTemplates.Should().HaveCount(2);
+        await Assert.That(teamTemplates).HasCount().EqualTo(2);
     }
 }

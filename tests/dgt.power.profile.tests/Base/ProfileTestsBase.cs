@@ -20,7 +20,7 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
 
     public string IdentityFileName { get; } = $"{Guid.NewGuid():N}.dat";
 
-    public ProfileTestsBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public ProfileTestsBase()
     {
         _services = new TestServiceCollection();
         _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
@@ -36,9 +36,9 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
         return base.GetBuilder().WithServiceCollection(_services);
     }
 
-    protected ProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>().As<ProfileManager>();
+    protected ProfileManager ProfileManager => (ProfileManager)_serviceProvider.GetRequiredService<IProfileManager>();
 
-    protected Identities GetIdentities() => ProfileManager.LoadIdentities().As<Identities>();
+    protected Identities GetIdentities() => (Identities)ProfileManager.LoadIdentities();
 
     protected void AddIdentity(string name, string connectionString)
     {

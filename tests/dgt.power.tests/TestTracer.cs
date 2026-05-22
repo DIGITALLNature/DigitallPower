@@ -4,45 +4,37 @@
 using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
 public class TestTracer : ITracer
 {
-    private readonly ITestOutputHelper? _testOutputHelper;
-
-    public TestTracer(ITestOutputHelper? testOutputHelper = null)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
     public void Log(string message, TraceEventType type)
     {
-        _testOutputHelper?.WriteLine($"{type}: {message}");
+        Console.WriteLine($"{type}: {message}");
     }
 
     public void Start<T>(T action) where T : IPowerLogic
     {
-        _testOutputHelper?.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Start *****************");
+        Console.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Start *****************");
     }
 
     public bool NotConfigured<T>(T action) where T : IPowerLogic
     {
-        _testOutputHelper?.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Not Configured *****************");
+        Console.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Not Configured *****************");
         return false;
     }
 
     public bool Skipped<T>(T action) where T : IPowerLogic
     {
-        _testOutputHelper?.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Skipped *****************");
+        Console.WriteLine($"{TraceEventType.Information}: ************** {action.GetType().Name} - Skipped *****************");
         return true;
     }
 
     public bool End<T>(T action, bool result) where T : IPowerLogic
     {
-        _testOutputHelper?.WriteLine(result ? 
-            $"{TraceEventType.Information}: ************** {action.GetType().Name} - End:OK *****************" : 
+        Console.WriteLine(result ?
+            $"{TraceEventType.Information}: ************** {action.GetType().Name} - End:OK *****************" :
             $"{TraceEventType.Error}: ************** {action.GetType().Name} - End:ERROR *****************");
         return result;
     }
@@ -50,7 +42,7 @@ public class TestTracer : ITracer
     public void Exception(Exception e, TraceEventType type)
     {
         var error = e.RootException();
-        _testOutputHelper?.WriteLine($"{type}: {error.Message}");
-        _testOutputHelper?.WriteLine($"{type}: {error.StackTrace}");
+        Console.WriteLine($"{type}: {error.Message}");
+        Console.WriteLine($"{type}: {error.StackTrace}");
     }
 }

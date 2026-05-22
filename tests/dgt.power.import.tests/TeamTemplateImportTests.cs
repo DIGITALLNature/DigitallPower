@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -9,10 +9,8 @@ using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using FakeXrmEasy.Extensions;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Xunit.Abstractions;
 using TeamTemplate = dgt.power.dto.TeamTemplate;
 #pragma warning disable CS8601
 
@@ -22,7 +20,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
 {
     private readonly EntityMetadata _testEntityMetadata;
 
-    public TeamTemplateImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public TeamTemplateImportTests()
     {
         _testEntityMetadata = new EntityMetadata
         {
@@ -39,28 +37,26 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
             .WithMetaData(_testEntityMetadata);
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext()
         .Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates()).Name,
             FileDir = ArtifactDirectory
-        })
-        .Should()
-        .BeFalse();
+        })).IsFalse();
 
-    [Fact]
-    public void ShouldDeleteMissingTeamTemplate()
+    [Test]
+    public async Task ShouldDeleteMissingTeamTemplate()
     {
         var missingTemplate = GetData();
         var context = GetBuilder()
@@ -79,17 +75,17 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
                 DefaultAccessRightsMask = 2
             }
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(templateConfig).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<dataverse.TeamTemplate>().Should().NotContain(x => x.Id == missingTemplate.Id);
+        await Assert.That(context.Get<dataverse.TeamTemplate>().Any(x => x.Id == missingTemplate.Id)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldUpdateExistingTeamTemplate()
+    [Test]
+    public async Task ShouldUpdateExistingTeamTemplate()
     {
         var existingTemplate = GetData();
         var context = GetBuilder()
@@ -104,22 +100,22 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = $"{existingTemplate.TeamTemplateName} Updated",
             DefaultAccessRightsMask = 8
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
         var postTemplate = context.GetSingle<dataverse.TeamTemplate>(x => x.Id == existingTemplate.Id);
-        postTemplate.TeamTemplateName.Should().Be(teamTemplateConfig.TeamTemplateName);
-        postTemplate.Description.Should().Be(teamTemplateConfig.Description);
-        postTemplate.IsSystem.Should().Be(teamTemplateConfig.IsSystem);
-        postTemplate.DefaultAccessRightsMask.Should().Be(teamTemplateConfig.DefaultAccessRightsMask);
-        postTemplate.ObjectTypeCode.Should().Be(TestEntity.EntityTypeCode);
+        await Assert.That(postTemplate.TeamTemplateName).IsEqualTo(teamTemplateConfig.TeamTemplateName);
+        await Assert.That(postTemplate.Description).IsEqualTo(teamTemplateConfig.Description);
+        await Assert.That(postTemplate.IsSystem).IsEqualTo(teamTemplateConfig.IsSystem);
+        await Assert.That(postTemplate.DefaultAccessRightsMask).IsEqualTo(teamTemplateConfig.DefaultAccessRightsMask);
+        await Assert.That(postTemplate.ObjectTypeCode).IsEqualTo(TestEntity.EntityTypeCode);
     }
 
-    [Fact]
-    public void ShouldFailOnTemplateUpdateIfMetadataNotFound()
+    [Test]
+    public async Task ShouldFailOnTemplateUpdateIfMetadataNotFound()
     {
         var existingTemplate = GetData();
         existingTemplate[dataverse.TeamTemplate.LogicalNames.ModifiedOn] = DateTime.UtcNow.AddDays(-1);
@@ -135,19 +131,19 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = existingTemplate.TeamTemplateName,
             DefaultAccessRightsMask = existingTemplate.DefaultAccessRightsMask
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
 
         var postTemplate = context.GetSingle<dataverse.TeamTemplate>(x => x.Id == existingTemplate.Id);
-        postTemplate.ModifiedOn.Should().Be(existingTemplate.ModifiedOn);
+        await Assert.That(postTemplate.ModifiedOn).IsEqualTo(existingTemplate.ModifiedOn);
     }
 
 
-    [Fact]
-    public void ShouldSkipUpdateIfUnchanged()
+    [Test]
+    public async Task ShouldSkipUpdateIfUnchanged()
     {
         var existingTemplate = GetData();
         existingTemplate[dataverse.TeamTemplate.LogicalNames.ModifiedOn] = DateTime.UtcNow.AddDays(-1);
@@ -163,18 +159,18 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = existingTemplate.TeamTemplateName,
             DefaultAccessRightsMask = existingTemplate.DefaultAccessRightsMask
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
         var postTemplate = context.GetSingle<dataverse.TeamTemplate>(x => x.Id == existingTemplate.Id);
-        postTemplate.ModifiedOn.Should().Be(existingTemplate.ModifiedOn);
+        await Assert.That(postTemplate.ModifiedOn).IsEqualTo(existingTemplate.ModifiedOn);
     }
 
-    [Fact]
-    public void ShouldFailOnEntityCreationBecauseEntityIsNotEnabledForAccessTeams()
+    [Test]
+    public async Task ShouldFailOnEntityCreationBecauseEntityIsNotEnabledForAccessTeams()
     {
         _testEntityMetadata.AutoCreateAccessTeams = null;
         var context = GetBuilder()
@@ -188,15 +184,15 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = "New",
             DefaultAccessRightsMask = 16
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFailOnTemplateCreationIfObjectTypeCodeIsNull()
+    [Test]
+    public async Task ShouldFailOnTemplateCreationIfObjectTypeCodeIsNull()
     {
         _testEntityMetadata.SetSealedPropertyValue(nameof(_testEntityMetadata.ObjectTypeCode), null);
         var context = GetBuilder()
@@ -211,15 +207,15 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = "New",
             DefaultAccessRightsMask = 16
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
     }
 
-    [Fact]
-    public void ShouldCreateNewTeamTemplate()
+    [Test]
+    public async Task ShouldCreateNewTeamTemplate()
     {
         var context = GetBuilder()
             .Build();
@@ -232,17 +228,17 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
             TeamTemplateName = "New",
             DefaultAccessRightsMask = 16
         };
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
         var postTemplate = context.GetSingle<dataverse.TeamTemplate>(x => x.Id == teamTemplateConfig.TeamTemplateId);
-        postTemplate.TeamTemplateName.Should().Be(teamTemplateConfig.TeamTemplateName);
-        postTemplate.Description.Should().Be(teamTemplateConfig.Description);
-        postTemplate.DefaultAccessRightsMask.Should().Be(teamTemplateConfig.DefaultAccessRightsMask);
-        postTemplate.ObjectTypeCode.Should().Be(TestEntity.EntityTypeCode);
+        await Assert.That(postTemplate.TeamTemplateName).IsEqualTo(teamTemplateConfig.TeamTemplateName);
+        await Assert.That(postTemplate.Description).IsEqualTo(teamTemplateConfig.Description);
+        await Assert.That(postTemplate.DefaultAccessRightsMask).IsEqualTo(teamTemplateConfig.DefaultAccessRightsMask);
+        await Assert.That(postTemplate.ObjectTypeCode).IsEqualTo(TestEntity.EntityTypeCode);
     }
 
     private static dataverse.TeamTemplate GetData()

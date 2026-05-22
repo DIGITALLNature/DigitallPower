@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using dgt.power.common;
 using Spectre.Console;
 using Spectre.Console.Testing;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
@@ -21,12 +20,10 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    private readonly ITestOutputHelper _testOutputHelper;
     protected IAnsiConsole TestConsole { get; } = new TestConsole();
 
-    public WorkerTestsBase(ITestOutputHelper testOutputHelper)
+    public WorkerTestsBase()
     {
-        _testOutputHelper = testOutputHelper;
         AnsiConsole.Console = TestConsole;
     }
 
@@ -78,7 +75,7 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     }
 
     protected virtual WorkerTestContextBuilder<TWorker, TWorkerSettings> GetBuilder() =>
-        new(_testOutputHelper);
+        new();
 
     protected virtual WorkerTestContext<TWorker, TWorkerSettings> GetContext() =>
         GetBuilder().Build();

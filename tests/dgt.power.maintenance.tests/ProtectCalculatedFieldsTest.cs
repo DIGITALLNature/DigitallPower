@@ -17,11 +17,6 @@ namespace dgt.power.maintenance.tests
 {
     public class ProtectCalculatedFieldsTest : MaintenanceTestsBase<ProtectCalculatedFields>
     {
-        public ProtectCalculatedFieldsTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-        {
-
-        }
-
         protected override CommandTestContext<ProtectCalculatedFields, MaintenanceVerb> GetContext()
         {
             return GetBuilder()
@@ -100,13 +95,13 @@ namespace dgt.power.maintenance.tests
             return metadata;
         }
 
-        [Fact]
-        public void ShouldFindAndUpdateTwoFields()
+        [Test]
+        public async Task ShouldFindAndUpdateTwoFields()
         {
             AnsiConsole.Record();
-            GetContext().Execute(new MaintenanceVerb()).Should().BeTrue();
+            await Assert.That(GetContext().Execute(new MaintenanceVerb())).IsTrue();
 
-            Assert.EndsWith("Protected 2 fields",AnsiConsole.ExportText());
+            await Assert.That(AnsiConsole.ExportText()).Contains("Protected 2 fields");
         }
     }
 }

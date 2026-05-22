@@ -7,19 +7,13 @@ using dgt.power.push.Logic;
 using dgt.power.push.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using AwesomeAssertions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
 
 namespace dgt.power.push.tests;
 
 public class PushTest : PushTestsBase<PushCommand>
 {
-    public PushTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<PushCommand, PushVerb> GetContext()
     {
         var serviceCollection = new TestServiceCollection()
@@ -37,21 +31,21 @@ public class PushTest : PushTestsBase<PushCommand>
             .Build();
     }
 
-    [Fact]
-    public void ShouldImportSample() =>
-        GetContext()
+    [Test]
+    public async Task ShouldImportSample() =>
+        await Assert.That(GetContext()
             .Execute(new PushVerb
             {
                 Target= "../../../../../samples/output/dgt.power.push.tests.sample.dll",
                 Solution = "TestSolution"
-            }).Should().BeTrue();
+            })).IsTrue();
 
-    [Fact]
-    public void ShouldImportDependentSample() =>
-        GetContext()
+    [Test]
+    public async Task ShouldImportDependentSample() =>
+        await Assert.That(GetContext()
             .Execute(new PushVerb
             {
                 Target = "../../../../../samples/output/dgt.power.push.tests.sample.1.0.0.nupkg",
                 Solution = "TestSolution"
-            }).Should().BeTrue();
+            })).IsTrue();
 }

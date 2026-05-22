@@ -7,9 +7,7 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 
@@ -17,10 +15,6 @@ namespace dgt.power.export.tests;
 
 public class CalendarExportTests : ExportTestBase<CalendarExport>
 {
-    public CalendarExportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<CalendarExport, ExportVerb> GetContext()
     {
         var calendar1 = new Calendar(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
@@ -125,33 +119,33 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
             }).Build();
     }
 
-    [Fact]
-    public void ShouldExportCalendar()
+    [Test]
+    public async Task ShouldExportCalendar()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>(GetTestFileName());
-        calendars.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay == false).Rules.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay).Rules.Should().BeEmpty();
+        await Assert.That(calendars).HasCount().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).HasCount().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>("calendar.json");
-        calendars.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay == false).Rules.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay).Rules.Should().BeEmpty();
+        await Assert.That(calendars).HasCount().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).HasCount().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 }

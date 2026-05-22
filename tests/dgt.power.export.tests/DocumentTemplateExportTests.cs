@@ -7,20 +7,13 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
 
 namespace dgt.power.export.tests;
 
 public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport>
 {
-
-    public DocumentTemplateExportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<DocumentTemplateExport, ExportVerb> GetContext()
     {
         return GetBuilder()
@@ -71,101 +64,101 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
     }
 
 
-    [Fact]
-    public void ShouldFilterTemplatesWhenAddingInlineDataFilter()
+    [Test]
+    public async Task ShouldFilterTemplatesWhenAddingInlineDataFilter()
     {
         const string fetchXml = "<filter><condition attribute=\"documenttype\" operator=\"eq\" value=\"1\" /></filter>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
-        templates.Templates.Should().HaveCount(2);
+        await Assert.That(templates.Templates).HasCount().EqualTo(2);
 
         foreach (var template in templates.Templates)
         {
-            File.Exists(GetArtifactPath(template.File)).Should().BeTrue();
+            await Assert.That(File.Exists(GetArtifactPath(template.File))).IsTrue();
         }
     }
 
-    [Fact]
-    public void ShouldFailOnInvalidFetchXml()
+    [Test]
+    public async Task ShouldFailOnInvalidFetchXml()
     {
         const string fetchXml = "<invalid-fetch/>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeFalse();
+        )).IsFalse();
     }
 
-    [Fact]
-    public void ShouldExportTemplatesWithAdvancedInlineData()
+    [Test]
+    public async Task ShouldExportTemplatesWithAdvancedInlineData()
     {
         const string inlineData =
             "force=false,missing=false<filter><condition attribute=\"documenttype\" operator=\"eq\" value=\"1\" /></filter>";
 
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
                     FileDir = ArtifactDirectory,
                     InlineData = inlineData
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
 
-        templates.Templates.Should().HaveCount(2);
+        await Assert.That(templates.Templates).HasCount().EqualTo(2);
 
         foreach (var template in templates.Templates)
         {
-            File.Exists(GetArtifactPath(template.File)).Should().BeTrue();
+            await Assert.That(File.Exists(GetArtifactPath(template.File))).IsTrue();
         }
     }
 
-    [Fact]
-    public void ShouldSetForceUpdateWhithDefaultConfiguration()
+    [Test]
+    public async Task ShouldSetForceUpdateWhithDefaultConfiguration()
     {
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
                     FileDir = ArtifactDirectory,
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
-        templates.Templates.Should().HaveCount(4);
+        await Assert.That(templates.Templates).HasCount().EqualTo(4);
 
         foreach (var template in templates.Templates) {
-            template.ForceUpdate.Should().BeTrue();
+            await Assert.That(template.ForceUpdate).IsTrue();
         }
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var templates = GetConfigurationTestArtifact<DocumentTemplates>("documenttemplate.json");
-        templates.Templates.Should().HaveCount(4);
+        await Assert.That(templates.Templates).HasCount().EqualTo(4);
 
         foreach (var template in templates.Templates)
         {
-            template.ForceUpdate.Should().BeTrue();
+            await Assert.That(template.ForceUpdate).IsTrue();
         }
     }
 }
