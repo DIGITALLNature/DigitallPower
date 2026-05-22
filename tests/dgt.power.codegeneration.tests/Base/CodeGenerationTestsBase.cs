@@ -10,18 +10,18 @@ using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.common;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console.Cli;
 using Xunit.Abstractions;
 
 namespace dgt.power.codegeneration.tests.Base;
 
-public abstract class CodeGenerationTestsBase<TCommand> : CommandTestsBase<TCommand, CodeGenerationVerb>
-    where TCommand : class, ICommand<CodeGenerationVerb>
+public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker, CodeGenerationVerb>
+    where TWorker : PowerWorker<CodeGenerationVerb>
 {
     protected CodeGenerationVerb DefaultVerb { get; } = new();
     protected CodeGenerationConfig DefaultConfig { get; } = new();
@@ -38,7 +38,7 @@ public abstract class CodeGenerationTestsBase<TCommand> : CommandTestsBase<TComm
             .AddScoped<IMetadataService, MetadataService>();
     }
 
-    protected override CommandTestContextBuilder<TCommand, CodeGenerationVerb> GetBuilder()
+    protected override WorkerTestContextBuilder<TWorker, CodeGenerationVerb> GetBuilder()
     {
         return base.GetBuilder()
             .WithServiceCollection(ServiceCollection)

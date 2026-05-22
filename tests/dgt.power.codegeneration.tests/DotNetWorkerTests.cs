@@ -16,14 +16,14 @@ using Attribute = dgt.power.dataverse.Attribute;
 
 namespace dgt.power.codegeneration.tests;
 
-public class DotNetCommandTests : CodeGenerationTestsBase<DotNetCommand>
+public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 {
 
-    public DotNetCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public DotNetWorkerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
     {
     }
 
-    protected override CommandTestContextBuilder<DotNetCommand, CodeGenerationVerb> GetBuilder()
+    protected override WorkerTestContextBuilder<DotNetWorker, CodeGenerationVerb> GetBuilder()
     {
         var organization = new Organization(Guid.NewGuid()) {LanguageCode = 1033};
         return base.GetBuilder()

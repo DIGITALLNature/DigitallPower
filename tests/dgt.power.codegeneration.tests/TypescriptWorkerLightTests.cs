@@ -20,16 +20,16 @@
 //
 // namespace dgt.power.codegeneration.tests;
 //
-// public class TypescriptCommandLightTests : CodeGenerationTestsBase<TypescriptCommand>
+// public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWorker>
 // {
 //     private readonly EntityMetadata _testTableMetadata;
 //
-//     public TypescriptCommandLightTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+//     public TypescriptWorkerLightTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
 //     {
 //         _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
 //     }
 //
-//     protected override CommandTestContextBuilder<TypescriptCommand, CodeGenerationVerb> GetBuilder()
+//     protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
 //     {
 //         var organization = new Organization(Guid.NewGuid())
 //         {

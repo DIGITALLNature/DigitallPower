@@ -15,25 +15,25 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 {
     private readonly ITracer _tracer;
     private readonly IConfigResolver _configResolver;
-    private readonly DotNetCommand _dotNetCommand;
-    private readonly TypescriptCommand _typescriptCommand;
-    private readonly MetadataCommand _metadataCommand;
+    private readonly DotNetWorker _dotNetWorker;
+    private readonly TypescriptWorker _typescriptWorker;
+    private readonly MetadataWorker _metadataWorker;
     private readonly IMetadataService _metadataService;
 
     public CodeGenerationCommand(
         ITracer tracer,
         IConfigResolver configResolver,
-        DotNetCommand dotNetCommand,
-        TypescriptCommand typescriptCommand,
-        MetadataCommand metadataCommand,
+        DotNetWorker dotNetWorker,
+        TypescriptWorker typescriptWorker,
+        MetadataWorker metadataWorker,
         IMetadataService metadataService)
 
     {
         _tracer = tracer;
         _configResolver = configResolver;
-        _dotNetCommand = dotNetCommand;
-        _typescriptCommand = typescriptCommand;
-        _metadataCommand = metadataCommand;
+        _dotNetWorker = dotNetWorker;
+        _typescriptWorker = typescriptWorker;
+        _metadataWorker = metadataWorker;
         _metadataService = metadataService;
     }
 
@@ -54,17 +54,17 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 
                     if (!config.SuppressDotNet)
                     {
-                        _dotNetCommand.Execute(context, verb, cancellationToken);
+                        _dotNetWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressTypeScript)
                     {
-                        _typescriptCommand.Execute(context, verb, cancellationToken);
+                        _typescriptWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressMetaData)
                     {
-                        _metadataCommand.Execute(context, verb, cancellationToken);
+                        _metadataWorker.Invoke(verb);
                     }
                 }
             );
