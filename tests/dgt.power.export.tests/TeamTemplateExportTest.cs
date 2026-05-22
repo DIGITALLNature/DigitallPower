@@ -6,8 +6,7 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using dgt.power.tests.FakeExecutor;
-using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using TeamTemplate = dgt.power.dataverse.TeamTemplate;
 
 namespace dgt.power.export.tests;
@@ -16,8 +15,12 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
 {
     protected override CommandTestContext<TeamTemplateExport, ExportVerb> GetContext()
     {
+        var entityMeta = new EntityMetadata();
+        entityMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(entityMeta, "custom_entity");
+        entityMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(entityMeta, 10000);
+
         return GetBuilder()
-            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
+            .WithMetaData(entityMeta)
             .WithData(new[]
                 {
                     new TeamTemplate(Guid.NewGuid())

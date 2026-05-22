@@ -43,7 +43,7 @@ public class WorkflowStateTracker
         };
 
         workflow.TryGetAttributeValue<AliasedValue>("owner.domainname", out var ownerName);
-        workflowChange.OwnerPre = (ownerName?.Value ?? workflow.OwnerId!.Id).ToString();
+        workflowChange.OwnerPre = (ownerName?.Value ?? workflow.OwnerId?.Id)?.ToString() ?? string.Empty;
 
         return workflowChange;
     }

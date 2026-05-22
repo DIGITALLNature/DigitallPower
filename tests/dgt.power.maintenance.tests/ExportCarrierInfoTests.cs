@@ -14,6 +14,16 @@ namespace dgt.power.maintenance.tests;
 
 public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, CarrierInfoSettings>
 {
+    protected override CommandTestContext<ExportCarrierInfo, CarrierInfoSettings> GetContext()
+    {
+        return GetBuilder()
+            .WithMetaData(new EntityMetadata
+            {
+                LogicalName = DgtCarrier.EntityLogicalName
+            })
+            .Build();
+    }
+
     [Test]
     public async Task ShouldFailValidationOnNotExistingCarrierEntity()
     {
@@ -54,8 +64,10 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
     [Test]
     public async Task ShouldExportCarrierInfoInAscendingOrder()
     {
-        var carrierSolution1 = new Solution(Guid.NewGuid())
+        var solutionId1 = Guid.NewGuid();
+        var carrierSolution1 = new Solution(solutionId1)
         {
+            SolutionId = solutionId1,
             UniqueName = "solution_a",
             FriendlyName = "Solution A",
             Version = "1.0.0.1"
@@ -69,8 +81,10 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
             DgtTransportOrderNo = 1,
         };
-        var carrierSolution2 = new Solution(Guid.NewGuid())
+        var solutionId2 = Guid.NewGuid();
+        var carrierSolution2 = new Solution(solutionId2)
         {
+            SolutionId = solutionId2,
             UniqueName = "solution_b",
             FriendlyName = "Solution B",
             Version = "1.0.1.1"
