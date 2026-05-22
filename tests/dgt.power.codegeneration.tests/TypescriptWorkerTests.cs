@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
+using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -31,6 +32,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             LanguageCode = 1031
         };
         return base.GetBuilder()
+            .WithFakeMessageExecutor(new RetrieveOptionSetExecutor())
             .WithMetaData(_accountMetadata)
             .WithData(organization);
     }

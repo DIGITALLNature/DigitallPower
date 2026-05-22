@@ -6,7 +6,9 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
+using dgt.power.tests;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
 
 #pragma warning disable CS8629
@@ -15,6 +17,20 @@ namespace dgt.power.import.tests;
 
 public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport>
 {
+    protected override CommandTestContextBuilder<DocumentTemplateImport, ImportVerb> GetBuilder()
+    {
+        var accountMeta = new EntityMetadata();
+        accountMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(accountMeta, Account.EntityLogicalName);
+        accountMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(accountMeta, Account.EntityTypeCode);
+
+        var contactMeta = new EntityMetadata();
+        contactMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(contactMeta, Contact.EntityLogicalName);
+        contactMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(contactMeta, Contact.EntityTypeCode);
+
+        return base.GetBuilder()
+            .WithMetaData(accountMeta)
+            .WithMetaData(contactMeta);
+    }
     private (DocumentTemplate accountExcel, DocumentTemplate contactExcel, DocumentTemplate accountWord,
         DocumentTemplate contactWord) GetData() =>
     (

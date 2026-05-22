@@ -63,7 +63,8 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         )).IsFalse();
 
         var createdQueue = context.GetById<dataverse.Queue>(queueToBeCreated.QueueId);
-        await Assert.That(createdQueue.OwnerId.Id).IsNotEqualTo(owner.Id);
+        // OwnerId is not auto-populated by the testing library on Create; queue was created but Assign failed
+        await Assert.That(createdQueue.OwnerId?.Id ?? Guid.Empty).IsNotEqualTo(owner.Id);
     }
 
     [Test]
@@ -146,9 +147,13 @@ public class QueueImportTests : ImportTestBase<QueueImport>
     public async Task ShouldFailOnUpdateWithAlternativeOwner()
     {
         var (owner, existingQueue) = GetData();
+        // Queue must have a different owner so the Assign condition triggers
+        var originalOwner = new SystemUser(Guid.NewGuid()) { DomainName = "original@test.de" };
+        existingQueue.OwnerId = originalOwner.ToEntityReference();
 
         var context = GetBuilder()
             .WithData(owner)
+            .WithData(originalOwner)
             .WithData(existingQueue)
             .WithExecutionMock<AssignRequest>(_ =>
                 throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
@@ -251,6 +256,7 @@ public class QueueImportTests : ImportTestBase<QueueImport>
                 .ServerSideSynchronizationOrEmailRouter),
             IncomingEmailFilteringMethod =
                 new OptionSetValue(dataverse.Queue.Options.IncomingEmailFilteringMethod.AllEmailMessages),
+            OwnerId = owner.ToEntityReference(),
         };
         return (owner, queue);
     }

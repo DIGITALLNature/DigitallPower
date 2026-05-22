@@ -15,6 +15,7 @@ public class AutoNumberFormatActionTests : MaintenanceTestsBase<AutoNumberFormat
     protected override CommandTestContext<AutoNumberFormatAction, MaintenanceVerb> GetContext()
     {
         return GetBuilder()
+            .WithFakeMessageExecutor(new RetrieveAttributeExecutor())
             .WithFakeMessageExecutor(new UpdateAttributeExecutor())
             .Build();
     }

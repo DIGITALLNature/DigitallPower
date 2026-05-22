@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
+using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -22,6 +23,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
     {
         var organization = new Organization(Guid.NewGuid()) {LanguageCode = 1033};
         return base.GetBuilder()
+            .WithFakeMessageExecutor(new RetrieveOptionSetExecutor())
             .WithData(organization);
     }
 
