@@ -5,17 +5,17 @@ using dgt.power.profile.Commands;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class CreateProfileSettingsTests
 {
-    [Fact]
-    public void ShouldBeInvalidWhenSettingInvalidSecurityProtocol()
+    [Test]
+    public async Task ShouldBeInvalidWhenSettingInvalidSecurityProtocol()
     {
         var settings = new CreateProfileSettings
         {
             SecurityProtocol = "something"
         };
 
-        settings.Validate().Successful.Should().BeFalse();
+        await Assert.That(settings.Validate().Successful).IsFalse();
     }
 }

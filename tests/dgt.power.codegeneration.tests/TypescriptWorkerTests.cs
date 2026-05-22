@@ -7,21 +7,20 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
-using Xunit.Abstractions;
 using FakeXrmEasy.Abstractions;
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
 
+[NotInParallel("AnsiConsole")]
 public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 {
     private readonly EntityMetadata _accountMetadata;
 
-    public TypescriptWorkerTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public TypescriptWorkerTests()
     {
         _accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
     }
@@ -37,17 +36,16 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(organization);
     }
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new CodeGenerationVerb
             {
                 Config = "missing.json"
-            })
-            .Should().BeFalse();
+            })).IsFalse();
 
-    [Fact]
-    public void ShouldCreateModelDirectoryStructureIfNotExistent()
+    [Test]
+    public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
     {
         var config = new CodeGenerationConfig
         {
@@ -59,16 +57,15 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             Config = WriteConfigurationArtifact(config).FullName,
             TargetDirectory = ArtifactDirectory
         };
-        GetContext()
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(GetContext()
+            .Execute(args)).IsTrue();
 
-        Directory.Exists(GetArtifactPath(args.Folder)).Should().BeTrue();
-        Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.Typescript}").Should().BeTrue();
+        await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
+        await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.Typescript}")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldDeleteAllExistingFilesInModelFolder()
+    [Test]
+    public async Task ShouldDeleteAllExistingFilesInModelFolder()
     {
         var config = new CodeGenerationConfig
         {
@@ -88,19 +85,17 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var existingFilePath = $"{typescriptPath}/testentity.form.ts";
         File.WriteAllText(existingFilePath, "import * from '.'");
 
-        GetContext()
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(GetContext()
+            .Execute(args)).IsTrue();
 
-        Directory.Exists(modelPath).Should().BeTrue();
-        Directory.Exists(typescriptPath).Should().BeTrue();
-        Directory.GetFileSystemEntries(typescriptPath).Should()
-            .HaveCount(6); // There are 6 boiler plate files which will always be created
-        File.Exists(existingFilePath).Should().BeFalse();
+        await Assert.That(Directory.Exists(modelPath)).IsTrue();
+        await Assert.That(Directory.Exists(typescriptPath)).IsTrue();
+        await Assert.That(Directory.GetFileSystemEntries(typescriptPath)).HasCount().EqualTo(6); // There are 6 boiler plate files which will always be created
+        await Assert.That(File.Exists(existingFilePath)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateBoilerPlateFiles()
+    [Test]
+    public async Task ShouldGenerateBoilerPlateFiles()
     {
         var config = new CodeGenerationConfig
         {
@@ -114,34 +109,33 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         };
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        GetContext()
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(GetContext()
+            .Execute(args)).IsTrue();
 
         var servicePath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Services}.ts";
         File.Exists(servicePath);
-        File.ReadAllText(servicePath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(File.ReadAllText(servicePath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
 
         var odataPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Odata}.ts";
         File.Exists(odataPath);
-        File.ReadAllText(odataPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(File.ReadAllText(odataPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var webapiPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Webapi}.ts";
         File.Exists(webapiPath);
-        File.ReadAllText(webapiPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(File.ReadAllText(webapiPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var modelPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Model}.ts";
         File.Exists(modelPath);
-        File.ReadAllText(modelPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(File.ReadAllText(modelPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var utilsPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Utils}.ts";
         File.Exists(utilsPath);
-        File.ReadAllText(utilsPath).Should().Contain($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(File.ReadAllText(utilsPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
     }
 
-    [Fact]
-    public void ShouldGenerateEntitiesAndEntityReferences()
+    [Test]
+    public async Task ShouldGenerateEntitiesAndEntityReferences()
     {
         var config = new CodeGenerationConfig
         {
@@ -161,20 +155,17 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts").Should()
-            .BeTrue();
-        File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.EntityRef}.ts").Should()
-            .BeTrue();
+        await Assert.That(File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts")).IsTrue();
+        await Assert.That(File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.EntityRef}.ts")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldWarnUserAboutSpecificFormWithTsFileExension()
+    [Test]
+    public async Task ShouldWarnUserAboutSpecificFormWithTsFileExension()
     {
         var forms = GetForms();
         var mainFormFileName =
@@ -203,25 +194,21 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(forms.mainForm)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists(
-                $"{typescriptPath}/{mainFormFileName}")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{mainFormFileName}")).IsTrue();
         var consoleOutput = AnsiConsole.ExportText();
 
         // Remove linebreaks from console output
-        consoleOutput.ReplaceLineEndings(" ")
-            .Should().Contain(Warnings.TsExtensionDeprecation);
+        await Assert.That(consoleOutput.ReplaceLineEndings(" ")).Contains(Warnings.TsExtensionDeprecation);
     }
 
-    [Fact]
-    public void ShouldGenerateSpecificForms()
+    [Test]
+    public async Task ShouldGenerateSpecificForms()
     {
         var forms = GetForms();
         var mainFormFileName =
@@ -249,30 +236,23 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(forms)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists(
-                $"{typescriptPath}/{mainFormFileName}.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{mainFormFileName}.ts")).IsTrue();
         var quickViewName = forms.quickView.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")).IsFalse();
         var quickCreateName = forms.quickCreate.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateAllForms()
+    [Test]
+    public async Task ShouldGenerateAllForms()
     {
         var forms = GetForms();
         var config = new CodeGenerationConfig
@@ -294,31 +274,24 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(forms)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
         var mainFormName = forms.mainForm.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts")).IsTrue();
         var quickViewName = forms.quickView.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")).IsTrue();
         var quickCreateName = forms.quickCreate.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldGenerateFormsFromSolution()
+    [Test]
+    public async Task ShouldGenerateFormsFromSolution()
     {
         var forms = GetForms();
         var solution = new Solution
@@ -367,32 +340,24 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             })
             .Build();
 
-        context
-            .Execute(args)
-            .Should()
-            .BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
         var mainFormName = forms.mainForm.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts")).IsTrue();
         var quickViewName = forms.quickView.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")).IsFalse();
         var quickCreateName = forms.quickCreate.Name.ToLowerInvariant().Replace(' ', '_');
-        File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists(
+                $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickCreateName}_quickcreate.form.ts")).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateSdkMessages()
+    [Test]
+    public async Task ShouldGenerateSdkMessages()
     {
         var config = new CodeGenerationConfig
         {
@@ -408,17 +373,16 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts").Should().BeTrue();
+        await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldGenerateAdditionalSdkMessages()
+    [Test]
+    public async Task ShouldGenerateAdditionalSdkMessages()
     {
         var customApi = new SdkMessage(Guid.NewGuid())
         {
@@ -461,26 +425,22 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(additionalMessage)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
         var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
-        File.Exists(messagesPath).Should().BeTrue();
+        await Assert.That(File.Exists(messagesPath)).IsTrue();
         var messagesCode = File.ReadAllText(messagesPath);
-        messagesCode.Should().Contain($"public static {Formatter.CamelCase(action.Name)}: string = \"{action.Name}\";");
-        messagesCode.Should()
-            .Contain($"public static {Formatter.CamelCase(customApi.Name)}: string = \"{customApi.Name}\";");
-        messagesCode.Should()
-            .Contain(
-                $"public static {Formatter.CamelCase(additionalMessage.Name)}: string = \"{additionalMessage.Name}\";");
+        await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(action.Name)}: string = \"{action.Name}\";");
+        await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(customApi.Name)}: string = \"{customApi.Name}\";");
+        await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(additionalMessage.Name)}: string = \"{additionalMessage.Name}\";");
     }
 
 
-    [Fact]
-    public void ShouldSuppressSdkMessagesGeneration()
+    [Test]
+    public async Task ShouldSuppressSdkMessagesGeneration()
     {
         var config = new CodeGenerationConfig
         {
@@ -497,19 +457,16 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var context = GetBuilder()
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")
-            .Should()
-            .BeFalse();
+        await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")).IsFalse();
     }
 
-    [Fact]
-    public void ShouldGenerateSpecifiedGlobalOptionSets()
+    [Test]
+    public async Task ShouldGenerateSpecifiedGlobalOptionSets()
     {
         var activityPointerMetadata = GetEntityMetadataResource("activitypointer");
         var globalOptionSet = activityPointerMetadata.Attributes.OfType<PicklistAttributeMetadata>()
@@ -534,19 +491,16 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithMetaData(activityPointerMetadata)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts")).IsTrue();
     }
 
-    [Fact]
-    public void ShouldGenerateSpecifiedBusinessProcessFlows()
+    [Test]
+    public async Task ShouldGenerateSpecifiedBusinessProcessFlows()
     {
         var businessProcessFlow = new Workflow(Guid.NewGuid())
         {
@@ -579,15 +533,12 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(processStage)
             .Build();
 
-        context
-            .Execute(args)
-            .Should().BeTrue();
+        await Assert.That(context
+            .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        File.Exists($"{typescriptPath}/{businessProcessFlow.UniqueName}.bpf.ts")
-            .Should()
-            .BeTrue();
+        await Assert.That(File.Exists($"{typescriptPath}/{businessProcessFlow.UniqueName}.bpf.ts")).IsTrue();
     }
 
     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()

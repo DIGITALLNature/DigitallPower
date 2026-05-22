@@ -7,18 +7,12 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 
 namespace dgt.power.export.tests;
 
 public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
 {
-    public SlaConfigExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<SlaConfigExport, ExportVerb> GetContext() =>
         GetBuilder()
             .WithData(new[]
@@ -39,31 +33,31 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
             })
             .Build();
 
-    [Fact]
-    public void ShouldExportSlasWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportSlasWithDefaultConfiguration()
     {
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
                     FileDir = ArtifactDirectory,
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>(GetTestFileName());
-        slaConfigs.Should().HaveCount(2);
+        await Assert.That(slaConfigs).HasCount().EqualTo(2);
     }
 
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>("slaconfig.json");
-        slaConfigs.Should().HaveCount(2);
+        await Assert.That(slaConfigs).HasCount().EqualTo(2);
     }
 }

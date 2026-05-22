@@ -10,14 +10,13 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests;
 
+[NotInParallel("AnsiConsole")]
 public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
 {
-    public UpdateWorkflowStateFlowTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
-
-    [Theory]
-    [InlineData(Workflow.Options.Category.Workflow_)]
-    [InlineData(Workflow.Options.Category.ModernFlow)]
-    private void DefaultShouldActivateFlows(int category)
+    [Test]
+    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.ModernFlow)]
+    public async Task DefaultShouldActivateFlows(int category)
     {
         var draftFlow = new Workflow(Guid.NewGuid())
         {
@@ -50,27 +49,27 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("empty.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftFlow = context.DataContext.WorkflowSet.Single(w => w.Id == draftFlow.Id);
         var updatedSuspendedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedFlow.Id);
         var updatedActivatedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == activatedFlow.Id);
 
-        updatedDraftFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedDraftFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedSuspendedFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedSuspendedFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedActivatedFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedActivatedFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedDraftFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedDraftFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedSuspendedFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedSuspendedFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedActivatedFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedActivatedFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
     }
 
-    [Theory]
-    [InlineData(Workflow.Options.Category.Workflow_)]
-    [InlineData(Workflow.Options.Category.ModernFlow)]
-    private void ShouldDeactivateFlows(int category)
+    [Test]
+    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.ModernFlow)]
+    public async Task ShouldDeactivateFlows(int category)
     {
         var draftFlow = new Workflow(Guid.NewGuid())
         {
@@ -103,27 +102,27 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("flows-deactivate.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftFlow = context.DataContext.WorkflowSet.Single(w => w.Id == draftFlow.Id);
         var updatedSuspendedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedFlow.Id);
         var updatedActivatedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == activatedFlow.Id);
 
-        updatedDraftFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedDraftFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
-        updatedSuspendedFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Suspended);
-        updatedSuspendedFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.CompanyDLPViolation);
-        updatedActivatedFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedActivatedFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedDraftFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedDraftFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedSuspendedFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Suspended);
+        await Assert.That(updatedSuspendedFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.CompanyDLPViolation);
+        await Assert.That(updatedActivatedFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedActivatedFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    [Theory]
-    [InlineData(Workflow.Options.Category.Workflow_)]
-    [InlineData(Workflow.Options.Category.ModernFlow)]
-    private void ShouldOverwriteFlowOwner(int category)
+    [Test]
+    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.ModernFlow)]
+    public async Task ShouldOverwriteFlowOwner(int category)
     {
         var currentOwner = new SystemUser(Guid.NewGuid())
         {
@@ -209,33 +208,33 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(currentToDefaultSpecifiedFlow)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("flows-owner.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedCurrentToDefaultFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultFlow.Id);
-        updatedCurrentToDefaultFlow.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultFlow.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
 
         var updatedCurrentToFlowFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToFlowFlow.Id);
-        updatedCurrentToFlowFlow.OwnerId.Should().Be(flowOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToFlowFlow.OwnerId).IsEqualTo(flowOwner.ToEntityReference());
 
         var updatedCurrentToCurrentSpecifiedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentSpecifiedFlow.Id);
-        updatedCurrentToCurrentSpecifiedFlow.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentSpecifiedFlow.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToCurrentFallbackFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentFallbackFlow.Id);
-        updatedCurrentToCurrentFallbackFlow.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentFallbackFlow.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToDefaultSpecifiedFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultSpecifiedFlow.Id);
-        updatedCurrentToDefaultSpecifiedFlow.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultSpecifiedFlow.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
     }
 
-    [Theory]
-    [InlineData("filter-solution.json", Workflow.Options.Category.Workflow_)]
-    [InlineData("filter-solution.json", Workflow.Options.Category.ModernFlow)]
-    [InlineData("filter-solution-pattern.json", Workflow.Options.Category.Workflow_)]
-    [InlineData("filter-solution-pattern.json", Workflow.Options.Category.ModernFlow)]
-    private void ShouldFilterFlowsBySolution(string config, int category)
+    [Test]
+    [Arguments("filter-solution.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-solution.json", Workflow.Options.Category.ModernFlow)]
+    [Arguments("filter-solution-pattern.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-solution-pattern.json", Workflow.Options.Category.ModernFlow)]
+    public async Task ShouldFilterFlowsBySolution(string config, int category)
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
@@ -289,26 +288,26 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(otherComponent)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
-        }).Should().Succeed();
+        }).Succeed();
 
         var matchingFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInMatchingSolution.Id);
-        matchingFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        matchingFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(matchingFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(matchingFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
 
         var otherFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInOtherSolution.Id);
-        otherFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        otherFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(otherFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(otherFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    [Theory]
-    [InlineData("filter-publisher.json", Workflow.Options.Category.Workflow_)]
-    [InlineData("filter-publisher.json", Workflow.Options.Category.ModernFlow)]
-    [InlineData("filter-publisher-pattern.json", Workflow.Options.Category.Workflow_)]
-    [InlineData("filter-publisher-pattern.json", Workflow.Options.Category.ModernFlow)]
-    private void ShouldFilterFlowsByPublisher(string config, int category)
+    [Test]
+    [Arguments("filter-publisher.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-publisher.json", Workflow.Options.Category.ModernFlow)]
+    [Arguments("filter-publisher-pattern.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-publisher-pattern.json", Workflow.Options.Category.ModernFlow)]
+    public async Task ShouldFilterFlowsByPublisher(string config, int category)
     {
         var matchingPublisher = new Publisher(Guid.NewGuid())
         {
@@ -375,17 +374,17 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(otherPublisher)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
-        }).Should().Succeed();
+        }).Succeed();
 
         var matchingFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInMatchingSolution.Id);
-        matchingFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        matchingFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(matchingFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(matchingFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
 
         var otherFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInOtherSolution.Id);
-        otherFlow.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        otherFlow.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(otherFlow.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(otherFlow.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 }

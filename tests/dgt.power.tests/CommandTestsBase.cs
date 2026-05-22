@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
@@ -17,12 +16,10 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    private readonly ITestOutputHelper _testOutputHelper;
     protected IAnsiConsole TestConsole { get; } = new TestConsole();
 
-    public CommandTestsBase(ITestOutputHelper testOutputHelper)
+    public CommandTestsBase()
     {
-        _testOutputHelper = testOutputHelper;
         AnsiConsole.Console = TestConsole;
     }
 
@@ -97,7 +94,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     }
 
     protected virtual CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder() =>
-        new(_testOutputHelper);
+        new();
 
     protected virtual CommandTestContext<TCommand, TCommandSettings> GetContext() =>
         GetBuilder()

@@ -13,12 +13,11 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.maintenance.tests;
 
+[NotInParallel("AnsiConsole")]
 public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
 {
-    public UpdateWorkflowStateBusinessRuleTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
-
-    [Fact]
-    private void DefaultShouldActivateBusinessRules()
+    [Test]
+    public async Task DefaultShouldActivateBusinessRules()
     {
         var draftBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -51,25 +50,25 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(activatedBusinessRule)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("empty.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
         var updatedSuspendedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedBusinessRule.Id);
         var updatedActivatedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == activatedBusinessRule.Id);
 
-        updatedDraftBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedDraftBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedSuspendedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedSuspendedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedActivatedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedActivatedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedDraftBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedDraftBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedSuspendedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedSuspendedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedActivatedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedActivatedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
     }
 
-    [Fact]
-    private void DefaultShouldActivateIndirectBusinessRules()
+    [Test]
+    public async Task DefaultShouldActivateIndirectBusinessRules()
     {
         var draftBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -132,28 +131,28 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithFakeMessageExecutor<RetrieveEntityRequest>(new FakeRetrieveEntityRequest())
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("filter-solution.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
         var updatedSuspendedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedBusinessRule.Id);
         var updatedActivatedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == activatedBusinessRule.Id);
         var updatedIgnoredBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == ignoredBusinessRule.Id);
 
-        updatedDraftBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedDraftBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedSuspendedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedSuspendedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedActivatedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedActivatedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedIgnoredBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedIgnoredBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedDraftBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedDraftBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedSuspendedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedSuspendedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedActivatedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedActivatedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedIgnoredBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedIgnoredBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    [Fact]
-    private void ShouldDeactivateFlows()
+    [Test]
+    public async Task ShouldDeactivateFlows()
     {
         var draftBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -189,25 +188,25 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(activatedBusinessRule)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("businessrules-deactivate.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
         var updatedSuspendedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedBusinessRule.Id);
         var updatedActivatedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == activatedBusinessRule.Id);
 
-        updatedDraftBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedDraftBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
-        updatedSuspendedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Suspended);
-        updatedSuspendedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.CompanyDLPViolation);
-        updatedActivatedBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedActivatedBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedDraftBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedDraftBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedSuspendedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Suspended);
+        await Assert.That(updatedSuspendedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.CompanyDLPViolation);
+        await Assert.That(updatedActivatedBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedActivatedBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    [Fact]
-    private void ShouldOverwriteBusinessRuleOwner()
+    [Test]
+    public async Task ShouldOverwriteBusinessRuleOwner()
     {
         var currentOwner = new SystemUser(Guid.NewGuid())
         {
@@ -298,31 +297,31 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(currentToDefaultSpecifiedBusinessRule)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("businessrules-owner.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedCurrentToDefaultBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultBusinessRule.Id);
-        updatedCurrentToDefaultBusinessRule.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultBusinessRule.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
 
         var updatedCurrentToBusinessRuleBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToBusinessRuleBusinessRule.Id);
-        updatedCurrentToBusinessRuleBusinessRule.OwnerId.Should().Be(BusinessRuleOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToBusinessRuleBusinessRule.OwnerId).IsEqualTo(BusinessRuleOwner.ToEntityReference());
 
         var updatedCurrentToCurrentSpecifiedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentSpecifiedBusinessRule.Id);
-        updatedCurrentToCurrentSpecifiedBusinessRule.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentSpecifiedBusinessRule.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToCurrentFallbackBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentFallbackBusinessRule.Id);
-        updatedCurrentToCurrentFallbackBusinessRule.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentFallbackBusinessRule.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToDefaultSpecifiedBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultSpecifiedBusinessRule.Id);
-        updatedCurrentToDefaultSpecifiedBusinessRule.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultSpecifiedBusinessRule.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
     }
 
-    [Theory]
-    [InlineData("filter-solution.json")]
-    [InlineData("filter-solution-pattern.json")]
-    private void ShouldFilterBusinessRulesBySolution(string config)
+    [Test]
+    [Arguments("filter-solution.json")]
+    [Arguments("filter-solution-pattern.json")]
+    public async Task ShouldFilterBusinessRulesBySolution(string config)
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
@@ -378,18 +377,18 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(otherComponent)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
-        }).Should().Succeed();
+        }).Succeed();
 
         var matchingBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == BusinessRuleInMatchingSolution.Id);
-        matchingBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        matchingBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(matchingBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(matchingBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
 
         var otherBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == BusinessRuleInOtherSolution.Id);
-        otherBusinessRule.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        otherBusinessRule.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(otherBusinessRule.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(otherBusinessRule.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
     class FakeRetrieveEntityRequest : IFakeMessageExecutor

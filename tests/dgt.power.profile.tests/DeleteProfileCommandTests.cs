@@ -7,21 +7,17 @@ using dgt.power.tests.Extensions;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class DeleteProfileCommandTests : ProfileTestsBase<DeleteProfileCommand, NamedProfileSettings>
 {
-    public DeleteProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldDeleteProfile()
+    [Test]
+    public async Task ShouldDeleteProfile()
     {
         var settings = new NamedProfileSettings {Name = "existing"};
         AddIdentity(settings.Name, "connectionstring");
 
-        GetContext().Execute(settings).Should().Succeed();
+        await GetContext().Execute(settings).Succeed();
 
-        GetIdentities().Infos.Should().BeEmpty();
+        await Assert.That(GetIdentities().Infos).IsEmpty();
     }
 }

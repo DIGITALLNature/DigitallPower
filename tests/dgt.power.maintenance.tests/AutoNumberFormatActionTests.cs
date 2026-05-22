@@ -12,10 +12,6 @@ namespace dgt.power.maintenance.tests;
 
 public class AutoNumberFormatActionTests : MaintenanceTestsBase<AutoNumberFormatAction>
 {
-    public AutoNumberFormatActionTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<AutoNumberFormatAction, MaintenanceVerb> GetContext()
     {
         return GetBuilder()
@@ -23,39 +19,39 @@ public class AutoNumberFormatActionTests : MaintenanceTestsBase<AutoNumberFormat
             .Build();
     }
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     Config = GetResourcePath("empty.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     Config = "missing.json"
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     Config = GetResourcePath("wrong.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldApplyAutoNumberFormatting() =>
-        GetContext()
+    [Test]
+    public async Task ShouldApplyAutoNumberFormatting() =>
+        await Assert.That(GetContext()
             .Execute(new MaintenanceVerb
                 {
                     Config = GetResourcePath("auto-number-formats.json")
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 }

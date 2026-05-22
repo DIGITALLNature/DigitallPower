@@ -20,7 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console.Cli;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
@@ -31,7 +30,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    private readonly ITestOutputHelper? _testOutputHelper;
     private readonly IMiddlewareBuilder _builder;
     private IServiceCollection _serviceCollection;
     private IEnumerable<Entity> _data = new List<Entity>();
@@ -43,9 +41,8 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     private Func<IXrmFakedContext, IEnumerable<Entity>>? _dataPreparer;
 
 
-    public CommandTestContextBuilder(ITestOutputHelper? testOutputHelper = null)
+    public CommandTestContextBuilder()
     {
-        _testOutputHelper = testOutputHelper;
         _serviceCollection = new TestServiceCollection();
         _builder = MiddlewareBuilder
             .New()
@@ -67,13 +64,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             .UseMessages()
             .UseCrud()
             .Build();
-
-
-        if (_testOutputHelper != null)
-        {
-            _serviceCollection
-                .AddSingleton<ITestOutputHelper>(_ => _testOutputHelper);
-        }
 
         var defaultConfiguration = new Dictionary<string, string?>
         {

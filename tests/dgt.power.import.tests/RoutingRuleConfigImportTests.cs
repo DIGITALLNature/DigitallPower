@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -6,9 +6,7 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using Queue = dgt.power.dataverse.Queue;
 using RoutingRuleItem = dgt.power.dto.RoutingRuleItem;
 #pragma warning disable CS8601
@@ -18,30 +16,26 @@ namespace dgt.power.import.tests;
 
 public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImport>
 {
-    public RoutingRuleConfigImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new RoutingRuleConfigs()).Name,
                 FileDir = ArtifactDirectory,
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-        [Fact]
-    public void ShouldUpdateRoutingRuleItems()
+    [Test]
+    public async Task ShouldUpdateRoutingRuleItems()
     {
         var data = GetData();
         var routingRule = data.routingRule;
@@ -99,20 +93,20 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .WithData(data.entities)
             .Build();
 
-        context
+        await Assert.That(context
             .Execute(new ImportVerb
                 {
                     FileName = WriteConfigurationArtifact(ruleConfig).Name,
                     FileDir = ArtifactDirectory
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
         var updatedRule = context.GetById<RoutingRule>(routingRule.Id);
-        updatedRule.OwnerId.Id.Should().Be(routingRule.OwnerId.Id);
+        await Assert.That(updatedRule.OwnerId.Id).IsEqualTo(routingRule.OwnerId.Id);
     }
 
-    [Fact]
-    public void ShouldSkipUpdateOfRoutingRuleItemsWhenRouteToIsMissing()
+    [Test]
+    public async Task ShouldSkipUpdateOfRoutingRuleItemsWhenRouteToIsMissing()
     {
         var data = GetData();
         var routingRule = data.routingRule;
@@ -127,20 +121,20 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .WithData(userRuleItem)
             .Build();
 
-        context
+        await Assert.That(context
             .Execute(new ImportVerb
                 {
                     FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = $"{teamRuleItem.Name} Updated", MsdynRouteto = teamRuleItem.MsdynRouteto.Value, RoutingRuleId = teamRuleItem.RoutingRuleId.Id, RoutingRuleItemId = teamRuleItem.Id, AssignObjectIdType = teamRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = teamRuleItem.AssignObjectId.Name }, new RoutingRuleItem { Name = $"{queueRuleItem.Name}Updated", MsdynRouteto = queueRuleItem.MsdynRouteto.Value, RoutingRuleId = queueRuleItem.RoutingRuleId.Id, RoutingRuleItemId = queueRuleItem.Id, RoutedQueueId = queueRuleItem.RoutedQueueId.Id }, new RoutingRuleItem { Name = $"{userRuleItem.Name} Updated", MsdynRouteto = userRuleItem.MsdynRouteto.Value, RoutingRuleId = userRuleItem.RoutingRuleId.Id, RoutingRuleItemId = userRuleItem.Id, AssignObjectIdType = userRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = userRuleItem.AssignObjectId.Name } } } }).Name,
                     FileDir = ArtifactDirectory
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
         var updatedRule = context.GetById<RoutingRule>(routingRule.Id);
-        updatedRule.OwnerId.Id.Should().Be(routingRule.OwnerId.Id);
+        await Assert.That(updatedRule.OwnerId.Id).IsEqualTo(routingRule.OwnerId.Id);
     }
 
-    [Fact]
-    public void ShouldSkipAssignmentIfOwnerIsNotFoundInOrganization()
+    [Test]
+    public async Task ShouldSkipAssignmentIfOwnerIsNotFoundInOrganization()
     {
         var data = GetData();
         var routingRule = data.routingRule;
@@ -148,7 +142,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .WithData(routingRule)
             .Build();
 
-        context
+        await Assert.That(context
             .Execute(new ImportVerb
                 {
                     Assignee = "owner@test.de",
@@ -164,14 +158,14 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
                         }).Name,
                     FileDir = ArtifactDirectory
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
         var updatedRule = context.GetById<RoutingRule>(routingRule.Id);
-        updatedRule.OwnerId.Id.Should().Be(routingRule.OwnerId.Id);
+        await Assert.That(updatedRule.OwnerId.Id).IsEqualTo(routingRule.OwnerId.Id);
     }
 
-    [Fact]
-    public void ShouldDeactivateActiveRoutingRule()
+    [Test]
+    public async Task ShouldDeactivateActiveRoutingRule()
     {
         var data = GetData();
         var routingRule = data.routingRule;
@@ -179,22 +173,22 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .WithData(routingRule)
             .Build();
 
-        context
+        await Assert.That(context
             .Execute(new ImportVerb
                 {
                     Assignee = "owner@test.de",
                     FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = false, RoutingRuleId = routingRule.Id, RoutingRuleItems = Array.Empty<RoutingRuleItem>() } }).Name,
                     FileDir = ArtifactDirectory
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
         var updatedRule = context.GetById<RoutingRule>(routingRule.Id);
-        updatedRule.OwnerId.Id.Should().Be(routingRule.OwnerId.Id);
-        updatedRule.StateCode.Value.Should().Be(RoutingRule.Options.StateCode.Draft);
+        await Assert.That(updatedRule.OwnerId.Id).IsEqualTo(routingRule.OwnerId.Id);
+        await Assert.That(updatedRule.StateCode.Value).IsEqualTo(RoutingRule.Options.StateCode.Draft);
     }
 
-    [Fact]
-    public void ShouldFailOnMissingRoutingRuleItemInOrganization()
+    [Test]
+    public async Task ShouldFailOnMissingRoutingRuleItemInOrganization()
     {
         var data = GetData();
         var routingRule = data.routingRule;
@@ -203,14 +197,14 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .WithData(data.owner)
             .Build();
 
-        context
+        await Assert.That(context
             .Execute(new ImportVerb
                 {
                     Assignee = data.owner.DomainName,
                     FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = "No Existing Rule Item", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
                     FileDir = ArtifactDirectory
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
     }
 
     private static (RoutingRule routingRule, SystemUser owner, dataverse.RoutingRuleItem queueRuleItem,
@@ -283,14 +277,14 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
     }
 
 
-    [Fact]
-    public void ShouldFailOnMissingRuleInOrganization()
+    [Test]
+    public async Task ShouldFailOnMissingRuleInOrganization()
     {
-        GetContext().Execute(new ImportVerb
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = "Not Existing Rule", Active = true, RoutingRuleId = Guid.NewGuid(), RoutingRuleItems = new[] { new RoutingRuleItem { Name = "Rule Item 1", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
     }
 }

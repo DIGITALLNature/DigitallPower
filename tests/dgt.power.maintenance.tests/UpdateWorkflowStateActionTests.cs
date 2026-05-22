@@ -9,12 +9,11 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.maintenance.tests;
 
+[NotInParallel("AnsiConsole")]
 public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
 {
-    public UpdateWorkflowStateActionTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
-
-    [Fact]
-    private void DefaultShouldActivateWorkflows()
+    [Test]
+    public async Task DefaultShouldActivateWorkflows()
     {
         var draftAction = new Workflow(Guid.NewGuid())
         {
@@ -47,25 +46,25 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(activatedAction)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("empty.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftAction = context.DataContext.WorkflowSet.Single(w => w.Id == draftAction.Id);
         var updatedSuspendedAction = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedAction.Id);
         var updatedActivatedAction = context.DataContext.WorkflowSet.Single(w => w.Id == activatedAction.Id);
 
-        updatedDraftAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedDraftAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedSuspendedAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedSuspendedAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
-        updatedActivatedAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        updatedActivatedAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedDraftAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedDraftAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedSuspendedAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedSuspendedAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
+        await Assert.That(updatedActivatedAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(updatedActivatedAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
     }
 
-    [Fact]
-    private void ShouldDeactivateFlows()
+    [Test]
+    public async Task ShouldDeactivateFlows()
     {
         var draftAction = new Workflow(Guid.NewGuid())
         {
@@ -98,25 +97,25 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(activatedAction)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("actions-deactivate.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedDraftAction = context.DataContext.WorkflowSet.Single(w => w.Id == draftAction.Id);
         var updatedSuspendedAction = context.DataContext.WorkflowSet.Single(w => w.Id == suspendedAction.Id);
         var updatedActivatedAction = context.DataContext.WorkflowSet.Single(w => w.Id == activatedAction.Id);
 
-        updatedDraftAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedDraftAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
-        updatedSuspendedAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Suspended);
-        updatedSuspendedAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.CompanyDLPViolation);
-        updatedActivatedAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        updatedActivatedAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedDraftAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedDraftAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
+        await Assert.That(updatedSuspendedAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Suspended);
+        await Assert.That(updatedSuspendedAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.CompanyDLPViolation);
+        await Assert.That(updatedActivatedAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(updatedActivatedAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 
-    [Fact]
-    private void ShouldOverwriteFlowOwner()
+    [Test]
+    public async Task ShouldOverwriteFlowOwner()
     {
         var currentOwner = new SystemUser(Guid.NewGuid())
         {
@@ -202,31 +201,31 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(currentToDefaultSpecifiedAction)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath("actions-owner.json"),
-        }).Should().Succeed();
+        }).Succeed();
 
         var updatedCurrentToDefaultAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultAction.Id);
-        updatedCurrentToDefaultAction.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultAction.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
 
         var updatedCurrentToActionAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToActionAction.Id);
-        updatedCurrentToActionAction.OwnerId.Should().Be(actionOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToActionAction.OwnerId).IsEqualTo(actionOwner.ToEntityReference());
 
         var updatedCurrentToCurrentSpecifiedAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentSpecifiedAction.Id);
-        updatedCurrentToCurrentSpecifiedAction.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentSpecifiedAction.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToCurrentFallbackAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToCurrentFallbackAction.Id);
-        updatedCurrentToCurrentFallbackAction.OwnerId.Should().Be(currentOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToCurrentFallbackAction.OwnerId).IsEqualTo(currentOwner.ToEntityReference());
 
         var updatedCurrentToDefaultSpecifiedAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultSpecifiedAction.Id);
-        updatedCurrentToDefaultSpecifiedAction.OwnerId.Should().Be(defaultOwner.ToEntityReference());
+        await Assert.That(updatedCurrentToDefaultSpecifiedAction.OwnerId).IsEqualTo(defaultOwner.ToEntityReference());
     }
 
-    [Theory]
-    [InlineData("filter-solution.json")]
-    [InlineData("filter-solution-pattern.json")]
-    private void ShouldFilterFlowsBySolution(string config)
+    [Test]
+    [Arguments("filter-solution.json")]
+    [Arguments("filter-solution-pattern.json")]
+    public async Task ShouldFilterFlowsBySolution(string config)
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
@@ -280,17 +279,17 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(otherComponent)
             .Build();
 
-        context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowState.Settings
         {
             Config = GetResourcePath(config),
-        }).Should().Succeed();
+        }).Succeed();
 
         var matchingAction = context.DataContext.WorkflowSet.Single(w => w.Id == actionInMatchingSolution.Id);
-        matchingAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Activated);
-        matchingAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Activated);
+        await Assert.That(matchingAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Activated);
+        await Assert.That(matchingAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Activated);
 
         var otherAction = context.DataContext.WorkflowSet.Single(w => w.Id == actionInOtherSolution.Id);
-        otherAction.StateCode!.Value.Should().Be(Workflow.Options.StateCode.Draft);
-        otherAction.StatusCode!.Value.Should().Be(Workflow.Options.StatusCode.Draft);
+        await Assert.That(otherAction.StateCode!.Value).IsEqualTo(Workflow.Options.StateCode.Draft);
+        await Assert.That(otherAction.StatusCode!.Value).IsEqualTo(Workflow.Options.StatusCode.Draft);
     }
 }

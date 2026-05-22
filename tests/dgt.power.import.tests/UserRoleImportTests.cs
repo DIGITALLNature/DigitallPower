@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -8,8 +8,6 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using FakeXrmEasy.Abstractions;
-using AwesomeAssertions;
-using Xunit.Abstractions;
 #pragma warning disable CS8601
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -17,10 +15,6 @@ namespace dgt.power.import.tests;
 
 public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 {
-    public UserRoleImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContextBuilder<UserRoleImport, ImportVerb> GetBuilder() =>
         base.GetBuilder()
             .WithRelationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation, new XrmFakedRelationship
@@ -33,25 +27,25 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany
             });
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles()).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnNonParsableBusinessUnit()
+    [Test]
+    public async Task ShouldFailOnNonParsableBusinessUnit()
     {
         var data = GetData();
         var adminUser = data.adminUser;
@@ -60,18 +54,18 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(adminUser)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "very much separators/s/s/", SecurityRoles = new[] { data.adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
 
-        context.Get<BusinessUnit>().Should().BeEmpty();
+        await Assert.That(context.Get<BusinessUnit>()).IsEmpty();
     }
 
 
-    [Fact]
-    public void ShouldFailOnMissingBusinessUnit()
+    [Test]
+    public async Task ShouldFailOnMissingBusinessUnit()
     {
         var data = GetData();
         var adminRole = data.adminRole;
@@ -81,34 +75,34 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(adminUser)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
 
-        context.Get<BusinessUnit>().Should().BeEmpty();
+        await Assert.That(context.Get<BusinessUnit>()).IsEmpty();
     }
 
-    [Fact]
-    public void ShouldSkipUserIfNotFound()
+    [Test]
+    public async Task ShouldSkipUserIfNotFound()
     {
         var context = GetBuilder()
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = new[] { "some role" }, UserName = "some.user@test.de" } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<SystemUser>().Should().BeEmpty();
-        context.Get<SystemUserRoles>().Should().BeEmpty();
+        await Assert.That(context.Get<SystemUser>()).IsEmpty();
+        await Assert.That(context.Get<SystemUserRoles>()).IsEmpty();
     }
 
 
-    [Fact]
-    public void ShouldAddUserRoleForNonUniqueBusinessUnit()
+    [Test]
+    public async Task ShouldAddUserRoleForNonUniqueBusinessUnit()
     {
         var data = GetData();
         var businessUnit = data.rootBusinessUnit;
@@ -121,18 +115,17 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(data)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnitSeparator = '/', BusinessUnit = $"{childBusinessUnit.Name}/{businessUnit.Name}", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<SystemUserRoles>().Should()
-            .ContainSingle(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id);
+        await Assert.That(context.Get<SystemUserRoles>().Count(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id)).IsEqualTo(1);
     }
 
-    [Fact]
-    public void ShouldFailOnMissingSecurityRole()
+    [Test]
+    public async Task ShouldFailOnMissingSecurityRole()
     {
         var data = GetData();
         var businessUnit = data.rootBusinessUnit;
@@ -144,18 +137,18 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(businessUnit)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name!, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeFalse();
+        })).IsFalse();
 
-        context.Get<Role>().Should().BeEmpty();
-        context.Get<SystemUserRoles>().Should().BeEmpty();
+        await Assert.That(context.Get<Role>()).IsEmpty();
+        await Assert.That(context.Get<SystemUserRoles>()).IsEmpty();
     }
 
-    [Fact]
-    public void ShouldRemoveAdditionalNotSpecifiedUserRoles()
+    [Test]
+    public async Task ShouldRemoveAdditionalNotSpecifiedUserRoles()
     {
         var data = GetData();
         var businessUnit = data.rootBusinessUnit;
@@ -172,19 +165,18 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(additionalUserRole)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<SystemUserRoles>().Should()
-            .NotContain(x =>
-                x.RoleId == additionalUserRole.RoleId && x.SystemUserId == additionalUserRole.SystemUserId);
+        await Assert.That(context.Get<SystemUserRoles>().Any(x =>
+                x.RoleId == additionalUserRole.RoleId && x.SystemUserId == additionalUserRole.SystemUserId)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldAddUserRoleForUniqueBusinessUnit()
+    [Test]
+    public async Task ShouldAddUserRoleForUniqueBusinessUnit()
     {
         var data = GetData();
         var businessUnit = data.rootBusinessUnit;
@@ -195,18 +187,17 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(data)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<SystemUserRoles>().Should()
-            .ContainSingle(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id);
+        await Assert.That(context.Get<SystemUserRoles>().Count(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id)).IsEqualTo(1);
     }
 
-    [Fact]
-    public void ShouldUpdateBusinessUnitOfUserToSpecified()
+    [Test]
+    public async Task ShouldUpdateBusinessUnitOfUserToSpecified()
     {
         var data = GetData();
         var oldBusinessUnit = data.childBusinessUnit;
@@ -219,16 +210,15 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
             .WithData(data)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
         {
             FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = newBusinessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
-        }).Should().BeTrue();
+        })).IsTrue();
 
-        context.Get<SystemUserRoles>().Should()
-            .ContainSingle(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id);
+        await Assert.That(context.Get<SystemUserRoles>().Count(x => x.RoleId == adminRole.Id && x.SystemUserId == adminUser.Id)).IsEqualTo(1);
         var postUser = context.GetById<SystemUser>(adminUser.Id);
-        postUser.BusinessUnitId.Id.Should().Be(newBusinessUnit.Id);
+        await Assert.That(postUser.BusinessUnitId.Id).IsEqualTo(newBusinessUnit.Id);
     }
 
 

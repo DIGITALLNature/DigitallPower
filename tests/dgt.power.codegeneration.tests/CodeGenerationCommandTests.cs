@@ -7,9 +7,7 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
 using FakeItEasy;
-using AwesomeAssertions;
 using Spectre.Console.Cli;
-using Xunit.Abstractions;
 
 namespace dgt.power.codegeneration.tests;
 
@@ -17,9 +15,9 @@ public class CodeGenerationCommandTests
 {
     private readonly ICommand<CodeGenerationVerb> _command;
 
-    public CodeGenerationCommandTests(ITestOutputHelper testOutputHelper)
+    public CodeGenerationCommandTests()
     {
-        var tracer = new TestTracer(testOutputHelper);
+        var tracer = new TestTracer();
         var configResolver = new ConfigResolver(tracer);
         var dotNetWorker = A.Fake<DotNetWorker>();
         var typescriptWorker = A.Fake<TypescriptWorker>();
@@ -29,21 +27,23 @@ public class CodeGenerationCommandTests
             dotNetWorker, typescriptWorker, metadataWorker, metadataService);
     }
 
-    [Fact]
-    public void ShouldExecuteALlCommands() =>
-        _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
-            new CodeGenerationVerb
-            {
-                Config = "Resources/CodeGenerationCommand/config.json"
-            },CancellationToken.None
-        ).GetAwaiter().GetResult().Should().Be(0);
+    [Test]
+    public async Task ShouldExecuteALlCommands() =>
+        await Assert.That(
+            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
+                new CodeGenerationVerb
+                {
+                    Config = "Resources/CodeGenerationCommand/config.json"
+                },CancellationToken.None
+            ).GetAwaiter().GetResult()).IsEqualTo(0);
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
-            new CodeGenerationVerb
-            {
-                Config = "missing.json"
-            },CancellationToken.None
-        ).GetAwaiter().GetResult().Should().Be(-1);
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(
+            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
+                new CodeGenerationVerb
+                {
+                    Config = "missing.json"
+                },CancellationToken.None
+            ).GetAwaiter().GetResult()).IsEqualTo(-1);
 }

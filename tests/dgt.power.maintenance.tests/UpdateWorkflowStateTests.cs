@@ -11,26 +11,24 @@ namespace dgt.power.maintenance.tests;
 
 public class UpdateWorkflowStateTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
 {
-    public UpdateWorkflowStateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper) { }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("missing.json")]
-    public void InvalidConfigPathsShouldFail(string config) =>
-        GetBuilder().Build()
+    [Test]
+    [Arguments("")]
+    [Arguments("missing.json")]
+    public async Task InvalidConfigPathsShouldFail(string config) =>
+        await Assert.That(GetBuilder().Build()
             .Execute(new UpdateWorkflowState.Settings
             {
                 Config = GetResourcePath(config)
-            }).Should().BeFalse();
+            })).IsFalse();
 
-    [Theory]
-    [InlineData("empty.json")]
-    [InlineData("simple.json")]
-    public void ValidConfigShouldSucceed(string config) =>
-        GetBuilder().Build()
+    [Test]
+    [Arguments("empty.json")]
+    [Arguments("simple.json")]
+    public async Task ValidConfigShouldSucceed(string config) =>
+        await Assert.That(GetBuilder().Build()
             .Execute(new UpdateWorkflowState.Settings
             {
                 Config = GetResourcePath(config)
-            }).Should().BeTrue();
+            })).IsTrue();
 
 }

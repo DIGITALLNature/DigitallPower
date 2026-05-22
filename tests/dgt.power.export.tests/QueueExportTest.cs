@@ -6,19 +6,13 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using AwesomeAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using Queue = dgt.power.dataverse.Queue;
 
 namespace dgt.power.export.tests;
 
 public class QueueExportTest : ExportTestBase<QueueExport>
 {
-    public QueueExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<QueueExport, ExportVerb> GetContext() =>
         GetBuilder()
             .WithData(
@@ -75,23 +69,23 @@ public class QueueExportTest : ExportTestBase<QueueExport>
                 })
             .Build();
 
-    [Fact]
-    public void ShouldExportQueuesWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportQueuesWithDefaultConfiguration()
     {
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new ExportVerb {FileName = GetTestFileName(), FileDir = ArtifactDirectory,}
-            ).Should().BeTrue();
+            )).IsTrue();
         var queues = GetConfigurationTestArtifact<Queues>(GetTestFileName());
-        queues.QueuesToTransport.Should().HaveCount(3);
+        await Assert.That(queues.QueuesToTransport).HasCount().EqualTo(3);
     }
 
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb {FileName = string.Empty, FileDir = ArtifactDirectory,}
-        ).Should().BeTrue();
+        await Assert.That(GetContext().Execute(new ExportVerb {FileName = string.Empty, FileDir = ArtifactDirectory,}
+        )).IsTrue();
         var queues = GetConfigurationTestArtifact<Queues>("queue.json");
-        queues.QueuesToTransport.Should().HaveCount(3);
+        await Assert.That(queues.QueuesToTransport).HasCount().EqualTo(3);
     }
 }
