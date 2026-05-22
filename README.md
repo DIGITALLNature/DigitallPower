@@ -339,6 +339,43 @@ dotnet tool install --global --add-source ./packages dgt.power --version <versio
 - Network access to your Dataverse environment (`*.dynamics.com`) and to `api.nuget.org` (for the version check)
 - An account with sufficient privileges on the target Dataverse environment
 
+## 📡 Telemetry
+
+DigitallPower collects anonymous usage telemetry to help improve the tool. Telemetry is **opt-out** — it is enabled by default but can be easily disabled.
+
+### What is collected
+
+| Data | Example | Purpose |
+|------|---------|---------|
+| Command name | `UserRoleImport` | Understand which modules are used |
+| Success/failure | `true` | Track reliability |
+| CI environment | `true` | Distinguish interactive vs automated usage |
+| OS platform | `Unix` | Platform distribution |
+| Tool version | `2.1.0` | Version adoption |
+| Anonymous install ID | `a1b2c3d4-...` | Count unique installations |
+
+**No personally identifiable information is collected.** No usernames, organization URLs, file contents, or environment-specific data is ever transmitted.
+
+### How to disable telemetry
+
+**Per invocation:**
+
+```bash
+dgtp export --no-telemetry
+```
+
+**Permanently (environment variable):**
+
+```bash
+export DGT_TELEMETRY_OPTOUT=1
+```
+
+Set `DGT_TELEMETRY_OPTOUT` to `1`, `true`, or `yes` to permanently disable telemetry.
+
+### First-run notice
+
+On first use, the CLI displays a one-time notice informing you about telemetry collection and how to opt out. This notice is shown only once per installation.
+
 ## ❤️ Community and Contributions
 
 DigitallPower CLI is a **community-driven open source project** backed by DIGITALL. We are committed to a fully transparent development process and **highly appreciate any contributions**. Whether you are helping us fixing bugs, proposing new features, improving our documentation or spreading the word — **we would love to have you as part of the DigitallPower community**.

@@ -6,6 +6,7 @@ using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using dgt.power.Telemetry;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
 using Spectre.Console;
@@ -28,7 +29,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
-        if (CheckForBuildAgent())
+        if (TelemetryConfig.IsCi)
         {
             AnsiConsole.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
             return;
@@ -44,18 +45,6 @@ public class VersionCheckInterceptor : ICommandInterceptor
             localPackageData.LastUpdateCheckOn = today;
             WriteLastUpdateCheck(localPackageData);
         }
-    }
-
-    private static bool CheckForBuildAgent()
-    {
-        var isAgent = false;
-
-        // Azure DevOps
-        isAgent |= Environment.GetEnvironmentVariable("BUILD_BUILDURI") != null;
-        // GitHub
-        isAgent |= Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null;
-
-        return isAgent;
     }
 
     private void CheckForNewVersion()

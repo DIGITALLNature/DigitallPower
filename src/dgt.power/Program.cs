@@ -5,6 +5,7 @@ using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using dgt.power;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
@@ -31,11 +32,15 @@ using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
 using dgt.power.push.Logic;
+using dgt.power.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -58,7 +63,31 @@ registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetResource<PackageMetadataResource>()
 );
 registrations.AddSingleton<VersionCheckInterceptor>();
-registrations.AddSingleton<ITracer, Tracer>();
+
+// Telemetry setup
+var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
+var telemetryEnabled = !TelemetryConfig.IsOptedOut;
+string? installId = null;
+TracerProvider? tracerProvider = null;
+
+if (telemetryEnabled)
+{
+    TelemetryNotice.ShowIfFirstRun(isolatedStorage);
+    installId = TelemetryConfig.GetOrCreateInstallId(isolatedStorage);
+
+    var connectionString = Environment.GetEnvironmentVariable("DGT_TELEMETRY_CONNECTION_STRING");
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        tracerProvider = Sdk.CreateTracerProviderBuilder()
+            .AddSource(DgtpActivitySource.Name)
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(DgtpActivitySource.Name, serviceVersion: DgtpActivitySource.Instance.Version))
+            .AddAzureMonitorTraceExporter(o => o.ConnectionString = connectionString)
+            .Build();
+    }
+}
+
+registrations.AddSingleton<ITracer>(_ => new dgt.power.Tracer(telemetryEnabled, installId));
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<TypescriptWorker, TypescriptWorker>();
@@ -72,7 +101,7 @@ registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
     }
 });
-registrations.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
+registrations.AddSingleton<IsolatedStorageFile>(_ => isolatedStorage);
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
@@ -89,7 +118,7 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     var versionCheckInterceptor = registrations.BuildServiceProvider().GetRequiredService<VersionCheckInterceptor>();
-    config.SetInterceptor(versionCheckInterceptor);
+    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor));
     config.AddBranch<ProfileSettings>("profile", profile =>
     {
         profile.SetDescription("Handles Authentication");
@@ -242,4 +271,9 @@ if (args.Length == 0)
 }
 
 
-return app.Run(args);
+var exitCode = app.Run(args);
+
+tracerProvider?.ForceFlush(5000);
+tracerProvider?.Dispose();
+
+return exitCode;
