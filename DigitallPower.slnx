@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/Modules/">
+    <Project Path="src/modules/dgt.power.analyzer/dgt.power.analyzer.csproj" />
+    <Project Path="src/modules/dgt.power.codegeneration/dgt.power.codegeneration.csproj" />
+    <Project Path="src/modules/dgt.power.export/dgt.power.export.csproj" />
+    <Project Path="src/modules/dgt.power.import/dgt.power.import.csproj" />
+    <Project Path="src/modules/dgt.power.maintenance/dgt.power.maintenance.csproj" />
+    <Project Path="src/modules/dgt.power.profile/dgt.power.profile.csproj" />
+    <Project Path="src/modules/dgt.power.push/dgt.power.push.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/dgt.power.analyzer.tests/dgt.power.analyzer.tests.csproj" />
+    <Project Path="tests/dgt.power.codegeneration.tests/dgt.power.codegeneration.tests.csproj" />
+    <Project Path="tests/dgt.power.export.tests/dgt.power.export.tests.csproj" />
+    <Project Path="tests/dgt.power.import.tests/dgt.power.import.tests.csproj" />
+    <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />
+    <Project Path="tests/dgt.power.profile.tests/dgt.power.profile.tests.csproj" />
+    <Project Path="tests/dgt.power.push.tests/dgt.power.push.tests.csproj" />
+    <Project Path="tests/dgt.power.tests/dgt.power.tests.csproj" />
+  </Folder>
+  <Project Path="src/dgt.power.common/dgt.power.common.csproj" />
+  <Project Path="src/dgt.power/dgt.power.csproj" />
+</Solution>
