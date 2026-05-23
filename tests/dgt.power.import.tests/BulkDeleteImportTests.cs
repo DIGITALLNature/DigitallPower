@@ -19,7 +19,8 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
     {
         return base.GetBuilder()
             .WithFakeMessageExecutor(new WhoAmIExecutor())
-            .WithFakeMessageExecutor(new BulkDeleteExecutor());
+            .WithFakeMessageExecutor(new BulkDeleteExecutor())
+            .WithCustomConfiguration(svc => svc.Options.UserId = Guid.Parse("f4e8821a-97d2-4938-8b73-8744431e59c8"));
     }
 
 
