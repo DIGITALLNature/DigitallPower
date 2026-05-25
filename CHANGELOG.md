@@ -1,3 +1,10 @@
+# [2.1.0-beta.44](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.43...v2.1.0-beta.44) (2026-05-25)
+
+
+### Features
+
+* **tsl:** add additional extra mock function in unit test builder ([#138](https://github.com/DIGITALLNature/DigitallPower/issues/138)) ([e0daf8c](https://github.com/DIGITALLNature/DigitallPower/commit/e0daf8cacc0c91fc476d7190bfd18a70076ecd15))
+
 # [2.1.0-beta.43](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.42...v2.1.0-beta.43) (2026-05-20)
 
 
