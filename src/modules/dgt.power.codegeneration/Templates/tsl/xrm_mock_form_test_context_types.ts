@@ -169,6 +169,7 @@ export interface IXrmMockFormTestContextBuilder<
     withLanguageId(languageId: number): this;
     withLookupControlMethodEventMock(isLookupControlMock: boolean): this;
     withPreSaveEventMock(isPreSaveEventMock: boolean): this;
+    withRefreshErrorMessage(errorMsg: string | null): this;
     withRegisterTabEventsMocks(isMockTabEvents: boolean): this;
     withSaveErrorMessage(errorMsg: string | null): this;
     withServerData(data: XrmFormMockServerData): this;
