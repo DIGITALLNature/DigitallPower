@@ -65,7 +65,7 @@
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
       <_Parameter1>TelemetryConnectionString</_Parameter1>
-      <_Parameter2>$(TELEMETRY_CONNECTION_STRING)</_Parameter2>
+      <_Parameter2>$(DGT_TELEMETRY_CONNECTION_STRING)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 

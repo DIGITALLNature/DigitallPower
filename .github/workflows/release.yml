@@ -39,5 +39,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
           AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}
-          TELEMETRY_CONNECTION_STRING: ${{ secrets.TELEMETRY_CONNECTION_STRING }}
+          DGT_TELEMETRY_CONNECTION_STRING: ${{ secrets.DGT_TELEMETRY_CONNECTION_STRING }}
         run: pnpm exec semantic-release

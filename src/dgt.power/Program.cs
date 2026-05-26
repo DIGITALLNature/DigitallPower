@@ -75,7 +75,7 @@ if (telemetryEnabled)
     TelemetryNotice.ShowIfFirstRun(isolatedStorage);
     installId = TelemetryConfig.GetOrCreateInstallId(isolatedStorage);
 
-    var connectionString = Environment.GetEnvironmentVariable("DGPT_TELEMETRY_CONNECTION_STRING")
+    var connectionString = Environment.GetEnvironmentVariable("DGT_TELEMETRY_CONNECTION_STRING")
         ?? EmbeddedTelemetryConfig.ConnectionString;
     if (!string.IsNullOrEmpty(connectionString))
     {

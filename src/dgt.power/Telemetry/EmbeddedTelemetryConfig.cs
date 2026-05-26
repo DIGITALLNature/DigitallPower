@@ -7,7 +7,7 @@ namespace dgt.power.Telemetry;
 
 /// <summary>
 /// Provides access to the telemetry connection string embedded at build time via AssemblyMetadata.
-/// Returns null when built without TELEMETRY_CONNECTION_STRING environment variable (e.g. local dev builds).
+/// Returns null when built without DGT_TELEMETRY_CONNECTION_STRING environment variable (e.g. local dev builds).
 /// </summary>
 internal static class EmbeddedTelemetryConfig
 {
