@@ -44,8 +44,8 @@ internal partial class CrmConnector: IConnector
         return serviceClient;
     }
 
-    [GeneratedRegex("SkipDiscovery=True", RegexOptions.IgnoreCase, "de-DE")]
+    [GeneratedRegex("SkipDiscovery=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex SkipDiscoveryRegex();
-    [GeneratedRegex("RequireNewInstance=True", RegexOptions.IgnoreCase, "de-DE")]
+    [GeneratedRegex("RequireNewInstance=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex RequireNewInstanceRegex();
 }
