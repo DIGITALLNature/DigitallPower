@@ -372,6 +372,14 @@ export DGT_TELEMETRY_OPTOUT=1
 
 Set `DGT_TELEMETRY_OPTOUT` to `1`, `true`, or `yes` to permanently disable telemetry.
 
+**Override telemetry endpoint (advanced):**
+
+```bash
+export DGT_TELEMETRY_CONNECTION_STRING="InstrumentationKey=..."
+```
+
+Set `DGT_TELEMETRY_CONNECTION_STRING` to an Azure Monitor connection string to route telemetry to a custom endpoint. When not set, the build-time embedded connection string is used (or telemetry is disabled if none was embedded).
+
 ### First-run notice
 
 On first use, the CLI displays a one-time notice informing you about telemetry collection and how to opt out. This notice is shown only once per installation.
