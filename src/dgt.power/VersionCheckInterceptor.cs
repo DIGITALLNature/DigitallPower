@@ -14,18 +14,13 @@ using Spectre.Console.Cli;
 
 namespace dgt.power;
 
-public class VersionCheckInterceptor : ICommandInterceptor
+public class VersionCheckInterceptor(
+    IsolatedStorageFile isolatedStorageFile,
+    PackageMetadataResource packageMetadataClient)
+    : ICommandInterceptor
 {
-    private readonly IsolatedStorageFile _isolatedStorageFile;
-    private readonly PackageMetadataResource _packageMetadataClient;
-    public const string FileName = "last-updated.json";
-    public const int CheckBarrierInDays = 3;
-
-    public VersionCheckInterceptor(IsolatedStorageFile isolatedStorageFile, PackageMetadataResource packageMetadataClient)
-    {
-        _isolatedStorageFile = isolatedStorageFile;
-        _packageMetadataClient = packageMetadataClient;
-    }
+    private const string FileName = "last-updated.json";
+    private const int CheckBarrierInDays = 3;
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
@@ -35,7 +30,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
             return;
         }
 
-        var localPackageData = _isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
+        var localPackageData = isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
 
         var today = DateTime.Today;
         var daysSinceLastCheck = (today - localPackageData.LastUpdateCheckOn.Date).TotalDays;
@@ -49,7 +44,7 @@ public class VersionCheckInterceptor : ICommandInterceptor
 
     private void CheckForNewVersion()
     {
-        var packageMetadata = _packageMetadataClient.GetMetadataAsync(
+        var packageMetadata = packageMetadataClient.GetMetadataAsync(
             "dgt.power",
             false,
             false,
@@ -71,14 +66,14 @@ public class VersionCheckInterceptor : ICommandInterceptor
 
     private void WriteLastUpdateCheck(LastUpdateCheck lastUpdate)
     {
-        using var storageStream = _isolatedStorageFile.OpenFile(FileName, FileMode.Create);
+        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Create);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(lastUpdate);
         storageStream.Write(bytes, 0, bytes.Length);
     }
 
     private LastUpdateCheck ReadOrCreateLastUpdateCheck()
     {
-        using var storageStream = _isolatedStorageFile.OpenFile(FileName, FileMode.Open);
+        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Open);
         using var memoryStream = new MemoryStream();
         storageStream.CopyTo(memoryStream);
         return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
