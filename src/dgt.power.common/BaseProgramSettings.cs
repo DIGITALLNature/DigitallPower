@@ -10,5 +10,5 @@ public abstract class BaseProgramSettings : CommandSettings
 {
     [CommandOption("--no-telemetry")]
     [Description("Disable telemetry for this invocation")]
-    public bool NoTelemetry { get; set; }
+    public bool NoTelemetry { get; init; }
 }

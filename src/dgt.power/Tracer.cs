@@ -10,10 +10,8 @@ using Spectre.Console;
 
 namespace dgt.power;
 
-internal sealed class Tracer : ITracer
+internal sealed class Tracer(bool telemetryEnabled = false, string? installId = null) : ITracer
 {
-    private readonly bool _telemetryEnabled;
-    private readonly string? _installId;
     private Activity? _currentActivity;
 
     /// <summary>
@@ -21,13 +19,7 @@ internal sealed class Tracer : ITracer
     /// </summary>
     internal static bool SuppressForInvocation { get; set; }
 
-    public Tracer(bool telemetryEnabled = false, string? installId = null)
-    {
-        _telemetryEnabled = telemetryEnabled;
-        _installId = installId;
-    }
-
-    private bool IsActive => _telemetryEnabled && !SuppressForInvocation;
+    private bool IsActive => telemetryEnabled && !SuppressForInvocation;
 
     public void Log(string message, TraceEventType type) => AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[underline red]{type}:[/]  {message}");
 
@@ -44,9 +36,9 @@ internal sealed class Tracer : ITracer
             _currentActivity?.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
             _currentActivity?.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());
             _currentActivity?.SetTag("dgtp.version", DgtpActivitySource.Instance.Version);
-            if (_installId != null)
+            if (installId != null)
             {
-                _currentActivity?.SetTag("dgtp.install_id", _installId);
+                _currentActivity?.SetTag("dgtp.install_id", installId);
             }
         }
     }

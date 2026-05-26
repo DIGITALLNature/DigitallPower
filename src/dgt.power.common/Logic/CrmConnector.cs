@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -9,7 +10,7 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal class CrmConnector: IConnector
+internal partial class CrmConnector: IConnector
 {
     private readonly string _connectionString;
 
@@ -17,12 +18,12 @@ internal class CrmConnector: IConnector
 
     public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
     {
-        if (!Regex.IsMatch(_connectionString, "SkipDiscovery=True", RegexOptions.IgnoreCase))
+        if (!SkipDiscoveryRegex().IsMatch(_connectionString))
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
         }
 
-        if (!Regex.IsMatch(_connectionString, "RequireNewInstance=True", RegexOptions.IgnoreCase))
+        if (!RequireNewInstanceRegex().IsMatch(_connectionString))
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
         }
@@ -32,6 +33,7 @@ internal class CrmConnector: IConnector
         return GetOrganizationService(serviceClient);
     }
 
+    [SuppressMessage("Performance", "CA1859:Verwenden Sie nach Möglichkeit konkrete Typen, um die Leistung zu verbessern.")]
     private static IOrganizationServiceAsync2 GetOrganizationService(ServiceClient serviceClient)
     {
         if (!serviceClient.IsReady)
@@ -41,4 +43,9 @@ internal class CrmConnector: IConnector
 
         return serviceClient;
     }
+
+    [GeneratedRegex("SkipDiscovery=True", RegexOptions.IgnoreCase, "de-DE")]
+    private static partial Regex SkipDiscoveryRegex();
+    [GeneratedRegex("RequireNewInstance=True", RegexOptions.IgnoreCase, "de-DE")]
+    private static partial Regex RequireNewInstanceRegex();
 }
