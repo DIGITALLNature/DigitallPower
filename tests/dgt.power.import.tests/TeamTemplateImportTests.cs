@@ -27,7 +27,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         {
             LogicalName = TestEntity.EntityLogicalName,
             MetadataId = Guid.NewGuid(),
-            AutoCreateAccessTeams = true,
+            AutoCreateAccessTeams = true
         };
         _testEntityMetadata.SetSealedPropertyValue(nameof(_testEntityMetadata.ObjectTypeCode),
             TestEntity.EntityTypeCode);

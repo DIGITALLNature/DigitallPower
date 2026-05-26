@@ -34,7 +34,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .WithData(new[]
             {
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
+                existingBulkDeleteJob
             })
             .Build();
         await Assert.That(context.Execute(new ImportVerb
@@ -80,7 +80,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             {
                 FileName = WriteConfigurationArtifact(new BulkDeletes
                 {
-                    Deletes = new List<BulkDelete>(),
+                    Deletes = new List<BulkDelete>()
                 }).Name,
                 FileDir = ArtifactDirectory
             }
@@ -105,7 +105,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .WithData(new[]
             {
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
+                existingBulkDeleteJob
             })
             .Build();
         await Assert.That(context.Execute(new ImportVerb
@@ -138,7 +138,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .WithData(new[]
             {
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
+                existingBulkDeleteJob
             })
             .Build();
         await Assert.That(context.Execute(new ImportVerb
@@ -171,7 +171,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .WithData(new[]
             {
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
+                existingBulkDeleteJob
             })
             .Build();
         await Assert.That(context.Execute(new ImportVerb
@@ -214,7 +214,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "disabled-bulk-deletes.json",
-                FileDir = ResourceDirectory,
+                FileDir = ResourceDirectory
             }
         )).IsTrue();
 

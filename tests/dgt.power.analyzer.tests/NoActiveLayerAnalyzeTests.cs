@@ -40,7 +40,7 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
                     {
                         UserLocalizedLabel = new LocalizedLabel("Test Entity", 1031)
                     }
-                },
+                }
             })
             .Build();
     }

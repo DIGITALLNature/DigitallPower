@@ -23,7 +23,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedFlow = new Workflow(Guid.NewGuid())
         {
@@ -31,7 +31,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedFlow = new Workflow(Guid.NewGuid())
         {
@@ -39,7 +39,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -50,7 +50,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("empty.json"),
+            Config = GetResourcePath("empty.json")
         }).Succeed();
 
         var updatedDraftFlow = context.DataContext.WorkflowSet.Single(w => w.Id == draftFlow.Id);
@@ -76,7 +76,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedFlow = new Workflow(Guid.NewGuid())
         {
@@ -84,7 +84,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedFlow = new Workflow(Guid.NewGuid())
         {
@@ -92,7 +92,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -103,7 +103,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("flows-deactivate.json"),
+            Config = GetResourcePath("flows-deactivate.json")
         }).Succeed();
 
         var updatedDraftFlow = context.DataContext.WorkflowSet.Single(w => w.Id == draftFlow.Id);
@@ -127,27 +127,27 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
         {
             Attributes = new AttributeCollection
             {
-                { SystemUser.LogicalNames.FullName, "Current Owner" },
+                { SystemUser.LogicalNames.FullName, "Current Owner" }
             },
-            DomainName = "current@owner.com",
+            DomainName = "current@owner.com"
         };
         var defaultOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Default Owner" },
-                { SystemUser.LogicalNames.DomainName, "default@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "default@owner.com" }
             },
-            DomainName = "default@owner.com",
+            DomainName = "default@owner.com"
         };
         var flowOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Flow Owner" },
-                { SystemUser.LogicalNames.DomainName, "flow@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "flow@owner.com" }
             },
-            DomainName = "flow@owner.com",
+            DomainName = "flow@owner.com"
         };
 
         var currentToDefaultFlow = new Workflow(Guid.NewGuid())
@@ -157,7 +157,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToFlowFlow = new Workflow(Guid.NewGuid())
         {
@@ -166,7 +166,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentSpecifiedFlow = new Workflow(Guid.NewGuid())
         {
@@ -175,7 +175,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentFallbackFlow = new Workflow(Guid.NewGuid())
         {
@@ -184,7 +184,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToDefaultSpecifiedFlow = new Workflow(Guid.NewGuid())
         {
@@ -193,7 +193,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
 
         var context = GetBuilder()
@@ -209,7 +209,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("flows-owner.json"),
+            Config = GetResourcePath("flows-owner.json")
         }).Succeed();
 
         var updatedCurrentToDefaultFlow = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultFlow.Id);
@@ -237,11 +237,11 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "match",
+            UniqueName = "match"
         };
         var otherSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "other",
+            UniqueName = "other"
         };
 
         var flowInMatchingSolution = new Workflow(Guid.NewGuid())
@@ -250,7 +250,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var flowInOtherSolution = new Workflow(Guid.NewGuid())
         {
@@ -258,7 +258,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
 
         var matchingComponent = new SolutionComponent(Guid.NewGuid())
@@ -266,16 +266,16 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, matchingSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, flowInMatchingSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, flowInMatchingSolution.Id }
+            }
         };
         var otherComponent = new SolutionComponent(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, otherSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, flowInOtherSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, flowInOtherSolution.Id }
+            }
         };
 
         var context = GetBuilder()
@@ -289,7 +289,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath(config),
+            Config = GetResourcePath(config)
         }).Succeed();
 
         var matchingFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInMatchingSolution.Id);
@@ -310,22 +310,22 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     {
         var matchingPublisher = new Publisher(Guid.NewGuid())
         {
-            UniqueName = "matchingPublisher",
+            UniqueName = "matchingPublisher"
         };
         var otherPublisher = new Publisher(Guid.NewGuid())
         {
-            UniqueName = "otherPublisher",
+            UniqueName = "otherPublisher"
         };
 
         var matchingSolution = new Solution(Guid.NewGuid())
         {
             UniqueName = "matchingSolution",
-            PublisherId = matchingPublisher.ToEntityReference(),
+            PublisherId = matchingPublisher.ToEntityReference()
         };
         var otherSolution = new Solution(Guid.NewGuid())
         {
             UniqueName = "otherSolution",
-            PublisherId = otherPublisher.ToEntityReference(),
+            PublisherId = otherPublisher.ToEntityReference()
         };
 
         var flowInMatchingSolution = new Workflow(Guid.NewGuid())
@@ -334,7 +334,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var flowInOtherSolution = new Workflow(Guid.NewGuid())
         {
@@ -342,7 +342,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Category = new OptionSetValue(category),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
 
         var matchingComponent = new SolutionComponent(Guid.NewGuid())
@@ -350,16 +350,16 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, matchingSolution.ToEntityReference() },
-                { SolutionComponent.LogicalNames.ObjectId, flowInMatchingSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, flowInMatchingSolution.Id }
+            }
         };
         var otherComponent = new SolutionComponent(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, otherSolution.ToEntityReference() },
-                { SolutionComponent.LogicalNames.ObjectId, flowInOtherSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, flowInOtherSolution.Id }
+            }
         };
 
         var context = GetBuilder()
@@ -375,7 +375,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath(config),
+            Config = GetResourcePath(config)
         }).Succeed();
 
         var matchingFlow = context.DataContext.WorkflowSet.Single(w => w.Id == flowInMatchingSolution.Id);

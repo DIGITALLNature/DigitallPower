@@ -34,7 +34,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
-                    FileDir = ArtifactDirectory,
+                    FileDir = ArtifactDirectory
                 }
             )).IsTrue();
 
@@ -72,11 +72,11 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
         {
             Name = "Rule1 Draft",
             StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Draft),
-            StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft),
+            StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft)
         };
         var queue = new Queue(Guid.Parse("469005c9-ca23-4d53-a1ae-f909c7863f6b"))
         {
-            Name = "Queue 1",
+            Name = "Queue 1"
         };
         var draftItem1 = new RoutingRuleItem(Guid.Parse("da6d62aa-b358-49af-b07a-2269919a0a97"))
         {
@@ -95,7 +95,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
             {
                 Name = "Rule1 Draft",
                 StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Draft),
-                StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft),
+                StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft)
             }.ToEntityReference(),
             AssignObjectId = user.ToEntityReference()
         };
@@ -103,11 +103,11 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
         {
             Name = "Rule2 Active",
             StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Active),
-            StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active),
+            StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active)
         };
         var team = new Team(Guid.NewGuid())
         {
-            Name = "Team 1",
+            Name = "Team 1"
         };
         var activeItem1 = new RoutingRuleItem(Guid.Parse("52afc222-fb8b-46e6-856f-9e07618b91c7"))
         {
@@ -116,7 +116,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
             {
                 Name = "Rule2 Active",
                 StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Active),
-                StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active),
+                StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active)
             }.ToEntityReference(),
             AssignObjectId = new EntityReference(team.LogicalName, team.Id)
             {
@@ -146,7 +146,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
             ).Build().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
 

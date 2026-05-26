@@ -352,8 +352,8 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
             TopCount = 1,
             Criteria = new FilterExpression(LogicalOperator.And)
             {
-                Conditions = { new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, username) },
-            },
+                Conditions = { new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, username) }
+            }
         };
 
         user = Connection.RetrieveMultiple(query).Entities.Cast<SystemUser>().SingleOrDefault();

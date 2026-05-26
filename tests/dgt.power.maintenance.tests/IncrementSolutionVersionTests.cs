@@ -101,7 +101,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Minor = true,
+                Minor = true
             })
             .Succeed();
 
@@ -126,7 +126,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Build = true,
+                Build = true
             })
             .Succeed();
 
@@ -151,7 +151,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Revision = true,
+                Revision = true
             })
             .Succeed();
 
@@ -175,7 +175,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
         await context
             .Execute(new IncrementSolutionVersionSettings
             {
-                Solution = solution.UniqueName,
+                Solution = solution.UniqueName
             })
             .Succeed();
 

@@ -59,7 +59,7 @@ namespace dgt.power.codegeneration.Services
                 WorkflowName = workflowName,
                 EntityName = string.IsNullOrWhiteSpace(clientStep.Description) ? mainEntityName : clientStep.Description,
                 ClassId = clientStep.ClassId?.ToUpperInvariant() ?? string.Empty,
-                DataFieldName = clientStep.DataFieldName ?? string.Empty,
+                DataFieldName = clientStep.DataFieldName ?? string.Empty
             };
         }
 

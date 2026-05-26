@@ -43,7 +43,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         var args = new CodeGenerationVerb
         {
             Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory,
+            TargetDirectory = ArtifactDirectory
         };
 
         await Assert.That(context
@@ -67,7 +67,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         var args = new CodeGenerationVerb
         {
             Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory,
+            TargetDirectory = ArtifactDirectory
         };
 
         await Assert.That(context
@@ -85,7 +85,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         var args = new CodeGenerationVerb
         {
             Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory,
+            TargetDirectory = ArtifactDirectory
         };
         Directory.CreateDirectory(GetArtifactPath(args.Folder));
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";

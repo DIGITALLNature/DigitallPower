@@ -48,7 +48,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
 
@@ -63,7 +63,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
 

@@ -20,17 +20,17 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
         var calendar1 = new Calendar(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
         {
             Name = "Test Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule),
+            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
         };
         var innerCalendar = new Calendar(Guid.NewGuid())
         {
             Name = "Inner Customer Service Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.InnerCalendarType),
+            Type = new OptionSetValue(Calendar.Options.Type.InnerCalendarType)
         };
         var calendar2 = new Calendar(Guid.NewGuid())
         {
             Name = "Customer Service Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.CustomerService),
+            Type = new OptionSetValue(Calendar.Options.Type.CustomerService)
 
         };
         return GetBuilder()
@@ -40,7 +40,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 ReferencingEntity = Calendar.EntityLogicalName,
                 ReferencingAttribute = Calendar.LogicalNames.CalendarId,
                 ReferencedEntity = CalendarRule.EntityLogicalName,
-                ReferencedAttribute = CalendarRule.LogicalNames.CalendarId,
+                ReferencedAttribute = CalendarRule.LogicalNames.CalendarId
             })
             .WithData(new Entity[]
             {
@@ -125,7 +125,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>(GetTestFileName());
@@ -140,7 +140,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>("calendar.json");

@@ -29,7 +29,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
         await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new SecureConfig()).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsFalse();
 
@@ -41,7 +41,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
         pluginStep.SdkMessageProcessingStepSecureConfigId = securePluginConfig.ToEntityReference();
         var secureConfig = new SecureConfig
         {
-            PluginStep = pluginStep.Name!,
+            PluginStep = pluginStep.Name!
         };
         var context = GetBuilder()
             .WithData(pluginStep)
@@ -55,7 +55,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
             {
                 InlineData = secret,
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsFalse();
 
@@ -76,7 +76,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
         pluginStep.SdkMessageProcessingStepSecureConfigId = securePluginConfig.ToEntityReference();
         var secureConfig = new SecureConfig
         {
-            PluginStep = pluginStep.Name!,
+            PluginStep = pluginStep.Name!
         };
         var context = GetBuilder()
             .WithData(pluginStep)
@@ -88,7 +88,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
             {
                 InlineData = secret,
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
 
@@ -116,7 +116,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
         await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
 
@@ -146,7 +146,7 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
         await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsFalse();
 

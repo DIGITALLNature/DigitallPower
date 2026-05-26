@@ -38,7 +38,7 @@ namespace dgt.power.codegeneration.Services
                 FormTypeName = FormatFormType(GetFormType(formType)),
                 FormUniqueName = formUniqueName,
                 FormEntityName = entityLogicalName,
-                FormId = formId,
+                FormId = formId
             };
 
             var tabs = doc.SelectNodes("/form/tabs/tab[*]");
@@ -95,7 +95,7 @@ namespace dgt.power.codegeneration.Services
             {
                 var tabDetail = new TabDetail()
                 {
-                    TabName = tabDetailName,
+                    TabName = tabDetailName
                 };
                 var columns = tab.SelectNodes(".//columns/column[*]");
                 var sectionList = new List<string>();
@@ -203,7 +203,7 @@ namespace dgt.power.codegeneration.Services
                 formDetail.Attributes.Add(new FormAttributeData
                 {
                     DataFieldName = fieldName,
-                    IsOptionalAttribute = false,
+                    IsOptionalAttribute = false
                 });
             }
             if (controlId != null)
@@ -265,7 +265,7 @@ namespace dgt.power.codegeneration.Services
                 IsDisabled = isDisabled,
                 ClassId = MapClassId(classId),
                 CustomControlClass = GetCustomControlClass(doc, classId, uniqueId),
-                RepeatedControl = 0,
+                RepeatedControl = 0
             };
         }
 
@@ -285,7 +285,7 @@ namespace dgt.power.codegeneration.Services
                 {
                     ControlName = controlId,
                     QuickViewFormId = quickViewFormId,
-                    QuickViewFormClass = "Xrm.Controls.QuickFormControl",
+                    QuickViewFormClass = "Xrm.Controls.QuickFormControl"
                 };
                 formDetail.QuickViews.Add(quickControl);
             }
@@ -333,7 +333,7 @@ namespace dgt.power.codegeneration.Services
                         formDetail.Attributes.Add(new FormAttributeData
                         {
                             DataFieldName = headerFieldName,
-                            IsOptionalAttribute = false,
+                            IsOptionalAttribute = false
                         });
                     }
                 }
@@ -360,7 +360,7 @@ namespace dgt.power.codegeneration.Services
                     formDetail.Attributes.Add(new FormAttributeData
                     {
                         DataFieldName = bpfControlFieldName,
-                        IsOptionalAttribute = true,
+                        IsOptionalAttribute = true
                     });
                     
                 }

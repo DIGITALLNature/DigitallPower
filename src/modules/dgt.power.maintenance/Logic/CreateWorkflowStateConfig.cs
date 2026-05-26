@@ -130,7 +130,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     Actions = [],
                     BusinessRules = [],
                     SolutionFilter = solutions,
-                    PublisherFilter = publishers,
+                    PublisherFilter = publishers
                 };
 
                 // collect modern flow and legacy workflow configs (both identified by name)
@@ -144,7 +144,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                         config.Flows.TryAdd(flow.Name!, new WorkflowConfig.FlowConfig
                         {
                             Disabled = disabled,
-                            Owner = owner,
+                            Owner = owner
                         });
                     }
                 }
@@ -160,7 +160,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                         config.Actions.TryAdd(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
                         {
                             Disabled = disabled,
-                            Owner = owner,
+                            Owner = owner
                         });
                     }
                 }
@@ -180,7 +180,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                             tableEntries.TryAdd(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
                             {
                                 Disabled = disabled,
-                                Owner = owner,
+                                Owner = owner
                             });
                         }
                     }

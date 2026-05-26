@@ -30,7 +30,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
         await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new RoutingRuleConfigs()).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsFalse();
 
@@ -254,7 +254,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             AssignObjectId = new EntityReference(team.LogicalName, team.Id)
             {
                 Name = team.Name
-            },
+            }
         };
 
         var userRuleItem = new dataverse.RoutingRuleItem(Guid.NewGuid())
@@ -265,7 +265,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             AssignObjectId = new EntityReference(user.LogicalName, user.Id)
             {
                 Name = user.DomainName
-            },
+            }
         };
 
         return (routingRule, owner, queueRuleItem, teamRuleItem, userRuleItem, new Entity[]

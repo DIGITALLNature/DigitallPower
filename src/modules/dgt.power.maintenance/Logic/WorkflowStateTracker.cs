@@ -39,7 +39,7 @@ public class WorkflowStateTracker
             Workflow.Options.Category.Action => ":gear: Action",
             Workflow.Options.Category.BusinessProcessFlow => ":bookmark: Business Process Flow",
             Workflow.Options.Category.BusinessRule => ":scroll: Business Rule",
-            _ => workflow.Category?.Value.ToString(CultureInfo.InvariantCulture),
+            _ => workflow.Category?.Value.ToString(CultureInfo.InvariantCulture)
         };
 
         workflow.TryGetAttributeValue<AliasedValue>("owner.domainname", out var ownerName);
@@ -110,7 +110,7 @@ public class WorkflowStateTracker
                 workflowChange.CategoryName?.EscapeMarkup() ?? "[grey italic]null[/]",
                 $"[{tableNameFormat}]{workflowChange.TableName.EscapeMarkup()}[/]",
                 disabledState,
-                owner,
+                owner
             };
             table.AddRow(row);
         }
@@ -144,7 +144,7 @@ internal class WorflowChange
             (_, false, true) => $"[red]Enabled[/] [strikethrough grey]{Emoji.Known.RightArrow} Enabled[/]",
             (true, null, null) => "[blue]Disabled[/]",
             (false, null, null) => "[blue]Enabled[/]",
-            _ => "[orange3]Unknown[/]",
+            _ => "[orange3]Unknown[/]"
         };
     }
 

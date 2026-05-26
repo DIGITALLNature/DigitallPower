@@ -107,7 +107,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 SchemaName = metadata.SchemaName,
                 LogicalName = metadata.LogicalName,
                 LanguageCode = languageCode,
-                Attributes = FilterEntityMetadataAttributes(metadata),
+                Attributes = FilterEntityMetadataAttributes(metadata)
             };
             var context = new TemplateContext(viewModel, _templateOptions);
             var content = liquidTemplate.Render(context);
@@ -196,7 +196,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             entityWithMetadataForms.Add(new EntityWithMetadataFormData()
             {
                 EntityMetadata = entityMetadata,
-                ParsedFormDetail = forms,
+                ParsedFormDetail = forms
             });
         }
         return entityWithMetadataForms;
@@ -382,7 +382,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             Name = formname,
             FormDetail = formDetail.Value,
             Attributes = FilterEntityMetadataAttributes(metadata),
-            BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList(),
+            BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList()
         };
         var context = new TemplateContext(viewModel, _templateOptions);
         return liquidTemplate.Render(context);
