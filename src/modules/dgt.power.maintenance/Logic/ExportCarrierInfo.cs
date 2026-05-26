@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -30,7 +30,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         _fileService = fileService;
     }
 
-    protected override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
+    protected override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
     {
         var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
@@ -69,7 +69,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         if (isSuccessfulOld)
         {
             carriers = DataContext.Ec4uCarrierSet
-                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
+                .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.Ec4uCarTransportOrderNo)
                 .Select(x => new Ec4uCarrier
                 {
@@ -88,7 +88,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         if(isSuccessfulDgt)
         {
             carriers = DataContext.DgtCarrierSet
-                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
+                .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.DgtTransportOrderNo)
                 .Select(x => new Ec4uCarrier
                 {

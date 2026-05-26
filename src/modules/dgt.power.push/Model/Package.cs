@@ -42,4 +42,8 @@ public class Package : IEquatable<Package>
                Version == other.Version &&
                Content == other.Content;
     }
+
+    public override bool Equals(object? obj) => Equals(obj as Package);
+
+    public override int GetHashCode() => HashCode.Combine(Name, Version, Content);
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -659,17 +659,11 @@ public class SampleDataverse
         UniqueName = "xunit-solution"
     };
 
-    internal readonly SolutionComponent SolutionComponent1 = new SolutionComponent(Guid.NewGuid())
-    {
-    };
+    internal readonly SolutionComponent SolutionComponent1 = new SolutionComponent(Guid.NewGuid());
 
-    internal readonly SolutionComponent SolutionComponent2 = new SolutionComponent(Guid.NewGuid())
-    {
-    };
+    internal readonly SolutionComponent SolutionComponent2 = new SolutionComponent(Guid.NewGuid());
 
-    internal readonly SolutionComponent SolutionComponentModernFlow = new SolutionComponent(Guid.NewGuid())
-    {
-    };
+    internal readonly SolutionComponent SolutionComponentModernFlow = new SolutionComponent(Guid.NewGuid());
 
     internal readonly Solution SolutionWorkflow = new Solution(Guid.NewGuid())
     {

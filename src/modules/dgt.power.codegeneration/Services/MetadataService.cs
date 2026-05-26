@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
@@ -202,7 +202,7 @@ public class MetadataService : IMetadataService
                     Entityname = ext.EntityName,
                     Type = ext.Type!.Split(':')[1].TrimEnd(')'),
                     IsOptional = false, // Not used for actions,
-                    IsOutput = ext.Direction == "Output" ? true : false
+                    IsOutput = ext.Direction == "Output"
                 };
 
                 switch (ext.Direction)

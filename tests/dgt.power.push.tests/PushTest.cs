@@ -7,7 +7,6 @@ using dgt.power.push.Logic;
 using dgt.power.push.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace dgt.power.push.tests;

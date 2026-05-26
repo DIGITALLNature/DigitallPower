@@ -103,7 +103,7 @@ public class WorkflowStateTracker
 
             var owner = workflowChange.GetOwnerText();
 
-            var row = new string[] {
+            var row = new[] {
                 status,
                 workflowChange.UniqueName?.EscapeMarkup() ?? "[grey italic]null[/]",
                 workflowChange.Name?.EscapeMarkup() ?? "[grey italic]null[/]",

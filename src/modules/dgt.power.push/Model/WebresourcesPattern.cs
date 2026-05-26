@@ -3,6 +3,4 @@
 
 namespace dgt.power.push.Model;
 
-internal record WebresourcesPattern(int Type, string FilePattern)
-{
-}
+internal record WebresourcesPattern(int Type, string FilePattern);

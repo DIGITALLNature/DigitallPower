@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.IO.IsolatedStorage;
@@ -10,7 +10,7 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.profile.tests.Base;
 
-public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCommand, TCommandSettings>, IDisposable
+public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCommand, TCommandSettings>
     where TCommandSettings : CommandSettings
     where TCommand : class, ICommand<TCommandSettings>
 {

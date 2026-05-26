@@ -191,7 +191,7 @@ public class TracerTests
         var action = new FakeAction();
 
         tracer.Start(action);
-        tracer.Exception(new InvalidOperationException("Something failed"), System.Diagnostics.TraceEventType.Error);
+        tracer.Exception(new InvalidOperationException("Something failed"), TraceEventType.Error);
         tracer.End(action, false);
 
         await Assert.That(stoppedActivities).Count().IsEqualTo(1);

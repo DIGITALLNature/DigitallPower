@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;

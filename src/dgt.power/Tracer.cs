@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -30,8 +30,7 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
         if (IsActive)
         {
             _currentActivity = DgtpActivitySource.Instance.StartActivity(
-                $"command.{action.GetType().Name}",
-                ActivityKind.Internal);
+                $"command.{action.GetType().Name}");
             _currentActivity?.SetTag("dgtp.command", action.GetType().Name);
             _currentActivity?.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
             _currentActivity?.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());

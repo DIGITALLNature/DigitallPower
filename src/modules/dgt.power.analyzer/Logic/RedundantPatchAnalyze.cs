@@ -46,6 +46,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
             AnsiConsole.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
+        var patches = GetPatchSolutions(context, parentSolutionId);
 
         var table = new Table();
         AnsiConsole.Live(Align.Center(table))
@@ -58,7 +59,6 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                 table.AddColumn("Suggestion");
 
                 ctx.Refresh();
-                var patches = GetPatchSolutions(context, parentSolutionId);
                 foreach (var patch in patches)
                 {
                     table.AddRow(patch.UniqueName, patch.FriendlyName, "", "", "Checking");

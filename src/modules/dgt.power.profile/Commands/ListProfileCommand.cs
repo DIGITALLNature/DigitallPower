@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -18,7 +18,7 @@ public class ListProfileCommand : Command<ProfileSettings>
 
     public ListProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
         var identities = _profileManager.LoadIdentities();
 

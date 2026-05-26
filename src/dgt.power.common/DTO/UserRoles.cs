@@ -3,6 +3,4 @@
 
 namespace dgt.power.dto;
 
-public sealed class UserRoles : List<UserRole>
-{
-}
+public sealed class UserRoles : List<UserRole>;

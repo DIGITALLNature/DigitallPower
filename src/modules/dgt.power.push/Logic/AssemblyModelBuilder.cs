@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Activities;
@@ -19,7 +19,7 @@ using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class AssemblyModelBuilder
+internal class AssemblyModelBuilder : IDisposable
 {
     private readonly DataContext _context;
 
@@ -94,7 +94,11 @@ internal class AssemblyModelBuilder
         {
             Directory.CreateDirectory(tempPath);
 
-            var files = reader.GetFiles().Where(f => !f.Contains("/System.") && !f.Contains("/Microsoft")  && f.EndsWith(".dll")).ToList();
+            var files = reader.GetFiles()
+                .Where(f => !f.Contains("/System.", StringComparison.Ordinal) &&
+                            !f.Contains("/Microsoft", StringComparison.Ordinal) &&
+                            f.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
             foreach (var file in files)
             {
@@ -104,7 +108,7 @@ internal class AssemblyModelBuilder
             }
 
 
-            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
             using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
 
             foreach (var nugetDlls in Directory.GetFiles(tempPath, "*.dll"))
@@ -817,10 +821,7 @@ internal class AssemblyModelBuilder
 
     private static IEnumerable<Type> GetLoadableTypes(System.Reflection.Assembly assembly)
     {
-        if (assembly == null)
-        {
-            throw new ArgumentNullException(nameof(assembly));
-        }
+        ArgumentNullException.ThrowIfNull(assembly);
 
         try
         {
@@ -842,6 +843,12 @@ internal class AssemblyModelBuilder
         }
 
         return result;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     #endregion

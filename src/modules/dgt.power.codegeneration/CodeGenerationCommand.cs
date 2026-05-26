@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -37,7 +37,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
         _metadataService = metadataService;
     }
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
         if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))

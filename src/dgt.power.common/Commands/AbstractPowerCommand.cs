@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +14,7 @@ public abstract class AbstractPowerCommand<TCommandSettings> : Command<TCommandS
 
     protected CommandContext? CommandContext { get; private set; }
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] TCommandSettings settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, TCommandSettings settings, CancellationToken cancellationToken)
     {
         CommandContext = context;
 

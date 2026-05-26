@@ -3,6 +3,4 @@
 
 namespace dgt.power.dto;
 
-public sealed class SlaConfigs : List<SlaConfig>
-{
-}
+public sealed class SlaConfigs : List<SlaConfig>;
