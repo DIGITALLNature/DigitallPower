@@ -91,7 +91,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(typescriptPath)).IsTrue();
-        await Assert.That(Directory.GetFileSystemEntries(typescriptPath)).Count().EqualTo(6); // There are 6 boiler plate files which will always be created
+        await Assert.That(Directory.GetFileSystemEntries(typescriptPath)).Count().IsEqualTo(6); // There are 6 boiler plate files which will always be created
         await Assert.That(File.Exists(existingFilePath)).IsFalse();
     }
 

@@ -102,7 +102,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(dotNetPath)).IsTrue();
-        await Assert.That(Directory.GetFileSystemEntries(dotNetPath)).Count().EqualTo(3); // SdkMessageNames.cs, Actions.cs, Context.cs
+        await Assert.That(Directory.GetFileSystemEntries(dotNetPath)).Count().IsEqualTo(3); // SdkMessageNames.cs, Actions.cs, Context.cs
         await Assert.That(File.Exists(existingFilePath)).IsFalse();
     }
 

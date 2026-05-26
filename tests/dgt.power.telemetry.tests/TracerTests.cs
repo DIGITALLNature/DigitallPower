@@ -35,7 +35,7 @@ public class TracerTests
 
         tracer.Start(action);
 
-        await Assert.That(activities).Count().EqualTo(1);
+        await Assert.That(activities).Count().IsEqualTo(1);
         await Assert.That(activities[0].OperationName).IsEqualTo("command.FakeAction");
 
         // Cleanup
@@ -107,8 +107,8 @@ public class TracerTests
         tracer.Start(action);
         tracer.End(action, true);
 
-        await Assert.That(stoppedActivities).Count().EqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsTrue();
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
+        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(true);
         await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Ok);
     }
 
@@ -124,8 +124,8 @@ public class TracerTests
         tracer.Start(action);
         tracer.End(action, false);
 
-        await Assert.That(stoppedActivities).Count().EqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsFalse();
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
+        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(false);
         await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Error);
     }
 
@@ -142,8 +142,8 @@ public class TracerTests
         var result = tracer.NotConfigured(action);
 
         await Assert.That(result).IsFalse();
-        await Assert.That(stoppedActivities).Count().EqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsFalse();
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
+        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(false);
     }
 
     [Test]
@@ -159,8 +159,8 @@ public class TracerTests
         var result = tracer.Skipped(action);
 
         await Assert.That(result).IsTrue();
-        await Assert.That(stoppedActivities).Count().EqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsTrue();
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
+        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(true);
     }
 
     [Test]
@@ -194,7 +194,7 @@ public class TracerTests
         tracer.Exception(new InvalidOperationException("Something failed"), System.Diagnostics.TraceEventType.Error);
         tracer.End(action, false);
 
-        await Assert.That(stoppedActivities).Count().EqualTo(1);
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
         await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Error);
         await Assert.That(stoppedActivities[0].StatusDescription).IsEqualTo("Something failed");
     }

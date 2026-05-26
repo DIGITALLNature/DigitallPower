@@ -53,7 +53,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";
         await Assert.That(Directory.Exists(metadataDirectoryPath)).IsTrue();
         var files = Directory.GetFiles(metadataDirectoryPath);
-        await Assert.That(files).Count().EqualTo(1);
+        await Assert.That(files).Count().IsEqualTo(1);
         var generatedAccountMetadata = GetEntityMetadataArtifact(accountMetadata.LogicalName);
         await Assert.That(generatedAccountMetadata.EntitySetName).IsEqualTo(accountMetadata.EntitySetName);
     }
