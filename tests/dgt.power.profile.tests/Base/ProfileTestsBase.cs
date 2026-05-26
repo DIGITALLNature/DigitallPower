@@ -52,5 +52,6 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
         _storage.Remove();
         _storage.Dispose();
         base.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

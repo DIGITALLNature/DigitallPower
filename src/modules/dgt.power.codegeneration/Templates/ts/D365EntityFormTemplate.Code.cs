@@ -74,7 +74,7 @@ namespace dgt.power.codegeneration.Templates.ts
                 .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
                 .Where(a => FormDetail.Attributes.Any(x => x.DataFieldName == a.LogicalName));
 
-            if (_cfg.EntityFormFilters.Any())
+            if (_cfg.EntityFormFilters.Count() > 0)
             {
                 var match = _cfg.EntityFormFilters.FirstOrDefault(e => e.EntityForm == Form);
                 if (match?.Attributes != null && match.Attributes.Length > 0)
@@ -98,7 +98,7 @@ namespace dgt.power.codegeneration.Templates.ts
                 .Select(o => new Templates.OptionField(o, _cfg.UseBaseLanguage, _systemLanguage));
 
 
-            if (_cfg.EntityFormFilters.Any())
+            if (_cfg.EntityFormFilters.Count() > 0)
             {
                 var match = _cfg.EntityFormFilters.FirstOrDefault(e => e.EntityForm == Form);
                 if (match?.Optionsets != null && match.Optionsets.Length > 0)
@@ -112,7 +112,7 @@ namespace dgt.power.codegeneration.Templates.ts
 
         private void FilterTabs()
         {
-            if (_cfg.EntityFormFilters.Any())
+            if (_cfg.EntityFormFilters.Count() > 0)
             {
                 var match = _cfg.EntityFormFilters.FirstOrDefault(e => e.EntityForm == Form);
                 if (match?.Tabs != null && match.Tabs.Length > 0)
@@ -128,7 +128,7 @@ namespace dgt.power.codegeneration.Templates.ts
 
         private void FilterGrids()
         {
-            if (_cfg.EntityFormFilters.Any())
+            if (_cfg.EntityFormFilters.Count() > 0)
             {
                 var match = _cfg.EntityFormFilters.FirstOrDefault(e => e.EntityForm == Form);
                 if (match?.Grids != null && match.Grids.Length > 0)
@@ -146,7 +146,7 @@ namespace dgt.power.codegeneration.Templates.ts
         {
             var filter = sections.AsEnumerable();
 
-            if (_cfg.EntityFormFilters.Any())
+            if (_cfg.EntityFormFilters.Count() > 0)
             {
                 var match = _cfg.EntityFormFilters.FirstOrDefault(e => e.EntityForm == Form);
                 if (match?.Sections != null && match.Sections.Length > 0)

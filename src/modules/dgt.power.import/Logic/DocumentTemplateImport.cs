@@ -40,7 +40,7 @@ public sealed class DocumentTemplateImport : BaseImport
         }
 
         //anything to do?
-        if (!templates.Templates.Any())
+        if (templates.Templates.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

@@ -97,5 +97,7 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
         {
             Directory.Delete(artifactDirectory, true);
         }
+
+        GC.SuppressFinalize(this);
     }
 }

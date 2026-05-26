@@ -49,7 +49,7 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
                     var step = SearchPowerFxPluginStep(config.Name,config.MessageName);
 
                     ctx.Status($"Build filter for {config.Name}");
-                    var filter = config.FilterAttributes.Any()
+                    var filter = config.FilterAttributes.Length > 0
                         ? string.Join(",", config.FilterAttributes.Order()): null;
 
                     step.FilteringAttributesField = filter;

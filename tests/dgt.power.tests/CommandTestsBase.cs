@@ -115,9 +115,9 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
         var artifactDirectory = ArtifactDirectory.TrimEnd('/');
         if (Directory.Exists(artifactDirectory))
         {
-
             Directory.Delete(artifactDirectory, true);
         }
 
+        GC.SuppressFinalize(this);
     }
 }

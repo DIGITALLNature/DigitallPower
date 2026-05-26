@@ -20,7 +20,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
         private IEnumerable<(string Name, string Message)> Filter(IEnumerable<(string Name, string Message)> sdkMessages)
         {
-            if (_cfg.SdkMessageFilters != null && _cfg.SdkMessageFilters.Any())
+            if (_cfg.SdkMessageFilters != null && _cfg.SdkMessageFilters.Count() > 0)
             {
                 return sdkMessages.Where(t => _cfg.SdkMessageFilters.Contains(t.Item2));
             }

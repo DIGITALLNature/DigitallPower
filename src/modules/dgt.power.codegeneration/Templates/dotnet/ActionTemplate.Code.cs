@@ -25,7 +25,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
             return ConvertCaseString(phrase, Case.CamelCase);
         }
 
-        internal string PascalCase(string phrase)
+        internal static string PascalCase(string phrase)
         {
             return ConvertCaseString(phrase, Case.PascalCase);
         }
