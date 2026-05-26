@@ -91,7 +91,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
         await Assert.That(updatedCalendars.Name).IsEqualTo(existingCalendar.Name);
 
         var calendarRules = context.Get<CalendarRule>(x => x.CalendarId.Id == calendarToBeUpdated.CalendarId);
-        await Assert.That(calendarRules).Count().EqualTo(calendarToBeUpdated.Rules.Count);
+        await Assert.That(calendarRules).Count().IsEqualTo(calendarToBeUpdated.Rules.Count);
 
         var innerCalendar = context.GetById<Calendar>(innerCalendarRule.InnerCalendar.CalendarId);
         await Assert.That(innerCalendar.Name).IsEqualTo(innerCalendarRule.InnerCalendar.Name);
@@ -117,7 +117,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
         await Assert.That(createdCalendar.Name).IsEqualTo(calendarToBeCreated.Name);
 
         var calendarRules = context.Get<CalendarRule>(x => x.CalendarId.Id == createdCalendar.Id);
-        await Assert.That(calendarRules).Count().EqualTo(calendarToBeCreated.Rules.Count);
+        await Assert.That(calendarRules).Count().IsEqualTo(calendarToBeCreated.Rules.Count);
 
         var innerCalendar = context.GetById<Calendar>(innerCalendarRule.InnerCalendar.CalendarId);
         await Assert.That(innerCalendar.Name).IsEqualTo(innerCalendarRule.InnerCalendar.Name);

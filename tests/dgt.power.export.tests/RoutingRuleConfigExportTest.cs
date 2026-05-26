@@ -39,12 +39,12 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
             )).IsTrue();
 
         var rules = GetConfigurationTestArtifact<List<RoutingRuleConfig>>(GetTestFileName());
-        await Assert.That(rules).Count().EqualTo(2);
+        await Assert.That(rules).Count().IsEqualTo(2);
 
 
         var rule1 = rules.Single(r => r.RoutingRuleId == draftRule.Id);
         await Assert.That(rule1.Active).IsFalse();
-        await Assert.That(rule1.RoutingRuleItems).Count().EqualTo(2);
+        await Assert.That(rule1.RoutingRuleItems).Count().IsEqualTo(2);
 
         var item1Rule1 = rule1.RoutingRuleItems.Single(rri => rri.RoutingRuleItemId == draftItem1.Id);
         await Assert.That(item1Rule1.MsdynRouteto).IsEqualTo(RoutingRuleItem.Options.MsdynRouteto.Queue);
@@ -57,7 +57,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
 
         var rule2 = rules.Single(r => r.RoutingRuleId == activeRule.Id);
         await Assert.That(rule2.Active).IsTrue();
-        await Assert.That(rule2.RoutingRuleItems).Count().EqualTo(1);
+        await Assert.That(rule2.RoutingRuleItems).Count().IsEqualTo(1);
 
         var item1Rule2 = rule2.RoutingRuleItems.Single(rri => rri.RoutingRuleItemId == activeItem1.Id);
         await Assert.That(item1Rule2.MsdynRouteto).IsEqualTo(RoutingRuleItem.Options.MsdynRouteto.User_Team);
@@ -151,11 +151,11 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
         )).IsTrue();
 
         var rules = GetConfigurationTestArtifact<List<RoutingRuleConfig>>("routingruleconfig.json");
-        await Assert.That(rules).Count().EqualTo(2);
+        await Assert.That(rules).Count().IsEqualTo(2);
 
         var rule1 = rules.Single(r => r.RoutingRuleId == draftRule.Id);
         await Assert.That(rule1.Active).IsFalse();
-        await Assert.That(rule1.RoutingRuleItems).Count().EqualTo(2);
+        await Assert.That(rule1.RoutingRuleItems).Count().IsEqualTo(2);
 
         var item1Rule1 = rule1.RoutingRuleItems.Single(rri => rri.RoutingRuleItemId == draftItem1.Id);
         await Assert.That(item1Rule1.MsdynRouteto).IsEqualTo(RoutingRuleItem.Options.MsdynRouteto.Queue);
@@ -168,7 +168,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
 
         var rule2 = rules.Single(r => r.RoutingRuleId == activeRule.Id);
         await Assert.That(rule2.Active).IsTrue();
-        await Assert.That(rule2.RoutingRuleItems).Count().EqualTo(1);
+        await Assert.That(rule2.RoutingRuleItems).Count().IsEqualTo(1);
 
         var item1Rule2 = rule2.RoutingRuleItems.Single(rri => rri.RoutingRuleItemId == activeItem1.Id);
         await Assert.That(item1Rule2.MsdynRouteto).IsEqualTo(RoutingRuleItem.Options.MsdynRouteto.User_Team);

@@ -76,7 +76,7 @@ public class QueueExportTest : ExportTestBase<QueueExport>
             .Execute(new ExportVerb {FileName = GetTestFileName(), FileDir = ArtifactDirectory,}
             )).IsTrue();
         var queues = GetConfigurationTestArtifact<Queues>(GetTestFileName());
-        await Assert.That(queues.QueuesToTransport).Count().EqualTo(3);
+        await Assert.That(queues.QueuesToTransport).Count().IsEqualTo(3);
     }
 
 
@@ -86,6 +86,6 @@ public class QueueExportTest : ExportTestBase<QueueExport>
         await Assert.That(GetContext().Execute(new ExportVerb {FileName = string.Empty, FileDir = ArtifactDirectory,}
         )).IsTrue();
         var queues = GetConfigurationTestArtifact<Queues>("queue.json");
-        await Assert.That(queues.QueuesToTransport).Count().EqualTo(3);
+        await Assert.That(queues.QueuesToTransport).Count().IsEqualTo(3);
     }
 }

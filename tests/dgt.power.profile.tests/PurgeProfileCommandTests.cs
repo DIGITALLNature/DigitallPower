@@ -15,7 +15,7 @@ public class PurgeProfileCommandTests : ProfileTestsBase<PurgeProfileCommand, Pr
     public async Task ShouldPurgeAllProfiles()
     {
         AddIdentity("some", "some");
-        await Assert.That(GetIdentities().Infos).Count().EqualTo(1);
+        await Assert.That(GetIdentities().Infos).Count().IsEqualTo(1);
 
         await GetContext().Execute(new ProfileSettings()).Succeed();
 

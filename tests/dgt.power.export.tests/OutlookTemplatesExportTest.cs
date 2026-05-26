@@ -47,8 +47,8 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
                 }
             )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>(GetTestFileName());
-        await Assert.That(templates.DisabledOutlookTemplates).Count().EqualTo(1);
-        await Assert.That(templates.OutlookTemplates).Count().EqualTo(1);
+        await Assert.That(templates.DisabledOutlookTemplates).Count().IsEqualTo(1);
+        await Assert.That(templates.OutlookTemplates).Count().IsEqualTo(1);
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
             }
         )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>("outlooktemplate.json");
-        await Assert.That(templates.DisabledOutlookTemplates).Count().EqualTo(1);
-        await Assert.That(templates.OutlookTemplates).Count().EqualTo(1);
+        await Assert.That(templates.DisabledOutlookTemplates).Count().IsEqualTo(1);
+        await Assert.That(templates.OutlookTemplates).Count().IsEqualTo(1);
     }
 }

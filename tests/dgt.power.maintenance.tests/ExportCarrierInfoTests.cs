@@ -113,7 +113,7 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
 
         var carriers = GetConfigurationTestArtifact<Carriers>(settings.FileName);
 
-        await Assert.That(carriers).Count().EqualTo(2);
+        await Assert.That(carriers).Count().IsEqualTo(2);
         await Assert.That(carriers.SequenceEqual(carriers.OrderBy(x => x.Order))).IsTrue();
         await Assert.That(carriers.Any(x =>
             x.UniqueName == carrierSolution1.UniqueName

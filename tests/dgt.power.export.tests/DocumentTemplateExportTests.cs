@@ -78,7 +78,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
 
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
-        await Assert.That(templates.Templates).Count().EqualTo(2);
+        await Assert.That(templates.Templates).Count().IsEqualTo(2);
 
         foreach (var template in templates.Templates)
         {
@@ -117,7 +117,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
 
-        await Assert.That(templates.Templates).Count().EqualTo(2);
+        await Assert.That(templates.Templates).Count().IsEqualTo(2);
 
         foreach (var template in templates.Templates)
         {
@@ -137,7 +137,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
             )).IsTrue();
         var templates =
             GetConfigurationTestArtifact<DocumentTemplates>(GetTestFileName());
-        await Assert.That(templates.Templates).Count().EqualTo(4);
+        await Assert.That(templates.Templates).Count().IsEqualTo(4);
 
         foreach (var template in templates.Templates) {
             await Assert.That(template.ForceUpdate).IsTrue();
@@ -154,7 +154,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
             }
         )).IsTrue();
         var templates = GetConfigurationTestArtifact<DocumentTemplates>("documenttemplate.json");
-        await Assert.That(templates.Templates).Count().EqualTo(4);
+        await Assert.That(templates.Templates).Count().IsEqualTo(4);
 
         foreach (var template in templates.Templates)
         {
