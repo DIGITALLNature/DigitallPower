@@ -22,6 +22,9 @@ public class CodeGenerationCommandTests
         var dotNetWorker = Substitute.For<DotNetWorker>(null!, null!, null!, null!);
         var typescriptWorker = Substitute.For<TypescriptWorker>(null!, null!, null!, null!);
         var metadataWorker = Substitute.For<MetadataWorker>(null!, null!, null!, null!);
+        dotNetWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
+        typescriptWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
+        metadataWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
         var metadataService = Substitute.For<IMetadataService>();
         _command = new CodeGenerationCommand(tracer, configResolver,
             dotNetWorker, typescriptWorker, metadataWorker, metadataService);
