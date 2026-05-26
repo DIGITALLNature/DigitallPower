@@ -6,7 +6,6 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
-using NSubstitute;
 using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.tests;
@@ -19,15 +18,20 @@ public class CodeGenerationCommandTests
     {
         var tracer = new TestTracer();
         var configResolver = new ConfigResolver(tracer);
-        var dotNetWorker = Substitute.For<DotNetWorker>(null!, null!, null!, null!);
-        var typescriptWorker = Substitute.For<TypescriptWorker>(null!, null!, null!, null!);
-        var metadataWorker = Substitute.For<MetadataWorker>(null!, null!, null!, null!);
-        dotNetWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
-        typescriptWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
-        metadataWorker.Invoke(NSubstitute.Arg.Any<CodeGenerationVerb>()).Returns(true);
-        var metadataService = Substitute.For<IMetadataService>();
+
+        var dotNetWorkerMock = Mock.Of<DotNetWorker>(null!, null!, null!, null!);
+        dotNetWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
+
+        var typescriptWorkerMock = Mock.Of<TypescriptWorker>(null!, null!, null!, null!);
+        typescriptWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
+
+        var metadataWorkerMock = Mock.Of<MetadataWorker>(null!, null!, null!, null!);
+        metadataWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
+
+        var metadataServiceMock = Mock.Of<IMetadataService>();
+
         _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetWorker, typescriptWorker, metadataWorker, metadataService);
+            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataWorkerMock.Object, metadataServiceMock.Object);
     }
 
     [Test]
