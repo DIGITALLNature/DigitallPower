@@ -15,8 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     permissions:
-      id-token: write
-      contents: write
+      contents: read
       checks: write
       pull-requests: write
     steps:
