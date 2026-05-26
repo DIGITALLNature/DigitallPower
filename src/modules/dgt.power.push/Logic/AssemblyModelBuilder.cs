@@ -39,7 +39,7 @@ internal class AssemblyModelBuilder : IDisposable
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
     }
 
-    public Package BuildPackageFromFile(string packageFile)
+    public static Package BuildPackageFromFile(string packageFile)
     {
         var result = default(Package);
         try

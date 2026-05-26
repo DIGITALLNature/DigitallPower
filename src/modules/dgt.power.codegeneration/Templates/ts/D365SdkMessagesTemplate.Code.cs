@@ -18,7 +18,7 @@ namespace dgt.power.codegeneration.Templates.ts
 
         private IEnumerable<(string Name, string Message)> Filter(IEnumerable<(string Name, string Message)> sdkMessages)
         {
-            if (_cfg.SdkMessageFilters.Any())
+            if (_cfg.SdkMessageFilters.Count() > 0)
             {
                 return sdkMessages.Where(t => _cfg.SdkMessageFilters.Contains(t.Message));
             }

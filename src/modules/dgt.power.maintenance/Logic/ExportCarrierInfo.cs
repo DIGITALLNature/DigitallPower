@@ -104,7 +104,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
                 .ToList();
         }
 
-        if (!carriers.Any())
+        if (carriers.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No active carrier[/]");
             return ExitCode.Error;

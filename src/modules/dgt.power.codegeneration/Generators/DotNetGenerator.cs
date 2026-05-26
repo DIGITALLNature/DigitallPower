@@ -88,7 +88,7 @@ public class DotNetGenerator : IDotNetGenerator
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.GlobalOptionSets.Any())
+        if (config.GlobalOptionSets.Count == 0)
         {
             return;
         }

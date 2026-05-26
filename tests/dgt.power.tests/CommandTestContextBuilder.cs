@@ -58,13 +58,13 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         service.AddDefaultRequests();
 
         // Initialize metadata
-        if (_metadata.Any())
+        if (_metadata.Count() > 0)
         {
             service.AddMetadata(_metadata);
         }
 
         // Add relationships
-        if (_relationships.Any())
+        if (_relationships.Count() > 0)
         {
             service.AddRelationships(_relationships);
         }
@@ -76,7 +76,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         }
 
         // Initialize data
-        if (_data.Any() || _dataPreparer != null)
+        if (_data.Count() > 0 || _dataPreparer != null)
         {
             if (_dataPreparer != null)
             {

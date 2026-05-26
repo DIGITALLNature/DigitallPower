@@ -68,7 +68,7 @@ public sealed class OutlookTemplateImport : BaseImport
         }
 
         //anything to do?
-        if (!queries.OutlookTemplates.Any())
+        if (queries.OutlookTemplates.Count == 0)
         {
             return Tracer.End(this, result);
         }

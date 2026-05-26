@@ -34,7 +34,7 @@ public sealed class BulkDeleteImport : BaseImport
         }
 
         //anything to do?
-        if (!bulkDeletes.Deletes.Any())
+        if (bulkDeletes.Deletes.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

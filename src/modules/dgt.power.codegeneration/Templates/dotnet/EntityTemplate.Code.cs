@@ -59,7 +59,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
             return Formatter.CamelCase(phrase);
         }
 
-        private string PascalCase(string phrase)
+        private static string PascalCase(string phrase)
         {
             return Formatter.PascalCase(phrase);
         }

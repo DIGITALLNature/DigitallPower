@@ -79,7 +79,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             // Dependent Plugin
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
-            var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
+            var packageLocal = AssemblyModelBuilder.BuildPackageFromFile(settings.Target);
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
             if (packageCrm.State == AssemblyState.Create)

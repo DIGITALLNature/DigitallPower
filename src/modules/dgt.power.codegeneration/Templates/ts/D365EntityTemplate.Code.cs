@@ -49,7 +49,7 @@ namespace dgt.power.codegeneration.Templates.ts
                .Where(a => !a.LogicalName.Contains("entityimage"))
                .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty);
 
-            if (_cfg.EntityFilters.Any())
+            if (_cfg.EntityFilters.Count() > 0)
             {
                 var match = _cfg.EntityFilters.FirstOrDefault(e => e.Entity == EntityMetadata.LogicalName);
                 if (match?.Attributes != null && match.Attributes.Length > 0)
@@ -72,7 +72,7 @@ namespace dgt.power.codegeneration.Templates.ts
                                a.AttributeType == AttributeTypeCode.Virtual &&
                                a.AttributeTypeName?.Value == "MultiSelectPicklistType")).Select(o => new Templates.OptionField(o, _cfg.UseBaseLanguage, _systemLanguage));
 
-            if (_cfg.EntityFilters.Any())
+            if (_cfg.EntityFilters.Count() > 0)
             {
                 var match = _cfg.EntityFilters.FirstOrDefault(e => e.Entity == EntityMetadata.LogicalName);
                 if (match?.Optionsets != null && match.Optionsets.Length > 0)

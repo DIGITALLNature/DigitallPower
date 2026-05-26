@@ -36,7 +36,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
         }
 
         //anything to do?
-        if (!entitiesAllAssets.Any())
+        if (entitiesAllAssets.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

@@ -32,7 +32,7 @@ public sealed class QueueImport : BaseImport
         }
 
         //anything to do?
-        if (!queuesToTransport.QueuesToTransport.Any())
+        if (queuesToTransport.QueuesToTransport.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

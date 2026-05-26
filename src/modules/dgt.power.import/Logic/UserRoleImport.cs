@@ -74,7 +74,7 @@ public sealed class UserRoleImport : BaseImport
             }
 
             List<Role> securityRoles;
-            if (userRole.SecurityRoles.Any())
+            if (userRole.SecurityRoles.Count() > 0)
             {
                 // SecurityRoles
                 securityRoles = GetSecurityRoles(businessUnit, userRole.SecurityRoles);
