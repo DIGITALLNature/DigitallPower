@@ -44,7 +44,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                 }
             )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>(GetTestFileName());
-        await Assert.That(slaConfigs).HasCount().EqualTo(2);
+        await Assert.That(slaConfigs).Count().EqualTo(2);
     }
 
 
@@ -58,6 +58,6 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
             }
         )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>("slaconfig.json");
-        await Assert.That(slaConfigs).HasCount().EqualTo(2);
+        await Assert.That(slaConfigs).Count().EqualTo(2);
     }
 }
