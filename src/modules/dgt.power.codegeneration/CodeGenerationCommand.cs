@@ -45,6 +45,8 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
             return _tracer.End(this, false) ? 0 : -1;
         }
 
+        var success = true;
+
         AnsiConsole.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
@@ -54,21 +56,21 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 
                     if (!config.SuppressDotNet)
                     {
-                        _dotNetWorker.Invoke(verb);
+                        success &= _dotNetWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressTypeScript)
                     {
-                        _typescriptWorker.Invoke(verb);
+                        success &= _typescriptWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressMetaData)
                     {
-                        _metadataWorker.Invoke(verb);
+                        success &= _metadataWorker.Invoke(verb);
                     }
                 }
             );
 
-        return _tracer.End(this, true) ? 0 : -1;
+        return _tracer.End(this, success) ? 0 : -1;
     }
 }
