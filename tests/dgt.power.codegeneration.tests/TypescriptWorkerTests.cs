@@ -327,10 +327,14 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             TargetDirectory = ArtifactDirectory
         };
 
+        var entityMetadata = new EntityMetadata();
+        entityMetadata.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(entityMetadata, "entity");
+
         var context = GetBuilder()
             .WithData(forms)
             .WithData(solution)
-            .WithData(solutionFormComponent)            
+            .WithData(solutionFormComponent)
+            .WithMetaData(entityMetadata)
             .WithRelationship(new OneToManyRelationshipMetadata
             {
                 SchemaName = "system_form_entity",
