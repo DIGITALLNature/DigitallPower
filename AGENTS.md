@@ -112,8 +112,17 @@ Every code change that modifies behavior **must** be accompanied by tests.
 
 ### Test Location
 
-- Tests live in `tests/Digitall.Testing.Tests/`
-- Mirror the source folder structure (e.g. `Logic/` tests go in `tests/.../Logic/`)
+- Tests live in `tests/dgt.power.*.tests/` — one project per source module, e.g.:
+  - `tests/dgt.power.maintenance.tests/`
+  - `tests/dgt.power.export.tests/`
+  - `tests/dgt.power.import.tests/`
+  - `tests/dgt.power.analyzer.tests/`
+  - `tests/dgt.power.codegeneration.tests/`
+  - `tests/dgt.power.push.tests/`
+  - `tests/dgt.power.profile.tests/`
+  - `tests/dgt.power.telemetry.tests/`
+  - `tests/dgt.power.tests/` (shared test helpers / base classes)
+- Mirror the source folder structure within each test project (e.g. `Logic/` tests go in `tests/dgt.power.<module>.tests/`)
 - Test class naming: `<ClassUnderTest>Tests.cs`
 
 ### Test Style
@@ -136,7 +145,8 @@ public async Task MethodName_Scenario_ExpectedResult()
 dotnet restore              # Restore dependencies (uses lock files)
 dotnet build                # Build the solution
 dotnet test                 # Run all tests
-dotnet test --filter "Name~Foo"  # Run filtered tests
+dotnet test --project tests/dgt.power.<module>.tests/dgt.power.<module>.tests.csproj  # Run single module
+dotnet test --project tests/dgt.power.<module>.tests/dgt.power.<module>.tests.csproj --treenode-filter "/<assembly>/<namespace>/<Class>/<Method>"  # Run specific test
 ```
 
 ---
