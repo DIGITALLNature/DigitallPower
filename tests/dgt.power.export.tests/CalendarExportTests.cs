@@ -129,8 +129,8 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
             }
         )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>(GetTestFileName());
-        await Assert.That(calendars).HasCount().EqualTo(2);
-        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).HasCount().EqualTo(2);
+        await Assert.That(calendars).Count().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).Count().EqualTo(2);
         await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 
@@ -144,8 +144,8 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
             }
         )).IsTrue();
         var calendars = GetConfigurationTestArtifact<Calendars>("calendar.json");
-        await Assert.That(calendars).HasCount().EqualTo(2);
-        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).HasCount().EqualTo(2);
+        await Assert.That(calendars).Count().EqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay == false).Rules).Count().EqualTo(2);
         await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 }
