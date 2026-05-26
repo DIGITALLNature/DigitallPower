@@ -19,7 +19,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         var businessUnit = new BusinessUnit(Guid.NewGuid())
         {
             Name = "devlab",
-            IsDisabled = false,
+            IsDisabled = false
         };
         var user1 = new SystemUser(Guid.NewGuid())
         {
@@ -88,13 +88,13 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         var roleassociation1 = new SystemUserRoles(Guid.NewGuid())
         {
             [SystemUserRoles.LogicalNames.RoleId] = systemadministrator.Id,
-            [SystemUserRoles.LogicalNames.SystemUserId] = user4.Id,
+            [SystemUserRoles.LogicalNames.SystemUserId] = user4.Id
         };
 
         var roleassociation2 = new SystemUserRoles(Guid.NewGuid())
         {
             [SystemUserRoles.LogicalNames.RoleId] = salesAppAccess.Id,
-            [SystemUserRoles.LogicalNames.SystemUserId] = user1.Id,
+            [SystemUserRoles.LogicalNames.SystemUserId] = user1.Id
         };
 
         return GetBuilder()
@@ -167,7 +167,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
@@ -180,7 +180,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>("userrole.json");

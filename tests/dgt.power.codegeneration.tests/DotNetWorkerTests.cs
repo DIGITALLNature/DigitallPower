@@ -126,7 +126,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
     [Test]
     public async Task ShouldGenerateDataContext()
     {
-        var config = new CodeGenerationConfig {SuppressSdkMessages = true, SuppressActions = true,};
+        var config = new CodeGenerationConfig {SuppressSdkMessages = true, SuppressActions = true};
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
 
         var context = GetBuilder()
@@ -192,7 +192,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
             Description = "String",
             Type = new OptionSetValue(CustomAPIRequestParameter.Options.Type.String),
             CustomAPIId = customApi.ToEntityReference(),
-            IsOptional = false,
+            IsOptional = false
         };
         var customApiResponseProperty = new CustomAPIResponseProperty(Guid.NewGuid())
         {

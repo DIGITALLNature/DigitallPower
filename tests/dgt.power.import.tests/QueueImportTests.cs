@@ -256,7 +256,7 @@ public class QueueImportTests : ImportTestBase<QueueImport>
                 .ServerSideSynchronizationOrEmailRouter),
             IncomingEmailFilteringMethod =
                 new OptionSetValue(dataverse.Queue.Options.IncomingEmailFilteringMethod.AllEmailMessages),
-            OwnerId = owner.ToEntityReference(),
+            OwnerId = owner.ToEntityReference()
         };
         return (owner, queue);
     }

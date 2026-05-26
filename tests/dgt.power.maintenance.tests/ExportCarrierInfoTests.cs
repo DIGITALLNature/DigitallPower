@@ -79,7 +79,7 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             DgtSolutionversion = carrierSolution1.Version,
             DgtSolutionid = carrierSolution1.Id.ToString(),
             Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 1,
+            DgtTransportOrderNo = 1
         };
         var solutionId2 = Guid.NewGuid();
         var carrierSolution2 = new Solution(solutionId2)
@@ -96,7 +96,7 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             DgtSolutionversion = carrierSolution2.Version,
             DgtSolutionid = carrierSolution2.Id.ToString(),
             Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 2,
+            DgtTransportOrderNo = 2
         };
         var context = GetBuilder()
             .WithData(activeCarrier1)

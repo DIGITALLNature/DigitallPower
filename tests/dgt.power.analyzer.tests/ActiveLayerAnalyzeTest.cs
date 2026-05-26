@@ -40,7 +40,7 @@ namespace dgt.power.analyzer.tests
                         {
                             UserLocalizedLabel = new LocalizedLabel("Test Entity", 1031)
                         }
-                    },
+                    }
                 })
                 .Build();
         }

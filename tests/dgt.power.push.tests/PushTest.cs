@@ -26,7 +26,7 @@ public class PushTest : PushTestsBase<PushCommand>
             {
                 Id = Guid.NewGuid(),
                 SolutionComponentType = 10119,
-                PrimaryEntityName = PluginPackage.EntityLogicalName,
+                PrimaryEntityName = PluginPackage.EntityLogicalName
             })
             .Build();
     }

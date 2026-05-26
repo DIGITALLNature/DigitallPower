@@ -202,7 +202,7 @@ public class MetadataService : IMetadataService
                     Entityname = ext.EntityName,
                     Type = ext.Type!.Split(':')[1].TrimEnd(')'),
                     IsOptional = false, // Not used for actions,
-                    IsOutput = ext.Direction == "Output" ? true : false,
+                    IsOutput = ext.Direction == "Output" ? true : false
                 };
 
                 switch (ext.Direction)
@@ -279,7 +279,7 @@ public class MetadataService : IMetadataService
                         Entityname = target,
                         Type = nameof(EntityReference),
                         IsOptional = false, // Bound parameters will be required parameters
-                        IsOutput = false,
+                        IsOutput = false
                     });
             }
 
@@ -317,7 +317,7 @@ public class MetadataService : IMetadataService
                         Entityname = "",
                         Type = type,
                         IsOptional = (bool?)inparam[CustomAPIRequestParameter.LogicalNames.IsOptional] ?? false,
-                        IsOutput = false,
+                        IsOutput = false
                     });
             }
 
@@ -355,7 +355,7 @@ public class MetadataService : IMetadataService
                         Entityname = "",
                         Type = type,
                         IsOptional = true, // assume all responses can be optional
-                        IsOutput = true,
+                        IsOutput = true
                     });
             }
 
@@ -555,7 +555,7 @@ public class MetadataService : IMetadataService
                 {
                     new ConditionExpression(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessProcessFlow),
                     new ConditionExpression(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.Equal, entityName),
-                    new ConditionExpression(Workflow.LogicalNames.ClientData, ConditionOperator.NotNull),
+                    new ConditionExpression(Workflow.LogicalNames.ClientData, ConditionOperator.NotNull)
                 }
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }

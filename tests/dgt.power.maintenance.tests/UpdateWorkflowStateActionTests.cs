@@ -21,7 +21,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedAction = new Workflow(Guid.NewGuid())
         {
@@ -29,7 +29,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedAction = new Workflow(Guid.NewGuid())
         {
@@ -37,7 +37,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -48,7 +48,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("empty.json"),
+            Config = GetResourcePath("empty.json")
         }).Succeed();
 
         var updatedDraftAction = context.DataContext.WorkflowSet.Single(w => w.Id == draftAction.Id);
@@ -72,7 +72,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedAction = new Workflow(Guid.NewGuid())
         {
@@ -80,7 +80,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedAction = new Workflow(Guid.NewGuid())
         {
@@ -88,7 +88,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -99,7 +99,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("actions-deactivate.json"),
+            Config = GetResourcePath("actions-deactivate.json")
         }).Succeed();
 
         var updatedDraftAction = context.DataContext.WorkflowSet.Single(w => w.Id == draftAction.Id);
@@ -121,27 +121,27 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
         {
             Attributes = new AttributeCollection
             {
-                { SystemUser.LogicalNames.FullName, "Current Owner" },
+                { SystemUser.LogicalNames.FullName, "Current Owner" }
             },
-            DomainName = "current@owner.com",
+            DomainName = "current@owner.com"
         };
         var defaultOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Default Owner" },
-                { SystemUser.LogicalNames.DomainName, "default@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "default@owner.com" }
             },
-            DomainName = "default@owner.com",
+            DomainName = "default@owner.com"
         };
         var actionOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Flow Owner" },
-                { SystemUser.LogicalNames.DomainName, "flow@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "flow@owner.com" }
             },
-            DomainName = "flow@owner.com",
+            DomainName = "flow@owner.com"
         };
 
         var currentToDefaultAction = new Workflow(Guid.NewGuid())
@@ -151,7 +151,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToActionAction = new Workflow(Guid.NewGuid())
         {
@@ -160,7 +160,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentSpecifiedAction = new Workflow(Guid.NewGuid())
         {
@@ -169,7 +169,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentFallbackAction = new Workflow(Guid.NewGuid())
         {
@@ -178,7 +178,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToDefaultSpecifiedAction = new Workflow(Guid.NewGuid())
         {
@@ -187,7 +187,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
 
         var context = GetBuilder()
@@ -203,7 +203,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("actions-owner.json"),
+            Config = GetResourcePath("actions-owner.json")
         }).Succeed();
 
         var updatedCurrentToDefaultAction = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultAction.Id);
@@ -229,11 +229,11 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "match",
+            UniqueName = "match"
         };
         var otherSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "other",
+            UniqueName = "other"
         };
 
         var actionInMatchingSolution = new Workflow(Guid.NewGuid())
@@ -242,7 +242,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var actionInOtherSolution = new Workflow(Guid.NewGuid())
         {
@@ -250,7 +250,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Category = new OptionSetValue(Workflow.Options.Category.Action),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
 
         var matchingComponent = new SolutionComponent(Guid.NewGuid())
@@ -258,16 +258,16 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, matchingSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, actionInMatchingSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, actionInMatchingSolution.Id }
+            }
         };
         var otherComponent = new SolutionComponent(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, otherSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, actionInOtherSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, actionInOtherSolution.Id }
+            }
         };
 
         var context = GetBuilder()
@@ -281,7 +281,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath(config),
+            Config = GetResourcePath(config)
         }).Succeed();
 
         var matchingAction = context.DataContext.WorkflowSet.Single(w => w.Id == actionInMatchingSolution.Id);

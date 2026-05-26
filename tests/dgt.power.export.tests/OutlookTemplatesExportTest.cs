@@ -43,7 +43,7 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
-                    FileDir = ArtifactDirectory,
+                    FileDir = ArtifactDirectory
                 }
             )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>(GetTestFileName());
@@ -57,7 +57,7 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var templates = GetConfigurationTestArtifact<dto.SavedQuery>("outlooktemplate.json");

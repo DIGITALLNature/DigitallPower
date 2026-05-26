@@ -22,7 +22,7 @@ public class PublishDuplicateRuleExecutor : IOrganizationRequestFake
             Attributes =
             {
                 {"statecode",new OptionSetValue(DuplicateRule.Options.StateCode.Active)},
-                {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)},
+                {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)}
             }
         });
 

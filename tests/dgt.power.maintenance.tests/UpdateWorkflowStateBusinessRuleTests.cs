@@ -25,7 +25,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Category = new OptionSetValue(Workflow.Options.Category.BusinessRule),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -33,7 +33,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Category = new OptionSetValue(Workflow.Options.Category.BusinessRule),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -41,7 +41,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Category = new OptionSetValue(Workflow.Options.Category.BusinessRule),
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -52,7 +52,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("empty.json"),
+            Config = GetResourcePath("empty.json")
         }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
@@ -77,7 +77,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -86,7 +86,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -95,7 +95,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var ignoredBusinessRule = new Workflow(Guid.NewGuid())
@@ -105,12 +105,12 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "ignored-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
 
         var solution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "match",
+            UniqueName = "match"
         };
 
         var tableComponent = new SolutionComponent(Guid.NewGuid())
@@ -118,7 +118,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
             [SolutionComponent.LogicalNames.ObjectId] = Guid.NewGuid(),
-            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents),
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
         };
 
         var context = GetBuilder()
@@ -133,7 +133,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("filter-solution.json"),
+            Config = GetResourcePath("filter-solution.json")
         }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
@@ -161,7 +161,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var suspendedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -170,7 +170,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation)
         };
         var activatedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -179,7 +179,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
         };
 
         var context = GetBuilder()
@@ -190,7 +190,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("businessrules-deactivate.json"),
+            Config = GetResourcePath("businessrules-deactivate.json")
         }).Succeed();
 
         var updatedDraftBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == draftBusinessRule.Id);
@@ -212,27 +212,27 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
         {
             Attributes = new AttributeCollection
             {
-                { SystemUser.LogicalNames.FullName, "Current Owner" },
+                { SystemUser.LogicalNames.FullName, "Current Owner" }
             },
-            DomainName = "current@owner.com",
+            DomainName = "current@owner.com"
         };
         var defaultOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Default Owner" },
-                { SystemUser.LogicalNames.DomainName, "default@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "default@owner.com" }
             },
-            DomainName = "default@owner.com",
+            DomainName = "default@owner.com"
         };
         var BusinessRuleOwner = new SystemUser(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SystemUser.LogicalNames.FullName, "Flow Owner" },
-                { SystemUser.LogicalNames.DomainName, "flow@owner.com" },
+                { SystemUser.LogicalNames.DomainName, "flow@owner.com" }
             },
-            DomainName = "flow@owner.com",
+            DomainName = "flow@owner.com"
         };
 
         var currentToDefaultBusinessRule = new Workflow(Guid.NewGuid())
@@ -243,7 +243,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToBusinessRuleBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -253,7 +253,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Suspended),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.CompanyDLPViolation),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentSpecifiedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -263,7 +263,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToCurrentFallbackBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -273,7 +273,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
         var currentToDefaultSpecifiedBusinessRule = new Workflow(Guid.NewGuid())
         {
@@ -283,7 +283,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
             StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
-            OwnerId = currentOwner.ToEntityReference(),
+            OwnerId = currentOwner.ToEntityReference()
         };
 
         var context = GetBuilder()
@@ -299,7 +299,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath("businessrules-owner.json"),
+            Config = GetResourcePath("businessrules-owner.json")
         }).Succeed();
 
         var updatedCurrentToDefaultBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == currentToDefaultBusinessRule.Id);
@@ -325,11 +325,11 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
     {
         var matchingSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "match",
+            UniqueName = "match"
         };
         var otherSolution = new Solution(Guid.NewGuid())
         {
-            UniqueName = "other",
+            UniqueName = "other"
         };
 
         var BusinessRuleInMatchingSolution = new Workflow(Guid.NewGuid())
@@ -339,7 +339,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
         var BusinessRuleInOtherSolution = new Workflow(Guid.NewGuid())
         {
@@ -348,7 +348,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             PrimaryEntity = "test-table",
             Type = new OptionSetValue(Workflow.Options.Type.Definition),
             StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
+            StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
         };
 
         var matchingComponent = new SolutionComponent(Guid.NewGuid())
@@ -356,16 +356,16 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, matchingSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, BusinessRuleInMatchingSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, BusinessRuleInMatchingSolution.Id }
+            }
         };
         var otherComponent = new SolutionComponent(Guid.NewGuid())
         {
             Attributes = new AttributeCollection
             {
                 { SolutionComponent.LogicalNames.SolutionId, otherSolution.Id },
-                { SolutionComponent.LogicalNames.ObjectId, BusinessRuleInOtherSolution.Id },
-            },
+                { SolutionComponent.LogicalNames.ObjectId, BusinessRuleInOtherSolution.Id }
+            }
         };
 
         var context = GetBuilder()
@@ -379,7 +379,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
 
         await context.Execute(new UpdateWorkflowState.Settings
         {
-            Config = GetResourcePath(config),
+            Config = GetResourcePath(config)
         }).Succeed();
 
         var matchingBusinessRule = context.DataContext.WorkflowSet.Single(w => w.Id == BusinessRuleInMatchingSolution.Id);
@@ -398,8 +398,8 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
         {
             Results = new ParameterCollection
             {
-                { "EntityMetadata", new EntityMetadata { LogicalName = "test-table" } },
-            },
+                { "EntityMetadata", new EntityMetadata { LogicalName = "test-table" } }
+            }
         };
     }
 }

@@ -63,7 +63,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
         var existingCalendar = new Calendar(calendarToBeUpdated.CalendarId)
         {
             Name = calendarToBeUpdated.Name,
-            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule),
+            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
         };
         var existingInnerCalendar = new Calendar(innerCalendarRule.InnerCalendar.CalendarId)
         {

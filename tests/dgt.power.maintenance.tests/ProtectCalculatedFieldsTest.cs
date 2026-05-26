@@ -33,7 +33,7 @@ namespace dgt.power.maintenance.tests
             var metadata = new EntityMetadata
             {
                 LogicalName = TestEntity.EntityLogicalName,
-                MetadataId = Guid.NewGuid(),
+                MetadataId = Guid.NewGuid()
             };
 
             metadata.SetSealedPropertyValue(nameof(metadata.ObjectTypeCode), TestEntity.EntityTypeCode);

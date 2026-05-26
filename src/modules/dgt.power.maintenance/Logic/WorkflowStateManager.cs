@@ -27,7 +27,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         var loadTasks = new[]
         {
             LoadDirectWorkflows(),
-            LoadIndirectBusinessRules(),
+            LoadIndirectBusinessRules()
         };
 
         taskStatusCallback?.Invoke("Loading all workflows", "loading", 0, loadTasks.Length);
@@ -179,7 +179,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         {
             RetrieveAsIfPublished = true,
             MetadataId = tableId,
-            EntityFilters = EntityFilters.Entity,
+            EntityFilters = EntityFilters.Entity
         };
 
         try
@@ -243,7 +243,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         var RetrieveMultipleRequest = new RetrieveMultipleRequest
         {
-            Query = query,
+            Query = query
         };
         var response = await ExecuteAsync<RetrieveMultipleResponse>(RetrieveMultipleRequest);
         var solutionComponents = response.EntityCollection.Entities.Cast<SolutionComponent>().ToArray();
@@ -277,7 +277,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         var retrieveMultpipleRequest = new RetrieveMultipleRequest
         {
-            Query = query,
+            Query = query
         };
         var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultpipleRequest);
         var workflows = response.EntityCollection.Entities.Cast<Workflow>().ToArray();

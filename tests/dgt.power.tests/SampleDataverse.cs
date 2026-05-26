@@ -218,7 +218,7 @@ public class SampleDataverse
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid()),
-        PrimaryEntity = "account",
+        PrimaryEntity = "account"
     };
 
     internal readonly Workflow ContactBusinessRule = new Workflow(Guid.NewGuid())
@@ -229,7 +229,7 @@ public class SampleDataverse
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid()),
-        PrimaryEntity = "contact",
+        PrimaryEntity = "contact"
     };
 
     internal readonly Workflow SolutionModernFlow = new Workflow(Guid.NewGuid())
@@ -239,7 +239,7 @@ public class SampleDataverse
         Category = new OptionSetValue(Workflow.Options.Category.ModernFlow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
-        OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid()),
+        OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
     };
 
     internal readonly AsyncOperation EntityKeyIndexCreation = new AsyncOperation(Guid.NewGuid())
@@ -309,7 +309,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(DuplicateRule.Options.StateCode.Active)},
-            {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)},
+            {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)}
         }
     };
 
@@ -348,7 +348,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(DuplicateRule.Options.StateCode.Active)},
-            {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)},
+            {"statuscode",new OptionSetValue(DuplicateRule.Options.StatusCode.Published)}
         }
     };
 
@@ -374,7 +374,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled)},
-            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)},
+            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)}
         }
     };
 
@@ -389,7 +389,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled)},
-            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)},
+            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)}
         }
     };
 
@@ -399,7 +399,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled)},
-            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Disabled)},
+            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Disabled)}
         }
     };
 
@@ -409,7 +409,7 @@ public class SampleDataverse
         Attributes =
         {
             {"statecode",new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled)},
-            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)},
+            {"statuscode",new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)}
         }
     };
 
@@ -565,7 +565,7 @@ public class SampleDataverse
     internal readonly Calendar Calendar1 = new Calendar(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
     {
         Name = "Test Calendar",
-        Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule),
+        Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
     };
 
     internal readonly CalendarRule CalendarRule1 = new CalendarRule(Guid.Parse("0f56b2f4-1b0f-43ab-9575-6309713820dd"))
@@ -609,7 +609,7 @@ public class SampleDataverse
         Name = "Sla1 Draft",
         StatusCode = new OptionSetValue(SLA.Options.StatusCode.Draft),
         StateCode = new OptionSetValue(SLA.Options.StateCode.Draft),
-        BusinessHoursId = new EntityReference(Calendar.EntityLogicalName, Guid.Parse("d425590e-7e62-4d82-8186-7f7d500d2fd3")),
+        BusinessHoursId = new EntityReference(Calendar.EntityLogicalName, Guid.Parse("d425590e-7e62-4d82-8186-7f7d500d2fd3"))
     };
 
     internal readonly SLA Sla2 = new SLA(Guid.Parse("6555bb4d-6c3a-454a-9bda-36ee77e7e0ed"))
@@ -624,7 +624,7 @@ public class SampleDataverse
     {
         Name = "Rule1 Draft",
         StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Draft),
-        StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft),
+        StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft)
     };
 
     internal readonly RoutingRuleItem Item1Rule1 = new RoutingRuleItem(Guid.Parse("da6d62aa-b358-49af-b07a-2269919a0a97"))
@@ -634,14 +634,14 @@ public class SampleDataverse
 
     internal readonly RoutingRuleItem Item2Rule1 = new RoutingRuleItem(Guid.Parse("8790f297-dc24-4bbf-bc8f-6727ad8bf23f"))
     {
-        MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
+        MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team)
     };
 
     internal readonly RoutingRule Rule2 = new RoutingRule(Guid.Parse("3a174e77-7c80-4b78-9ba0-bc1fd8464b62"))
     {
         Name = "Rule2 Active",
         StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Active),
-        StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active),
+        StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active)
     };
 
     internal readonly RoutingRuleItem Item1Rule2 = new RoutingRuleItem(Guid.Parse("52afc222-fb8b-46e6-856f-9e07618b91c7"))
@@ -651,7 +651,7 @@ public class SampleDataverse
 
     internal readonly Team Team1 = new Team(Guid.NewGuid())
     {
-        Name = "Team1",
+        Name = "Team1"
     };
 
     internal readonly Solution Solution = new Solution(Guid.NewGuid())
@@ -673,7 +673,7 @@ public class SampleDataverse
 
     internal readonly Solution SolutionWorkflow = new Solution(Guid.NewGuid())
     {
-        UniqueName = "Workflows",
+        UniqueName = "Workflows"
     };
 
     internal readonly Publisher Publisher1 = new Publisher(Guid.NewGuid())

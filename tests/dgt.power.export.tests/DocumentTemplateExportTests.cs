@@ -132,7 +132,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
-                    FileDir = ArtifactDirectory,
+                    FileDir = ArtifactDirectory
                 }
             )).IsTrue();
         var templates =
@@ -150,7 +150,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var templates = GetConfigurationTestArtifact<DocumentTemplates>("documenttemplate.json");

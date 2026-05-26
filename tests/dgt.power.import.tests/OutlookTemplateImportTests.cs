@@ -104,7 +104,7 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         {
             OutlookTemplates = new[]
             {
-                existingConfig,
+                existingConfig
             }
         });
 
@@ -147,7 +147,7 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         {
             OutlookTemplates = new[]
             {
-                template,
+                template
             }
         });
 
@@ -197,7 +197,7 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         {
             OutlookTemplates = new[]
             {
-                existingConfig,
+                existingConfig
             }
         });
 

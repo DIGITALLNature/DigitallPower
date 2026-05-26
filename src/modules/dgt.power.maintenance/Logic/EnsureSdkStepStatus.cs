@@ -70,7 +70,7 @@ namespace dgt.power.maintenance.Logic
                             (SdkMessageProcessingStep.Options.StateCode.Enabled, true) => "[red]Enabled[/]",
                             (SdkMessageProcessingStep.Options.StateCode.Disabled, false) => "[red]Disabled[/]",
                             (SdkMessageProcessingStep.Options.StateCode.Disabled, true) => "[grey]Disabled[/]",
-                            _ => "[red]Unknown[/]",
+                            _ => "[red]Unknown[/]"
                         };
 
                         table.AddRow(pluginType, stepName, status, stepId);
@@ -87,8 +87,8 @@ namespace dgt.power.maintenance.Logic
                             {
                                 Target = new SdkMessageProcessingStep(sdkStep.Id)
                                 {
-                                    StateCode = new OptionSetValue(desiredStateValue),
-                                },
+                                    StateCode = new OptionSetValue(desiredStateValue)
+                                }
                             };
                             await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(updateRequest);
 
@@ -113,7 +113,7 @@ namespace dgt.power.maintenance.Logic
                     SdkMessageProcessingStep.LogicalNames.StateCode,
                     SdkMessageProcessingStep.LogicalNames.Name,
                     SdkMessageProcessingStep.LogicalNames.PluginTypeId
-                ),
+                )
             };
 
             var componentLink = query.AddLink(SolutionComponent.EntityLogicalName, SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId, SolutionComponent.LogicalNames.ObjectId);
@@ -124,7 +124,7 @@ namespace dgt.power.maintenance.Logic
 
             var retrieveMultipleRequest = new RetrieveMultipleRequest
             {
-                Query = query,
+                Query = query
             };
             var orgResponse = await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(retrieveMultipleRequest);
 

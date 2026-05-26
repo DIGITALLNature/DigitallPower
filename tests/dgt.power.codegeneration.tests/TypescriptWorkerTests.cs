@@ -51,7 +51,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
-            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full
         };
         var args = new CodeGenerationVerb
         {
@@ -71,7 +71,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
-            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full
         };
         var args = new CodeGenerationVerb
         {
@@ -341,7 +341,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
                 ReferencingEntity = SystemForm.EntityLogicalName,
                 ReferencingAttribute = SystemForm.LogicalNames.ObjectTypeCode,
                 ReferencedEntity = "entity",
-                ReferencedAttribute = "objecttypecode",
+                ReferencedAttribute = "objecttypecode"
             })
             .Build();
 
@@ -367,7 +367,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var config = new CodeGenerationConfig
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
-            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
+            TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full
         };
         var args = new CodeGenerationVerb
         {

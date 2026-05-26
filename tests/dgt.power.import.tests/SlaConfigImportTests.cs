@@ -118,7 +118,7 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
         var sla1 = new SLA(Guid.NewGuid())
         {
             StateCode = new OptionSetValue(SLA.Options.StateCode.Active),
-            StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active),
+            StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active)
         };
         var sla2 = new SLA(Guid.NewGuid())
         {

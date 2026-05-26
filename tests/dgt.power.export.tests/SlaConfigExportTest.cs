@@ -22,13 +22,13 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                     Name = "Sla1 Draft",
                     StatusCode = new OptionSetValue(SLA.Options.StatusCode.Draft),
                     StateCode = new OptionSetValue(SLA.Options.StateCode.Draft),
-                    BusinessHoursId = new EntityReference(dataverse.Calendar.EntityLogicalName, Guid.NewGuid()),
+                    BusinessHoursId = new EntityReference(dataverse.Calendar.EntityLogicalName, Guid.NewGuid())
                 },
                 new SLA(Guid.Parse("6555bb4d-6c3a-454a-9bda-36ee77e7e0ed"))
                 {
                     Name = "Sla1 Draft",
                     StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active),
-                    StateCode = new OptionSetValue(SLA.Options.StateCode.Active),
+                    StateCode = new OptionSetValue(SLA.Options.StateCode.Active)
                 }
             })
             .Build();
@@ -40,7 +40,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
             .Execute(new ExportVerb
                 {
                     FileName = GetTestFileName(),
-                    FileDir = ArtifactDirectory,
+                    FileDir = ArtifactDirectory
                 }
             )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>(GetTestFileName());
@@ -54,7 +54,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
         await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
         )).IsTrue();
         var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>("slaconfig.json");
