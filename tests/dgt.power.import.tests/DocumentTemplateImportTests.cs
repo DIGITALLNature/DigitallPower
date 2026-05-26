@@ -120,7 +120,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == forceUpdateTemplate.Name);
         await Assert.That(template.Id).IsEqualTo(forceUpdateTemplate.DocumentTemplateId.Value);
@@ -168,7 +168,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == updateTemplate.Name);
         await Assert.That(template.Status).IsTrue();
@@ -196,7 +196,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == updateTemplate.Name);
         await Assert.That(template.Id).IsNotEqualTo(updateTemplate.DocumentTemplateId.Value);
@@ -223,7 +223,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(0);
+        await Assert.That(templates).Count().IsEqualTo(0);
     }
 
 
@@ -246,7 +246,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == createTemplate.Name);
         await Assert.That(template.Id).IsEqualTo(createTemplate.DocumentTemplateId.Value);
@@ -277,7 +277,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(2);
+        await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
         await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Activated);
     }
@@ -305,7 +305,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(templates).Count().EqualTo(2);
+        await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
         await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Draft);
     }

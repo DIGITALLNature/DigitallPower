@@ -157,7 +157,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         )).IsTrue();
 
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        await Assert.That(userRoles).Count().EqualTo(1);
+        await Assert.That(userRoles).Count().IsEqualTo(1);
         await Assert.That(userRoles.Single().UserName).IsEqualTo(domainName);
     }
 
@@ -171,7 +171,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
             }
         )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        await Assert.That(userRoles).Count().EqualTo(6);
+        await Assert.That(userRoles).Count().IsEqualTo(6);
     }
 
     [Test]
@@ -184,6 +184,6 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
             }
         )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>("userrole.json");
-        await Assert.That(userRoles).Count().EqualTo(6);
+        await Assert.That(userRoles).Count().IsEqualTo(6);
     }
 }

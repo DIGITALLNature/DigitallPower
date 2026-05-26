@@ -44,7 +44,7 @@ public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
         await Assert.That(context.Execute(new ExportVerb {FileName = GetTestFileName(), FileDir = ArtifactDirectory,}
         )).IsTrue();
         var bulkDeletes = GetConfigurationTestArtifact<BulkDeletes>(GetTestFileName());
-        await Assert.That(bulkDeletes.Deletes).Count().EqualTo(2);
+        await Assert.That(bulkDeletes.Deletes).Count().IsEqualTo(2);
     }
 
     [Test]
@@ -54,6 +54,6 @@ public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
         )).IsTrue();
 
         var bulkDeletes = GetConfigurationTestArtifact<BulkDeletes>("bulkdelete.json");
-        await Assert.That(bulkDeletes.Deletes).Count().EqualTo(2);
+        await Assert.That(bulkDeletes.Deletes).Count().IsEqualTo(2);
     }
 }

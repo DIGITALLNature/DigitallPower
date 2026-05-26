@@ -53,7 +53,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
         )).IsTrue();
 
         var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>(GetTestFileName());
-        await Assert.That(teamTemplates).Count().EqualTo(2);
+        await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 
 
@@ -68,6 +68,6 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
         )).IsTrue();
 
         var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>("teamtemplate.json");
-        await Assert.That(teamTemplates).Count().EqualTo(2);
+        await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 }

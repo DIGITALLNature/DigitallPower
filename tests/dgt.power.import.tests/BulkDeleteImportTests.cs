@@ -122,7 +122,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(deletes).Count().EqualTo(3);
+        await Assert.That(deletes).Count().IsEqualTo(3);
 
         var existing = deletes.Single(x => x.Name == existingBulkDeleteJob.Name);
         await Assert.That(string.IsNullOrWhiteSpace(existing.RecurrencePattern)).IsFalse();
@@ -155,7 +155,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(deletes).Count().EqualTo(3);
+        await Assert.That(deletes).Count().IsEqualTo(3);
 
         var disabled = deletes.Single(e => e.Id == disabledBulkDeleteJob.Id);
         await Assert.That(disabled.RecurrencePattern).IsEqualTo(disabledBulkDeleteJob.RecurrencePattern);
@@ -188,7 +188,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             .OrderBy(x => x.Name)
             .ToList();
 
-        await Assert.That(deletes).Count().EqualTo(3);
+        await Assert.That(deletes).Count().IsEqualTo(3);
 
         var disabled = deletes.Single(e => e.Name == disabledBulkDeleteJob.Name);
         var disabledTicks = disabled.RecurrenceStartTime?.Ticks ?? -1;
@@ -227,7 +227,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             select rec).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-        await Assert.That(deletes).Count().EqualTo(2);
+        await Assert.That(deletes).Count().IsEqualTo(2);
 
         var disabled = deletes.Single(e => e.Name == disabledBulkDeleteJob.Name);
         var disabledTicks = disabled.RecurrenceStartTime?.Ticks ?? -1;
