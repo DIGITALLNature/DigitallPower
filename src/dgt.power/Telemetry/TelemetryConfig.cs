@@ -9,7 +9,7 @@ namespace dgt.power.Telemetry;
 /// </summary>
 internal static class TelemetryConfig
 {
-    private const string OptOutEnvVar = "DGPT_TELEMETRY_OPTOUT";
+    private const string OptOutEnvVar = "DGT_TELEMETRY_OPTOUT";
     private const string InstallIdFileName = "telemetry-install-id";
 
     /// <summary>
