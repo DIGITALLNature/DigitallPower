@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.dataverse;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -64,7 +65,7 @@ public class LibraryDiagnosticTests
         service.AddMetadata(meta);
 
         var queueId = Guid.NewGuid();
-        var queue = new dgt.power.dataverse.Queue(queueId)
+        var queue = new Queue(queueId)
         {
             Name = "Early Bound Queue",
             Description = "EB Description"
@@ -72,7 +73,7 @@ public class LibraryDiagnosticTests
 
         var createdId = service.Create(queue);
         var retrieved = service.Retrieve("queue", createdId, new ColumnSet(true));
-        var typedRetrieved = retrieved.ToEntity<dgt.power.dataverse.Queue>();
+        var typedRetrieved = retrieved.ToEntity<Queue>();
 
         await Assert.That(typedRetrieved.Name).IsEqualTo("Early Bound Queue");
         await Assert.That(typedRetrieved.Description).IsEqualTo("EB Description");

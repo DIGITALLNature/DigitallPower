@@ -5,10 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace dgt.power.maintenance.Base.Config;
 
-public class PowerFxPluginsConfigs : List<PowerFxPluginsConfig>
-{
-
-}
+public class PowerFxPluginsConfigs : List<PowerFxPluginsConfig>;
 
 public class PowerFxPluginsConfig
 {

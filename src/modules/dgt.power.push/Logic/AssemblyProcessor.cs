@@ -14,7 +14,7 @@ using PluginType = dgt.power.push.Model.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class AssemblyProcessor
+internal class AssemblyProcessor : IDisposable
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
@@ -111,7 +111,9 @@ internal class AssemblyProcessor
         if (scd == null)
         {
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
-            throw new Exception("The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " + pluginPackage.Name);
+            throw new InvalidOperationException(
+                "The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " +
+                pluginPackage.Name);
         }
         var addReq = new AddSolutionComponentRequest
         {
@@ -139,7 +141,8 @@ internal class AssemblyProcessor
                 AnsiConsole.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Package: " + pluginPackage.Name, ex.RootException());
+            throw new InvalidOperationException("The Plugin Registration was aborted. Package: " + pluginPackage.Name,
+                ex.RootException());
         }
     }
 
@@ -250,7 +253,8 @@ internal class AssemblyProcessor
                 AnsiConsole.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name, ex.RootException());
+            throw new InvalidOperationException("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
+                ex.RootException());
         }
     }
 
@@ -414,8 +418,8 @@ internal class AssemblyProcessor
                     }
                 };
                 var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
-                AnsiConsole.Markup("  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name,
-                    api.UniqueName!);
+                AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                    "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
                 _service.Update(new CustomAPI(api.Id)
                 {
                     PluginTypeId = new EntityReference(dataverse.PluginType.EntityLogicalName, pluginType.Id)
@@ -453,7 +457,7 @@ internal class AssemblyProcessor
             FriendlyName = workflowType.FriendlyName,
             WorkflowActivityGroupName = workflowType.WorkflowActivityGroupName
         };
-        AnsiConsole.Markup(
+        AnsiConsole.Markup(CultureInfo.InvariantCulture,
             " Create WorkflowType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
             workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
         type.Id = _service.Create(type);
@@ -547,13 +551,13 @@ internal class AssemblyProcessor
 
         try
         {
-            AnsiConsole.Markup("  Create PluginStep: [green]{0}[/]", step.Name);
+            AnsiConsole.Markup(CultureInfo.InvariantCulture, "  Create PluginStep: [green]{0}[/]", step.Name);
             step.Id = _service.Create(step);
             AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
         }
         catch (Exception ex)
         {
-            throw new Exception(
+            throw new InvalidOperationException(
                 "The Plugin Registration was aborted. Maybe you try to register a Async with Pre. Check your Plugin dll and try again. Plugin Step: " +
                 step.Name, ex.RootException());
         }
@@ -587,7 +591,7 @@ internal class AssemblyProcessor
                     AnsiConsole.WriteException(rb.RootException());
                 }
 
-                throw new Exception("The Plugin Registration was aborted. PluginStep: " + step.Name,
+                throw new InvalidOperationException("The Plugin Registration was aborted. PluginStep: " + step.Name,
                     ex.RootException());
             }
         }
@@ -804,7 +808,8 @@ internal class AssemblyProcessor
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
             "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name, pluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
-        AnsiConsole.Markup("   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
+        AnsiConsole.Markup(CultureInfo.InvariantCulture,
+            "   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
             pluginStepImage.ParentName!);
         image.Id = _service.Create(image);
         AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
@@ -888,7 +893,8 @@ internal class AssemblyProcessor
             return crmPluginStepImage;
         }
 
-        AnsiConsole.Markup("   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
+        AnsiConsole.Markup(CultureInfo.InvariantCulture,
+            "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
             updatedStepImage.ImageType!.Value);
@@ -909,5 +915,11 @@ internal class AssemblyProcessor
             select p.CustomizationPrefix).SingleOrDefault();
 
         return prefix ?? defaultValue;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

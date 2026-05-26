@@ -52,7 +52,7 @@ public class ConfigResolver : IConfigResolver
     {
         if (MemoryCache.Default.Contains($"cfg-{file}"))
         {
-            var cached = (TC)MemoryCache.Default.Get($"cfg-{file}");
+            var cached = MemoryCache.Default.Get($"cfg-{file}") as TC;
             if (cached != null)
             {
                 config = cached;

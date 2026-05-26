@@ -3,6 +3,4 @@
 
 namespace dgt.power.dto;
 
-public sealed class RoutingRuleConfigs : List<RoutingRuleConfig>
-{
-}
+public sealed class RoutingRuleConfigs : List<RoutingRuleConfig>;

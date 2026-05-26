@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -15,7 +15,7 @@ public class DeleteProfileCommand : Command<NamedProfileSettings>
 
     public DeleteProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] NamedProfileSettings settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 

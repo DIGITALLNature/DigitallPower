@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ServiceModel;
@@ -10,7 +10,6 @@ using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Crm.Sdk;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 

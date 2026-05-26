@@ -3,6 +3,4 @@
 
 namespace dgt.power.dto;
 
-public sealed class TeamTemplates : List<TeamTemplate>
-{
-}
+public sealed class TeamTemplates : List<TeamTemplate>;

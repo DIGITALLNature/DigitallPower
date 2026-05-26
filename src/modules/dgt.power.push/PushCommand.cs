@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -30,7 +30,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         _webresourcesProcessor = webresourcesProcessor;
     }
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, PushVerb settings, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
 
@@ -69,8 +69,8 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
         List<Assembly?> assemblies;
-        var modelBuilder = new AssemblyModelBuilder(_connection);
-        var processor = new AssemblyProcessor(_connection);
+        using var modelBuilder = new AssemblyModelBuilder(_connection);
+        using var processor = new AssemblyProcessor(_connection);
 
         var solutionPrefix = processor.GetSolutionPrefix(settings.Solution);
 
@@ -102,7 +102,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         }
         else
         {
-            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll")));
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,"*.dll")));
             var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
             assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(settings.Target,loadContext) };
         }

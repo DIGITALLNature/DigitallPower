@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
@@ -25,7 +25,7 @@ namespace dgt.power.codegeneration.Templates.ts
         private static string Sanitize(string value)
         {
             var result = Formatter.PreventFirstNumber(value);
-            return Regex.Replace(result, @"[^0-9a-zA-Z_]+", "_");
+            return Regex.Replace(result, "[^0-9a-zA-Z_]+", "_");
         }
     }
 }

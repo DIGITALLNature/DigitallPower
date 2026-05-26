@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -17,7 +17,7 @@ public class PurgeProfileCommand : Command<ProfileSettings>
 
     public PurgeProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
 
-    protected override int Execute([NotNull] CommandContext context, [NotNull] ProfileSettings settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
         _profileManager.Purge();
 

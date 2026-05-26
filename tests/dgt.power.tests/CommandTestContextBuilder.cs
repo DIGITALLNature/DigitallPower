@@ -3,7 +3,6 @@
 
 using System.Runtime.CompilerServices;
 using dgt.power.common;
-using dgt.power.dataverse;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -9,7 +9,6 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
-using Newtonsoft.Json.Linq;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services

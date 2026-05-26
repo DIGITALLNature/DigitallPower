@@ -3,6 +3,4 @@
 
 namespace dgt.power.common;
 
-public interface IPowerLogic
-{
-}
+public interface IPowerLogic;

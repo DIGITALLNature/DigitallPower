@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json.Serialization;
@@ -50,7 +50,7 @@ namespace dgt.power.codegeneration.Model
         public required string WorkflowEntityId { get; init; }
 
         [JsonPropertyName("formId")]
-        public string? FormId { get; init; } = null;
+        public string? FormId { get; init; }
 
         [JsonPropertyName("argumentsArray")]
         public required List<string> ArgumentsArray { get; init; }

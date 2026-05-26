@@ -52,7 +52,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
 
             if (cases == Case.PascalCase)
             {
-                sb.Append(splittedPhrase[0].ToLower());
+                sb.Append(splittedPhrase[0].ToLowerInvariant());
                 splittedPhrase[0] = string.Empty;
             }
 

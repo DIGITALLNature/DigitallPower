@@ -17,7 +17,6 @@ public class RetrieveCurrentOrganizationExecutor : IOrganizationRequestFake
     {
         var detail = new OrganizationDetail
         {
-            Endpoints = { },
             EnvironmentId = "any-unique-name",
             Geo = "EMEA",
             OrganizationId = Guid.NewGuid(),

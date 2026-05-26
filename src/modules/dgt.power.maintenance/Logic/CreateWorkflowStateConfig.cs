@@ -10,9 +10,6 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
