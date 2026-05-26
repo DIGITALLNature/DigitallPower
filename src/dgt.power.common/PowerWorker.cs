@@ -30,7 +30,7 @@ public abstract class PowerWorker<TConfig>(
     /// </summary>
     /// <param name="args">The worker configuration/verb.</param>
     /// <returns><c>true</c> on success, <c>false</c> on failure.</returns>
-    public bool Invoke(TConfig args) => InvokeCore(args);
+    public virtual bool Invoke(TConfig args) => InvokeCore(args);
 
     protected abstract bool InvokeCore(TConfig args);
 }
