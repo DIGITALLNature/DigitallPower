@@ -9,13 +9,13 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public sealed class UserRoleImport : BaseImport
 {
-    public UserRoleImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
-        connection, configResolver)
+    public UserRoleImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

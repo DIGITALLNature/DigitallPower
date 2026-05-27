@@ -8,13 +8,13 @@ using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
 public sealed class AutoNumberFormatAction : BaseMaintenance
 {
-    public AutoNumberFormatAction(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public AutoNumberFormatAction(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

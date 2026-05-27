@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
 
 namespace dgt.power.tests;
 
@@ -28,14 +29,26 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     private readonly List<IOrganizationRequestFake> _requestFakes = new();
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
+    private IAnsiConsole? _console;
 
     public WorkerTestContextBuilder()
     {
         _serviceCollection = new TestServiceCollection();
     }
 
+    public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithAnsiConsole(IAnsiConsole console)
+    {
+        _console = console;
+        return this;
+    }
+
     public WorkerTestContext<TWorker, TWorkerSettings> Build()
     {
+        if (_console != null)
+        {
+            _serviceCollection.AddSingleton<IAnsiConsole>(_console);
+        }
+
         var service = new FakeOrganizationServiceAsync();
 
         // Merge project-specific fakes with custom fakes (custom fakes win on conflict)

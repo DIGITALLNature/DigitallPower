@@ -11,13 +11,14 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class DocumentTemplateExport : BaseExport
 {
-    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
+        : base(tracer, connection, configResolver, fileService, console)
     {
     }
 

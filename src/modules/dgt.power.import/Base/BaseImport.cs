@@ -5,12 +5,13 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.import.Base;
 
 public abstract class BaseImport : PowerLogic<ImportVerb>
 {
-    protected BaseImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    protected BaseImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

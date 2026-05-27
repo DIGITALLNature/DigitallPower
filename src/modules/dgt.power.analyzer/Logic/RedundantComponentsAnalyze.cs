@@ -18,7 +18,7 @@ namespace dgt.power.analyzer.Logic;
 
 public sealed class RedundantComponentsAnalyze : BaseAnalyze
 {
-    public RedundantComponentsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public RedundantComponentsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

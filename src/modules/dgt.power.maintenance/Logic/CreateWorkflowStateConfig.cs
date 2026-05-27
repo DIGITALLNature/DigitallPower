@@ -51,7 +51,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly WorkflowStateTracker _workflowStateTracker;
 
-    public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
+    public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
         _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
         _workflowStateTracker = new WorkflowStateTracker();

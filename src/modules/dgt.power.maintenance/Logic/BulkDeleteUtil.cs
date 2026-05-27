@@ -10,6 +10,7 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
@@ -17,7 +18,7 @@ public sealed class BulkDeleteUtil : BaseMaintenance
 {
     private readonly int _sleepTime;
 
-    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(tracer, connection, configResolver)
+    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
         _sleepTime = configuration.GetValue<int>("pollrate");
     }

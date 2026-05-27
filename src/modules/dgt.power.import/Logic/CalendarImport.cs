@@ -10,12 +10,13 @@ using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public sealed class CalendarImport : BaseImport
 {
-    public CalendarImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public CalendarImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

@@ -12,7 +12,7 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : BaseAnalyze(tracer, connection, configResolver)
+public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : BaseAnalyze(tracer, connection, configResolver, console)
 {
     protected override bool Invoke(AnalyzeVerb args)
     {

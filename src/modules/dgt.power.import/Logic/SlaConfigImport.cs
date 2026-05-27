@@ -9,12 +9,13 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Calendar = dgt.power.dataverse.Calendar;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public class SlaConfigImport : BaseImport
 {
-    public SlaConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public SlaConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

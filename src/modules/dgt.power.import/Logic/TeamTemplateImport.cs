@@ -11,12 +11,13 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using TeamTemplate = dgt.power.dto.TeamTemplate;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public sealed class TeamTemplateImport : BaseImport
 {
-    public TeamTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public TeamTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

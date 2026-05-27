@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.common;
@@ -10,12 +11,14 @@ namespace dgt.power.common;
 public abstract class PowerLogic<TConfig>(
     ITracer tracer,
     IOrganizationService connection,
-    IConfigResolver configResolver)
+    IConfigResolver configResolver,
+    IAnsiConsole console)
     : Command<TConfig>, IPowerLogic
     where TConfig : BaseProgramSettings
 {
     protected const int PageSize = 5000;
 
+    protected IAnsiConsole Console { get; } = console;
     protected IConfigResolver ConfigResolver { get; } = configResolver;
 
     protected IOrganizationService Connection { get; } = connection;

@@ -12,13 +12,14 @@ using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.analyzer.Base;
 
 #pragma warning disable S1200
 public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 {
-    protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();

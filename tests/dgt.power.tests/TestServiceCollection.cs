@@ -7,6 +7,7 @@ using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
 
 namespace dgt.power.tests;
 
@@ -26,5 +27,6 @@ public class TestServiceCollection : ServiceCollection
         });
         this.AddScoped<IConfigResolver, ConfigResolver>();
         this.AddScoped<IFileService, FileService>();
+        this.AddSingleton<IAnsiConsole>(AnsiConsole.Console);
     }
 }

@@ -10,12 +10,13 @@ using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Queue = dgt.power.dto.Queue;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public sealed class QueueImport : BaseImport
 {
-    public QueueImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public QueueImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

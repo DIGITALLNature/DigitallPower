@@ -16,7 +16,7 @@ namespace dgt.power.analyzer.Logic;
 
 public sealed class TopLayerAnalyze : BaseAnalyze
 {
-    public TopLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public TopLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 
