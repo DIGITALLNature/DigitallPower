@@ -207,7 +207,9 @@ public class CodeGenerationConfig
 
 
     /// <summary>
-    ///     DotNet only; Make generated properties virtual
+    ///     DotNet only; When true, generates classic .NET Framework 4.6.2 compatible code
+    ///     (explicit using directives, non-nullable reference types). When false (default),
+    ///     generates modern .NET code with nullable reference types.
     /// </summary>
     public bool SuppressNullableSupport { get; init; }
 }
