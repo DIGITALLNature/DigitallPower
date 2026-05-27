@@ -168,3 +168,54 @@ Even in command chains:
 ```bash
 rtk git add . && rtk git commit -m "msg" && rtk git push
 ```
+
+---
+
+## Knowledge Persistence (.memory/)
+
+Agents **must** persist valuable findings, decisions, and context in the `.memory/` directory so that knowledge survives across sessions and is available to other agents and developers.
+
+### Rules
+
+1. **Read first.** Always read `.memory/summary.md` at the start of a task to understand current status and avoid redundant work.
+2. **Store findings** in `.memory/` directory. All notes must be in markdown format.
+3. **Filename convention:** `.memory/<type>-<title>.md`
+   - `<type>` is one of: `research`, `phase`, `guide`, `decision`, `implementation`
+   - `<title>` is a short kebab-case descriptor
+4. **Exception:** `.memory/summary.md` does not follow the naming convention — it is the index file.
+5. **Keep `.memory/summary.md` up to date** with current status, active tasks, and key findings. Prune incorrect or outdated information.
+6. **Committed to git.** The `.memory/` directory is shared knowledge — do not add it to `.gitignore`.
+
+### Types
+
+| Type | Purpose |
+|------|---------|
+| `research` | Investigation results, API behavior findings, library evaluations |
+| `phase` | Progress tracking for multi-step work (e.g. migration phases) |
+| `guide` | How-to instructions, patterns, and reusable approaches |
+| `decision` | Architecture/design decisions with rationale and alternatives considered |
+| `implementation` | Implementation plans, technical specs, or post-implementation notes |
+
+### When to Write
+
+- After discovering non-obvious behavior or caveats
+- After making a design/architecture decision
+- When starting multi-step work that spans sessions
+- When findings would save future agents significant research time
+
+### When NOT to Write
+
+- Trivial or self-evident facts already in the code
+- Temporary debugging notes (use comments or session memory instead)
+- Information already covered in README.md or code comments
+
+### Example Filenames
+
+```
+.memory/summary.md
+.memory/research-fetchxml-paging-behavior.md
+.memory/decision-tunit-over-xunit.md
+.memory/phase-net10-migration.md
+.memory/guide-bulk-operation-patterns.md
+.memory/implementation-audit-export-logic.md
+```
