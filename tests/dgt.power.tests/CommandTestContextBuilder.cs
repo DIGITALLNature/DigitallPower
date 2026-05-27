@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.tests;
@@ -27,10 +28,17 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     private readonly List<IOrganizationRequestFake> _requestFakes = new();
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
+    private IAnsiConsole? _console;
 
     public CommandTestContextBuilder()
     {
         _serviceCollection = new TestServiceCollection();
+    }
+
+    public CommandTestContextBuilder<TCommand, TCommandSettings> WithAnsiConsole(IAnsiConsole console)
+    {
+        _console = console;
+        return this;
     }
 
     /// <summary>
@@ -39,6 +47,11 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     /// <returns>The command test context.</returns>
     public CommandTestContext<TCommand, TCommandSettings> Build()
     {
+        if (_console != null)
+        {
+            _serviceCollection.AddSingleton<IAnsiConsole>(_console);
+        }
+
         var service = new FakeOrganizationServiceAsync();
 
         // Merge project-specific fakes with custom fakes (custom fakes win on conflict)

@@ -16,11 +16,10 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    protected IAnsiConsole TestConsole { get; } = new TestConsole();
+    protected Spectre.Console.Testing.TestConsole TestConsole { get; } = new Spectre.Console.Testing.TestConsole();
 
     public CommandTestsBase()
     {
-        AnsiConsole.Console = TestConsole;
     }
 
     protected virtual string ResourceDirectory => Path.Combine("Resources", typeof(TCommand).Name);
@@ -94,7 +93,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     }
 
     protected virtual CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder() =>
-        new();
+        new CommandTestContextBuilder<TCommand, TCommandSettings>().WithAnsiConsole(TestConsole);
 
     protected virtual CommandTestContext<TCommand, TCommandSettings> GetContext() =>
         GetBuilder()

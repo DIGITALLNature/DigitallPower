@@ -8,13 +8,14 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class BulkDeleteExport : BaseExport
 {
-    public BulkDeleteExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public BulkDeleteExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
+        : base(tracer, connection, configResolver, fileService, console)
     {
     }
 

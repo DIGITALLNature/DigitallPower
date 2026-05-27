@@ -20,11 +20,10 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    protected IAnsiConsole TestConsole { get; } = new TestConsole();
+    protected Spectre.Console.Testing.TestConsole TestConsole { get; } = new Spectre.Console.Testing.TestConsole();
 
     public WorkerTestsBase()
     {
-        AnsiConsole.Console = TestConsole;
     }
 
     protected virtual string ResourceDirectory => Path.Combine("Resources", typeof(TWorker).Name);
@@ -75,7 +74,7 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     }
 
     protected virtual WorkerTestContextBuilder<TWorker, TWorkerSettings> GetBuilder() =>
-        new();
+        new WorkerTestContextBuilder<TWorker, TWorkerSettings>().WithAnsiConsole(TestConsole);
 
     protected virtual WorkerTestContext<TWorker, TWorkerSettings> GetContext() =>
         GetBuilder().Build();

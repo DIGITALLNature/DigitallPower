@@ -14,8 +14,7 @@ namespace dgt.power.maintenance.Logic;
 
 public class FilterPowerFxPluginSteps : BaseMaintenance
 {
-    public FilterPowerFxPluginSteps(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) :
-        base(tracer, connection, configResolver)
+    public FilterPowerFxPluginSteps(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

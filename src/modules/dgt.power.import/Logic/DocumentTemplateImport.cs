@@ -17,13 +17,13 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using static dgt.power.dataverse.DocumentTemplate.Options;
 using DocumentTemplate = dgt.power.dto.DocumentTemplate;
+using IAnsiConsole = Spectre.Console.IAnsiConsole;
 
 namespace dgt.power.import.Logic;
 
 public sealed class DocumentTemplateImport : BaseImport
 {
-    public DocumentTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public DocumentTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

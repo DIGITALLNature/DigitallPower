@@ -11,13 +11,14 @@ using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport : BaseExport
 {
-    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
+        : base(tracer, connection, configResolver, fileService, console)
     {
     }
 

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.export.Base;
 
@@ -22,8 +23,8 @@ public abstract class BaseExport : PowerLogic<ExportVerb>
         }
     };
 
-    protected BaseExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService) : base(tracer,
-        connection, configResolver)
+    protected BaseExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console) : base(tracer,
+        connection, configResolver, console)
     {
         _fileService = fileService;
     }

@@ -9,13 +9,14 @@ using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class TeamTemplateExport : BaseExport
 {
-    public TeamTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public TeamTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
+        : base(tracer, connection, configResolver, fileService, console)
     {
     }
 

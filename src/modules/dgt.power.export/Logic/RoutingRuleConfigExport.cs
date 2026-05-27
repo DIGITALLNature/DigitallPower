@@ -9,13 +9,14 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
 using RoutingRuleItem = dgt.power.dto.RoutingRuleItem;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class RoutingRuleConfigExport : BaseExport
 {
-    public RoutingRuleConfigExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
+    public RoutingRuleConfigExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
+        : base(tracer, connection, configResolver, fileService, console)
     {
     }
 

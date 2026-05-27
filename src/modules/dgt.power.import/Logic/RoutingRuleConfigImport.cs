@@ -10,13 +10,13 @@ using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Queue = dgt.power.dataverse.Queue;
 using RoutingRuleItem = dgt.power.dataverse.RoutingRuleItem;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
 public sealed class RoutingRuleConfigImport : BaseImport
 {
-    public RoutingRuleConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
+    public RoutingRuleConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
     }
 

@@ -10,13 +10,13 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Calendar = dgt.power.dto.Calendar;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
 public sealed class CalendarExport : BaseExport
 {
-    public CalendarExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService) : base(tracer,
-        connection, configResolver, fileService)
+    public CalendarExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console) : base(tracer, connection, configResolver, fileService, console)
     {
     }
 
