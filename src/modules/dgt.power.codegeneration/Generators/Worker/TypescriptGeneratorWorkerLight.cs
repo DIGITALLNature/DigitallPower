@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Reflection;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
@@ -30,9 +29,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _metadataService = metadataService;
         _templateOptions = new TemplateOptions();
         CustomLiquidFilters.SetConsole(console);
-        _templateOptions.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
-        _templateOptions.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
-        _templateOptions.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
+        LiquidTemplateEngine.RegisterCoreFilters(_templateOptions);
         _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
         _templateOptions.Filters.AddFilter("attributetype", CustomLiquidFilters.Attributetype);
         _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
@@ -64,13 +61,11 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
     }
 
+    private const string TslResourcePrefix = "dgt.power.codegeneration.Templates.tsl";
+
     private static IFluidTemplate InitializeLiquidTemplate(string templateName)
     {
-        var reader = new StreamReader(Assembly.GetCallingAssembly()
-            .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateName}")!);
-        var parser = new FluidParser(new FluidParserOptions { AllowParentheses = true });
-        var liquidTemplate = parser.Parse(reader.ReadToEnd());
-        return liquidTemplate;
+        return LiquidTemplateEngine.LoadTemplate(TslResourcePrefix, templateName);
     }
 
     #region ITypescriptGenerator Members
