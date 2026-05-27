@@ -20,11 +20,6 @@ public class MissingConnectionException : AbstractPowerException
     {
     }
 
-    protected MissingConnectionException(SerializationInfo serializationInfo, StreamingContext streamingContext) :
-        base(serializationInfo, streamingContext)
-    {
-    }
-
     public static string ErrorMessage =>
         "No connection is selected. Please select an existing connection with dgtp profile select or create a new one with dgtp profile create";
 }

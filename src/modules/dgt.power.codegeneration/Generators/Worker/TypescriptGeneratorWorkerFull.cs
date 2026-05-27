@@ -208,7 +208,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         {
             config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
                 .ToList()
-                .ForEach(e =>
+                .ForEach(_ =>
                     Console.MarkupLine(Warnings.TsExtensionDeprecation));
             config.Forms = config.Forms.Select(e =>
                     e.EndsWith(".ts", StringComparison.InvariantCulture)

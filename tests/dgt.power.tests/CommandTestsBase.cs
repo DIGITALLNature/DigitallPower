@@ -20,10 +20,6 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     private readonly JsonSerializerOptions _jsonSerializerOptions = new() {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}};
 
 
-    public CommandTestsBase()
-    {
-    }
-
     protected virtual string ResourceDirectory => Path.Combine("Resources", typeof(TCommand).Name);
 
     protected virtual string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";

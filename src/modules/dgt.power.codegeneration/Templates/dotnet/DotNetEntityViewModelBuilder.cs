@@ -65,7 +65,7 @@ public class DotNetEntityViewModelBuilder
             ["KeyAttributeIsValidForCreate"] = keyAttribute.IsValidForCreate.GetValueOrDefault(),
             ["Attributes"] = BuildAttributes(editableReadOnlyProperties, useClassic),
             ["NavigationProperties"] = BuildNavigationProperties(),
-            ["OptionFields"] = BuildOptionFields(entitySchemaName),
+            ["OptionFields"] = BuildOptionFields(),
             ["LogicalNameEntries"] = BuildLogicalNameEntries(),
             ["AlternateKeys"] = BuildAlternateKeys(),
             ["OneToManyRelationships"] = BuildOneToManyRelationships(),
@@ -116,12 +116,12 @@ public class DotNetEntityViewModelBuilder
             }).ToArray<object>();
     }
 
-    private object[] BuildOptionFields(string entitySchemaName)
+    private object[] BuildOptionFields()
     {
         return FilterOptions(_entity.Attributes).Select(optionField =>
         {
             var name = Unique(Formatter.CamelCase(optionField.SchemaName), "O" + _entity.LogicalName);
-            string attributeType = optionField.AttributeType switch
+            var attributeType = optionField.AttributeType switch
             {
                 AttributeTypeCode.Picklist => "Picklist",
                 AttributeTypeCode.Virtual => "Virtual",
@@ -130,9 +130,9 @@ public class DotNetEntityViewModelBuilder
                 _ => "Boolean"
             };
 
-            string falseLabel = "";
-            string trueLabel = "";
-            string structLabel = name;
+            var falseLabel = "";
+            var trueLabel = "";
+            var structLabel = name;
 
             if (attributeType == "Boolean")
             {
