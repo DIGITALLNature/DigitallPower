@@ -63,13 +63,13 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
         service.AddDefaultRequests();
 
         // Initialize metadata
-        if (_metadata.Count() > 0)
+        if (_metadata.Any())
         {
             service.AddMetadata(_metadata);
         }
 
         // Add relationships
-        if (_relationships.Count() > 0)
+        if (_relationships.Count > 0)
         {
             service.AddRelationships(_relationships);
         }
@@ -81,7 +81,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
         }
 
         // Initialize data
-        if (_data.Count() > 0 || _dataPreparer != null)
+        if (_data.Any() || _dataPreparer != null)
         {
             if (_dataPreparer != null)
             {

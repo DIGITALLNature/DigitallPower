@@ -87,7 +87,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         if (config.UseBaseLanguage)
         {
             languageCode = _metadataService.RetrieveOrganizationLanguage();
-            _console.MarkupLine($"Using Base Language: {languageCode}");
+            Console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.TsAuxiliaryExtTypes, FileNames.Typescript.FileExtension.TypeExtension);
@@ -137,7 +137,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 var formName =  $"{entityMetada.LogicalName.Trim()}.{Formatter.Sanitize(parsedForm.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
                 if (ShouldSkipFormForConfig(config.Forms, formName))
                 {
-                    _console.MarkupLine($"Skip: {formName}");
+                    Console.MarkupLine($"Skip: {formName}");
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
@@ -179,7 +179,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             // do not create forms for bpf entities
             if (entityMetadata.IsBPFEntity == true)
             {
-                _console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
+                Console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
                 continue;
             }
 
@@ -421,7 +421,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         }
         configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
             .ToList()
-            .ForEach(e => _console.MarkupLine(Warnings.TsExtensionDeprecation));
+            .ForEach(e => Console.MarkupLine(Warnings.TsExtensionDeprecation));
         configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
                     ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
                     : e)

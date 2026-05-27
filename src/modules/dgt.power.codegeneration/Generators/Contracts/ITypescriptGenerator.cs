@@ -15,5 +15,5 @@ public interface ITypescriptGenerator
     void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config);
     void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config);
     void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateCustomApis(CodeGenerationVerb arg, CodeGenerationConfig config);
+    void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config);
 }

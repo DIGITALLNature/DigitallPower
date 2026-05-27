@@ -14,6 +14,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.tests;
 
+[NotInParallel("Win_Shared_File_Issue")]
 public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 {
     private readonly EntityMetadata _accountMetadata;

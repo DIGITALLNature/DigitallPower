@@ -382,7 +382,7 @@ internal class AssemblyProcessor : IDisposable
             var missing = true;
             foreach (var api in apis)
             {
-                if (string.Compare(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase) != 0)
+                if (!string.Equals(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase))
                 {
                     _console.Markup(CultureInfo.InvariantCulture,
                         "  Unlink PluginType [green]{0}[/] from Custom API [bold]{1}[/]", pluginType.Name,

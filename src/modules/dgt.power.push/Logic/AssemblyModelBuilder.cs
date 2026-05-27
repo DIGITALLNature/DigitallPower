@@ -429,7 +429,7 @@ internal class AssemblyModelBuilder : IDisposable
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
-    private IEnumerable<PluginStep> GetPluginSteps(EntityReference pluginType, string pluginTypeName)
+    private List<PluginStep> GetPluginSteps(EntityReference pluginType, string pluginTypeName)
     {
         var steps = new List<PluginStep>();
 
@@ -514,7 +514,7 @@ internal class AssemblyModelBuilder : IDisposable
         return steps;
     }
 
-    private IEnumerable<PluginStepImage> GetPluginStepImages(EntityReference pluginStep, string pluginStepName)
+    private List<PluginStepImage> GetPluginStepImages(EntityReference pluginStep, string pluginStepName)
     {
         var images = new List<PluginStepImage>();
 
@@ -571,7 +571,7 @@ internal class AssemblyModelBuilder : IDisposable
 
     #region dgt.registration
 
-    private IEnumerable<PluginStep> GetPluginSteps(Type pluginType)
+    private List<PluginStep> GetPluginSteps(Type pluginType)
     {
         var steps = new List<PluginStep>();
 

@@ -15,9 +15,4 @@ public abstract class AbstractPowerException : Exception
     protected AbstractPowerException(string environment, Exception innerException) : base(environment, innerException)
     {
     }
-
-    protected AbstractPowerException(SerializationInfo serializationInfo, StreamingContext streamingContext) :
-        base(serializationInfo, streamingContext)
-    {
-    }
 }
