@@ -16,17 +16,19 @@ namespace dgt.power;
 
 public class VersionCheckInterceptor(
     IsolatedStorageFile isolatedStorageFile,
-    PackageMetadataResource packageMetadataClient)
+    PackageMetadataResource packageMetadataClient,
+    IAnsiConsole console)
     : ICommandInterceptor
 {
     private const string FileName = "last-updated.json";
     private const int CheckBarrierInDays = 3;
+    private readonly IAnsiConsole _console = console;
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
         if (TelemetryConfig.IsCi)
         {
-            AnsiConsole.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
+            _console.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
             return;
         }
 
@@ -58,9 +60,9 @@ public class VersionCheckInterceptor(
         var remoteVersion = lastPackage.Identity.Version.Version;
         if (remoteVersion > localPackageVersion)
         {
-            AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
-            AnsiConsole.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
-            AnsiConsole.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
+            _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
+            _console.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
+            _console.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
         }
     }
 
