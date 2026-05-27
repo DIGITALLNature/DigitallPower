@@ -22,14 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Templates\dotnet\ActionTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>ActionTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\dotnet\EntityTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>EntityTemplate.cs</LastGenOutput>
-    </Content>
     <Content Include="Templates\ts\D365BusinessProcessFlowTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365BusinessProcessFlowTemplate.cs</LastGenOutput>
@@ -107,16 +99,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Templates\dotnet\ActionTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ActionTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\dotnet\EntityTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>EntityTemplate.tt</DependentUpon>
-    </Compile>
     <Compile Update="Templates\ts\D365BusinessProcessFlowTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -189,6 +171,10 @@
     <EmbeddedResource Include="Templates\dotnet\SdkMessages.dotnet.liquid" />
     <None Remove="Templates\dotnet\OptionSets.dotnet.liquid" />
     <EmbeddedResource Include="Templates\dotnet\OptionSets.dotnet.liquid" />
+    <None Remove="Templates\dotnet\Action.dotnet.liquid" />
+    <EmbeddedResource Include="Templates\dotnet\Action.dotnet.liquid" />
+    <None Remove="Templates\dotnet\Entity.dotnet.liquid" />
+    <EmbeddedResource Include="Templates\dotnet\Entity.dotnet.liquid" />
     <None Remove="Templates\tsl\OptionSets.liquid" />
     <EmbeddedResource Include="Templates\tsl\OptionSets.liquid" />
     <None Remove="Templates\tsl\SdkMessages.liquid" />

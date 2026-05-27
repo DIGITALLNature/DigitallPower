@@ -57,7 +57,12 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         using var file = File.CreateText(fileName);
-        var content = new ActionTemplate(actions.Concat(apis), config.NameSpace).TransformText();
+
+        var context = DotNetLiquidRenderer.CreateContext();
+        context.SetValue("NameSpace", config.NameSpace);
+        context.SetValue("Actions", actions.Concat(apis).ToArray());
+
+        var content = DotNetLiquidRenderer.Render("Action.dotnet.liquid", context);
         file.Write(content);
     }
 
@@ -148,13 +153,21 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
             using var file = File.CreateText(fileName);
             console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
-            var content = new EntityTemplate(metadata,
+
+            var builder = new DotNetEntityViewModelBuilder(
+                metadata,
                 logicalName => metadataService.RetrieveEntityMetadata(logicalName),
                 config,
                 metadataService.RetrieveOrganizationLanguage(),
-                console).TransformText();
+                console);
 
-            file.Write(content);
+            var context = DotNetLiquidRenderer.CreateContext();
+            foreach (var (key, value) in builder.Build())
+            {
+                context.SetValue(key, value);
+            }
+
+            file.Write(DotNetLiquidRenderer.Render("Entity.dotnet.liquid", context));
         }
     }
 }
