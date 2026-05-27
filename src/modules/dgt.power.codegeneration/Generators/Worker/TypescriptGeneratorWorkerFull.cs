@@ -27,12 +27,14 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        var context = TsLiquidRenderer.CreateContext();
+        context.SetValue("TypingPath", config.TypingPath);
 
-        CreateTemplateFile(new D365ModelTemplate(config.TypingPath), FileNames.Typescript.FileNamePart.Model, args);
-        CreateTemplateFile(new D365ServicesTemplate(config.TypingPath), FileNames.Typescript.FileNamePart.Services, args);
-        CreateTemplateFile(new D365WebApiTemplate(config.TypingPath), FileNames.Typescript.FileNamePart.Webapi, args);
-        CreateTemplateFile(new D365UtilsTemplate(config.TypingPath), FileNames.Typescript.FileNamePart.Utils, args);
-        CreateTemplateFile(new D365ODataTemplate(config.TypingPath), FileNames.Typescript.FileNamePart.Odata, args);
+        CreateLiquidTemplateFile("D365Model.liquid", context, FileNames.Typescript.FileNamePart.Model, args);
+        CreateLiquidTemplateFile("D365Services.liquid", context, FileNames.Typescript.FileNamePart.Services, args);
+        CreateLiquidTemplateFile("D365WebApi.liquid", context, FileNames.Typescript.FileNamePart.Webapi, args);
+        CreateLiquidTemplateFile("D365Utils.liquid", context, FileNames.Typescript.FileNamePart.Utils, args);
+        CreateLiquidTemplateFile("D365OData.liquid", context, FileNames.Typescript.FileNamePart.Odata, args);
     }
 
     /// <summary>
@@ -59,6 +61,14 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
 
         // Write the generated content to the file
         file.Write(content);
+    }
+
+    private void CreateLiquidTemplateFile(string templateName, TemplateContext context, string name, CodeGenerationVerb args)
+    {
+        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
+        using var file = File.CreateText(path);
+        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
+        file.Write(TsLiquidRenderer.Render(templateName, context));
     }
 
     /// <summary>
