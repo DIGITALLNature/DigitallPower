@@ -197,7 +197,7 @@ public sealed class QueueImport(
             PageNumber = 1,
             PagingCookie = null
         };
-        IList<dataverse.Queue> queues = new List<dataverse.Queue>();
+        List<dataverse.Queue> queues = new List<dataverse.Queue>();
         var moreRecords = true;
         while (moreRecords)
         {

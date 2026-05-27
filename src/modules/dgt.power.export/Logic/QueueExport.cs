@@ -63,7 +63,7 @@ public sealed class QueueExport(
             PageNumber = 1,
             PagingCookie = null
         };
-        IList<Queue> queues = new List<Queue>();
+        List<Queue> queues = new List<Queue>();
         var moreRecords = true;
         while (moreRecords)
         {

@@ -11,9 +11,9 @@ namespace dgt.power.codegeneration.Generators.Worker;
 
 public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 {
-    protected readonly IAnsiConsole _console = console;
+    protected readonly IAnsiConsole Console = console;
 
-    private const string NOT_NULL = "!= null";
+    private const string NotNull = "!= null";
     /// <summary>
     ///     Creates a TypeScript file with the specified content and name in the target directory.
     /// </summary>
@@ -25,9 +25,9 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     public void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
     {
         // Ensure that the template and args are not null
-        Debug.Assert(content != null, $"{nameof(content)} {NOT_NULL}");
-        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
-        Debug.Assert(name != null, $"{nameof(name)} + { NOT_NULL}");
+        Debug.Assert(content != null, $"{nameof(content)} {NotNull}");
+        Debug.Assert(args != null, $"{nameof(args)} {NotNull}");
+        Debug.Assert(name != null, $"{nameof(name)} + { NotNull}");
         // Combine the target directory, folder, and file name to create the full path
         var path = Path.Combine([
             args.TargetDirectory,
@@ -42,7 +42,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
         // Create a text file at the specified path
         using var file = File.CreateText(path);
         // Print a message indicating the file creation
-        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
+        Console.MarkupLine($"Creating File: [bold green] {path} [/]");
         // Write the generated content to the file
         file.Write(content);
     }
@@ -50,11 +50,11 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     public void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
     {
         // Ensure that the template and args are not null
-        Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} {NOT_NULL}");
-        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
-        Debug.Assert(extension != null, $"{nameof(extension)} {NOT_NULL}");
+        Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} {NotNull}");
+        Debug.Assert(args != null, $"{nameof(args)} {NotNull}");
+        Debug.Assert(extension != null, $"{nameof(extension)} {NotNull}");
 
-        _console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
+        Console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
         var reader = new StreamReader(Assembly.GetCallingAssembly()
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
@@ -68,10 +68,12 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     /// Prepares the directory for code generation.
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
+#pragma warning disable CA1822 - part of API
     public void PrepareDirectory(CodeGenerationVerb args)
+#pragma warning restore CA1822
     {
         // Ensure that the arguments are not null
-        Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
+        Debug.Assert(args != null, $"{nameof(args)} {NotNull}");
 
         // Create the main folder if it doesn't exist
         var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
@@ -98,11 +100,11 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     /// <summary>
     /// Auxiliary function given a path creates missed directory folders and returns true, false when folder already exists
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="directoryPath"></param>
     /// <returns></returns>
     private static bool CreateDirectoryWhenNeeded(string? directoryPath)
     {
-        Debug.Assert(directoryPath != null, $"{nameof(directoryPath)} {NOT_NULL}");
+        Debug.Assert(directoryPath != null, $"{nameof(directoryPath)} {NotNull}");
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);

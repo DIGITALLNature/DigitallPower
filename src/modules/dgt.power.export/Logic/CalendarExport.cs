@@ -42,7 +42,7 @@ public sealed class CalendarExport(
         return Tracer.End(this, true);
     }
 
-    private static IEnumerable<Guid> GetCalendarIds(DataContext context)
+    private static List<Guid> GetCalendarIds(DataContext context)
     {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         return (from rec in context.CalendarSet

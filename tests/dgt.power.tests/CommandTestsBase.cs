@@ -15,7 +15,10 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    protected TestConsole TestConsole { get; } = new TestConsole();
+    protected TestConsole TestConsole { get; } = new();
+
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}};
+
 
     public CommandTestsBase()
     {
@@ -38,7 +41,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     protected FileInfo WriteConfigurationArtifact<TArtifact>(TArtifact artifact)
     {
         var json = Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(artifact,
-            new JsonSerializerOptions {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}}))).Trim('"');
+            _jsonSerializerOptions))).Trim('"');
 
         var fileName = $"{Guid.NewGuid():N}.json";
         var artifactFqn = Path.Combine(Directory.GetCurrentDirectory(), ArtifactDirectory);

@@ -39,7 +39,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
     {
         var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
         using var file = File.CreateText(path);
-        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
+        Console.MarkupLine($"Creating File: [bold green] {path} [/]");
         file.Write(TsLiquidRenderer.Render(templateName, context));
     }
 
@@ -209,7 +209,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
             config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
                 .ToList()
                 .ForEach(e =>
-                    _console.MarkupLine(Warnings.TsExtensionDeprecation));
+                    Console.MarkupLine(Warnings.TsExtensionDeprecation));
             config.Forms = config.Forms.Select(e =>
                     e.EndsWith(".ts", StringComparison.InvariantCulture)
                         ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
@@ -219,7 +219,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
 
         if (config.Forms.Length != 0 && !config.Forms.Contains(form))
         {
-            _console.MarkupLine($"Skip: {form}");
+            Console.MarkupLine($"Skip: {form}");
             return;
         }
 

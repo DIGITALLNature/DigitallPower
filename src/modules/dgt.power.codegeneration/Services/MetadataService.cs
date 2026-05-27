@@ -101,7 +101,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                         ConditionOperator.Equal, uniqueName)
                 }
             }
-        }).Entities.SingleOrDefault()?.ToEntity<Solution>();   
+        }).Entities.SingleOrDefault()?.ToEntity<Solution>();
 
     public IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config)
     {
@@ -567,7 +567,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
             var querySolutionAndSolutionComponent = querySolutionComponent.AddLink(Solution.EntityLogicalName, Solution.LogicalNames.SolutionId, SolutionComponent.LogicalNames.SolutionId);
             querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions);
-            
+
             queryWorkflow.Criteria.AddFilter(queryAnd);
         }
         List<Workflow> returnList = connection
@@ -611,13 +611,15 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                          ?.Entities?.Select(x => x.ToEntity<ProcessStage>()) ??
                      Enumerable.Empty<ProcessStage>()).ToArray();
 
-        var unique = new HashSet<string>(stages.Count());
+        var unique = new HashSet<string>(stages.Length);
         foreach (var stage in stages)
         {
             var name = Formatter.CamelCase(stage.StageName);
             var stagename = stage.StageName!;
             var processstageid = stage.Id;
+#pragma warning disable CA1868 - needed in controlflow
             if (unique.Contains(stagename))
+#pragma warning restore CA1868
             {
                 var ids = result.Find(t => t.Item2.Equals(stagename,StringComparison.Ordinal))!.Item3;
                 ids.Add(processstageid);
@@ -665,7 +667,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             SolutionComponent.LogicalNames.ObjectId,
             JoinOperator.Any);
         query_Or_Or1.AnyAllFilterLinkEntity = query_Or_Or1_solutioncomponent;
-        query_Or_Or1_solutioncomponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.SystemForm);  
+        query_Or_Or1_solutioncomponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.SystemForm);
 
         var query_Or_Or1_solutioncomponent_And = new FilterExpression();
         query_Or_Or1_solutioncomponent.LinkCriteria = query_Or_Or1_solutioncomponent_And;
@@ -746,7 +748,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                 console);
         })
        .ToDictionary(formDetail => $"{formDetail.FormUniqueName}.{FormParser.GetFormType(formDetail.FormType)}", formDetail => formDetail);
-    }    
+    }
 
     private EntityCollection RetrieveFormsForEntity(string logicalName)
     {
