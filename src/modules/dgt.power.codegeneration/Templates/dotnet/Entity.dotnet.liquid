@@ -1,0 +1,306 @@
+{% if UseClassic %}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+{% endif %}
+using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
+{% if WithDebuggerNonUserCode %}using System.Diagnostics;
+{% endif %}using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Runtime.Serialization;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query; 
+using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+
+// ReSharper disable All
+namespace {{ NameSpace }}
+{
+	/// <inheritdoc />
+	{{ Summary }}
+	[DataContractAttribute()]
+	[EntityLogicalNameAttribute("{{ EntityLogicalName }}")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+    [ExcludeFromCodeCoverage]
+	public partial class {{ EntitySchemaName }} : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    {
+	    #region ctor
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		public {{ EntitySchemaName }}() : this(false)
+        {
+        }
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		public {{ EntitySchemaName }}(bool trackChanges = false) : base(EntityLogicalName)
+        {
+			_trackChanges = trackChanges;
+        }
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		public {{ EntitySchemaName }}(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        {
+			_trackChanges = trackChanges;
+        }
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		public {{ EntitySchemaName }}(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        {
+			_trackChanges = trackChanges;
+        }
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		public {{ EntitySchemaName }}(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        {
+			_trackChanges = trackChanges;
+        }
+        #endregion
+
+		#region fields
+        private readonly bool _trackChanges;
+        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        #endregion
+
+        #region consts
+        public const string EntityLogicalName = "{{ EntityLogicalName }}";
+{% if HasPrimaryNameAttribute %}
+        public const string PrimaryNameAttribute = "{{ PrimaryNameAttribute }}";
+{% endif %}
+{% unless SuppressEntityTypeCode %}
+        public const int EntityTypeCode = {{ ObjectTypeCode }};
+{% endunless %}
+        #endregion
+
+        #region Events
+{% if UseClassic %}
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangingEventHandler PropertyChanging;
+{% else %}
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
+{% endif %}
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (_trackChanges)
+            {
+                _changedProperties.Value.Add(propertyName);
+            }
+        }
+
+{% if WithDebuggerNonUserCode %}		[DebuggerNonUserCode]
+{% endif %}		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
+        }
+
+        #endregion
+
+		#region Attributes
+		[AttributeLogicalNameAttribute("{{ PrimaryIdAttribute }}")]
+		public new {{ Virtual }}System.Guid Id
+		{
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			get
+			{
+				return base.Id;
+			}
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			set
+			{
+{% if KeyAttributeIsValidForCreate %}				{{ KeyAttributeSchemaName }} = value;
+{% else %}				base.Id = value;	
+{% endif %}			}
+		}
+
+{% for attr in Attributes %}
+		{{ attr.Summary }}
+		[AttributeLogicalName("{{ attr.LogicalName }}")]
+        public {{ Virtual }}{{ attr.CSharpType }} {{ attr.Name }}
+        {
+{% if attr.IsValidForRead %}
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			get
+            {
+{% if attr.IsPartyList %}				var collection = this.GetAttributeValue<EntityCollection>("{{ attr.LogicalName }}");
+				if (collection?.Entities != null)
+				{
+					return collection.Entities.Select(e => e.ToEntity<ActivityParty>());
+				}
+				else
+				{
+					return null;
+				}
+{% else %}                return GetAttributeValue<{{ attr.CSharpType }}>("{{ attr.LogicalName }}");
+{% endif %}            }
+{% endif %}
+{% if attr.HasSetter %}
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			set
+            {
+                OnPropertyChanging(nameof({{ attr.Name }}));
+{% if attr.IsPartyList %}				if ((value == null))
+				{
+					this.SetAttributeValue("{{ attr.LogicalName }}", value);
+				}
+				else
+				{
+					this.SetAttributeValue("{{ attr.LogicalName }}", new EntityCollection(new List<Entity>(value)));
+				}
+{% else %}                SetAttributeValue("{{ attr.LogicalName }}", value);
+{% if attr.IsPrimaryId %}				if (value.HasValue)
+				{
+					base.Id = value.Value;
+				}
+				else
+				{
+					base.Id = System.Guid.Empty;
+				}
+{% endif %}
+{% endif %}                OnPropertyChanged(nameof({{ attr.Name }}));
+            }
+{% endif %}
+        }
+
+{% endfor %}		#endregion
+
+{% unless SuppressNavigationProperties %}
+		#region NavigationProperties
+{% for attr in NavigationProperties %}
+		/// <summary>
+		/// 1:N {{ attr.SchemaName }}
+		/// </summary>	
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("{{ attr.SchemaName }}")]
+		public System.Collections.Generic.IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
+		{
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			get
+			{
+				return this.GetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null);
+			}
+{% if WithDebuggerNonUserCode %}			[DebuggerNonUserCode]
+{% endif %}			set
+			{
+				this.OnPropertyChanging("{{ attr.Name }}");
+				this.SetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null, value);
+				this.OnPropertyChanged("{{ attr.Name }}");
+			}
+		}
+
+{% endfor %}		#endregion
+{% endunless %}
+
+{% unless SuppressOptions %}
+		#region Options
+		public static class Options
+		{
+{% for optionField in OptionFields %}
+{% if optionField.AttributeType == "Picklist" or optionField.AttributeType == "Virtual" or optionField.AttributeType == "Status" or optionField.AttributeType == "State" %}		    public struct {{ optionField.Name }}
+                {
+{% for option in optionField.Options %}					public const int {{ option.Label | camelcase | sanitize | unique: optionField.Name }} = {{ option.Value }};
+{% endfor %}                }
+{% else %}                public struct {{ optionField.StructLabel }}
+                {
+                    public const bool {{ optionField.FalseLabel }} = false;
+                    public const bool {{ optionField.TrueLabel }} = true;
+                }
+{% endif %}{% endfor %}		}
+		#endregion
+{% endunless %}
+
+{% unless SuppressLogicalNames %}
+		#region LogicalNames
+		public static class LogicalNames
+		{
+{% for attr in LogicalNameEntries %}				public const string {{ attr.Name }} = "{{ attr.LogicalName }}";
+{% endfor %}		}
+		#endregion
+{% endunless %}
+{% if SuppressAlternateKeys == false and AlternateKeys.size > 0 %}
+
+		#region AlternateKeys
+		public static class AlternateKeys
+		{
+{% for key in AlternateKeys %}				public const string {{ key.Name }} = "{{ key.LogicalName }}";
+{% endfor %}		}
+		#endregion
+{% endif %}
+
+{% unless SuppressRelations %}
+		#region Relations
+        public static class Relations
+        {
+            public static class OneToMany
+            {
+{% for attr in OneToManyRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{% endfor %}            }
+
+            public static class ManyToOne
+            {
+{% for attr in ManyToOneRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{% endfor %}            }
+
+            public static class ManyToMany
+            {
+{% for attr in ManyToManyRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{% endfor %}            }
+        }
+
+        #endregion
+{% endunless %}
+
+		#region Methods
+{% if HasPrimaryNameAttribute %}
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+{% if UseClassic %}            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
+
+{% else %}            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+{% endif %}            return reference;
+        }
+{% endif %}
+        public static {{ EntitySchemaName }} Retrieve(IOrganizationService service, Guid id)
+        {
+            return Retrieve(service,id, new ColumnSet(true));
+        }
+
+        public static {{ EntitySchemaName }} Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        {
+            return service.Retrieve("{{ EntityLogicalName }}", id, columnSet).ToEntity<{{ EntitySchemaName }}>();
+        }
+
+        public {{ EntitySchemaName }} GetChangedEntity()
+        {
+            if (_trackChanges)
+            {
+                var attr = new AttributeCollection();
+{% if UseClassic %}                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+{% else %}                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+{% endif %}                {
+                    attr.Add(attrName,this[attrName]);
+                }
+                return new {{ EntitySchemaName }}(Id) {Attributes = attr };
+            }
+            return this;
+        }
+        #endregion
+	}
+
+{% unless SuppressContext %}
+	#region Context
+	public partial class DataContext
+	{
+		public IQueryable<{{ EntitySchemaName }}> {{ EntitySchemaName }}Set
+		{
+			get
+			{
+				return CreateQuery<{{ EntitySchemaName }}>();
+			}
+		}
+	}
+	#endregion
+{% endunless %}
+}
