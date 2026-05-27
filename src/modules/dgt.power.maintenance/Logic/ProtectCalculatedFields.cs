@@ -23,13 +23,13 @@ namespace dgt.power.maintenance.Logic
             Tracer.Start(this);
             var updated = 0;
 
-            AnsiConsole.Status()
+            Console.Status()
                 .Start("Retrieve Metadata...", ctx =>
                 {
                     ctx.Spinner(Spinner.Known.Smiley);
                     ctx.SpinnerStyle(Style.Parse("green"));
 
-                    AnsiConsole.MarkupLine("Retrieve Metadata");
+                    Console.MarkupLine("Retrieve Metadata");
 
                     var request = new RetrieveAllEntitiesRequest
                     {
@@ -53,7 +53,7 @@ namespace dgt.power.maintenance.Logic
 
                         if (attributeMetadata.IsCustomizable.Value && attributeMetadata.IsCustomizable.CanBeChanged)
                         {
-                            AnsiConsole.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
+                            Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
                             attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
                             Connection.Execute(new UpdateAttributeRequest
                             {
@@ -67,7 +67,7 @@ namespace dgt.power.maintenance.Logic
                 });
 
 
-            AnsiConsole.MarkupLine($"Protected {updated} fields");
+            Console.MarkupLine($"Protected {updated} fields");
 
 
             return true;

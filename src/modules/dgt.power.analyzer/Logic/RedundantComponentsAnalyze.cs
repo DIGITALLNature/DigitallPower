@@ -51,12 +51,12 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             var components = GetSolutionComponents(context, uniqueName);
 
             var table = new Table();
-            AnsiConsole.Live(Align.Center(table))
+            Console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");
@@ -116,8 +116,8 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
 
             var groupedMetrics = resultTable.Where(r => r.OriginSolution == uniqueName).GroupBy(rc => rc.AlsoInSolution).ToList();
 
-            AnsiConsole.WriteLine();
-            AnsiConsole.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
+            Console.WriteLine();
+            Console.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
             var summaryTable = new Table();
 
 
@@ -129,7 +129,7 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
                 summaryTable.AddRow(groupedMetric.Key!, $"[green]{groupedMetric.Count()}[/]");
             }
 
-            AnsiConsole.Write(summaryTable);
+            Console.Write(summaryTable);
         }
 
         if (args.GenerateSummaryFile)

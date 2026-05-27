@@ -51,12 +51,12 @@ public sealed class NoActiveLayerAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             var components = GetSolutionComponents(context, uniqueName);
 
             var table = new Table();
-            AnsiConsole.Live(Align.Center(table))
+            Console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");

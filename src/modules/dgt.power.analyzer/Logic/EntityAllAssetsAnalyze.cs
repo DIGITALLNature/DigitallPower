@@ -61,7 +61,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{entityAllAssets.Solution}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             using var context = new DataContext(Connection);
             var solution = GetSolution(context, entityAllAssets);

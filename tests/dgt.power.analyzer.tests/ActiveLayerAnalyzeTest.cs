@@ -15,7 +15,6 @@ using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console;
 
 namespace dgt.power.analyzer.tests
 {
@@ -136,7 +135,6 @@ namespace dgt.power.analyzer.tests
         [Test]
         public async Task ShouldAnalyzeActiveLayer()
         {
-            AnsiConsole.Record();
             await Assert.That(GetContext()
                 .Execute(new AnalyzeVerb
                 {
@@ -145,7 +143,7 @@ namespace dgt.power.analyzer.tests
                     GenerateReportFile = true
                 })).IsTrue();
 
-            var output = AnsiConsole.ExportText();
+            var output = TestConsole.Output;
             await Assert.That(output).StartsWith("── solution unique name: customizations ──");
             await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json"))).IsTrue();
             await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv"))).IsTrue();
