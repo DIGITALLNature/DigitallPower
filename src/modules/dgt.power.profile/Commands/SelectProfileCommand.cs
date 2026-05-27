@@ -14,8 +14,13 @@ namespace dgt.power.profile.Commands;
 public class SelectProfileCommand : Command<NamedProfileSettings>
 {
     private readonly IProfileManager _profileManager;
+    private readonly IAnsiConsole _console;
 
-    public SelectProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
+    public SelectProfileCommand(IProfileManager profileManager, IAnsiConsole console)
+    {
+        _profileManager = profileManager;
+        _console = console;
+    }
 
     protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
@@ -24,7 +29,7 @@ public class SelectProfileCommand : Command<NamedProfileSettings>
         var identities = _profileManager.LoadIdentities();
         if (!identities.Contains(settings.Name.ToUpperInvariant()))
         {
-            AnsiConsole.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
+            _console.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
             return -1;
         }
 
@@ -33,7 +38,7 @@ public class SelectProfileCommand : Command<NamedProfileSettings>
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] set.");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        _console.Write(rule);
 
         return 0;
     }

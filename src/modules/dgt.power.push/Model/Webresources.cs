@@ -30,7 +30,7 @@ internal record Webresources
 
     public Webresources(int type, string name, WebresourceState webresourceState, Guid xrmId) : this(type, name, name, null, null, webresourceState, xrmId) { }
 
-    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default)
+    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default, IAnsiConsole? console = null)
     {
         var content = File.ReadAllBytes(localFilePath);
         var hash = Convert.ToHexString(SHA256.HashData(content));
@@ -44,7 +44,7 @@ internal record Webresources
             name = fileMapping[relativePath];
             displayName = Path.GetFileName(fileMapping[relativePath]);
 
-            AnsiConsole.MarkupLine($" - [yellow]Applying mapping[/]: [blue]{relativePath}[/] {Emoji.Known.RightArrow} [green]{name}[/]");
+            (console ?? AnsiConsole.Console).MarkupLine($" - [yellow]Applying mapping[/]: [blue]{relativePath}[/] {Emoji.Known.RightArrow} [green]{name}[/]");
         }
         else if (relativePath.StartsWith($"{solutionPrefix}_/", StringComparison.InvariantCulture))
         {

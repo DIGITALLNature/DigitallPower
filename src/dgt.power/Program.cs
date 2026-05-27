@@ -110,6 +110,7 @@ registrations.AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetWorker, DotNetWorker>();
 registrations.AddScoped<IFileService, FileService>();
+registrations.AddSingleton<IAnsiConsole>(AnsiConsole.Console);
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
 registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);

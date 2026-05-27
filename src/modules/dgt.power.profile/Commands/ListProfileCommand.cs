@@ -15,8 +15,13 @@ namespace dgt.power.profile.Commands;
 public class ListProfileCommand : Command<ProfileSettings>
 {
     private readonly IProfileManager _profileManager;
+    private readonly IAnsiConsole _console;
 
-    public ListProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
+    public ListProfileCommand(IProfileManager profileManager, IAnsiConsole console)
+    {
+        _profileManager = profileManager;
+        _console = console;
+    }
 
     protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
@@ -35,7 +40,7 @@ public class ListProfileCommand : Command<ProfileSettings>
                 _profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
         }
 
-        AnsiConsole.Write(grid);
+        _console.Write(grid);
         return 0;
     }
 }

@@ -10,7 +10,7 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public class XrmConnection(IProfileManager profileManager, IConfiguration configuration)
+public class XrmConnection(IProfileManager profileManager, IConfiguration configuration, IAnsiConsole console)
     : IXrmConnection
 {
     public IOrganizationService Connect()
@@ -51,8 +51,8 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
 #pragma warning restore CA5359
         }
 
-        AnsiConsole.MarkupLine("Connect to given configuration.");
-        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection"));
+        console.MarkupLine("Connect to given configuration.");
+        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection"), console);
         try
         {
             return connector.CreateOrganizationServiceProxy();
@@ -91,13 +91,13 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         IConnector connector;
         if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
-            AnsiConsole.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
+            console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
             connector = new TokenConnector(tokenIdentity, profileManager);
         }
         else
         {
-            AnsiConsole.MarkupLine($"Connect to {profileManager.Current} via classic connection");
-            connector = new CrmConnector(identity.ConnectionString);
+            console.MarkupLine($"Connect to {profileManager.Current} via classic connection");
+            connector = new CrmConnector(identity.ConnectionString, console);
         }
 
         try
@@ -112,9 +112,9 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         }
     }
 
-    private static void CheckWhoAmI(IOrganizationService service)
+    private void CheckWhoAmI(IOrganizationService service)
     {
         var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+        console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 }

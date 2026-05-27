@@ -16,10 +16,12 @@ namespace dgt.power.codegeneration.Generators;
 public class MetadataGenerator : IMetadataGenerator
 {
     private readonly IMetadataService _metadataService;
+    private readonly IAnsiConsole _console;
 
-    public MetadataGenerator(IMetadataService metadataService)
+    public MetadataGenerator(IMetadataService metadataService, IAnsiConsole console)
     {
         _metadataService = metadataService;
+        _console = console;
     }
 
     public void PrepareDirectory(CodeGenerationVerb args)
@@ -58,7 +60,7 @@ public class MetadataGenerator : IMetadataGenerator
             var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8};
 
             using var file = XmlWriter.Create(fileName, settings);
-            AnsiConsole.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+            _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }
     }

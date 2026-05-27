@@ -13,16 +13,18 @@ public class ProfileManager : IProfileManager
 {
     private readonly string _identityFileName;
     private readonly IsolatedStorageFile _storage;
+    private readonly IAnsiConsole _console;
     private Identities _identities = new();
 
-    public ProfileManager(IsolatedStorageFile storage) : this(storage, "identities.dat")
+    public ProfileManager(IsolatedStorageFile storage, IAnsiConsole? console = null) : this(storage, "identities.dat", console)
     {
     }
 
-    public ProfileManager(IsolatedStorageFile storage, string identityFileName)
+    public ProfileManager(IsolatedStorageFile storage, string identityFileName, IAnsiConsole? console = null)
     {
         _storage = storage;
         _identityFileName = identityFileName;
+        _console = console ?? AnsiConsole.Console;
     }
 
     public IIdentities LoadIdentities()
@@ -51,7 +53,7 @@ public class ProfileManager : IProfileManager
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _console.WriteException(e);
         }
 
         // TODO Remove 2025 - Mitigation of changed Key-Format

@@ -14,8 +14,13 @@ namespace dgt.power.profile.Commands;
 public class PurgeProfileCommand : Command<ProfileSettings>
 {
     private readonly IProfileManager _profileManager;
+    private readonly IAnsiConsole _console;
 
-    public PurgeProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
+    public PurgeProfileCommand(IProfileManager profileManager, IAnsiConsole console)
+    {
+        _profileManager = profileManager;
+        _console = console;
+    }
 
     protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
@@ -23,7 +28,7 @@ public class PurgeProfileCommand : Command<ProfileSettings>
 
         var rule = new Rule("Identities have been [red]purged[/].");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        _console.Write(rule);
 
         return 0;
     }

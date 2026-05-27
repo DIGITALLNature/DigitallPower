@@ -24,7 +24,8 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     private readonly IMetadataService _metadataService;
     private readonly TemplateOptions _templateOptions;
 
-    public TypescriptGeneratorWorkerLight(IMetadataService metadataService)
+    public TypescriptGeneratorWorkerLight(IMetadataService metadataService, IAnsiConsole console)
+        : base(console)
     {
         _metadataService = metadataService;
         _templateOptions = new TemplateOptions();
@@ -90,7 +91,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         if (config.UseBaseLanguage)
         {
             languageCode = _metadataService.RetrieveOrganizationLanguage();
-            AnsiConsole.MarkupLine($"Using Base Language: {languageCode}");
+            _console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.TsAuxiliaryExtTypes, FileNames.Typescript.FileExtension.TypeExtension);
@@ -140,7 +141,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 var formName =  $"{entityMetada.LogicalName.Trim()}.{Formatter.Sanitize(parsedForm.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
                 if (ShouldSkipFormForConfig(config.Forms, formName))
                 {
-                    AnsiConsole.MarkupLine($"Skip: {formName}");
+                    _console.MarkupLine($"Skip: {formName}");
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
@@ -182,7 +183,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             // do not create forms for bpf entities
             if (entityMetadata.IsBPFEntity == true)
             {
-                AnsiConsole.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
+                _console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
                 continue;
             }
 
@@ -416,7 +417,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="configForms"></param>
     /// <param name="form"></param>
     /// <returns></returns>
-    private static bool ShouldSkipFormForConfig(string[] configForms, string form)
+    private bool ShouldSkipFormForConfig(string[] configForms, string form)
     {
         if (configForms.Length == 0)
         {
@@ -424,7 +425,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         }
         configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
             .ToList()
-            .ForEach(e => AnsiConsole.MarkupLine(Warnings.TsExtensionDeprecation));
+            .ForEach(e => _console.MarkupLine(Warnings.TsExtensionDeprecation));
         configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
                     ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
                     : e)

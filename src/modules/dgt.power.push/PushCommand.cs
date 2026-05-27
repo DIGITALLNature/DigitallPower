@@ -22,19 +22,21 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private readonly IOrganizationService _connection;
     private readonly WebresourcesProcessor _webresourcesProcessor;
     private readonly ITracer _tracer;
+    private readonly IAnsiConsole _console;
 
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor)
+    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor, IAnsiConsole console)
     {
         _tracer = tracer;
         _connection = connection;
         _webresourcesProcessor = webresourcesProcessor;
+        _console = console;
     }
 
     protected override int Execute(CommandContext context, PushVerb settings, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
 
-        AnsiConsole.Status()
+        _console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Connect to XRM...", ctx =>
@@ -57,7 +59,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 }
                 else
                 {
-                    AnsiConsole.MarkupLine("[Red] File or Folder not existing - aborting[/]");
+                    _console.MarkupLine("[Red] File or Folder not existing - aborting[/]");
                 }
 
                 ctx.Status("Finishing");
@@ -69,17 +71,17 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
         List<Assembly?> assemblies;
-        using var modelBuilder = new AssemblyModelBuilder(_connection);
-        using var processor = new AssemblyProcessor(_connection);
+        using var modelBuilder = new AssemblyModelBuilder(_connection, _console);
+        using var processor = new AssemblyProcessor(_connection, _console);
 
         var solutionPrefix = processor.GetSolutionPrefix(settings.Solution);
 
         if (settings.Target.EndsWith(".nupkg", StringComparison.InvariantCultureIgnoreCase))
         {
             // Dependent Plugin
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
-            var packageLocal = AssemblyModelBuilder.BuildPackageFromFile(settings.Target);
+            var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
             if (packageCrm.State == AssemblyState.Create)
@@ -87,7 +89,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 ctx.Status("CreatePluginPackage");
                 if (solutionPrefix == "new")
                 {
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
+                    _console.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
                 }
 
                 packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix, settings.Solution);
@@ -117,11 +119,11 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
             if (localAssembly.Type == AssemblyType.Undefined)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] plugins or workflows - aborting", localAssembly.Name, localAssembly.Version);
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] plugins or workflows - aborting", localAssembly.Name, localAssembly.Version);
                 continue;
             }
 
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
 
             ctx.Status("BuildFromCrm");
             var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);

@@ -4,7 +4,6 @@
 using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
-using Spectre.Console;
 
 namespace dgt.power.profile.tests;
 
@@ -14,7 +13,6 @@ public class SelectProfileCommandTests : ProfileTestsBase<SelectProfileCommand, 
     [Test]
     public async Task ShouldSetProfileAsCurrentOnSelection()
     {
-        AnsiConsole.Record();
         const string identity = "SOME IDENTITY";
         const string connectionString = "con";
         AddIdentity(identity, connectionString);

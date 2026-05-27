@@ -19,6 +19,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
     private readonly TypescriptWorker _typescriptWorker;
     private readonly MetadataWorker _metadataWorker;
     private readonly IMetadataService _metadataService;
+    private readonly IAnsiConsole _console;
 
     public CodeGenerationCommand(
         ITracer tracer,
@@ -26,7 +27,8 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
         DotNetWorker dotNetWorker,
         TypescriptWorker typescriptWorker,
         MetadataWorker metadataWorker,
-        IMetadataService metadataService)
+        IMetadataService metadataService,
+        IAnsiConsole console)
 
     {
         _tracer = tracer;
@@ -35,6 +37,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
         _typescriptWorker = typescriptWorker;
         _metadataWorker = metadataWorker;
         _metadataService = metadataService;
+        _console = console;
     }
 
     protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
@@ -47,7 +50,7 @@ public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
 
         var success = true;
 
-        AnsiConsole.Status()
+        _console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", ctx =>

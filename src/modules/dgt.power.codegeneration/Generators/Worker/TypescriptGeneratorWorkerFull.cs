@@ -17,8 +17,8 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators.Worker;
 
-public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
-    : TypescriptGeneratorWorker, ITypescriptGenerator
+public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAnsiConsole console)
+    : TypescriptGeneratorWorker(console), ITypescriptGenerator
 {
     #region ITypescriptGenerator Members
 
@@ -53,7 +53,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
         // Create a text file at the specified path
         using var file = File.CreateText(path);
         // Print a message indicating the file creation
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
+        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
         // Generate the content using the provided template
         var content = template.GenerateTemplate();
 
@@ -111,7 +111,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
                 $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.EntityRef}.ts");
 
             using var file = File.CreateText(fileName);
-            AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
+            _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
             var content =
                 new D365EntityRefTemplate(config.TypingPath, metadata, config,
                         metadataService.RetrieveOrganizationLanguage())
@@ -209,7 +209,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "TypeScript", $"{bpf.Item4}.bpf.ts");
 
             using var file = File.CreateText(fileName);
-            AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
+            _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
             var content =
                 new D365BusinessProcessFlowTemplate(config.TypingPath, bpf, stages, config).TransformText();
 
@@ -256,7 +256,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
             config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
                 .ToList()
                 .ForEach(e =>
-                    AnsiConsole.MarkupLine(Warnings.TsExtensionDeprecation));
+                    _console.MarkupLine(Warnings.TsExtensionDeprecation));
             config.Forms = config.Forms.Select(e =>
                     e.EndsWith(".ts", StringComparison.InvariantCulture)
                         ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
@@ -266,7 +266,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
 
         if (config.Forms.Length != 0 && !config.Forms.Contains(form))
         {
-            AnsiConsole.MarkupLine($"Skip: {form}");
+            _console.MarkupLine($"Skip: {form}");
             return;
         }
 
@@ -277,7 +277,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService)
 
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
         using var file = File.CreateText(fileName);
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {fileName} [/]");
+        _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
         //TODO: not smart, but works
         var content = new D365EntityFormTemplate(config.TypingPath, form,
             formname, formDetail.Value, entityMetadata, config,

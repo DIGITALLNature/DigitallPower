@@ -15,12 +15,14 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
 {
     private readonly IXrmConnection _connection;
     private readonly IProfileManager _profileManager;
+    private readonly IAnsiConsole _console;
 
 
-    public CreateProfileCommand(IProfileManager profileManager, IConfigResolver configResolver, IXrmConnection connection) : base(configResolver)
+    public CreateProfileCommand(IProfileManager profileManager, IConfigResolver configResolver, IXrmConnection connection, IAnsiConsole console) : base(configResolver)
     {
         _profileManager = profileManager;
         _connection = connection;
+        _console = console;
     }
 
     public override ExitCode Execute(CreateProfileSettings settings)
@@ -60,14 +62,14 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
             }
             catch (FailedConnectionException fc)
             {
-                AnsiConsole.WriteLine(fc.RootMessage());
+                _console.WriteLine(fc.RootMessage());
                 throw;
             }
         }
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        _console.Write(rule);
 
         return ExitCode.Success;
     }

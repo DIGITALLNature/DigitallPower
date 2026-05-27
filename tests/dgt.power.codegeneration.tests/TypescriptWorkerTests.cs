@@ -10,12 +10,10 @@ using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console;
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
 
-[NotInParallel("AnsiConsole")]
 public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 {
     private readonly EntityMetadata _accountMetadata;
@@ -189,8 +187,6 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             Config = WriteConfigurationArtifact(config).FullName,
             TargetDirectory = ArtifactDirectory
         };
-        AnsiConsole.Record();
-
         var context = GetBuilder()
             .WithData(forms.mainForm)
             .Build();
@@ -202,7 +198,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         await Assert.That(File.Exists(
                 $"{typescriptPath}/{mainFormFileName}")).IsTrue();
-        var consoleOutput = AnsiConsole.ExportText();
+        var consoleOutput = TestConsole.Output;
 
         // Remove linebreaks from console output
         await Assert.That(consoleOutput.ReplaceLineEndings(" ")).Contains(Warnings.TsExtensionDeprecation);

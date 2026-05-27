@@ -23,11 +23,13 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 {
     public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
     private readonly IFileService _fileService;
+    private readonly IAnsiConsole _console;
 
-    public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService) : base(
+    public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console) : base(
         organizationService, configResolver)
     {
         _fileService = fileService;
+        _console = console;
     }
 
     protected override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
@@ -106,7 +108,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
         if (carriers.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]No active carrier[/]");
+            _console.MarkupLine("[red]No active carrier[/]");
             return ExitCode.Error;
         }
 
@@ -139,14 +141,14 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
     };
 
 
-    private static bool IsCarrierValid(Ec4uCarrier carrier)
+    private bool IsCarrierValid(Ec4uCarrier carrier)
     {
         if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid,CultureInfo.InvariantCulture, out _))
         {
             return true;
         }
 
-        AnsiConsole.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
+        _console.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
         return false;
     }
 
@@ -163,7 +165,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             })
             .SingleOrDefault();
 
-        AnsiConsole.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
+        _console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
 
         return (solution, tuple.Order);
     }
