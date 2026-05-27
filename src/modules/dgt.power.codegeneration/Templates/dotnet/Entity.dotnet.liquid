@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +21,7 @@ namespace {{ NameSpace }}
 	{{ Summary }}
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("{{ EntityLogicalName }}")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
 	public partial class {{ EntitySchemaName }} : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -111,7 +111,7 @@ namespace {{ NameSpace }}
 {% endif %}			set
 			{
 {% if KeyAttributeIsValidForCreate %}				{{ KeyAttributeSchemaName }} = value;
-{% else %}				base.Id = value;	
+{% else %}				base.Id = value;
 {% endif %}			}
 		}
 
@@ -171,7 +171,7 @@ namespace {{ NameSpace }}
 {% for attr in NavigationProperties %}
 		/// <summary>
 		/// 1:N {{ attr.SchemaName }}
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("{{ attr.SchemaName }}")]
 		public System.Collections.Generic.IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
 		{
@@ -199,8 +199,10 @@ namespace {{ NameSpace }}
 {% for optionField in OptionFields %}
 {% if optionField.AttributeType == "Picklist" or optionField.AttributeType == "Virtual" or optionField.AttributeType == "Status" or optionField.AttributeType == "State" %}		    public struct {{ optionField.Name }}
                 {
-{% for option in optionField.Options %}					public const int {{ option.Label | camelcase | sanitize | unique: optionField.Name }} = {{ option.Value }};
-{% endfor %}                }
+{%- for option in optionField.Options %}
+					public const int {{ option.Label | camelcase | sanitize | unique: optionField.Name }} = {{ option.Value }};
+{%- endfor %}
+                }
 {% else %}                public struct {{ optionField.StructLabel }}
                 {
                     public const bool {{ optionField.FalseLabel }} = false;
@@ -214,8 +216,10 @@ namespace {{ NameSpace }}
 		#region LogicalNames
 		public static class LogicalNames
 		{
-{% for attr in LogicalNameEntries %}				public const string {{ attr.Name }} = "{{ attr.LogicalName }}";
-{% endfor %}		}
+{%- for attr in LogicalNameEntries %}
+				public const string {{ attr.Name }} = "{{ attr.LogicalName }}";
+{%- endfor %}
+		}
 		#endregion
 {% endunless %}
 {% if SuppressAlternateKeys == false and AlternateKeys.size > 0 %}
@@ -223,8 +227,10 @@ namespace {{ NameSpace }}
 		#region AlternateKeys
 		public static class AlternateKeys
 		{
-{% for key in AlternateKeys %}				public const string {{ key.Name }} = "{{ key.LogicalName }}";
-{% endfor %}		}
+{%- for key in AlternateKeys %}
+				public const string {{ key.Name }} = "{{ key.LogicalName }}";
+{%- endfor %}
+		}
 		#endregion
 {% endif %}
 
@@ -234,18 +240,24 @@ namespace {{ NameSpace }}
         {
             public static class OneToMany
             {
-{% for attr in OneToManyRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
-{% endfor %}            }
+{%- for attr in OneToManyRelationships %}
+				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
 
             public static class ManyToOne
             {
-{% for attr in ManyToOneRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
-{% endfor %}            }
+{%- for attr in ManyToOneRelationships %}
+				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
 
             public static class ManyToMany
             {
-{% for attr in ManyToManyRelationships %}				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
-{% endfor %}            }
+{%- for attr in ManyToManyRelationships %}
+				public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
         }
 
         #endregion
