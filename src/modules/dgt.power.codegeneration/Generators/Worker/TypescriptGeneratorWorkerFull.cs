@@ -8,7 +8,6 @@ using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
 using Fluid;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -34,32 +33,6 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         CreateLiquidTemplateFile("D365WebApi.liquid", context, FileNames.Typescript.FileNamePart.Webapi, args);
         CreateLiquidTemplateFile("D365Utils.liquid", context, FileNames.Typescript.FileNamePart.Utils, args);
         CreateLiquidTemplateFile("D365OData.liquid", context, FileNames.Typescript.FileNamePart.Odata, args);
-    }
-
-    /// <summary>
-    ///     Creates a template file using the provided template, name, and code generation arguments.
-    /// </summary>
-    /// <param name="template">The template to use for generating the file content.</param>
-    /// <param name="name">The name of the file to be created.</param>
-    /// <param name="args">The code generation arguments, including the target directory and folder.</param>
-    public void CreateTemplateFile(ITemplate template, string name, CodeGenerationVerb args)
-    {
-        // Ensure that the template and args are not null
-        Debug.Assert(template != null, nameof(template) + " != null");
-        Debug.Assert(args != null, nameof(args) + " != null");
-
-        // Combine the target directory, folder, and file name to create the full path
-        var path = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{name}.ts");
-
-        // Create a text file at the specified path
-        using var file = File.CreateText(path);
-        // Print a message indicating the file creation
-        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
-        // Generate the content using the provided template
-        var content = template.GenerateTemplate();
-
-        // Write the generated content to the file
-        file.Write(content);
     }
 
     private void CreateLiquidTemplateFile(string templateName, TemplateContext context, string name, CodeGenerationVerb args)
