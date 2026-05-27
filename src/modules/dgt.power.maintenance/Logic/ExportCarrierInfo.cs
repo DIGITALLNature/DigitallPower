@@ -2,10 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.common.Commands;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -19,28 +17,25 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 
-public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
+public class ExportCarrierInfo(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : PowerLogic<CarrierInfoSettings>(tracer, connection, configResolver, console)
 {
     public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
-    private readonly IFileService _fileService;
-    private readonly IAnsiConsole _console;
-
-    public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console) : base(
-        organizationService, configResolver)
-    {
-        _fileService = fileService;
-        _console = console;
-    }
 
     protected override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
     {
-        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        var isSuccessfulEc4u = !isSuccessfulDgt && OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulEc4u = !isSuccessfulDgt && Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = Ec4uCarrier.EntityLogicalName
@@ -51,17 +46,20 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
-    public override ExitCode Execute(CarrierInfoSettings settings)
+    protected override bool Invoke(CarrierInfoSettings settings)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
+        Tracer.Start(this);
 
-        var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        using var dataContext = new DataContext(Connection);
+
+        var isSuccessfulOld = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = Ec4uCarrier.EntityLogicalName
         }, out _);
 
-        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = DgtCarrier.EntityLogicalName
@@ -70,7 +68,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
         List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
         if (isSuccessfulOld)
         {
-            carriers = DataContext.Ec4uCarrierSet
+            carriers = dataContext.Ec4uCarrierSet
                 .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.Ec4uCarTransportOrderNo)
                 .Select(x => new Ec4uCarrier
@@ -89,7 +87,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
         if(isSuccessfulDgt)
         {
-            carriers = DataContext.DgtCarrierSet
+            carriers = dataContext.DgtCarrierSet
                 .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.DgtTransportOrderNo)
                 .Select(x => new Ec4uCarrier
@@ -108,21 +106,21 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
 
         if (carriers.Count == 0)
         {
-            _console.MarkupLine("[red]No active carrier[/]");
-            return ExitCode.Error;
+            Console.MarkupLine("[red]No active carrier[/]");
+            return Tracer.End(this, false);
         }
 
         var carrierInfo = carriers
             .Where(IsCarrierValid)
             .Select(ExtractIdAndOrder)
-            .Select(GetSolution)
+            .Select(tuple => GetSolution(dataContext, tuple))
             .Where(SolutionIsNotNull)
             .Select(ToCarrierInfo)
             .OrderBy(carrier => carrier.Order);
 
-        _fileService.ExportJsonFile(settings.FileDir, settings.FileName, new Carriers(carrierInfo));
+        fileService.ExportJsonFile(settings.FileDir, settings.FileName, new Carriers(carrierInfo));
 
-        return ExitCode.Success;
+        return Tracer.End(this, true);
     }
 
     private static bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
@@ -148,13 +146,13 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             return true;
         }
 
-        _console.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
+        Console.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
         return false;
     }
 
-    private (Solution? Solution, Ec4uCarrier Carrier) GetSolution((Guid SolutionId, Ec4uCarrier Order) tuple)
+    private (Solution? Solution, Ec4uCarrier Carrier) GetSolution(DataContext dataContext, (Guid SolutionId, Ec4uCarrier Order) tuple)
     {
-        var solution = DataContext.SolutionSet.Where(x => x.Id == tuple.SolutionId)
+        var solution = dataContext.SolutionSet.Where(x => x.Id == tuple.SolutionId)
             .Select(x => new Solution
             {
                 Id = x.Id,
@@ -165,7 +163,7 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             })
             .SingleOrDefault();
 
-        _console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
+        Console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
 
         return (solution, tuple.Order);
     }
