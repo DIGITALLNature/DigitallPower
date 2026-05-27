@@ -397,7 +397,7 @@ internal static class TsLiquidTemplateModelFactory
         return filteredGrids;
     }
 
-    private static IEnumerable<string> FlatSections(string form, IEnumerable<KeyValuePair<string, List<string>>> filteredTabs, CodeGenerationConfig config)
+    private static List<string> FlatSections(string form, IEnumerable<KeyValuePair<string, List<string>>> filteredTabs, CodeGenerationConfig config)
     {
         var sections = new List<string>();
         foreach (var tab in filteredTabs)

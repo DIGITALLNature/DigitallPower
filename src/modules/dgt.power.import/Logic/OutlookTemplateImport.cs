@@ -166,7 +166,7 @@ public sealed class OutlookTemplateImport(
                     return false;
                 }
 
-                if (!attr.Value.Equals(secondary.Attribute(attr.Name.LocalName)?.Value.ToUpperInvariant(), StringComparison.InvariantCultureIgnoreCase))
+                if (!attr.Value.Equals(secondary.Attribute(attr.Name.LocalName)?.Value.ToUpperInvariant(), StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
