@@ -98,7 +98,9 @@ public class LibraryDiagnosticTests
         {
             SchemaName = "calendar_calendar_rules",
             ReferencedEntity = "calendar",
-            ReferencingEntity = "calendarrule"
+            ReferencedAttribute = "calendarid",
+            ReferencingEntity = "calendarrule",
+            ReferencingAttribute = "calendarid"
         };
         service.AddRelationships(relationship);
 
