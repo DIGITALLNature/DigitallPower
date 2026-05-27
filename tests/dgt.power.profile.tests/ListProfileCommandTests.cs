@@ -5,7 +5,6 @@ using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
-using Spectre.Console;
 
 namespace dgt.power.profile.tests;
 
@@ -20,11 +19,9 @@ public class ListProfileCommandTests : ProfileTestsBase<ListProfileCommand, Prof
         const string identity2 = "SECOND";
         AddIdentity(identity2, "connection");
 
-        AnsiConsole.Record();
-
         await GetContext().Execute(new ProfileSettings()).Succeed();
 
-        var consoleOutput = AnsiConsole.ExportText();
+        var consoleOutput = TestConsole.Output;
         await Assert.That(consoleOutput).Contains(identity1);
         await Assert.That(consoleOutput).Contains(identity2);
     }

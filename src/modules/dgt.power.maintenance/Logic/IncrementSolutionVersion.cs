@@ -12,16 +12,19 @@ namespace dgt.power.maintenance.Logic;
 
 public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSolutionVersionSettings>
 {
-    public IncrementSolutionVersion(IOrganizationService organizationService, IConfigResolver configResolver) : base(organizationService,
+    private readonly IAnsiConsole _console;
+
+    public IncrementSolutionVersion(IOrganizationService organizationService, IConfigResolver configResolver, IAnsiConsole console) : base(organizationService,
         configResolver)
     {
+        _console = console;
     }
 
     public override ExitCode Execute(IncrementSolutionVersionSettings settings)
     {
         if (string.IsNullOrWhiteSpace(settings.Solution))
         {
-            AnsiConsole.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
+            _console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
             return ExitCode.Error;
         }
 
@@ -37,17 +40,17 @@ public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSoluti
 
         if (solution == null)
         {
-            AnsiConsole.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
+            _console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
             return ExitCode.Error;
         }
 
         if (!Version.TryParse(solution.Version, out var version))
         {
-            AnsiConsole.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
+            _console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
             return ExitCode.Error;
         }
 
-        AnsiConsole.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
+        _console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
 
         Version incrementedVersion;
         if (settings.Major)
@@ -68,7 +71,7 @@ public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSoluti
         }
         else
         {
-            AnsiConsole.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
+            _console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
             return ExitCode.Error;
         }
 
@@ -76,7 +79,7 @@ public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSoluti
         {
             Version = incrementedVersion.ToString()
         });
-        AnsiConsole.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
+        _console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
 
         return ExitCode.Success;
     }

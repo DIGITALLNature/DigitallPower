@@ -13,19 +13,24 @@ namespace dgt.power.common.Logic;
 internal partial class CrmConnector: IConnector
 {
     private readonly string _connectionString;
+    private readonly IAnsiConsole _console;
 
-    internal CrmConnector(string connectionString) => _connectionString = connectionString;
+    internal CrmConnector(string connectionString, IAnsiConsole? console = null)
+    {
+        _connectionString = connectionString;
+        _console = console ?? AnsiConsole.Console;
+    }
 
     public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
     {
         if (!SkipDiscoveryRegex().IsMatch(_connectionString))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
         }
 
         if (!RequireNewInstanceRegex().IsMatch(_connectionString))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
         }
 
         var serviceClient = new ServiceClient(_connectionString);

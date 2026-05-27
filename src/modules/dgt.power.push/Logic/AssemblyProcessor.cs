@@ -18,11 +18,13 @@ internal class AssemblyProcessor : IDisposable
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
+    private readonly IAnsiConsole _console;
     private static readonly string[] separator = [","];
 
-    public AssemblyProcessor(IOrganizationService service)
+    public AssemblyProcessor(IOrganizationService service, IAnsiConsole? console = null)
     {
         _service = service;
+        _console = console ?? AnsiConsole.Console;
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
     }
 
@@ -38,10 +40,10 @@ internal class AssemblyProcessor : IDisposable
             Version = packageLocal.Version
         };
 
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, "Create Package [green]{0} ({1})[/]", package.Name,
+        _console.Markup(CultureInfo.InvariantCulture, "Create Package [green]{0} ({1})[/]", package.Name,
             package.Version);
         package.Id = _service.Create(package);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
 
        if (!string.IsNullOrWhiteSpace(solution))
        {
@@ -66,12 +68,12 @@ internal class AssemblyProcessor : IDisposable
             Version = packageCrm.Version
         };
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
        _service.Update(package);
 
        if (publish)
        {
-           AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+           _console.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
            _service.Execute(new PublishXmlRequest
            {
                ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrm.Id}</pluginpackage></pluginpackages></importexportxml>"
@@ -110,7 +112,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (scd == null)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
+            _console.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
             throw new InvalidOperationException(
                 "The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " +
                 pluginPackage.Name);
@@ -125,7 +127,7 @@ internal class AssemblyProcessor : IDisposable
 
         try
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
                 pluginPackage.Name!, solution);
             _service.Execute(addReq);
         }
@@ -137,8 +139,8 @@ internal class AssemblyProcessor : IDisposable
             }
             catch (Exception rb)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                AnsiConsole.WriteException(rb.RootException());
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
             }
 
             throw new InvalidOperationException("The Plugin Registration was aborted. Package: " + pluginPackage.Name,
@@ -160,10 +162,10 @@ internal class AssemblyProcessor : IDisposable
             Content = dll.Content
         };
 
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, "Create Assembly [green]{0} ({1})[/]", pluginAssembly.Name,
+        _console.Markup(CultureInfo.InvariantCulture, "Create Assembly [green]{0} ({1})[/]", pluginAssembly.Name,
             dll.Version);
         pluginAssembly.Id = _service.Create(pluginAssembly);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", pluginAssembly.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", pluginAssembly.Id);
 
         if (!string.IsNullOrWhiteSpace(solution))
         {
@@ -181,7 +183,7 @@ internal class AssemblyProcessor : IDisposable
 
     public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution, bool publish)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
             crm.Name, crm.Version, dll.Version);
         //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly"
         foreach (var oldType in crm.PluginTypes.ToList().Where(t => dll.PluginTypes.All(d => d.TypeName != t.TypeName)))
@@ -197,7 +199,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (publish)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
             _service.Execute(new PublishXmlRequest
             {
                 ParameterXml = $"<importexportxml><pluginassemblies><pluginassembly>{crm.Id}</pluginassembly></pluginassemblies></importexportxml>"
@@ -237,7 +239,7 @@ internal class AssemblyProcessor : IDisposable
 
         try
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add Assembly [green]{0}[/] to Solution [bold]{1}[/]",
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add Assembly [green]{0}[/] to Solution [bold]{1}[/]",
                 pluginAssembly.Name!, solution);
             _service.Execute(addReq);
         }
@@ -249,8 +251,8 @@ internal class AssemblyProcessor : IDisposable
             }
             catch (Exception rb)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                AnsiConsole.WriteException(rb.RootException());
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
             }
 
             throw new InvalidOperationException("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
@@ -289,10 +291,10 @@ internal class AssemblyProcessor : IDisposable
             TypeName = pluginType.TypeName,
             FriendlyName = pluginType.FriendlyName
         };
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, " Create PluginType [green]{0}[/] for Assembly [bold]{1}[/]",
+        _console.Markup(CultureInfo.InvariantCulture, " Create PluginType [green]{0}[/] for Assembly [bold]{1}[/]",
             pluginType.Name, pluginType.ParentName!);
         type.Id = _service.Create(type);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
 
         if (!string.IsNullOrWhiteSpace(pluginType.CustomApi))
         {
@@ -311,13 +313,13 @@ internal class AssemblyProcessor : IDisposable
                 }
             };
             var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
-            AnsiConsole.Markup(CultureInfo.InvariantCulture,
+            _console.Markup(CultureInfo.InvariantCulture,
                 "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
             _service.Update(new CustomAPI(api.Id)
             {
                 PluginTypeId = type.ToEntityReference()
             });
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
         }
 
         return new PluginType
@@ -334,7 +336,7 @@ internal class AssemblyProcessor : IDisposable
 
     internal PluginType DeletePluginType(PluginType pluginType)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             " Delete PluginType [green]{0}[/] for Assembly [bold]{1}[/] first", pluginType.Name,
             pluginType.ParentName!);
         var request = new RetrieveDependenciesForDeleteRequest
@@ -347,7 +349,7 @@ internal class AssemblyProcessor : IDisposable
         {
             if (dependency.DependentComponentType!.Value == 92) //SDK Message Processing Step
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "  Delete [green]{0}[/] for PluginType [bold]{1}[/]", "PluginStep", pluginType.Name);
                 _service.Delete(SdkMessageProcessingStep.EntityLogicalName,
                     dependency.DependentComponentObjectId!.Value);
@@ -382,7 +384,7 @@ internal class AssemblyProcessor : IDisposable
             {
                 if (string.Compare(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase) != 0)
                 {
-                    AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                    _console.Markup(CultureInfo.InvariantCulture,
                         "  Unlink PluginType [green]{0}[/] from Custom API [bold]{1}[/]", pluginType.Name,
                         api.UniqueName!);
                     _service.Update(new CustomAPI(api.Id)
@@ -392,13 +394,13 @@ internal class AssemblyProcessor : IDisposable
                 }
                 else
                 {
-                    AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                    _console.Markup(CultureInfo.InvariantCulture,
                         "  Match PluginType [green]{0}[/] for Custom API [bold]{1}[/]", pluginType.Name,
                         api.UniqueName!);
                     missing = false;
                 }
 
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
             }
 
             if (missing)
@@ -418,13 +420,13 @@ internal class AssemblyProcessor : IDisposable
                     }
                 };
                 var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
-                AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                _console.Markup(CultureInfo.InvariantCulture,
                     "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
                 _service.Update(new CustomAPI(api.Id)
                 {
                     PluginTypeId = new EntityReference(dataverse.PluginType.EntityLogicalName, pluginType.Id)
                 });
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
             }
         }
     }
@@ -457,11 +459,11 @@ internal class AssemblyProcessor : IDisposable
             FriendlyName = workflowType.FriendlyName,
             WorkflowActivityGroupName = workflowType.WorkflowActivityGroupName
         };
-        AnsiConsole.Markup(CultureInfo.InvariantCulture,
+        _console.Markup(CultureInfo.InvariantCulture,
             " Create WorkflowType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
             workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
         type.Id = _service.Create(type);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
 
         return new WorkflowType
         {
@@ -477,7 +479,7 @@ internal class AssemblyProcessor : IDisposable
 
     private WorkflowType DeleteWorkflowType(WorkflowType workflowType)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             " Delete PluginType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
             workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
         _service.Delete(workflowType.TypeCode, workflowType.Id);
@@ -495,7 +497,7 @@ internal class AssemblyProcessor : IDisposable
             var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
             if (dllPluginType.PluginSteps.Count == 0)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
+                _console.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
                     dllPluginType.Name);
                 continue;
             }
@@ -541,7 +543,7 @@ internal class AssemblyProcessor : IDisposable
             Configuration = pluginStep.Configuration
         };
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
         AssemblyValidator.Validate(step);
 
         if (!Guid.Empty.Equals(pluginStep.MessageFilterId))
@@ -551,9 +553,9 @@ internal class AssemblyProcessor : IDisposable
 
         try
         {
-            AnsiConsole.Markup(CultureInfo.InvariantCulture, "  Create PluginStep: [green]{0}[/]", step.Name);
+            _console.Markup(CultureInfo.InvariantCulture, "  Create PluginStep: [green]{0}[/]", step.Name);
             step.Id = _service.Create(step);
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
         }
         catch (Exception ex)
         {
@@ -575,7 +577,7 @@ internal class AssemblyProcessor : IDisposable
 
             try
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "  Add PluginStep [green]{0}[/] to Solution [bold]{1}[/]", step.Name, solution);
                 _service.Execute(addReq);
             }
@@ -587,8 +589,8 @@ internal class AssemblyProcessor : IDisposable
                 }
                 catch (Exception rb)
                 {
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                    AnsiConsole.WriteException(rb.RootException());
+                    _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                    _console.WriteException(rb.RootException());
                 }
 
                 throw new InvalidOperationException("The Plugin Registration was aborted. PluginStep: " + step.Name,
@@ -614,14 +616,14 @@ internal class AssemblyProcessor : IDisposable
 
     private PluginStep DeletePluginStep(PluginStep pluginStep)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Delete PluginStep [green]{0}[/]", pluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Delete PluginStep [green]{0}[/]", pluginStep.Name);
         //del image
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         (from mpsi in _context.SdkMessageProcessingStepImageSet
             where mpsi.SdkMessageProcessingStepId.Equals(new EntityReference(pluginStep.TypeCode, pluginStep.Id))
             select mpsi).ToList().ForEach(e =>
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Delete PluginStepImage [bold]{0}[/] for PluginStep [green]{1}[/]", e.Name!, pluginStep.Name);
             _service.Delete(SdkMessageProcessingStepImage.EntityLogicalName, e.Id);
         });
@@ -634,7 +636,7 @@ internal class AssemblyProcessor : IDisposable
 
     private PluginStep UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
 
         var name = dllPluginStep.Name;
 
@@ -649,7 +651,7 @@ internal class AssemblyProcessor : IDisposable
         var updated = false;
         if (crmPluginStep.Name != name)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Rename PluginStep from [navy]{0}[/] to [green]{1}[/]", crmPluginStep.Name, name);
             updatedStep.Name = name;
             updated = true;
@@ -657,7 +659,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (crmPluginStep.ExecutionOrder != dllPluginStep.ExecutionOrder)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update ExecutionOrder from [navy]{0}[/] to [green]{1}[/] for PluginStep {2}",
                 crmPluginStep.ExecutionOrder, dllPluginStep.ExecutionOrder, name);
             updatedStep.Rank = dllPluginStep.ExecutionOrder;
@@ -674,7 +676,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (!string.IsNullOrEmpty(crmFilter) && string.IsNullOrEmpty(dllFilter))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] filters from '{1}' to <empty>", name, crmFilter);
             updatedStep.FilteringAttributesField = null;
             crmPluginStep.FilterAttributes = null;
@@ -682,7 +684,7 @@ internal class AssemblyProcessor : IDisposable
         }
         else if (string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] filters from <empty> to '{1}'", name, dllFilter);
             updatedStep.FilteringAttributesField = dllFilter;
             crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
@@ -697,7 +699,7 @@ internal class AssemblyProcessor : IDisposable
             if (!string.Join(",", crmFilteringAttributes)
                     .Equals(string.Join(",", dllFilteringAttributes!), StringComparison.Ordinal))
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "   Update PluginStep [green]{0}[/] filters from '{1}' to '{2}'", name, crmFilter, dllFilter);
                 updatedStep.FilteringAttributesField = dllFilter;
                 crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
@@ -707,7 +709,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (!string.IsNullOrEmpty(crmPluginStep.Configuration) && string.IsNullOrEmpty(dllPluginStep.Configuration))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration from '{1}' to <empty>", name,
                 crmPluginStep.Configuration);
             updatedStep.Configuration = null;
@@ -717,7 +719,7 @@ internal class AssemblyProcessor : IDisposable
         else if (string.IsNullOrEmpty(crmPluginStep.Configuration) &&
                  !string.IsNullOrEmpty(dllPluginStep.Configuration))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration from <empty> to '{1}'", name,
                 dllPluginStep.Configuration);
             updatedStep.Configuration = dllPluginStep.Configuration;
@@ -726,7 +728,7 @@ internal class AssemblyProcessor : IDisposable
         }
         else if (!crmPluginStep.Configuration?.Equals(dllPluginStep.Configuration, StringComparison.Ordinal) ?? false)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration '{1}' to '{2}'", name, crmPluginStep.Configuration,
                 dllPluginStep.Configuration!);
             updatedStep.Configuration = dllPluginStep.Configuration;
@@ -739,10 +741,10 @@ internal class AssemblyProcessor : IDisposable
             return crmPluginStep;
         }
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
         AssemblyValidator.Validate(updatedStep);
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
         _service.Update(updatedStep);
         return crmPluginStep;
     }
@@ -805,14 +807,14 @@ internal class AssemblyProcessor : IDisposable
                 ? null
                 : string.Join(",", pluginStepImage.Attributes)
         };
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name, pluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
-        AnsiConsole.Markup(CultureInfo.InvariantCulture,
+        _console.Markup(CultureInfo.InvariantCulture,
             "   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
             pluginStepImage.ParentName!);
         image.Id = _service.Create(image);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
 
         pluginStepImage.Id = image.Id;
         pluginStepImage.ParentId = pluginStep.Id;
@@ -831,7 +833,7 @@ internal class AssemblyProcessor : IDisposable
 
     private PluginStepImage DeletePluginStepImage(PluginStepImage pluginStepImage)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Delete PluginStepImage: [green]{0}[/] for [bold]{1}[/]", pluginStepImage.Name,
             pluginStepImage.ParentName!);
         _service.Delete(pluginStepImage.TypeCode, pluginStepImage.Id);
@@ -841,7 +843,7 @@ internal class AssemblyProcessor : IDisposable
     private PluginStepImage UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
         PluginStepImage crmPluginStepImage)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
+        _console.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
             crmPluginStepImage.Name, crmPluginStepImage.ParentName!);
 
         var crmFilter = crmPluginStepImage.Attributes;
@@ -859,7 +861,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (!(crmFilter == null || crmFilter.Length < 1) && (dllFilter == null || dllFilter.Length < 1))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from [green]{0}[/] to <empty>", string.Join(",", crmFilter));
             updatedStepImage.AttributesField = null;
             crmPluginStepImage.Attributes = null;
@@ -867,7 +869,7 @@ internal class AssemblyProcessor : IDisposable
         }
         else if ((crmFilter == null || crmFilter.Length < 1) && !(dllFilter == null || dllFilter.Length < 1))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from <empty> to [green]{0}[/]", string.Join(",", dllFilter));
             updatedStepImage.AttributesField = string.Join(",", dllFilter);
             crmPluginStepImage.Attributes = dllFilter;
@@ -879,7 +881,7 @@ internal class AssemblyProcessor : IDisposable
             Array.Sort(dllFilter);
             if (!string.Join(",", crmFilter).Equals(string.Join(",", dllFilter), StringComparison.Ordinal))
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", crmFilter),
                     string.Join(",", dllFilter));
                 updatedStepImage.AttributesField = string.Join(",", dllFilter);
@@ -893,12 +895,12 @@ internal class AssemblyProcessor : IDisposable
             return crmPluginStepImage;
         }
 
-        AnsiConsole.Markup(CultureInfo.InvariantCulture,
+        _console.Markup(CultureInfo.InvariantCulture,
             "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
             updatedStepImage.ImageType!.Value);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Update PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         _service.Update(updatedStepImage);

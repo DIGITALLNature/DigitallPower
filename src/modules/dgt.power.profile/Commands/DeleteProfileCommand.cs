@@ -12,8 +12,13 @@ namespace dgt.power.profile.Commands;
 public class DeleteProfileCommand : Command<NamedProfileSettings>
 {
     private readonly IProfileManager _profileManager;
+    private readonly IAnsiConsole _console;
 
-    public DeleteProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
+    public DeleteProfileCommand(IProfileManager profileManager, IAnsiConsole console)
+    {
+        _profileManager = profileManager;
+        _console = console;
+    }
 
     protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
@@ -25,7 +30,7 @@ public class DeleteProfileCommand : Command<NamedProfileSettings>
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] is removed.");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        _console.Write(rule);
 
         return 0;
     }

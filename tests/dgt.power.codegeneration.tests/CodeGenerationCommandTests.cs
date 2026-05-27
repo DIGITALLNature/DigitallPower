@@ -6,6 +6,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.tests;
@@ -31,7 +32,7 @@ public class CodeGenerationCommandTests
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
         _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataWorkerMock.Object, metadataServiceMock.Object);
+            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataWorkerMock.Object, metadataServiceMock.Object, AnsiConsole.Console);
     }
 
     [Test]

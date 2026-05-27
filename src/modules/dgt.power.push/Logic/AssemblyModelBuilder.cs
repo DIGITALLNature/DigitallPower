@@ -32,14 +32,16 @@ internal class AssemblyModelBuilder : IDisposable
     };
 
     private readonly IOrganizationService _service;
+    private readonly IAnsiConsole _console;
 
-    public AssemblyModelBuilder(IOrganizationService service)
+    public AssemblyModelBuilder(IOrganizationService service, IAnsiConsole? console = null)
     {
         _service = service;
+        _console = console ?? AnsiConsole.Console;
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
     }
 
-    public static Package BuildPackageFromFile(string packageFile)
+    public Package BuildPackageFromFile(string packageFile)
     {
         var result = default(Package);
         try
@@ -58,7 +60,7 @@ internal class AssemblyModelBuilder : IDisposable
         }
         catch (Exception e)
         {
-            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
+            _console.MarkupLine(Markup.Escape(e.RootMessage()));
         }
 
         return result;
@@ -145,12 +147,12 @@ internal class AssemblyModelBuilder : IDisposable
         }
         catch (AssemblyException e)
         {
-            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
+            _console.MarkupLine(Markup.Escape(e.RootMessage()));
             throw;
         }
         catch (Exception e)
         {
-            AnsiConsole.MarkupLine(Markup.Escape(e.RootMessage()));
+            _console.MarkupLine(Markup.Escape(e.RootMessage()));
         }
 
         return result;
@@ -542,7 +544,7 @@ internal class AssemblyModelBuilder : IDisposable
             }
             else
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "    Delete PluginStepImage [bold green]{0} ({1})[/]", e.Name!, e.EntityAlias!);
                 _service.Delete(SdkMessageProcessingStepImage.EntityLogicalName, e.Id);
             }
@@ -651,7 +653,7 @@ internal class AssemblyModelBuilder : IDisposable
     }
 
 
-    private static WorkflowRegistrationAttribute? GetWorkflowRegistration(Type workflowType)
+    private WorkflowRegistrationAttribute? GetWorkflowRegistration(Type workflowType)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(workflowType);
         var registration = customAttributes.FirstOrDefault(ca =>
@@ -772,7 +774,7 @@ internal class AssemblyModelBuilder : IDisposable
         return default;
     }
 
-    private static T? GetValue<T>(CustomAttributeData customAttribute, string property)
+    private T? GetValue<T>(CustomAttributeData customAttribute, string property)
     {
         if (typeof(T).IsArray)
         {
@@ -785,7 +787,7 @@ internal class AssemblyModelBuilder : IDisposable
             if (propertyInfo.TypedValue.Value is T value){
                 return value;
             }
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.TypedValue.ArgumentType.Name)})[/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.TypedValue.ArgumentType.Name)})[/]");
         }
 
         var ctorPosition = customAttribute.Constructor.GetParameters().SingleOrDefault(c => c.Name == property)?.Position;
@@ -795,7 +797,7 @@ internal class AssemblyModelBuilder : IDisposable
             if (propertyInfo.Value is T value){
                 return value;
             }
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.ArgumentType.Name)})[/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, $"Attribute Type mismatch [bold red]{Markup.Escape(property)} ({Markup.Escape(typeof(T).Name)}->{Markup.Escape(propertyInfo.ArgumentType.Name)})[/]");
         }
 
         return default;

@@ -11,6 +11,12 @@ namespace dgt.power.codegeneration.Generators.Worker;
 
 public abstract class TypescriptGeneratorWorker
 {
+    protected readonly IAnsiConsole _console;
+
+    protected TypescriptGeneratorWorker(IAnsiConsole console)
+    {
+        _console = console;
+    }
 
     private const string NOT_NULL = "!= null";
     /// <summary>
@@ -21,7 +27,7 @@ public abstract class TypescriptGeneratorWorker
     /// <param name="args">The code generation arguments, including target directory and folder configuration.</param>
     /// <param name="extension">Extension of the file</param>
     /// <param name="outputPath">Additional path in the output ts script folder</param>
-    public static void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
+    public void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
     {
         // Ensure that the template and args are not null
         Debug.Assert(content != null, $"{nameof(content)} {NOT_NULL}");
@@ -41,7 +47,7 @@ public abstract class TypescriptGeneratorWorker
         // Create a text file at the specified path
         using var file = File.CreateText(path);
         // Print a message indicating the file creation
-        AnsiConsole.MarkupLine($"Creating File: [bold green] {path} [/]");
+        _console.MarkupLine($"Creating File: [bold green] {path} [/]");
         // Write the generated content to the file
         file.Write(content);
     }
@@ -53,7 +59,7 @@ public abstract class TypescriptGeneratorWorker
         Debug.Assert(args != null, $"{nameof(args)} {NOT_NULL}");
         Debug.Assert(extension != null, $"{nameof(extension)} {NOT_NULL}");
 
-        AnsiConsole.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
+        _console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
         var reader = new StreamReader(Assembly.GetCallingAssembly()
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
