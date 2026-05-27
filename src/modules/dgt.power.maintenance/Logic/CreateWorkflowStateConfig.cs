@@ -78,7 +78,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole();
+            _workflowStateTracker.WriteToConsole(Console);
         }
 
         return Tracer.End(this, true);
@@ -86,7 +86,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
 
     private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile, bool detailed)
     {
-        await AnsiConsole.Progress()
+        await Console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();

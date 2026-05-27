@@ -7,7 +7,6 @@ using dgt.power.maintenance.tests.Base;
 using dgt.power.tests.FakeExecutor;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
-using Spectre.Console;
 using Microsoft.Xrm.Sdk.Metadata;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
@@ -97,10 +96,9 @@ namespace dgt.power.maintenance.tests
         [Test]
         public async Task ShouldFindAndUpdateTwoFields()
         {
-            AnsiConsole.Record();
             await Assert.That(GetContext().Execute(new MaintenanceVerb())).IsTrue();
 
-            await Assert.That(AnsiConsole.ExportText()).Contains("Protected 2 fields");
+            await Assert.That(TestConsole.Output).Contains("Protected 2 fields");
         }
     }
 }

@@ -40,7 +40,7 @@ namespace dgt.power.maintenance.Logic
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(args.Solution);
 
-            var sdkSteps = await AnsiConsole.Status()
+            var sdkSteps = await Console.Status()
                 .StartAsync("Loading sdk steps", async _ => await RetrieveSdkSteps(args.Solution));
 
             var table = new Table()
@@ -49,7 +49,7 @@ namespace dgt.power.maintenance.Logic
                 .AddColumn("Status")
                 .AddColumn("Step Id");
 
-            await AnsiConsole.Live(table)
+            await Console.Live(table)
                 .StartAsync(async ctx =>
                 {
                     var orderedSdkSteps = sdkSteps

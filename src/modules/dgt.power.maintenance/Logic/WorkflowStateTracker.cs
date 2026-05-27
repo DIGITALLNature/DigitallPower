@@ -74,7 +74,7 @@ public class WorkflowStateTracker
         workflowChange.OwnerPost = desiredOwnerPost?.DomainName ?? desiredOwnerPost?.SystemUserId.ToString() ?? workflowChange.OwnerPre;
     }
 
-    internal void WriteToConsole()
+    internal void WriteToConsole(IAnsiConsole console)
     {
         var table = new Table()
             .AddColumn(" ")
@@ -115,7 +115,7 @@ public class WorkflowStateTracker
             table.AddRow(row);
         }
 
-        AnsiConsole.Write(table);
+        console.Write(table);
     }
 }
 

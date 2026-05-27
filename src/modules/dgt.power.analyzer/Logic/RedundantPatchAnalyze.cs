@@ -36,20 +36,20 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
         var solution = GetSolution(context, args.InlineData);
         if (!solution.IsManaged.GetValueOrDefault(false))
         {
-            AnsiConsole.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
             return Tracer.End(this, false);
         }
 
         Guid parentSolutionId = solution.Id;
         if (solution.ParentSolutionId != null)
         {
-            AnsiConsole.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
         var patches = GetPatchSolutions(context, parentSolutionId);
 
         var table = new Table();
-        AnsiConsole.Live(Align.Center(table))
+        Console.Live(Align.Center(table))
             .Start(ctx =>
             {
                 table.AddColumn("Solution");

@@ -59,7 +59,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole();
+            _workflowStateTracker.WriteToConsole(Console);
         }
 
         return Tracer.End(this, task.Result);
@@ -72,7 +72,7 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
     /// <returns>True if no errors occured otherwise False</returns>
     private async Task<bool> UpdateWorkflowStatesAsync(WorkflowConfig workflowConfig, string[]? solutions, string[]? publishers)
     {
-        return await AnsiConsole.Progress()
+        return await Console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();

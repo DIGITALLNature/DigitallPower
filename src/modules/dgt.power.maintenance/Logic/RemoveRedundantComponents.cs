@@ -48,10 +48,10 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         var sourceComponents = new HashSet<Guid?>();
         foreach (var sourceSolution in args.SourceSolutions.Split(','))
         {
-            AnsiConsole.WriteLine($"Fetch components for source {sourceSolution}");
+            Console.WriteLine($"Fetch components for source {sourceSolution}");
             sourceComponents.UnionWith(GetSolutionComponents(context, sourceSolution).Select(s => s.ObjectId));
         }
-        AnsiConsole.WriteLine($"Fetch components for target {args.TargetSolution}");
+        Console.WriteLine($"Fetch components for target {args.TargetSolution}");
         var targetComponents = GetSolutionComponents(context, args.TargetSolution);
 
         foreach (var component in targetComponents.IntersectBy(sourceComponents,o => o.ObjectId).OrderByDescending(o => o.ComponentType.Value))
@@ -59,7 +59,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
             if (component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && !args.Entities)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId!.Value);
-                AnsiConsole.WriteLine($"Found entity {entity.LogicalName} - ignore");
+                Console.WriteLine($"Found entity {entity.LogicalName} - ignore");
                 continue;
             }
 
@@ -89,7 +89,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                 typeColumn = component.ComponentType.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            AnsiConsole.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
+            Console.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
             if (!args.DryRun)
             {
                 Connection.Execute(new RemoveSolutionComponentRequest
@@ -98,7 +98,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                     ComponentType = component.ComponentType.Value,
                     SolutionUniqueName = args.TargetSolution
                 });
-                AnsiConsole.WriteLine(" - removed");
+                Console.WriteLine(" - removed");
             }
         }
 

@@ -34,13 +34,13 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
             return Tracer.End(this, false);
         }
 
-        AnsiConsole.Status()
+        Console.Status()
             .Start("Working on PowerFX Plugin Steps...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
 
-                AnsiConsole.MarkupLine("Working on PowerFX Plugin Steps...");
+                Console.MarkupLine("Working on PowerFX Plugin Steps...");
                 // Do the actual work
                 foreach (var config in powerfxpluginConfig)
                 {
@@ -55,7 +55,7 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
 
                     ctx.Status($"Update {config.Name}");
                     Connection.Update(step);
-                    AnsiConsole.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
+                    Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
                 ctx.Status("Finishing");
