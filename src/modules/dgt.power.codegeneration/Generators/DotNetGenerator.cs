@@ -6,7 +6,11 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.dotnet;
+using dgt.power.codegeneration.Templates.tsl.ViewModels;
+using Fluid;
+using Fluid.Values;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using static dgt.power.codegeneration.Constants.FileNames;
@@ -68,11 +72,23 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
 
         var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
+
+        // Apply filter
+        IEnumerable<(string Name, string Message)> filtered = sdkMessages;
+        if (config.SdkMessageFilters != null && config.SdkMessageFilters.Count > 0)
+        {
+            filtered = sdkMessages.Where(t => config.SdkMessageFilters.Contains(t.Message));
+        }
+
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
         using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
-        var content = new SdkMessagesTemplate(sdkMessages, config).TransformText();
 
+        var context = DotNetLiquidRenderer.CreateContext();
+        context.SetValue("NameSpace", config.NameSpace);
+        context.SetValue("SdkMessages", filtered.Select(s => new SdkMessageViewModel(s)).ToArray());
+
+        var content = DotNetLiquidRenderer.Render("SdkMessages.dotnet.liquid", context);
         file.Write(content);
     }
 
@@ -91,8 +107,12 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
         using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
-        var content = new OptionSetsTemplate(optionSets, config).TransformText();
 
+        var context = DotNetLiquidRenderer.CreateContext();
+        context.SetValue("NameSpace", config.NameSpace);
+        context.SetValue("OptionSets", optionSets.Select(kvp => new OptionViewModel(kvp)).ToArray());
+
+        var content = DotNetLiquidRenderer.Render("OptionSets.dotnet.liquid", context);
         file.Write(content);
     }
 
@@ -105,8 +125,11 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
         using var file = File.CreateText(contextFile);
         console.MarkupLine($"Creating File: [bold green]{contextFile}[/]");
-        var content = new ContextTemplate(config.NameSpace).TransformText();
 
+        var context = DotNetLiquidRenderer.CreateContext();
+        context.SetValue("NameSpace", config.NameSpace);
+
+        var content = DotNetLiquidRenderer.Render("Context.dotnet.liquid", context);
         file.Write(content);
     }
 
