@@ -17,11 +17,6 @@ public class FailedConnectionException : AbstractPowerException
     {
     }
 
-    protected FailedConnectionException(SerializationInfo serializationInfo, StreamingContext streamingContext) :
-        base(serializationInfo, streamingContext)
-    {
-    }
-
     public static string ErrorMessage(string environment) =>
         $"Connection to '{environment}' failed. Please review your connection.";
 }

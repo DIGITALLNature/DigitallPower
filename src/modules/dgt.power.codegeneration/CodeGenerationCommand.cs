@@ -33,7 +33,7 @@ public class CodeGenerationCommand(
         console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
-            .Start("Generate Model ...", ctx =>
+            .Start("Generate Model ...", _ =>
                 {
                     metadataService.PopulateEntitiesAndSolutions(config);
 

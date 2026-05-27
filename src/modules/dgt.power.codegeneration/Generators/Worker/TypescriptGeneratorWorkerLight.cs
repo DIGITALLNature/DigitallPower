@@ -94,7 +94,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         // Iterate through each entity in the configuration
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
-        {           
+        {
             // Retrieve the metadata for the entity
             var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
@@ -326,7 +326,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         CodeGenerationVerb args,
         string form,
         SortedSet<BpfControlDetail> bpfControls)
-    {        
+    {
         var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, bpfControls);
         CreateFile(content, form, args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityForms));
     }
@@ -421,7 +421,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         }
         configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
             .ToList()
-            .ForEach(e => Console.MarkupLine(Warnings.TsExtensionDeprecation));
+            .ForEach(_ => Console.MarkupLine(Warnings.TsExtensionDeprecation));
         configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
                     ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
                     : e)

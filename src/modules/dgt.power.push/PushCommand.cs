@@ -23,7 +23,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private readonly ITracer _tracer;
     private readonly IAnsiConsole _console;
 
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor, IAnsiConsole console)
+    public PushCommand(ITracer tracer, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor, IAnsiConsole console)
     {
         _tracer = tracer;
         _connection = connection;

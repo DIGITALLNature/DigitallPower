@@ -276,13 +276,13 @@ internal class AssemblyProcessor : IDisposable
         // New
         foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.All(t => t.TypeName != d.TypeName)))
         {
-            crm.PluginTypes.Add(CreatePluginType(crm, newType, solution));
+            crm.PluginTypes.Add(CreatePluginType(crm, newType));
         }
 
         return crm;
     }
 
-    private PluginType CreatePluginType(Assembly crm, PluginType pluginType, string solution)
+    private PluginType CreatePluginType(Assembly crm, PluginType pluginType)
     {
         var type = new dataverse.PluginType
         {

@@ -123,7 +123,7 @@ public class UpdateWorkflowState(
             progress?.Invoke($"Updating workflows - round {round}", $"{currentFailures} failures", 0, previousFailures);
 
             // traverse all workflows that were marked as failures in the last round (initially all are marked as failures)
-            int index = 0;
+            var index = 0;
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
                 bool updateResult;

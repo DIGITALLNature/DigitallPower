@@ -207,8 +207,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     [Test]
     public async Task ShouldFailOnMissingDocumentTemplateFile()
     {
-        var templateConfiguration = GetConfigurationResource<DocumentTemplates>("not-found-templates.json");
-        var createTemplate = templateConfiguration.Templates.Single();
+        GetConfigurationResource<DocumentTemplates>("not-found-templates.json");
         var context = GetBuilder()
             .Build();
 

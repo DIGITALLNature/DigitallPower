@@ -107,7 +107,7 @@ public sealed class UserRoleExport(
         );
         roLink.EntityAlias = "ro";
 
-        bool moreRecords = true;
+        var moreRecords = true;
         while (moreRecords)
         {
             // Retrieve the page.
