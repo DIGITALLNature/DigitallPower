@@ -10,7 +10,6 @@ using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.ts;
-using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -71,6 +70,13 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         file.Write(TsLiquidRenderer.Render(templateName, context));
     }
 
+    private void CreateLiquidTemplateFile(string templateName, object model, string name, CodeGenerationVerb args)
+    {
+        var context = TsLiquidRenderer.CreateContext();
+        context.SetValue("model", model);
+        CreateLiquidTemplateFile(templateName, context, name, args);
+    }
+
     /// <summary>
     ///     Generates TypeScript entities based on the provided code generation arguments and configuration.
     /// </summary>
@@ -82,15 +88,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        CustomLiquidFilters.SetConsole(_console);
-        var options = new TemplateOptions();
-        options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
-        options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
-        options.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
-        options.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
-        options.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
-        options.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
-        options.MemberAccessStrategy.Register<OptionMetadataViewModel>();
+        var systemLanguage = metadataService.RetrieveOrganizationLanguage();
 
         // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
@@ -99,12 +97,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
             var metadata =
                 metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
-
-            ITemplate template =
-                new D365EntityTemplate(config.TypingPath, metadata, config,
-                metadataService.RetrieveOrganizationLanguage());
-            // Create the template file
-            CreateTemplateFile(template, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.Entity}", args);
+            var model = TsLiquidTemplateModelFactory.CreateEntityModel(config.TypingPath, metadata, config, systemLanguage);
+            CreateLiquidTemplateFile("D365Entity.liquid", model, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.Entity}", args);
         }
     }
 
@@ -113,22 +107,15 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        var systemLanguage = metadataService.RetrieveOrganizationLanguage();
+
         foreach (var entity in config.Entities)
         {
             var metadata =
                 metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
-            var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript,
-                $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.EntityRef}.ts");
-
-            using var file = File.CreateText(fileName);
-            _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-            var content =
-                new D365EntityRefTemplate(config.TypingPath, metadata, config,
-                        metadataService.RetrieveOrganizationLanguage())
-                    .TransformText();
-
-            file.Write(content);
+            var model = TsLiquidTemplateModelFactory.CreateEntityRefModel(config.TypingPath, metadata, config, systemLanguage);
+            CreateLiquidTemplateFile("D365EntityRef.liquid", model, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.EntityRef}", args);
         }
     }
 
@@ -163,14 +150,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         // Retrieve SDK message names from the metadata service
         var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
 
-        // Determine the template to use based on the TypeScript generator version
-        ITemplate template;
-
-        // Use the D365EntityTemplate for the full TypeScript generator version
-        template = new D365SdkMessagesTemplate(sdkMessages, config);
-
-        // Create the template file
-        CreateTemplateFile(template, $"{FileNames.Typescript.FileNames.SdkMessageNames}", args);
+        var model = TsLiquidTemplateModelFactory.CreateSdkMessagesModel(sdkMessages, config);
+        CreateLiquidTemplateFile("D365SdkMessages.liquid", model, $"{FileNames.Typescript.FileNames.SdkMessageNames}", args);
     }
 
     /// <summary>
@@ -193,14 +174,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         // Retrieve option sets from the metadata service
         var optionSets = metadataService.RetrieveOptionSets(config);
 
-        // Determine the template to use based on the TypeScript generator version
-        ITemplate template;
-
-        // Use the D365EntityTemplate for the full TypeScript generator version
-        template = new D365OptionSetsTemplate(optionSets, config);
-
-        // Create the template file
-        CreateTemplateFile(template, $"{FileNames.Typescript.FileNames.OptionSetValues}", args);
+        var model = TsLiquidTemplateModelFactory.CreateOptionSetsModel(optionSets);
+        CreateLiquidTemplateFile("D365OptionSets.liquid", model, $"{FileNames.Typescript.FileNames.OptionSetValues}", args);
     }
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
@@ -217,14 +192,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         foreach (var bpf in bpfs)
         {
             var stages = metadataService.RetrieveBusinessProcessFlowStages(bpf.Item3);
-            var fileName = Path.Combine(args.TargetDirectory, args.Folder, "TypeScript", $"{bpf.Item4}.bpf.ts");
-
-            using var file = File.CreateText(fileName);
-            _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-            var content =
-                new D365BusinessProcessFlowTemplate(config.TypingPath, bpf, stages, config).TransformText();
-
-            file.Write(content);
+            var model = TsLiquidTemplateModelFactory.CreateBusinessProcessFlowModel(config.TypingPath, bpf, stages);
+            CreateLiquidTemplateFile("D365BusinessProcessFlow.liquid", model, $"{bpf.Item4}.bpf", args);
         }
     }
 
@@ -286,15 +255,8 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
             .Replace(".quickcreate", "QuickCreate");
 
 
-        var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript, $"{form}.ts");
-        using var file = File.CreateText(fileName);
-        _console.MarkupLine($"Creating File: [bold green] {fileName} [/]");
-        //TODO: not smart, but works
-        var content = new D365EntityFormTemplate(config.TypingPath, form,
-            formname, formDetail.Value, entityMetadata, config,
-            metadataService.RetrieveOrganizationLanguage()).TransformText();
-
-        file.Write(content);
+        var model = TsLiquidTemplateModelFactory.CreateEntityFormModel(config.TypingPath, form, formname, formDetail.Value, entityMetadata, config, metadataService.RetrieveOrganizationLanguage());
+        CreateLiquidTemplateFile("D365EntityForm.liquid", model, form, args);
     }
 
     #region NotImplemented
