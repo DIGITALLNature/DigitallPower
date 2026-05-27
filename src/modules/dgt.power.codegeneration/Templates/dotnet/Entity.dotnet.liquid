@@ -19,10 +19,10 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace {{ NameSpace }}
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
     {{ Summary }}
-    [DataContractAttribute()]
-    [EntityLogicalNameAttribute("{{ EntityLogicalName }}")]
+    [DataContract]
+    [EntityLogicalName("{{ EntityLogicalName }}")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     public partial class {{ EntitySchemaName }} : Entity, INotifyPropertyChanging, INotifyPropertyChanged
@@ -70,7 +70,11 @@ namespace {{ NameSpace }}
 
         #region fields
         private readonly bool _trackChanges;
+{%- if UseClassic %}
         private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+{%- else %}
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
+{%- endif %}
         #endregion
 
         #region consts
@@ -88,8 +92,10 @@ namespace {{ NameSpace }}
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangingEventHandler PropertyChanging;
 {%- else %}
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
+        #pragma warning restore CS8612
 {%- endif %}
 
 {%- if WithDebuggerNonUserCode %}
@@ -97,6 +103,11 @@ namespace {{ NameSpace }}
 {%- endif %}
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
+{%- if UseClassic %}
+            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+{%- else %}
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+{%- endif %}
             if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
@@ -114,8 +125,8 @@ namespace {{ NameSpace }}
         #endregion
 
         #region Attributes
-        [AttributeLogicalNameAttribute("{{ PrimaryIdAttribute }}")]
-        public new {{ Virtual }}System.Guid Id
+        [AttributeLogicalName("{{ PrimaryIdAttribute }}")]
+        public new {{ Virtual }}Guid Id
         {
 {%- if WithDebuggerNonUserCode %}
             [DebuggerNonUserCode]
@@ -169,7 +180,7 @@ namespace {{ NameSpace }}
 {%- endif %}
             set
             {
-                OnPropertyChanging(nameof({{ attr.Name }}));
+                OnPropertyChanging();
 {%- if attr.IsPartyList %}
                 if ((value == null))
                 {
@@ -182,17 +193,10 @@ namespace {{ NameSpace }}
 {%- else %}
                 SetAttributeValue("{{ attr.LogicalName }}", value);
 {%- if attr.IsPrimaryId %}
-                if (value.HasValue)
-                {
-                    base.Id = value.Value;
-                }
-                else
-                {
-                    base.Id = System.Guid.Empty;
-                }
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
 {%- endif %}
 {%- endif %}
-                OnPropertyChanged(nameof({{ attr.Name }}));
+                OnPropertyChanged();
             }
 {%- endif %}
         }
@@ -206,24 +210,24 @@ namespace {{ NameSpace }}
         /// <summary>
         /// 1:N {{ attr.SchemaName }}
         /// </summary>
-        [Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("{{ attr.SchemaName }}")]
-        public System.Collections.Generic.IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
+        [RelationshipSchemaName("{{ attr.SchemaName }}")]
+        public IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
         {
 {%- if WithDebuggerNonUserCode %}
             [DebuggerNonUserCode]
 {%- endif %}
             get
             {
-                return this.GetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null);
+                return GetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null);
             }
 {%- if WithDebuggerNonUserCode %}
             [DebuggerNonUserCode]
 {%- endif %}
             set
             {
-                this.OnPropertyChanging("{{ attr.Name }}");
-                this.SetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null, value);
-                this.OnPropertyChanged("{{ attr.Name }}");
+                OnPropertyChanging();
+                SetRelatedEntities("{{ attr.SchemaName }}", null, value);
+                OnPropertyChanged();
             }
         }
 {%- endfor %}
@@ -331,20 +335,20 @@ namespace {{ NameSpace }}
 
         public {{ EntitySchemaName }} GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
+                return this;
+            }
                 var attr = new AttributeCollection();
 {%- if UseClassic %}
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof(AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof(AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
 {%- else %}
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
 {%- endif %}
-                {
-                    attr.Add(attrName, this[attrName]);
-                }
-                return new {{ EntitySchemaName }}(Id) { Attributes = attr };
+            {
+                attr.Add(attrName, this[attrName]);
             }
-            return this;
+            return new {{ EntitySchemaName }}(Id) { Attributes = attr };
         }
         #endregion
     }
