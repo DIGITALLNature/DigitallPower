@@ -16,7 +16,7 @@ internal static class TelemetryNotice
     /// <summary>
     /// Displays the telemetry notice if it hasn't been shown before.
     /// </summary>
-    public static void ShowIfFirstRun(IsolatedStorageFile store)
+    public static void ShowIfFirstRun(IsolatedStorageFile store, IAnsiConsole console)
     {
         if (store.FileExists(NoticeShownFileName)) return;
 
@@ -33,8 +33,8 @@ internal static class TelemetryNotice
             Padding = new Padding(1, 0)
         };
 
-        AnsiConsole.Write(panel);
-        AnsiConsole.WriteLine();
+        console.Write(panel);
+        console.WriteLine();
 
         // Mark as shown
         using var stream = store.OpenFile(NoticeShownFileName, FileMode.Create, FileAccess.Write);

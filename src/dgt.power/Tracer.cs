@@ -10,9 +10,10 @@ using Spectre.Console;
 
 namespace dgt.power;
 
-internal sealed class Tracer(bool telemetryEnabled = false, string? installId = null) : ITracer
+internal sealed class Tracer(bool telemetryEnabled = false, string? installId = null, IAnsiConsole? console = null) : ITracer
 {
     private Activity? _currentActivity;
+    private readonly IAnsiConsole _console = console ?? AnsiConsole.Console;
 
     /// <summary>
     /// Set to true by the TelemetryInterceptor when --no-telemetry is passed.
@@ -21,11 +22,11 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
 
     private bool IsActive => telemetryEnabled && !SuppressForInvocation;
 
-    public void Log(string message, TraceEventType type) => AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[underline red]{type}:[/]  {message}");
+    public void Log(string message, TraceEventType type) => _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[underline red]{type}:[/]  {message}");
 
     public void Start<T>(T action) where T : IPowerLogic
     {
-        AnsiConsole.Write(new Rule($"[lime]{action.GetType().Name} - Start[/]"));
+        _console.Write(new Rule($"[lime]{action.GetType().Name} - Start[/]"));
 
         if (IsActive)
         {
@@ -44,21 +45,21 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
 
     public bool NotConfigured<T>(T action) where T : IPowerLogic
     {
-        AnsiConsole.Write(new Rule($"[red]{action.GetType().Name} - Not Configured[/]"));
+        _console.Write(new Rule($"[red]{action.GetType().Name} - Not Configured[/]"));
         EndActivity(false);
         return false;
     }
 
     public bool Skipped<T>(T action) where T : IPowerLogic
     {
-        AnsiConsole.Write(new Rule($"[yellow]{action.GetType().Name} - Skipped[/]"));
+        _console.Write(new Rule($"[yellow]{action.GetType().Name} - Skipped[/]"));
         EndActivity(true);
         return true;
     }
 
     public bool End<T>(T action, bool result) where T : IPowerLogic
     {
-        AnsiConsole.Write(result ? new Rule($"[lime]{action.GetType().Name} - End:OK[/]") : new Rule($"[red]{action.GetType().Name} - End:ERROR[/]"));
+        _console.Write(result ? new Rule($"[lime]{action.GetType().Name} - End:OK[/]") : new Rule($"[red]{action.GetType().Name} - End:ERROR[/]"));
         EndActivity(result);
         return result;
     }
@@ -66,7 +67,7 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
     public void Exception(Exception e, TraceEventType type)
     {
         var error = e.RootException();
-        AnsiConsole.WriteException(error);
+        _console.WriteException(error);
         _currentActivity?.SetStatus(ActivityStatusCode.Error, error.Message);
     }
 

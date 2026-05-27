@@ -57,6 +57,7 @@ var configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
+var appConsole = AnsiConsole.Console;
 var registrations = new ServiceCollection();
 registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetCoreV3("https://api.nuget.org/v3/index.json")
@@ -72,7 +73,7 @@ TracerProvider? tracerProvider = null;
 
 if (telemetryEnabled)
 {
-    TelemetryNotice.ShowIfFirstRun(isolatedStorage);
+    TelemetryNotice.ShowIfFirstRun(isolatedStorage, appConsole);
     installId = TelemetryConfig.GetOrCreateInstallId(isolatedStorage);
 
     var connectionString = Environment.GetEnvironmentVariable("DGT_TELEMETRY_CONNECTION_STRING")
@@ -88,7 +89,7 @@ if (telemetryEnabled)
     }
 }
 
-registrations.AddSingleton<ITracer>(_ => new dgt.power.Tracer(telemetryEnabled, installId));
+registrations.AddSingleton<ITracer>(_ => new dgt.power.Tracer(telemetryEnabled, installId, appConsole));
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<TypescriptWorker, TypescriptWorker>();
@@ -110,7 +111,7 @@ registrations.AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetWorker, DotNetWorker>();
 registrations.AddScoped<IFileService, FileService>();
-registrations.AddSingleton<IAnsiConsole>(AnsiConsole.Console);
+registrations.AddSingleton<IAnsiConsole>(appConsole);
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
 registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
