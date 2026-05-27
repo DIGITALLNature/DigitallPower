@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Reflection;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
@@ -11,7 +10,7 @@ namespace dgt.power.codegeneration.Templates.dotnet;
 
 public static class DotNetLiquidRenderer
 {
-    private static readonly FluidParser Parser = new(new FluidParserOptions { AllowParentheses = true });
+    private const string ResourcePrefix = "dgt.power.codegeneration.Templates.dotnet";
 
     private static readonly TemplateOptions Options;
 
@@ -20,9 +19,7 @@ public static class DotNetLiquidRenderer
     static DotNetLiquidRenderer()
     {
         Options = new TemplateOptions();
-        Options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
-        Options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
-        Options.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
+        LiquidTemplateEngine.RegisterCoreFilters(Options);
         Options.Filters.AddFilter("maskoverrides", MaskOverrides);
         Options.MemberAccessStrategy.Register<SdkMessageViewModel>();
         Options.MemberAccessStrategy.Register<OptionViewModel>();
@@ -46,19 +43,11 @@ public static class DotNetLiquidRenderer
 
     public static string Render(string templateName, TemplateContext context)
     {
-        var liquidTemplate = LoadTemplate(templateName);
-        return liquidTemplate.Render(context);
+        return LiquidTemplateEngine.Render(ResourcePrefix, templateName, context);
     }
 
     public static TemplateContext CreateContext()
     {
-        return new TemplateContext(Options);
-    }
-
-    private static IFluidTemplate LoadTemplate(string templateName)
-    {
-        using var reader = new StreamReader(Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream($"dgt.power.codegeneration.Templates.dotnet.{templateName}")!);
-        return Parser.Parse(reader.ReadToEnd());
+        return LiquidTemplateEngine.CreateContext(Options);
     }
 }
