@@ -41,28 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Templates\tsl\EntityLightTemplate.tt" />
-    <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
-    <None Remove="Templates\tsl\FunctionsLightTemplate.tt" />
-    <None Remove="Templates\tsl\OptionSetsLightTemplate.tt" />
-    <None Remove="Templates\tsl\SdkMessagesLightTemplate.tt" />
-    <Content Update="Templates\tsl\EntityLightFormTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>EntityLightTemplate.cs</LastGenOutput>
-    </Content>
-    <None Remove="Templates\tsl\EntityLightFormTemplate.tt" />
-    <Content Update="Templates\tsl\D365SdkMessagesLightTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365SdkMessagesLightTemplate.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Fluid.Core" Version="2.31.0" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.10" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
-    <PackageReference Include="System.CodeDom" Version="10.0.8" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -70,15 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\dgt.power.common\dgt.power.common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Templates\tsl\EntityLight.liquid" />
   </ItemGroup>
 
   <ItemGroup>
