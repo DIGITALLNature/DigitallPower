@@ -233,6 +233,6 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
     }
 
     #region NotImplemented
-    public void GenerateCustomApis(CodeGenerationVerb arg, CodeGenerationConfig config) => throw new NotImplementedException();
+    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) => throw new NotImplementedException();
     #endregion
 }

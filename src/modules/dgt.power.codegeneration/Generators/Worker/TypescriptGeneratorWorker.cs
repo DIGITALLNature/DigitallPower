@@ -11,7 +11,7 @@ namespace dgt.power.codegeneration.Generators.Worker;
 
 public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 {
-    protected readonly IAnsiConsole Console = console;
+    protected IAnsiConsole Console { get; } = console;
 
     private const string NotNull = "!= null";
     /// <summary>

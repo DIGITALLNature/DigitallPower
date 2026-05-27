@@ -162,7 +162,7 @@ public sealed class QueueImport(
         return alternativeOwner;
     }
 
-    private IList<dataverse.Queue> GetQueues()
+    private List<dataverse.Queue> GetQueues()
     {
         var query = new QueryExpression
         {
