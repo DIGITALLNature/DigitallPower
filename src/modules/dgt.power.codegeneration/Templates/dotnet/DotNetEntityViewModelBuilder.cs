@@ -174,8 +174,8 @@ public class DotNetEntityViewModelBuilder
         return Filter(_entity.Attributes).Select(attr =>
         {
             var name = Unique(Formatter.CamelCase(attr.SchemaName), "L" + _entity.LogicalName);
-            return new { Name = name, attr.LogicalName };
-        }).ToArray<object>();
+            return (object)new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = attr.LogicalName };
+        }).ToArray();
     }
 
     private object[] BuildAlternateKeys()
@@ -190,8 +190,8 @@ public class DotNetEntityViewModelBuilder
                 var name = Unique(
                     Formatter.Sanitize(Formatter.CamelCase(GetLocalizedLabel(key.DisplayName))),
                     "K" + key.LogicalName);
-                return new { Name = name, LogicalName = MaskDoubleQuote(key.LogicalName) };
-            }).ToArray<object>();
+                return (object)new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = MaskDoubleQuote(key.LogicalName) };
+            }).ToArray();
     }
 
     private object[] BuildOneToManyRelationships()
@@ -201,8 +201,8 @@ public class DotNetEntityViewModelBuilder
             .Select(attr =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "ROTM" + _entity.LogicalName);
-                return new { Name = name, attr.SchemaName };
-            }).ToArray<object>();
+                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+            }).ToArray();
     }
 
     private object[] BuildManyToOneRelationships()
@@ -212,8 +212,8 @@ public class DotNetEntityViewModelBuilder
             .Select(attr =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTO" + _entity.LogicalName);
-                return new { Name = name, attr.SchemaName };
-            }).ToArray<object>();
+                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+            }).ToArray();
     }
 
     private object[] BuildManyToManyRelationships()
@@ -223,8 +223,8 @@ public class DotNetEntityViewModelBuilder
             .Select(attr =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTM" + _entity.LogicalName);
-                return new { Name = name, attr.SchemaName };
-            }).ToArray<object>();
+                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+            }).ToArray();
     }
 
     private string Unique(string value, string scope)

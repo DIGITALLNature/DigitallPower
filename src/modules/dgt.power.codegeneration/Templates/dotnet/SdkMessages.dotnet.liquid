@@ -1,14 +1,15 @@
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable All
 namespace {{ NameSpace }}
 {
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
     public sealed class SdkMessageNames
     {
         private SdkMessageNames() {}
-
-{% for sdkMessage in SdkMessages %}
+{%- for sdkMessage in SdkMessages %}
         public const string {{ sdkMessage.Name }} = "{{ sdkMessage.Message }}";
-{% endfor %}
+{%- endfor %}
     }
 }
