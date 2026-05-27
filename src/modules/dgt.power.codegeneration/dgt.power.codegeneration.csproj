@@ -10,9 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Templates\ts\D365ServicesTemplate.tt" />
-    <None Remove="Templates\ts\D365UtilsTemplate.tt" />
-    <None Remove="Templates\ts\D365WebApiTemplate.tt" />
+    <None Remove="Templates\ts\D365Model.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365Model.liquid" />
+    <None Remove="Templates\ts\D365Services.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365Services.liquid" />
+    <None Remove="Templates\ts\D365Utils.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365Utils.liquid" />
+    <None Remove="Templates\ts\D365WebApi.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365WebApi.liquid" />
+    <None Remove="Templates\ts\D365OData.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365OData.liquid" />
   </ItemGroup>
 
   <ItemGroup Condition="$(Configuration) != 'Release'">
@@ -38,14 +45,6 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365EntityTemplate.cs</LastGenOutput>
     </Content>
-    <Content Include="Templates\ts\D365ModelTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365ModelTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365ODataTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365ODataTemplate.cs</LastGenOutput>
-    </Content>
     <Content Include="Templates\ts\D365OptionSetsTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365OptionSetsTemplate.cs</LastGenOutput>
@@ -53,18 +52,6 @@
     <Content Include="Templates\ts\D365SdkMessagesTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>D365SdkMessagesTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365ServicesTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365ServicesTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365UtilsTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365UtilsTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365WebApiTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365WebApiTemplate.cs</LastGenOutput>
     </Content>
     <None Remove="Templates\tsl\EntityLightTemplate.tt" />
     <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
@@ -119,16 +106,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>D365EntityTemplate.tt</DependentUpon>
     </Compile>
-    <Compile Update="Templates\ts\D365ModelTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365ModelTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365ODataTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365ODataTemplate.tt</DependentUpon>
-    </Compile>
     <Compile Update="Templates\ts\D365OptionSetsTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -138,21 +115,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>D365SdkMessagesTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365ServicesTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365ServicesTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365UtilsTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365UtilsTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365WebApiTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365WebApiTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
