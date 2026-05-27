@@ -24,17 +24,12 @@ public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker
     protected CodeGenerationVerb DefaultVerb { get; } = new();
     protected CodeGenerationConfig DefaultConfig { get; } = new();
     private readonly DataContractSerializer _metadataSerializer = new(typeof(EntityMetadata));
-    protected readonly IServiceCollection ServiceCollection;
-
-    protected CodeGenerationTestsBase()
-    {
-        ServiceCollection = new TestServiceCollection()
-            .AddScoped<IMetadataGenerator, MetadataGenerator>()
-            .AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>()
-            .AddScoped<IDotNetGenerator, DotNetGenerator>()
-            .AddScoped<ObjectCache>(_ => MemoryCache.Default)
-            .AddScoped<IMetadataService, MetadataService>();
-    }
+    protected readonly IServiceCollection ServiceCollection = new TestServiceCollection()
+        .AddScoped<IMetadataGenerator, MetadataGenerator>()
+        .AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>()
+        .AddScoped<IDotNetGenerator, DotNetGenerator>()
+        .AddScoped<ObjectCache>(_ => MemoryCache.Default)
+        .AddScoped<IMetadataService, MetadataService>();
 
     protected override WorkerTestContextBuilder<TWorker, CodeGenerationVerb> GetBuilder()
     {

@@ -21,12 +21,13 @@ using IAnsiConsole = Spectre.Console.IAnsiConsole;
 
 namespace dgt.power.import.Logic;
 
-public sealed class DocumentTemplateImport : BaseImport
+public sealed class DocumentTemplateImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public DocumentTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

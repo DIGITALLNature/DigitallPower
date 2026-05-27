@@ -17,14 +17,15 @@ using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
-public sealed class OutlookTemplateImport : BaseImport
+public sealed class OutlookTemplateImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IConfiguration configuration,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    private readonly int _sleepTime;
-
-    public OutlookTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-        _sleepTime = configuration.GetValue<int>("pollrate");
-    }
+    private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
     protected override bool Invoke(ImportVerb args)
     {

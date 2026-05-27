@@ -25,7 +25,7 @@ public static class Formatter
             return CamelCase(Sanitize(phrase));
         }
 
-        var leadingUnderscore = phrase.StartsWith("_", StringComparison.InvariantCulture);//"_AddMemberBatch" and "AddMemberBatch"
+        var leadingUnderscore = phrase.StartsWith('_');//"_AddMemberBatch" and "AddMemberBatch"
 
         var splittedPhrase = phrase.Split(' ', '-', '_');
         var sb = new StringBuilder();

@@ -15,12 +15,13 @@ using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
-public sealed class BulkDeleteImport : BaseImport
+public sealed class BulkDeleteImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public BulkDeleteImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

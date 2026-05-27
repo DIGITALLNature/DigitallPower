@@ -17,7 +17,12 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 
-public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
+public class UpdateWorkflowState(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<UpdateWorkflowState.Settings>(tracer, connection, configResolver, console)
 {
     public class Settings : BaseProgramSettings
     {
@@ -32,14 +37,8 @@ public class UpdateWorkflowState : PowerLogic<UpdateWorkflowState.Settings>
         public bool TableReport { get; init; }
     }
 
-    private readonly Dictionary<string, SystemUser> _userTable;
-    private readonly WorkflowStateTracker _workflowStateTracker;
-
-    public UpdateWorkflowState(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-        _userTable = new Dictionary<string, SystemUser>();
-        _workflowStateTracker = new WorkflowStateTracker();
-    }
+    private readonly Dictionary<string, SystemUser> _userTable = new();
+    private readonly WorkflowStateTracker _workflowStateTracker = new();
 
     protected override bool Invoke(Settings args)
     {

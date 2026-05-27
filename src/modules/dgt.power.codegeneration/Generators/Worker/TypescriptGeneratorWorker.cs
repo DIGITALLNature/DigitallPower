@@ -9,14 +9,9 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators.Worker;
 
-public abstract class TypescriptGeneratorWorker
+public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 {
-    protected readonly IAnsiConsole _console;
-
-    protected TypescriptGeneratorWorker(IAnsiConsole console)
-    {
-        _console = console;
-    }
+    protected readonly IAnsiConsole _console = console;
 
     private const string NOT_NULL = "!= null";
     /// <summary>

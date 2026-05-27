@@ -14,14 +14,15 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public sealed class BulkDeleteUtil : BaseMaintenance
+public sealed class BulkDeleteUtil(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IConfiguration configuration,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    private readonly int _sleepTime;
-
-    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-        _sleepTime = configuration.GetValue<int>("pollrate");
-    }
+    private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
     protected override bool Invoke(MaintenanceVerb args)
     {

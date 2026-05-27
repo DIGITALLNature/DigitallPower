@@ -92,7 +92,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = new[] { "some role" }, UserName = "some.user@test.de" } }).Name,
+            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = ["some role"], UserName = "some.user@test.de" } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 

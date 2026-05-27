@@ -12,13 +12,14 @@ using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class SlaConfigExport : BaseExport
+public sealed class SlaConfigExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public SlaConfigExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
-        : base(tracer, connection, configResolver, fileService, console)
-    {
-    }
-
     protected override bool Invoke(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

@@ -13,7 +13,11 @@ using Spectre.Console;
 
 namespace dgt.power.push.Logic;
 
-public class WebresourcesProcessor : IDisposable
+public class WebresourcesProcessor(
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : IDisposable
 {
     private readonly WebresourcesPattern[] _knownWebresourcesPattern =
     [
@@ -31,18 +35,7 @@ public class WebresourcesProcessor : IDisposable
         new WebresourcesPattern(WebResource.Options.WebResourceType.String_RESX_, "*.resx")
     ];
 
-    private readonly IOrganizationService _connection;
-    private readonly IConfigResolver _configResolver;
-    private readonly DataContext _context;
-    private readonly IAnsiConsole _console;
-
-    public WebresourcesProcessor(IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
-    {
-        _connection = connection;
-        _configResolver = configResolver;
-        _console = console;
-        _context = new DataContext(connection) { MergeOption = MergeOption.NoTracking };
-    }
+    private readonly DataContext _context = new(connection) { MergeOption = MergeOption.NoTracking };
 
     internal void Process(PushVerb settings, Action<string>? statusCallback) {
         statusCallback?.Invoke("Check settings");
@@ -50,10 +43,10 @@ public class WebresourcesProcessor : IDisposable
         Dictionary<string, string>? fileMappings = default;
         if (!string.IsNullOrEmpty(settings.Config))
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Loading config file [bold]{0}[/]", settings.Config);
-            if (_configResolver.TryGetConfigFile<WebresourceConfig>(settings.Config, out var config))
+            console.MarkupLine(CultureInfo.InvariantCulture, "Loading config file [bold]{0}[/]", settings.Config);
+            if (configResolver.TryGetConfigFile<WebresourceConfig>(settings.Config, out var config))
             {
-                _console.MarkupLine(CultureInfo.InvariantCulture, "[grey] > Found [green]{0}[/] mappings[/]", config.Maps?.Count ?? 0);
+                console.MarkupLine(CultureInfo.InvariantCulture, "[grey] > Found [green]{0}[/] mappings[/]", config.Maps?.Count ?? 0);
                 fileMappings = config.Maps;
             }
             else
@@ -121,12 +114,12 @@ public class WebresourcesProcessor : IDisposable
                     Files = Directory.EnumerateFiles(folderInfo, pattern.FilePattern, SearchOption.AllDirectories)
                 });
 
-        var webresources = (from @group in groups from file in @group.Files select Webresources.FromFile(file, folderInfo, @group.Type, solutionPrefix, fileMapping, _console)).ToArray();
+        var webresources = (from @group in groups from file in @group.Files select Webresources.FromFile(file, folderInfo, @group.Type, solutionPrefix, fileMapping, console)).ToArray();
 
         foreach (var webresource in webresources)
         {
             EnrichState(webresource);
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Found webresource [bold green]{0} ({1})[/] <{2}>", webresource.DisplayName, webresource.Name, webresource.State!);
+            console.MarkupLine(CultureInfo.InvariantCulture, "Found webresource [bold green]{0} ({1})[/] <{2}>", webresource.DisplayName, webresource.Name, webresource.State!);
         }
 
         return webresources;
@@ -153,8 +146,8 @@ public class WebresourcesProcessor : IDisposable
     {
         foreach (var resource in webresources.Where(f => f.State == WebresourceState.Create))
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Create WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
-            var id = _connection.Create(new WebResource
+            console.MarkupLine(CultureInfo.InvariantCulture, "Create WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
+            var id = connection.Create(new WebResource
             {
                 Content = resource.Content,
                 Description = $"Upserted with DGTP: {resource.Hash}",
@@ -162,7 +155,7 @@ public class WebresourcesProcessor : IDisposable
                 Name = resource.Name,
                 WebResourceType = new OptionSetValue(resource.Type)
             });
-            _console.MarkupLine(CultureInfo.InvariantCulture, "    => {0}", id);
+            console.MarkupLine(CultureInfo.InvariantCulture, "    => {0}", id);
 
             if (solutionId.HasValue)
             {
@@ -172,8 +165,8 @@ public class WebresourcesProcessor : IDisposable
 
         foreach (var resource in webresources.Where(f => f.State == WebresourceState.Update))
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Update WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
-            _connection.Update(new WebResource
+            console.MarkupLine(CultureInfo.InvariantCulture, "Update WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
+            connection.Update(new WebResource
             {
                 Id = resource.XrmId!.Value,
                 Content = resource.Content,
@@ -182,8 +175,8 @@ public class WebresourcesProcessor : IDisposable
 
             if (publish)
             {
-                _console.MarkupLine(CultureInfo.InvariantCulture, "Publish WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
-                _connection.Execute(new PublishXmlRequest
+                console.MarkupLine(CultureInfo.InvariantCulture, "Publish WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
+                connection.Execute(new PublishXmlRequest
                 {
                     ParameterXml = $"<importexportxml><webresources><webresource>{resource.XrmId}</webresource></webresources></importexportxml>"
                 });
@@ -203,15 +196,15 @@ public class WebresourcesProcessor : IDisposable
 
         try
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Adding webresource [green]{0}[/] to solution [bold]{1}[/]", resourceName, solutionName);
-            _connection.Execute(addReq);
+            console.MarkupLine(CultureInfo.InvariantCulture, "Adding webresource [green]{0}[/] to solution [bold]{1}[/]", resourceName, solutionName);
+            connection.Execute(addReq);
 
-            _console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [green]Added[/]");
+            console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [green]Added[/]");
         }
         catch (Exception ex)
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [red]Failed[/]");
-            _console.WriteException(ex);
+            console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [red]Failed[/]");
+            console.WriteException(ex);
         }
     }
 
@@ -227,7 +220,7 @@ public class WebresourcesProcessor : IDisposable
         {
             if (webresources.SingleOrDefault(f => f.Type == webresource.WebResourceType.Value && f.Name == webresource.Name) == null)
             {
-                _console.MarkupLine(CultureInfo.InvariantCulture, "Found obsolete: [Green]{0}[/] <{1}>", webresource.Name, webresource.WebResourceType);
+                console.MarkupLine(CultureInfo.InvariantCulture, "Found obsolete: [Green]{0}[/] <{1}>", webresource.Name, webresource.WebResourceType);
                 yield return new Webresources(webresource.WebResourceType.Value, webresource.Name, WebresourceState.Delete, webresource.WebResourceId!.Value);
             }
         }
@@ -237,8 +230,8 @@ public class WebresourcesProcessor : IDisposable
     {
         foreach (var resource in webResources)
         {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "Delete obsolete: [Red]{0}[/] <{1}>", resource.Name, resource.Type);
-            _connection.Delete(WebResource.EntityLogicalName, resource.XrmId!.Value);
+            console.MarkupLine(CultureInfo.InvariantCulture, "Delete obsolete: [Red]{0}[/] <{1}>", resource.Name, resource.Type);
+            connection.Delete(WebResource.EntityLogicalName, resource.XrmId!.Value);
         }
     }
 

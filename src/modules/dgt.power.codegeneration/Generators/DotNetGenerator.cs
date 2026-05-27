@@ -13,17 +13,8 @@ using static dgt.power.codegeneration.Constants.FileNames;
 
 namespace dgt.power.codegeneration.Generators;
 
-public class DotNetGenerator : IDotNetGenerator
+public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole console) : IDotNetGenerator
 {
-    private readonly IMetadataService _metadataService;
-    private readonly IAnsiConsole _console;
-
-    public DotNetGenerator(IMetadataService metadataService, IAnsiConsole console)
-    {
-        _metadataService = metadataService;
-        _console = console;
-    }
-
     public void PrepareDirectory(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -55,11 +46,11 @@ public class DotNetGenerator : IDotNetGenerator
         }
 
 
-        var actions = _metadataService.RetrieveActions(config);
-        var apis = _metadataService.RetrieveCustomAPIs(config);
+        var actions = metadataService.RetrieveActions(config);
+        var apis = metadataService.RetrieveCustomAPIs(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
 
-        _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+        console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         using var file = File.CreateText(fileName);
         var content = new ActionTemplate(actions.Concat(apis), config.NameSpace).TransformText();
@@ -76,10 +67,10 @@ public class DotNetGenerator : IDotNetGenerator
             return;
         }
 
-        var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
+        var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
         using var file = File.CreateText(fileName);
-        _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+        console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
         var content = new SdkMessagesTemplate(sdkMessages, config).TransformText();
 
         file.Write(content);
@@ -95,11 +86,11 @@ public class DotNetGenerator : IDotNetGenerator
             return;
         }
 
-        var optionSets = _metadataService.RetrieveOptionSets(config);
+        var optionSets = metadataService.RetrieveOptionSets(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
 
         using var file = File.CreateText(fileName);
-        _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+        console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
         var content = new OptionSetsTemplate(optionSets, config).TransformText();
 
         file.Write(content);
@@ -113,7 +104,7 @@ public class DotNetGenerator : IDotNetGenerator
         var contextFile = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Context}.cs");
 
         using var file = File.CreateText(contextFile);
-        _console.MarkupLine($"Creating File: [bold green]{contextFile}[/]");
+        console.MarkupLine($"Creating File: [bold green]{contextFile}[/]");
         var content = new ContextTemplate(config.NameSpace).TransformText();
 
         file.Write(content);
@@ -126,19 +117,19 @@ public class DotNetGenerator : IDotNetGenerator
 
         foreach (var entity in config.Entities)
         {
-            var metadata = _metadataService.RetrieveEntityMetadata(entity,
+            var metadata = metadataService.RetrieveEntityMetadata(entity,
                 EntityFilters.Attributes | EntityFilters.Relationships | EntityFilters.Entity);
 
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet,
                 $"{Formatter.CamelCase(metadata.SchemaName)}.cs");
 
             using var file = File.CreateText(fileName);
-            _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+            console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             var content = new EntityTemplate(metadata,
-                logicalName => _metadataService.RetrieveEntityMetadata(logicalName),
+                logicalName => metadataService.RetrieveEntityMetadata(logicalName),
                 config,
-                _metadataService.RetrieveOrganizationLanguage(),
-                _console).TransformText();
+                metadataService.RetrieveOrganizationLanguage(),
+                console).TransformText();
 
             file.Write(content);
         }

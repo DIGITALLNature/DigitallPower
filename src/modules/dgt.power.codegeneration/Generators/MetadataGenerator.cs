@@ -13,17 +13,8 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators;
 
-public class MetadataGenerator : IMetadataGenerator
+public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole console) : IMetadataGenerator
 {
-    private readonly IMetadataService _metadataService;
-    private readonly IAnsiConsole _console;
-
-    public MetadataGenerator(IMetadataService metadataService, IAnsiConsole console)
-    {
-        _metadataService = metadataService;
-        _console = console;
-    }
-
     public void PrepareDirectory(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -53,14 +44,14 @@ public class MetadataGenerator : IMetadataGenerator
 
         foreach (var entity in config.Entities)
         {
-            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new DataContractSerializer(typeof(EntityMetadata));
             var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8};
 
             using var file = XmlWriter.Create(fileName, settings);
-            _console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+            console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }
     }

@@ -15,7 +15,13 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 
-public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Settings>
+public class CreateWorkflowStateConfig(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    JsonSerializerOptions jsonSerializerOptions,
+    IAnsiConsole console)
+    : PowerLogic<CreateWorkflowStateConfig.Settings>(tracer, connection, configResolver, console)
 {
     public class Settings : BaseProgramSettings
     {
@@ -48,14 +54,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
         public bool Detailed { get; init; }
     }
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly WorkflowStateTracker _workflowStateTracker;
-
-    public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-        _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-        _workflowStateTracker = new WorkflowStateTracker();
-    }
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+    private readonly WorkflowStateTracker _workflowStateTracker = new();
 
     protected override bool Invoke(Settings args)
     {

@@ -15,12 +15,13 @@ using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
-public sealed class TeamTemplateImport : BaseImport
+public sealed class TeamTemplateImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public TeamTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

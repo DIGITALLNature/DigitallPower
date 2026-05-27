@@ -15,13 +15,14 @@ using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class UserRoleExport : BaseExport
+public sealed class UserRoleExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public UserRoleExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
-        : base(tracer, connection, configResolver, fileService, console)
-    {
-    }
-
     protected override bool Invoke(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -32,11 +33,14 @@ public sealed class UserRoleExport : BaseExport
 
         var separator = args.InlineData;
         var filter = string.Empty;
-        if (!string.IsNullOrWhiteSpace(args.InlineData) && args.InlineData.IndexOf("<", StringComparison.InvariantCulture) >= 0)
+        if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
-            var idx = args.InlineData.IndexOf("<", StringComparison.InvariantCulture);
-            separator = args.InlineData.Substring(0, idx);
-            filter = args.InlineData.Substring(idx);
+            var idx = args.InlineData.IndexOf('<');
+            if (idx >= 0)
+            {
+                separator = args.InlineData.Substring(0, idx);
+                filter = args.InlineData.Substring(idx);
+            }
         }
 
         if (!GetQueryExpression(Tracer, Connection, filter, out var query))
@@ -111,24 +115,25 @@ public sealed class UserRoleExport : BaseExport
             foreach (var entity in results.Entities)
             {
                 var systemUser = entity.ToEntity<SystemUser>();
-                if (!userRoles.ContainsKey(systemUser.Id))
+                if (!userRoles.TryGetValue(systemUser.Id, out var userRole))
                 {
                     var bu = GetAttribute<string>(systemUser, $"bu.{BusinessUnit.LogicalNames.Name}");
                     var pbu = GetAttribute<string>(systemUser, $"pbu.{BusinessUnit.LogicalNames.Name}");
-                    userRoles.Add(systemUser.Id, new UserRole
+                    userRole = new UserRole
                     {
                         UserName = systemUser.DomainName,
 #pragma warning disable CS8601
                         BusinessUnit = string.IsNullOrWhiteSpace(pbu) ? bu : $"{bu}{separator[0]}{pbu}",
 #pragma warning restore CS8601
                         BusinessUnitSeparator = separator[0]
-                    });
+                    };
+                    userRoles.Add(systemUser.Id, userRole);
                 }
 
                 var role = GetAttribute<string>(systemUser, $"ro.{Role.LogicalNames.Name}");
                 if (!string.IsNullOrWhiteSpace(role))
                 {
-                    userRoles[systemUser.Id].SecurityRoles.Add(role);
+                    userRole.SecurityRoles.Add(role);
                 }
             }
 
@@ -149,8 +154,9 @@ public sealed class UserRoleExport : BaseExport
         return userRoles.Values.OrderBy(e => e.UserName).ToList();
     }
 
-    private static T? GetAttribute<T>(Entity entity, string attribute) =>
-        entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : default;
+    private static T? GetAttribute<T>(Entity entity, string attribute)
+        where T : class =>
+        entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : null;
 
     private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
     {

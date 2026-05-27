@@ -12,14 +12,8 @@ namespace dgt.power.codegeneration.Base.Config;
 /// </summary>
 public class EntityRefFilter
 {
-    private readonly HashSet<string> _attributes;
-    private readonly HashSet<string> _optionsets;
-
-    public EntityRefFilter()
-    {
-        _attributes = new HashSet<string>();
-        _optionsets = new HashSet<string>();
-    }
+    private readonly HashSet<string> _attributes = new();
+    private readonly HashSet<string> _optionsets = new();
 
     public required string Entity { get; set; }
 

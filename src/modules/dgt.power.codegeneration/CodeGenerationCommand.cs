@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
@@ -11,69 +10,50 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration;
 
-public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
+public class CodeGenerationCommand(
+    ITracer tracer,
+    IConfigResolver configResolver,
+    DotNetWorker dotNetWorker,
+    TypescriptWorker typescriptWorker,
+    MetadataWorker metadataWorker,
+    IMetadataService metadataService,
+    IAnsiConsole console)
+    : Command<CodeGenerationVerb>, IPowerLogic
 {
-    private readonly ITracer _tracer;
-    private readonly IConfigResolver _configResolver;
-    private readonly DotNetWorker _dotNetWorker;
-    private readonly TypescriptWorker _typescriptWorker;
-    private readonly MetadataWorker _metadataWorker;
-    private readonly IMetadataService _metadataService;
-    private readonly IAnsiConsole _console;
-
-    public CodeGenerationCommand(
-        ITracer tracer,
-        IConfigResolver configResolver,
-        DotNetWorker dotNetWorker,
-        TypescriptWorker typescriptWorker,
-        MetadataWorker metadataWorker,
-        IMetadataService metadataService,
-        IAnsiConsole console)
-
-    {
-        _tracer = tracer;
-        _configResolver = configResolver;
-        _dotNetWorker = dotNetWorker;
-        _typescriptWorker = typescriptWorker;
-        _metadataWorker = metadataWorker;
-        _metadataService = metadataService;
-        _console = console;
-    }
-
     protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
-        _tracer.Start(this);
-        if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
+        tracer.Start(this);
+        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
         {
-            return _tracer.End(this, false) ? 0 : -1;
+            return tracer.End(this, false) ? 0 : -1;
         }
 
         var success = true;
 
-        _console.Status()
+        console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", ctx =>
                 {
-                    _metadataService.PopulateEntitiesAndSolutions(config);
+                    metadataService.PopulateEntitiesAndSolutions(config);
 
                     if (!config.SuppressDotNet)
                     {
-                        success &= _dotNetWorker.Invoke(verb);
+                        success &= dotNetWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressTypeScript)
                     {
-                        success &= _typescriptWorker.Invoke(verb);
+                        success &= typescriptWorker.Invoke(verb);
                     }
 
                     if (!config.SuppressMetaData)
                     {
-                        success &= _metadataWorker.Invoke(verb);
+                        success &= metadataWorker.Invoke(verb);
                     }
                 }
             );
 
-        return _tracer.End(this, success) ? 0 : -1;
+        return tracer.End(this, success) ? 0 : -1;
     }
 }

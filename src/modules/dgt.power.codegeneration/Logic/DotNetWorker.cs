@@ -9,16 +9,13 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public class DotNetWorker : PowerWorker<CodeGenerationVerb>
+public class DotNetWorker(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IDotNetGenerator generator)
+    : PowerWorker<CodeGenerationVerb>(tracer, connection, configResolver)
 {
-    private readonly IDotNetGenerator _generator;
-
-    public DotNetWorker(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IDotNetGenerator generator)
-        : base(tracer, connection, configResolver)
-    {
-        _generator = generator;
-    }
-
     protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -27,12 +24,12 @@ public class DotNetWorker : PowerWorker<CodeGenerationVerb>
             return Tracer.End(this, false);
         }
 
-        _generator.PrepareDirectory(args);
-        _generator.GenerateActions(args, config);
-        _generator.GenerateSdkMessages(args, config);
-        _generator.GenerateOptionSets(args, config);
-        _generator.GenerateContext(args, config);
-        _generator.GenerateEntities(args, config);
+        generator.PrepareDirectory(args);
+        generator.GenerateActions(args, config);
+        generator.GenerateSdkMessages(args, config);
+        generator.GenerateOptionSets(args, config);
+        generator.GenerateContext(args, config);
+        generator.GenerateEntities(args, config);
         return true;
     }
 }

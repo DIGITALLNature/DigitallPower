@@ -6,27 +6,18 @@ using Spectre.Console;
 
 namespace dgt.power.push.Model;
 
-internal record Webresources
+internal record Webresources(
+    int Type,
+    string Name,
+    string DisplayName,
+    string? Content,
+    string? Hash,
+    WebresourceState? State = default,
+    Guid? XrmId = default)
 {
     // Should be matching to WebResource.Options.WebResourceType
-    public int Type { get; }
-    public string Name { get; }
-    public string DisplayName { get; }
-    public string? Content { get; }
-    public string? Hash { get; }
-    public WebresourceState? State { get; set; }
-    public Guid? XrmId { get; set; }
-
-    public Webresources(int type, string name, string displayName, string? content, string? hash, WebresourceState? webresourceState = default, Guid? xrmId = default)
-    {
-        Type = type;
-        Name = name;
-        DisplayName = displayName;
-        Content = content;
-        Hash = hash;
-        State = webresourceState;
-        XrmId = xrmId;
-    }
+    public WebresourceState? State { get; set; } = State;
+    public Guid? XrmId { get; set; } = XrmId;
 
     public Webresources(int type, string name, WebresourceState webresourceState, Guid xrmId) : this(type, name, name, null, null, webresourceState, xrmId) { }
 

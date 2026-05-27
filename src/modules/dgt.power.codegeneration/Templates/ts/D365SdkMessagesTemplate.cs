@@ -22,7 +22,7 @@ namespace dgt.power.codegeneration.Templates.ts
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("/* eslint-disable */\r\n\r\nexport class D365SdkMessages {\r\n\tconstructor() {\r\n\t}\r\n");
+            this.Write("/* eslint-disable */\n\nexport class D365SdkMessages {\n\tconstructor() {\n\t}\n");
  foreach(var sdkMessages in Filter(SdkMessages))
 {
 
@@ -38,11 +38,11 @@ namespace dgt.power.codegeneration.Templates.ts
             
             #line default
             #line hidden
-            this.Write("\";\r\n");
+            this.Write("\";\n");
 
 }
 
-            this.Write("}\r\n");
+            this.Write("}\n");
             return this.GenerationEnvironment.ToString();
         }
     }
