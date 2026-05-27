@@ -10,7 +10,6 @@ using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console;
 using Attribute = dgt.power.dataverse.Attribute;
 
 namespace dgt.power.codegeneration.tests;
@@ -272,8 +271,6 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
         var config = new CodeGenerationConfig {Entities = new[] {accountMetadata.LogicalName}};
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
-
-        AnsiConsole.Record();
 
         var context = GetBuilder()
             .WithMetaData(accountMetadata)
