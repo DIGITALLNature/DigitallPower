@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
-using dgt.power.common.Commands;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Model.Settings;
 using Microsoft.Xrm.Sdk;
@@ -10,25 +9,26 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSolutionVersionSettings>
+public class IncrementSolutionVersion(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<IncrementSolutionVersionSettings>(tracer, connection, configResolver, console)
 {
-    private readonly IAnsiConsole _console;
-
-    public IncrementSolutionVersion(IOrganizationService organizationService, IConfigResolver configResolver, IAnsiConsole console) : base(organizationService,
-        configResolver)
+    protected override bool Invoke(IncrementSolutionVersionSettings settings)
     {
-        _console = console;
-    }
+        Tracer.Start(this);
 
-    public override ExitCode Execute(IncrementSolutionVersionSettings settings)
-    {
         if (string.IsNullOrWhiteSpace(settings.Solution))
         {
-            _console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
-            return ExitCode.Error;
+            Console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
+            return Tracer.End(this, false);
         }
 
-        var solution = DataContext.SolutionSet.Where(x => x.UniqueName == settings.Solution)
+        using var dataContext = new DataContext(Connection);
+
+        var solution = dataContext.SolutionSet.Where(x => x.UniqueName == settings.Solution)
             .Select(x => new Solution
             {
                 Id = x.Id,
@@ -40,17 +40,17 @@ public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSoluti
 
         if (solution == null)
         {
-            _console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
-            return ExitCode.Error;
+            Console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
+            return Tracer.End(this, false);
         }
 
         if (!Version.TryParse(solution.Version, out var version))
         {
-            _console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
-            return ExitCode.Error;
+            Console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
+            return Tracer.End(this, false);
         }
 
-        _console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
+        Console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
 
         Version incrementedVersion;
         if (settings.Major)
@@ -71,16 +71,16 @@ public class IncrementSolutionVersion : AbstractDataverseCommand<IncrementSoluti
         }
         else
         {
-            _console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
-            return ExitCode.Error;
+            Console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
+            return Tracer.End(this, false);
         }
 
-        OrganizationService.Update(new Solution(solution.Id)
+        Connection.Update(new Solution(solution.Id)
         {
             Version = incrementedVersion.ToString()
         });
-        _console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
+        Console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
 
-        return ExitCode.Success;
+        return Tracer.End(this, true);
     }
 }

@@ -3,33 +3,25 @@
 
 using System.Diagnostics;
 using dgt.power.common;
-using dgt.power.common.Commands;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
 using dgt.power.common.Logic;
 using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace dgt.power.profile.Commands;
 
-public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
+public class CreateProfileCommand(
+    IProfileManager profileManager,
+    IXrmConnection connection,
+    IAnsiConsole console)
+    : Command<CreateProfileSettings>
 {
-    private readonly IXrmConnection _connection;
-    private readonly IProfileManager _profileManager;
-    private readonly IAnsiConsole _console;
-
-
-    public CreateProfileCommand(IProfileManager profileManager, IConfigResolver configResolver, IXrmConnection connection, IAnsiConsole console) : base(configResolver)
-    {
-        _profileManager = profileManager;
-        _connection = connection;
-        _console = console;
-    }
-
-    public override ExitCode Execute(CreateProfileSettings settings)
+    protected override int Execute(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.LoadIdentities();
+        var identities = profileManager.LoadIdentities();
         if (settings.TokenBased)
         {
             identities.Upsert(settings.Name.ToUpperInvariant(),
@@ -38,7 +30,7 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
                     ConnectionString = settings.ConnectionString,
                     Insecure = settings.Insecure,
                     SecurityProtocol = settings.SecurityProtocol,
-                    Token = null
+                    Token = string.Empty
                 });
         }
         else
@@ -51,26 +43,26 @@ public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
                     SecurityProtocol = settings.SecurityProtocol
                 });
         }
-        
-        _profileManager.Save();
+
+        profileManager.Save();
 
         if (!settings.SkipChecking)
         {
             try
             {
-                _connection.Connect();
+                connection.Connect();
             }
             catch (FailedConnectionException fc)
             {
-                _console.WriteLine(fc.RootMessage());
+                console.WriteLine(fc.RootMessage());
                 throw;
             }
         }
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");
         rule.LeftJustified();
-        _console.Write(rule);
+        console.Write(rule);
 
-        return ExitCode.Success;
+        return 0;
     }
 }
