@@ -29,6 +29,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     {
         _metadataService = metadataService;
         _templateOptions = new TemplateOptions();
+        CustomLiquidFilters.SetConsole(console);
         _templateOptions.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
         _templateOptions.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
         _templateOptions.Filters.AddFilter("unique", CustomLiquidFilters.Unique);

@@ -137,7 +137,8 @@ public class DotNetGenerator : IDotNetGenerator
             var content = new EntityTemplate(metadata,
                 logicalName => _metadataService.RetrieveEntityMetadata(logicalName),
                 config,
-                _metadataService.RetrieveOrganizationLanguage()).TransformText();
+                _metadataService.RetrieveOrganizationLanguage(),
+                _console).TransformText();
 
             file.Write(content);
         }

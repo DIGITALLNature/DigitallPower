@@ -72,6 +72,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        CustomLiquidFilters.SetConsole(_console);
         var options = new TemplateOptions();
         options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
         options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
