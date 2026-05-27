@@ -10,17 +10,10 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators;
 
-public class TypescriptGeneratorFascade : ITypescriptGeneratorFascade
+public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiConsole console)
+    : ITypescriptGeneratorFascade
 {
-    private readonly IMetadataService _metadataService;
-    private readonly IAnsiConsole _console;
     private ITypescriptGenerator _generator;
-
-    public TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiConsole console)
-    {
-        _metadataService = metadataService;
-        _console = console;
-    }
 
     #region ITypescriptGeneratorFascade Members
 
@@ -132,10 +125,10 @@ public class TypescriptGeneratorFascade : ITypescriptGeneratorFascade
         switch (generatorVersion)
         {
             case TypescriptGeneratorVersion.Full:
-                _generator = new TypescriptGeneratorWorkerFull(_metadataService, _console);
+                _generator = new TypescriptGeneratorWorkerFull(metadataService, console);
                 break;
             case TypescriptGeneratorVersion.Light:
-                _generator = new TypescriptGeneratorWorkerLight(_metadataService, _console);
+                _generator = new TypescriptGeneratorWorkerLight(metadataService, console);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(generatorVersion), generatorVersion, null);

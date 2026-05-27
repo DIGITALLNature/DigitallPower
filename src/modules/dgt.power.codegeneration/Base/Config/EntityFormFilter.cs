@@ -10,20 +10,11 @@ namespace dgt.power.codegeneration.Base.Config;
 /// </summary>
 public class EntityFormFilter
 {
-    private readonly HashSet<string> _attributes;
-    private readonly HashSet<string> _optionsets;
-    private readonly HashSet<string> _tabs;
-    private readonly HashSet<string> _sections;
-    private readonly HashSet<string> _grids;
-
-    public EntityFormFilter()
-    {
-        _attributes = new HashSet<string>();
-        _optionsets = new HashSet<string>();
-        _tabs = new HashSet<string>();
-        _sections = new HashSet<string>();
-        _grids = new HashSet<string>();
-    }
+    private readonly HashSet<string> _attributes = new();
+    private readonly HashSet<string> _optionsets = new();
+    private readonly HashSet<string> _tabs = new();
+    private readonly HashSet<string> _sections = new();
+    private readonly HashSet<string> _grids = new();
 
     public required string EntityForm { get; init; }
 

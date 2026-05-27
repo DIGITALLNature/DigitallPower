@@ -7,9 +7,9 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Base;
 
-public abstract class BaseMaintenance : PowerLogic<MaintenanceVerb>
-{
-    protected BaseMaintenance(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-}
+public abstract class BaseMaintenance(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<MaintenanceVerb>(tracer, connection, configResolver, console);

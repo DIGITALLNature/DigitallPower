@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.profile.Base;
 using Spectre.Console;
@@ -12,20 +11,11 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.profile.Commands;
 
-public class ListProfileCommand : Command<ProfileSettings>
+public class ListProfileCommand(IProfileManager profileManager, IAnsiConsole console) : Command<ProfileSettings>
 {
-    private readonly IProfileManager _profileManager;
-    private readonly IAnsiConsole _console;
-
-    public ListProfileCommand(IProfileManager profileManager, IAnsiConsole console)
-    {
-        _profileManager = profileManager;
-        _console = console;
-    }
-
     protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
-        var identities = _profileManager.LoadIdentities();
+        var identities = profileManager.LoadIdentities();
 
         var grid = new Grid();
         // Add columns
@@ -36,11 +26,11 @@ public class ListProfileCommand : Command<ProfileSettings>
 
         foreach (var identity in identities.Infos)
         {
-            grid.AddRow(identity.Name == _profileManager.Current ? "*" : string.Empty, identity.Name , identity.Type , _profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
-                _profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
+            grid.AddRow(identity.Name == profileManager.Current ? "*" : string.Empty, identity.Name , identity.Type , profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
+                profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
         }
 
-        _console.Write(grid);
+        console.Write(grid);
         return 0;
     }
 }

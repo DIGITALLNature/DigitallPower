@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 
@@ -16,7 +15,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    protected Spectre.Console.Testing.TestConsole TestConsole { get; } = new Spectre.Console.Testing.TestConsole();
+    protected TestConsole TestConsole { get; } = new TestConsole();
 
     public CommandTestsBase()
     {

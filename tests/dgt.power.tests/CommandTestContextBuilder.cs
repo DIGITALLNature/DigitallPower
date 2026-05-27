@@ -21,7 +21,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    private IServiceCollection _serviceCollection;
+    private IServiceCollection _serviceCollection = new TestServiceCollection();
     private IEnumerable<Entity> _data = new List<Entity>();
     private IEnumerable<EntityMetadata> _metadata = new List<EntityMetadata>();
     private readonly List<RelationshipMetadataBase> _relationships = new();
@@ -29,11 +29,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
     private IAnsiConsole? _console;
-
-    public CommandTestContextBuilder()
-    {
-        _serviceCollection = new TestServiceCollection();
-    }
 
     public CommandTestContextBuilder<TCommand, TCommandSettings> WithAnsiConsole(IAnsiConsole console)
     {

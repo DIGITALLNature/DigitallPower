@@ -43,16 +43,13 @@ public class CompositeInterceptorTests
     }
 
     [Test]
-    public async Task Intercept_WorksWithNoInterceptors()
+    public void Intercept_WorksWithNoInterceptors()
     {
         var composite = new CompositeInterceptor();
         var context = new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "test", null);
         var settings = new TestSettings();
 
-        // Should not throw
         composite.Intercept(context, settings);
-
-        await Assert.That(true).IsTrue();
     }
 
     private sealed class TrackingInterceptor(int id, List<int> callLog) : ICommandInterceptor

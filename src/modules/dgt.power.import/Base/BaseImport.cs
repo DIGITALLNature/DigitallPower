@@ -9,13 +9,13 @@ using Spectre.Console;
 
 namespace dgt.power.import.Base;
 
-public abstract class BaseImport : PowerLogic<ImportVerb>
+public abstract class BaseImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<ImportVerb>(tracer, connection, configResolver, console)
 {
-    protected BaseImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
-
     protected static string GetAssignee(string assignee, Assignee owner)
     {
         Debug.Assert(owner != null, nameof(owner) + " != null");

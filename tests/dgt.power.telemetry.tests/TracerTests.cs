@@ -108,7 +108,7 @@ public class TracerTests
         tracer.End(action, true);
 
         await Assert.That(stoppedActivities).Count().IsEqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(true);
+        await Assert.That((bool?)stoppedActivities[0].GetTagItem("dgtp.success")).IsTrue();
         await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Ok);
     }
 
@@ -125,7 +125,7 @@ public class TracerTests
         tracer.End(action, false);
 
         await Assert.That(stoppedActivities).Count().IsEqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(false);
+        await Assert.That((bool?)stoppedActivities[0].GetTagItem("dgtp.success")).IsFalse();
         await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Error);
     }
 
@@ -143,7 +143,7 @@ public class TracerTests
 
         await Assert.That(result).IsFalse();
         await Assert.That(stoppedActivities).Count().IsEqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(false);
+        await Assert.That((bool?)stoppedActivities[0].GetTagItem("dgtp.success")).IsFalse();
     }
 
     [Test]
@@ -160,7 +160,7 @@ public class TracerTests
 
         await Assert.That(result).IsTrue();
         await Assert.That(stoppedActivities).Count().IsEqualTo(1);
-        await Assert.That(stoppedActivities[0].GetTagItem("dgtp.success")).IsEqualTo(true);
+        await Assert.That((bool?)stoppedActivities[0].GetTagItem("dgtp.success")).IsTrue();
     }
 
     [Test]

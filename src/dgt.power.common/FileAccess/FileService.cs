@@ -7,18 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace dgt.power.common.FileAccess;
 
-public class FileService : IFileService
+public class FileService(JsonSerializerOptions options) : IFileService
 {
-    private readonly JsonSerializerOptions _options;
-
-    public FileService(JsonSerializerOptions options)
-    {
-        _options = options;
-    }
-
     public string ExportJsonFile<TObject>(string fileDirectory, string fileName, TObject jsonObject)
     {
-        var json = Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(jsonObject, _options))).Trim('"');
+        var json = Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(jsonObject, options))).Trim('"');
         return ExportFile(fileDirectory, fileName, json);
     }
 

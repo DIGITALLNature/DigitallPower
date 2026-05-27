@@ -9,16 +9,13 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public class TypescriptWorker : PowerWorker<CodeGenerationVerb>
+public class TypescriptWorker(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    ITypescriptGeneratorFascade generatorFascade)
+    : PowerWorker<CodeGenerationVerb>(tracer, connection, configResolver)
 {
-    private readonly ITypescriptGeneratorFascade _generatorFascade;
-
-    public TypescriptWorker(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver,
-        ITypescriptGeneratorFascade generatorFascade) : base(tracer,connection, configResolver)
-    {
-        _generatorFascade = generatorFascade;
-    }
-
     protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -27,23 +24,23 @@ public class TypescriptWorker : PowerWorker<CodeGenerationVerb>
             return Tracer.End(this, false);
         }
 
-        _generatorFascade.SetGenerationVersion(config.TypescriptGeneratorVersion);
-        _generatorFascade.PrepareDirectory(args);
-        _generatorFascade.GenerateEntities(args, config);
-        _generatorFascade.GenerateEntityForms(args, config);
-        _generatorFascade.GenerateOptionSets(args, config);
-        _generatorFascade.GenerateSdkMessages(args, config);
+        generatorFascade.SetGenerationVersion(config.TypescriptGeneratorVersion);
+        generatorFascade.PrepareDirectory(args);
+        generatorFascade.GenerateEntities(args, config);
+        generatorFascade.GenerateEntityForms(args, config);
+        generatorFascade.GenerateOptionSets(args, config);
+        generatorFascade.GenerateSdkMessages(args, config);
 
         if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Full)
         {
-            _generatorFascade.GenerateBoilerPlateFull(args, config);
-            _generatorFascade.GenerateEntityRefsFull(args, config);
-            _generatorFascade.GenerateBusinessProcessFlowsFull(args, config);
+            generatorFascade.GenerateBoilerPlateFull(args, config);
+            generatorFascade.GenerateEntityRefsFull(args, config);
+            generatorFascade.GenerateBusinessProcessFlowsFull(args, config);
         }
 
         if (config.TypescriptGeneratorVersion == TypescriptGeneratorVersion.Light)
         {
-            _generatorFascade.GenerateCustomApis(args, config);
+            generatorFascade.GenerateCustomApis(args, config);
         }
 
         return true;

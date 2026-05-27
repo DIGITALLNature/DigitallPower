@@ -22,7 +22,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    private IServiceCollection _serviceCollection;
+    private IServiceCollection _serviceCollection = new TestServiceCollection();
     private IEnumerable<Entity> _data = new List<Entity>();
     private IEnumerable<EntityMetadata> _metadata = new List<EntityMetadata>();
     private readonly List<RelationshipMetadataBase> _relationships = new();
@@ -30,11 +30,6 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
     private IAnsiConsole? _console;
-
-    public WorkerTestContextBuilder()
-    {
-        _serviceCollection = new TestServiceCollection();
-    }
 
     public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithAnsiConsole(IAnsiConsole console)
     {

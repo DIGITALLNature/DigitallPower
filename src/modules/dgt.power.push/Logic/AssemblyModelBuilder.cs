@@ -85,11 +85,11 @@ internal class AssemblyModelBuilder : IDisposable
     }
 
 
-    public List<Model.Assembly?> BuildAssemblyFromPackage(Package packageFile)
+    public List<Assembly?> BuildAssemblyFromPackage(Package packageFile)
     {
         using var inputStream = new MemoryStream(Convert.FromBase64String(packageFile.Content!));
         using var reader = new PackageArchiveReader(inputStream);
-        var results = new List<Model.Assembly?>();
+        var results = new List<Assembly?>();
 
         var tempPath = Path.Combine(Path.GetTempPath(), "dgtp.push", packageFile.Id.ToString("N"));
         try
@@ -128,14 +128,14 @@ internal class AssemblyModelBuilder : IDisposable
 
     public Assembly? BuildAssemblyFromDll(string dllFile, MetadataLoadContext? metadataLoadContext)
     {
-        var result = default(Model.Assembly);
+        var result = default(Assembly);
         try
         {
             System.Reflection.Assembly assembly = metadataLoadContext.LoadFromAssemblyPath(dllFile);
 
             if (assembly.IsFullyTrusted)
             {
-                result = new Model.Assembly
+                result = new Assembly
                 {
                     Name = assembly.GetName().Name!,
                     Version = assembly.GetName().Version!.ToString(),
@@ -158,9 +158,9 @@ internal class AssemblyModelBuilder : IDisposable
         return result;
     }
 
-    public Model.Assembly BuildAssemblyFromCrm(string name, string version)
+    public Assembly BuildAssemblyFromCrm(string name, string version)
     {
-        var result = new Model.Assembly();
+        var result = new Assembly();
         var state = GetPluginAssembly(name, version, out var pluginAssembly);
         result.State = state;
         if (state != AssemblyState.Create)
@@ -214,19 +214,19 @@ internal class AssemblyModelBuilder : IDisposable
     /// </summary>
     /// <param name="name">The name of the assembly.</param>
     /// <returns>The list of outdated assembly content.</returns>
-    public List<Model.AssemblyContent> BuildOutdatedAssemblyContentFromCrm(string name)
+    public List<AssemblyContent> BuildOutdatedAssemblyContentFromCrm(string name)
     {
         // Get the list of plugin assemblies from CRM
         var assemblies = GetPluginAssemblies(name);
 
         // Create a list to store the outdated assembly content
-        var results = new List<Model.AssemblyContent>();
+        var results = new List<AssemblyContent>();
 
         // Iterate over the plugin assemblies except the first one which is the latest one
         foreach (var pluginAssembly in assemblies.Skip(1))
         {
             // Create a new assembly content model
-            var result = new Model.AssemblyContent();
+            var result = new AssemblyContent();
             result.Id = pluginAssembly.Id;
 
             // Get the list of plugin types from CRM
@@ -297,7 +297,7 @@ internal class AssemblyModelBuilder : IDisposable
 
     #region Assembly
 
-    private void ParseAssembly(System.Reflection.Assembly assembly, ref Model.Assembly result)
+    private void ParseAssembly(System.Reflection.Assembly assembly, ref Assembly result)
     {
         var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
         var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
@@ -497,7 +497,7 @@ internal class AssemblyModelBuilder : IDisposable
                 SecondaryEntityName =
                     GetAttribute<string>(mps, $"flt.{SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode}")!,
                 FilterAttributes =
-                    mps.FilteringAttributesField?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+                    mps.FilteringAttributesField?.Split(',', StringSplitOptions.RemoveEmptyEntries),
                 ExecutionOrder = mps.Rank.GetValueOrDefault(100),
                 MessageId = GetAttribute<Guid?>(mps, $"msg.{SdkMessage.LogicalNames.SdkMessageId}").GetValueOrDefault(),
                 MessageFilterId = GetAttribute<Guid?>(mps, $"msg.{SdkMessageFilter.LogicalNames.SdkMessageFilterId}")
@@ -535,7 +535,7 @@ internal class AssemblyModelBuilder : IDisposable
                     Name = e.Name,
                     EntityAlias = e.EntityAlias,
                     ImageType = e.ImageType.Value,
-                    Attributes = e.AttributesField?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+                    Attributes = e.AttributesField?.Split(',', StringSplitOptions.RemoveEmptyEntries),
                     MessagePropertyName = e.MessagePropertyName!,
                     Id = e.SdkMessageProcessingStepImageId!.Value,
                     ParentId = pluginStep.Id,
@@ -838,7 +838,7 @@ internal class AssemblyModelBuilder : IDisposable
 
     private static string[] GetVersion(string version)
     {
-        var result = version.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        var result = version.Split('.', StringSplitOptions.RemoveEmptyEntries);
         if (result.Length is < 3 or > 4) //major.minor.build.patch
         {
             throw new ArgumentException($"Version {version} does not match 'major.minor.build[.patch]'");

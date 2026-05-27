@@ -12,12 +12,13 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public sealed class AutoNumberFormatAction : BaseMaintenance
+public sealed class AutoNumberFormatAction(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    public AutoNumberFormatAction(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(MaintenanceVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

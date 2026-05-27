@@ -9,22 +9,14 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public class ProfileManager : IProfileManager
+public class ProfileManager(IsolatedStorageFile storage, string identityFileName, IAnsiConsole? console = null)
+    : IProfileManager
 {
-    private readonly string _identityFileName;
-    private readonly IsolatedStorageFile _storage;
-    private readonly IAnsiConsole _console;
+    private readonly IAnsiConsole _console = console ?? AnsiConsole.Console;
     private Identities _identities = new();
 
     public ProfileManager(IsolatedStorageFile storage, IAnsiConsole? console = null) : this(storage, "identities.dat", console)
     {
-    }
-
-    public ProfileManager(IsolatedStorageFile storage, string identityFileName, IAnsiConsole? console = null)
-    {
-        _storage = storage;
-        _identityFileName = identityFileName;
-        _console = console ?? AnsiConsole.Console;
     }
 
     public IIdentities LoadIdentities()
@@ -34,12 +26,12 @@ public class ProfileManager : IProfileManager
             return _identities ??= new Identities();
         }
 
-        if (!_storage.FileExists(_identityFileName))
+        if (!storage.FileExists(identityFileName))
         {
             return _identities ??= new Identities();
         }
 
-        using var identityStream = new IsolatedStorageFileStream(_identityFileName, FileMode.Open, _storage);
+        using var identityStream = new IsolatedStorageFileStream(identityFileName, FileMode.Open, storage);
         using var ms = new MemoryStream();
         identityStream.CopyTo(ms);
         var protectedMemory = ms.ToArray();
@@ -69,7 +61,7 @@ public class ProfileManager : IProfileManager
     public void Save()
     {
         // Use FileMode.Create to recreate a new file OpenOrCreate has weird behaviour that keeps fragment of the old file content sometimes
-        using var identityStream = new IsolatedStorageFileStream(_identityFileName, FileMode.Create, _storage);
+        using var identityStream = new IsolatedStorageFileStream(identityFileName, FileMode.Create, storage);
         var json = JsonSerializer.SerializeToUtf8Bytes(_identities);
         json = ProtectData(json);
         identityStream.Write(json, 0, json.Length);

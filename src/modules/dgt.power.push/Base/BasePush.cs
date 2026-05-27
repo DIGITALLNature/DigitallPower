@@ -7,9 +7,9 @@ using Spectre.Console;
 
 namespace dgt.power.push.Base;
 
-public abstract class BasePush : PowerLogic<PushVerb>
-{
-    protected BasePush(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-}
+public abstract class BasePush(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<PushVerb>(tracer, connection, configResolver, console);

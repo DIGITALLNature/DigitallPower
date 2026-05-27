@@ -14,13 +14,14 @@ using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class OutlookTemplateExport : BaseExport
+public sealed class OutlookTemplateExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public OutlookTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService, IAnsiConsole console)
-        : base(tracer, connection, configResolver, fileService, console)
-    {
-    }
-
     protected override bool Invoke(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

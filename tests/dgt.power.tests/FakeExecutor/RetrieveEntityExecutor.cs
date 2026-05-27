@@ -9,17 +9,10 @@ using Microsoft.Xrm.Sdk.Messages;
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class RetrieveEntityExecutor : IOrganizationRequestFake
+public class RetrieveEntityExecutor(Dictionary<string, int> map) : IOrganizationRequestFake
 {
-    private readonly Dictionary<string, int> _map;
-
-    public RetrieveEntityExecutor()
+    public RetrieveEntityExecutor() : this(new Dictionary<string, int>())
     {
-        _map = new Dictionary<string, int>();
-    }
-    public RetrieveEntityExecutor(Dictionary<string, int> map)
-    {
-        _map = map;
     }
 
     public Type ForType => typeof(RetrieveEntityRequest);
@@ -28,7 +21,7 @@ public class RetrieveEntityExecutor : IOrganizationRequestFake
     {
         var typed = (RetrieveEntityRequest)organizationRequest;
         var entityMetadata = state.State.EntityMetadata[TestEntity.EntityLogicalName];
-        entityMetadata.GetType().GetProperty("ObjectTypeCode")!.SetValue(entityMetadata, _map[typed.LogicalName], null);
+        entityMetadata.GetType().GetProperty("ObjectTypeCode")!.SetValue(entityMetadata, map[typed.LogicalName], null);
         return new RetrieveEntityResponse
         {
             Results =

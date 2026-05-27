@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using dgt.power.common;
-using Spectre.Console;
 using Spectre.Console.Testing;
 
 namespace dgt.power.tests;
@@ -20,7 +19,7 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    protected Spectre.Console.Testing.TestConsole TestConsole { get; } = new Spectre.Console.Testing.TestConsole();
+    protected TestConsole TestConsole { get; } = new TestConsole();
 
     public WorkerTestsBase()
     {

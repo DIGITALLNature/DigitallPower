@@ -11,23 +11,13 @@ namespace dgt.power.codegeneration.Base;
 
 public class CodeGenerationConfig
 {
-    private HashSet<string> _actions;
-    private HashSet<string> _customApis;
+    private HashSet<string> _actions = new();
+    private HashSet<string> _customApis = new();
 
-    private HashSet<string> _entities;
-    private HashSet<string> _forms;
-    private HashSet<string> _sdkMessages;
-    private HashSet<string> _solutions;
-
-    public CodeGenerationConfig()
-    {
-        _entities = new HashSet<string>();
-        _actions = new HashSet<string>();
-        _customApis = new HashSet<string>();
-        _sdkMessages = new HashSet<string>();
-        _solutions = new HashSet<string>();
-        _forms = new HashSet<string>();
-    }
+    private HashSet<string> _entities = new();
+    private HashSet<string> _forms = new();
+    private HashSet<string> _sdkMessages = new();
+    private HashSet<string> _solutions = new();
 
     public string NameSpace { get; init; } = "Digitall.APower.Model";
 

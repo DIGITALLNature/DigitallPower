@@ -14,12 +14,13 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class TopLayerAnalyze : BaseAnalyze
+public sealed class TopLayerAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public TopLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(AnalyzeVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");

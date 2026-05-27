@@ -17,12 +17,13 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class EntityAllAssetsAnalyze : BaseAnalyze
+public sealed class EntityAllAssetsAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public EntityAllAssetsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(AnalyzeVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -83,7 +84,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                     {
                         var patternWl = entryWl;
                         var matchWl = true;
-                        if (entryWl.StartsWith("!", StringComparison.InvariantCulture))
+                        if (entryWl.StartsWith('!'))
                         {
                             patternWl = entryWl.Remove(0, 1);
                             matchWl = false;
@@ -96,7 +97,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                             {
                                 var patternBl = entryBl;
                                 var matchBl = true;
-                                if (entryBl.StartsWith("!", StringComparison.InvariantCulture))
+                                if (entryBl.StartsWith('!'))
                                 {
                                     patternBl = entryBl.Remove(0, 1);
                                     matchBl = false;
@@ -152,7 +153,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                     {
                         var patternWl = entryWl;
                         var matchWl = false;
-                        if (entryWl.StartsWith("!", StringComparison.InvariantCulture))
+                        if (entryWl.StartsWith('!'))
                         {
                             patternWl = entryWl.Remove(0, 1);
                             matchWl = true;
@@ -169,7 +170,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                         {
                             var patternBl = entryBl;
                             var matchBl = true;
-                            if (entryBl.StartsWith("!", StringComparison.InvariantCulture))
+                            if (entryBl.StartsWith('!'))
                             {
                                 patternBl = entryBl.Remove(0, 1);
                                 matchBl = false;

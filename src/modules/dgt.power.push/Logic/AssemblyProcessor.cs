@@ -152,7 +152,7 @@ internal class AssemblyProcessor : IDisposable
 
     #region PluginAssembly
 
-    public Model.Assembly CreatePluginAssembly(Model.Assembly dll, string solution)
+    public Assembly CreatePluginAssembly(Assembly dll, string solution)
     {
         var pluginAssembly = new PluginAssembly
         {
@@ -172,7 +172,7 @@ internal class AssemblyProcessor : IDisposable
             AddPluginAssemblyToSolution(pluginAssembly, solution);
         }
 
-        return new Model.Assembly
+        return new Assembly
         {
             Name = pluginAssembly.Name,
             Version = dll.Version,
@@ -264,7 +264,7 @@ internal class AssemblyProcessor : IDisposable
 
     #region PluginType
 
-    public Model.Assembly UpsertAndPurgePluginTypes(Model.Assembly dll, Model.Assembly crm, string solution)
+    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm, string solution)
     {
         // Update
         foreach (var updateType in dll.PluginTypes.Where(t => crm.PluginTypes.Contains(t)))
@@ -282,7 +282,7 @@ internal class AssemblyProcessor : IDisposable
         return crm;
     }
 
-    private PluginType CreatePluginType(Model.Assembly crm, PluginType pluginType, string solution)
+    private PluginType CreatePluginType(Assembly crm, PluginType pluginType, string solution)
     {
         var type = new dataverse.PluginType
         {
@@ -431,7 +431,7 @@ internal class AssemblyProcessor : IDisposable
         }
     }
 
-    public Model.Assembly UpsertAndPurgeWorkflowTypes(Model.Assembly dll, Model.Assembly crm)
+    public Assembly UpsertAndPurgeWorkflowTypes(Assembly dll, Assembly crm)
     {
         // New
         foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.All(t => t.TypeName != d.TypeName)))
@@ -449,7 +449,7 @@ internal class AssemblyProcessor : IDisposable
         return crm;
     }
 
-    private WorkflowType CreateWorkflowType(Model.Assembly crm, WorkflowType workflowType)
+    private WorkflowType CreateWorkflowType(Assembly crm, WorkflowType workflowType)
     {
         var type = new dataverse.PluginType
         {
@@ -490,7 +490,7 @@ internal class AssemblyProcessor : IDisposable
 
     #region PluginStep
 
-    public Model.Assembly UpsertAndPurgePluginSteps(Model.Assembly dll, Model.Assembly crm, string solution)
+    public Assembly UpsertAndPurgePluginSteps(Assembly dll, Assembly crm, string solution)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {
@@ -753,7 +753,7 @@ internal class AssemblyProcessor : IDisposable
 
     #region PluginStepImage
 
-    public Model.Assembly UpsertAndPurgePluginStepImages(Model.Assembly dll, Model.Assembly crm)
+    public Assembly UpsertAndPurgePluginStepImages(Assembly dll, Assembly crm)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {

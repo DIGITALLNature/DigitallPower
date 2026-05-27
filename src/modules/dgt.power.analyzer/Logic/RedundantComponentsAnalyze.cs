@@ -16,12 +16,13 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class RedundantComponentsAnalyze : BaseAnalyze
+public sealed class RedundantComponentsAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public RedundantComponentsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
-    {
-    }
-
     protected override bool Invoke(AnalyzeVerb args)
     {
         Tracer.Start(this);
