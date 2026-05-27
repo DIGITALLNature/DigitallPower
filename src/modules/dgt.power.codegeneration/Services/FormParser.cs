@@ -23,7 +23,7 @@ namespace dgt.power.codegeneration.Services
         /// <param name="entityLogicalName"></param>
         /// <param name="bpfControls"></param>
         /// <returns></returns>
-        public static FormDetail ParseForm(Entity form, string formUniqueName, string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
+        public static FormDetail ParseForm(Entity form, string formUniqueName, string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, IAnsiConsole? console = null)
         {
             var formId = form.GetAttributeValue<Guid>(SystemForm.LogicalNames.FormId).ToString();
             var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
@@ -49,7 +49,7 @@ namespace dgt.power.codegeneration.Services
             foreach (XmlNode tab in tabs)
             {
                 // Map form xlm tab and sections
-                MapFormXmlTabIntoFormDetail(formDetail, doc, tab);
+                MapFormXmlTabIntoFormDetail(formDetail, doc, tab, console);
             }
 
             // Map form xml header controls
@@ -81,13 +81,13 @@ namespace dgt.power.codegeneration.Services
         /// <param name="formDetail"></param>
         /// <param name="doc"></param>
         /// <param name="tab"></param>
-        private static void MapFormXmlTabIntoFormDetail(FormDetail formDetail, XmlDocument doc, XmlNode tab)
+        private static void MapFormXmlTabIntoFormDetail(FormDetail formDetail, XmlDocument doc, XmlNode tab, IAnsiConsole? console)
         {
             var tabId = Regex.Replace(tab.Attributes?["id"]?.Value?.ToUpperInvariant() ?? "", "[{}]", "", RegexOptions.NonBacktracking);
             var tabName = tab.Attributes?["name"]?.Value;
             if (string.IsNullOrWhiteSpace(tabName) && formDetail.FormType != SystemForm.Options.Type.QuickViewForm)
             {
-                AnsiConsole.MarkupLine($"[bold red]Warning:[/] tabName empty for form: {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
+                (console ?? AnsiConsole.Console).MarkupLine($"[bold red]Warning:[/] tabName empty for form: {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
             }
             var tabDetailName = !string.IsNullOrWhiteSpace(tabName) ? tabName : tabId;
             if (tabDetailName != null)
@@ -104,7 +104,7 @@ namespace dgt.power.codegeneration.Services
                     foreach (XmlNode column in columns)
                     {
                         // Loop over sections in the column
-                        MapFormXmlTabColumnIntoFormDetail(formDetail, doc, tabDetail, column, sectionList);
+                        MapFormXmlTabColumnIntoFormDetail(formDetail, doc, tabDetail, column, sectionList, console);
                     }
                 }
                 formDetail.Tabs.Add(tabDetailName, sectionList);
@@ -125,7 +125,8 @@ namespace dgt.power.codegeneration.Services
             XmlDocument doc,
             TabDetail tabDetail,
             XmlNode column,
-            List<string> sectionList)
+            List<string> sectionList,
+            IAnsiConsole? console)
         {
             var sections = column.SelectNodes(".//sections/section[*]");
             if (sections == null)
@@ -137,7 +138,7 @@ namespace dgt.power.codegeneration.Services
                 var sectionName = section.Attributes?["name"]?.Value;
                 if (string.IsNullOrWhiteSpace(sectionName) && formDetail.FormType != SystemForm.Options.Type.QuickViewForm)
                 {
-                    AnsiConsole.MarkupLine($"[bold red]Warning:[/] section name is empty for tab {tabDetail.TabName} in form {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
+                    (console ?? AnsiConsole.Console).MarkupLine($"[bold red]Warning:[/] section name is empty for tab {tabDetail.TabName} in form {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
                     continue;
                 }
                 MapFormXmlSectionIntoFormDetail(formDetail, doc, tabDetail, sectionList, section, sectionName);

@@ -16,6 +16,12 @@ namespace dgt.power.codegeneration.Templates;
 public static class CustomLiquidFilters
 {
     private static readonly Dictionary<int, Dictionary<string, List<string>>> s_usedTokens = new();
+    private static IAnsiConsole? s_console;
+
+    public static void SetConsole(IAnsiConsole console)
+    {
+        s_console = console;
+    }
 
 #pragma warning disable IDE0060 // Remove unused parameter
     public static ValueTask<FluidValue> CamelCase(FluidValue input, FilterArguments arguments, TemplateContext context)
@@ -152,7 +158,7 @@ public static class CustomLiquidFilters
         {
             return result;
         }
-        AnsiConsole.MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
+        (s_console ?? AnsiConsole.Console).MarkupLine($"[red]Warning:[/] cant find Attributemetadata for: {value}");
         return new AttributeMetadataViewModel(new AttributeMetadata{LogicalName = value, RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None)});
     }
 

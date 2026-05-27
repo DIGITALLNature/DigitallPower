@@ -27,15 +27,17 @@ namespace dgt.power.codegeneration.Templates.dotnet
         private readonly bool _suppressOptions;
         private readonly Dictionary<string, List<string>> _usedTokens = new Dictionary<string, List<string>>();
         private readonly EntityMetadata EntityMetadata;
+        private readonly IAnsiConsole _console;
         private readonly Func<string, EntityMetadata> _retrieveEntityMetadata;
         private readonly string[] _configEntities;
         private readonly string NameSpace;
         private readonly bool _useClassic;
         private bool HasPrimaryNameAttribute => EntityMetadata.PrimaryNameAttribute != null;
 
-        public EntityTemplate(EntityMetadata entity, Func<string, EntityMetadata> retrieveEntityMetadata, CodeGenerationConfig config, int systemLanguage)
+        public EntityTemplate(EntityMetadata entity, Func<string, EntityMetadata> retrieveEntityMetadata, CodeGenerationConfig config, int systemLanguage, IAnsiConsole? console = null)
         {
             EntityMetadata = entity;
+            _console = console ?? AnsiConsole.Console;
             _retrieveEntityMetadata = retrieveEntityMetadata;
             _configEntities = config.Entities.ToArray();
             NameSpace = config.NameSpace;
@@ -71,7 +73,7 @@ namespace dgt.power.codegeneration.Templates.dotnet
             //if (_usedTokens[scope].Any(s => s.Equals(value, StringComparison.OrdinalIgnoreCase)) || value == $"{CamelCase(EntityMetadata.SchemaName)}")
             if (_usedTokens[scope].Contains(value) || value == $"{CamelCase(EntityMetadata.SchemaName)}")
             {
-                AnsiConsole.MarkupLine($"[red]Warning:[/] multiple entries for: {value} ({scope})");
+                _console.MarkupLine($"[red]Warning:[/] multiple entries for: {value} ({scope})");
                 return Unique(value + "_", scope);
             }
 
