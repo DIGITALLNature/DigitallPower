@@ -20,6 +20,18 @@
     <EmbeddedResource Include="Templates\ts\D365WebApi.liquid" />
     <None Remove="Templates\ts\D365OData.liquid" />
     <EmbeddedResource Include="Templates\ts\D365OData.liquid" />
+    <None Remove="Templates\ts\D365SdkMessages.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365SdkMessages.liquid" />
+    <None Remove="Templates\ts\D365OptionSets.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365OptionSets.liquid" />
+    <None Remove="Templates\ts\D365EntityRef.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365EntityRef.liquid" />
+    <None Remove="Templates\ts\D365BusinessProcessFlow.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365BusinessProcessFlow.liquid" />
+    <None Remove="Templates\ts\D365Entity.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365Entity.liquid" />
+    <None Remove="Templates\ts\D365EntityForm.liquid" />
+    <EmbeddedResource Include="Templates\ts\D365EntityForm.liquid" />
   </ItemGroup>
 
   <ItemGroup Condition="$(Configuration) != 'Release'">
@@ -29,30 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Templates\ts\D365BusinessProcessFlowTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365BusinessProcessFlowTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365EntityFormTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365EntityFormTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365EntityRefTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365EntityRefTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365EntityTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365EntityTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365OptionSetsTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365OptionSetsTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="Templates\ts\D365SdkMessagesTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>D365SdkMessagesTemplate.cs</LastGenOutput>
-    </Content>
     <None Remove="Templates\tsl\EntityLightTemplate.tt" />
     <None Remove="Templates\tsl\ActionsLightTemplate.tt" />
     <None Remove="Templates\tsl\FunctionsLightTemplate.tt" />
@@ -83,39 +71,6 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Templates\ts\D365BusinessProcessFlowTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365BusinessProcessFlowTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365EntityFormTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365EntityFormTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365EntityRefTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365EntityRefTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365EntityTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365EntityTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365OptionSetsTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365OptionSetsTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Templates\ts\D365SdkMessagesTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>D365SdkMessagesTemplate.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

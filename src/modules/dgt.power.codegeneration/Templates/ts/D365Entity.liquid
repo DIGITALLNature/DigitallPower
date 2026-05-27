@@ -1,0 +1,92 @@
+/* eslint-disable */
+///<reference path="{{ model.TypingPath }}" />
+
+import { D365Model } from "./model";
+
+export module {{ model.ModuleName }} {
+	export class Attributes {
+		constructor() {
+		}
+{% for attribute in model.AttributeConstants %}
+		public static {{ attribute.Name }}: string = "{{ attribute.LogicalName }}";
+{% endfor %}
+	}
+
+{{ model.EntitySummary }}
+	export class Entity implements D365Model.Entity {
+
+		public static EntitylogicalName: string = "{{ model.EntityLogicalName }}";
+
+		public FormContext!: Xrm.FormContext;
+
+		constructor(private context?: Xrm.FormContext) {
+			if (this.context) {
+				this.FormContext = this.context;
+			}
+		}
+
+		EntitylogicalName(): string {
+			return Entity.EntitylogicalName;
+		};
+
+		EntityId(): string {
+			return this.FormContext.data.entity.getId().replace("{", "").replace("}", "").trim();
+		};
+
+{% for attribute in model.AttributeFields %}
+{{ attribute.Summary }}
+		{{ attribute.Name }}: D365Model.EntityField<{{ attribute.AttributeType }}, {{ attribute.ControlType }}> = new D365Model.EntityField<{{ attribute.AttributeType }}, {{ attribute.ControlType }}>(
+			//{{ model.ModuleName }}.Attributes.{{ attribute.Name }},
+			"{{ attribute.LogicalName }}",
+			{{ attribute.XrmEnum }},
+			() => this._a<{{ attribute.AttributeType }}>("{{ attribute.LogicalName }}"),
+			(header?: boolean, index?: number) => this._c<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", header, index),
+			(delegate: (control: {{ attribute.ControlType }}) => void) => this._f<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", delegate),
+			(value) => this._v<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", value),
+			(value) => this._d<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", value)
+		);
+
+{% endfor %}
+		private _a<A extends Xrm.Attributes.Attribute>(attributeName: string): A {
+			return this.FormContext.getAttribute(attributeName);
+		}
+
+		private _c<C extends Xrm.Controls.StandardControl>(attributeName: string, header?: boolean, index?: number): C {
+			var name = attributeName;
+			if (header) {
+				name = "header_process_" + name;
+			}
+			if (index) {
+				name = name + "_" + index;
+			}
+			return this.FormContext.getControl(name);
+		}
+
+		private _v<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => (c as C).setVisible(value));
+		}
+
+		private _d<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => (c as C).setDisabled(value));
+		}
+
+		private _f<C extends Xrm.Controls.StandardControl>(attributeName: string, callback: (control: C) => void) {
+			this.FormContext.getAttribute(attributeName)?.controls.forEach((c) => callback((c as C)));
+		}
+	}
+
+{% if model.IncludeOptions %}
+	export module Optionsets {
+{% for optionSet in model.Optionsets %}
+		export class {{ optionSet.Name }} implements D365Model.Optionset {
+			constructor() {
+			}
+
+{% for option in optionSet.Options %}
+			public static {{ option.Name }}: D365Model.OptionsetValue = new D365Model.OptionsetValue("{{ option.Label }}", {{ option.Value }});
+{% endfor %}
+		}
+{% endfor %}
+	}
+{% endif %}
+}

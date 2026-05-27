@@ -1,0 +1,14 @@
+/* eslint-disable */
+
+// This module contains global option sets which are used in more than one entity!
+export module D365OptionSets {
+{% for optionSet in model.OptionSets %}
+		export class {{ optionSet.Name }} {
+			constructor() {
+			}
+{% for option in optionSet.Options %}
+			public static {{ option.Name }} = { value: {{ option.Value }} };
+{% endfor %}
+		}
+{% endfor %}
+}
