@@ -158,9 +158,17 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
             .Execute(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
+        var entityPath = $"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts";
+        var entityRefPath = $"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.EntityRef}.ts";
+        var primaryId = _accountMetadata.Attributes.First(attribute => attribute.IsPrimaryId == true);
+        var primaryIdToken = Formatter.CamelCase(Formatter.Sanitize(primaryId.SchemaName));
 
-        await Assert.That(File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts")).IsTrue();
-        await Assert.That(File.Exists($"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.EntityRef}.ts")).IsTrue();
+        await Assert.That(File.Exists(entityPath)).IsTrue();
+        await Assert.That(File.Exists(entityRefPath)).IsTrue();
+        await Assert.That(File.ReadAllText(entityPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}Entity {{");
+        await Assert.That(File.ReadAllText(entityPath)).Contains($"public static {primaryIdToken}: string = \"{primaryId.LogicalName}\";");
+        await Assert.That(File.ReadAllText(entityRefPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}EntityRef {{");
+        await Assert.That(File.ReadAllText(entityRefPath)).Contains($"public static EntitylogicalName: string = \"{_accountMetadata.LogicalName}\";");
     }
 
     [Test]
@@ -277,8 +285,11 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
         var mainFormName = forms.mainForm.Name.ToLowerInvariant().Replace(' ', '_');
-        await Assert.That(File.Exists(
-                $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts")).IsTrue();
+        var mainFormPath = $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts";
+        await Assert.That(File.Exists(mainFormPath)).IsTrue();
+        var mainFormCode = File.ReadAllText(mainFormPath);
+        await Assert.That(mainFormCode).Contains("export module D365AccountAccountMainForm {");
+        await Assert.That(mainFormCode).Contains("export module FormTabs {");
         var quickViewName = forms.quickView.Name.ToLowerInvariant().Replace(' ', '_');
         await Assert.That(File.Exists(
                 $"{typescriptPath}/{_accountMetadata.LogicalName}.{quickViewName}_quickview.form.ts")).IsTrue();
@@ -379,7 +390,9 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")).IsTrue();
+        var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
+        await Assert.That(File.Exists(messagesPath)).IsTrue();
+        await Assert.That(File.ReadAllText(messagesPath)).Contains("export class D365SdkMessages {");
     }
 
     [Test]
@@ -497,7 +510,9 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts")).IsTrue();
+        var optionSetsPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts";
+        await Assert.That(File.Exists(optionSetsPath)).IsTrue();
+        await Assert.That(File.ReadAllText(optionSetsPath)).Contains($"export class {Formatter.CamelCase(globalOptionSet.Name)} {{");
     }
 
     [Test]
@@ -539,7 +554,12 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        await Assert.That(File.Exists($"{typescriptPath}/{businessProcessFlow.UniqueName}.bpf.ts")).IsTrue();
+        var businessProcessFlowPath = $"{typescriptPath}/{businessProcessFlow.UniqueName}.bpf.ts";
+        await Assert.That(File.Exists(businessProcessFlowPath)).IsTrue();
+        var businessProcessFlowCode = File.ReadAllText(businessProcessFlowPath);
+        await Assert.That(businessProcessFlowCode).Contains("export module D365TestBPFBPF {");
+        await Assert.That(businessProcessFlowCode).Contains("public static ProcessName = \"Test BPF\";");
+        await Assert.That(businessProcessFlowCode).Contains("public static TestStage = {");
     }
 
     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()

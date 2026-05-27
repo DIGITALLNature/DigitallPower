@@ -1,0 +1,30 @@
+/* eslint-disable */
+///<reference path="{{ model.TypingPath }}" />
+
+import { D365Model } from "./model";
+
+export module {{ model.ModuleName }} {
+    export class Stages {
+        constructor() {
+        }
+{% for stage in model.Stages %}
+
+        public static {{ stage.Name }} = {
+            Name: "{{ stage.DisplayName }}",
+            Ids: [
+{% for id in stage.Ids %}              "{{ id }}"{% unless forloop.last %},{% endunless %}
+{% endfor %}            ],
+{% for namedId in stage.NamedIds %}            {{ namedId.Name }}: "{{ namedId.Value }}"{% unless forloop.last %},{% endunless %}
+{% endfor %}        }
+{% endfor %}
+    }
+    export class Process {
+        constructor() {
+        }
+        public static ProcessName = "{{ model.ProcessName }}";
+        public static ProcessId = "{{ model.ProcessId }}";
+        public static Stages: D365Model.BusinessProcessFlowStage[] = [
+{% for stage in model.Stages %}            Stages.{{ stage.Name }}{% unless forloop.last %},{% endunless %}
+{% endfor %}        ];
+    }
+}

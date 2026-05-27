@@ -18,6 +18,22 @@ public static class TsLiquidRenderer
         Options.Filters.AddFilter("camelcase", CustomLiquidFilters.CamelCase);
         Options.Filters.AddFilter("sanitize", CustomLiquidFilters.Sanitize);
         Options.Filters.AddFilter("unique", CustomLiquidFilters.Unique);
+        Options.MemberAccessStrategy.Register<TsSdkMessagesTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsSdkMessageModel>();
+        Options.MemberAccessStrategy.Register<TsOptionSetsTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsOptionSetModel>();
+        Options.MemberAccessStrategy.Register<TsOptionValueModel>();
+        Options.MemberAccessStrategy.Register<TsBusinessProcessFlowTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsBusinessProcessFlowStageModel>();
+        Options.MemberAccessStrategy.Register<TsNamedIdModel>();
+        Options.MemberAccessStrategy.Register<TsEntityRefTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsEntityTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsEntityFormTemplateModel>();
+        Options.MemberAccessStrategy.Register<TsAttributeConstantModel>();
+        Options.MemberAccessStrategy.Register<TsAttributeFieldModel>();
+        Options.MemberAccessStrategy.Register<TsNamedValueModel>();
+        Options.MemberAccessStrategy.Register<TsFormTabModel>();
+        Options.MemberAccessStrategy.Register<TsFormTabSectionClassModel>();
     }
 
     public static string Render(string templateName, TemplateContext context)
