@@ -1,0 +1,14 @@
+using System.Collections.Generic;
+
+// ReSharper disable All
+namespace {{ NameSpace }}
+{
+    public sealed class SdkMessageNames
+    {
+        private SdkMessageNames() {}
+
+{% for sdkMessage in SdkMessages %}
+        public const string {{ sdkMessage.Name }} = "{{ sdkMessage.Message }}";
+{% endfor %}
+    }
+}
