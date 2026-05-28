@@ -78261,7 +78261,7 @@
       "invocations": [
         {
           "exitCode": 255,
-          "exitCodeDescription": "Failure condition triggered\n - Detected 1026 problems across all severities, fail threshold 15",
+          "exitCodeDescription": "Failure condition triggered\n - Detected 797 problems across all severities, fail threshold 15",
           "executionSuccessful": true
         }
       ],
@@ -78269,7 +78269,7 @@
       "versionControlProvenance": [
         {
           "repositoryUri": "https://github.com/DIGITALLNature/DigitallPower.git",
-          "revisionId": "d4d979aebd9dd6141bb45fdf0e4740a71afc644c",
+          "revisionId": "7ce6f157cf24278d76f494f44e993d6ad77bfa9e",
           "branch": "feat/dotnet10",
           "properties": {
             "repoUrl": "https://github.com/DIGITALLNature/DigitallPower.git",
@@ -78472,6 +78472,13 @@
         },
         {
           "location": {
+            "uri": "src/modules/dgt.power.push/PushCommand.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
             "uri": "tests/dgt.power.analyzer.tests/ActiveLayerAnalyzeTest.cs",
             "uriBaseId": "solutionDir"
           },
@@ -78494,13 +78501,6 @@
         {
           "location": {
             "uri": "tests/dgt.power.import.tests/QueueImportTests.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.maintenance/Logic/FilterPowerFxPluginSteps.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -78564,13 +78564,6 @@
         {
           "location": {
             "uri": "src/modules/dgt.power.maintenance/Model/Settings/RemoveRedundantComponentsVerb.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.push/Model/Webresources.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -78892,6 +78885,13 @@
         },
         {
           "location": {
+            "uri": "src/modules/dgt.power.maintenance/Logic/FilterPowerFxPluginSteps.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
             "uri": "src/modules/dgt.power.maintenance/Logic/IncrementSolutionVersion.cs",
             "uriBaseId": "solutionDir"
           },
@@ -78921,13 +78921,6 @@
         {
           "location": {
             "uri": "src/modules/dgt.power.maintenance/Logic/ProtectCalculatedFields.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.push/PushCommand.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79032,20 +79025,6 @@
         },
         {
           "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Model/TabDetail.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
             "uri": "src/modules/dgt.power.codegeneration/Services/FormParser.cs",
             "uriBaseId": "solutionDir"
           },
@@ -79088,13 +79067,6 @@
         },
         {
           "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Model/FormAttributeData.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
             "uri": "src/modules/dgt.power.codegeneration/Base/CodeGenerationConfig.cs",
             "uriBaseId": "solutionDir"
           },
@@ -79103,6 +79075,20 @@
         {
           "location": {
             "uri": "src/modules/dgt.power.maintenance/Logic/WorkflowStateTracker.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
+            "uri": "tests/dgt.power.tests/CommandTestContextBuilder.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
+            "uri": "tests/dgt.power.tests/WorkerTestContextBuilder.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79200,13 +79186,6 @@
         },
         {
           "location": {
-            "uri": "tests/dgt.power.tests/WorkerTestContextBuilder.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
             "uri": "tests/dgt.power.tests/CommandTestContext.cs",
             "uriBaseId": "solutionDir"
           },
@@ -79270,21 +79249,7 @@
         },
         {
           "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Model/BpfControlDetail.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
             "uri": "src/modules/dgt.power.codegeneration/Model/FormXmlControlData.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Model/QuickViewFormControl.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79305,13 +79270,6 @@
         },
         {
           "location": {
-            "uri": "tests/dgt.power.tests/CommandTestContextBuilder.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
             "uri": "src/dgt.power.common/Extensions/OrganizationServiceExtensions.cs",
             "uriBaseId": "solutionDir"
           },
@@ -79320,6 +79278,13 @@
         {
           "location": {
             "uri": "src/modules/dgt.power.import/Logic/SecureConfigImport.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
+            "uri": "src/modules/dgt.power.push/Model/Webresources.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79403,70 +79368,14 @@
         },
         {
           "location": {
+            "uri": "src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
             "uri": "src/dgt.power/VersionCheckInterceptor.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/FormViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/SectionDetailsViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/CustomApiViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/CustomApiParameterViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/EntityViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.push/Model/WebresourceConfig.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/SdkMessageViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/OptionViewModel.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/modules/dgt.power.analyzer/Reports/SolutionRedundantPatchLine.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79509,6 +79418,20 @@
         {
           "location": {
             "uri": "src/dgt.power.common/IProfileManager.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
+            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/EntityViewModel.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
+            "uri": "src/modules/dgt.power.codegeneration/Templates/tsl/ViewModels/FormViewModel.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -79754,7 +79677,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "7BB287FD32618FD99B49F876F638FB958E0D308565C060BCB6C57EF3C9D1E06F"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -79807,7 +79730,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "66917A10D8DBFB7950545FC5C467212B7EC1E905B5F077A831FCB4B601C84F80"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -79860,7 +79783,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "6BA6C981000CE7FEE6AA3AA53E71EFE62F846241D076951AA870DB99BE8CA7DB"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -79890,7 +79813,7 @@
                   "startColumn": 94,
                   "endLine": 1040,
                   "endColumn": 223,
-                  "charOffset": 34143,
+                  "charOffset": 34145,
                   "charLength": 129,
                   "snippet": {
                     "text": "(AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))"
@@ -79901,7 +79824,7 @@
                   "startColumn": 1,
                   "endLine": 1041,
                   "endColumn": 18,
-                  "charOffset": 33996,
+                  "charOffset": 33998,
                   "charLength": 347,
                   "snippet": {
                     "text": "                var attr = new AttributeCollection();\n                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))\n                {"
@@ -79913,60 +79836,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "4EB0527ECB3AE2E5AE4449B6E1F567F08BDCE66D1E8CC4BEBA8BD5EDAC321DCA"
           },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "High",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "CSharpWarnings::CS8600",
-          "ruleIndex": 198,
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Converting null literal or possible null value into non-nullable type"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 20
-                },
-                "region": {
-                  "startLine": 768,
-                  "startColumn": 29,
-                  "endLine": 768,
-                  "endColumn": 109,
-                  "charOffset": 30357,
-                  "charLength": 80,
-                  "snippet": {
-                    "text": "(IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 767,
-                  "startColumn": 1,
-                  "endLine": 769,
-                  "endColumn": 77,
-                  "charOffset": 30228,
-                  "charLength": 287,
-                  "snippet": {
-                    "text": "            var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);\n            var valuesRaw = (IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value;\n            var result = valuesRaw.Select(x => x.Value as string).ToArray();"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "6393E367EFC248E907DB4F195CC526E6705418084073397CBA58A3233A27855B"
-          },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -79996,7 +79866,7 @@
                   "startColumn": 27,
                   "endLine": 57,
                   "endColumn": 62,
-                  "charOffset": 1983,
+                  "charOffset": 1988,
                   "charLength": 35,
                   "snippet": {
                     "text": "nuspec.GetVersion().OriginalVersion"
@@ -80007,7 +79877,7 @@
                   "startColumn": 1,
                   "endLine": 58,
                   "endColumn": 34,
-                  "charOffset": 1918,
+                  "charOffset": 1923,
                   "charLength": 135,
                   "snippet": {
                     "text": "                Name = nuspec.GetId(),\n                Version = nuspec.GetVersion().OriginalVersion,\n                Content = content"
@@ -80019,7 +79889,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "0811C794B524D45490282E604C2A0526AE8F5F542AE7B31F3CD4743C2765002E"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80072,7 +79942,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "9C2948614B354FB3B9910BB2E333A68B4E09C8C165EB15D564C8FB4169522995"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80082,12 +79952,12 @@
           }
         },
         {
-          "ruleId": "CSharpWarnings::CS8602",
-          "ruleIndex": 200,
+          "ruleId": "CSharpWarnings::CS8600",
+          "ruleIndex": 198,
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Dereference of a possibly null reference"
+            "text": "Converting null literal or possible null value into non-nullable type"
           },
           "locations": [
             {
@@ -80102,7 +79972,7 @@
                   "startColumn": 94,
                   "endLine": 1040,
                   "endColumn": 223,
-                  "charOffset": 34143,
+                  "charOffset": 34145,
                   "charLength": 129,
                   "snippet": {
                     "text": "(AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))"
@@ -80113,7 +79983,7 @@
                   "startColumn": 1,
                   "endLine": 1041,
                   "endColumn": 18,
-                  "charOffset": 33996,
+                  "charOffset": 33998,
                   "charLength": 347,
                   "snippet": {
                     "text": "                var attr = new AttributeCollection();\n                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))\n                {"
@@ -80125,7 +79995,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "4EB0527ECB3AE2E5AE4449B6E1F567F08BDCE66D1E8CC4BEBA8BD5EDAC321DCA"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80155,7 +80025,7 @@
                   "startColumn": 19,
                   "endLine": 125,
                   "endColumn": 38,
-                  "charOffset": 4442,
+                  "charOffset": 4464,
                   "charLength": 19,
                   "snippet": {
                     "text": "su.ParentSolutionId"
@@ -80166,7 +80036,7 @@
                   "startColumn": 1,
                   "endLine": 126,
                   "endColumn": 37,
-                  "charOffset": 4377,
+                  "charOffset": 4399,
                   "charLength": 144,
                   "snippet": {
                     "text": "        return (from su in context.SolutionSet\n            where su.ParentSolutionId.Id == parentSolutionId\n                select su).ToList();"
@@ -80178,7 +80048,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "A634A00E1141CD165B5FE21757C85ECB39AB61E5D3FA7F92C8EC5FAE773FD576"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80231,7 +80101,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "ED8CD28A61615960E9500C50ED83C282E904524DE9225D00C9B98093DDCF5F83"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80283,7 +80153,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "5BBCDB321C6913B630CFF4737DC313EC6A9CDE82B84A686C6D1E6705108FAF7A"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80336,7 +80206,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "57F4D5BFDFFEC45F838EC828D02B93191979A31A38418EFA696551B2D7D1EF68"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80362,22 +80232,22 @@
                   "index": 25
                 },
                 "region": {
-                  "startLine": 274,
+                  "startLine": 275,
                   "startColumn": 62,
-                  "endLine": 274,
+                  "endLine": 275,
                   "endColumn": 74,
-                  "charOffset": 14726,
+                  "charOffset": 14780,
                   "charLength": 12,
                   "snippet": {
                     "text": "desiredOwner"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 273,
+                  "startLine": 274,
                   "startColumn": 1,
-                  "endLine": 275,
+                  "endLine": 276,
                   "endColumn": 10,
-                  "charOffset": 14390,
+                  "charOffset": 14444,
                   "charLength": 427,
                   "snippet": {
                     "text": "            Tracer?.Log($\"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): chaging owner from {currentOwnerDomainName}'({currentOwner?.Id}) to owner={desiredOwnerDomainName}({desiredOwner?.Id})\", TraceEventType.Information);\n            Connection.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });\n        }"
@@ -80389,7 +80259,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "392415062BE569E78DF0F760CC666EB182A37E5044C3D500C9FD3E92586F1696"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80419,7 +80289,7 @@
                   "startColumn": 51,
                   "endLine": 134,
                   "endColumn": 70,
-                  "charOffset": 4805,
+                  "charOffset": 4810,
                   "charLength": 19,
                   "snippet": {
                     "text": "metadataLoadContext"
@@ -80430,7 +80300,7 @@
                   "startColumn": 1,
                   "endLine": 135,
                   "endColumn": 1,
-                  "charOffset": 4745,
+                  "charOffset": 4750,
                   "charLength": 111,
                   "snippet": {
                     "text": "        {\n            System.Reflection.Assembly assembly = metadataLoadContext.LoadFromAssemblyPath(dllFile);\n"
@@ -80442,7 +80312,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "C64C72B4C589981C5F1DA4965B4A04ACFCC3EBBE78B27AC621A29D6BA40C330D"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80472,7 +80342,7 @@
                   "startColumn": 19,
                   "endLine": 270,
                   "endColumn": 26,
-                  "charOffset": 9983,
+                  "charOffset": 9988,
                   "charLength": 7,
                   "snippet": {
                     "text": "pa.Name"
@@ -80483,7 +80353,7 @@
                   "startColumn": 1,
                   "endLine": 271,
                   "endColumn": 31,
-                  "charOffset": 9904,
+                  "charOffset": 9909,
                   "charLength": 132,
                   "snippet": {
                     "text": "        var packages = (from pa in _context.PluginPackageSet\n            where pa.Name.EndsWith(name)\n            orderby pa.Version"
@@ -80495,7 +80365,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "2A9034FA55210B28A0C6C6DB78754C066A01C577D54EE9FF99525BF7F49EFE7E"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80525,7 +80395,7 @@
                   "startColumn": 48,
                   "endLine": 915,
                   "endColumn": 61,
-                  "charOffset": 37801,
+                  "charOffset": 37802,
                   "charLength": 13,
                   "snippet": {
                     "text": "s.PublisherId"
@@ -80536,7 +80406,7 @@
                   "startColumn": 1,
                   "endLine": 916,
                   "endColumn": 43,
-                  "charOffset": 37701,
+                  "charOffset": 37702,
                   "charLength": 171,
                   "snippet": {
                     "text": "        var prefix = (from s in _context.SolutionSet\n            join p in _context.PublisherSet on s.PublisherId.Id equals p.Id\n            where s.UniqueName == solution"
@@ -80548,60 +80418,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "3B26FC890C20A1AAB87079B167351A1D35164CABE163A11BE1D1C48609B48558"
           },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "High",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "CSharpWarnings::CS8602",
-          "ruleIndex": 200,
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Dereference of a possibly null reference"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "tests/dgt.power.analyzer.tests/ActiveLayerAnalyzeTest.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 26
-                },
-                "region": {
-                  "startLine": 153,
-                  "startColumn": 31,
-                  "endLine": 153,
-                  "endColumn": 38,
-                  "charOffset": 6491,
-                  "charLength": 7,
-                  "snippet": {
-                    "text": "summary"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 152,
-                  "startColumn": 1,
-                  "endLine": 154,
-                  "endColumn": 1,
-                  "charOffset": 6303,
-                  "charLength": 221,
-                  "snippet": {
-                    "text": "            var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, \"ActiveLayer-summary.json\")));\n            await Assert.That(summary.Anomalies).IsEqualTo(1);\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "4E8A39281DFAD306639D29EBD7BB106AC6A580854F8EC38C55B5F966FD949CC6"
-          },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80624,7 +80441,7 @@
                 "artifactLocation": {
                   "uri": "tests/dgt.power.analyzer.tests/NoActiveLayerAnalyzeTests.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 27
+                  "index": 28
                 },
                 "region": {
                   "startLine": 153,
@@ -80654,7 +80471,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "F6950577A09FB80C5F529A82864502B8786725C9C6AF1F960BDFA4A68FCBFEFF"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80664,65 +80481,12 @@
           }
         },
         {
-          "ruleId": "CSharpWarnings::CS8602",
-          "ruleIndex": 200,
+          "ruleId": "CSharpWarnings::CS8600",
+          "ruleIndex": 198,
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Dereference of a possibly null reference"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "tests/dgt.power.analyzer.tests/TopLayerAnalyzeTest.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 28
-                },
-                "region": {
-                  "startLine": 180,
-                  "startColumn": 31,
-                  "endLine": 180,
-                  "endColumn": 38,
-                  "charOffset": 7661,
-                  "charLength": 7,
-                  "snippet": {
-                    "text": "summary"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 179,
-                  "startColumn": 1,
-                  "endLine": 181,
-                  "endColumn": 1,
-                  "charOffset": 7476,
-                  "charLength": 218,
-                  "snippet": {
-                    "text": "            var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, \"TopLayer-summary.json\")));\n            await Assert.That(summary.Anomalies).IsEqualTo(1);\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "CDA912EA5E758BF8E8BA3816039D0389DA92349F38A702850A04DA657AC18687"
-          },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "High",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "CSharpWarnings::CS8604",
-          "ruleIndex": 202,
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Possible 'null' reference argument for parameter 'element' in 'System.Reflection.CustomAttributeExtensions.GetCustomAttribute'"
+            "text": "Converting null literal or possible null value into non-nullable type"
           },
           "locations": [
             {
@@ -80734,13 +80498,13 @@
                 },
                 "region": {
                   "startLine": 1040,
-                  "startColumn": 126,
+                  "startColumn": 94,
                   "endLine": 1040,
-                  "endColumn": 164,
-                  "charOffset": 34175,
-                  "charLength": 38,
+                  "endColumn": 223,
+                  "charOffset": 34145,
+                  "charLength": 129,
                   "snippet": {
-                    "text": "GetType().GetProperty(changedProperty)"
+                    "text": "(AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))"
                   }
                 },
                 "contextRegion": {
@@ -80748,7 +80512,7 @@
                   "startColumn": 1,
                   "endLine": 1041,
                   "endColumn": 18,
-                  "charOffset": 33996,
+                  "charOffset": 33998,
                   "charLength": 347,
                   "snippet": {
                     "text": "                var attr = new AttributeCollection();\n                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))\n                {"
@@ -80760,60 +80524,7 @@
           "partialFingerprints": {
             "equalIndicator/v1": "4EB0527ECB3AE2E5AE4449B6E1F567F08BDCE66D1E8CC4BEBA8BD5EDAC321DCA"
           },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "High",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "CSharpWarnings::CS8625",
-          "ruleIndex": 221,
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Cannot convert null literal to non-nullable reference type"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/modules/dgt.power.push/Model/Webresources.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 40
-                },
-                "region": {
-                  "startLine": 24,
-                  "startColumn": 162,
-                  "endLine": 24,
-                  "endColumn": 169,
-                  "charOffset": 913,
-                  "charLength": 7,
-                  "snippet": {
-                    "text": "default"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 23,
-                  "startColumn": 1,
-                  "endLine": 25,
-                  "endColumn": 6,
-                  "charOffset": 751,
-                  "charLength": 206,
-                  "snippet": {
-                    "text": "\n    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default, IAnsiConsole? console = null)\n    {"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "11273A11AE9581B4D8AEED51496368FA9120222CA824E345EAA8B7C902AB243C"
-          },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
             "tags": [
@@ -80836,7 +80547,7 @@
                 "artifactLocation": {
                   "uri": "src/dgt.power/Program.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 144
+                  "index": 139
                 },
                 "region": {
                   "startLine": 250,
@@ -80866,62 +80577,9 @@
           "partialFingerprints": {
             "equalIndicator/v1": "C4DCCC076D449F7B40C5045B5C2DB4E2E972609E664A442D8088B42984285809"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "High",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "PreferConcreteValueOverDefault",
-          "ruleIndex": 2536,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Use 'null' instead of 'default'"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/modules/dgt.power.push/Model/Webresources.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 40
-                },
-                "region": {
-                  "startLine": 24,
-                  "startColumn": 162,
-                  "endLine": 24,
-                  "endColumn": 169,
-                  "charOffset": 913,
-                  "charLength": 7,
-                  "snippet": {
-                    "text": "default"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 23,
-                  "startColumn": 1,
-                  "endLine": 25,
-                  "endColumn": 6,
-                  "charOffset": 751,
-                  "charLength": 206,
-                  "snippet": {
-                    "text": "\n    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default, IAnsiConsole? console = null)\n    {"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "11273A11AE9581B4D8AEED51496368FA9120222CA824E345EAA8B7C902AB243C"
-          },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "Moderate",
             "tags": [
               "C#",
               ".NET 10.0"
@@ -80942,7 +80600,7 @@
                 "artifactLocation": {
                   "uri": "src/dgt.power/Program.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 144
+                  "index": 139
                 },
                 "region": {
                   "startLine": 254,
@@ -80972,6 +80630,218 @@
           "partialFingerprints": {
             "equalIndicator/v1": "63DEC9D985709234F6F63EFE45FD7D507213D476C248C9E4FDDB605771223EF2"
           },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CSharpWarnings::CS8600",
+          "ruleIndex": 198,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Converting null literal or possible null value into non-nullable type"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 20
+                },
+                "region": {
+                  "startLine": 768,
+                  "startColumn": 29,
+                  "endLine": 768,
+                  "endColumn": 109,
+                  "charOffset": 30364,
+                  "charLength": 80,
+                  "snippet": {
+                    "text": "(IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 767,
+                  "startColumn": 1,
+                  "endLine": 769,
+                  "endColumn": 78,
+                  "charOffset": 30235,
+                  "charLength": 288,
+                  "snippet": {
+                    "text": "            var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);\n            var valuesRaw = (IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value;\n            var result = valuesRaw?.Select(x => x.Value as string).ToArray();"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "2A4F92A1E8F02C3018F626C14E9970BD95E85E3DBEFEAE9BE2444E57B73A573E"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CSharpWarnings::CS8602",
+          "ruleIndex": 200,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Dereference of a possibly null reference"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.analyzer.tests/ActiveLayerAnalyzeTest.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 27
+                },
+                "region": {
+                  "startLine": 153,
+                  "startColumn": 27,
+                  "endLine": 153,
+                  "endColumn": 34,
+                  "charOffset": 6079,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "summary"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 152,
+                  "startColumn": 1,
+                  "endLine": 154,
+                  "endColumn": 1,
+                  "charOffset": 5899,
+                  "charLength": 213,
+                  "snippet": {
+                    "text": "        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, \"ActiveLayer-summary.json\")));\n        await Assert.That(summary.Anomalies).IsEqualTo(1);\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D2ED5C528F47FA4F9B8591A1EDDA5259CF6E9D407E1B1364CA2C7D9E32902A32"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CSharpWarnings::CS8602",
+          "ruleIndex": 200,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Dereference of a possibly null reference"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.analyzer.tests/TopLayerAnalyzeTest.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 29
+                },
+                "region": {
+                  "startLine": 180,
+                  "startColumn": 27,
+                  "endLine": 180,
+                  "endColumn": 34,
+                  "charOffset": 7153,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "summary"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 179,
+                  "startColumn": 1,
+                  "endLine": 181,
+                  "endColumn": 1,
+                  "charOffset": 6976,
+                  "charLength": 210,
+                  "snippet": {
+                    "text": "        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, \"TopLayer-summary.json\")));\n        await Assert.That(summary.Anomalies).IsEqualTo(1);\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "FB9851F64DA3A028D32136C756D4897BD13E056969B2663392E72A6B55AB9848"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.codegeneration.Generators.Contracts'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/modules/dgt.power.codegeneration/Generators/Contracts/IDotNetGenerator.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 41
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 46,
+                  "charOffset": 184,
+                  "charLength": 35,
+                  "snippet": {
+                    "text": "dgt.power.codegeneration.Generators"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 173,
+                  "charLength": 48,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.codegeneration.Generators;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "877D633B9AD77305D7AEEBE6944CB5C6993E2A6A0254110D4C17A754FB3A2A96"
+          },
           "baselineState": "new",
           "properties": {
             "qodanaSeverity": "High",
@@ -80980,13 +80850,1603 @@
               ".NET 10.0"
             ]
           }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.codegeneration.Generators.Contracts'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/modules/dgt.power.codegeneration/Generators/Contracts/IMetadataGenerator.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 42
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 46,
+                  "charOffset": 184,
+                  "charLength": 35,
+                  "snippet": {
+                    "text": "dgt.power.codegeneration.Generators"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 173,
+                  "charLength": 48,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.codegeneration.Generators;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "877D633B9AD77305D7AEEBE6944CB5C6993E2A6A0254110D4C17A754FB3A2A96"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/AnalyzerResult.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 43
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/BulkDelete.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/BulkDeletes.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 44
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/Calendar.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 5
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/CalendarRule.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 45
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/Calendars.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 46
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/DocumentTemplate.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 47
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/DocumentTemplates.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 48
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/DuplicateRule.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 49
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/DuplicateRuleCondition.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 50
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/DuplicateRules.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 51
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/OutlookTemplate.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 52
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/Queue.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 53
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 11,
+                  "endLine": 9,
+                  "endColumn": 24,
+                  "charOffset": 248,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 8,
+                  "startColumn": 1,
+                  "endLine": 10,
+                  "endColumn": 1,
+                  "charOffset": 237,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/Queues.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 54
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/RoutingRuleConfig.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 55
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/RoutingRuleConfigs.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 56
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/RoutingRuleItem.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 57
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 55,
+                  "charOffset": 174,
+                  "charLength": 80,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n// ReSharper disable UnusedAutoPropertyAccessor.Global"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "C855F6BF8FDE08EFF7932EB0F8F1033A57C1A57871EC4193ED4673C261F0E9D6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/SavedQuery.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 58
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/SecureConfig.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 59
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/SlaConfig.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 60
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/SlaConfigs.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 61
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/TeamTemplate.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 62
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 11,
+                  "endLine": 7,
+                  "endColumn": 24,
+                  "charOffset": 216,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 205,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/TeamTemplates.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 63
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/UserRole.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 64
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/UserRoles.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 65
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11,
+                  "endLine": 4,
+                  "endColumn": 24,
+                  "charOffset": 146,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 1,
+                  "charOffset": 135,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckNamespace",
+          "ruleIndex": 339,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Namespace does not correspond to file location, must be: 'dgt.power.common.DTO'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/DTO/_Assignee.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 66
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 24,
+                  "charOffset": 185,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "dgt.power.dto"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 174,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "\nnamespace dgt.power.dto;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D0BBA0805B5AACAF06A8CB13913F19626DE2E0614A22C7647D8B6099DEBA08F6"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "PreferConcreteValueOverDefault",
+          "ruleIndex": 2536,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Use 'null' instead of 'default'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/modules/dgt.power.push/Model/Webresources.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 142
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 31,
+                  "endLine": 15,
+                  "endColumn": 38,
+                  "charOffset": 383,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "default"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 14,
+                  "startColumn": 1,
+                  "endLine": 16,
+                  "endColumn": 27,
+                  "charOffset": 335,
+                  "charLength": 83,
+                  "snippet": {
+                    "text": "    string? Hash,\n    WebresourceState? State = default,\n    Guid? XrmId = default)"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "01D65AB386B435C7DAFF8AB3ACE5D061661ACD25E12AFB36E8B6E7D6E7CB0FA8"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "RedundantTypeArgumentsOfMethod",
+          "ruleIndex": 2653,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Type argument specification is redundant"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Program.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 139
+                },
+                "region": {
+                  "startLine": 114,
+                  "startColumn": 27,
+                  "endLine": 114,
+                  "endColumn": 41,
+                  "charOffset": 4379,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "<IAnsiConsole>"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 113,
+                  "startColumn": 1,
+                  "endLine": 115,
+                  "endColumn": 119,
+                  "charOffset": 4299,
+                  "charLength": 226,
+                  "snippet": {
+                    "text": "registrations.AddScoped<IFileService, FileService>();\nregistrations.AddSingleton<IAnsiConsole>(appConsole);\nregistrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "9F8669303F669EEEBCA3278329FA9AEE641275667E31B6A12597924065550D74"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2922,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Enum member 'Success' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/Commands/ExitCode.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 159
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 8,
+                  "endColumn": 12,
+                  "charOffset": 201,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "Success"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "endLine": 9,
+                  "endColumn": 14,
+                  "charOffset": 195,
+                  "charLength": 32,
+                  "snippet": {
+                    "text": "{\n    Success = 0,\n    Error = 1"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "D1961C2F8675E59DFD45E0B5220753DBF519AD40FDFA8D5CDBF1F23C9D7AEFC0"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
         }
       ],
       "automationDetails": {
-        "id": "QDNETC/qodana/2026-05-27",
-        "guid": "f3b8929e-5b63-4162-9353-5921da44769d",
+        "id": "QDNETC/qodana/2026-05-28",
+        "guid": "f51e5561-7ac5-43f8-8492-720873654304",
         "properties": {
-          "jobUrl": "https://github.com/DIGITALLNature/DigitallPower/actions/runs/26525025101"
+          "jobUrl": "https://github.com/DIGITALLNature/DigitallPower/actions/runs/26557920058"
         }
       },
       "newlineSequences": [
