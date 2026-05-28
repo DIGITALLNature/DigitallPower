@@ -1,3 +1,29 @@
+# [2.1.0-beta.45](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.44...v2.1.0-beta.45) (2026-05-28)
+
+
+### Bug Fixes
+
+* **codegeneration:** eliminate empty lines in Entity.dotnet.liquid for-loops ([27f4008](https://github.com/DIGITALLNature/DigitallPower/commit/27f40084e1d121e1e6da739919ee302a3dbbd9dd))
+* **codegeneration:** normalize all dotnet Liquid templates to 4 spaces ([3487078](https://github.com/DIGITALLNature/DigitallPower/commit/34870781b88671802f45821399315c940e257531))
+* **codegeneration:** propagate worker failure to exit code ([2a15cb3](https://github.com/DIGITALLNature/DigitallPower/commit/2a15cb3fdfdd71d56f39a61a284a2b597e0c5a3d))
+* complete TUnit assertion API migration ([b4ebb8e](https://github.com/DIGITALLNature/DigitallPower/commit/b4ebb8e93a27e5ccfffa3f96bc320f94acb9bf99))
+* correct TUnit Count() API usage - use IsEqualTo not EqualTo ([e318a0f](https://github.com/DIGITALLNature/DigitallPower/commit/e318a0f700fd9f7dae07d1ba1e2c31412c6ddd30))
+* migrate TUnit assertions from HasCount() to Count() ([157dd99](https://github.com/DIGITALLNature/DigitallPower/commit/157dd99784e9d16f6d96b9d9cd80456e220519b0))
+* plugin package upgrade ([1454086](https://github.com/DIGITALLNature/DigitallPower/commit/1454086514a087f91da16a98168a6b80955b081d))
+* resolve high-priority code analysis warnings ([f71be1f](https://github.com/DIGITALLNature/DigitallPower/commit/f71be1f67a65f88363ea0e886bdda9e6bded4380)), closes [hi#priority](https://github.com/hi/issues/priority)
+* resolve Qodana static analysis findings ([58b5a26](https://github.com/DIGITALLNature/DigitallPower/commit/58b5a26efa9f6749d7f9a5c202bc967e3dfc770c))
+* **telemetry:** align env var name to DGT_TELEMETRY_CONNECTION_STRING ([12f8521](https://github.com/DIGITALLNature/DigitallPower/commit/12f852188201239d255b6cfef64ce20b4e1834e6))
+* **test:** update Digitall.Dataverse.Testing to beta.6 and fix BulkDelete test ([007f20f](https://github.com/DIGITALLNature/DigitallPower/commit/007f20f41ebb05883c4017a5e18db5d282bf286d))
+* update Digitall.Dataverse.Testing to beta.8 and fix telemetry env var typo ([a1906fd](https://github.com/DIGITALLNature/DigitallPower/commit/a1906fd1e2a089907b09e85fdc0deddd0610eb69))
+
+
+### Features
+
+* add detailed option to create workflowstate config ([aca08f2](https://github.com/DIGITALLNature/DigitallPower/commit/aca08f2c963c1404e5cd31d1c637b9aa617fe772))
+* add OpenTelemetry usage telemetry with opt-out ([4676f12](https://github.com/DIGITALLNature/DigitallPower/commit/4676f1228163d6ee6250f4bd81f03ae113ecd8fc))
+* assembly with major version change should replace older version and allow purge of outdated ([6ded506](https://github.com/DIGITALLNature/DigitallPower/commit/6ded5068c1a63b229425c305f0879ce50c8ddd55))
+* **telemetry:** embed connection string at build time via AssemblyMetadata ([8003a80](https://github.com/DIGITALLNature/DigitallPower/commit/8003a808e5af233ab2058c8ad05935f03ea90c1c))
+
 # [2.1.0-beta.44](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.43...v2.1.0-beta.44) (2026-05-25)
 
 
