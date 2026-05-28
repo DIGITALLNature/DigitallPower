@@ -80,7 +80,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
         // Apply filter
         IEnumerable<(string Name, string Message)> filtered = sdkMessages;
-        if (config.SdkMessageFilters != null && config.SdkMessageFilters.Count > 0)
+        if (config.SdkMessageFilters.Count > 0)
         {
             filtered = sdkMessages.Where(t => config.SdkMessageFilters.Contains(t.Message));
         }

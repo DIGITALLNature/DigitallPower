@@ -9,69 +9,68 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
-namespace dgt.power.maintenance.Logic
+namespace dgt.power.maintenance.Logic;
+
+public sealed class ProtectCalculatedFields(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    public sealed class ProtectCalculatedFields(
-        ITracer tracer,
-        IOrganizationService connection,
-        IConfigResolver configResolver,
-        IAnsiConsole console)
-        : BaseMaintenance(tracer, connection, configResolver, console)
+    protected override bool Invoke(MaintenanceVerb args)
     {
-        protected override bool Invoke(MaintenanceVerb args)
-        {
-            Debug.Assert(args != null, nameof(args) + " != null");
-            Tracer.Start(this);
-            var updated = 0;
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Tracer.Start(this);
+        var updated = 0;
 
-            Console.Status()
-                .Start("Retrieve Metadata...", ctx =>
+        Console.Status()
+            .Start("Retrieve Metadata...", ctx =>
+            {
+                ctx.Spinner(Spinner.Known.Smiley);
+                ctx.SpinnerStyle(Style.Parse("green"));
+
+                Console.MarkupLine("Retrieve Metadata");
+
+                var request = new RetrieveAllEntitiesRequest
                 {
-                    ctx.Spinner(Spinner.Known.Smiley);
-                    ctx.SpinnerStyle(Style.Parse("green"));
+                    EntityFilters = EntityFilters.Attributes
+                };
+                var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+                var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false);
 
-                    Console.MarkupLine("Retrieve Metadata");
-
-                    var request = new RetrieveAllEntitiesRequest
+                foreach (var attributeMetadata in attributeMetadatas)
+                {
+                    ctx.Status($"Check <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
+                    if (attributeMetadata is MoneyAttributeMetadata { IsBaseCurrency: true })
                     {
-                        EntityFilters = EntityFilters.Attributes
-                    };
-                    var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
-                    var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false);
-
-                    foreach (var attributeMetadata in attributeMetadatas)
-                    {
-                        ctx.Status($"Check <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
-                        if (attributeMetadata is MoneyAttributeMetadata { IsBaseCurrency: true })
-                        {
-                            continue;
-                        }
-
-                        if (attributeMetadata.LogicalName == "bpf_duration")
-                        {
-                            continue;
-                        }
-
-                        if (attributeMetadata.IsCustomizable.Value && attributeMetadata.IsCustomizable.CanBeChanged)
-                        {
-                            Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
-                            attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
-                            Connection.Execute(new UpdateAttributeRequest
-                            {
-                                Attribute = attributeMetadata,
-                                EntityName = attributeMetadata.EntityLogicalName,
-                                MergeLabels = false
-                            });
-                            updated++;
-                        }
+                        continue;
                     }
-                });
+
+                    if (attributeMetadata.LogicalName == "bpf_duration")
+                    {
+                        continue;
+                    }
+
+                    if (attributeMetadata.IsCustomizable.Value && attributeMetadata.IsCustomizable.CanBeChanged)
+                    {
+                        Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
+                        attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
+                        Connection.Execute(new UpdateAttributeRequest
+                        {
+                            Attribute = attributeMetadata,
+                            EntityName = attributeMetadata.EntityLogicalName,
+                            MergeLabels = false
+                        });
+                        updated++;
+                    }
+                }
+            });
 
 
-            Console.MarkupLine($"Protected {updated} fields");
+        Console.MarkupLine($"Protected {updated} fields");
 
 
-            return true;
-        }
+        return true;
     }
 }

@@ -161,7 +161,6 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <summary>
     /// Generate intermediate structure as postprocessing of the overall list is needed to link forms
     /// </summary>
-    /// <param name="args"></param>
     /// <param name="config"></param>
     /// <param name="bpfControls"></param>
     /// <returns></returns>

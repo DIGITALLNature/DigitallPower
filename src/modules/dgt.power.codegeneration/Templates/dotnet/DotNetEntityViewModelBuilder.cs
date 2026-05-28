@@ -354,6 +354,7 @@ public class DotNetEntityViewModelBuilder
     }
 }
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 public class DotNetAttributeModel
 {
     public string Name { get; set; } = "";

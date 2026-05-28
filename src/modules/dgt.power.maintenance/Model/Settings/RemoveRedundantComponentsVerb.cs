@@ -6,6 +6,7 @@ using dgt.power.common;
 using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Model.Settings;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class RemoveRedundantComponentsVerb: BaseProgramSettings
 {

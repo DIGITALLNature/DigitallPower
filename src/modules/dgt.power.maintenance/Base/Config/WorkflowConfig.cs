@@ -4,6 +4,7 @@
 using System.Text.Json.Serialization;
 
 namespace dgt.power.maintenance.Base.Config;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class WorkflowConfig
 {

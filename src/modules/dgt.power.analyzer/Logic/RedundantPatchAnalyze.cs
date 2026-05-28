@@ -61,7 +61,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                 ctx.Refresh();
                 foreach (var patch in patches)
                 {
-                    table.AddRow(patch.UniqueName, patch.FriendlyName, "", "", "Checking");
+                    table.AddRow(patch.UniqueName!, patch.FriendlyName ?? patch.UniqueName!, "", "", "Checking");
                     ctx.Refresh();
                     table.RemoveRow(table.Rows.Count - 1);
                     var components = GetSolutionComponents(patch.Id);

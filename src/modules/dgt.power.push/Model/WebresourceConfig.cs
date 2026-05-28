@@ -4,6 +4,7 @@
 using System.Text.Json.Serialization;
 
 namespace dgt.power.push.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class WebresourceConfig
 {

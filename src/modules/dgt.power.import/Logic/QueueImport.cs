@@ -224,11 +224,6 @@ public sealed class QueueImport(
 
     private static bool Unchanged(dataverse.Queue existing, Queue config)
     {
-        if (config == null)
-        {
-            return false;
-        }
-
         return
             (
                 existing.Name == config.Name ||

@@ -3,11 +3,10 @@
 
 using System.Text.Json.Serialization;
 
-namespace dgt.power.codegeneration.Model
+namespace dgt.power.codegeneration.Model;
+
+public sealed class BpfClientDataStepLabelList
 {
-    public sealed class BpfClientDataStepLabelList
-    {
-        [JsonPropertyName("list")]
-        public required List<BpfStepLabel> ListLabels { get; init; }
-    }
+    [JsonPropertyName("list")]
+    public required List<BpfStepLabel> ListLabels { get; init; }
 }

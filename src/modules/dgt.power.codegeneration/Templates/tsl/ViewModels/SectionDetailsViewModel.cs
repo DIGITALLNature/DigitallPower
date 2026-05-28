@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 

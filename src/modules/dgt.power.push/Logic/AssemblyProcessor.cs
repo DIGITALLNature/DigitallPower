@@ -120,7 +120,7 @@ internal class AssemblyProcessor : IDisposable
         var addReq = new AddSolutionComponentRequest
         {
             AddRequiredComponents = false,
-            ComponentType = scd.SolutionComponentType.Value,
+            ComponentType = scd.SolutionComponentType!.Value,
             ComponentId = pluginPackage.Id,
             SolutionUniqueName = solution
         };

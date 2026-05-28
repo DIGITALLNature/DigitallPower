@@ -45,5 +45,6 @@ public class Package : IEquatable<Package>
 
     public override bool Equals(object? obj) => Equals(obj as Package);
 
+    // ReSharper disable once NonReadonlyMemberInGetHashCode
     public override int GetHashCode() => HashCode.Combine(Name, Version, Content);
 }

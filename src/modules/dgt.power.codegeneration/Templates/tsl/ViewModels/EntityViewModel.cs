@@ -4,6 +4,7 @@
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public record EntityViewModel
 {

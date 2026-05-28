@@ -87,7 +87,7 @@ public class WorkflowStateTracker
 
         var orderedWorfklowChanges = _workflowChanges.Values
             .OrderBy(w => w.TableName)
-            .OrderBy(w => w.UniqueName)
+            .ThenBy(w => w.UniqueName)
             .ThenBy(w => w.Name);
 
         foreach (var workflowChange in orderedWorfklowChanges)

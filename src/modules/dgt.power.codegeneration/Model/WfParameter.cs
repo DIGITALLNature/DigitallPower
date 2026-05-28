@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 namespace dgt.power.codegeneration.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class WfParameter
 {

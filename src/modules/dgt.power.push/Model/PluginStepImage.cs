@@ -8,6 +8,7 @@ using dgt.power.dataverse;
 #pragma warning disable CA1067
 
 namespace dgt.power.push.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 [DataContract]
 public class PluginStepImage : IEquatable<PluginStepImage>

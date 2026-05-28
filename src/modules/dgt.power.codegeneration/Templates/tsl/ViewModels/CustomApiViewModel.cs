@@ -3,13 +3,13 @@
 
 using dgt.power.codegeneration.Model;
 
-namespace dgt.power.codegeneration.Templates.tsl.ViewModels
-{
-    public class CustomApiViewModel
-    {
-        public required string Name { get; set; }
-        public required List<WfParameter> InParameters { get; set; }
+namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
-        public required List<WfParameter> OutParameters { get; set; }
-    }
+public class CustomApiViewModel
+{
+    public required string Name { get; set; }
+    public required List<WfParameter> InParameters { get; set; }
+
+    public required List<WfParameter> OutParameters { get; set; }
 }

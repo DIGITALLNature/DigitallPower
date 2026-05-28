@@ -102,7 +102,7 @@ public class WebresourcesProcessor(
         return (solutionDetails.CustomizationPrefix, solutionDetails.SolutionId!.Value);
     }
 
-    private Webresources[] DiscoverWebresources(string folder, string solutionPrefix, IDictionary<string, string> fileMapping)
+    private Webresources[] DiscoverWebresources(string folder, string solutionPrefix, IDictionary<string, string>? fileMapping)
     {
         var folderInfo = Path.GetFullPath(folder);
 

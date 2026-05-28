@@ -14,6 +14,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class CreateWorkflowStateConfig(
     ITracer tracer,

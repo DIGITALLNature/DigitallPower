@@ -16,6 +16,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class UpdateWorkflowState(
     ITracer tracer,
@@ -164,7 +165,7 @@ public class UpdateWorkflowState(
 
     private async Task<bool> TryUpdateWorkflow(Workflow workflow, WorkflowConfig workflowConfig)
     {
-        Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value}): checking against config", TraceEventType.Verbose);
+        Tracer.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value}): checking against config", TraceEventType.Verbose);
 
         string? workflowName;
         WorkflowConfig.BaseWorkflowConfig? baseWorkflowConfig = default;

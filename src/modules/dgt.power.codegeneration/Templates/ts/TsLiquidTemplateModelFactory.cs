@@ -236,7 +236,7 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<AttributeMetadata> FilterEntityAttributes(EntityMetadata entityMetadata, CodeGenerationConfig config)
     {
         var filteredAttributes = entityMetadata.Attributes
-            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute == true || attribute.IsPrimaryId == true)
+            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute || attribute.IsPrimaryId == true)
                 && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
             .Where(attribute => !attribute.LogicalName.Contains("entityimage", StringComparison.Ordinal))
             .Where(attribute => attribute.AttributeType != AttributeTypeCode.ManagedProperty);
@@ -253,17 +253,17 @@ internal static class TsLiquidTemplateModelFactory
         return filteredAttributes.OrderBy(attribute => attribute.LogicalName);
     }
 
-    private static IEnumerable<Templates.OptionField> FilterEntityOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
+    private static IEnumerable<OptionField> FilterEntityOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
-            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute == true)
+            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute)
                     && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
                 && (attribute.AttributeType == AttributeTypeCode.Picklist
                     || attribute.AttributeType == AttributeTypeCode.State
                     || attribute.AttributeType == AttributeTypeCode.Status
                     || attribute.AttributeType == AttributeTypeCode.Boolean
                     || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
-            .Select(attribute => new Templates.OptionField(attribute, config.UseBaseLanguage, systemLanguage));
+            .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityFilters.Count > 0)
         {
@@ -280,7 +280,7 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<AttributeMetadata> FilterEntityRefAttributes(EntityMetadata entityMetadata, CodeGenerationConfig config)
     {
         var filteredAttributes = entityMetadata.Attributes
-            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute == true || attribute.IsPrimaryId == true)
+            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute || attribute.IsPrimaryId == true)
                 && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
             .Where(attribute => !attribute.LogicalName.Contains("entityimage", StringComparison.Ordinal))
             .Where(attribute => attribute.AttributeType != AttributeTypeCode.ManagedProperty);
@@ -297,17 +297,17 @@ internal static class TsLiquidTemplateModelFactory
         return filteredAttributes.OrderBy(attribute => attribute.LogicalName);
     }
 
-    private static IEnumerable<Templates.OptionField> FilterEntityRefOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
+    private static IEnumerable<OptionField> FilterEntityRefOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
-            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute == true)
+            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute)
                     && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
                 && (attribute.AttributeType == AttributeTypeCode.Picklist
                     || attribute.AttributeType == AttributeTypeCode.State
                     || attribute.AttributeType == AttributeTypeCode.Status
                     || attribute.AttributeType == AttributeTypeCode.Boolean
                     || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
-            .Select(attribute => new Templates.OptionField(attribute, config.UseBaseLanguage, systemLanguage));
+            .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityRefFilters.Count > 0)
         {
@@ -341,7 +341,7 @@ internal static class TsLiquidTemplateModelFactory
         return filteredAttributes.OrderBy(attribute => attribute.LogicalName);
     }
 
-    private static IEnumerable<Templates.OptionField> FilterFormOptionFields(string form, FormDetail formDetail, EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
+    private static IEnumerable<OptionField> FilterFormOptionFields(string form, FormDetail formDetail, EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
             .Where(attribute => (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true)
@@ -351,7 +351,7 @@ internal static class TsLiquidTemplateModelFactory
                     || attribute.AttributeType == AttributeTypeCode.Boolean
                     || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
             .Where(attribute => formDetail.Attributes.Any(formAttribute => formAttribute.DataFieldName == attribute.LogicalName))
-            .Select(attribute => new Templates.OptionField(attribute, config.UseBaseLanguage, systemLanguage));
+            .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityFormFilters.Count > 0)
         {
@@ -424,7 +424,7 @@ internal static class TsLiquidTemplateModelFactory
         return filteredSections;
     }
 
-    private static List<TsOptionSetModel> CreateEntityOptionSetModels(IEnumerable<Templates.OptionField> optionFields, UniqueNameGenerator uniqueNames, EntityMetadata entityMetadata)
+    private static List<TsOptionSetModel> CreateEntityOptionSetModels(IEnumerable<OptionField> optionFields, UniqueNameGenerator uniqueNames, EntityMetadata entityMetadata)
     {
         return optionFields
             .Select(optionField => new TsOptionSetModel
@@ -496,6 +496,7 @@ internal static class TsLiquidTemplateModelFactory
         }
     }
 }
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 internal sealed record TsSdkMessagesTemplateModel
 {
