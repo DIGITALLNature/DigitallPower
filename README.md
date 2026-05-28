@@ -380,6 +380,21 @@ export DGT_TELEMETRY_CONNECTION_STRING="InstrumentationKey=..."
 
 Set `DGT_TELEMETRY_CONNECTION_STRING` to an Azure Monitor connection string to route telemetry to a custom endpoint. When not set, the build-time embedded connection string is used (or telemetry is disabled if none was embedded).
 
+### Example query
+
+To count how often each module was invoked, split by CI and non-CI usage:
+
+```kusto
+dependencies
+| where timestamp > ago(30d)
+| extend
+    module = tostring(customDimensions["dgtp.command"]),
+    is_ci = tolower(tostring(customDimensions["dgtp.is_ci"])) == "true"
+| where isnotempty(module)
+| summarize CI = countif(is_ci), NonCI = countif(not(is_ci)) by module
+| order by CI + NonCI desc
+```
+
 ### First-run notice
 
 On first use, the CLI displays a one-time notice informing you about telemetry collection and how to opt out. This notice is shown only once per installation.
