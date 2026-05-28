@@ -17,6 +17,14 @@ internal static class DgtpActivitySource
 
     private static string GetVersion()
     {
-        return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
+        var assembly = Assembly.GetExecutingAssembly();
+        var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(informationalVersion))
+        {
+            return informationalVersion.Split('+', StringSplitOptions.RemoveEmptyEntries)[0];
+        }
+
+        return assembly.GetName().Version?.ToString() ?? "0.0.0";
     }
 }
