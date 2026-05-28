@@ -41,9 +41,9 @@ internal class AssemblyModelBuilder : IDisposable
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
     }
 
-    public Package BuildPackageFromFile(string packageFile)
+    public Package? BuildPackageFromFile(string packageFile)
     {
-        var result = default(Package);
+        Package result = default(Package);
         try
         {
             var content = Convert.ToBase64String(File.ReadAllBytes(packageFile));
@@ -760,13 +760,13 @@ internal class AssemblyModelBuilder : IDisposable
 
     #region Support
 
-    private static string[] GetArrayValues(CustomAttributeData customAttribute, string property)
+    private static string?[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {
         if (customAttribute.NamedArguments.Any(a => a.MemberName == property))
         {
             var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);
             var valuesRaw = (IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value;
-            var result = valuesRaw.Select(x => x.Value as string).ToArray();
+            var result = valuesRaw?.Select(x => x.Value as string).ToArray();
 
             return result;
         }

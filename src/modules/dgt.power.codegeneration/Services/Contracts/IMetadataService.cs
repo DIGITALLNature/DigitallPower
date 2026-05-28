@@ -12,7 +12,7 @@ public interface IMetadataService
 {
     IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
     IEnumerable<WfAction> RetrieveCustomAPIs(CodeGenerationConfig config);
-    IEnumerable<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
+    List<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
     SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
     EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
     int RetrieveOrganizationLanguage();

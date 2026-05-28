@@ -358,7 +358,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return result;
     }
 
-    public IEnumerable<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
+    public List<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
         var result = new List<(string Name, string Message)>();
         if (config.Hints)

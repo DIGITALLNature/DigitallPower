@@ -22,8 +22,8 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     where TCommandSettings : CommandSettings
 {
     private IServiceCollection _serviceCollection = new TestServiceCollection();
-    private IEnumerable<Entity> _data = new List<Entity>();
-    private IEnumerable<EntityMetadata> _metadata = new List<EntityMetadata>();
+    private List<Entity> _data = new();
+    private List<EntityMetadata> _metadata = new();
     private readonly List<RelationshipMetadataBase> _relationships = new();
     private readonly List<IOrganizationRequestFake> _requestFakes = new();
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
@@ -66,7 +66,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         service.AddDefaultRequests();
 
         // Initialize metadata
-        if (_metadata.Any())
+        if (_metadata.Count != 0)
         {
             service.AddMetadata(_metadata);
         }
@@ -84,11 +84,11 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         }
 
         // Initialize data
-        if (_data.Any() || _dataPreparer != null)
+        if (_data.Count != 0 || _dataPreparer != null)
         {
             if (_dataPreparer != null)
             {
-                _data = _data.Concat(_dataPreparer(service));
+                _data.AddRange(_dataPreparer(service));
             }
 
             // Auto-register metadata for entity types used in data that aren't already registered
@@ -142,7 +142,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     /// <returns>self</returns>
     public CommandTestContextBuilder<TCommand, TCommandSettings> WithData(IEnumerable<Entity> data)
     {
-        _data = _data.Concat(data);
+        _data.AddRange(data);
         return this;
     }
 
@@ -198,7 +198,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     /// <returns>self</returns>
     public CommandTestContextBuilder<TCommand, TCommandSettings> WithMetaData(IEnumerable<EntityMetadata> metadata)
     {
-        _metadata = _metadata.Concat(metadata);
+        _metadata.AddRange(metadata);
         return this;
     }
 

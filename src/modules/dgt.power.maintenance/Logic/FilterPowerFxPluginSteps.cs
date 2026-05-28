@@ -67,7 +67,7 @@ public class FilterPowerFxPluginSteps(
     }
 
 
-    private SdkMessageProcessingStep SearchPowerFxPluginStep(string name, string message)
+    private SdkMessageProcessingStep SearchPowerFxPluginStep(string name, string? message)
     {
 // Instantiate QueryExpression query
         var query = new QueryExpression("sdkmessageprocessingstep")

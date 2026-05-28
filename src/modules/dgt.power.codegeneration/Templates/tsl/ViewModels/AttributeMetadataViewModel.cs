@@ -5,6 +5,7 @@ using dgt.power.codegeneration.Constants;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public record AttributeMetadataViewModel
 {
@@ -84,7 +85,7 @@ public record AttributeMetadataViewModel
                 NativeType = "number";
                 XrmMockTypeAttributeType = XrmMock.Attributes.NumberAttribute;
                 XrmMockControlType = XrmMock.Control.NumberControl;
-                break;                
+                break;
             case AttributeTypeCode.Customer:
                 DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.LookupAtt;
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.LookupCtl;
@@ -196,14 +197,15 @@ public record AttributeMetadataViewModel
                 return XrmMock.RequiredLevel.Required;
             case AttributeRequiredLevel.Recommended:
                 return XrmMock.RequiredLevel.Recommended;
+            default:
+                return XrmMock.RequiredLevel.None;
         }
-        return XrmMock.RequiredLevel.None;
     }
 
     private static string GetDateTimeType(DateTimeAttributeMetadata? attr)
     {
 
-        if (attr?.DateTimeBehavior == DateTimeBehavior.DateOnly && attr?.Format == DateTimeFormat.DateOnly)
+        if (attr?.DateTimeBehavior == DateTimeBehavior.DateOnly && attr.Format == DateTimeFormat.DateOnly)
         {
             return "DateOnly:DateOnly";
         }

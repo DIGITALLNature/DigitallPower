@@ -3,11 +3,11 @@
 
 using System.Text.Json.Serialization;
 
-namespace dgt.power.codegeneration.Model
+namespace dgt.power.codegeneration.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+public sealed class BpfClientDataStepList
 {
-    public sealed class BpfClientDataStepList
-    {
-        [JsonPropertyName("list")]
-        public required List<BpfClientDataStep> StepList { get; init; }
-    }
+    [JsonPropertyName("list")]
+    public required List<BpfClientDataStep> StepList { get; init; }
 }

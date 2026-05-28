@@ -11,94 +11,93 @@ using Microsoft.Xrm.Sdk.Metadata;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 
-namespace dgt.power.maintenance.tests
+namespace dgt.power.maintenance.tests;
+
+public class ProtectCalculatedFieldsTest : MaintenanceTestsBase<ProtectCalculatedFields>
 {
-    public class ProtectCalculatedFieldsTest : MaintenanceTestsBase<ProtectCalculatedFields>
+    protected override CommandTestContext<ProtectCalculatedFields, MaintenanceVerb> GetContext()
     {
-        protected override CommandTestContext<ProtectCalculatedFields, MaintenanceVerb> GetContext()
+        return GetBuilder()
+            .WithFakeMessageExecutor(new UpdateAttributeExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
+            .WithMetaData(BuildTestMetadata())
+            .Build();
+
+        // TODO enrich metadata
+    }
+
+    private static EntityMetadata BuildTestMetadata()
+    {
+        var metadata = new EntityMetadata
         {
-            return GetBuilder()
-                .WithFakeMessageExecutor(new UpdateAttributeExecutor())
-                .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
-                .WithMetaData(BuildTestMetadata())
-                .Build();
+            LogicalName = TestEntity.EntityLogicalName,
+            MetadataId = Guid.NewGuid()
+        };
 
-            // TODO enrich metadata
-        }
+        metadata.SetSealedPropertyValue(nameof(metadata.ObjectTypeCode), TestEntity.EntityTypeCode);
 
-        private static EntityMetadata BuildTestMetadata()
+        var nameAttributeMetadata = new StringAttributeMetadata { LogicalName = "name", SourceType = 0 };
+        nameAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        nameAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true){CanBeChanged = true});
+        nameAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testMoneyCalcAttributeMetadata = new MoneyAttributeMetadata { LogicalName = "test_money_calc", SourceType = 1 };
+        testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
+        testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsBaseCurrency", false);
+        testMoneyCalcAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testMoneyCalcBaseAttributeMetadata = new MoneyAttributeMetadata { LogicalName = "test_money_base", SourceType = 1 };
+        testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
+        testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsBaseCurrency", true);
+        testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var bpfDurationAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "bpf_duration", SourceType = 1 };
+        bpfDurationAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        bpfDurationAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
+        bpfDurationAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testNumberCalcAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc", SourceType = 1 };
+        testNumberCalcAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        testNumberCalcAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
+        testNumberCalcAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testNumberCalcManagedAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_managed", SourceType = 1 };
+        testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("IsManaged", true);
+        testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
+        testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testNumberCalcAllreadySetAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_allready_set", SourceType = 1 };
+        testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(false) { CanBeChanged = true });
+        testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        var testNumberCalcNotCustomizableAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_not_customizable", SourceType = 1 };
+        testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
+        testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true){CanBeChanged = false});
+        testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+
+        metadata.SetAttributeCollection(new List<AttributeMetadata>
         {
-            var metadata = new EntityMetadata
-            {
-                LogicalName = TestEntity.EntityLogicalName,
-                MetadataId = Guid.NewGuid()
-            };
+            nameAttributeMetadata,
+            testNumberCalcAttributeMetadata,
+            testMoneyCalcAttributeMetadata,
+            testMoneyCalcBaseAttributeMetadata,
+            bpfDurationAttributeMetadata,
+            testNumberCalcManagedAttributeMetadata,
+            testNumberCalcAllreadySetAttributeMetadata,
+            testNumberCalcNotCustomizableAttributeMetadata
+        });
 
-            metadata.SetSealedPropertyValue(nameof(metadata.ObjectTypeCode), TestEntity.EntityTypeCode);
+        return metadata;
+    }
 
-            var nameAttributeMetadata = new StringAttributeMetadata { LogicalName = "name", SourceType = 0 };
-            nameAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            nameAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true){CanBeChanged = true});
-            nameAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
+    [Test]
+    public async Task ShouldFindAndUpdateTwoFields()
+    {
+        await Assert.That(GetContext().Execute(new MaintenanceVerb())).IsTrue();
 
-            var testMoneyCalcAttributeMetadata = new MoneyAttributeMetadata { LogicalName = "test_money_calc", SourceType = 1 };
-            testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
-            testMoneyCalcAttributeMetadata.SetSealedPropertyValue("IsBaseCurrency", false);
-            testMoneyCalcAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var testMoneyCalcBaseAttributeMetadata = new MoneyAttributeMetadata { LogicalName = "test_money_base", SourceType = 1 };
-            testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
-            testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("IsBaseCurrency", true);
-            testMoneyCalcBaseAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var bpfDurationAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "bpf_duration", SourceType = 1 };
-            bpfDurationAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            bpfDurationAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
-            bpfDurationAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var testNumberCalcAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc", SourceType = 1 };
-            testNumberCalcAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            testNumberCalcAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
-            testNumberCalcAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var testNumberCalcManagedAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_managed", SourceType = 1 };
-            testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("IsManaged", true);
-            testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true) { CanBeChanged = true });
-            testNumberCalcManagedAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var testNumberCalcAllreadySetAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_allready_set", SourceType = 1 };
-            testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(false) { CanBeChanged = true });
-            testNumberCalcAllreadySetAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            var testNumberCalcNotCustomizableAttributeMetadata = new IntegerAttributeMetadata { LogicalName = "test_number_calc_not_customizable", SourceType = 1 };
-            testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("IsManaged", false);
-            testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("IsCustomizable", new BooleanManagedProperty(true){CanBeChanged = false});
-            testNumberCalcNotCustomizableAttributeMetadata.SetSealedPropertyValue("EntityLogicalName", TestEntity.EntityLogicalName);
-
-            metadata.SetAttributeCollection(new List<AttributeMetadata>
-            {
-                nameAttributeMetadata,
-                testNumberCalcAttributeMetadata,
-                testMoneyCalcAttributeMetadata,
-                testMoneyCalcBaseAttributeMetadata,
-                bpfDurationAttributeMetadata,
-                testNumberCalcManagedAttributeMetadata,
-                testNumberCalcAllreadySetAttributeMetadata,
-                testNumberCalcNotCustomizableAttributeMetadata
-            });
-
-            return metadata;
-        }
-
-        [Test]
-        public async Task ShouldFindAndUpdateTwoFields()
-        {
-            await Assert.That(GetContext().Execute(new MaintenanceVerb())).IsTrue();
-
-            await Assert.That(TestConsole.Output).Contains("Protected 2 fields");
-        }
+        await Assert.That(TestConsole.Output).Contains("Protected 2 fields");
     }
 }

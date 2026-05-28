@@ -3,11 +3,10 @@
 
 using Microsoft.Xrm.Sdk.Metadata;
 
-namespace dgt.power.codegeneration.Model
+namespace dgt.power.codegeneration.Model;
+
+public class EntityWithMetadataFormData
 {
-    public class EntityWithMetadataFormData
-    {
-        public required EntityMetadata EntityMetadata { get; set; }
-        public required Dictionary<string, FormDetail> ParsedFormDetail {get; set; }
-    }
+    public required EntityMetadata EntityMetadata { get; set; }
+    public required Dictionary<string, FormDetail> ParsedFormDetail {get; set; }
 }

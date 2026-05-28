@@ -4,6 +4,7 @@
 using System.Text.Json.Serialization;
 
 namespace dgt.power.dto;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public sealed class RoutingRuleItem
 {

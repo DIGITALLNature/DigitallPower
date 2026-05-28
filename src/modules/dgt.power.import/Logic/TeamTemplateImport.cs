@@ -149,11 +149,6 @@ public sealed class TeamTemplateImport(
 
     private static bool Unchanged(dataverse.TeamTemplate existing, int entity, TeamTemplate config)
     {
-        if (config == null)
-        {
-            return false;
-        }
-
         return
             (
                 existing.TeamTemplateName == config.TeamTemplateName ||
