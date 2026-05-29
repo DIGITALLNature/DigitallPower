@@ -1,3 +1,10 @@
+# [2.1.0-beta.46](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.45...v2.1.0-beta.46) (2026-05-29)
+
+
+### Features
+
+* **telemetry:** expose beta version in activity source ([c055f0e](https://github.com/DIGITALLNature/DigitallPower/commit/c055f0e6ba3a9ecc423ecd9a4dc6bec868b47fe6))
+
 # [2.1.0-beta.45](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.44...v2.1.0-beta.45) (2026-05-28)
 
 
