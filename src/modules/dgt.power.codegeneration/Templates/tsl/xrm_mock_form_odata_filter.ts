@@ -147,6 +147,9 @@ export class XrmMockFormODataFilter {
         if (node.raw == "null") {
             return null;
         }
+        if (node.type == TokenType.Literal && typeof node.raw === "string" && node.value === "Edm.Int32") {
+            return Number.parseInt(node.raw, 10);
+        }
         if (node.type == TokenType.Literal && typeof node.raw === "string") {
             return XrmMockFormODataFilter.deleteRawNodeStartAndEnd(node.raw, "'", "'");
         }
