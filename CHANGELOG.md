@@ -1,3 +1,10 @@
+# [2.1.0-beta.47](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.46...v2.1.0-beta.47) (2026-06-02)
+
+
+### Features
+
+* **tsl:** add small extra corrections to the unit tests utils ([#141](https://github.com/DIGITALLNature/DigitallPower/issues/141)) ([7734377](https://github.com/DIGITALLNature/DigitallPower/commit/7734377f005f3ad6aab93f88fcdc57dcec85e477))
+
 # [2.1.0-beta.46](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.45...v2.1.0-beta.46) (2026-05-29)
 
 
