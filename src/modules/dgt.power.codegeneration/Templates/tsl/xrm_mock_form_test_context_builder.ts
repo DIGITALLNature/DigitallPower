@@ -942,6 +942,9 @@ export class XrmMockFormTestContextBuilder<
             if (updateData.isVisible !== undefined && control) {
                 control.isVisible = updateData.isVisible;
             }
+            if (updateData.isDisabled !== undefined && control) {
+                control.isDisabled = updateData.isDisabled;
+            }
         }
     }
 
@@ -1101,11 +1104,13 @@ export class XrmMockFormTestContextBuilder<
                     refresh: jest.fn(),
                     addOnLoad: jest.fn(),
                     getGrid: jest.fn((): Xrm.Controls.Grid => this.CreateMockGrid(control)),
+                    setFilterXml: jest.fn((_): void => { }),
                 };
                 this.xrmSubGridControlMockStubs[control.name] = gridControlMock;
                 controlMock.addOnLoad = gridControlMock.addOnLoad;
                 controlMock.refresh = gridControlMock.refresh;
                 controlMock.getGrid = gridControlMock.getGrid;
+                (<any>controlMock).setFilterXml = gridControlMock.setFilterXml;
             }
             if (this.isControlLookupMethodMock && this.isLookupControl(controlMock)) {
                 const lookupControlMock = {
@@ -1413,6 +1418,7 @@ export class XrmMockFormTestContextBuilder<
                 name: control.name,
                 attribute: <StringAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1427,6 +1433,7 @@ export class XrmMockFormTestContextBuilder<
                 name: control.name,
                 attribute: <BooleanAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1441,6 +1448,7 @@ export class XrmMockFormTestContextBuilder<
                 name: control.name,
                 attribute: <DateAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1455,6 +1463,7 @@ export class XrmMockFormTestContextBuilder<
                 name: control.name,
                 attribute: <NumberAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1469,6 +1478,7 @@ export class XrmMockFormTestContextBuilder<
                 name: control.name,
                 attribute: <LookupAttributeMock>mockAttribute,
                 visible: control.isVisible,
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1485,6 +1495,7 @@ export class XrmMockFormTestContextBuilder<
                 attribute: <OptionSetAttributeMock>mockAttribute,
                 visible: control.isVisible,
                 options: mockOptions.map(opt => ({ ...opt })),
+                disabled: control.isDisabled,
             });
         }
         return null;
@@ -1501,6 +1512,7 @@ export class XrmMockFormTestContextBuilder<
                 attribute: mockAttribute as any,
                 visible: control.isVisible,
                 options: mockOptions.map(opt => ({ ...opt })),
+                disabled: control.isDisabled,
             });
         }
         return null;
