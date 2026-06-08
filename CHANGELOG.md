@@ -1,3 +1,10 @@
+# [2.1.0-beta.48](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.47...v2.1.0-beta.48) (2026-06-08)
+
+
+### Features
+
+* **tsl:** correct xrm-type class in template ([#143](https://github.com/DIGITALLNature/DigitallPower/issues/143)) ([149df5a](https://github.com/DIGITALLNature/DigitallPower/commit/149df5adaa4744aeec3fdac14e3c9504813a2fb0))
+
 # [2.1.0-beta.47](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.46...v2.1.0-beta.47) (2026-06-02)
 
 
