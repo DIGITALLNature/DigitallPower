@@ -77,13 +77,13 @@ declare namespace XrmForm.{{ FormEntityName }} {
             attributes: Attributes;
         }
 
-        export interface Attributes extends Xrm.Collection.ItemCollection<Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>> {
+        export interface Attributes extends Xrm.Collection.ItemCollection<Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>> {
             {%- for attribute in FormDetail.Attributes  %}
             get(name: "{{ attribute.DataFieldName }}"): {{ attribute.DataFieldName | attributetype: Attributes }};{% endfor %}
             get(name: AttributeName): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues> | null;
-            get<T extends Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>>(name: AttributeName): T | null;
+            get<T extends Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>>(name: AttributeName): T | null;
             get<T>(name: string): T | null;
-            get(delegate?: MatchingDelegate<Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>>): Xrm.Attributes.Attribute<Xrm.Attributes.Attribute.AttributeValues>[];
+            get(delegate?: MatchingDelegate<Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>>): Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
         }
 
         export interface Controls extends Xrm.Collection.ItemCollection<Xrm.Controls.Control> {
