@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -24,19 +24,6 @@ public class CreateWorkflowStateConfig(
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private readonly WorkflowStateTracker _workflowStateTracker = new();
-
-    protected override bool Invoke(CreateWorkflowStateConfigSettings args)
-    {
-        ArgumentNullException.ThrowIfNull(args);
-        ArgumentException.ThrowIfNullOrWhiteSpace(args.Config);
-        
-        if (File.Exists(args.Config) && !args.Overwrite)
-        {
-            throw new InvalidOperationException($"Output file '{args.Config}' already exists. Use --overwrite flag to overwrite the existng file");
-        }
-        
-        throw new NotSupportedException("This command requires async execution. Use InvokeAsync.");
-    }
 
     protected override Task<bool> InvokeAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {

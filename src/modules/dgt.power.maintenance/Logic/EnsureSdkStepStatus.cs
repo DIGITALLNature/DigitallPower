@@ -15,8 +15,6 @@ namespace dgt.power.maintenance.Logic;
 public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
     : PowerLogic<EnsureSdkStepStatusSettings>(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(EnsureSdkStepStatusSettings args) => throw new NotSupportedException("This command requires async execution. Use InvokeAsync.");
-
     protected override Task<bool> InvokeAsync(EnsureSdkStepStatusSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);

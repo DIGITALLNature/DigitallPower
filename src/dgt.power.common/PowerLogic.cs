@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -32,7 +32,5 @@ public abstract class PowerLogic<TConfig>(
         return await InvokeAsync(args, cancellationToken);
     }
 
-    protected virtual Task<bool> InvokeAsync(TConfig args, CancellationToken cancellationToken) => Task.FromResult(Invoke(args));
-
-    protected abstract bool Invoke(TConfig args);
+    protected abstract Task<bool> InvokeAsync(TConfig args, CancellationToken cancellationToken);
 }

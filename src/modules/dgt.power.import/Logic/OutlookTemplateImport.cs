@@ -27,7 +27,10 @@ public sealed class OutlookTemplateImport(
 {
     private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
-    protected override bool Invoke(ImportVerb args)
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

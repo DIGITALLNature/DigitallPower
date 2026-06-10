@@ -23,7 +23,10 @@ public sealed class RedundantComponentsAnalyze(
     IAnsiConsole console)
     : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(AnalyzeVerb args)
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(AnalyzeVerb args)
     {
         ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);

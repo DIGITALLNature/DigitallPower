@@ -16,7 +16,10 @@ public class IncrementSolutionVersion(
     IAnsiConsole console)
     : PowerLogic<IncrementSolutionVersionSettings>(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(IncrementSolutionVersionSettings settings)
+    protected override Task<bool> InvokeAsync(IncrementSolutionVersionSettings settings, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(settings));
+
+    private bool InvokeCore(IncrementSolutionVersionSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
         Tracer.Start(this);

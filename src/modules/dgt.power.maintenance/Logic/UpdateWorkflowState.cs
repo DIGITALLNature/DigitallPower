@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -25,14 +25,6 @@ public class UpdateWorkflowState(
 {
     private readonly Dictionary<string, SystemUser> _userTable = new();
     private readonly WorkflowStateTracker _workflowStateTracker = new();
-
-    protected override bool Invoke(UpdateWorkflowStateSettings args)
-    {
-        ArgumentNullException.ThrowIfNull(args);
-        ArgumentException.ThrowIfNullOrWhiteSpace(args.Config);
-
-        throw new NotSupportedException("This command requires async execution. Use InvokeAsync.");
-    }
 
     protected override Task<bool> InvokeAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
     {

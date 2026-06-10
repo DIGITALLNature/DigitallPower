@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -14,7 +14,10 @@ namespace dgt.power.analyzer.Logic;
 
 public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(AnalyzeVerb args)
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(AnalyzeVerb args)
     {
         ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
