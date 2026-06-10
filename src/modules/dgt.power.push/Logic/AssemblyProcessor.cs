@@ -539,7 +539,7 @@ internal sealed class AssemblyProcessor : IDisposable
             Stage = new OptionSetValue(pluginStep.Stage),
             SdkMessageId = new EntityReference(pluginStep.MessageTypeCode, pluginStep.MessageId),
             EventHandler = new EntityReference(pluginStep.ParentTypeCode, pluginType.Id),
-            Rank = pluginStep.ExecutionOrder,
+            Rank = pluginStep.ExecutionOrder ?? 1,
             Name = pluginStep.Name,
             Mode = new OptionSetValue(pluginStep.Mode),
             AsyncAutoDelete = SdkMessageProcessingStep.Options.Mode.Asynchronous == pluginStep.Mode,
@@ -670,7 +670,7 @@ internal sealed class AssemblyProcessor : IDisposable
                 crmPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
                 dllPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
                 name);
-            updatedStep.Rank = dllPluginStep.ExecutionOrder;
+            updatedStep.Rank = dllPluginStep.ExecutionOrder ?? 1;
             crmPluginStep.ExecutionOrder = dllPluginStep.ExecutionOrder;
             updated = true;
         }
