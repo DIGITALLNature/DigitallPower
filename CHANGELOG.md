@@ -1,3 +1,11 @@
+# [2.1.0-beta.50](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.49...v2.1.0-beta.50) (2026-06-10)
+
+
+### Bug Fixes
+
+* **push:** change ExecutionOrder default from 1 to 100 ([5e580a4](https://github.com/DIGITALLNature/DigitallPower/commit/5e580a4b308dd515b68fc34d7d4bdd2c94ae8eab))
+* sign test assemblies and build/test exclusively in Release ([3236382](https://github.com/DIGITALLNature/DigitallPower/commit/3236382cafb96d6efc01a6a5f2dc5cd55dca62b5)), closes [#if](https://github.com/DIGITALLNature/DigitallPower/issues/if)
+
 # [2.1.0-beta.49](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.48...v2.1.0-beta.49) (2026-06-10)
 
 
