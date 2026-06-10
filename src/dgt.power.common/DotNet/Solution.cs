@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// A solution which contains CRM customizations.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("solution")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("solution")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class Solution : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Solution : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public Solution() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public Solution() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public Solution(bool trackChanges = false) : base(EntityLogicalName)
+        public Solution(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Solution(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public Solution(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Solution(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public Solution(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Solution(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public Solution(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,689 +61,736 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("solutionid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("solutionid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				SolutionId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                SolutionId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SolutionId));
+                OnPropertyChanging();
                 SetAttributeValue("solutionid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(SolutionId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// A link to an optional configuration page for this solution.
 		/// </summary>
-		[AttributeLogicalName("configurationpageid")]
+        [AttributeLogicalName("configurationpageid")]
         public EntityReference? ConfigurationPageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("configurationpageid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ConfigurationPageId));
+                OnPropertyChanging();
                 SetAttributeValue("configurationpageid", value);
-                OnPropertyChanged(nameof(ConfigurationPageId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the solution.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the solution was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the solution.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Description of the solution.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates if solution is enabled for source control integration
+		/// </summary>
+        [AttributeLogicalName("enabledforsourcecontrolintegration")]
+        public bool? EnabledForSourceControlIntegration
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enabledforsourcecontrolintegration");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enabledforsourcecontrolintegration", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// User display name for the solution.
 		/// </summary>
-		[AttributeLogicalName("friendlyname")]
+        [AttributeLogicalName("friendlyname")]
         public string? FriendlyName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("friendlyname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FriendlyName));
+                OnPropertyChanging();
                 SetAttributeValue("friendlyname", value);
-                OnPropertyChanged(nameof(FriendlyName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the solution was installed/upgraded.
 		/// </summary>
-		[AttributeLogicalName("installedon")]
+        [AttributeLogicalName("installedon")]
         public DateTime? InstalledOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("installedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about whether the solution is api managed.
 		/// </summary>
-		[AttributeLogicalName("isapimanaged")]
+        [AttributeLogicalName("isapimanaged")]
         public bool? IsApiManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isapimanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the solution is managed or unmanaged.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the solution is visible outside of the platform.
 		/// </summary>
-		[AttributeLogicalName("isvisible")]
+        [AttributeLogicalName("isvisible")]
         public bool? IsVisible
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isvisible");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the solution.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the solution was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who modified the solution.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization associated with the solution.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the parent solution. Should only be non-null if this solution is a patch.
 		/// </summary>
-		[AttributeLogicalName("parentsolutionid")]
+        [AttributeLogicalName("parentsolutionid")]
         public EntityReference? ParentSolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("parentsolutionid");
             }
         }
 
-		
-		[AttributeLogicalName("pinpointassetid")]
+        
+        [AttributeLogicalName("pinpointassetid")]
         public string? PinpointAssetId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("pinpointassetid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Identifier of the publisher of this solution in Microsoft Pinpoint.
 		/// </summary>
-		[AttributeLogicalName("pinpointpublisherid")]
+        [AttributeLogicalName("pinpointpublisherid")]
         public long? PinpointPublisherId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("pinpointpublisherid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Default locale of the solution in Microsoft Pinpoint.
 		/// </summary>
-		[AttributeLogicalName("pinpointsolutiondefaultlocale")]
+        [AttributeLogicalName("pinpointsolutiondefaultlocale")]
         public string? PinpointSolutionDefaultLocale
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("pinpointsolutiondefaultlocale");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Identifier of the solution in Microsoft Pinpoint.
 		/// </summary>
-		[AttributeLogicalName("pinpointsolutionid")]
+        [AttributeLogicalName("pinpointsolutionid")]
         public long? PinpointSolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("pinpointsolutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the publisher.
 		/// </summary>
-		[AttributeLogicalName("publisherid")]
+        [AttributeLogicalName("publisherid")]
         public EntityReference? PublisherId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("publisherid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PublisherId));
+                OnPropertyChanging();
                 SetAttributeValue("publisherid", value);
-                OnPropertyChanged(nameof(PublisherId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Solution package source organization version
 		/// </summary>
-		[AttributeLogicalName("solutionpackageversion")]
+        [AttributeLogicalName("solutionpackageversion")]
         public string? SolutionPackageVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("solutionpackageversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SolutionPackageVersion));
+                OnPropertyChanging();
                 SetAttributeValue("solutionpackageversion", value);
-                OnPropertyChanged(nameof(SolutionPackageVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Solution Type
 		/// </summary>
-		[AttributeLogicalName("solutiontype")]
+        [AttributeLogicalName("solutiontype")]
         public OptionSetValue? SolutionType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("solutiontype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SolutionType));
+                OnPropertyChanging();
                 SetAttributeValue("solutiontype", value);
-                OnPropertyChanged(nameof(SolutionType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates the current status of source control integration
+		/// </summary>
+        [AttributeLogicalName("sourcecontrolsyncstatus")]
+        public OptionSetValue? SourceControlSyncStatus
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("sourcecontrolsyncstatus");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("sourcecontrolsyncstatus", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// The template suffix of this solution
 		/// </summary>
-		[AttributeLogicalName("templatesuffix")]
+        [AttributeLogicalName("templatesuffix")]
         public string? TemplateSuffix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("templatesuffix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TemplateSuffix));
+                OnPropertyChanging();
                 SetAttributeValue("templatesuffix", value);
-                OnPropertyChanged(nameof(TemplateSuffix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// thumbprint of the solution signature
 		/// </summary>
-		[AttributeLogicalName("thumbprint")]
+        [AttributeLogicalName("thumbprint")]
         public string? Thumbprint
         {
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Thumbprint));
+                OnPropertyChanging();
                 SetAttributeValue("thumbprint", value);
-                OnPropertyChanged(nameof(Thumbprint));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The unique name of this solution
 		/// </summary>
-		[AttributeLogicalName("uniquename")]
+        [AttributeLogicalName("uniquename")]
         public string? UniqueName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("uniquename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueName));
+                OnPropertyChanging();
                 SetAttributeValue("uniquename", value);
-                OnPropertyChanged(nameof(UniqueName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the solution was updated.
 		/// </summary>
-		[AttributeLogicalName("updatedon")]
+        [AttributeLogicalName("updatedon")]
         public DateTime? UpdatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("updatedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Contains component info for the solution upgrade operation
 		/// </summary>
-		[AttributeLogicalName("upgradeinfo")]
+        [AttributeLogicalName("upgradeinfo")]
         public string? UpgradeInfo
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("upgradeinfo");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Solution version, used to identify a solution for upgrades and hotfixes.
 		/// </summary>
-		[AttributeLogicalName("version")]
+        [AttributeLogicalName("version")]
         public string? Version
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("version");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Version));
+                OnPropertyChanging();
                 SetAttributeValue("version", value);
-                OnPropertyChanged(nameof(Version));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
-
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N solution_parent_solution
-		/// </summary>	
-		[RelationshipSchemaName("solution_parent_solution")]
-		public IEnumerable<Solution> SolutionParentSolution
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Solution>("solution_parent_solution", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SolutionParentSolution");
-				this.SetRelatedEntities<Solution>("solution_parent_solution", null, value);
-				this.OnPropertyChanged("SolutionParentSolution");
-			}
-		}
-
-		/// <summary>
-		/// 1:N solution_role
-		/// </summary>	
-		[RelationshipSchemaName("solution_role")]
-		public IEnumerable<Role> SolutionRole
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Role>("solution_role", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SolutionRole");
-				this.SetRelatedEntities<Role>("solution_role", null, value);
-				this.OnPropertyChanged("SolutionRole");
-			}
-		}
-
-		/// <summary>
-		/// 1:N solution_solutioncomponent
-		/// </summary>	
-		[RelationshipSchemaName("solution_solutioncomponent")]
-		public IEnumerable<SolutionComponent> SolutionSolutioncomponent
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SolutionComponent>("solution_solutioncomponent", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SolutionSolutioncomponent");
-				this.SetRelatedEntities<SolutionComponent>("solution_solutioncomponent", null, value);
-				this.OnPropertyChanged("SolutionSolutioncomponent");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-                public struct IsApiManaged
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct IsVisible
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct SolutionType
-                {
-					public const int None = 0;
-					public const int Snapshot = 1;
-					public const int Internal = 2;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string SolutionId = "solutionid";
-				public const string ConfigurationPageId = "configurationpageid";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Description = "description";
-				public const string FriendlyName = "friendlyname";
-				public const string InstalledOn = "installedon";
-				public const string IsApiManaged = "isapimanaged";
-				public const string IsManaged = "ismanaged";
-				public const string IsVisible = "isvisible";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string OrganizationId = "organizationid";
-				public const string ParentSolutionId = "parentsolutionid";
-				public const string PinpointAssetId = "pinpointassetid";
-				public const string PinpointPublisherId = "pinpointpublisherid";
-				public const string PinpointSolutionDefaultLocale = "pinpointsolutiondefaultlocale";
-				public const string PinpointSolutionId = "pinpointsolutionid";
-				public const string PublisherId = "publisherid";
-				public const string SolutionPackageVersion = "solutionpackageversion";
-				public const string SolutionType = "solutiontype";
-				public const string TemplateSuffix = "templatesuffix";
-				public const string Thumbprint = "thumbprint";
-				public const string UniqueName = "uniquename";
-				public const string UpdatedOn = "updatedon";
-				public const string UpgradeInfo = "upgradeinfo";
-				public const string Version = "version";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        /// <summary>
+        /// 1:N solution_parent_solution
+        /// </summary>
+        [RelationshipSchemaName("solution_parent_solution")]
+        public IEnumerable<Solution> SolutionParentSolution
         {
-            public static class OneToMany
+            [DebuggerNonUserCode]
+            get
             {
-				public const string FileAttachmentSolution = "FileAttachment_Solution";
-				public const string FKCanvasAppSolution = "FK_CanvasApp_Solution";
-				public const string SolutionBaseDependencynode = "solution_base_dependencynode";
-				public const string SolutionFieldpermission = "solution_fieldpermission";
-				public const string SolutionFieldsecurityprofile = "solution_fieldsecurityprofile";
-				public const string SolutionParentSolution = "solution_parent_solution";
-				public const string SolutionPrivilege = "solution_privilege";
-				public const string SolutionRole = "solution_role";
-				public const string SolutionRoleprivileges = "solution_roleprivileges";
-				public const string SolutionSolutioncomponent = "solution_solutioncomponent";
-				public const string SolutionSyncErrors = "Solution_SyncErrors";
-				public const string SolutionTopDependencynode = "solution_top_dependencynode";
-				public const string UserentityinstancedataSolution = "userentityinstancedata_solution";
+                return GetRelatedEntities<Solution>("solution_parent_solution", null);
             }
-
-            public static class ManyToOne
+            [DebuggerNonUserCode]
+            set
             {
-				public const string FileattachmentSolutionFileid = "fileattachment_solution_fileid";
-				public const string LkSolutionCreatedby = "lk_solution_createdby";
-				public const string LkSolutionModifiedby = "lk_solution_modifiedby";
-				public const string LkSolutionbaseCreatedonbehalfby = "lk_solutionbase_createdonbehalfby";
-				public const string LkSolutionbaseModifiedonbehalfby = "lk_solutionbase_modifiedonbehalfby";
-				public const string OrganizationSolution = "organization_solution";
-				public const string PublisherSolution = "publisher_solution";
-				public const string SolutionConfigurationWebresource = "solution_configuration_webresource";
-				public const string SolutionParentSolution = "solution_parent_solution";
-            }
-
-            public static class ManyToMany
-            {
-				public const string PackageSolution = "package_solution";
+                OnPropertyChanging();
+                SetRelatedEntities("solution_parent_solution", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N solution_role
+        /// </summary>
+        [RelationshipSchemaName("solution_role")]
+        public IEnumerable<Role> SolutionRole
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Role>("solution_role", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("solution_role", null, value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// 1:N solution_solutioncomponent
+        /// </summary>
+        [RelationshipSchemaName("solution_solutioncomponent")]
+        public IEnumerable<SolutionComponent> SolutionSolutioncomponent
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SolutionComponent>("solution_solutioncomponent", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("solution_solutioncomponent", null, value);
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-		#region Methods
+        #region Options
+        public static partial class Options
+        {
+            public struct EnabledForSourceControlIntegration
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsApiManaged
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsVisible
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SolutionType
+            {
+                public const int None = 0;
+                public const int Snapshot = 1;
+                public const int Internal = 2;
+            }
+            public struct SourceControlSyncStatus
+            {
+                public const int NotStarted = 0;
+                public const int InitialSyncInProgress = 1;
+                public const int ErrorsInInitialSync = 2;
+                public const int PendingChangesToBeCommitted = 3;
+                public const int Committed = 4;
+            }
+        }
+        #endregion
+
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string SolutionId = "solutionid";
+            public const string ConfigurationPageId = "configurationpageid";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string Description = "description";
+            public const string EnabledForSourceControlIntegration = "enabledforsourcecontrolintegration";
+            public const string FriendlyName = "friendlyname";
+            public const string InstalledOn = "installedon";
+            public const string IsApiManaged = "isapimanaged";
+            public const string IsManaged = "ismanaged";
+            public const string IsVisible = "isvisible";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string OrganizationId = "organizationid";
+            public const string ParentSolutionId = "parentsolutionid";
+            public const string PinpointAssetId = "pinpointassetid";
+            public const string PinpointPublisherId = "pinpointpublisherid";
+            public const string PinpointSolutionDefaultLocale = "pinpointsolutiondefaultlocale";
+            public const string PinpointSolutionId = "pinpointsolutionid";
+            public const string PublisherId = "publisherid";
+            public const string SolutionPackageVersion = "solutionpackageversion";
+            public const string SolutionType = "solutiontype";
+            public const string SourceControlSyncStatus = "sourcecontrolsyncstatus";
+            public const string TemplateSuffix = "templatesuffix";
+            public const string Thumbprint = "thumbprint";
+            public const string UniqueName = "uniquename";
+            public const string UpdatedOn = "updatedon";
+            public const string UpgradeInfo = "upgradeinfo";
+            public const string Version = "version";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
+
+        #region Relations
+        public static partial class Relations
+        {
+            public static class OneToMany
+            {
+                public const string FileAttachmentSolution = "FileAttachment_Solution";
+                public const string FKCanvasAppSolution = "FK_CanvasApp_Solution";
+                public const string SolutionBaseDependencynode = "solution_base_dependencynode";
+                public const string SolutionFieldpermission = "solution_fieldpermission";
+                public const string SolutionFieldsecurityprofile = "solution_fieldsecurityprofile";
+                public const string SolutionParentSolution = "solution_parent_solution";
+                public const string SolutionPrivilege = "solution_privilege";
+                public const string SolutionRole = "solution_role";
+                public const string SolutionRoleprivileges = "solution_roleprivileges";
+                public const string SolutionSolutioncomponent = "solution_solutioncomponent";
+                public const string SolutionSyncErrors = "Solution_SyncErrors";
+                public const string SolutionTopDependencynode = "solution_top_dependencynode";
+                public const string UserSettingsPreferredSolution = "user_settings_preferred_solution";
+                public const string UserentityinstancedataSolution = "userentityinstancedata_solution";
+            }
+
+            public static partial class ManyToOne
+            {
+                public const string FileattachmentSolutionFileid = "fileattachment_solution_fileid";
+                public const string LkSolutionCreatedby = "lk_solution_createdby";
+                public const string LkSolutionModifiedby = "lk_solution_modifiedby";
+                public const string LkSolutionbaseCreatedonbehalfby = "lk_solutionbase_createdonbehalfby";
+                public const string LkSolutionbaseModifiedonbehalfby = "lk_solutionbase_modifiedonbehalfby";
+                public const string OrganizationSolution = "organization_solution";
+                public const string PublisherSolution = "publisher_solution";
+                public const string SolutionConfigurationWebresource = "solution_configuration_webresource";
+                public const string SolutionParentSolution = "solution_parent_solution";
+            }
+
+            public static partial class ManyToMany
+            {
+                public const string PackageSolution = "package_solution";
+            }
+        }
+        #endregion
+
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static Solution Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static Solution Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -761,30 +800,30 @@ namespace dgt.power.dataverse
 
         public Solution GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  Solution(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new Solution(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<Solution> SolutionSet
-		{
-			get
-			{
-				return CreateQuery<Solution>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<Solution> SolutionSet
+        {
+            get
+            {
+                return CreateQuery<Solution>();
+            }
+        }
+    }
+    #endregion
 }

@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Organization-owned entity customizations including form layout and dashboards.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("systemform")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("systemform")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class SystemForm : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SystemForm : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public SystemForm() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public SystemForm() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public SystemForm(bool trackChanges = false) : base(EntityLogicalName)
+        public SystemForm(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemForm(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public SystemForm(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemForm(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public SystemForm(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemForm(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public SystemForm(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,729 +61,720 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("formid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("formid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				FormId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                FormId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the record type form.
 		/// </summary>
-		[AttributeLogicalName("formid")]
+        [AttributeLogicalName("formid")]
         public Guid? FormId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("formid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FormId));
+                OnPropertyChanging();
                 SetAttributeValue("formid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(FormId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the parent form.
 		/// </summary>
-		[AttributeLogicalName("ancestorformid")]
+        [AttributeLogicalName("ancestorformid")]
         public EntityReference? AncestorFormId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("ancestorformid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AncestorFormId));
+                OnPropertyChanging();
                 SetAttributeValue("ancestorformid", value);
-                OnPropertyChanged(nameof(AncestorFormId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component can be deleted.
 		/// </summary>
-		[AttributeLogicalName("canbedeleted")]
+        [AttributeLogicalName("canbedeleted")]
         public BooleanManagedProperty? CanBeDeleted
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("canbedeleted");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CanBeDeleted));
+                OnPropertyChanging();
                 SetAttributeValue("canbedeleted", value);
-                OnPropertyChanged(nameof(CanBeDeleted));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Description of the form or dashboard.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the state of the form.
 		/// </summary>
-		[AttributeLogicalName("formactivationstate")]
+        [AttributeLogicalName("formactivationstate")]
         public OptionSetValue? FormActivationState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("formactivationstate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FormActivationState));
+                OnPropertyChanging();
                 SetAttributeValue("formactivationstate", value);
-                OnPropertyChanged(nameof(FormActivationState));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the form used when synchronizing customizations for the Microsoft Dynamics 365 client for Outlook.
 		/// </summary>
-		[AttributeLogicalName("formidunique")]
+        [AttributeLogicalName("formidunique")]
         public Guid? FormIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("formidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Json representation of the form layout.
 		/// </summary>
-		[AttributeLogicalName("formjson")]
+        [AttributeLogicalName("formjson")]
         public string? FormJson
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("formjson");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FormJson));
+                OnPropertyChanging();
                 SetAttributeValue("formjson", value);
-                OnPropertyChanged(nameof(FormJson));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies whether this form is in the updated UI layout in Microsoft Dynamics CRM 2015 or Microsoft Dynamics CRM Online 2015 Update.
 		/// </summary>
-		[AttributeLogicalName("formpresentation")]
+        [AttributeLogicalName("formpresentation")]
         public OptionSetValue? FormPresentation
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("formpresentation");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FormPresentation));
+                OnPropertyChanging();
                 SetAttributeValue("formpresentation", value);
-                OnPropertyChanged(nameof(FormPresentation));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML representation of the form layout.
 		/// </summary>
-		[AttributeLogicalName("formxml")]
+        [AttributeLogicalName("formxml")]
         public string? FormXml
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("formxml");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FormXml));
+                OnPropertyChanging();
                 SetAttributeValue("formxml", value);
-                OnPropertyChanged(nameof(FormXml));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// formXml diff as in a managed solution. for internal use only
 		/// </summary>
-		[AttributeLogicalName("formxmlmanaged")]
+        [AttributeLogicalName("formxmlmanaged")]
         public string? FormXmlManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("formxmlmanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version in which the form is introduced.
 		/// </summary>
-		[AttributeLogicalName("introducedversion")]
+        [AttributeLogicalName("introducedversion")]
         public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntroducedVersion));
+                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged(nameof(IntroducedVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies whether this form is merged with the updated UI layout in Microsoft Dynamics CRM 2015 or Microsoft Dynamics CRM Online 2015 Update.
 		/// </summary>
-		[AttributeLogicalName("isairmerged")]
+        [AttributeLogicalName("isairmerged")]
         public bool? IsAIRMerged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isairmerged");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAIRMerged));
+                OnPropertyChanging();
                 SetAttributeValue("isairmerged", value);
-                OnPropertyChanged(nameof(IsAIRMerged));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component can be customized.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether the form or the dashboard is the system default.
 		/// </summary>
-		[AttributeLogicalName("isdefault")]
+        [AttributeLogicalName("isdefault")]
         public bool? IsDefault
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdefault");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDefault));
+                OnPropertyChanging();
                 SetAttributeValue("isdefault", value);
-                OnPropertyChanged(nameof(IsDefault));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether the dashboard is enabled for desktop.
 		/// </summary>
-		[AttributeLogicalName("isdesktopenabled")]
+        [AttributeLogicalName("isdesktopenabled")]
         public bool? IsDesktopEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdesktopenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDesktopEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdesktopenabled", value);
-                OnPropertyChanged(nameof(IsDesktopEnabled));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("ismanaged")]
+        
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether the dashboard is enabled for tablet.
 		/// </summary>
-		[AttributeLogicalName("istabletenabled")]
+        [AttributeLogicalName("istabletenabled")]
         public bool? IsTabletEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("istabletenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsTabletEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("istabletenabled", value);
-                OnPropertyChanged(nameof(IsTabletEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the form.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Code that represents the record type.
 		/// </summary>
-		[AttributeLogicalName("objecttypecode")]
+        [AttributeLogicalName("objecttypecode")]
         public string? ObjectTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("objecttypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ObjectTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("objecttypecode", value);
-                OnPropertyChanged(nameof(ObjectTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		
-		[AttributeLogicalName("publishedon")]
+        
+        [AttributeLogicalName("publishedon")]
         public DateTime? PublishedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("publishedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type of the form, for example, Dashboard or Preview.
 		/// </summary>
-		[AttributeLogicalName("type")]
+        [AttributeLogicalName("type")]
         public OptionSetValue? Type
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("type");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Type));
+                OnPropertyChanging();
                 SetAttributeValue("type", value);
-                OnPropertyChanged(nameof(Type));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique Name
 		/// </summary>
-		[AttributeLogicalName("uniquename")]
+        [AttributeLogicalName("uniquename")]
         public string? UniqueName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("uniquename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueName));
+                OnPropertyChanging();
                 SetAttributeValue("uniquename", value);
-                OnPropertyChanged(nameof(UniqueName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("version")]
+        [AttributeLogicalName("version")]
         public int? Version
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("version");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Version));
+                OnPropertyChanging();
                 SetAttributeValue("version", value);
-                OnPropertyChanged(nameof(Version));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Represents a version of customizations to be synchronized with the Microsoft Dynamics 365 client for Outlook.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
-
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N form_ancestor_form
-		/// </summary>	
-		[RelationshipSchemaName("form_ancestor_form")]
-		public IEnumerable<SystemForm> FormAncestorForm
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SystemForm>("form_ancestor_form", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("FormAncestorForm");
-				this.SetRelatedEntities<SystemForm>("form_ancestor_form", null, value);
-				this.OnPropertyChanged("FormAncestorForm");
-			}
-		}
-
-		/// <summary>
-		/// 1:N SystemForm_AsyncOperations
-		/// </summary>	
-		[RelationshipSchemaName("SystemForm_AsyncOperations")]
-		public IEnumerable<AsyncOperation> SystemFormAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("SystemForm_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SystemFormAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("SystemForm_AsyncOperations", null, value);
-				this.OnPropertyChanged("SystemFormAsyncOperations");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-			    public struct FormActivationState
-                {
-					public const int Inactive = 0;
-					public const int Active = 1;
-                }
-			    public struct FormPresentation
-                {
-					public const int ClassicForm = 0;
-					public const int AirForm = 1;
-					public const int ConvertedICForm = 2;
-                }
-                public struct IsAIRMerged
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDefault
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDesktopEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct IsTabletEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct Type
-                {
-					public const int Dashboard = 0;
-					public const int AppointmentBook = 1;
-					public const int Main = 2;
-					public const int MiniCampaignBO = 3;
-					public const int Preview = 4;
-					public const int MobileExpress = 5;
-					public const int QuickViewForm = 6;
-					public const int QuickCreate = 7;
-					public const int Dialog = 8;
-					public const int TaskFlowForm = 9;
-					public const int InteractionCentricDashboard = 10;
-					public const int Card = 11;
-					public const int MainInteractiveExperience = 12;
-					public const int ContextualDashboard = 13;
-					public const int Other = 100;
-					public const int MainBackup = 101;
-					public const int AppointmentBookBackup = 102;
-					public const int PowerBIDashboard = 103;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string FormId = "formid";
-				public const string AncestorFormId = "ancestorformid";
-				public const string CanBeDeleted = "canbedeleted";
-				public const string ComponentState = "componentstate";
-				public const string Description = "description";
-				public const string FormActivationState = "formactivationstate";
-				public const string FormIdUnique = "formidunique";
-				public const string FormJson = "formjson";
-				public const string FormPresentation = "formpresentation";
-				public const string FormXml = "formxml";
-				public const string FormXmlManaged = "formxmlmanaged";
-				public const string IntroducedVersion = "introducedversion";
-				public const string IsAIRMerged = "isairmerged";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsDefault = "isdefault";
-				public const string IsDesktopEnabled = "isdesktopenabled";
-				public const string IsManaged = "ismanaged";
-				public const string IsTabletEnabled = "istabletenabled";
-				public const string Name = "name";
-				public const string ObjectTypeCode = "objecttypecode";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string PublishedOn = "publishedon";
-				public const string SolutionId = "solutionid";
-				public const string Type = "type";
-				public const string UniqueName = "uniquename";
-				public const string Version = "version";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        /// <summary>
+        /// 1:N form_ancestor_form
+        /// </summary>
+        [RelationshipSchemaName("form_ancestor_form")]
+        public IEnumerable<SystemForm> FormAncestorForm
         {
-            public static class OneToMany
+            [DebuggerNonUserCode]
+            get
             {
-				public const string FormAncestorForm = "form_ancestor_form";
-				public const string ProcesstriggerSystemform = "processtrigger_systemform";
-				public const string SocialinsightsconfigurationSystemform = "socialinsightsconfiguration_systemform";
-				public const string SystemFormAsyncOperations = "SystemForm_AsyncOperations";
-				public const string SystemFormBulkDeleteFailures = "SystemForm_BulkDeleteFailures";
+                return GetRelatedEntities<SystemForm>("form_ancestor_form", null);
             }
-
-            public static class ManyToOne
+            [DebuggerNonUserCode]
+            set
             {
-				public const string FormAncestorForm = "form_ancestor_form";
-				public const string OrganizationSystemforms = "organization_systemforms";
-            }
-
-            public static class ManyToMany
-            {
+                OnPropertyChanging();
+                SetRelatedEntities("form_ancestor_form", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N SystemForm_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("SystemForm_AsyncOperations")]
+        public IEnumerable<AsyncOperation> SystemFormAsyncOperations
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<AsyncOperation>("SystemForm_AsyncOperations", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("SystemForm_AsyncOperations", null, value);
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-		#region Methods
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct FormActivationState
+            {
+                public const int Inactive = 0;
+                public const int Active = 1;
+            }
+            public struct FormPresentation
+            {
+                public const int ClassicForm = 0;
+                public const int AirForm = 1;
+                public const int ConvertedICForm = 2;
+            }
+            public struct IsAIRMerged
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDefault
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsTabletEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct Type
+            {
+                public const int Dashboard = 0;
+                public const int AppointmentBook = 1;
+                public const int Main = 2;
+                public const int MiniCampaignBO = 3;
+                public const int Preview = 4;
+                public const int MobileExpress = 5;
+                public const int QuickViewForm = 6;
+                public const int QuickCreate = 7;
+                public const int Dialog = 8;
+                public const int TaskFlowForm = 9;
+                public const int InteractionCentricDashboard = 10;
+                public const int Card = 11;
+                public const int MainInteractiveExperience = 12;
+                public const int ContextualDashboard = 13;
+                public const int Other = 100;
+                public const int MainBackup = 101;
+                public const int AppointmentBookBackup = 102;
+                public const int PowerBIDashboard = 103;
+            }
+        }
+        #endregion
+
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string FormId = "formid";
+            public const string AncestorFormId = "ancestorformid";
+            public const string CanBeDeleted = "canbedeleted";
+            public const string ComponentState = "componentstate";
+            public const string Description = "description";
+            public const string FormActivationState = "formactivationstate";
+            public const string FormIdUnique = "formidunique";
+            public const string FormJson = "formjson";
+            public const string FormPresentation = "formpresentation";
+            public const string FormXml = "formxml";
+            public const string FormXmlManaged = "formxmlmanaged";
+            public const string IntroducedVersion = "introducedversion";
+            public const string IsAIRMerged = "isairmerged";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsDefault = "isdefault";
+            public const string IsDesktopEnabled = "isdesktopenabled";
+            public const string IsManaged = "ismanaged";
+            public const string IsTabletEnabled = "istabletenabled";
+            public const string Name = "name";
+            public const string ObjectTypeCode = "objecttypecode";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string PublishedOn = "publishedon";
+            public const string SolutionId = "solutionid";
+            public const string Type = "type";
+            public const string UniqueName = "uniquename";
+            public const string Version = "version";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
+
+        #region Relations
+        public static partial class Relations
+        {
+            public static class OneToMany
+            {
+                public const string FormAncestorForm = "form_ancestor_form";
+                public const string ProcesstriggerSystemform = "processtrigger_systemform";
+                public const string SocialinsightsconfigurationSystemform = "socialinsightsconfiguration_systemform";
+                public const string SystemFormAsyncOperations = "SystemForm_AsyncOperations";
+                public const string SystemFormBulkDeleteFailures = "SystemForm_BulkDeleteFailures";
+            }
+
+            public static partial class ManyToOne
+            {
+                public const string FormAncestorForm = "form_ancestor_form";
+                public const string OrganizationSystemforms = "organization_systemforms";
+            }
+
+            public static partial class ManyToMany
+            {
+            }
+        }
+        #endregion
+
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static SystemForm Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static SystemForm Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -801,30 +784,30 @@ namespace dgt.power.dataverse
 
         public SystemForm GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  SystemForm(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new SystemForm(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<SystemForm> SystemFormSet
-		{
-			get
-			{
-				return CreateQuery<SystemForm>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<SystemForm> SystemFormSet
+        {
+            get
+            {
+                return CreateQuery<SystemForm>();
+            }
+        }
+    }
+    #endregion
 }

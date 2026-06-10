@@ -14,36 +14,36 @@ namespace dgt.power.dataverse
 {
     /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
     /// <summary>
-	/// Entity that defines a custom API
+	/// Contains data to represent an Azure Active Directory Application used to connect to secure web-hosted resources.
 	/// </summary>
     [DataContract]
-    [EntityLogicalName("customapi")]
+    [EntityLogicalName("managedidentity")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-    public partial class CustomAPI : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class ManagedIdentity : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
         [DebuggerNonUserCode]
-        public CustomAPI() : this(false)
+        public ManagedIdentity() : this(false)
         {
         }
         [DebuggerNonUserCode]
-        public CustomAPI(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public CustomAPI(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
+        public ManagedIdentity(bool trackChanges = false) : base(EntityLogicalName)
         {
             _trackChanges = trackChanges;
         }
         [DebuggerNonUserCode]
-        public CustomAPI(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
+        public ManagedIdentity(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
             _trackChanges = trackChanges;
         }
         [DebuggerNonUserCode]
-        public CustomAPI(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public ManagedIdentity(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
+        {
+            _trackChanges = trackChanges;
+        }
+        [DebuggerNonUserCode]
+        public ManagedIdentity(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
             _trackChanges = trackChanges;
         }
@@ -55,9 +55,9 @@ namespace dgt.power.dataverse
         #endregion
 
         #region consts
-        public const string EntityLogicalName = "customapi";
+        public const string EntityLogicalName = "managedidentity";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10038;
+        public const int EntityTypeCode = 10034;
         #endregion
 
         #region Events
@@ -82,7 +82,7 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Attributes
-        [AttributeLogicalName("customapiid")]
+        [AttributeLogicalName("managedidentityid")]
         public new Guid Id
         {
             [DebuggerNonUserCode]
@@ -93,87 +93,62 @@ namespace dgt.power.dataverse
             [DebuggerNonUserCode]
             set
             {
-                CustomAPIId = value;
+                ManagedIdentityId = value;
             }
         }
 
         /// <summary>
-		/// Unique identifier for custom API instances
+		/// Unique identifier for entity instances
 		/// </summary>
-        [AttributeLogicalName("customapiid")]
-        public Guid? CustomAPIId
+        [AttributeLogicalName("managedidentityid")]
+        public Guid? ManagedIdentityId
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetAttributeValue<Guid?>("customapiid");
+                return GetAttributeValue<Guid?>("managedidentityid");
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("customapiid", value);
+                SetAttributeValue("managedidentityid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-		/// The type of custom processing step allowed
+		/// Application Id
 		/// </summary>
-        [AttributeLogicalName("allowedcustomprocessingsteptype")]
-        public OptionSetValue? AllowedCustomProcessingStepType
+        [AttributeLogicalName("applicationid")]
+        public Guid? ApplicationId
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetAttributeValue<OptionSetValue?>("allowedcustomprocessingsteptype");
+                return GetAttributeValue<Guid?>("applicationid");
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("allowedcustomprocessingsteptype", value);
+                SetAttributeValue("applicationid", value);
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-		/// The binding type of the custom API
+		/// Contains a secret for the Azure Active Directory application. Once set, it cannot be read except by Dataverse.
 		/// </summary>
-        [AttributeLogicalName("bindingtype")]
-        public OptionSetValue? BindingType
+        [AttributeLogicalName("clientsecret")]
+        public string? ClientSecret
         {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<OptionSetValue?>("bindingtype");
-            }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("bindingtype", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-		/// The logical name of the entity bound to the custom API
-		/// </summary>
-        [AttributeLogicalName("boundentitylogicalname")]
-        public string? BoundEntityLogicalName
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<string?>("boundentitylogicalname");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("boundentitylogicalname", value);
+                SetAttributeValue("clientsecret", value);
                 OnPropertyChanged();
             }
         }
@@ -244,81 +219,41 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Localized description for custom API instances
+		/// Where the Managed Identity will get the credentials to use.
 		/// </summary>
-        [AttributeLogicalName("description")]
-        public string? Description
+        [AttributeLogicalName("credentialsource")]
+        public OptionSetValue? CredentialSource
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetAttributeValue<string?>("description");
+                return GetAttributeValue<OptionSetValue?>("credentialsource");
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("description", value);
+                SetAttributeValue("credentialsource", value);
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-		/// Localized display name for custom API instances
+		/// Determines Identity type for Managed Identity
 		/// </summary>
-        [AttributeLogicalName("displayname")]
-        public string? DisplayName
+        [AttributeLogicalName("identitytype")]
+        public OptionSetValue? IdentityType
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetAttributeValue<string?>("displayname");
+                return GetAttributeValue<OptionSetValue?>("identitytype");
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("displayname", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-		/// Name of the privilege that allows execution of the custom API
-		/// </summary>
-        [AttributeLogicalName("executeprivilegename")]
-        public string? ExecutePrivilegeName
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<string?>("executeprivilegename");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("executeprivilegename", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-		/// Unique identifier for fxexpression associated with Custom API.
-		/// </summary>
-        [AttributeLogicalName("fxexpressionid")]
-        public EntityReference? FxExpressionId
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<EntityReference?>("fxexpressionid");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("fxexpressionid", value);
+                SetAttributeValue("identitytype", value);
                 OnPropertyChanged();
             }
         }
@@ -364,26 +299,6 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Indicates if the custom API is a function (GET is supported) or not (POST is supported)
-		/// </summary>
-        [AttributeLogicalName("isfunction")]
-        public bool? IsFunction
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<bool?>("isfunction");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("isfunction", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
 		/// Indicates whether the solution component is part of a managed solution.
 		/// </summary>
         [AttributeLogicalName("ismanaged")]
@@ -397,21 +312,21 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Indicates if the custom API is private (hidden from metadata and documentation)
+		/// Unique identifier for keyvaultreference which contains the secret.
 		/// </summary>
-        [AttributeLogicalName("isprivate")]
-        public bool? IsPrivate
+        [AttributeLogicalName("keyvaultreferenceid")]
+        public EntityReference? KeyVaultReferenceId
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetAttributeValue<bool?>("isprivate");
+                return GetAttributeValue<EntityReference?>("keyvaultreferenceid");
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetAttributeValue("isprivate", value);
+                SetAttributeValue("keyvaultreferenceid", value);
                 OnPropertyChanged();
             }
         }
@@ -456,7 +371,7 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// The primary name of the custom API
+		/// The name assigned to this Managed Identity.
 		/// </summary>
         [AttributeLogicalName("name")]
         public string? Name
@@ -472,6 +387,19 @@ namespace dgt.power.dataverse
                 OnPropertyChanging();
                 SetAttributeValue("name", value);
                 OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// ObjectId
+		/// </summary>
+        [AttributeLogicalName("objectid")]
+        public Guid? ObjectId
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<Guid?>("objectid");
             }
         }
 
@@ -567,62 +495,6 @@ namespace dgt.power.dataverse
             }
         }
 
-        
-        [AttributeLogicalName("plugintypeid")]
-        public EntityReference? PluginTypeId
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<EntityReference?>("plugintypeid");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("plugintypeid", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-		/// Unique identifier for powerfxrule associated with Custom API.
-		/// </summary>
-        [AttributeLogicalName("powerfxruleid")]
-        public EntityReference? PowerfxRuleId
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<EntityReference?>("powerfxruleid");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("powerfxruleid", value);
-                OnPropertyChanged();
-            }
-        }
-
-        
-        [AttributeLogicalName("sdkmessageid")]
-        public EntityReference? SdkMessageId
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<EntityReference?>("sdkmessageid");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("sdkmessageid", value);
-                OnPropertyChanged();
-            }
-        }
-
         /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
@@ -637,7 +509,7 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Status of the Custom API
+		/// Status of the Managed Identity
 		/// </summary>
         [AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
@@ -657,7 +529,7 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Reason for the status of the Custom API
+		/// Reason for the status of the Managed Identity
 		/// </summary>
         [AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
@@ -672,6 +544,46 @@ namespace dgt.power.dataverse
             {
                 OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Where the Scope of the SubjectName for Managed Identity will be determined.
+		/// </summary>
+        [AttributeLogicalName("subjectscope")]
+        public OptionSetValue? SubjectScope
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("subjectscope");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("subjectscope", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// The Id of the Azure Active Directory Tenant that the Application is part of.
+		/// </summary>
+        [AttributeLogicalName("tenantid")]
+        public Guid? TenantId
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<Guid?>("tenantid");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("tenantid", value);
                 OnPropertyChanged();
             }
         }
@@ -697,26 +609,6 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
-		/// Unique name for the custom API
-		/// </summary>
-        [AttributeLogicalName("uniquename")]
-        public string? UniqueName
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<string?>("uniquename");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("uniquename", value);
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
         [AttributeLogicalName("utcconversiontimezonecode")]
@@ -737,6 +629,26 @@ namespace dgt.power.dataverse
         }
 
         /// <summary>
+		/// Version indicating the format of the FIC subject.
+		/// </summary>
+        [AttributeLogicalName("version")]
+        public int? Version
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("version");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("version", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Version Number
 		/// </summary>
         [AttributeLogicalName("versionnumber")]
@@ -748,86 +660,66 @@ namespace dgt.power.dataverse
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
-
-        /// <summary>
-		/// Indicates if the custom API is enabled as a workflow action
-		/// </summary>
-        [AttributeLogicalName("workflowsdkstepenabled")]
-        public bool? WorkflowSdkStepEnabled
-        {
-            [DebuggerNonUserCode]
-            get
-            {
-                return GetAttributeValue<bool?>("workflowsdkstepenabled");
-            }
-            [DebuggerNonUserCode]
-            set
-            {
-                OnPropertyChanging();
-                SetAttributeValue("workflowsdkstepenabled", value);
-                OnPropertyChanged();
-            }
-        }
         #endregion
 
         #region NavigationProperties
 
         /// <summary>
-        /// 1:N customapi_AsyncOperations
+        /// 1:N managedidentity_AsyncOperations
         /// </summary>
-        [RelationshipSchemaName("customapi_AsyncOperations")]
-        public IEnumerable<AsyncOperation> CustomapiAsyncOperations
+        [RelationshipSchemaName("managedidentity_AsyncOperations")]
+        public IEnumerable<AsyncOperation> ManagedidentityAsyncOperations
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetRelatedEntities<AsyncOperation>("customapi_AsyncOperations", null);
+                return GetRelatedEntities<AsyncOperation>("managedidentity_AsyncOperations", null);
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetRelatedEntities("customapi_AsyncOperations", null, value);
+                SetRelatedEntities("managedidentity_AsyncOperations", null, value);
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-        /// 1:N customapi_customapirequestparameter
+        /// 1:N managedidentity_PluginAssembly
         /// </summary>
-        [RelationshipSchemaName("customapi_customapirequestparameter")]
-        public IEnumerable<CustomAPIRequestParameter> CustomapiCustomapirequestparameter
+        [RelationshipSchemaName("managedidentity_PluginAssembly")]
+        public IEnumerable<PluginAssembly> ManagedidentityPluginAssembly
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetRelatedEntities<CustomAPIRequestParameter>("customapi_customapirequestparameter", null);
+                return GetRelatedEntities<PluginAssembly>("managedidentity_PluginAssembly", null);
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetRelatedEntities("customapi_customapirequestparameter", null, value);
+                SetRelatedEntities("managedidentity_PluginAssembly", null, value);
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
-        /// 1:N customapi_customapiresponseproperty
+        /// 1:N managedidentity_pluginpackage
         /// </summary>
-        [RelationshipSchemaName("customapi_customapiresponseproperty")]
-        public IEnumerable<CustomAPIResponseProperty> CustomapiCustomapiresponseproperty
+        [RelationshipSchemaName("managedidentity_pluginpackage")]
+        public IEnumerable<PluginPackage> ManagedidentityPluginpackage
         {
             [DebuggerNonUserCode]
             get
             {
-                return GetRelatedEntities<CustomAPIResponseProperty>("customapi_customapiresponseproperty", null);
+                return GetRelatedEntities<PluginPackage>("managedidentity_pluginpackage", null);
             }
             [DebuggerNonUserCode]
             set
             {
                 OnPropertyChanging();
-                SetRelatedEntities("customapi_customapiresponseproperty", null, value);
+                SetRelatedEntities("managedidentity_pluginpackage", null, value);
                 OnPropertyChanged();
             }
         }
@@ -836,18 +728,6 @@ namespace dgt.power.dataverse
         #region Options
         public static partial class Options
         {
-            public struct AllowedCustomProcessingStepType
-            {
-                public const int None = 0;
-                public const int AsyncOnly = 1;
-                public const int SyncAndAsync = 2;
-            }
-            public struct BindingType
-            {
-                public const int Global = 0;
-                public const int Entity = 1;
-                public const int EntityCollection = 2;
-            }
             public struct ComponentState
             {
                 public const int Published = 0;
@@ -855,20 +735,24 @@ namespace dgt.power.dataverse
                 public const int Deleted = 2;
                 public const int DeletedUnpublished = 3;
             }
-            public struct IsFunction
+            public struct CredentialSource
             {
-                public const bool No = false;
-                public const bool Yes = true;
+                public const int ClientSecret = 0;
+                public const int KeyVault = 1;
+                public const int IsManaged = 2;
+                public const int MicrosoftFirstPartyCertificate = 3;
+            }
+            public struct IdentityType
+            {
+                public const int AppRegisteration = 0;
+                public const int AgentId = 1;
+                public const int AgentIdentityBlueprint = 2;
+                public const int AgentUser = 3;
             }
             public struct IsManaged
             {
                 public const bool Unmanaged = false;
                 public const bool Managed = true;
-            }
-            public struct IsPrivate
-            {
-                public const bool No = false;
-                public const bool Yes = true;
             }
             public struct Statecode
             {
@@ -880,10 +764,11 @@ namespace dgt.power.dataverse
                 public const int Active = 1;
                 public const int Inactive = 2;
             }
-            public struct WorkflowSdkStepEnabled
+            public struct SubjectScope
             {
-                public const bool No = false;
-                public const bool Yes = true;
+                public const int GlobalScope = 0;
+                public const int EnviornmentScope = 1;
+                public const int DevOnlyScope = 2;
             }
         }
         #endregion
@@ -891,52 +776,40 @@ namespace dgt.power.dataverse
         #region LogicalNames
         public static partial class LogicalNames
         {
-            public const string CustomAPIId = "customapiid";
-            public const string AllowedCustomProcessingStepType = "allowedcustomprocessingsteptype";
-            public const string BindingType = "bindingtype";
-            public const string BoundEntityLogicalName = "boundentitylogicalname";
+            public const string ManagedIdentityId = "managedidentityid";
+            public const string ApplicationId = "applicationid";
+            public const string ClientSecret = "clientsecret";
             public const string ComponentIdUnique = "componentidunique";
             public const string ComponentState = "componentstate";
             public const string CreatedBy = "createdby";
             public const string CreatedOn = "createdon";
             public const string CreatedOnBehalfBy = "createdonbehalfby";
-            public const string Description = "description";
-            public const string DisplayName = "displayname";
-            public const string ExecutePrivilegeName = "executeprivilegename";
-            public const string FxExpressionId = "fxexpressionid";
+            public const string CredentialSource = "credentialsource";
+            public const string IdentityType = "identitytype";
             public const string ImportSequenceNumber = "importsequencenumber";
             public const string IsCustomizable = "iscustomizable";
-            public const string IsFunction = "isfunction";
             public const string IsManaged = "ismanaged";
-            public const string IsPrivate = "isprivate";
+            public const string KeyVaultReferenceId = "keyvaultreferenceid";
             public const string ModifiedBy = "modifiedby";
             public const string ModifiedOn = "modifiedon";
             public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
             public const string Name = "name";
+            public const string ObjectId = "objectid";
             public const string OverriddenCreatedOn = "overriddencreatedon";
             public const string OverwriteTime = "overwritetime";
             public const string OwnerId = "ownerid";
             public const string OwningBusinessUnit = "owningbusinessunit";
             public const string OwningTeam = "owningteam";
             public const string OwningUser = "owninguser";
-            public const string PluginTypeId = "plugintypeid";
-            public const string PowerfxRuleId = "powerfxruleid";
-            public const string SdkMessageId = "sdkmessageid";
             public const string SolutionId = "solutionid";
             public const string Statecode = "statecode";
             public const string Statuscode = "statuscode";
+            public const string SubjectScope = "subjectscope";
+            public const string TenantId = "tenantid";
             public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-            public const string UniqueName = "uniquename";
             public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string Version = "version";
             public const string VersionNumber = "versionnumber";
-            public const string WorkflowSdkStepEnabled = "workflowsdkstepenabled";
-        }
-        #endregion
-
-        #region AlternateKeys
-        public static partial class AlternateKeys
-        {
-            public const string CustomAPIExportKey = "custom api export key";
         }
         #endregion
 
@@ -945,41 +818,41 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
-                public const string AIPluginOperationCustomAPICustomAPI = "AIPluginOperation_CustomAPI_CustomAPI";
-                public const string CatalogassignmentCustomapi = "catalogassignment_customapi";
-                public const string CustomapiAsyncOperations = "customapi_AsyncOperations";
-                public const string CustomapiBulkDeleteFailures = "customapi_BulkDeleteFailures";
-                public const string CustomapiCustomapirequestparameter = "customapi_customapirequestparameter";
-                public const string CustomapiCustomapiresponseproperty = "customapi_customapiresponseproperty";
-                public const string CustomapiMailboxTrackingFolders = "customapi_MailboxTrackingFolders";
-                public const string CustomapiMsdynFunctionCustomapi = "customapi_msdyn_function_customapi";
-                public const string CustomapiPluginCustomAPI = "customapi_plugin_CustomAPI";
-                public const string CustomapiPrincipalObjectAttributeAccesses = "customapi_PrincipalObjectAttributeAccesses";
-                public const string CustomapiProcessSession = "customapi_ProcessSession";
-                public const string CustomapiServiceplanmapping = "customapi_serviceplanmapping";
-                public const string CustomapiSyncErrors = "customapi_SyncErrors";
-                public const string CustomapiUserEntityInstanceDatas = "customapi_UserEntityInstanceDatas";
-                public const string FabricaiskillCustomapiid = "fabricaiskill_customapiid";
-                public const string MCPToolCustomAPICustomAPI = "MCPTool_CustomAPI_CustomAPI";
-                public const string MsdynCustomapiMsdynPmbusinessruleautomationconfigCustomApiId = "msdyn_customapi_msdyn_pmbusinessruleautomationconfig_CustomApiId";
-                public const string MsdynFormmappingCustomapiid = "msdyn_formmapping_customapiid";
-                public const string MsdynKnowledgeassetconfigurationCustomapiid = "msdyn_knowledgeassetconfiguration_customapiid";
+                public const string ComponentIdCertificateCredentialManagedidentity = "ComponentId_CertificateCredential_Managedidentity";
+                public const string ManagedidentityAsyncOperations = "managedidentity_AsyncOperations";
+                public const string ManagedidentityBulkDeleteFailures = "managedidentity_BulkDeleteFailures";
+                public const string ManagedidentityDuplicateBaseRecord = "managedidentity_DuplicateBaseRecord";
+                public const string ManagedidentityDuplicateMatchingRecord = "managedidentity_DuplicateMatchingRecord";
+                public const string ManagedidentityEmailserverprofileAcsmanagedidentityid = "managedidentity_emailserverprofile_acsmanagedidentityid";
+                public const string ManagedidentityEmailserverprofileManagedidentityid = "managedidentity_emailserverprofile_managedidentityid";
+                public const string ManagedidentityEmailserverprofilePowerplatformmanagedidentityid = "managedidentity_emailserverprofile_powerplatformmanagedidentityid";
+                public const string ManagedidentityEmailserverprofilePurviewmanagedidentityid = "managedidentity_emailserverprofile_purviewmanagedidentityid";
+                public const string ManagedidentityGithubappconfigManagedIdentityId = "managedidentity_githubappconfig_ManagedIdentityId";
+                public const string ManagedidentityKeyVaultReference = "managedidentity_KeyVaultReference";
+                public const string ManagedidentityMailboxTrackingFolders = "managedidentity_MailboxTrackingFolders";
+                public const string ManagedIdentityMCPServerManagedIdentityId = "ManagedIdentity_MCPServer_ManagedIdentityId";
+                public const string ManagedidentityPluginAssembly = "managedidentity_PluginAssembly";
+                public const string ManagedidentityPluginpackage = "managedidentity_pluginpackage";
+                public const string ManagedidentityPrincipalObjectAttributeAccesses = "managedidentity_PrincipalObjectAttributeAccesses";
+                public const string ManagedidentityProcessSession = "managedidentity_ProcessSession";
+                public const string ManagedidentityServiceEndpoint = "managedidentity_ServiceEndpoint";
+                public const string ManagedIdentitySharePointManagedIdentityManagedIdentityId = "ManagedIdentity_SharePointManagedIdentity_ManagedIdentityId";
+                public const string ManagedidentitySyncErrors = "managedidentity_SyncErrors";
+                public const string ManagedidentityUserEntityInstanceDatas = "managedidentity_UserEntityInstanceDatas";
+                public const string PowerPagesManagedIdentityManagedIdentityManagedIdentity = "PowerPagesManagedIdentity_ManagedIdentity_ManagedIdentity";
             }
 
             public static partial class ManyToOne
             {
-                public const string BusinessUnitCustomapi = "business_unit_customapi";
-                public const string FxexpressionCustomapi = "fxexpression_customapi";
-                public const string LkCustomapiCreatedby = "lk_customapi_createdby";
-                public const string LkCustomapiCreatedonbehalfby = "lk_customapi_createdonbehalfby";
-                public const string LkCustomapiModifiedby = "lk_customapi_modifiedby";
-                public const string LkCustomapiModifiedonbehalfby = "lk_customapi_modifiedonbehalfby";
-                public const string OwnerCustomapi = "owner_customapi";
-                public const string PlugintypeCustomapi = "plugintype_customapi";
-                public const string PowerfxruleCustomapi = "powerfxrule_customapi";
-                public const string SdkmessageCustomapi = "sdkmessage_customapi";
-                public const string TeamCustomapi = "team_customapi";
-                public const string UserCustomapi = "user_customapi";
+                public const string BusinessUnitManagedidentity = "business_unit_managedidentity";
+                public const string KeyvaultreferenceManagedIdentity = "keyvaultreference_ManagedIdentity";
+                public const string LkManagedidentityCreatedby = "lk_managedidentity_createdby";
+                public const string LkManagedidentityCreatedonbehalfby = "lk_managedidentity_createdonbehalfby";
+                public const string LkManagedidentityModifiedby = "lk_managedidentity_modifiedby";
+                public const string LkManagedidentityModifiedonbehalfby = "lk_managedidentity_modifiedonbehalfby";
+                public const string OwnerManagedidentity = "owner_managedidentity";
+                public const string TeamManagedidentity = "team_managedidentity";
+                public const string UserManagedidentity = "user_managedidentity";
             }
 
             public static partial class ManyToMany
@@ -997,17 +870,17 @@ namespace dgt.power.dataverse
             return reference;
         }
 
-        public static CustomAPI Retrieve(IOrganizationService service, Guid id)
+        public static ManagedIdentity Retrieve(IOrganizationService service, Guid id)
         {
             return Retrieve(service, id, new ColumnSet(true));
         }
 
-        public static CustomAPI Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
+        public static ManagedIdentity Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
         {
-            return service.Retrieve("customapi", id, columnSet).ToEntity<CustomAPI>();
+            return service.Retrieve("managedidentity", id, columnSet).ToEntity<ManagedIdentity>();
         }
 
-        public CustomAPI GetChangedEntity()
+        public ManagedIdentity GetChangedEntity()
         {
             if (!_trackChanges)
             {
@@ -1018,7 +891,7 @@ namespace dgt.power.dataverse
             {
                 attr.Add(attrName, this[attrName]);
             }
-            return new CustomAPI(Id) { Attributes = attr };
+            return new ManagedIdentity(Id) { Attributes = attr };
         }
         #endregion
     }
@@ -1026,11 +899,11 @@ namespace dgt.power.dataverse
     #region Context
     public partial class DataContext
     {
-        public IQueryable<CustomAPI> CustomAPISet
+        public IQueryable<ManagedIdentity> ManagedIdentitySet
         {
             get
             {
-                return CreateQuery<CustomAPI>();
+                return CreateQuery<ManagedIdentity>();
             }
         }
     }

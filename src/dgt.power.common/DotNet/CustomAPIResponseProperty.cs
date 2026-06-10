@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,799 +12,753 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Entity that defines a response property for a custom API
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("customapiresponseproperty")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("customapiresponseproperty")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class CustomAPIResponseProperty : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class CustomAPIResponseProperty : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public CustomAPIResponseProperty() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public CustomAPIResponseProperty() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(bool trackChanges = false) : base(EntityLogicalName)
+        public CustomAPIResponseProperty(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public CustomAPIResponseProperty(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public CustomAPIResponseProperty(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CustomAPIResponseProperty(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public CustomAPIResponseProperty(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
         public const string EntityLogicalName = "customapiresponseproperty";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10023;
+        public const int EntityTypeCode = 10040;
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("customapiresponsepropertyid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("customapiresponsepropertyid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				CustomAPIResponsePropertyId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                CustomAPIResponsePropertyId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for custom API response property instances
 		/// </summary>
-		[AttributeLogicalName("customapiresponsepropertyid")]
+        [AttributeLogicalName("customapiresponsepropertyid")]
         public Guid? CustomAPIResponsePropertyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("customapiresponsepropertyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CustomAPIResponsePropertyId));
+                OnPropertyChanging();
                 SetAttributeValue("customapiresponsepropertyid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(CustomAPIResponsePropertyId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentidunique")]
+        [AttributeLogicalName("componentidunique")]
         public Guid? ComponentIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("componentidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the custom API that owns this custom API response property
 		/// </summary>
-		[AttributeLogicalName("customapiid")]
+        [AttributeLogicalName("customapiid")]
         public EntityReference? CustomAPIId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("customapiid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CustomAPIId));
+                OnPropertyChanging();
                 SetAttributeValue("customapiid", value);
-                OnPropertyChanged(nameof(CustomAPIId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Localized description for custom API response property instances
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Localized display name for custom API response property instances
 		/// </summary>
-		[AttributeLogicalName("displayname")]
+        [AttributeLogicalName("displayname")]
         public string? DisplayName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("displayname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DisplayName));
+                OnPropertyChanging();
                 SetAttributeValue("displayname", value);
-                OnPropertyChanged(nameof(DisplayName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Sequence number of the import that created this record.
 		/// </summary>
-		[AttributeLogicalName("importsequencenumber")]
+        [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ImportSequenceNumber));
+                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged(nameof(ImportSequenceNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the solution component is part of a managed solution.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The logical name of the entity bound to the custom API response property
 		/// </summary>
-		[AttributeLogicalName("logicalentityname")]
+        [AttributeLogicalName("logicalentityname")]
         public string? LogicalEntityName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("logicalentityname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LogicalEntityName));
+                OnPropertyChanging();
                 SetAttributeValue("logicalentityname", value);
-                OnPropertyChanged(nameof(LogicalEntityName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The primary name of the custom API response property
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time that the record was migrated.
 		/// </summary>
-		[AttributeLogicalName("overriddencreatedon")]
+        [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OverriddenCreatedOn));
+                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged(nameof(OverriddenCreatedOn));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Owner Id
 		/// </summary>
-		[AttributeLogicalName("ownerid")]
+        [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerId));
-                SetAttributeValue("ownerid", value);
-                OnPropertyChanged(nameof(OwnerId));
-            }
         }
 
-		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the business unit that owns the record
 		/// </summary>
-		[AttributeLogicalName("owningbusinessunit")]
+        [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the team that owns the record.
 		/// </summary>
-		[AttributeLogicalName("owningteam")]
+        [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the user that owns the record.
 		/// </summary>
-		[AttributeLogicalName("owninguser")]
+        [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Status of the Custom API Response Property
 		/// </summary>
-		[AttributeLogicalName("statecode")]
+        [AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Statecode));
+                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged(nameof(Statecode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Reason for the status of the Custom API Response Property
 		/// </summary>
-		[AttributeLogicalName("statuscode")]
+        [AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Statuscode));
+                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged(nameof(Statuscode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("timezoneruleversionnumber")]
+        [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The data type of the custom API response property
 		/// </summary>
-		[AttributeLogicalName("type")]
+        [AttributeLogicalName("type")]
         public OptionSetValue? Type
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("type");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Type));
+                OnPropertyChanging();
                 SetAttributeValue("type", value);
-                OnPropertyChanged(nameof(Type));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique name for the custom API response property
 		/// </summary>
-		[AttributeLogicalName("uniquename")]
+        [AttributeLogicalName("uniquename")]
         public string? UniqueName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("uniquename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueName));
+                OnPropertyChanging();
                 SetAttributeValue("uniquename", value);
-                OnPropertyChanged(nameof(UniqueName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
-		[AttributeLogicalName("utcconversiontimezonecode")]
+        [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version Number
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
+        /// <summary>
+        /// 1:N customapiresponseproperty_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("customapiresponseproperty_AsyncOperations")]
+        public IEnumerable<AsyncOperation> CustomapiresponsepropertyAsyncOperations
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<AsyncOperation>("customapiresponseproperty_AsyncOperations", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("customapiresponseproperty_AsyncOperations", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N customapiresponseproperty_AsyncOperations
-		/// </summary>	
-		[RelationshipSchemaName("customapiresponseproperty_AsyncOperations")]
-		public IEnumerable<AsyncOperation> CustomapiresponsepropertyAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("customapiresponseproperty_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("CustomapiresponsepropertyAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("customapiresponseproperty_AsyncOperations", null, value);
-				this.OnPropertyChanged("CustomapiresponsepropertyAsyncOperations");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct Statecode
+            {
+                public const int Active = 0;
+                public const int Inactive = 1;
+            }
+            public struct Statuscode
+            {
+                public const int Active = 1;
+                public const int Inactive = 2;
+            }
+            public struct Type
+            {
+                public const int Boolean = 0;
+                public const int DateTime = 1;
+                public const int Decimal = 2;
+                public const int Entity = 3;
+                public const int EntityCollection = 4;
+                public const int EntityReference = 5;
+                public const int Float = 6;
+                public const int Integer = 7;
+                public const int Money = 8;
+                public const int Picklist = 9;
+                public const int String = 10;
+                public const int StringArray = 11;
+                public const int Guid = 12;
+            }
+        }
+        #endregion
 
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string CustomAPIResponsePropertyId = "customapiresponsepropertyid";
+            public const string ComponentIdUnique = "componentidunique";
+            public const string ComponentState = "componentstate";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string CustomAPIId = "customapiid";
+            public const string Description = "description";
+            public const string DisplayName = "displayname";
+            public const string ImportSequenceNumber = "importsequencenumber";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsManaged = "ismanaged";
+            public const string LogicalEntityName = "logicalentityname";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OverriddenCreatedOn = "overriddencreatedon";
+            public const string OverwriteTime = "overwritetime";
+            public const string OwnerId = "ownerid";
+            public const string OwningBusinessUnit = "owningbusinessunit";
+            public const string OwningTeam = "owningteam";
+            public const string OwningUser = "owninguser";
+            public const string SolutionId = "solutionid";
+            public const string Statecode = "statecode";
+            public const string Statuscode = "statuscode";
+            public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
+            public const string Type = "type";
+            public const string UniqueName = "uniquename";
+            public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct Statecode
-                {
-					public const int Active = 0;
-					public const int Inactive = 1;
-                }
-                public struct Statuscode
-                {
-					public const int Active = 1;
-					public const int Inactive = 2;
-                }
-			    public struct Type
-                {
-					public const int Boolean = 0;
-					public const int DateTime = 1;
-					public const int Decimal = 2;
-					public const int Entity = 3;
-					public const int EntityCollection = 4;
-					public const int EntityReference = 5;
-					public const int Float = 6;
-					public const int Integer = 7;
-					public const int Money = 8;
-					public const int Picklist = 9;
-					public const int String = 10;
-					public const int StringArray = 11;
-					public const int Guid = 12;
-                }
-		}
-		#endregion
+        #region AlternateKeys
+        public static partial class AlternateKeys
+        {
+            public const string CustomAPIResponsePropertyExportKey = "custom api response property export key";
+        }
+        #endregion
 
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string CustomAPIResponsePropertyId = "customapiresponsepropertyid";
-				public const string ComponentIdUnique = "componentidunique";
-				public const string ComponentState = "componentstate";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CustomAPIId = "customapiid";
-				public const string Description = "description";
-				public const string DisplayName = "displayname";
-				public const string ImportSequenceNumber = "importsequencenumber";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsManaged = "ismanaged";
-				public const string LogicalEntityName = "logicalentityname";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OverriddenCreatedOn = "overriddencreatedon";
-				public const string OverwriteTime = "overwritetime";
-				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
-				public const string OwningBusinessUnit = "owningbusinessunit";
-				public const string OwningTeam = "owningteam";
-				public const string OwningUser = "owninguser";
-				public const string SolutionId = "solutionid";
-				public const string Statecode = "statecode";
-				public const string Statuscode = "statuscode";
-				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string Type = "type";
-				public const string UniqueName = "uniquename";
-				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region AlternateKeys
-		public static class AlternateKeys
-		{
-				public const string CustomAPIResponsePropertyExportKey = "customapiresponsepropertyexportkey";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string CustomapiresponsepropertyAsyncOperations = "customapiresponseproperty_AsyncOperations";
-				public const string CustomapiresponsepropertyBulkDeleteFailures = "customapiresponseproperty_BulkDeleteFailures";
-				public const string CustomapiresponsepropertyMailboxTrackingFolders = "customapiresponseproperty_MailboxTrackingFolders";
-				public const string CustomapiresponsepropertyPrincipalObjectAttributeAccesses = "customapiresponseproperty_PrincipalObjectAttributeAccesses";
-				public const string CustomapiresponsepropertyProcessSession = "customapiresponseproperty_ProcessSession";
-				public const string CustomapiresponsepropertySyncErrors = "customapiresponseproperty_SyncErrors";
-				public const string CustomapiresponsepropertyUserEntityInstanceDatas = "customapiresponseproperty_UserEntityInstanceDatas";
-				public const string MsdynCustomapiresponsepropertyMsdynCustomapirulesetconfigurationCustomAPIResponseProperty = "msdyn_customapiresponseproperty_msdyn_customapirulesetconfiguration_CustomAPIResponseProperty";
+                public const string CustomapiresponsepropertyAsyncOperations = "customapiresponseproperty_AsyncOperations";
+                public const string CustomapiresponsepropertyBulkDeleteFailures = "customapiresponseproperty_BulkDeleteFailures";
+                public const string CustomapiresponsepropertyMailboxTrackingFolders = "customapiresponseproperty_MailboxTrackingFolders";
+                public const string CustomapiresponsepropertyPrincipalObjectAttributeAccesses = "customapiresponseproperty_PrincipalObjectAttributeAccesses";
+                public const string CustomapiresponsepropertyProcessSession = "customapiresponseproperty_ProcessSession";
+                public const string CustomapiresponsepropertySyncErrors = "customapiresponseproperty_SyncErrors";
+                public const string CustomapiresponsepropertyUserEntityInstanceDatas = "customapiresponseproperty_UserEntityInstanceDatas";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string BusinessUnitCustomapiresponseproperty = "business_unit_customapiresponseproperty";
-				public const string CustomapiCustomapiresponseproperty = "customapi_customapiresponseproperty";
-				public const string LkCustomapiresponsepropertyCreatedby = "lk_customapiresponseproperty_createdby";
-				public const string LkCustomapiresponsepropertyCreatedonbehalfby = "lk_customapiresponseproperty_createdonbehalfby";
-				public const string LkCustomapiresponsepropertyModifiedby = "lk_customapiresponseproperty_modifiedby";
-				public const string LkCustomapiresponsepropertyModifiedonbehalfby = "lk_customapiresponseproperty_modifiedonbehalfby";
-				public const string OwnerCustomapiresponseproperty = "owner_customapiresponseproperty";
-				public const string TeamCustomapiresponseproperty = "team_customapiresponseproperty";
-				public const string UserCustomapiresponseproperty = "user_customapiresponseproperty";
+                public const string CustomapiCustomapiresponseproperty = "customapi_customapiresponseproperty";
+                public const string LkCustomapiresponsepropertyCreatedby = "lk_customapiresponseproperty_createdby";
+                public const string LkCustomapiresponsepropertyCreatedonbehalfby = "lk_customapiresponseproperty_createdonbehalfby";
+                public const string LkCustomapiresponsepropertyModifiedby = "lk_customapiresponseproperty_modifiedby";
+                public const string LkCustomapiresponsepropertyModifiedonbehalfby = "lk_customapiresponseproperty_modifiedonbehalfby";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static CustomAPIResponseProperty Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static CustomAPIResponseProperty Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -818,30 +768,30 @@ namespace dgt.power.dataverse
 
         public CustomAPIResponseProperty GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  CustomAPIResponseProperty(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new CustomAPIResponseProperty(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<CustomAPIResponseProperty> CustomAPIResponsePropertySet
-		{
-			get
-			{
-				return CreateQuery<CustomAPIResponseProperty>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<CustomAPIResponseProperty> CustomAPIResponsePropertySet
+        {
+            get
+            {
+                return CreateQuery<CustomAPIResponseProperty>();
+            }
+        }
+    }
+    #endregion
 }

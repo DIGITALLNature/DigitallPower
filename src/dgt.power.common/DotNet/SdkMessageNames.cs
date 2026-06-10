@@ -1,13 +1,13 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
     public sealed class SdkMessageNames
     {
         private SdkMessageNames() {}
-
         public const string Assign = "Assign";
         public const string Create = "Create";
         public const string Delete = "Delete";

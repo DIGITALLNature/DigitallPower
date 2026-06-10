@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Assembly that contains one or more plug-in types.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("pluginassembly")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("pluginassembly")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class PluginAssembly : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class PluginAssembly : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public PluginAssembly() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public PluginAssembly() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public PluginAssembly(bool trackChanges = false) : base(EntityLogicalName)
+        public PluginAssembly(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginAssembly(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public PluginAssembly(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginAssembly(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public PluginAssembly(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginAssembly(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public PluginAssembly(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,810 +61,801 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("pluginassemblyid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("pluginassemblyid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				PluginAssemblyId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                PluginAssemblyId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("pluginassemblyid")]
+        [AttributeLogicalName("pluginassemblyid")]
         public Guid? PluginAssemblyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("pluginassemblyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginAssemblyId));
+                OnPropertyChanging();
                 SetAttributeValue("pluginassemblyid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(PluginAssemblyId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies mode of authentication with web sources like WebApp
 		/// </summary>
-		[AttributeLogicalName("authtype")]
+        [AttributeLogicalName("authtype")]
         public OptionSetValue? AuthType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("authtype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AuthType));
+                OnPropertyChanging();
                 SetAttributeValue("authtype", value);
-                OnPropertyChanged(nameof(AuthType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Bytes of the assembly, in Base64 format.
 		/// </summary>
-		[AttributeLogicalName("content")]
+        [AttributeLogicalName("content")]
         public string? Content
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("content");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Content));
+                OnPropertyChanging();
                 SetAttributeValue("content", value);
-                OnPropertyChanged(nameof(Content));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the plug-in assembly was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the pluginassembly.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Culture code for the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("culture")]
+        [AttributeLogicalName("culture")]
         public string? Culture
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("culture");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Culture));
+                OnPropertyChanging();
                 SetAttributeValue("culture", value);
-                OnPropertyChanged(nameof(Culture));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Customization Level.
 		/// </summary>
-		[AttributeLogicalName("customizationlevel")]
+        [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("customizationlevel");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Description of the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version in which the form is introduced.
 		/// </summary>
-		[AttributeLogicalName("introducedversion")]
+        [AttributeLogicalName("introducedversion")]
         public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntroducedVersion));
+                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged(nameof(IntroducedVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component can be customized.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component should be hidden.
 		/// </summary>
-		[AttributeLogicalName("ishidden")]
+        [AttributeLogicalName("ishidden")]
         public BooleanManagedProperty? IsHidden
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("ishidden");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsHidden));
+                OnPropertyChanging();
                 SetAttributeValue("ishidden", value);
-                OnPropertyChanged(nameof(IsHidden));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component is managed.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about how the plugin assembly is to be isolated at execution time; None / Sandboxed.
 		/// </summary>
-		[AttributeLogicalName("isolationmode")]
+        [AttributeLogicalName("isolationmode")]
         public OptionSetValue? IsolationMode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("isolationmode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsolationMode));
+                OnPropertyChanging();
                 SetAttributeValue("isolationmode", value);
-                OnPropertyChanged(nameof(IsolationMode));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("ispasswordset")]
+        
+        [AttributeLogicalName("ispasswordset")]
         public bool? IsPasswordSet
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispasswordset");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Major of the assembly version.
 		/// </summary>
-		[AttributeLogicalName("major")]
+        [AttributeLogicalName("major")]
         public int? Major
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("major");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for managedidentity associated with pluginassembly.
 		/// </summary>
-		[AttributeLogicalName("managedidentityid")]
+        [AttributeLogicalName("managedidentityid")]
         public EntityReference? ManagedIdentityId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("managedidentityid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ManagedIdentityId));
+                OnPropertyChanging();
                 SetAttributeValue("managedidentityid", value);
-                OnPropertyChanged(nameof(ManagedIdentityId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minor of the assembly version.
 		/// </summary>
-		[AttributeLogicalName("minor")]
+        [AttributeLogicalName("minor")]
         public int? Minor
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("minor");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the plug-in assembly was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the pluginassembly.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization with which the plug-in assembly is associated.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for Plugin Package associated with Plug-in Assembly.
 		/// </summary>
-		[AttributeLogicalName("packageid")]
+        [AttributeLogicalName("packageid")]
         public EntityReference? PackageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("packageid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PackageId));
+                OnPropertyChanging();
                 SetAttributeValue("packageid", value);
-                OnPropertyChanged(nameof(PackageId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// User Password
 		/// </summary>
-		[AttributeLogicalName("password")]
+        [AttributeLogicalName("password")]
         public string? Password
         {
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Password));
+                OnPropertyChanging();
                 SetAttributeValue("password", value);
-                OnPropertyChanged(nameof(Password));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// File name of the plug-in assembly. Used when the source type is set to 1.
 		/// </summary>
-		[AttributeLogicalName("path")]
+        [AttributeLogicalName("path")]
         public string? Path
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("path");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Path));
+                OnPropertyChanging();
                 SetAttributeValue("path", value);
-                OnPropertyChanged(nameof(Path));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("pluginassemblyidunique")]
+        [AttributeLogicalName("pluginassemblyidunique")]
         public Guid? PluginAssemblyIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("pluginassemblyidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Public key token of the assembly. This value can be obtained from the assembly by using reflection.
 		/// </summary>
-		[AttributeLogicalName("publickeytoken")]
+        [AttributeLogicalName("publickeytoken")]
         public string? PublicKeyToken
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("publickeytoken");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PublicKeyToken));
+                OnPropertyChanging();
                 SetAttributeValue("publickeytoken", value);
-                OnPropertyChanged(nameof(PublicKeyToken));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Hash of the source of the assembly.
 		/// </summary>
-		[AttributeLogicalName("sourcehash")]
+        [AttributeLogicalName("sourcehash")]
         public string? SourceHash
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("sourcehash");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SourceHash));
+                OnPropertyChanging();
                 SetAttributeValue("sourcehash", value);
-                OnPropertyChanged(nameof(SourceHash));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Location of the assembly, for example 0=database, 1=on-disk.
 		/// </summary>
-		[AttributeLogicalName("sourcetype")]
+        [AttributeLogicalName("sourcetype")]
         public OptionSetValue? SourceType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("sourcetype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SourceType));
+                OnPropertyChanging();
                 SetAttributeValue("sourcetype", value);
-                OnPropertyChanged(nameof(SourceType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Web Url
 		/// </summary>
-		[AttributeLogicalName("url")]
+        [AttributeLogicalName("url")]
         public string? Url
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("url");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Url));
+                OnPropertyChanging();
                 SetAttributeValue("url", value);
-                OnPropertyChanged(nameof(Url));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// User Name
 		/// </summary>
-		[AttributeLogicalName("username")]
+        [AttributeLogicalName("username")]
         public string? UserName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("username");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UserName));
+                OnPropertyChanging();
                 SetAttributeValue("username", value);
-                OnPropertyChanged(nameof(UserName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version number of the assembly. The value can be obtained from the assembly through reflection.
 		/// </summary>
-		[AttributeLogicalName("version")]
+        [AttributeLogicalName("version")]
         public string? Version
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("version");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Version));
+                OnPropertyChanging();
                 SetAttributeValue("version", value);
-                OnPropertyChanged(nameof(Version));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
+        /// <summary>
+        /// 1:N pluginassembly_plugintype
+        /// </summary>
+        [RelationshipSchemaName("pluginassembly_plugintype")]
+        public IEnumerable<PluginType> PluginassemblyPlugintype
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<PluginType>("pluginassembly_plugintype", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("pluginassembly_plugintype", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N pluginassembly_plugintype
-		/// </summary>	
-		[RelationshipSchemaName("pluginassembly_plugintype")]
-		public IEnumerable<PluginType> PluginassemblyPlugintype
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<PluginType>("pluginassembly_plugintype", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PluginassemblyPlugintype");
-				this.SetRelatedEntities<PluginType>("pluginassembly_plugintype", null, value);
-				this.OnPropertyChanged("PluginassemblyPlugintype");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct AuthType
+            {
+                public const int BasicAuth = 0;
+            }
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsolationMode
+            {
+                public const int None = 1;
+                public const int Sandbox = 2;
+                public const int External = 3;
+            }
+            public struct IsPasswordSet
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SourceType
+            {
+                public const int Database = 0;
+                public const int Disk = 1;
+                public const int Normal = 2;
+                public const int AzureWebApp = 3;
+                public const int FileStore = 4;
+            }
+        }
+        #endregion
 
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string PluginAssemblyId = "pluginassemblyid";
+            public const string AuthType = "authtype";
+            public const string ComponentState = "componentstate";
+            public const string Content = "content";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string Culture = "culture";
+            public const string CustomizationLevel = "customizationlevel";
+            public const string Description = "description";
+            public const string IntroducedVersion = "introducedversion";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsHidden = "ishidden";
+            public const string IsManaged = "ismanaged";
+            public const string IsolationMode = "isolationmode";
+            public const string IsPasswordSet = "ispasswordset";
+            public const string Major = "major";
+            public const string ManagedIdentityId = "managedidentityid";
+            public const string Minor = "minor";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string PackageId = "packageid";
+            public const string Password = "password";
+            public const string Path = "path";
+            public const string PluginAssemblyIdUnique = "pluginassemblyidunique";
+            public const string PublicKeyToken = "publickeytoken";
+            public const string SolutionId = "solutionid";
+            public const string SourceHash = "sourcehash";
+            public const string SourceType = "sourcetype";
+            public const string Url = "url";
+            public const string UserName = "username";
+            public const string Version = "version";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct AuthType
-                {
-					public const int BasicAuth = 0;
-                }
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-			    public struct IsolationMode
-                {
-					public const int None = 1;
-					public const int Sandbox = 2;
-					public const int External = 3;
-                }
-                public struct IsPasswordSet
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct SourceType
-                {
-					public const int Database = 0;
-					public const int Disk = 1;
-					public const int Normal = 2;
-					public const int AzureWebApp = 3;
-					public const int FileStore = 4;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string PluginAssemblyId = "pluginassemblyid";
-				public const string AuthType = "authtype";
-				public const string ComponentState = "componentstate";
-				public const string Content = "content";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Culture = "culture";
-				public const string CustomizationLevel = "customizationlevel";
-				public const string Description = "description";
-				public const string IntroducedVersion = "introducedversion";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsHidden = "ishidden";
-				public const string IsManaged = "ismanaged";
-				public const string IsolationMode = "isolationmode";
-				public const string IsPasswordSet = "ispasswordset";
-				public const string Major = "major";
-				public const string ManagedIdentityId = "managedidentityid";
-				public const string Minor = "minor";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string PackageId = "packageid";
-				public const string Password = "password";
-				public const string Path = "path";
-				public const string PluginAssemblyIdUnique = "pluginassemblyidunique";
-				public const string PublicKeyToken = "publickeytoken";
-				public const string SolutionId = "solutionid";
-				public const string SourceHash = "sourcehash";
-				public const string SourceType = "sourcetype";
-				public const string Url = "url";
-				public const string UserName = "username";
-				public const string Version = "version";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string PluginassemblyPlugintype = "pluginassembly_plugintype";
-				public const string UserentityinstancedataPluginassembly = "userentityinstancedata_pluginassembly";
+                public const string PluginassemblyPlugintype = "pluginassembly_plugintype";
+                public const string UserentityinstancedataPluginassembly = "userentityinstancedata_pluginassembly";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string CreatedbyPluginassembly = "createdby_pluginassembly";
-				public const string LkPluginassemblyCreatedonbehalfby = "lk_pluginassembly_createdonbehalfby";
-				public const string LkPluginassemblyModifiedonbehalfby = "lk_pluginassembly_modifiedonbehalfby";
-				public const string ManagedidentityPluginAssembly = "managedidentity_PluginAssembly";
-				public const string ModifiedbyPluginassembly = "modifiedby_pluginassembly";
-				public const string OrganizationPluginassembly = "organization_pluginassembly";
-				public const string PluginpackagePluginassembly = "pluginpackage_pluginassembly";
+                public const string CreatedbyPluginassembly = "createdby_pluginassembly";
+                public const string LkPluginassemblyCreatedonbehalfby = "lk_pluginassembly_createdonbehalfby";
+                public const string LkPluginassemblyModifiedonbehalfby = "lk_pluginassembly_modifiedonbehalfby";
+                public const string ManagedidentityPluginAssembly = "managedidentity_PluginAssembly";
+                public const string ModifiedbyPluginassembly = "modifiedby_pluginassembly";
+                public const string OrganizationPluginassembly = "organization_pluginassembly";
+                public const string PluginpackagePluginassembly = "pluginpackage_pluginassembly";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static PluginAssembly Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static PluginAssembly Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -882,30 +865,30 @@ namespace dgt.power.dataverse
 
         public PluginAssembly GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  PluginAssembly(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new PluginAssembly(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<PluginAssembly> PluginAssemblySet
-		{
-			get
-			{
-				return CreateQuery<PluginAssembly>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<PluginAssembly> PluginAssemblySet
+        {
+            get
+            {
+                return CreateQuery<PluginAssembly>();
+            }
+        }
+    }
+    #endregion
 }

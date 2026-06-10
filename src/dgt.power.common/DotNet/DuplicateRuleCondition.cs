@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Condition of a duplicate detection rule.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("duplicaterulecondition")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("duplicaterulecondition")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class DuplicateRuleCondition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class DuplicateRuleCondition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public DuplicateRuleCondition() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public DuplicateRuleCondition() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public DuplicateRuleCondition(bool trackChanges = false) : base(EntityLogicalName)
+        public DuplicateRuleCondition(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public DuplicateRuleCondition(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public DuplicateRuleCondition(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public DuplicateRuleCondition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public DuplicateRuleCondition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public DuplicateRuleCondition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public DuplicateRuleCondition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -68,515 +60,505 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("duplicateruleconditionid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("duplicateruleconditionid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				DuplicateRuleConditionId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                DuplicateRuleConditionId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the condition.
 		/// </summary>
-		[AttributeLogicalName("duplicateruleconditionid")]
+        [AttributeLogicalName("duplicateruleconditionid")]
         public Guid? DuplicateRuleConditionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("duplicateruleconditionid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DuplicateRuleConditionId));
+                OnPropertyChanging();
                 SetAttributeValue("duplicateruleconditionid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(DuplicateRuleConditionId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Field that is being compared.
 		/// </summary>
-		[AttributeLogicalName("baseattributename")]
+        [AttributeLogicalName("baseattributename")]
         public string? BaseAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("baseattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BaseAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("baseattributename", value);
-                OnPropertyChanged(nameof(BaseAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentidunique")]
+        [AttributeLogicalName("componentidunique")]
         public Guid? ComponentIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("componentidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the condition.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the condition was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the duplicate rule condition.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Determines whether to consider blank values as non-duplicate values
 		/// </summary>
-		[AttributeLogicalName("ignoreblankvalues")]
+        [AttributeLogicalName("ignoreblankvalues")]
         public bool? IgnoreBlankValues
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ignoreblankvalues");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IgnoreBlankValues));
+                OnPropertyChanging();
                 SetAttributeValue("ignoreblankvalues", value);
-                OnPropertyChanged(nameof(IgnoreBlankValues));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the solution component is part of a managed solution.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Field that is being compared with the base field.
 		/// </summary>
-		[AttributeLogicalName("matchingattributename")]
+        [AttributeLogicalName("matchingattributename")]
         public string? MatchingAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("matchingattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MatchingAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("matchingattributename", value);
-                OnPropertyChanged(nameof(MatchingAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the condition.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the condition was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the duplicate rule condition.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Operator for this rule condition.
 		/// </summary>
-		[AttributeLogicalName("operatorcode")]
+        [AttributeLogicalName("operatorcode")]
         public OptionSetValue? OperatorCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("operatorcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OperatorCode));
+                OnPropertyChanging();
                 SetAttributeValue("operatorcode", value);
-                OnPropertyChanged(nameof(OperatorCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Parameter value of N if the operator is Same First Characters or Same Last Characters.
 		/// </summary>
-		[AttributeLogicalName("operatorparam")]
+        [AttributeLogicalName("operatorparam")]
         public int? OperatorParam
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("operatorparam");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OperatorParam));
+                OnPropertyChanging();
                 SetAttributeValue("operatorparam", value);
-                OnPropertyChanged(nameof(OperatorParam));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user or team who owns the duplicate rule condition.
 		/// </summary>
-		[AttributeLogicalName("ownerid")]
+        [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the business unit that owns the condition.
 		/// </summary>
-		[AttributeLogicalName("owningbusinessunit")]
+        [AttributeLogicalName("owningbusinessunit")]
         public Guid? OwningBusinessUnit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("owningbusinessunit");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who owns the condition.
 		/// </summary>
-		[AttributeLogicalName("owninguser")]
+        [AttributeLogicalName("owninguser")]
         public Guid? OwningUser
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("owninguser");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the object with which the condition is associated.
 		/// </summary>
-		[AttributeLogicalName("regardingobjectid")]
+        [AttributeLogicalName("regardingobjectid")]
         public EntityReference? RegardingObjectId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("regardingobjectid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RegardingObjectId));
+                OnPropertyChanging();
                 SetAttributeValue("regardingobjectid", value);
-                OnPropertyChanged(nameof(RegardingObjectId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		
-		[AttributeLogicalName("uniquerulename")]
+        
+        [AttributeLogicalName("uniquerulename")]
         public string? UniqueRuleName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("uniquerulename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueRuleName));
+                OnPropertyChanging();
                 SetAttributeValue("uniquerulename", value);
-                OnPropertyChanged(nameof(UniqueRuleName));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IgnoreBlankValues
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct OperatorCode
+            {
+                public const int ExactMatch = 0;
+                public const int SameFirstCharacters = 1;
+                public const int SameLastCharacters = 2;
+                public const int SameDate = 3;
+                public const int SameDateAndTime = 4;
+                public const int ExactMatchPickListLabel = 5;
+                public const int ExactMatchPickListValue = 6;
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string DuplicateRuleConditionId = "duplicateruleconditionid";
+            public const string BaseAttributeName = "baseattributename";
+            public const string ComponentIdUnique = "componentidunique";
+            public const string ComponentState = "componentstate";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string IgnoreBlankValues = "ignoreblankvalues";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsManaged = "ismanaged";
+            public const string MatchingAttributeName = "matchingattributename";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string OperatorCode = "operatorcode";
+            public const string OperatorParam = "operatorparam";
+            public const string OverwriteTime = "overwritetime";
+            public const string OwnerId = "ownerid";
+            public const string OwningBusinessUnit = "owningbusinessunit";
+            public const string OwningUser = "owninguser";
+            public const string RegardingObjectId = "regardingobjectid";
+            public const string SolutionId = "solutionid";
+            public const string UniqueRuleName = "uniquerulename";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IgnoreBlankValues
-                {
-                    public const bool False = false;
-                    public const bool True = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-			    public struct OperatorCode
-                {
-					public const int ExactMatch = 0;
-					public const int SameFirstCharacters = 1;
-					public const int SameLastCharacters = 2;
-					public const int SameDate = 3;
-					public const int SameDateAndTime = 4;
-					public const int ExactMatch_PickListLabel_ = 5;
-					public const int ExactMatch_PickListValue_ = 6;
-                }
-		}
-		#endregion
+        #region AlternateKeys
+        public static partial class AlternateKeys
+        {
+            public const string Dupruleconditionuniquekey = "dupruleconditionuniquekey";
+        }
+        #endregion
 
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string DuplicateRuleConditionId = "duplicateruleconditionid";
-				public const string BaseAttributeName = "baseattributename";
-				public const string ComponentIdUnique = "componentidunique";
-				public const string ComponentState = "componentstate";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string IgnoreBlankValues = "ignoreblankvalues";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsManaged = "ismanaged";
-				public const string MatchingAttributeName = "matchingattributename";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string OperatorCode = "operatorcode";
-				public const string OperatorParam = "operatorparam";
-				public const string OverwriteTime = "overwritetime";
-				public const string OwnerId = "ownerid";
-				public const string OwningBusinessUnit = "owningbusinessunit";
-				public const string OwningUser = "owninguser";
-				public const string RegardingObjectId = "regardingobjectid";
-				public const string SolutionId = "solutionid";
-				public const string UniqueRuleName = "uniquerulename";
-		}
-		#endregion
-
-		#region AlternateKeys
-		public static class AlternateKeys
-		{
-				public const string Dupruleconditionuniquekey = "dupruleconditionuniquekey";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string DuplicateRuleConditionSyncErrors = "DuplicateRuleCondition_SyncErrors";
-				public const string UserentityinstancedataDuplicaterulecondition = "userentityinstancedata_duplicaterulecondition";
+                public const string DuplicateRuleConditionSyncErrors = "DuplicateRuleCondition_SyncErrors";
+                public const string UserentityinstancedataDuplicaterulecondition = "userentityinstancedata_duplicaterulecondition";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string DuplicateRuleDuplicateRuleConditions = "DuplicateRule_DuplicateRuleConditions";
-				public const string LkDuplicateruleconditionCreatedonbehalfby = "lk_duplicaterulecondition_createdonbehalfby";
-				public const string LkDuplicateruleconditionModifiedonbehalfby = "lk_duplicaterulecondition_modifiedonbehalfby";
-				public const string LkDuplicateruleconditionbaseCreatedby = "lk_duplicateruleconditionbase_createdby";
-				public const string LkDuplicateruleconditionbaseModifiedby = "lk_duplicateruleconditionbase_modifiedby";
+                public const string DuplicateRuleDuplicateRuleConditions = "DuplicateRule_DuplicateRuleConditions";
+                public const string LkDuplicateruleconditionCreatedonbehalfby = "lk_duplicaterulecondition_createdonbehalfby";
+                public const string LkDuplicateruleconditionModifiedonbehalfby = "lk_duplicaterulecondition_modifiedonbehalfby";
+                public const string LkDuplicateruleconditionbaseCreatedby = "lk_duplicateruleconditionbase_createdby";
+                public const string LkDuplicateruleconditionbaseModifiedby = "lk_duplicateruleconditionbase_modifiedby";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public static DuplicateRuleCondition Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static DuplicateRuleCondition Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -586,30 +568,30 @@ namespace dgt.power.dataverse
 
         public DuplicateRuleCondition GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  DuplicateRuleCondition(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new DuplicateRuleCondition(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<DuplicateRuleCondition> DuplicateRuleConditionSet
-		{
-			get
-			{
-				return CreateQuery<DuplicateRuleCondition>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<DuplicateRuleCondition> DuplicateRuleConditionSet
+        {
+            get
+            {
+                return CreateQuery<DuplicateRuleCondition>();
+            }
+        }
+    }
+    #endregion
 }

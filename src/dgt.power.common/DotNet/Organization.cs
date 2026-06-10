@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Top level of the Microsoft Dynamics 365 business hierarchy. The organization can be a specific business, holding company, or corporation.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("organization")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("organization")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class Organization : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Organization : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public Organization() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public Organization() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public Organization(bool trackChanges = false) : base(EntityLogicalName)
+        public Organization(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Organization(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public Organization(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Organization(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public Organization(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Organization(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public Organization(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,11349 +61,12478 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("organizationid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("organizationid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				base.Id = value;	
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                base.Id = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public Guid? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// ACI Web Endpoint URL.
 		/// </summary>
-		[AttributeLogicalName("aciwebendpointurl")]
+        [AttributeLogicalName("aciwebendpointurl")]
         public string? ACIWebEndpointUrl
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("aciwebendpointurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ACIWebEndpointUrl));
+                OnPropertyChanging();
                 SetAttributeValue("aciwebendpointurl", value);
-                OnPropertyChanged(nameof(ACIWebEndpointUrl));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the template to be used for acknowledgement when a user unsubscribes.
 		/// </summary>
-		[AttributeLogicalName("acknowledgementtemplateid")]
+        [AttributeLogicalName("acknowledgementtemplateid")]
         public EntityReference? AcknowledgementTemplateId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("acknowledgementtemplateid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AcknowledgementTemplateId));
+                OnPropertyChanging();
                 SetAttributeValue("acknowledgementtemplateid", value);
-                OnPropertyChanged(nameof(AcknowledgementTemplateId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information on whether filtering activity based on entity in app.
 		/// </summary>
-		[AttributeLogicalName("activitytypefilter")]
+        [AttributeLogicalName("activitytypefilter")]
         public bool? ActivityTypeFilter
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("activitytypefilter");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ActivityTypeFilter));
+                OnPropertyChanging();
                 SetAttributeValue("activitytypefilter", value);
-                OnPropertyChanged(nameof(ActivityTypeFilter));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Whether to show only activities configured in this app or all activities in the 'New activity' button.
 		/// </summary>
-		[AttributeLogicalName("activitytypefilterv2")]
+        [AttributeLogicalName("activitytypefilterv2")]
         public bool? ActivityTypeFilterV2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("activitytypefilterv2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ActivityTypeFilterV2));
+                OnPropertyChanging();
                 SetAttributeValue("activitytypefilterv2", value);
-                OnPropertyChanged(nameof(ActivityTypeFilterV2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the display column options on a view in model-driven apps is enabled
 		/// </summary>
-		[AttributeLogicalName("advancedcolumneditorenabled")]
+        [AttributeLogicalName("advancedcolumneditorenabled")]
         public bool? AdvancedColumnEditorEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("advancedcolumneditorenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AdvancedColumnEditorEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("advancedcolumneditorenabled", value);
-                OnPropertyChanged(nameof(AdvancedColumnEditorEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the advanced column filtering in a view in model-driven apps is enabled
 		/// </summary>
-		[AttributeLogicalName("advancedcolumnfilteringenabled")]
+        [AttributeLogicalName("advancedcolumnfilteringenabled")]
         public bool? AdvancedColumnFilteringEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("advancedcolumnfilteringenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AdvancedColumnFilteringEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("advancedcolumnfilteringenabled", value);
-                OnPropertyChanged(nameof(AdvancedColumnFilteringEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the advanced filtering on all tables in a model-driven app is enabled
 		/// </summary>
-		[AttributeLogicalName("advancedfilteringenabled")]
+        [AttributeLogicalName("advancedfilteringenabled")]
         public bool? AdvancedFilteringEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("advancedfilteringenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AdvancedFilteringEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("advancedfilteringenabled", value);
-                OnPropertyChanged(nameof(AdvancedFilteringEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the Advanced Lookup feature is enabled for lookup controls
 		/// </summary>
-		[AttributeLogicalName("advancedlookupenabled")]
+        [AttributeLogicalName("advancedlookupenabled")]
         public bool? AdvancedLookupEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("advancedlookupenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AdvancedLookupEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("advancedlookupenabled", value);
-                OnPropertyChanged(nameof(AdvancedLookupEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enables advanced lookup in grid edit filter panel
 		/// </summary>
-		[AttributeLogicalName("advancedlookupineditfilter")]
+        [AttributeLogicalName("advancedlookupineditfilter")]
         public int? AdvancedLookupInEditFilter
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("advancedlookupineditfilter");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AdvancedLookupInEditFilter));
+                OnPropertyChanging();
                 SetAttributeValue("advancedlookupineditfilter", value);
-                OnPropertyChanged(nameof(AdvancedLookupInEditFilter));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether AI Builder features are blocked from using Copilot Credits.
+		/// </summary>
+        [AttributeLogicalName("aibuildercreditsonlyenabled")]
+        public bool? AiBuilderCreditsOnlyEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aibuildercreditsonlyenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aibuildercreditsonlyenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Azure AI Foundry model types for AI Prompts are enabled.
+		/// </summary>
+        [AttributeLogicalName("aipromptsazureaifoundrymodeltypesenabled")]
+        public bool? AiPromptsAzureAIFoundryModelTypesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aipromptsazureaifoundrymodeltypesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aipromptsazureaifoundrymodeltypesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Basic model types for AI Prompts are enabled.
+		/// </summary>
+        [AttributeLogicalName("aipromptsbasicmodeltypesenabled")]
+        public bool? AiPromptsBasicModelTypesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aipromptsbasicmodeltypesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aipromptsbasicmodeltypesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether AI Prompts feature is enabled.
+		/// </summary>
+        [AttributeLogicalName("aipromptsenabled")]
+        public bool? AiPromptsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aipromptsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aipromptsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Premium model types for AI Prompts are enabled.
+		/// </summary>
+        [AttributeLogicalName("aipromptspremiummodeltypesenabled")]
+        public bool? AiPromptsPremiumModelTypesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aipromptspremiummodeltypesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aipromptspremiummodeltypesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Standard model types for AI Prompts are enabled.
+		/// </summary>
+        [AttributeLogicalName("aipromptsstandardmodeltypesenabled")]
+        public bool? AiPromptsStandardModelTypesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("aipromptsstandardmodeltypesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("aipromptsstandardmodeltypesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether background address book synchronization in Microsoft Office Outlook is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowaddressbooksyncs")]
+        [AttributeLogicalName("allowaddressbooksyncs")]
         public bool? AllowAddressBookSyncs
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowaddressbooksyncs");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowAddressBookSyncs));
+                OnPropertyChanging();
                 SetAttributeValue("allowaddressbooksyncs", value);
-                OnPropertyChanged(nameof(AllowAddressBookSyncs));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether all application users are allowed to access the environment
 		/// </summary>
-		[AttributeLogicalName("allowapplicationuseraccess")]
+        [AttributeLogicalName("allowapplicationuseraccess")]
         public bool? AllowApplicationUserAccess
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowapplicationuseraccess");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowApplicationUserAccess));
+                OnPropertyChanging();
                 SetAttributeValue("allowapplicationuseraccess", value);
-                OnPropertyChanged(nameof(AllowApplicationUserAccess));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether automatic response creation is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowautoresponsecreation")]
+        [AttributeLogicalName("allowautoresponsecreation")]
         public bool? AllowAutoResponseCreation
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowautoresponsecreation");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowAutoResponseCreation));
+                OnPropertyChanging();
                 SetAttributeValue("allowautoresponsecreation", value);
-                OnPropertyChanged(nameof(AllowAutoResponseCreation));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether automatic unsubscribe is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowautounsubscribe")]
+        [AttributeLogicalName("allowautounsubscribe")]
         public bool? AllowAutoUnsubscribe
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowautounsubscribe");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowAutoUnsubscribe));
+                OnPropertyChanging();
                 SetAttributeValue("allowautounsubscribe", value);
-                OnPropertyChanged(nameof(AllowAutoUnsubscribe));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether automatic unsubscribe acknowledgement email is allowed to send.
 		/// </summary>
-		[AttributeLogicalName("allowautounsubscribeacknowledgement")]
+        [AttributeLogicalName("allowautounsubscribeacknowledgement")]
         public bool? AllowAutoUnsubscribeAcknowledgement
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowautounsubscribeacknowledgement");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowAutoUnsubscribeAcknowledgement));
+                OnPropertyChanging();
                 SetAttributeValue("allowautounsubscribeacknowledgement", value);
-                OnPropertyChanged(nameof(AllowAutoUnsubscribeAcknowledgement));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Outlook Client message bar advertisement is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowclientmessagebarad")]
+        [AttributeLogicalName("allowclientmessagebarad")]
         public bool? AllowClientMessageBarAd
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowclientmessagebarad");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowClientMessageBarAd));
+                OnPropertyChanging();
                 SetAttributeValue("allowclientmessagebarad", value);
-                OnPropertyChanged(nameof(AllowClientMessageBarAd));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information on whether connectors on power fx actions is enabled.
+		/// </summary>
+        [AttributeLogicalName("allowconnectorsonpowerfxactions")]
+        public bool? AllowConnectorsOnPowerFXActions
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("allowconnectorsonpowerfxactions");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("allowconnectorsonpowerfxactions", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Information that specifies the Applications that are in allow list for the accessing DV resources.
+		/// </summary>
+        [AttributeLogicalName("allowedapplicationsfordvaccess")]
+        public string? AllowedApplicationsForDVAccess
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("allowedapplicationsfordvaccess");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("allowedapplicationsfordvaccess", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information that specifies the range of IP addresses that are in allow list for the firewall.
 		/// </summary>
-		[AttributeLogicalName("allowediprangeforfirewall")]
+        [AttributeLogicalName("allowediprangeforfirewall")]
         public string? AllowedIpRangeForFirewall
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("allowediprangeforfirewall");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowedIpRangeForFirewall));
+                OnPropertyChanging();
                 SetAttributeValue("allowediprangeforfirewall", value);
-                OnPropertyChanged(nameof(AllowedIpRangeForFirewall));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies the range of IP addresses that are in allowed list for generating the SAS URIs.
 		/// </summary>
-		[AttributeLogicalName("allowediprangeforstorageaccesssignatures")]
+        [AttributeLogicalName("allowediprangeforstorageaccesssignatures")]
         public string? AllowedIpRangeForStorageAccessSignatures
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("allowediprangeforstorageaccesssignatures");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowedIpRangeForStorageAccessSignatures));
+                OnPropertyChanging();
                 SetAttributeValue("allowediprangeforstorageaccesssignatures", value);
-                OnPropertyChanged(nameof(AllowedIpRangeForStorageAccessSignatures));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Specifies list of allowed IP addresses for firewall.
+		/// </summary>
+        [AttributeLogicalName("allowedlistofiprangesforfirewall")]
+        public string? AllowedListOfIpRangesForFirewall
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("allowedlistofiprangesforfirewall");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("allowedlistofiprangesforfirewall", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Allow upload or download of certain mime types.
 		/// </summary>
-		[AttributeLogicalName("allowedmimetypes")]
+        [AttributeLogicalName("allowedmimetypes")]
         public string? AllowedMimeTypes
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("allowedmimetypes");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowedMimeTypes));
+                OnPropertyChanging();
                 SetAttributeValue("allowedmimetypes", value);
-                OnPropertyChanged(nameof(AllowedMimeTypes));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information that specifies the List of Service Tags that should be allowed by the firewall.
+		/// </summary>
+        [AttributeLogicalName("allowedservicetagsforfirewall")]
+        public string? AllowedServiceTagsForFirewall
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("allowedservicetagsforfirewall");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("allowedservicetagsforfirewall", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether auditing of changes to entity is allowed when no attributes have changed.
 		/// </summary>
-		[AttributeLogicalName("allowentityonlyaudit")]
+        [AttributeLogicalName("allowentityonlyaudit")]
         public bool? AllowEntityOnlyAudit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowentityonlyaudit");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowEntityOnlyAudit));
+                OnPropertyChanging();
                 SetAttributeValue("allowentityonlyaudit", value);
-                OnPropertyChanged(nameof(AllowEntityOnlyAudit));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enables ends-with searches in grids with the use of a leading wildcard on all tables in the environment
 		/// </summary>
-		[AttributeLogicalName("allowleadingwildcardsingridsearch")]
+        [AttributeLogicalName("allowleadingwildcardsingridsearch")]
         public bool? AllowLeadingWildcardsInGridSearch
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowleadingwildcardsingridsearch");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowLeadingWildcardsInGridSearch));
+                OnPropertyChanging();
                 SetAttributeValue("allowleadingwildcardsingridsearch", value);
-                OnPropertyChanged(nameof(AllowLeadingWildcardsInGridSearch));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enables ends-with searches in grids with the use of a leading wildcard on all tables in the environment
 		/// </summary>
-		[AttributeLogicalName("allowleadingwildcardsinquickfind")]
+        [AttributeLogicalName("allowleadingwildcardsinquickfind")]
         public int? AllowLeadingWildcardsInQuickFind
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("allowleadingwildcardsinquickfind");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowLeadingWildcardsInQuickFind));
+                OnPropertyChanging();
                 SetAttributeValue("allowleadingwildcardsinquickfind", value);
-                OnPropertyChanged(nameof(AllowLeadingWildcardsInQuickFind));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable access to legacy web client UI
 		/// </summary>
-		[AttributeLogicalName("allowlegacyclientexperience")]
+        [AttributeLogicalName("allowlegacyclientexperience")]
         public bool? AllowLegacyClientExperience
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowlegacyclientexperience");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowLegacyClientExperience));
+                OnPropertyChanging();
                 SetAttributeValue("allowlegacyclientexperience", value);
-                OnPropertyChanged(nameof(AllowLegacyClientExperience));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable embedding of certain legacy dialogs in Unified Interface browser client
 		/// </summary>
-		[AttributeLogicalName("allowlegacydialogsembedding")]
+        [AttributeLogicalName("allowlegacydialogsembedding")]
         public bool? AllowLegacyDialogsEmbedding
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowlegacydialogsembedding");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowLegacyDialogsEmbedding));
+                OnPropertyChanging();
                 SetAttributeValue("allowlegacydialogsembedding", value);
-                OnPropertyChanged(nameof(AllowLegacyDialogsEmbedding));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether marketing emails execution is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowmarketingemailexecution")]
+        [AttributeLogicalName("allowmarketingemailexecution")]
         public bool? AllowMarketingEmailExecution
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowmarketingemailexecution");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowMarketingEmailExecution));
+                OnPropertyChanging();
                 SetAttributeValue("allowmarketingemailexecution", value);
-                OnPropertyChanged(nameof(AllowMarketingEmailExecution));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether Microsoft Trusted Service Tags are allowed
 		/// </summary>
-		[AttributeLogicalName("allowmicrosofttrustedservicetags")]
+        [AttributeLogicalName("allowmicrosofttrustedservicetags")]
         public bool? AllowMicrosoftTrustedServiceTags
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowmicrosofttrustedservicetags");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowMicrosoftTrustedServiceTags));
+                OnPropertyChanging();
                 SetAttributeValue("allowmicrosofttrustedservicetags", value);
-                OnPropertyChanged(nameof(AllowMicrosoftTrustedServiceTags));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether background offline synchronization in Microsoft Office Outlook is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowofflinescheduledsyncs")]
+        [AttributeLogicalName("allowofflinescheduledsyncs")]
         public bool? AllowOfflineScheduledSyncs
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowofflinescheduledsyncs");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowOfflineScheduledSyncs));
+                OnPropertyChanging();
                 SetAttributeValue("allowofflinescheduledsyncs", value);
-                OnPropertyChanged(nameof(AllowOfflineScheduledSyncs));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether scheduled synchronizations to Outlook are allowed.
 		/// </summary>
-		[AttributeLogicalName("allowoutlookscheduledsyncs")]
+        [AttributeLogicalName("allowoutlookscheduledsyncs")]
         public bool? AllowOutlookScheduledSyncs
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowoutlookscheduledsyncs");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowOutlookScheduledSyncs));
+                OnPropertyChanging();
                 SetAttributeValue("allowoutlookscheduledsyncs", value);
-                OnPropertyChanged(nameof(AllowOutlookScheduledSyncs));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Control whether the organization Allow Redirect Legacy Admin Settings To Modern UI
 		/// </summary>
-		[AttributeLogicalName("allowredirectadminsettingstomodernui")]
+        [AttributeLogicalName("allowredirectadminsettingstomodernui")]
         public bool? AllowRedirectAdminSettingsToModernUI
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowredirectadminsettingstomodernui");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowRedirectAdminSettingsToModernUI));
+                OnPropertyChanging();
                 SetAttributeValue("allowredirectadminsettingstomodernui", value);
-                OnPropertyChanged(nameof(AllowRedirectAdminSettingsToModernUI));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether users are allowed to send email to unresolved parties (parties must still have an email address).
 		/// </summary>
-		[AttributeLogicalName("allowunresolvedpartiesonemailsend")]
+        [AttributeLogicalName("allowunresolvedpartiesonemailsend")]
         public bool? AllowUnresolvedPartiesOnEmailSend
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowunresolvedpartiesonemailsend");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowUnresolvedPartiesOnEmailSend));
+                OnPropertyChanging();
                 SetAttributeValue("allowunresolvedpartiesonemailsend", value);
-                OnPropertyChanged(nameof(AllowUnresolvedPartiesOnEmailSend));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether individuals can select their form mode preference in their personal options.
 		/// </summary>
-		[AttributeLogicalName("allowuserformmodepreference")]
+        [AttributeLogicalName("allowuserformmodepreference")]
         public bool? AllowUserFormModePreference
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowuserformmodepreference");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowUserFormModePreference));
+                OnPropertyChanging();
                 SetAttributeValue("allowuserformmodepreference", value);
-                OnPropertyChanged(nameof(AllowUserFormModePreference));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if allow end users to hide system views in model-driven apps is enabled
 		/// </summary>
-		[AttributeLogicalName("allowusershidingsystemviews")]
+        [AttributeLogicalName("allowusershidingsystemviews")]
         public bool? AllowUsersHidingSystemViews
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowusershidingsystemviews");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowUsersHidingSystemViews));
+                OnPropertyChanging();
                 SetAttributeValue("allowusershidingsystemviews", value);
-                OnPropertyChanged(nameof(AllowUsersHidingSystemViews));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the showing tablet application notification bars in a browser is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowusersseeappdownloadmessage")]
+        [AttributeLogicalName("allowusersseeappdownloadmessage")]
         public bool? AllowUsersSeeAppdownloadMessage
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowusersseeappdownloadmessage");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowUsersSeeAppdownloadMessage));
+                OnPropertyChanging();
                 SetAttributeValue("allowusersseeappdownloadmessage", value);
-                OnPropertyChanged(nameof(AllowUsersSeeAppdownloadMessage));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Warning : Allowing  Virtual Entity plugin execution on nested pipeline does not offer transactional support. i.e. if call in native entity pipeline fails, then virtual entity operation will not be reverted.
+		/// </summary>
+        [AttributeLogicalName("allowvirtualentitypluginexecutiononnestedpipeline")]
+        public bool? AllowVirtualEntityPluginExecutionOnNestedPipeline
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("allowvirtualentitypluginexecutiononnestedpipeline");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("allowvirtualentitypluginexecutiononnestedpipeline", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether Web-based export of grids to Microsoft Office Excel is allowed.
 		/// </summary>
-		[AttributeLogicalName("allowwebexcelexport")]
+        [AttributeLogicalName("allowwebexcelexport")]
         public bool? AllowWebExcelExport
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowwebexcelexport");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowWebExcelExport));
+                OnPropertyChanging();
                 SetAttributeValue("allowwebexcelexport", value);
-                OnPropertyChanged(nameof(AllowWebExcelExport));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// AM designator to use throughout Microsoft Dynamics CRM.
 		/// </summary>
-		[AttributeLogicalName("amdesignator")]
+        [AttributeLogicalName("amdesignator")]
         public string? AMDesignator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("amdesignator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AMDesignator));
+                OnPropertyChanging();
                 SetAttributeValue("amdesignator", value);
-                OnPropertyChanged(nameof(AMDesignator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the appDesignerExperience is enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("appdesignerexperienceenabled")]
+        [AttributeLogicalName("appdesignerexperienceenabled")]
         public bool? AppDesignerExperienceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("appdesignerexperienceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AppDesignerExperienceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("appdesignerexperienceenabled", value);
-                OnPropertyChanged(nameof(AppDesignerExperienceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Application Based Access Control Mode. 0 is Disabled, 1 is audit mode , 2 is enforcement mode
+		/// </summary>
+        [AttributeLogicalName("applicationbasedaccesscontrolmode")]
+        public OptionSetValue? ApplicationBasedAccessControlMode
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("applicationbasedaccesscontrolmode");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("applicationbasedaccesscontrolmode", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information on whether rich editing experience for Appointment is enabled.
 		/// </summary>
-		[AttributeLogicalName("appointmentricheditorexperience")]
+        [AttributeLogicalName("appointmentricheditorexperience")]
         public bool? AppointmentRichEditorExperience
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("appointmentricheditorexperience");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AppointmentRichEditorExperience));
+                OnPropertyChanging();
                 SetAttributeValue("appointmentricheditorexperience", value);
-                OnPropertyChanged(nameof(AppointmentRichEditorExperience));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information on whether Teams meeting experience for Appointment is enabled.
 		/// </summary>
-		[AttributeLogicalName("appointmentwithteamsmeeting")]
+        [AttributeLogicalName("appointmentwithteamsmeeting")]
         public bool? AppointmentWithTeamsMeeting
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("appointmentwithteamsmeeting");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AppointmentWithTeamsMeeting));
+                OnPropertyChanging();
                 SetAttributeValue("appointmentwithteamsmeeting", value);
-                OnPropertyChanged(nameof(AppointmentWithTeamsMeeting));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Whether Teams meetings experience for appointments is enabled.
 		/// </summary>
-		[AttributeLogicalName("appointmentwithteamsmeetingv2")]
+        [AttributeLogicalName("appointmentwithteamsmeetingv2")]
         public bool? AppointmentWithTeamsMeetingV2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("appointmentwithteamsmeetingv2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AppointmentWithTeamsMeetingV2));
+                OnPropertyChanging();
                 SetAttributeValue("appointmentwithteamsmeetingv2", value);
-                OnPropertyChanged(nameof(AppointmentWithTeamsMeetingV2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether Power Automate Automation Center preview features will be available for all users in this organization.
+		/// </summary>
+        [AttributeLogicalName("areautomationcenterpreviewfeaturesenabled")]
+        public bool? AreAutomationCenterPreviewFeaturesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("areautomationcenterpreviewfeaturesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("areautomationcenterpreviewfeaturesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Process Insights Preview features are enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("areprocessinsightspreviewfeaturesenabled")]
+        public bool? AreProcessInsightsPreviewFeaturesEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("areprocessinsightspreviewfeaturesenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("areprocessinsightspreviewfeaturesenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Audit Retention Period settings stored in Organization Database.
 		/// </summary>
-		[AttributeLogicalName("auditretentionperiod")]
+        [AttributeLogicalName("auditretentionperiod")]
         public int? AuditRetentionPeriod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("auditretentionperiod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AuditRetentionPeriod));
+                OnPropertyChanging();
                 SetAttributeValue("auditretentionperiod", value);
-                OnPropertyChanged(nameof(AuditRetentionPeriod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Audit Retention Period settings stored in Organization Database.
 		/// </summary>
-		[AttributeLogicalName("auditretentionperiodv2")]
+        [AttributeLogicalName("auditretentionperiodv2")]
         public int? AuditRetentionPeriodV2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("auditretentionperiodv2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AuditRetentionPeriodV2));
+                OnPropertyChanging();
                 SetAttributeValue("auditretentionperiodv2", value);
-                OnPropertyChanged(nameof(AuditRetentionPeriodV2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Audit Settings of the organization
+		/// </summary>
+        [AttributeLogicalName("auditsettings")]
+        public string? AuditSettings
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("auditsettings");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("auditsettings", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Select whether to auto apply the default customer entitlement on case creation.
 		/// </summary>
-		[AttributeLogicalName("autoapplydefaultoncasecreate")]
+        [AttributeLogicalName("autoapplydefaultoncasecreate")]
         public bool? AutoApplyDefaultonCaseCreate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("autoapplydefaultoncasecreate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AutoApplyDefaultonCaseCreate));
+                OnPropertyChanging();
                 SetAttributeValue("autoapplydefaultoncasecreate", value);
-                OnPropertyChanged(nameof(AutoApplyDefaultonCaseCreate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to auto apply the default customer entitlement on case update.
 		/// </summary>
-		[AttributeLogicalName("autoapplydefaultoncaseupdate")]
+        [AttributeLogicalName("autoapplydefaultoncaseupdate")]
         public bool? AutoApplyDefaultonCaseUpdate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("autoapplydefaultoncaseupdate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AutoApplyDefaultonCaseUpdate));
+                OnPropertyChanging();
                 SetAttributeValue("autoapplydefaultoncaseupdate", value);
-                OnPropertyChanged(nameof(AutoApplyDefaultonCaseUpdate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether to Auto-apply SLA on case record update after SLA was manually applied.
 		/// </summary>
-		[AttributeLogicalName("autoapplysla")]
+        [AttributeLogicalName("autoapplysla")]
         public bool? AutoApplySLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("autoapplysla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AutoApplySLA));
+                OnPropertyChanging();
                 SetAttributeValue("autoapplysla", value);
-                OnPropertyChanged(nameof(AutoApplySLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("azureschedulerjobcollectionname")]
+        [AttributeLogicalName("azureschedulerjobcollectionname")]
         public string? AzureSchedulerJobCollectionName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("azureschedulerjobcollectionname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AzureSchedulerJobCollectionName));
+                OnPropertyChanging();
                 SetAttributeValue("azureschedulerjobcollectionname", value);
-                OnPropertyChanged(nameof(AzureSchedulerJobCollectionName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the base currency of the organization.
 		/// </summary>
-		[AttributeLogicalName("basecurrencyid")]
+        [AttributeLogicalName("basecurrencyid")]
         public EntityReference? BaseCurrencyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("basecurrencyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BaseCurrencyId));
+                OnPropertyChanging();
                 SetAttributeValue("basecurrencyid", value);
-                OnPropertyChanged(nameof(BaseCurrencyId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of decimal places that can be used for the base currency.
 		/// </summary>
-		[AttributeLogicalName("basecurrencyprecision")]
+        [AttributeLogicalName("basecurrencyprecision")]
         public int? BaseCurrencyPrecision
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("basecurrencyprecision");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Symbol used for the base currency.
 		/// </summary>
-		[AttributeLogicalName("basecurrencysymbol")]
+        [AttributeLogicalName("basecurrencysymbol")]
         public string? BaseCurrencySymbol
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("basecurrencysymbol");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Api Key to be used in requests to Bing Maps services.
 		/// </summary>
-		[AttributeLogicalName("bingmapsapikey")]
+        [AttributeLogicalName("bingmapsapikey")]
         public string? BingMapsApiKey
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("bingmapsapikey");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BingMapsApiKey));
+                OnPropertyChanging();
                 SetAttributeValue("bingmapsapikey", value);
-                OnPropertyChanged(nameof(BingMapsApiKey));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Enable this feature to prevent makers from accessing and downloading session transcripts
+		/// </summary>
+        [AttributeLogicalName("blockaccesstosessiontranscriptsforcopilotstudio")]
+        public bool? BlockAccessToSessionTranscriptsForCopilotStudio
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("blockaccesstosessiontranscriptsforcopilotstudio");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("blockaccesstosessiontranscriptsforcopilotstudio", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Prevent makers from allowing end-users to use their credentials during authentication to use connectors, actions, flows, and triggers that are connected to an agent
+		/// </summary>
+        [AttributeLogicalName("blockcopilotauthorauthentication")]
+        public bool? BlockCopilotAuthorAuthentication
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("blockcopilotauthorauthentication");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("blockcopilotauthorauthentication", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Information that specifies the Applications that are in block list for the accessing DV resources.
+		/// </summary>
+        [AttributeLogicalName("blockedapplicationsfordvaccess")]
+        public string? BlockedApplicationsForDVAccess
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("blockedapplicationsfordvaccess");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("blockedapplicationsfordvaccess", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Prevent upload or download of certain attachment types that are considered dangerous.
 		/// </summary>
-		[AttributeLogicalName("blockedattachments")]
+        [AttributeLogicalName("blockedattachments")]
         public string? BlockedAttachments
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("blockedattachments");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BlockedAttachments));
+                OnPropertyChanging();
                 SetAttributeValue("blockedattachments", value);
-                OnPropertyChanged(nameof(BlockedAttachments));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prevent upload or download of certain mime types that are considered dangerous.
 		/// </summary>
-		[AttributeLogicalName("blockedmimetypes")]
+        [AttributeLogicalName("blockedmimetypes")]
         public string? BlockedMimeTypes
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("blockedmimetypes");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BlockedMimeTypes));
+                OnPropertyChanging();
                 SetAttributeValue("blockedmimetypes", value);
-                OnPropertyChanged(nameof(BlockedMimeTypes));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Enable this feature to block access to session transcripts and conversational transcripts from being written to Dataverse for an individual environment
+		/// </summary>
+        [AttributeLogicalName("blocktranscriptrecordingforcopilotstudio")]
+        public bool? BlockTranscriptRecordingForCopilotStudio
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("blocktranscriptrecordingforcopilotstudio");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("blocktranscriptrecordingforcopilotstudio", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Enable this feature to block URLs and images in Copilot Studio and agent responses for an individual environment. URLs will be replaced with placeholders.
+		/// </summary>
+        [AttributeLogicalName("blockurlsinresponsesforcopilotstudio")]
+        public bool? BlockUrlsInResponsesForCopilotStudio
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("blockurlsinresponsesforcopilotstudio");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("blockurlsinresponsesforcopilotstudio", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Display cards in expanded state for interactive dashboard
 		/// </summary>
-		[AttributeLogicalName("bounddashboarddefaultcardexpanded")]
+        [AttributeLogicalName("bounddashboarddefaultcardexpanded")]
         public bool? BoundDashboardDefaultCardExpanded
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("bounddashboarddefaultcardexpanded");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BoundDashboardDefaultCardExpanded));
+                OnPropertyChanging();
                 SetAttributeValue("bounddashboarddefaultcardexpanded", value);
-                OnPropertyChanged(nameof(BoundDashboardDefaultCardExpanded));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix used for bulk operation numbering.
 		/// </summary>
-		[AttributeLogicalName("bulkoperationprefix")]
+        [AttributeLogicalName("bulkoperationprefix")]
         public string? BulkOperationPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("bulkoperationprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BulkOperationPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("bulkoperationprefix", value);
-                OnPropertyChanged(nameof(BulkOperationPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// BusinessCardOptions
 		/// </summary>
-		[AttributeLogicalName("businesscardoptions")]
+        [AttributeLogicalName("businesscardoptions")]
         public string? BusinessCardOptions
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("businesscardoptions");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BusinessCardOptions));
+                OnPropertyChanging();
                 SetAttributeValue("businesscardoptions", value);
-                OnPropertyChanged(nameof(BusinessCardOptions));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the business closure calendar of organization.
 		/// </summary>
-		[AttributeLogicalName("businessclosurecalendarid")]
+        [AttributeLogicalName("businessclosurecalendarid")]
         public Guid? BusinessClosureCalendarId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("businessclosurecalendarid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BusinessClosureCalendarId));
+                OnPropertyChanging();
                 SetAttributeValue("businessclosurecalendarid", value);
-                OnPropertyChanged(nameof(BusinessClosureCalendarId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Calendar type for the system. Set to Gregorian US by default.
 		/// </summary>
-		[AttributeLogicalName("calendartype")]
+        [AttributeLogicalName("calendartype")]
         public int? CalendarType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("calendartype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CalendarType));
+                OnPropertyChanging();
                 SetAttributeValue("calendartype", value);
-                OnPropertyChanged(nameof(CalendarType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix used for campaign numbering.
 		/// </summary>
-		[AttributeLogicalName("campaignprefix")]
+        [AttributeLogicalName("campaignprefix")]
         public string? CampaignPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("campaignprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CampaignPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("campaignprefix", value);
-                OnPropertyChanged(nameof(CampaignPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the organization can opt out of the new Relevance search experience (released in Oct 2020)
 		/// </summary>
-		[AttributeLogicalName("canoptoutnewsearchexperience")]
+        [AttributeLogicalName("canoptoutnewsearchexperience")]
         public bool? CanOptOutNewSearchExperience
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("canoptoutnewsearchexperience");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CanOptOutNewSearchExperience));
+                OnPropertyChanging();
                 SetAttributeValue("canoptoutnewsearchexperience", value);
-                OnPropertyChanged(nameof(CanOptOutNewSearchExperience));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to cascade Update on incident.
 		/// </summary>
-		[AttributeLogicalName("cascadestatusupdate")]
+        [AttributeLogicalName("cascadestatusupdate")]
         public bool? CascadeStatusUpdate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("cascadestatusupdate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CascadeStatusUpdate));
+                OnPropertyChanging();
                 SetAttributeValue("cascadestatusupdate", value);
-                OnPropertyChanged(nameof(CascadeStatusUpdate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix to use for all cases throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("caseprefix")]
+        [AttributeLogicalName("caseprefix")]
         public string? CasePrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("caseprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CasePrefix));
+                OnPropertyChanging();
                 SetAttributeValue("caseprefix", value);
-                OnPropertyChanged(nameof(CasePrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the prefix to use for all categories in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("categoryprefix")]
+        [AttributeLogicalName("categoryprefix")]
         public string? CategoryPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("categoryprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CategoryPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("categoryprefix", value);
-                OnPropertyChanged(nameof(CategoryPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Client Features to be enabled as an XML BLOB.
 		/// </summary>
-		[AttributeLogicalName("clientfeatureset")]
+        [AttributeLogicalName("clientfeatureset")]
         public string? ClientFeatureSet
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("clientfeatureset");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ClientFeatureSet));
+                OnPropertyChanging();
                 SetAttributeValue("clientfeatureset", value);
-                OnPropertyChanged(nameof(ClientFeatureSet));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Policy configuration for CSP
 		/// </summary>
-		[AttributeLogicalName("contentsecuritypolicyconfiguration")]
+        [AttributeLogicalName("contentsecuritypolicyconfiguration")]
         public string? ContentSecurityPolicyConfiguration
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("contentsecuritypolicyconfiguration");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ContentSecurityPolicyConfiguration));
+                OnPropertyChanging();
                 SetAttributeValue("contentsecuritypolicyconfiguration", value);
-                OnPropertyChanged(nameof(ContentSecurityPolicyConfiguration));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Content Security Policy configuration for Canvas apps.
 		/// </summary>
-		[AttributeLogicalName("contentsecuritypolicyconfigurationforcanvas")]
+        [AttributeLogicalName("contentsecuritypolicyconfigurationforcanvas")]
         public string? ContentSecurityPolicyConfigurationForCanvas
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("contentsecuritypolicyconfigurationforcanvas");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ContentSecurityPolicyConfigurationForCanvas));
+                OnPropertyChanging();
                 SetAttributeValue("contentsecuritypolicyconfigurationforcanvas", value);
-                OnPropertyChanged(nameof(ContentSecurityPolicyConfigurationForCanvas));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Content Security Policy Options.
+		/// </summary>
+        [AttributeLogicalName("contentsecuritypolicyoptions")]
+        public int? ContentSecurityPolicyOptions
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("contentsecuritypolicyoptions");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("contentsecuritypolicyoptions", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Content Security Policy Report Uri.
 		/// </summary>
-		[AttributeLogicalName("contentsecuritypolicyreporturi")]
+        [AttributeLogicalName("contentsecuritypolicyreporturi")]
         public string? ContentSecurityPolicyReportUri
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("contentsecuritypolicyreporturi");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ContentSecurityPolicyReportUri));
+                OnPropertyChanging();
                 SetAttributeValue("contentsecuritypolicyreporturi", value);
-                OnPropertyChanged(nameof(ContentSecurityPolicyReportUri));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix to use for all contracts throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("contractprefix")]
+        [AttributeLogicalName("contractprefix")]
         public string? ContractPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("contractprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ContractPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("contractprefix", value);
-                OnPropertyChanged(nameof(ContractPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Refresh rate for copresence data in seconds.
 		/// </summary>
-		[AttributeLogicalName("copresencerefreshrate")]
+        [AttributeLogicalName("copresencerefreshrate")]
         public int? CopresenceRefreshRate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("copresencerefreshrate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CopresenceRefreshRate));
+                OnPropertyChanging();
                 SetAttributeValue("copresencerefreshrate", value);
-                OnPropertyChanged(nameof(CopresenceRefreshRate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature CortanaProactiveExperience Flow processes should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("cortanaproactiveexperienceenabled")]
+        [AttributeLogicalName("cortanaproactiveexperienceenabled")]
         public bool? CortanaProactiveExperienceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("cortanaproactiveexperienceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CortanaProactiveExperienceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("cortanaproactiveexperienceenabled", value);
-                OnPropertyChanged(nameof(CortanaProactiveExperienceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the organization.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the organization was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the organization.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Initial state of newly created products to be Active instead of Draft
 		/// </summary>
-		[AttributeLogicalName("createproductswithoutparentinactivestate")]
+        [AttributeLogicalName("createproductswithoutparentinactivestate")]
         public bool? CreateProductsWithoutParentInActiveState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("createproductswithoutparentinactivestate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CreateProductsWithoutParentInActiveState));
+                OnPropertyChanging();
                 SetAttributeValue("createproductswithoutparentinactivestate", value);
-                OnPropertyChanged(nameof(CreateProductsWithoutParentInActiveState));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Default time to live in minutes for new records in the Flow Logs entity for CUA logs.
+		/// </summary>
+        [AttributeLogicalName("cuaflowlogsttlinminutes")]
+        public int? CuaFlowLogsTtlInMinutes
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("cuaflowlogsttlinminutes");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("cuaflowlogsttlinminutes", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Set the level of detail the computer use logs allow.
+		/// </summary>
+        [AttributeLogicalName("cuaflowlogsverbosity")]
+        public OptionSetValue? CuaFlowLogsVerbosity
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("cuaflowlogsverbosity");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("cuaflowlogsverbosity", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Number of decimal places that can be used for currency.
 		/// </summary>
-		[AttributeLogicalName("currencydecimalprecision")]
+        [AttributeLogicalName("currencydecimalprecision")]
         public int? CurrencyDecimalPrecision
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currencydecimalprecision");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrencyDecimalPrecision));
+                OnPropertyChanging();
                 SetAttributeValue("currencydecimalprecision", value);
-                OnPropertyChanged(nameof(CurrencyDecimalPrecision));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether to display money fields with currency code or currency symbol.
 		/// </summary>
-		[AttributeLogicalName("currencydisplayoption")]
+        [AttributeLogicalName("currencydisplayoption")]
         public OptionSetValue? CurrencyDisplayOption
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("currencydisplayoption");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrencyDisplayOption));
+                OnPropertyChanging();
                 SetAttributeValue("currencydisplayoption", value);
-                OnPropertyChanged(nameof(CurrencyDisplayOption));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about how currency symbols are placed throughout Microsoft Dynamics CRM.
 		/// </summary>
-		[AttributeLogicalName("currencyformatcode")]
+        [AttributeLogicalName("currencyformatcode")]
         public OptionSetValue? CurrencyFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("currencyformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrencyFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("currencyformatcode", value);
-                OnPropertyChanged(nameof(CurrencyFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Symbol used for currency throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("currencysymbol")]
+        [AttributeLogicalName("currencysymbol")]
         public string? CurrencySymbol
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("currencysymbol");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrencySymbol));
+                OnPropertyChanging();
                 SetAttributeValue("currencysymbol", value);
-                OnPropertyChanged(nameof(CurrencySymbol));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Current bulk operation number. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentbulkoperationnumber")]
+        [AttributeLogicalName("currentbulkoperationnumber")]
         public int? CurrentBulkOperationNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentbulkoperationnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentBulkOperationNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentbulkoperationnumber", value);
-                OnPropertyChanged(nameof(CurrentBulkOperationNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Current campaign number. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentcampaignnumber")]
+        [AttributeLogicalName("currentcampaignnumber")]
         public int? CurrentCampaignNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentcampaignnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentCampaignNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentcampaignnumber", value);
-                OnPropertyChanged(nameof(CurrentCampaignNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First case number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentcasenumber")]
+        [AttributeLogicalName("currentcasenumber")]
         public int? CurrentCaseNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentcasenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentCaseNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentcasenumber", value);
-                OnPropertyChanged(nameof(CurrentCaseNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enter the first number to use for Categories. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentcategorynumber")]
+        [AttributeLogicalName("currentcategorynumber")]
         public int? CurrentCategoryNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentcategorynumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentCategoryNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentcategorynumber", value);
-                OnPropertyChanged(nameof(CurrentCategoryNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First contract number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentcontractnumber")]
+        [AttributeLogicalName("currentcontractnumber")]
         public int? CurrentContractNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentcontractnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentContractNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentcontractnumber", value);
-                OnPropertyChanged(nameof(CurrentContractNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Import sequence to use.
 		/// </summary>
-		[AttributeLogicalName("currentimportsequencenumber")]
+        [AttributeLogicalName("currentimportsequencenumber")]
         public int? CurrentImportSequenceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentimportsequencenumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First invoice number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentinvoicenumber")]
+        [AttributeLogicalName("currentinvoicenumber")]
         public int? CurrentInvoiceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentinvoicenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentInvoiceNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentinvoicenumber", value);
-                OnPropertyChanged(nameof(CurrentInvoiceNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enter the first number to use for knowledge articles. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentkanumber")]
+        [AttributeLogicalName("currentkanumber")]
         public int? CurrentKaNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentkanumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentKaNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentkanumber", value);
-                OnPropertyChanged(nameof(CurrentKaNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First article number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentkbnumber")]
+        [AttributeLogicalName("currentkbnumber")]
         public int? CurrentKbNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentkbnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentKbNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentkbnumber", value);
-                OnPropertyChanged(nameof(CurrentKbNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First order number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentordernumber")]
+        [AttributeLogicalName("currentordernumber")]
         public int? CurrentOrderNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentordernumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentOrderNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentordernumber", value);
-                OnPropertyChanged(nameof(CurrentOrderNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First parsed table number to use.
 		/// </summary>
-		[AttributeLogicalName("currentparsedtablenumber")]
+        [AttributeLogicalName("currentparsedtablenumber")]
         public int? CurrentParsedTableNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentparsedtablenumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// First quote number to use. Deprecated. Use SetAutoNumberSeed message.
 		/// </summary>
-		[AttributeLogicalName("currentquotenumber")]
+        [AttributeLogicalName("currentquotenumber")]
         public int? CurrentQuoteNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("currentquotenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CurrentQuoteNumber));
+                OnPropertyChanging();
                 SetAttributeValue("currentquotenumber", value);
-                OnPropertyChanged(nameof(CurrentQuoteNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about how the date is displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("dateformatcode")]
+        [AttributeLogicalName("dateformatcode")]
         public OptionSetValue? DateFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("dateformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DateFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("dateformatcode", value);
-                OnPropertyChanged(nameof(DateFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// String showing how the date is displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("dateformatstring")]
+        [AttributeLogicalName("dateformatstring")]
         public string? DateFormatString
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("dateformatstring");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DateFormatString));
+                OnPropertyChanging();
                 SetAttributeValue("dateformatstring", value);
-                OnPropertyChanged(nameof(DateFormatString));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Character used to separate the month, the day, and the year in dates throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("dateseparator")]
+        [AttributeLogicalName("dateseparator")]
         public string? DateSeparator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("dateseparator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DateSeparator));
+                OnPropertyChanging();
                 SetAttributeValue("dateseparator", value);
-                OnPropertyChanged(nameof(DateSeparator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Number of days before we migrate email description to blob.
+		/// </summary>
+        [AttributeLogicalName("daysbeforeemaildescriptionismigrated")]
+        public int? DaysBeforeEmailDescriptionIsMigrated
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("daysbeforeemaildescriptionismigrated");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("daysbeforeemaildescriptionismigrated", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Days of inactivity before sync is disabled for a Teams Chat.
 		/// </summary>
-		[AttributeLogicalName("daysbeforeinactiveteamschatsyncdisabled")]
+        [AttributeLogicalName("daysbeforeinactiveteamschatsyncdisabled")]
         public int? DaysBeforeInactiveTeamsChatSyncDisabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("daysbeforeinactiveteamschatsyncdisabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DaysBeforeInactiveTeamsChatSyncDisabled));
+                OnPropertyChanging();
                 SetAttributeValue("daysbeforeinactiveteamschatsyncdisabled", value);
-                OnPropertyChanged(nameof(DaysBeforeInactiveTeamsChatSyncDisabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The maximum value for the Mobile Offline setting Days since record last modified
 		/// </summary>
-		[AttributeLogicalName("dayssincerecordlastmodifiedmaxvalue")]
+        [AttributeLogicalName("dayssincerecordlastmodifiedmaxvalue")]
         public int? DaysSinceRecordLastModifiedMaxValue
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("dayssincerecordlastmodifiedmaxvalue");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Symbol used for decimal in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("decimalsymbol")]
+        [AttributeLogicalName("decimalsymbol")]
         public string? DecimalSymbol
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("decimalsymbol");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DecimalSymbol));
+                OnPropertyChanging();
                 SetAttributeValue("decimalsymbol", value);
-                OnPropertyChanged(nameof(DecimalSymbol));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Text area to enter default country code.
 		/// </summary>
-		[AttributeLogicalName("defaultcountrycode")]
+        [AttributeLogicalName("defaultcountrycode")]
         public string? DefaultCountryCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("defaultcountrycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultCountryCode));
+                OnPropertyChanging();
                 SetAttributeValue("defaultcountrycode", value);
-                OnPropertyChanged(nameof(DefaultCountryCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the default crm custom.
 		/// </summary>
-		[AttributeLogicalName("defaultcrmcustomname")]
+        [AttributeLogicalName("defaultcrmcustomname")]
         public string? DefaultCrmCustomName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("defaultcrmcustomname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultCrmCustomName));
+                OnPropertyChanging();
                 SetAttributeValue("defaultcrmcustomname", value);
-                OnPropertyChanged(nameof(DefaultCrmCustomName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the default email server profile.
 		/// </summary>
-		[AttributeLogicalName("defaultemailserverprofileid")]
+        [AttributeLogicalName("defaultemailserverprofileid")]
         public EntityReference? DefaultEmailServerProfileId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("defaultemailserverprofileid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultEmailServerProfileId));
+                OnPropertyChanging();
                 SetAttributeValue("defaultemailserverprofileid", value);
-                OnPropertyChanged(nameof(DefaultEmailServerProfileId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string containing the default email settings that are applied when a user or queue is created.
 		/// </summary>
-		[AttributeLogicalName("defaultemailsettings")]
+        [AttributeLogicalName("defaultemailsettings")]
         public string? DefaultEmailSettings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("defaultemailsettings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultEmailSettings));
+                OnPropertyChanging();
                 SetAttributeValue("defaultemailsettings", value);
-                OnPropertyChanged(nameof(DefaultEmailSettings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the default mobile offline profile.
 		/// </summary>
-		[AttributeLogicalName("defaultmobileofflineprofileid")]
+        [AttributeLogicalName("defaultmobileofflineprofileid")]
         public EntityReference? DefaultMobileOfflineProfileId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("defaultmobileofflineprofileid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultMobileOfflineProfileId));
+                OnPropertyChanging();
                 SetAttributeValue("defaultmobileofflineprofileid", value);
-                OnPropertyChanged(nameof(DefaultMobileOfflineProfileId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type of default recurrence end range date.
 		/// </summary>
-		[AttributeLogicalName("defaultrecurrenceendrangetype")]
+        [AttributeLogicalName("defaultrecurrenceendrangetype")]
         public OptionSetValue? DefaultRecurrenceEndRangeType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("defaultrecurrenceendrangetype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultRecurrenceEndRangeType));
+                OnPropertyChanging();
                 SetAttributeValue("defaultrecurrenceendrangetype", value);
-                OnPropertyChanged(nameof(DefaultRecurrenceEndRangeType));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("defaultrecurrenceendrangetypename")]
-        public string? DefaultRecurrenceEndRangeTypeName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("defaultrecurrenceendrangetypename");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DefaultRecurrenceEndRangeTypeName));
-                SetAttributeValue("defaultrecurrenceendrangetypename", value);
-                OnPropertyChanged(nameof(DefaultRecurrenceEndRangeTypeName));
-            }
-        }
-
-		/// <summary>
-		/// Indicates whether the default teams linked chat title is the record name
-		/// </summary>
-		[AttributeLogicalName("defaultteamschattitlerecordname")]
-        public bool? DefaultTeamsChatTitleRecordName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("defaultteamschattitlerecordname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DefaultTeamsChatTitleRecordName));
-                SetAttributeValue("defaultteamschattitlerecordname", value);
-                OnPropertyChanged(nameof(DefaultTeamsChatTitleRecordName));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Default theme data for the organization.
 		/// </summary>
-		[AttributeLogicalName("defaultthemedata")]
+        [AttributeLogicalName("defaultthemedata")]
         public string? DefaultThemeData
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("defaultthemedata");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DefaultThemeData));
+                OnPropertyChanging();
                 SetAttributeValue("defaultthemedata", value);
-                OnPropertyChanged(nameof(DefaultThemeData));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegated admin user for the organization.
 		/// </summary>
-		[AttributeLogicalName("delegatedadminuserid")]
+        [AttributeLogicalName("delegatedadminuserid")]
         public Guid? DelegatedAdminUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("delegatedadminuserid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DelegatedAdminUserId));
+                OnPropertyChanging();
                 SetAttributeValue("delegatedadminuserid", value);
-                OnPropertyChanged(nameof(DelegatedAdminUserId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Default time to live in minutes for new desktop flow queue log records.
+		/// </summary>
+        [AttributeLogicalName("desktopflowqueuelogsttlinminutes")]
+        public int? DesktopFlowQueueLogsTtlInMinutes
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("desktopflowqueuelogsttlinminutes");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("desktopflowqueuelogsttlinminutes", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Toggle the activation of the Power Automate Desktop Flow run action logs.
+		/// </summary>
+        [AttributeLogicalName("desktopflowrunactionlogsstatus")]
+        public OptionSetValue? DesktopFlowRunActionLogsStatus
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("desktopflowrunactionlogsstatus");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("desktopflowrunactionlogsstatus", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// What verbosity level the Power Automate Desktop Flow Run Action Logs allow.
+		/// </summary>
+        [AttributeLogicalName("desktopflowrunactionlogverbosity")]
+        public OptionSetValue? DesktopFlowRunActionLogVerbosity
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("desktopflowrunactionlogverbosity");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("desktopflowrunactionlogverbosity", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Where the Power Automate Desktop Flow Run Action logs are stored.
+		/// </summary>
+        [AttributeLogicalName("desktopflowrunactionlogversion")]
+        public OptionSetValue? DesktopFlowRunActionLogVersion
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("desktopflowrunactionlogversion");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("desktopflowrunactionlogversion", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Reason for disabling the organization.
 		/// </summary>
-		[AttributeLogicalName("disabledreason")]
+        [AttributeLogicalName("disabledreason")]
         public string? DisabledReason
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("disabledreason");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Social Care is disabled.
 		/// </summary>
-		[AttributeLogicalName("disablesocialcare")]
+        [AttributeLogicalName("disablesocialcare")]
         public bool? DisableSocialCare
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("disablesocialcare");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DisableSocialCare));
+                OnPropertyChanging();
                 SetAttributeValue("disablesocialcare", value);
-                OnPropertyChanged(nameof(DisableSocialCare));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Disable sharing system labels for the organization.
+		/// </summary>
+        [AttributeLogicalName("disablesystemlabelscachesharing")]
+        public bool? DisableSystemLabelsCacheSharing
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("disablesystemlabelscachesharing");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("disablesystemlabelscachesharing", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Discount calculation method for the QOOI product.
 		/// </summary>
-		[AttributeLogicalName("discountcalculationmethod")]
+        [AttributeLogicalName("discountcalculationmethod")]
         public OptionSetValue? DiscountCalculationMethod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("discountcalculationmethod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DiscountCalculationMethod));
+                OnPropertyChanging();
                 SetAttributeValue("discountcalculationmethod", value);
-                OnPropertyChanged(nameof(DiscountCalculationMethod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether or not navigation tour is displayed.
 		/// </summary>
-		[AttributeLogicalName("displaynavigationtour")]
+        [AttributeLogicalName("displaynavigationtour")]
         public bool? DisplayNavigationTour
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("displaynavigationtour");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DisplayNavigationTour));
+                OnPropertyChanging();
                 SetAttributeValue("displaynavigationtour", value);
-                OnPropertyChanged(nameof(DisplayNavigationTour));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select if you want to use the Email Router or server-side synchronization for email processing.
 		/// </summary>
-		[AttributeLogicalName("emailconnectionchannel")]
+        [AttributeLogicalName("emailconnectionchannel")]
         public OptionSetValue? EmailConnectionChannel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("emailconnectionchannel");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EmailConnectionChannel));
+                OnPropertyChanging();
                 SetAttributeValue("emailconnectionchannel", value);
-                OnPropertyChanged(nameof(EmailConnectionChannel));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to turn email correlation on or off.
 		/// </summary>
-		[AttributeLogicalName("emailcorrelationenabled")]
+        [AttributeLogicalName("emailcorrelationenabled")]
         public bool? EmailCorrelationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("emailcorrelationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EmailCorrelationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("emailcorrelationenabled", value);
-                OnPropertyChanged(nameof(EmailCorrelationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Normal polling frequency used for sending email in Microsoft Office Outlook.
 		/// </summary>
-		[AttributeLogicalName("emailsendpollingperiod")]
+        [AttributeLogicalName("emailsendpollingperiod")]
         public int? EmailSendPollingPeriod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("emailsendpollingperiod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EmailSendPollingPeriod));
+                OnPropertyChanging();
                 SetAttributeValue("emailsendpollingperiod", value);
-                OnPropertyChanged(nameof(EmailSendPollingPeriod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates the selected default view in the enhanced insert e-mail template experience..
-		/// </summary>
-		[AttributeLogicalName("emailtemplatedefaultview")]
-        public OptionSetValue? EmailTemplateDefaultView
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<OptionSetValue?>("emailtemplatedefaultview");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(EmailTemplateDefaultView));
-                SetAttributeValue("emailtemplatedefaultview", value);
-                OnPropertyChanged(nameof(EmailTemplateDefaultView));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Determines whether records merged through the merge dialog in UCI are merged asynchronously
 		/// </summary>
-		[AttributeLogicalName("enableasyncmergeapiforuci")]
+        [AttributeLogicalName("enableasyncmergeapiforuci")]
         public bool? EnableAsyncMergeAPIForUCI
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableasyncmergeapiforuci");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableAsyncMergeAPIForUCI));
+                OnPropertyChanging();
                 SetAttributeValue("enableasyncmergeapiforuci", value);
-                OnPropertyChanged(nameof(EnableAsyncMergeAPIForUCI));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Integration with Bing Maps
 		/// </summary>
-		[AttributeLogicalName("enablebingmapsintegration")]
+        [AttributeLogicalName("enablebingmapsintegration")]
         public bool? EnableBingMapsIntegration
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablebingmapsintegration");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableBingMapsIntegration));
+                OnPropertyChanging();
                 SetAttributeValue("enablebingmapsintegration", value);
-                OnPropertyChanged(nameof(EnableBingMapsIntegration));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether to Allow calendar export import with SLA.
-		/// </summary>
-		[AttributeLogicalName("enablecalendarimportexport")]
-        public bool? EnableCalendarImportExport
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("enablecalendarimportexport");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(EnableCalendarImportExport));
-                SetAttributeValue("enablecalendarimportexport", value);
-                OnPropertyChanged(nameof(EnableCalendarImportExport));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Note: By enabling this feature, you will also enable the automatic creation of enviornment variables when adding data sources for your apps.
 		/// </summary>
-		[AttributeLogicalName("enablecanvasappsinsolutionsbydefault")]
+        [AttributeLogicalName("enablecanvasappsinsolutionsbydefault")]
         public bool? EnableCanvasAppsInSolutionsByDefault
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablecanvasappsinsolutionsbydefault");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableCanvasAppsInSolutionsByDefault));
+                OnPropertyChanging();
                 SetAttributeValue("enablecanvasappsinsolutionsbydefault", value);
-                OnPropertyChanged(nameof(EnableCanvasAppsInSolutionsByDefault));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether to Allow email template views in Enhanced Email Template.
+        /// <summary>
+		/// Enable this feature to allow cross-geo boundary sharing of aggregated analytics data if your preferred data location for Viva Insights is different than the location of your environment
 		/// </summary>
-		[AttributeLogicalName("enableemailtemplateviews")]
-        public bool? EnableEmailTemplateViews
+        [AttributeLogicalName("enablecopilotstudiocrossgeosharedatawithvivainsights")]
+        public bool? EnableCopilotStudioCrossGeoShareDataWithVivaInsights
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<bool?>("enableemailtemplateviews");
+                return GetAttributeValue<bool?>("enablecopilotstudiocrossgeosharedatawithvivainsights");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableEmailTemplateViews));
-                SetAttributeValue("enableemailtemplateviews", value);
-                OnPropertyChanged(nameof(EnableEmailTemplateViews));
+                OnPropertyChanging();
+                SetAttributeValue("enablecopilotstudiocrossgeosharedatawithvivainsights", value);
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// (Deprecated) Enable this feature to allow Copilot Studio to share aggregated analytics data for custom agents with Viva Insights for an individual environment
+		/// </summary>
+        [AttributeLogicalName("enablecopilotstudiosharedatawithvi")]
+        public bool? EnableCopilotStudioShareDataWithVI
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enablecopilotstudiosharedatawithvi");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enablecopilotstudiosharedatawithvi", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Enable this feature to allow Copilot Studio to share aggregated analytics data for custom agents with Viva Insights for an individual environment
+		/// </summary>
+        [AttributeLogicalName("enablecopilotstudiosharedatawithvivainsights")]
+        public bool? EnableCopilotStudioShareDataWithVivaInsights
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enablecopilotstudiosharedatawithvivainsights");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enablecopilotstudiosharedatawithvivainsights", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Enables the Environment Settings App
+		/// </summary>
+        [AttributeLogicalName("enableenvironmentsettingsapp")]
+        public bool? EnableEnvironmentSettingsApp
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enableenvironmentsettingsapp");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enableenvironmentsettingsapp", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether the creation of flows is within a solution by default for this organization.
 		/// </summary>
-		[AttributeLogicalName("enableflowsinsolutionbydefault")]
+        [AttributeLogicalName("enableflowsinsolutionbydefault")]
         public bool? EnableFlowsInSolutionByDefault
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableflowsinsolutionbydefault");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableFlowsInSolutionByDefault));
+                OnPropertyChanging();
                 SetAttributeValue("enableflowsinsolutionbydefault", value);
-                OnPropertyChanged(nameof(EnableFlowsInSolutionByDefault));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Organizations with this attribute set to true will be granted a grace period and excluded from the initial world wide enablement of 'creation of flows within a solution by default' functionality. Once the grace period expires, the functionality will be enabled in your organization.
+		/// </summary>
+        [AttributeLogicalName("enableflowsinsolutionbydefaultgraceperiod")]
+        public bool? EnableFlowsInSolutionByDefaultGracePeriod
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enableflowsinsolutionbydefaultgraceperiod");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enableflowsinsolutionbydefaultgraceperiod", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Enable Integration with Immersive Skype
 		/// </summary>
-		[AttributeLogicalName("enableimmersiveskypeintegration")]
+        [AttributeLogicalName("enableimmersiveskypeintegration")]
         public bool? EnableImmersiveSkypeIntegration
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableimmersiveskypeintegration");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableImmersiveSkypeIntegration));
+                OnPropertyChanging();
                 SetAttributeValue("enableimmersiveskypeintegration", value);
-                OnPropertyChanged(nameof(EnableImmersiveSkypeIntegration));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether IP based cookie binding is enabled
 		/// </summary>
-		[AttributeLogicalName("enableipbasedcookiebinding")]
+        [AttributeLogicalName("enableipbasedcookiebinding")]
         public bool? EnableIpBasedCookieBinding
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableipbasedcookiebinding");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableIpBasedCookieBinding));
+                OnPropertyChanging();
                 SetAttributeValue("enableipbasedcookiebinding", value);
-                OnPropertyChanged(nameof(EnableIpBasedCookieBinding));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether IP based firewall rule is enabled
 		/// </summary>
-		[AttributeLogicalName("enableipbasedfirewallrule")]
+        [AttributeLogicalName("enableipbasedfirewallrule")]
         public bool? EnableIpBasedFirewallRule
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableipbasedfirewallrule");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableIpBasedFirewallRule));
+                OnPropertyChanging();
                 SetAttributeValue("enableipbasedfirewallrule", value);
-                OnPropertyChanged(nameof(EnableIpBasedFirewallRule));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information that specifies whether IP based firewall rule is enabled in Audit Only Mode
+		/// </summary>
+        [AttributeLogicalName("enableipbasedfirewallruleinauditmode")]
+        public bool? EnableIpBasedFirewallRuleInAuditMode
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("enableipbasedfirewallruleinauditmode");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("enableipbasedfirewallruleinauditmode", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information that specifies whether IP based SAS URI generation rule is enabled
 		/// </summary>
-		[AttributeLogicalName("enableipbasedstorageaccesssignaturerule")]
+        [AttributeLogicalName("enableipbasedstorageaccesssignaturerule")]
         public bool? EnableIpBasedStorageAccessSignatureRule
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableipbasedstorageaccesssignaturerule");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableIpBasedStorageAccessSignatureRule));
+                OnPropertyChanging();
                 SetAttributeValue("enableipbasedstorageaccesssignaturerule", value);
-                OnPropertyChanged(nameof(EnableIpBasedStorageAccessSignatureRule));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the user has enabled or disabled Live Persona Card feature in UCI.
 		/// </summary>
-		[AttributeLogicalName("enablelivepersonacarduci")]
+        [AttributeLogicalName("enablelivepersonacarduci")]
         public bool? EnableLivePersonaCardUCI
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablelivepersonacarduci");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableLivePersonaCardUCI));
+                OnPropertyChanging();
                 SetAttributeValue("enablelivepersonacarduci", value);
-                OnPropertyChanged(nameof(EnableLivePersonaCardUCI));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the user has enabled or disabled LivePersonCardIntegration in Office.
 		/// </summary>
-		[AttributeLogicalName("enablelivepersoncardintegrationinoffice")]
+        [AttributeLogicalName("enablelivepersoncardintegrationinoffice")]
         public bool? EnableLivePersonCardIntegrationInOffice
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablelivepersoncardintegrationinoffice");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableLivePersonCardIntegrationInOffice));
+                OnPropertyChanging();
                 SetAttributeValue("enablelivepersoncardintegrationinoffice", value);
-                OnPropertyChanged(nameof(EnableLivePersonCardIntegrationInOffice));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select to enable learning path auhtoring.
 		/// </summary>
-		[AttributeLogicalName("enablelpauthoring")]
+        [AttributeLogicalName("enablelpauthoring")]
         public bool? EnableLPAuthoring
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablelpauthoring");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableLPAuthoring));
+                OnPropertyChanging();
                 SetAttributeValue("enablelpauthoring", value);
-                OnPropertyChanged(nameof(EnableLPAuthoring));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Control whether the organization Switch Maker Portal to Classic
 		/// </summary>
-		[AttributeLogicalName("enablemakerswitchtoclassic")]
+        [AttributeLogicalName("enablemakerswitchtoclassic")]
         public bool? EnableMakerSwitchToClassic
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablemakerswitchtoclassic");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableMakerSwitchToClassic));
+                OnPropertyChanging();
                 SetAttributeValue("enablemakerswitchtoclassic", value);
-                OnPropertyChanged(nameof(EnableMakerSwitchToClassic));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Integration with Microsoft Flow
 		/// </summary>
-		[AttributeLogicalName("enablemicrosoftflowintegration")]
+        [AttributeLogicalName("enablemicrosoftflowintegration")]
         public bool? EnableMicrosoftFlowIntegration
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablemicrosoftflowintegration");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableMicrosoftFlowIntegration));
+                OnPropertyChanging();
                 SetAttributeValue("enablemicrosoftflowintegration", value);
-                OnPropertyChanged(nameof(EnableMicrosoftFlowIntegration));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable pricing calculations on a Create call.
 		/// </summary>
-		[AttributeLogicalName("enablepricingoncreate")]
+        [AttributeLogicalName("enablepricingoncreate")]
         public bool? EnablePricingOnCreate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablepricingoncreate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnablePricingOnCreate));
+                OnPropertyChanging();
                 SetAttributeValue("enablepricingoncreate", value);
-                OnPropertyChanged(nameof(EnablePricingOnCreate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether privacy and sensitivity attributes for new team creation has been enabled
+        /// <summary>
+		/// Enable or disable Sensitivity Labels in Email.
 		/// </summary>
-		[AttributeLogicalName("enablesensitivitylabelsforteamscollab")]
-        public bool? EnableSensitivityLabelsForTeamsCollab
+        [AttributeLogicalName("enablesensitivitylabels")]
+        public bool? EnableSensitivityLabels
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<bool?>("enablesensitivitylabelsforteamscollab");
+                return GetAttributeValue<bool?>("enablesensitivitylabels");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableSensitivityLabelsForTeamsCollab));
-                SetAttributeValue("enablesensitivitylabelsforteamscollab", value);
-                OnPropertyChanged(nameof(EnableSensitivityLabelsForTeamsCollab));
+                OnPropertyChanging();
+                SetAttributeValue("enablesensitivitylabels", value);
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Use Smart Matching.
 		/// </summary>
-		[AttributeLogicalName("enablesmartmatching")]
+        [AttributeLogicalName("enablesmartmatching")]
         public bool? EnableSmartMatching
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enablesmartmatching");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableSmartMatching));
+                OnPropertyChanging();
                 SetAttributeValue("enablesmartmatching", value);
-                OnPropertyChanged(nameof(EnableSmartMatching));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Leave empty to use default setting. Set to on/off to enable/disable CDN for UCI.
 		/// </summary>
-		[AttributeLogicalName("enableunifiedclientcdn")]
+        [AttributeLogicalName("enableunifiedclientcdn")]
         public bool? EnableUnifiedClientCDN
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableunifiedclientcdn");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableUnifiedClientCDN));
+                OnPropertyChanging();
                 SetAttributeValue("enableunifiedclientcdn", value);
-                OnPropertyChanged(nameof(EnableUnifiedClientCDN));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable site map and commanding update
 		/// </summary>
-		[AttributeLogicalName("enableunifiedinterfaceshellrefresh")]
+        [AttributeLogicalName("enableunifiedinterfaceshellrefresh")]
         public bool? EnableUnifiedInterfaceShellRefresh
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enableunifiedinterfaceshellrefresh");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnableUnifiedInterfaceShellRefresh));
+                OnPropertyChanging();
                 SetAttributeValue("enableunifiedinterfaceshellrefresh", value);
-                OnPropertyChanged(nameof(EnableUnifiedInterfaceShellRefresh));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Organization setting to enforce read only plugins.
 		/// </summary>
-		[AttributeLogicalName("enforcereadonlyplugins")]
+        [AttributeLogicalName("enforcereadonlyplugins")]
         public bool? EnforceReadOnlyPlugins
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("enforcereadonlyplugins");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EnforceReadOnlyPlugins));
+                OnPropertyChanging();
                 SetAttributeValue("enforcereadonlyplugins", value);
-                OnPropertyChanged(nameof(EnforceReadOnlyPlugins));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether validation enforcement has been enabled for this organization's apps.
-		/// </summary>
-		[AttributeLogicalName("enforcevalidations")]
-        public bool? EnforceValidations
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("enforcevalidations");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(EnforceValidations));
-                SetAttributeValue("enforcevalidations", value);
-                OnPropertyChanged(nameof(EnforceValidations));
-            }
-        }
-
-		/// <summary>
-		/// JSON string containing settings for enhanced add products experience in Sales
-		/// </summary>
-		[AttributeLogicalName("enhancedoqoiaddproductssettings")]
-        public string? EnhancedOQOIAddProductsSettings
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("enhancedoqoiaddproductssettings");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(EnhancedOQOIAddProductsSettings));
-                SetAttributeValue("enhancedoqoiaddproductssettings", value);
-                OnPropertyChanged(nameof(EnhancedOQOIAddProductsSettings));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// The default image for the entity.
 		/// </summary>
-		[AttributeLogicalName("entityimage")]
+        [AttributeLogicalName("entityimage")]
         public byte[]? EntityImage
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<byte[]?>("entityimage");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EntityImage));
+                OnPropertyChanging();
                 SetAttributeValue("entityimage", value);
-                OnPropertyChanged(nameof(EntityImage));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("entityimage_timestamp")]
+        
+        [AttributeLogicalName("entityimage_timestamp")]
         public long? EntityImageTimestamp
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("entityimage_timestamp");
             }
         }
 
-		
-		[AttributeLogicalName("entityimage_url")]
+        
+        [AttributeLogicalName("entityimage_url")]
         public string? EntityImageURL
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("entityimage_url");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("entityimageid")]
+        [AttributeLogicalName("entityimageid")]
         public Guid? EntityImageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("entityimageid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of days to keep change tracking deleted records
 		/// </summary>
-		[AttributeLogicalName("expirechangetrackingindays")]
+        [AttributeLogicalName("expirechangetrackingindays")]
         public int? ExpireChangeTrackingInDays
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("expirechangetrackingindays");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExpireChangeTrackingInDays));
+                OnPropertyChanging();
                 SetAttributeValue("expirechangetrackingindays", value);
-                OnPropertyChanged(nameof(ExpireChangeTrackingInDays));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of days before deleting inactive subscriptions.
 		/// </summary>
-		[AttributeLogicalName("expiresubscriptionsindays")]
+        [AttributeLogicalName("expiresubscriptionsindays")]
         public int? ExpireSubscriptionsInDays
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("expiresubscriptionsindays");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExpireSubscriptionsInDays));
+                OnPropertyChanging();
                 SetAttributeValue("expiresubscriptionsindays", value);
-                OnPropertyChanged(nameof(ExpireSubscriptionsInDays));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specify the base URL to use to look for external document suggestions.
 		/// </summary>
-		[AttributeLogicalName("externalbaseurl")]
+        [AttributeLogicalName("externalbaseurl")]
         public string? ExternalBaseUrl
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("externalbaseurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExternalBaseUrl));
+                OnPropertyChanging();
                 SetAttributeValue("externalbaseurl", value);
-                OnPropertyChanged(nameof(ExternalBaseUrl));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string containing the ExternalPartyEnabled entities correlation keys for association of existing External Party instance entities to newly created IsExternalPartyEnabled entities.For internal use only
 		/// </summary>
-		[AttributeLogicalName("externalpartycorrelationkeys")]
+        [AttributeLogicalName("externalpartycorrelationkeys")]
         public string? ExternalPartyCorrelationKeys
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("externalpartycorrelationkeys");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExternalPartyCorrelationKeys));
+                OnPropertyChanging();
                 SetAttributeValue("externalpartycorrelationkeys", value);
-                OnPropertyChanged(nameof(ExternalPartyCorrelationKeys));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string containing the ExternalPartyEnabled entities settings.
 		/// </summary>
-		[AttributeLogicalName("externalpartyentitysettings")]
+        [AttributeLogicalName("externalpartyentitysettings")]
         public string? ExternalPartyEntitySettings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("externalpartyentitysettings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExternalPartyEntitySettings));
+                OnPropertyChanging();
                 SetAttributeValue("externalpartyentitysettings", value);
-                OnPropertyChanged(nameof(ExternalPartyEntitySettings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Features to be enabled as an XML BLOB.
 		/// </summary>
-		[AttributeLogicalName("featureset")]
+        [AttributeLogicalName("featureset")]
         public string? FeatureSet
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("featureset");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FeatureSet));
+                OnPropertyChanging();
                 SetAttributeValue("featureset", value);
-                OnPropertyChanged(nameof(FeatureSet));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Start date for the fiscal period that is to be used throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("fiscalcalendarstart")]
+        [AttributeLogicalName("fiscalcalendarstart")]
         public DateTime? FiscalCalendarStart
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("fiscalcalendarstart");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalCalendarStart));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalcalendarstart", value);
-                OnPropertyChanged(nameof(FiscalCalendarStart));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the name of the fiscal period is displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("fiscalperiodformat")]
+        [AttributeLogicalName("fiscalperiodformat")]
         public string? FiscalPeriodFormat
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("fiscalperiodformat");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalPeriodFormat));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalperiodformat", value);
-                OnPropertyChanged(nameof(FiscalPeriodFormat));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Format in which the fiscal period will be displayed.
 		/// </summary>
-		[AttributeLogicalName("fiscalperiodformatperiod")]
+        [AttributeLogicalName("fiscalperiodformatperiod")]
         public OptionSetValue? FiscalPeriodFormatPeriod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("fiscalperiodformatperiod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalPeriodFormatPeriod));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalperiodformatperiod", value);
-                OnPropertyChanged(nameof(FiscalPeriodFormatPeriod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type of fiscal period used throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("fiscalperiodtype")]
+        [AttributeLogicalName("fiscalperiodtype")]
         public int? FiscalPeriodType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("fiscalperiodtype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalPeriodType));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalperiodtype", value);
-                OnPropertyChanged(nameof(FiscalPeriodType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether the fiscal settings have been updated.
 		/// </summary>
-		[AttributeLogicalName("fiscalsettingsupdated")]
+        [AttributeLogicalName("fiscalsettingsupdated")]
         public bool? FiscalSettingsUpdated
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("fiscalsettingsupdated");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether the fiscal year should be displayed based on the start date or the end date of the fiscal year.
 		/// </summary>
-		[AttributeLogicalName("fiscalyeardisplaycode")]
+        [AttributeLogicalName("fiscalyeardisplaycode")]
         public int? FiscalYearDisplayCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("fiscalyeardisplaycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearDisplayCode));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyeardisplaycode", value);
-                OnPropertyChanged(nameof(FiscalYearDisplayCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the name of the fiscal year is displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("fiscalyearformat")]
+        [AttributeLogicalName("fiscalyearformat")]
         public string? FiscalYearFormat
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("fiscalyearformat");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearFormat));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyearformat", value);
-                OnPropertyChanged(nameof(FiscalYearFormat));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix for the display of the fiscal year.
 		/// </summary>
-		[AttributeLogicalName("fiscalyearformatprefix")]
+        [AttributeLogicalName("fiscalyearformatprefix")]
         public OptionSetValue? FiscalYearFormatPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("fiscalyearformatprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearFormatPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyearformatprefix", value);
-                OnPropertyChanged(nameof(FiscalYearFormatPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Suffix for the display of the fiscal year.
 		/// </summary>
-		[AttributeLogicalName("fiscalyearformatsuffix")]
+        [AttributeLogicalName("fiscalyearformatsuffix")]
         public OptionSetValue? FiscalYearFormatSuffix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("fiscalyearformatsuffix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearFormatSuffix));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyearformatsuffix", value);
-                OnPropertyChanged(nameof(FiscalYearFormatSuffix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Format for the year.
 		/// </summary>
-		[AttributeLogicalName("fiscalyearformatyear")]
+        [AttributeLogicalName("fiscalyearformatyear")]
         public OptionSetValue? FiscalYearFormatYear
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("fiscalyearformatyear");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearFormatYear));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyearformatyear", value);
-                OnPropertyChanged(nameof(FiscalYearFormatYear));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the names of the fiscal year and the fiscal period should be connected when displayed together.
 		/// </summary>
-		[AttributeLogicalName("fiscalyearperiodconnect")]
+        [AttributeLogicalName("fiscalyearperiodconnect")]
         public string? FiscalYearPeriodConnect
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("fiscalyearperiodconnect");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FiscalYearPeriodConnect));
+                OnPropertyChanging();
                 SetAttributeValue("fiscalyearperiodconnect", value);
-                OnPropertyChanged(nameof(FiscalYearPeriodConnect));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Defines how long desktop flow logs are retained in Dataverse (V2 only). The default is 40,320 minutes (28 days). Set to 0 to retain logs indefinitely.
+		/// </summary>
+        [AttributeLogicalName("flowlogsttlinminutes")]
+        public int? FlowLogsTtlInMinutes
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("flowlogsttlinminutes");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("flowlogsttlinminutes", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Time to live (in seconds) for flow run
+		/// </summary>
+        [AttributeLogicalName("flowruntimetoliveinseconds")]
+        public int? FlowRunTimeToLiveInSeconds
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("flowruntimetoliveinseconds");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("flowruntimetoliveinseconds", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Order in which names are to be displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("fullnameconventioncode")]
+        [AttributeLogicalName("fullnameconventioncode")]
         public OptionSetValue? FullNameConventionCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("fullnameconventioncode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FullNameConventionCode));
+                OnPropertyChanging();
                 SetAttributeValue("fullnameconventioncode", value);
-                OnPropertyChanged(nameof(FullNameConventionCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the maximum number of months in future for which the recurring activities can be created.
 		/// </summary>
-		[AttributeLogicalName("futureexpansionwindow")]
+        [AttributeLogicalName("futureexpansionwindow")]
         public int? FutureExpansionWindow
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("futureexpansionwindow");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FutureExpansionWindow));
+                OnPropertyChanging();
                 SetAttributeValue("futureexpansionwindow", value);
-                OnPropertyChanged(nameof(FutureExpansionWindow));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether alerts will be generated for errors.
 		/// </summary>
-		[AttributeLogicalName("generatealertsforerrors")]
+        [AttributeLogicalName("generatealertsforerrors")]
         public bool? GenerateAlertsForErrors
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("generatealertsforerrors");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GenerateAlertsForErrors));
+                OnPropertyChanging();
                 SetAttributeValue("generatealertsforerrors", value);
-                OnPropertyChanged(nameof(GenerateAlertsForErrors));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether alerts will be generated for information.
 		/// </summary>
-		[AttributeLogicalName("generatealertsforinformation")]
+        [AttributeLogicalName("generatealertsforinformation")]
         public bool? GenerateAlertsForInformation
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("generatealertsforinformation");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GenerateAlertsForInformation));
+                OnPropertyChanging();
                 SetAttributeValue("generatealertsforinformation", value);
-                OnPropertyChanged(nameof(GenerateAlertsForInformation));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether alerts will be generated for warnings.
 		/// </summary>
-		[AttributeLogicalName("generatealertsforwarnings")]
+        [AttributeLogicalName("generatealertsforwarnings")]
         public bool? GenerateAlertsForWarnings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("generatealertsforwarnings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GenerateAlertsForWarnings));
+                OnPropertyChanging();
                 SetAttributeValue("generatealertsforwarnings", value);
-                OnPropertyChanged(nameof(GenerateAlertsForWarnings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Get Started content is enabled for this organization.
 		/// </summary>
-		[AttributeLogicalName("getstartedpanecontentenabled")]
+        [AttributeLogicalName("getstartedpanecontentenabled")]
         public bool? GetStartedPaneContentEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("getstartedpanecontentenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GetStartedPaneContentEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("getstartedpanecontentenabled", value);
-                OnPropertyChanged(nameof(GetStartedPaneContentEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the append URL parameters is enabled.
 		/// </summary>
-		[AttributeLogicalName("globalappendurlparametersenabled")]
+        [AttributeLogicalName("globalappendurlparametersenabled")]
         public bool? GlobalAppendUrlParametersEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("globalappendurlparametersenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GlobalAppendUrlParametersEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("globalappendurlparametersenabled", value);
-                OnPropertyChanged(nameof(GlobalAppendUrlParametersEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// URL for the web page global help.
 		/// </summary>
-		[AttributeLogicalName("globalhelpurl")]
+        [AttributeLogicalName("globalhelpurl")]
         public string? GlobalHelpUrl
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("globalhelpurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GlobalHelpUrl));
+                OnPropertyChanging();
                 SetAttributeValue("globalhelpurl", value);
-                OnPropertyChanged(nameof(GlobalHelpUrl));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the customizable global help is enabled.
 		/// </summary>
-		[AttributeLogicalName("globalhelpurlenabled")]
+        [AttributeLogicalName("globalhelpurlenabled")]
         public bool? GlobalHelpUrlEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("globalhelpurlenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GlobalHelpUrlEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("globalhelpurlenabled", value);
-                OnPropertyChanged(nameof(GlobalHelpUrlEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of days after the goal's end date after which the rollup of the goal stops automatically.
 		/// </summary>
-		[AttributeLogicalName("goalrollupexpirytime")]
+        [AttributeLogicalName("goalrollupexpirytime")]
         public int? GoalRollupExpiryTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("goalrollupexpirytime");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GoalRollupExpiryTime));
+                OnPropertyChanging();
                 SetAttributeValue("goalrollupexpirytime", value);
-                OnPropertyChanged(nameof(GoalRollupExpiryTime));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of hours between automatic rollup jobs .
 		/// </summary>
-		[AttributeLogicalName("goalrollupfrequency")]
+        [AttributeLogicalName("goalrollupfrequency")]
         public int? GoalRollupFrequency
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("goalrollupfrequency");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GoalRollupFrequency));
+                OnPropertyChanging();
                 SetAttributeValue("goalrollupfrequency", value);
-                OnPropertyChanged(nameof(GoalRollupFrequency));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("grantaccesstonetworkservice")]
+        [AttributeLogicalName("grantaccesstonetworkservice")]
         public bool? GrantAccessToNetworkService
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("grantaccesstonetworkservice");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GrantAccessToNetworkService));
+                OnPropertyChanging();
                 SetAttributeValue("grantaccesstonetworkservice", value);
-                OnPropertyChanged(nameof(GrantAccessToNetworkService));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum difference allowed between subject keywords count of the email messaged to be correlated
 		/// </summary>
-		[AttributeLogicalName("hashdeltasubjectcount")]
+        [AttributeLogicalName("hashdeltasubjectcount")]
         public int? HashDeltaSubjectCount
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("hashdeltasubjectcount");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HashDeltaSubjectCount));
+                OnPropertyChanging();
                 SetAttributeValue("hashdeltasubjectcount", value);
-                OnPropertyChanged(nameof(HashDeltaSubjectCount));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Filter Subject Keywords
 		/// </summary>
-		[AttributeLogicalName("hashfilterkeywords")]
+        [AttributeLogicalName("hashfilterkeywords")]
         public string? HashFilterKeywords
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("hashfilterkeywords");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HashFilterKeywords));
+                OnPropertyChanging();
                 SetAttributeValue("hashfilterkeywords", value);
-                OnPropertyChanged(nameof(HashFilterKeywords));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of subject keywords or recipients used for correlation
 		/// </summary>
-		[AttributeLogicalName("hashmaxcount")]
+        [AttributeLogicalName("hashmaxcount")]
         public int? HashMaxCount
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("hashmaxcount");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HashMaxCount));
+                OnPropertyChanging();
                 SetAttributeValue("hashmaxcount", value);
-                OnPropertyChanged(nameof(HashMaxCount));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum number of recipients required to match for email messaged to be correlated
 		/// </summary>
-		[AttributeLogicalName("hashminaddresscount")]
+        [AttributeLogicalName("hashminaddresscount")]
         public int? HashMinAddressCount
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("hashminaddresscount");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HashMinAddressCount));
+                OnPropertyChanging();
                 SetAttributeValue("hashminaddresscount", value);
-                OnPropertyChanged(nameof(HashMinAddressCount));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// High contrast theme data for the organization.
 		/// </summary>
-		[AttributeLogicalName("highcontrastthemedata")]
+        [AttributeLogicalName("highcontrastthemedata")]
         public string? HighContrastThemeData
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("highcontrastthemedata");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HighContrastThemeData));
+                OnPropertyChanging();
                 SetAttributeValue("highcontrastthemedata", value);
-                OnPropertyChanged(nameof(HighContrastThemeData));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether incoming email sent by internal Microsoft Dynamics 365 users or queues should be tracked.
 		/// </summary>
-		[AttributeLogicalName("ignoreinternalemail")]
+        [AttributeLogicalName("ignoreinternalemail")]
         public bool? IgnoreInternalEmail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ignoreinternalemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IgnoreInternalEmail));
+                OnPropertyChanging();
                 SetAttributeValue("ignoreinternalemail", value);
-                OnPropertyChanged(nameof(IgnoreInternalEmail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether an organization has consented to sharing search query data to help improve search results
 		/// </summary>
-		[AttributeLogicalName("improvesearchloggingenabled")]
+        [AttributeLogicalName("improvesearchloggingenabled")]
         public bool? ImproveSearchLoggingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("improvesearchloggingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ImproveSearchLoggingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("improvesearchloggingenabled", value);
-                OnPropertyChanged(nameof(ImproveSearchLoggingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether Inactivity timeout is enabled
 		/// </summary>
-		[AttributeLogicalName("inactivitytimeoutenabled")]
+        [AttributeLogicalName("inactivitytimeoutenabled")]
         public bool? InactivityTimeoutEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("inactivitytimeoutenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InactivityTimeoutEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("inactivitytimeoutenabled", value);
-                OnPropertyChanged(nameof(InactivityTimeoutEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Inactivity timeout in minutes
 		/// </summary>
-		[AttributeLogicalName("inactivitytimeoutinmins")]
+        [AttributeLogicalName("inactivitytimeoutinmins")]
         public int? InactivityTimeoutInMins
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("inactivitytimeoutinmins");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InactivityTimeoutInMins));
+                OnPropertyChanging();
                 SetAttributeValue("inactivitytimeoutinmins", value);
-                OnPropertyChanged(nameof(InactivityTimeoutInMins));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Inactivity timeout reminder in minutes
 		/// </summary>
-		[AttributeLogicalName("inactivitytimeoutreminderinmins")]
+        [AttributeLogicalName("inactivitytimeoutreminderinmins")]
         public int? InactivityTimeoutReminderInMins
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("inactivitytimeoutreminderinmins");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InactivityTimeoutReminderInMins));
+                OnPropertyChanging();
                 SetAttributeValue("inactivitytimeoutreminderinmins", value);
-                OnPropertyChanged(nameof(InactivityTimeoutReminderInMins));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Setting for the Async Service Mailbox Queue. Defines the retrieval batch size of exchange server.
 		/// </summary>
-		[AttributeLogicalName("incomingemailexchangeemailretrievalbatchsize")]
+        [AttributeLogicalName("incomingemailexchangeemailretrievalbatchsize")]
         public int? IncomingEmailExchangeEmailRetrievalBatchSize
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("incomingemailexchangeemailretrievalbatchsize");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IncomingEmailExchangeEmailRetrievalBatchSize));
+                OnPropertyChanging();
                 SetAttributeValue("incomingemailexchangeemailretrievalbatchsize", value);
-                OnPropertyChanged(nameof(IncomingEmailExchangeEmailRetrievalBatchSize));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Initial version of the organization.
 		/// </summary>
-		[AttributeLogicalName("initialversion")]
+        [AttributeLogicalName("initialversion")]
         public string? InitialVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("initialversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InitialVersion));
+                OnPropertyChanging();
                 SetAttributeValue("initialversion", value);
-                OnPropertyChanged(nameof(InitialVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the integration user for the organization.
 		/// </summary>
-		[AttributeLogicalName("integrationuserid")]
+        [AttributeLogicalName("integrationuserid")]
         public Guid? IntegrationUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("integrationuserid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntegrationUserId));
+                OnPropertyChanging();
                 SetAttributeValue("integrationuserid", value);
-                OnPropertyChanged(nameof(IntegrationUserId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix to use for all invoice numbers throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("invoiceprefix")]
+        [AttributeLogicalName("invoiceprefix")]
         public string? InvoicePrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("invoiceprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InvoicePrefix));
+                OnPropertyChanging();
                 SetAttributeValue("invoiceprefix", value);
-                OnPropertyChanged(nameof(InvoicePrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// IP Based SAS mode.
 		/// </summary>
-		[AttributeLogicalName("ipbasedstorageaccesssignaturemode")]
+        [AttributeLogicalName("ipbasedstorageaccesssignaturemode")]
         public OptionSetValue? IpBasedStorageAccessSignatureMode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("ipbasedstorageaccesssignaturemode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IpBasedStorageAccessSignatureMode));
+                OnPropertyChanging();
                 SetAttributeValue("ipbasedstorageaccesssignaturemode", value);
-                OnPropertyChanged(nameof(IpBasedStorageAccessSignatureMode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Action Card should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isactioncardenabled")]
+        [AttributeLogicalName("isactioncardenabled")]
         public bool? IsActionCardEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isactioncardenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsActionCardEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isactioncardenabled", value);
-                OnPropertyChanged(nameof(IsActionCardEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether Action Support Feature is enabled
 		/// </summary>
-		[AttributeLogicalName("isactionsupportfeatureenabled")]
+        [AttributeLogicalName("isactionsupportfeatureenabled")]
         public bool? IsActionSupportFeatureEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isactionsupportfeatureenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsActionSupportFeatureEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isactionsupportfeatureenabled", value);
-                OnPropertyChanged(nameof(IsActionSupportFeatureEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Relationship Analytics should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isactivityanalysisenabled")]
+        [AttributeLogicalName("isactivityanalysisenabled")]
         public bool? IsActivityAnalysisEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isactivityanalysisenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsActivityAnalysisEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isactivityanalysisenabled", value);
-                OnPropertyChanged(nameof(IsActivityAnalysisEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether all money attributes are converted to decimal.
 		/// </summary>
-		[AttributeLogicalName("isallmoneydecimal")]
+        [AttributeLogicalName("isallmoneydecimal")]
         public bool? IsAllMoneyDecimal
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isallmoneydecimal");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether loading of Microsoft Dynamics 365 in a browser window that does not have address, tool, and menu bars is enabled.
 		/// </summary>
-		[AttributeLogicalName("isappmode")]
+        [AttributeLogicalName("isappmode")]
         public bool? IsAppMode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isappmode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAppMode));
+                OnPropertyChanging();
                 SetAttributeValue("isappmode", value);
-                OnPropertyChanged(nameof(IsAppMode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable attachments sync for outlook and exchange.
 		/// </summary>
-		[AttributeLogicalName("isappointmentattachmentsyncenabled")]
+        [AttributeLogicalName("isappointmentattachmentsyncenabled")]
         public bool? IsAppointmentAttachmentSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isappointmentattachmentsyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAppointmentAttachmentSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isappointmentattachmentsyncenabled", value);
-                OnPropertyChanged(nameof(IsAppointmentAttachmentSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable assigned tasks sync for outlook and exchange.
 		/// </summary>
-		[AttributeLogicalName("isassignedtaskssyncenabled")]
+        [AttributeLogicalName("isassignedtaskssyncenabled")]
         public bool? IsAssignedTasksSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isassignedtaskssyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAssignedTasksSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isassignedtaskssyncenabled", value);
-                OnPropertyChanged(nameof(IsAssignedTasksSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable auditing of changes.
 		/// </summary>
-		[AttributeLogicalName("isauditenabled")]
+        [AttributeLogicalName("isauditenabled")]
         public bool? IsAuditEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isauditenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAuditEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isauditenabled", value);
-                OnPropertyChanged(nameof(IsAuditEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Auto Capture should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isautodatacaptureenabled")]
+        [AttributeLogicalName("isautodatacaptureenabled")]
         public bool? IsAutoDataCaptureEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isautodatacaptureenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAutoDataCaptureEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isautodatacaptureenabled", value);
-                OnPropertyChanged(nameof(IsAutoDataCaptureEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the V2 feature of Auto Capture should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isautodatacapturev2enabled")]
+        [AttributeLogicalName("isautodatacapturev2enabled")]
         public bool? IsAutoDataCaptureV2Enabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isautodatacapturev2enabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAutoDataCaptureV2Enabled));
+                OnPropertyChanging();
                 SetAttributeValue("isautodatacapturev2enabled", value);
-                OnPropertyChanged(nameof(IsAutoDataCaptureV2Enabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("isautoinstallappford365inteamsenabled")]
+        public bool? IsAutoInstallAppForD365InTeamsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isautoinstallappford365inteamsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isautoinstallappford365inteamsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information on whether auto save is enabled.
 		/// </summary>
-		[AttributeLogicalName("isautosaveenabled")]
+        [AttributeLogicalName("isautosaveenabled")]
         public bool? IsAutoSaveEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isautosaveenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAutoSaveEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isautosaveenabled", value);
-                OnPropertyChanged(nameof(IsAutoSaveEnabled));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("isbasecardstaticfielddataenabled")]
+        
+        [AttributeLogicalName("isbasecardstaticfielddataenabled")]
         public bool? IsBaseCardStaticFieldDataEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isbasecardstaticfielddataenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsBaseCardStaticFieldDataEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isbasecardstaticfielddataenabled", value);
-                OnPropertyChanged(nameof(IsBaseCardStaticFieldDataEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Determines whether users can make use of basic Geospatial featuers in Canvas apps.
 		/// </summary>
-		[AttributeLogicalName("isbasicgeospatialintegrationenabled")]
+        [AttributeLogicalName("isbasicgeospatialintegrationenabled")]
         public bool? IsBasicGeospatialIntegrationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isbasicgeospatialintegrationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsBasicGeospatialIntegrationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isbasicgeospatialintegrationenabled", value);
-                OnPropertyChanged(nameof(IsBasicGeospatialIntegrationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether BPF Entity Customization Feature is enabled
 		/// </summary>
-		[AttributeLogicalName("isbpfentitycustomizationfeatureenabled")]
+        [AttributeLogicalName("isbpfentitycustomizationfeatureenabled")]
         public bool? IsBPFEntityCustomizationFeatureEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isbpfentitycustomizationfeatureenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsBPFEntityCustomizationFeatureEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isbpfentitycustomizationfeatureenabled", value);
-                OnPropertyChanged(nameof(IsBPFEntityCustomizationFeatureEnabled));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("iscollaborationexperienceenabled")]
+        /// <summary>
+		/// Indicates whether Power Automate savings feature is enabled for Cloudflow.
+		/// </summary>
+        [AttributeLogicalName("iscloudflowsavingsenabled")]
+        public bool? IsCloudFlowSavingsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("iscloudflowsavingsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("iscloudflowsavingsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Read-only flag indicating whether clustering is enabled for the organization.
+		/// </summary>
+        [AttributeLogicalName("isclusteringenabled")]
+        public bool? IsClusteringEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isclusteringenabled");
+            }
+        }
+
+        
+        [AttributeLogicalName("iscollaborationexperienceenabled")]
         public bool? IsCollaborationExperienceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscollaborationexperienceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCollaborationExperienceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscollaborationexperienceenabled", value);
-                OnPropertyChanged(nameof(IsCollaborationExperienceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether Computer Use in MCS feature is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("iscomputeruseinmcsenabled")]
+        public bool? IsComputerUseInMCSEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("iscomputeruseinmcsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("iscomputeruseinmcsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information that specifies whether conflict detection for mobile client is enabled.
 		/// </summary>
-		[AttributeLogicalName("isconflictdetectionenabledformobileclient")]
+        [AttributeLogicalName("isconflictdetectionenabledformobileclient")]
         public bool? IsConflictDetectionEnabledForMobileClient
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isconflictdetectionenabledformobileclient");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsConflictDetectionEnabledForMobileClient));
+                OnPropertyChanging();
                 SetAttributeValue("isconflictdetectionenabledformobileclient", value);
-                OnPropertyChanged(nameof(IsConflictDetectionEnabledForMobileClient));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable mailing address sync for outlook and exchange.
 		/// </summary>
-		[AttributeLogicalName("iscontactmailingaddresssyncenabled")]
+        [AttributeLogicalName("iscontactmailingaddresssyncenabled")]
         public bool? IsContactMailingAddressSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscontactmailingaddresssyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsContactMailingAddressSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscontactmailingaddresssyncenabled", value);
-                OnPropertyChanged(nameof(IsContactMailingAddressSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Content Security Policy has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("iscontentsecuritypolicyenabled")]
+        [AttributeLogicalName("iscontentsecuritypolicyenabled")]
         public bool? IsContentSecurityPolicyEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscontentsecuritypolicyenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsContentSecurityPolicyEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscontentsecuritypolicyenabled", value);
-                OnPropertyChanged(nameof(IsContentSecurityPolicyEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Content Security Policy has been enabled for this organization's Canvas apps.
 		/// </summary>
-		[AttributeLogicalName("iscontentsecuritypolicyenabledforcanvas")]
+        [AttributeLogicalName("iscontentsecuritypolicyenabledforcanvas")]
         public bool? IsContentSecurityPolicyEnabledForCanvas
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscontentsecuritypolicyenabledforcanvas");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsContentSecurityPolicyEnabledForCanvas));
+                OnPropertyChanging();
                 SetAttributeValue("iscontentsecuritypolicyenabledforcanvas", value);
-                OnPropertyChanged(nameof(IsContentSecurityPolicyEnabledForCanvas));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Contextual email experience is enabled on this organization
 		/// </summary>
-		[AttributeLogicalName("iscontextualemailenabled")]
+        [AttributeLogicalName("iscontextualemailenabled")]
         public bool? IsContextualEmailEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscontextualemailenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsContextualEmailEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscontextualemailenabled", value);
-                OnPropertyChanged(nameof(IsContextualEmailEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select to enable Contextual Help in UCI.
 		/// </summary>
-		[AttributeLogicalName("iscontextualhelpenabled")]
+        [AttributeLogicalName("iscontextualhelpenabled")]
         public bool? IsContextualHelpEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscontextualhelpenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsContextualHelpEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscontextualhelpenabled", value);
-                OnPropertyChanged(nameof(IsContextualHelpEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Determines whether users can provide feedback Copilot experiences.
+		/// </summary>
+        [AttributeLogicalName("iscopilotfeedbackenabled")]
+        public bool? IsCopilotFeedbackEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("iscopilotfeedbackenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("iscopilotfeedbackenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether CUA on Hosted Groups V2 feature is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("iscuaonhmgv2enabled")]
+        public bool? IsCuaOnHmgV2Enabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("iscuaonhmgv2enabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("iscuaonhmgv2enabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether Custom Controls in canvas PowerApps feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("iscustomcontrolsincanvasappsenabled")]
+        [AttributeLogicalName("iscustomcontrolsincanvasappsenabled")]
         public bool? IsCustomControlsInCanvasAppsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iscustomcontrolsincanvasappsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomControlsInCanvasAppsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomcontrolsincanvasappsenabled", value);
-                OnPropertyChanged(nameof(IsCustomControlsInCanvasAppsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable country code selection.
 		/// </summary>
-		[AttributeLogicalName("isdefaultcountrycodecheckenabled")]
+        [AttributeLogicalName("isdefaultcountrycodecheckenabled")]
         public bool? IsDefaultCountryCodeCheckEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdefaultcountrycodecheckenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDefaultCountryCodeCheckEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdefaultcountrycodecheckenabled", value);
-                OnPropertyChanged(nameof(IsDefaultCountryCodeCheckEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Delegation Access content
 		/// </summary>
-		[AttributeLogicalName("isdelegateaccessenabled")]
+        [AttributeLogicalName("isdelegateaccessenabled")]
         public bool? IsDelegateAccessEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdelegateaccessenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDelegateAccessEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdelegateaccessenabled", value);
-                OnPropertyChanged(nameof(IsDelegateAccessEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Action Hub should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isdelveactionhubintegrationenabled")]
+        [AttributeLogicalName("isdelveactionhubintegrationenabled")]
         public bool? IsDelveActionHubIntegrationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdelveactionhubintegrationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDelveActionHubIntegrationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdelveactionhubintegrationenabled", value);
-                OnPropertyChanged(nameof(IsDelveActionHubIntegrationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether connection embedding in Desktop Flows is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowconnectionembeddingenabled")]
+        public bool? IsDesktopFlowConnectionEmbeddingEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowconnectionembeddingenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowconnectionembeddingenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether the Desktop Flows UI Automation Runtime Repair for Attended feature for this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowruntimerepairattendedenabled")]
+        public bool? IsDesktopFlowRuntimeRepairAttendedEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowruntimerepairattendedenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowruntimerepairattendedenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether the Desktop Flows UI Automation Runtime Repair for Unattended feature for this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowruntimerepairunattendedenabled")]
+        public bool? IsDesktopFlowRuntimeRepairUnattendedEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowruntimerepairunattendedenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowruntimerepairunattendedenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Power Automate savings feature is enabled for Desktopflow.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowsavingsenabled")]
+        public bool? IsDesktopFlowSavingsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowsavingsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowsavingsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether v2 schema for Desktop Flows is enabled in this organization.
 		/// </summary>
-		[AttributeLogicalName("isdesktopflowschemav2enabled")]
+        [AttributeLogicalName("isdesktopflowschemav2enabled")]
         public bool? IsDesktopFlowSchemaV2Enabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdesktopflowschemav2enabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDesktopFlowSchemaV2Enabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdesktopflowschemav2enabled", value);
-                OnPropertyChanged(nameof(IsDesktopFlowSchemaV2Enabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether Windows Vanilla Image will be available for Desktop Flow users in this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowvanillaimagesharingenabled")]
+        public bool? IsDesktopFlowVanillaImageSharingEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowvanillaimagesharingenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowvanillaimagesharingenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether version control for Desktop Flows is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowversioncontrolenabled")]
+        public bool? IsDesktopFlowVersionControlEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowversioncontrolenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowversioncontrolenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates if this organization will opt-in to automatically to enable version control for Desktop Flows.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowversioncontrolenabledbydefault")]
+        public bool? IsDesktopFlowVersionControlEnabledByDefault
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isdesktopflowversioncontrolenabledbydefault");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowversioncontrolenabledbydefault", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Overrides whether version control for Desktop Flows is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isdesktopflowversioncontrolenabledoverride")]
+        public OptionSetValue? IsDesktopFlowVersionControlEnabledOverride
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("isdesktopflowversioncontrolenabledoverride");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isdesktopflowversioncontrolenabledoverride", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Information that specifies whether the organization is disabled.
 		/// </summary>
-		[AttributeLogicalName("isdisabled")]
+        [AttributeLogicalName("isdisabled")]
         public bool? IsDisabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdisabled");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether duplicate detection of records is enabled.
 		/// </summary>
-		[AttributeLogicalName("isduplicatedetectionenabled")]
+        [AttributeLogicalName("isduplicatedetectionenabled")]
         public bool? IsDuplicateDetectionEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isduplicatedetectionenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDuplicateDetectionEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isduplicatedetectionenabled", value);
-                OnPropertyChanged(nameof(IsDuplicateDetectionEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether duplicate detection of records during import is enabled.
 		/// </summary>
-		[AttributeLogicalName("isduplicatedetectionenabledforimport")]
+        [AttributeLogicalName("isduplicatedetectionenabledforimport")]
         public bool? IsDuplicateDetectionEnabledForImport
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isduplicatedetectionenabledforimport");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDuplicateDetectionEnabledForImport));
+                OnPropertyChanging();
                 SetAttributeValue("isduplicatedetectionenabledforimport", value);
-                OnPropertyChanged(nameof(IsDuplicateDetectionEnabledForImport));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether duplicate detection of records during offline synchronization is enabled.
 		/// </summary>
-		[AttributeLogicalName("isduplicatedetectionenabledforofflinesync")]
+        [AttributeLogicalName("isduplicatedetectionenabledforofflinesync")]
         public bool? IsDuplicateDetectionEnabledForOfflineSync
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isduplicatedetectionenabledforofflinesync");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDuplicateDetectionEnabledForOfflineSync));
+                OnPropertyChanging();
                 SetAttributeValue("isduplicatedetectionenabledforofflinesync", value);
-                OnPropertyChanged(nameof(IsDuplicateDetectionEnabledForOfflineSync));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether duplicate detection during online create or update is enabled.
 		/// </summary>
-		[AttributeLogicalName("isduplicatedetectionenabledforonlinecreateupdate")]
+        [AttributeLogicalName("isduplicatedetectionenabledforonlinecreateupdate")]
         public bool? IsDuplicateDetectionEnabledForOnlineCreateUpdate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isduplicatedetectionenabledforonlinecreateupdate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDuplicateDetectionEnabledForOnlineCreateUpdate));
+                OnPropertyChanging();
                 SetAttributeValue("isduplicatedetectionenabledforonlinecreateupdate", value);
-                OnPropertyChanged(nameof(IsDuplicateDetectionEnabledForOnlineCreateUpdate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information on whether Smart Email Address Validation is enabled.
+		/// </summary>
+        [AttributeLogicalName("isemailaddressvalidationenabled")]
+        public bool? IsEmailAddressValidationEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isemailaddressvalidationenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isemailaddressvalidationenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Allow tracking recipient activity on sent emails.
 		/// </summary>
-		[AttributeLogicalName("isemailmonitoringallowed")]
+        [AttributeLogicalName("isemailmonitoringallowed")]
         public bool? IsEmailMonitoringAllowed
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isemailmonitoringallowed");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsEmailMonitoringAllowed));
+                OnPropertyChanging();
                 SetAttributeValue("isemailmonitoringallowed", value);
-                OnPropertyChanged(nameof(IsEmailMonitoringAllowed));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Email Server Profile content filtering
 		/// </summary>
-		[AttributeLogicalName("isemailserverprofilecontentfilteringenabled")]
+        [AttributeLogicalName("isemailserverprofilecontentfilteringenabled")]
         public bool? IsEmailServerProfileContentFilteringEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isemailserverprofilecontentfilteringenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsEmailServerProfileContentFilteringEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isemailserverprofilecontentfilteringenabled", value);
-                OnPropertyChanged(nameof(IsEmailServerProfileContentFilteringEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether embed Teams collaboration has been enabled for the organization
-		/// </summary>
-		[AttributeLogicalName("isembedteamscollabenabled")]
-        public bool? IsEmbedTeamsCollabEnabled
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("isembedteamscollabenabled");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(IsEmbedTeamsCollabEnabled));
-                SetAttributeValue("isembedteamscollabenabled", value);
-                OnPropertyChanged(nameof(IsEmbedTeamsCollabEnabled));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Indicates whether appmodule is enabled for all roles
 		/// </summary>
-		[AttributeLogicalName("isenabledforallroles")]
+        [AttributeLogicalName("isenabledforallroles")]
         public bool? IsEnabledForAllRoles
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isenabledforallroles");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsEnabledForAllRoles));
+                OnPropertyChanging();
                 SetAttributeValue("isenabledforallroles", value);
-                OnPropertyChanged(nameof(IsEnabledForAllRoles));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the organization's files are being stored in Azure.
 		/// </summary>
-		[AttributeLogicalName("isexternalfilestorageenabled")]
+        [AttributeLogicalName("isexternalfilestorageenabled")]
         public bool? IsExternalFileStorageEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isexternalfilestorageenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsExternalFileStorageEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isexternalfilestorageenabled", value);
-                OnPropertyChanged(nameof(IsExternalFileStorageEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether data can be synchronized with an external search index.
 		/// </summary>
-		[AttributeLogicalName("isexternalsearchindexenabled")]
+        [AttributeLogicalName("isexternalsearchindexenabled")]
         public bool? IsExternalSearchIndexEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isexternalsearchindexenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsExternalSearchIndexEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isexternalsearchindexenabled", value);
-                OnPropertyChanged(nameof(IsExternalSearchIndexEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the fiscal period is displayed as the month number.
 		/// </summary>
-		[AttributeLogicalName("isfiscalperiodmonthbased")]
+        [AttributeLogicalName("isfiscalperiodmonthbased")]
         public bool? IsFiscalPeriodMonthBased
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isfiscalperiodmonthbased");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsFiscalPeriodMonthBased));
+                OnPropertyChanging();
                 SetAttributeValue("isfiscalperiodmonthbased", value);
-                OnPropertyChanged(nameof(IsFiscalPeriodMonthBased));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether folders should be automatically created on SharePoint.
 		/// </summary>
-		[AttributeLogicalName("isfolderautocreatedonsp")]
+        [AttributeLogicalName("isfolderautocreatedonsp")]
         public bool? IsFolderAutoCreatedonSP
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isfolderautocreatedonsp");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsFolderAutoCreatedonSP));
+                OnPropertyChanging();
                 SetAttributeValue("isfolderautocreatedonsp", value);
-                OnPropertyChanged(nameof(IsFolderAutoCreatedonSP));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable folder based tracking for Server Side Sync.
 		/// </summary>
-		[AttributeLogicalName("isfolderbasedtrackingenabled")]
+        [AttributeLogicalName("isfolderbasedtrackingenabled")]
         public bool? IsFolderBasedTrackingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isfolderbasedtrackingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsFolderBasedTrackingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isfolderbasedtrackingenabled", value);
-                OnPropertyChanged(nameof(IsFolderBasedTrackingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether full-text search for Quick Find entities should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isfulltextsearchenabled")]
+        [AttributeLogicalName("isfulltextsearchenabled")]
         public bool? IsFullTextSearchEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isfulltextsearchenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsFullTextSearchEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isfulltextsearchenabled", value);
-                OnPropertyChanged(nameof(IsFullTextSearchEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether geospatial capabilities leveraging Azure Maps are enabled.
 		/// </summary>
-		[AttributeLogicalName("isgeospatialazuremapsintegrationenabled")]
+        [AttributeLogicalName("isgeospatialazuremapsintegrationenabled")]
         public bool? IsGeospatialAzureMapsIntegrationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isgeospatialazuremapsintegrationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsGeospatialAzureMapsIntegrationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isgeospatialazuremapsintegrationenabled", value);
-                OnPropertyChanged(nameof(IsGeospatialAzureMapsIntegrationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable Hierarchical Security Model
 		/// </summary>
-		[AttributeLogicalName("ishierarchicalsecuritymodelenabled")]
+        [AttributeLogicalName("ishierarchicalsecuritymodelenabled")]
         public bool? IsHierarchicalSecurityModelEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ishierarchicalsecuritymodelenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsHierarchicalSecurityModelEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ishierarchicalsecuritymodelenabled", value);
-                OnPropertyChanged(nameof(IsHierarchicalSecurityModelEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether data collection for ideas in canvas PowerApps has been enabled.
 		/// </summary>
-		[AttributeLogicalName("isideasdatacollectionenabled")]
+        [AttributeLogicalName("isideasdatacollectionenabled")]
         public bool? IsIdeasDataCollectionEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isideasdatacollectionenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsIdeasDataCollectionEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isideasdatacollectionenabled", value);
-                OnPropertyChanged(nameof(IsIdeasDataCollectionEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Give Consent to use LUIS in Dynamics 365 Bot
 		/// </summary>
-		[AttributeLogicalName("isluisenabledford365bot")]
+        [AttributeLogicalName("isluisenabledford365bot")]
         public bool? IsLUISEnabledforD365Bot
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isluisenabledford365bot");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsLUISEnabledforD365Bot));
+                OnPropertyChanging();
                 SetAttributeValue("isluisenabledford365bot", value);
-                OnPropertyChanged(nameof(IsLUISEnabledforD365Bot));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable forced unlocking for Server Side Sync mailboxes.
 		/// </summary>
-		[AttributeLogicalName("ismailboxforcedunlockingenabled")]
+        [AttributeLogicalName("ismailboxforcedunlockingenabled")]
         public bool? IsMailboxForcedUnlockingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismailboxforcedunlockingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMailboxForcedUnlockingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismailboxforcedunlockingenabled", value);
-                OnPropertyChanged(nameof(IsMailboxForcedUnlockingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable mailbox keep alive for Server Side Sync.
 		/// </summary>
-		[AttributeLogicalName("ismailboxinactivebackoffenabled")]
+        [AttributeLogicalName("ismailboxinactivebackoffenabled")]
         public bool? IsMailboxInactiveBackoffEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismailboxinactivebackoffenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMailboxInactiveBackoffEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismailboxinactivebackoffenabled", value);
-                OnPropertyChanged(nameof(IsMailboxInactiveBackoffEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Manual Sales Forecasting feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ismanualsalesforecastingenabled")]
+        [AttributeLogicalName("ismanualsalesforecastingenabled")]
         public bool? IsManualSalesForecastingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanualsalesforecastingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsManualSalesForecastingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismanualsalesforecastingenabled", value);
-                OnPropertyChanged(nameof(IsManualSalesForecastingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether mobile client on demand sync is enabled.
 		/// </summary>
-		[AttributeLogicalName("ismobileclientondemandsyncenabled")]
+        [AttributeLogicalName("ismobileclientondemandsyncenabled")]
         public bool? IsMobileClientOnDemandSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismobileclientondemandsyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMobileClientOnDemandSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismobileclientondemandsyncenabled", value);
-                OnPropertyChanged(nameof(IsMobileClientOnDemandSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature MobileOffline should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ismobileofflineenabled")]
+        [AttributeLogicalName("ismobileofflineenabled")]
         public bool? IsMobileOfflineEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismobileofflineenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMobileOfflineEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismobileofflineenabled", value);
-                OnPropertyChanged(nameof(IsMobileOfflineEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Model Apps can be embedded within Microsoft Teams. This is a tenant admin controlled preview/experimental feature.
 		/// </summary>
-		[AttributeLogicalName("ismodeldrivenappsinmsteamsenabled")]
+        [AttributeLogicalName("ismodeldrivenappsinmsteamsenabled")]
         public bool? IsModelDrivenAppsInMSTeamsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismodeldrivenappsinmsteamsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsModelDrivenAppsInMSTeamsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismodeldrivenappsinmsteamsenabled", value);
-                OnPropertyChanged(nameof(IsModelDrivenAppsInMSTeamsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether the maker can create Power Automate money based saving rules.
+		/// </summary>
+        [AttributeLogicalName("ismoneysavingsallowed")]
+        public bool? IsMoneySavingsAllowed
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("ismoneysavingsallowed");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("ismoneysavingsallowed", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether Microsoft Teams Collaboration feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ismsteamscollaborationenabled")]
+        [AttributeLogicalName("ismsteamscollaborationenabled")]
         public bool? IsMSTeamsCollaborationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismsteamscollaborationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMSTeamsCollaborationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismsteamscollaborationenabled", value);
-                OnPropertyChanged(nameof(IsMSTeamsCollaborationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Microsoft Teams integration has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ismsteamsenabled")]
+        [AttributeLogicalName("ismsteamsenabled")]
         public bool? IsMSTeamsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismsteamsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMSTeamsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismsteamsenabled", value);
-                OnPropertyChanged(nameof(IsMSTeamsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the user has enabled or disabled Microsoft Teams integration.
 		/// </summary>
-		[AttributeLogicalName("ismsteamssettingchangedbyuser")]
+        [AttributeLogicalName("ismsteamssettingchangedbyuser")]
         public bool? IsMSTeamsSettingChangedByUser
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismsteamssettingchangedbyuser");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMSTeamsSettingChangedByUser));
+                OnPropertyChanging();
                 SetAttributeValue("ismsteamssettingchangedbyuser", value);
-                OnPropertyChanged(nameof(IsMSTeamsSettingChangedByUser));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Microsoft Teams User Sync feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ismsteamsusersyncenabled")]
+        [AttributeLogicalName("ismsteamsusersyncenabled")]
         public bool? IsMSTeamsUserSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismsteamsusersyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMSTeamsUserSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ismsteamsusersyncenabled", value);
-                OnPropertyChanged(nameof(IsMSTeamsUserSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether new add product experience is enabled.
 		/// </summary>
-		[AttributeLogicalName("isnewaddproductexperienceenabled")]
+        [AttributeLogicalName("isnewaddproductexperienceenabled")]
         public bool? IsNewAddProductExperienceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isnewaddproductexperienceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsNewAddProductExperienceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isnewaddproductexperienceenabled", value);
-                OnPropertyChanged(nameof(IsNewAddProductExperienceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Notes Analysis should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isnotesanalysisenabled")]
+        [AttributeLogicalName("isnotesanalysisenabled")]
         public bool? IsNotesAnalysisEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isnotesanalysisenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsNotesAnalysisEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isnotesanalysisenabled", value);
-                OnPropertyChanged(nameof(IsNotesAnalysisEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("isnotificationford365inteamsenabled")]
+        public bool? IsNotificationForD365InTeamsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isnotificationford365inteamsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isnotificationford365inteamsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether the feature OfficeGraph should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isofficegraphenabled")]
+        [AttributeLogicalName("isofficegraphenabled")]
         public bool? IsOfficeGraphEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isofficegraphenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsOfficeGraphEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isofficegraphenabled", value);
-                OnPropertyChanged(nameof(IsOfficeGraphEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature One Drive should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isonedriveenabled")]
+        [AttributeLogicalName("isonedriveenabled")]
         public bool? IsOneDriveEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isonedriveenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsOneDriveEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isonedriveenabled", value);
-                OnPropertyChanged(nameof(IsOneDriveEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether PAI feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ispaienabled")]
+        [AttributeLogicalName("ispaienabled")]
         public bool? IsPAIEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispaienabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPAIEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ispaienabled", value);
-                OnPropertyChanged(nameof(IsPAIEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether PDF Generation feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ispdfgenerationenabled")]
+        [AttributeLogicalName("ispdfgenerationenabled")]
         public string? IsPDFGenerationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("ispdfgenerationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPDFGenerationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ispdfgenerationenabled", value);
-                OnPropertyChanged(nameof(IsPDFGenerationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether the Per Process overage feature is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isperprocesscapacityoverageenabled")]
+        public bool? IsPerProcessCapacityOverageEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isperprocesscapacityoverageenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isperprocesscapacityoverageenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether playbook feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isplaybookenabled")]
+        [AttributeLogicalName("isplaybookenabled")]
         public bool? IsPlaybookEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isplaybookenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPlaybookEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isplaybookenabled", value);
-                OnPropertyChanged(nameof(IsPlaybookEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information on whether IM presence is enabled.
 		/// </summary>
-		[AttributeLogicalName("ispresenceenabled")]
+        [AttributeLogicalName("ispresenceenabled")]
         public bool? IsPresenceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispresenceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPresenceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ispresenceenabled", value);
-                OnPropertyChanged(nameof(IsPresenceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("ispresenceenabledname")]
-        public string? IsPresenceEnabledName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("ispresenceenabledname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(IsPresenceEnabledName));
-                SetAttributeValue("ispresenceenabledname", value);
-                OnPropertyChanged(nameof(IsPresenceEnabledName));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the Preview feature for Action Card should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("ispreviewenabledforactioncard")]
+        [AttributeLogicalName("ispreviewenabledforactioncard")]
         public bool? IsPreviewEnabledForActionCard
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispreviewenabledforactioncard");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPreviewEnabledForActionCard));
+                OnPropertyChanging();
                 SetAttributeValue("ispreviewenabledforactioncard", value);
-                OnPropertyChanged(nameof(IsPreviewEnabledForActionCard));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Auto Capture should be enabled for the organization at Preview Settings.
 		/// </summary>
-		[AttributeLogicalName("ispreviewforautocaptureenabled")]
+        [AttributeLogicalName("ispreviewforautocaptureenabled")]
         public bool? IsPreviewForAutoCaptureEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispreviewforautocaptureenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPreviewForAutoCaptureEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("ispreviewforautocaptureenabled", value);
-                OnPropertyChanged(nameof(IsPreviewForAutoCaptureEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Is Preview For Email Monitoring Allowed.
 		/// </summary>
-		[AttributeLogicalName("ispreviewforemailmonitoringallowed")]
+        [AttributeLogicalName("ispreviewforemailmonitoringallowed")]
         public bool? IsPreviewForEmailMonitoringAllowed
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispreviewforemailmonitoringallowed");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPreviewForEmailMonitoringAllowed));
+                OnPropertyChanging();
                 SetAttributeValue("ispreviewforemailmonitoringallowed", value);
-                OnPropertyChanged(nameof(IsPreviewForEmailMonitoringAllowed));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether PriceList is mandatory for adding existing products to sales entities.
 		/// </summary>
-		[AttributeLogicalName("ispricelistmandatory")]
+        [AttributeLogicalName("ispricelistmandatory")]
         public bool? IsPriceListMandatory
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ispricelistmandatory");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPriceListMandatory));
+                OnPropertyChanging();
                 SetAttributeValue("ispricelistmandatory", value);
-                OnPropertyChanged(nameof(IsPriceListMandatory));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether the Process capacity auto-claim feature is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isprocesscapacityautoclaimenabled")]
+        public bool? IsProcessCapacityAutoClaimEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isprocesscapacityautoclaimenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isprocesscapacityautoclaimenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+		/// Indicates whether Process Mining is enabled in this organization.
+		/// </summary>
+        [AttributeLogicalName("isprocessminingenabled")]
+        public bool? IsProcessMiningEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isprocessminingenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isprocessminingenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Select whether to use the standard Out-of-box Opportunity Close experience or opt to for a customized experience.
 		/// </summary>
-		[AttributeLogicalName("isquickcreateenabledforopportunityclose")]
+        [AttributeLogicalName("isquickcreateenabledforopportunityclose")]
         public bool? IsQuickCreateEnabledForOpportunityClose
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isquickcreateenabledforopportunityclose");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsQuickCreateEnabledForOpportunityClose));
+                OnPropertyChanging();
                 SetAttributeValue("isquickcreateenabledforopportunityclose", value);
-                OnPropertyChanged(nameof(IsQuickCreateEnabledForOpportunityClose));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable or disable auditing of read operations.
 		/// </summary>
-		[AttributeLogicalName("isreadauditenabled")]
+        [AttributeLogicalName("isreadauditenabled")]
         public bool? IsReadAuditEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isreadauditenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsReadAuditEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isreadauditenabled", value);
-                OnPropertyChanged(nameof(IsReadAuditEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the feature Relationship Insights should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("isrelationshipinsightsenabled")]
+        [AttributeLogicalName("isrelationshipinsightsenabled")]
         public bool? IsRelationshipInsightsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrelationshipinsightsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRelationshipInsightsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrelationshipinsightsenabled", value);
-                OnPropertyChanged(nameof(IsRelationshipInsightsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates if the synchronization of user resource booking with Exchange is enabled at organization level.
 		/// </summary>
-		[AttributeLogicalName("isresourcebookingexchangesyncenabled")]
+        [AttributeLogicalName("isresourcebookingexchangesyncenabled")]
         public bool? IsResourceBookingExchangeSyncEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isresourcebookingexchangesyncenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsResourceBookingExchangeSyncEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isresourcebookingexchangesyncenabled", value);
-                OnPropertyChanged(nameof(IsResourceBookingExchangeSyncEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether rich text editor for notes experience is enabled on this organization
 		/// </summary>
-		[AttributeLogicalName("isrichtextnotesenabled")]
+        [AttributeLogicalName("isrichtextnotesenabled")]
         public bool? IsRichTextNotesEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrichtextnotesenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRichTextNotesEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrichtextnotesenabled", value);
-                OnPropertyChanged(nameof(IsRichTextNotesEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether AAD Join for RPA Autoscale is enabled in this organization..
 		/// </summary>
-		[AttributeLogicalName("isrpaautoscaleaadjoinenabled")]
+        [AttributeLogicalName("isrpaautoscaleaadjoinenabled")]
         public bool? IsRpaAutoscaleAadJoinEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrpaautoscaleaadjoinenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRpaAutoscaleAadJoinEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrpaautoscaleaadjoinenabled", value);
-                OnPropertyChanged(nameof(IsRpaAutoscaleAadJoinEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Autoscale feature for RPA is enabled in this organization.
 		/// </summary>
-		[AttributeLogicalName("isrpaautoscaleenabled")]
+        [AttributeLogicalName("isrpaautoscaleenabled")]
         public bool? IsRpaAutoscaleEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrpaautoscaleenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRpaAutoscaleEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrpaautoscaleenabled", value);
-                OnPropertyChanged(nameof(IsRpaAutoscaleEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether RPA Box feature is enabled in this organization in locations outside the tenant's geographical location.
+		/// </summary>
+        [AttributeLogicalName("isrpaboxcrossgeoenabled")]
+        public bool? IsRpaBoxCrossGeoEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isrpaboxcrossgeoenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isrpaboxcrossgeoenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether RPA Box feature is enabled in this organization.
 		/// </summary>
-		[AttributeLogicalName("isrpaboxenabled")]
+        [AttributeLogicalName("isrpaboxenabled")]
         public bool? IsRpaBoxEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrpaboxenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRpaBoxEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrpaboxenabled", value);
-                OnPropertyChanged(nameof(IsRpaBoxEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Unattended runs feature for RPA is enabled in this organization.
 		/// </summary>
-		[AttributeLogicalName("isrpaunattendedenabled")]
+        [AttributeLogicalName("isrpaunattendedenabled")]
         public bool? IsRpaUnattendedEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isrpaunattendedenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsRpaUnattendedEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isrpaunattendedenabled", value);
-                OnPropertyChanged(nameof(IsRpaUnattendedEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Sales Assistant mobile app has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("issalesassistantenabled")]
+        [AttributeLogicalName("issalesassistantenabled")]
         public bool? IsSalesAssistantEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("issalesassistantenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSalesAssistantEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("issalesassistantenabled", value);
-                OnPropertyChanged(nameof(IsSalesAssistantEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether Sales Mobile Preview has been enabled for the organization
+        /// <summary>
+		/// Indicates whether sending CUA audit logs to Purview is enabled.
 		/// </summary>
-		[AttributeLogicalName("issalesmobilepreviewenabled")]
-        public bool? IsSalesMobilePreviewEnabled
+        [AttributeLogicalName("issendcuaauditlogtopurviewenabled")]
+        public bool? IsSendCuaAuditLogToPurviewEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<bool?>("issalesmobilepreviewenabled");
+                return GetAttributeValue<bool?>("issendcuaauditlogtopurviewenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSalesMobilePreviewEnabled));
-                SetAttributeValue("issalesmobilepreviewenabled", value);
-                OnPropertyChanged(nameof(IsSalesMobilePreviewEnabled));
+                OnPropertyChanging();
+                SetAttributeValue("issendcuaauditlogtopurviewenabled", value);
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("issharinginorgallowed")]
+        
+        [AttributeLogicalName("issharinginorgallowed")]
         public bool? IsSharingInOrgAllowed
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("issharinginorgallowed");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSharingInOrgAllowed));
+                OnPropertyChanging();
                 SetAttributeValue("issharinginorgallowed", value);
-                OnPropertyChanged(nameof(IsSharingInOrgAllowed));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable sales order processing integration.
 		/// </summary>
-		[AttributeLogicalName("issopintegrationenabled")]
+        [AttributeLogicalName("issopintegrationenabled")]
         public bool? IsSOPIntegrationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("issopintegrationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSOPIntegrationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("issopintegrationenabled", value);
-                OnPropertyChanged(nameof(IsSOPIntegrationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information on whether text wrap is enabled.
 		/// </summary>
-		[AttributeLogicalName("istextwrapenabled")]
+        [AttributeLogicalName("istextwrapenabled")]
         public bool? IsTextWrapEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("istextwrapenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsTextWrapEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("istextwrapenabled", value);
-                OnPropertyChanged(nameof(IsTextWrapEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether CUA log upload to Dataverse is enabled.
+		/// </summary>
+        [AttributeLogicalName("isuploadcualogtodataverseenabled")]
+        public bool? IsUploadCuaLogToDataverseEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isuploadcualogtodataverseenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isuploadcualogtodataverseenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Enable or disable auditing of user access.
 		/// </summary>
-		[AttributeLogicalName("isuseraccessauditenabled")]
+        [AttributeLogicalName("isuseraccessauditenabled")]
         public bool? IsUserAccessAuditEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isuseraccessauditenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsUserAccessAuditEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("isuseraccessauditenabled", value);
-                OnPropertyChanged(nameof(IsUserAccessAuditEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether loading of Microsoft Dynamics 365 in a browser window that does not have address, tool, and menu bars is enabled.
 		/// </summary>
-		[AttributeLogicalName("isvintegrationcode")]
+        [AttributeLogicalName("isvintegrationcode")]
         public OptionSetValue? ISVIntegrationCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("isvintegrationcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ISVIntegrationCode));
+                OnPropertyChanging();
                 SetAttributeValue("isvintegrationcode", value);
-                OnPropertyChanged(nameof(ISVIntegrationCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates whether Power Automate savings feature is enabled for WorkQueue.
+		/// </summary>
+        [AttributeLogicalName("isworkqueuesavingsenabled")]
+        public bool? IsWorkQueueSavingsEnabled
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("isworkqueuesavingsenabled");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("isworkqueuesavingsenabled", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Indicates whether Write-in Products can be added to Opportunity/Quote/Order/Invoice or not.
 		/// </summary>
-		[AttributeLogicalName("iswriteinproductsallowed")]
+        [AttributeLogicalName("iswriteinproductsallowed")]
         public bool? IsWriteInProductsAllowed
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("iswriteinproductsallowed");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsWriteInProductsAllowed));
+                OnPropertyChanging();
                 SetAttributeValue("iswriteinproductsallowed", value);
-                OnPropertyChanged(nameof(IsWriteInProductsAllowed));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the prefix to use for all knowledge articles in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("kaprefix")]
+        [AttributeLogicalName("kaprefix")]
         public string? KaPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("kaprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(KaPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("kaprefix", value);
-                OnPropertyChanged(nameof(KaPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix to use for all articles in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("kbprefix")]
+        [AttributeLogicalName("kbprefix")]
         public string? KbPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("kbprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(KbPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("kbprefix", value);
-                OnPropertyChanged(nameof(KbPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string containing the Knowledge Management settings that are applied in Knowledge Management Wizard.
 		/// </summary>
-		[AttributeLogicalName("kmsettings")]
+        [AttributeLogicalName("kmsettings")]
         public string? KMSettings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("kmsettings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(KMSettings));
+                OnPropertyChanging();
                 SetAttributeValue("kmsettings", value);
-                OnPropertyChanged(nameof(KMSettings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Preferred language for the organization.
 		/// </summary>
-		[AttributeLogicalName("languagecode")]
+        [AttributeLogicalName("languagecode")]
         public int? LanguageCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("languagecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LanguageCode));
+                OnPropertyChanging();
                 SetAttributeValue("languagecode", value);
-                OnPropertyChanged(nameof(LanguageCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Show legacy app for admins
+		/// </summary>
+        [AttributeLogicalName("legacyapptoggle")]
+        public OptionSetValue? LegacyAppToggle
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<OptionSetValue?>("legacyapptoggle");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("legacyapptoggle", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Unique identifier of the locale of the organization.
 		/// </summary>
-		[AttributeLogicalName("localeid")]
+        [AttributeLogicalName("localeid")]
         public int? LocaleId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("localeid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LocaleId));
+                OnPropertyChanging();
                 SetAttributeValue("localeid", value);
-                OnPropertyChanged(nameof(LocaleId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the Long Date format is displayed in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("longdateformatcode")]
+        [AttributeLogicalName("longdateformatcode")]
         public int? LongDateFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("longdateformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LongDateFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("longdateformatcode", value);
-                OnPropertyChanged(nameof(LongDateFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum number of characters that should be entered in the lookup control before resolving for suggestions
 		/// </summary>
-		[AttributeLogicalName("lookupcharactercountbeforeresolve")]
+        [AttributeLogicalName("lookupcharactercountbeforeresolve")]
         public int? LookupCharacterCountBeforeResolve
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("lookupcharactercountbeforeresolve");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LookupCharacterCountBeforeResolve));
+                OnPropertyChanging();
                 SetAttributeValue("lookupcharactercountbeforeresolve", value);
-                OnPropertyChanged(nameof(LookupCharacterCountBeforeResolve));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum delay (in milliseconds) between consecutive inputs in a lookup control that will trigger a search for suggestions
 		/// </summary>
-		[AttributeLogicalName("lookupresolvedelayms")]
+        [AttributeLogicalName("lookupresolvedelayms")]
         public int? LookupResolveDelayMS
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("lookupresolvedelayms");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LookupResolveDelayMS));
+                OnPropertyChanging();
                 SetAttributeValue("lookupresolvedelayms", value);
-                OnPropertyChanged(nameof(LookupResolveDelayMS));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Lower Threshold For Mailbox Intermittent Issue.
 		/// </summary>
-		[AttributeLogicalName("mailboxintermittentissueminrange")]
+        [AttributeLogicalName("mailboxintermittentissueminrange")]
         public int? MailboxIntermittentIssueMinRange
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("mailboxintermittentissueminrange");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MailboxIntermittentIssueMinRange));
+                OnPropertyChanging();
                 SetAttributeValue("mailboxintermittentissueminrange", value);
-                OnPropertyChanged(nameof(MailboxIntermittentIssueMinRange));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Lower Threshold For Mailbox Permanent Issue.
 		/// </summary>
-		[AttributeLogicalName("mailboxpermanentissueminrange")]
+        [AttributeLogicalName("mailboxpermanentissueminrange")]
         public int? MailboxPermanentIssueMinRange
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("mailboxpermanentissueminrange");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MailboxPermanentIssueMinRange));
+                OnPropertyChanging();
                 SetAttributeValue("mailboxpermanentissueminrange", value);
-                OnPropertyChanged(nameof(MailboxPermanentIssueMinRange));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of actionsteps allowed in a BPF
 		/// </summary>
-		[AttributeLogicalName("maxactionstepsinbpf")]
+        [AttributeLogicalName("maxactionstepsinbpf")]
         public int? MaxActionStepsInBPF
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxactionstepsinbpf");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxActionStepsInBPF));
+                OnPropertyChanging();
                 SetAttributeValue("maxactionstepsinbpf", value);
-                OnPropertyChanged(nameof(MaxActionStepsInBPF));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum Allowed Pending Rollup Job Count
 		/// </summary>
-		[AttributeLogicalName("maxallowedpendingrollupjobcount")]
+        [AttributeLogicalName("maxallowedpendingrollupjobcount")]
         public int? MaxAllowedPendingRollupJobCount
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxallowedpendingrollupjobcount");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxAllowedPendingRollupJobCount));
+                OnPropertyChanging();
                 SetAttributeValue("maxallowedpendingrollupjobcount", value);
-                OnPropertyChanged(nameof(MaxAllowedPendingRollupJobCount));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Percentage Of Entity Table Size For Kicking Off Bootstrap Job
 		/// </summary>
-		[AttributeLogicalName("maxallowedpendingrollupjobpercentage")]
+        [AttributeLogicalName("maxallowedpendingrollupjobpercentage")]
         public int? MaxAllowedPendingRollupJobPercentage
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxallowedpendingrollupjobpercentage");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxAllowedPendingRollupJobPercentage));
+                OnPropertyChanging();
                 SetAttributeValue("maxallowedpendingrollupjobpercentage", value);
-                OnPropertyChanged(nameof(MaxAllowedPendingRollupJobPercentage));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of days an appointment can last.
 		/// </summary>
-		[AttributeLogicalName("maxappointmentdurationdays")]
+        [AttributeLogicalName("maxappointmentdurationdays")]
         public int? MaxAppointmentDurationDays
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxappointmentdurationdays");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxAppointmentDurationDays));
+                OnPropertyChanging();
                 SetAttributeValue("maxappointmentdurationdays", value);
-                OnPropertyChanged(nameof(MaxAppointmentDurationDays));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of conditions allowed for mobile offline filters
 		/// </summary>
-		[AttributeLogicalName("maxconditionsformobileofflinefilters")]
+        [AttributeLogicalName("maxconditionsformobileofflinefilters")]
         public int? MaxConditionsForMobileOfflineFilters
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxconditionsformobileofflinefilters");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxConditionsForMobileOfflineFilters));
+                OnPropertyChanging();
                 SetAttributeValue("maxconditionsformobileofflinefilters", value);
-                OnPropertyChanged(nameof(MaxConditionsForMobileOfflineFilters));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum depth for hierarchy security propagation.
 		/// </summary>
-		[AttributeLogicalName("maxdepthforhierarchicalsecuritymodel")]
+        [AttributeLogicalName("maxdepthforhierarchicalsecuritymodel")]
         public int? MaxDepthForHierarchicalSecurityModel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxdepthforhierarchicalsecuritymodel");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxDepthForHierarchicalSecurityModel));
+                OnPropertyChanging();
                 SetAttributeValue("maxdepthforhierarchicalsecuritymodel", value);
-                OnPropertyChanged(nameof(MaxDepthForHierarchicalSecurityModel));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of Folder Based Tracking mappings user can add
 		/// </summary>
-		[AttributeLogicalName("maxfolderbasedtrackingmappings")]
+        [AttributeLogicalName("maxfolderbasedtrackingmappings")]
         public int? MaxFolderBasedTrackingMappings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxfolderbasedtrackingmappings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxFolderBasedTrackingMappings));
+                OnPropertyChanging();
                 SetAttributeValue("maxfolderbasedtrackingmappings", value);
-                OnPropertyChanged(nameof(MaxFolderBasedTrackingMappings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of active business process flows allowed per entity
 		/// </summary>
-		[AttributeLogicalName("maximumactivebusinessprocessflowsallowedperentity")]
+        [AttributeLogicalName("maximumactivebusinessprocessflowsallowedperentity")]
         public int? MaximumActiveBusinessProcessFlowsAllowedPerEntity
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maximumactivebusinessprocessflowsallowedperentity");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaximumActiveBusinessProcessFlowsAllowedPerEntity));
+                OnPropertyChanging();
                 SetAttributeValue("maximumactivebusinessprocessflowsallowedperentity", value);
-                OnPropertyChanged(nameof(MaximumActiveBusinessProcessFlowsAllowedPerEntity));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Restrict the maximum number of product properties for a product family/bundle
 		/// </summary>
-		[AttributeLogicalName("maximumdynamicpropertiesallowed")]
+        [AttributeLogicalName("maximumdynamicpropertiesallowed")]
         public int? MaximumDynamicPropertiesAllowed
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maximumdynamicpropertiesallowed");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaximumDynamicPropertiesAllowed));
+                OnPropertyChanging();
                 SetAttributeValue("maximumdynamicpropertiesallowed", value);
-                OnPropertyChanged(nameof(MaximumDynamicPropertiesAllowed));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of active SLA allowed per entity in online
 		/// </summary>
-		[AttributeLogicalName("maximumentitieswithactivesla")]
+        [AttributeLogicalName("maximumentitieswithactivesla")]
         public int? MaximumEntitiesWithActiveSLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maximumentitieswithactivesla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaximumEntitiesWithActiveSLA));
+                OnPropertyChanging();
                 SetAttributeValue("maximumentitieswithactivesla", value);
-                OnPropertyChanged(nameof(MaximumEntitiesWithActiveSLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of SLA KPI per active SLA allowed for entity in online
 		/// </summary>
-		[AttributeLogicalName("maximumslakpiperentitywithactivesla")]
+        [AttributeLogicalName("maximumslakpiperentitywithactivesla")]
         public int? MaximumSLAKPIPerEntityWithActiveSLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maximumslakpiperentitywithactivesla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaximumSLAKPIPerEntityWithActiveSLA));
+                OnPropertyChanging();
                 SetAttributeValue("maximumslakpiperentitywithactivesla", value);
-                OnPropertyChanged(nameof(MaximumSLAKPIPerEntityWithActiveSLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum tracking number before recycling takes place.
 		/// </summary>
-		[AttributeLogicalName("maximumtrackingnumber")]
+        [AttributeLogicalName("maximumtrackingnumber")]
         public int? MaximumTrackingNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maximumtrackingnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaximumTrackingNumber));
+                OnPropertyChanging();
                 SetAttributeValue("maximumtrackingnumber", value);
-                OnPropertyChanged(nameof(MaximumTrackingNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Restrict the maximum no of items in a bundle
 		/// </summary>
-		[AttributeLogicalName("maxproductsinbundle")]
+        [AttributeLogicalName("maxproductsinbundle")]
         public int? MaxProductsInBundle
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxproductsinbundle");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxProductsInBundle));
+                OnPropertyChanging();
                 SetAttributeValue("maxproductsinbundle", value);
-                OnPropertyChanged(nameof(MaxProductsInBundle));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of records that will be exported to a static Microsoft Office Excel worksheet when exporting from the grid.
 		/// </summary>
-		[AttributeLogicalName("maxrecordsforexporttoexcel")]
+        [AttributeLogicalName("maxrecordsforexporttoexcel")]
         public int? MaxRecordsForExportToExcel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxrecordsforexporttoexcel");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxRecordsForExportToExcel));
+                OnPropertyChanging();
                 SetAttributeValue("maxrecordsforexporttoexcel", value);
-                OnPropertyChanged(nameof(MaxRecordsForExportToExcel));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of lookup and picklist records that can be selected by user for filtering.
 		/// </summary>
-		[AttributeLogicalName("maxrecordsforlookupfilters")]
+        [AttributeLogicalName("maxrecordsforlookupfilters")]
         public int? MaxRecordsForLookupFilters
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxrecordsforlookupfilters");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxRecordsForLookupFilters));
+                OnPropertyChanging();
                 SetAttributeValue("maxrecordsforlookupfilters", value);
-                OnPropertyChanged(nameof(MaxRecordsForLookupFilters));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum Rollup Fields Per Entity
 		/// </summary>
-		[AttributeLogicalName("maxrollupfieldsperentity")]
+        [AttributeLogicalName("maxrollupfieldsperentity")]
         public int? MaxRollupFieldsPerEntity
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxrollupfieldsperentity");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxRollupFieldsPerEntity));
+                OnPropertyChanging();
                 SetAttributeValue("maxrollupfieldsperentity", value);
-                OnPropertyChanged(nameof(MaxRollupFieldsPerEntity));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum Rollup Fields Per Organization
 		/// </summary>
-		[AttributeLogicalName("maxrollupfieldsperorg")]
+        [AttributeLogicalName("maxrollupfieldsperorg")]
         public int? MaxRollupFieldsPerOrg
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxrollupfieldsperorg");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxRollupFieldsPerOrg));
+                OnPropertyChanging();
                 SetAttributeValue("maxrollupfieldsperorg", value);
-                OnPropertyChanged(nameof(MaxRollupFieldsPerOrg));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("maxslaitemspersla")]
+        
+        [AttributeLogicalName("maxslaitemspersla")]
         public int? MaxSLAItemsPerSLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxslaitemspersla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxSLAItemsPerSLA));
+                OnPropertyChanging();
                 SetAttributeValue("maxslaitemspersla", value);
-                OnPropertyChanged(nameof(MaxSLAItemsPerSLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The maximum version of IE to run browser emulation for in Outlook client
 		/// </summary>
-		[AttributeLogicalName("maxsupportedinternetexplorerversion")]
+        [AttributeLogicalName("maxsupportedinternetexplorerversion")]
         public int? MaxSupportedInternetExplorerVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxsupportedinternetexplorerversion");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum allowed size of an attachment.
 		/// </summary>
-		[AttributeLogicalName("maxuploadfilesize")]
+        [AttributeLogicalName("maxuploadfilesize")]
         public int? MaxUploadFileSize
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxuploadfilesize");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MaxUploadFileSize));
+                OnPropertyChanging();
                 SetAttributeValue("maxuploadfilesize", value);
-                OnPropertyChanged(nameof(MaxUploadFileSize));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of mailboxes that can be toggled for verbose logging
 		/// </summary>
-		[AttributeLogicalName("maxverboseloggingmailbox")]
+        [AttributeLogicalName("maxverboseloggingmailbox")]
         public int? MaxVerboseLoggingMailbox
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxverboseloggingmailbox");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of sync cycles for which verbose logging will be enabled by default
 		/// </summary>
-		[AttributeLogicalName("maxverboseloggingsynccycles")]
+        [AttributeLogicalName("maxverboseloggingsynccycles")]
         public int? MaxVerboseLoggingSyncCycles
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("maxverboseloggingsynccycles");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// (Deprecated) Environment selected for Integration with Microsoft Flow
 		/// </summary>
-		[AttributeLogicalName("microsoftflowenvironment")]
+        [AttributeLogicalName("microsoftflowenvironment")]
         public string? MicrosoftFlowEnvironment
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("microsoftflowenvironment");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MicrosoftFlowEnvironment));
+                OnPropertyChanging();
                 SetAttributeValue("microsoftflowenvironment", value);
-                OnPropertyChanged(nameof(MicrosoftFlowEnvironment));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Normal polling frequency used for address book synchronization in Microsoft Office Outlook.
 		/// </summary>
-		[AttributeLogicalName("minaddressbooksyncinterval")]
+        [AttributeLogicalName("minaddressbooksyncinterval")]
         public int? MinAddressBookSyncInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("minaddressbooksyncinterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MinAddressBookSyncInterval));
+                OnPropertyChanging();
                 SetAttributeValue("minaddressbooksyncinterval", value);
-                OnPropertyChanged(nameof(MinAddressBookSyncInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Normal polling frequency used for background offline synchronization in Microsoft Office Outlook.
 		/// </summary>
-		[AttributeLogicalName("minofflinesyncinterval")]
+        [AttributeLogicalName("minofflinesyncinterval")]
         public int? MinOfflineSyncInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("minofflinesyncinterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MinOfflineSyncInterval));
+                OnPropertyChanging();
                 SetAttributeValue("minofflinesyncinterval", value);
-                OnPropertyChanged(nameof(MinOfflineSyncInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum allowed time between scheduled Outlook synchronizations.
 		/// </summary>
-		[AttributeLogicalName("minoutlooksyncinterval")]
+        [AttributeLogicalName("minoutlooksyncinterval")]
         public int? MinOutlookSyncInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("minoutlooksyncinterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MinOutlookSyncInterval));
+                OnPropertyChanging();
                 SetAttributeValue("minoutlooksyncinterval", value);
-                OnPropertyChanged(nameof(MinOutlookSyncInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum number of user license required for mobile offline service by production/preview organization
 		/// </summary>
-		[AttributeLogicalName("mobileofflineminlicenseprod")]
+        [AttributeLogicalName("mobileofflineminlicenseprod")]
         public int? MobileOfflineMinLicenseProd
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("mobileofflineminlicenseprod");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minimum number of user license required for mobile offline service by trial organization
 		/// </summary>
-		[AttributeLogicalName("mobileofflineminlicensetrial")]
+        [AttributeLogicalName("mobileofflineminlicensetrial")]
         public int? MobileOfflineMinLicenseTrial
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("mobileofflineminlicensetrial");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Sync interval for mobile offline.
 		/// </summary>
-		[AttributeLogicalName("mobileofflinesyncinterval")]
+        [AttributeLogicalName("mobileofflinesyncinterval")]
         public int? MobileOfflineSyncInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("mobileofflinesyncinterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MobileOfflineSyncInterval));
+                OnPropertyChanging();
                 SetAttributeValue("mobileofflinesyncinterval", value);
-                OnPropertyChanged(nameof(MobileOfflineSyncInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the modern advanced find filtering on all tables in a model-driven app is enabled
 		/// </summary>
-		[AttributeLogicalName("modernadvancedfindfiltering")]
+        [AttributeLogicalName("modernadvancedfindfiltering")]
         public bool? ModernAdvancedFindFiltering
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("modernadvancedfindfiltering");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ModernAdvancedFindFiltering));
+                OnPropertyChanging();
                 SetAttributeValue("modernadvancedfindfiltering", value);
-                OnPropertyChanged(nameof(ModernAdvancedFindFiltering));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether coauthoring is enabled in modern app designer
 		/// </summary>
-		[AttributeLogicalName("modernappdesignercoauthoringenabled")]
+        [AttributeLogicalName("modernappdesignercoauthoringenabled")]
         public bool? ModernAppDesignerCoauthoringEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("modernappdesignercoauthoringenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ModernAppDesignerCoauthoringEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("modernappdesignercoauthoringenabled", value);
-                OnPropertyChanged(nameof(ModernAppDesignerCoauthoringEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the organization.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the organization was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the organization.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Show the sort by button on views
 		/// </summary>
-		[AttributeLogicalName("multicolumnsortenabled")]
+        [AttributeLogicalName("multicolumnsortenabled")]
         public int? MultiColumnSortEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("multicolumnsortenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MultiColumnSortEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("multicolumnsortenabled", value);
-                OnPropertyChanged(nameof(MultiColumnSortEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the organization. The name is set when Microsoft CRM is installed and should not be changed.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enables Natural Language Assist Filter.
 		/// </summary>
-		[AttributeLogicalName("naturallanguageassistfilter")]
+        [AttributeLogicalName("naturallanguageassistfilter")]
         public bool? NaturalLanguageAssistFilter
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("naturallanguageassistfilter");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NaturalLanguageAssistFilter));
+                OnPropertyChanging();
                 SetAttributeValue("naturallanguageassistfilter", value);
-                OnPropertyChanged(nameof(NaturalLanguageAssistFilter));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how negative currency numbers are displayed throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("negativecurrencyformatcode")]
+        [AttributeLogicalName("negativecurrencyformatcode")]
         public int? NegativeCurrencyFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("negativecurrencyformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NegativeCurrencyFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("negativecurrencyformatcode", value);
-                OnPropertyChanged(nameof(NegativeCurrencyFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how negative numbers are displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("negativeformatcode")]
+        [AttributeLogicalName("negativeformatcode")]
         public OptionSetValue? NegativeFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("negativeformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NegativeFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("negativeformatcode", value);
-                OnPropertyChanged(nameof(NegativeFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether an organization has enabled the new Relevance search experience (released in Oct 2020) for the organization
 		/// </summary>
-		[AttributeLogicalName("newsearchexperienceenabled")]
+        [AttributeLogicalName("newsearchexperienceenabled")]
         public bool? NewSearchExperienceEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("newsearchexperienceenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NewSearchExperienceEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("newsearchexperienceenabled", value);
-                OnPropertyChanged(nameof(NewSearchExperienceEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Next token to be placed on the subject line of an email message.
 		/// </summary>
-		[AttributeLogicalName("nexttrackingnumber")]
+        [AttributeLogicalName("nexttrackingnumber")]
         public int? NextTrackingNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("nexttrackingnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NextTrackingNumber));
+                OnPropertyChanging();
                 SetAttributeValue("nexttrackingnumber", value);
-                OnPropertyChanged(nameof(NextTrackingNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether mailbox owners will be notified of email server profile level alerts.
 		/// </summary>
-		[AttributeLogicalName("notifymailboxownerofemailserverlevelalerts")]
+        [AttributeLogicalName("notifymailboxownerofemailserverlevelalerts")]
         public bool? NotifyMailboxOwnerOfEmailServerLevelAlerts
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("notifymailboxownerofemailserverlevelalerts");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NotifyMailboxOwnerOfEmailServerLevelAlerts));
+                OnPropertyChanging();
                 SetAttributeValue("notifymailboxownerofemailserverlevelalerts", value);
-                OnPropertyChanged(nameof(NotifyMailboxOwnerOfEmailServerLevelAlerts));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specification of how numbers are displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("numberformat")]
+        [AttributeLogicalName("numberformat")]
         public string? NumberFormat
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("numberformat");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NumberFormat));
+                OnPropertyChanging();
                 SetAttributeValue("numberformat", value);
-                OnPropertyChanged(nameof(NumberFormat));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies how numbers are grouped in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("numbergroupformat")]
+        [AttributeLogicalName("numbergroupformat")]
         public string? NumberGroupFormat
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("numbergroupformat");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NumberGroupFormat));
+                OnPropertyChanging();
                 SetAttributeValue("numbergroupformat", value);
-                OnPropertyChanged(nameof(NumberGroupFormat));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Symbol used for number separation in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("numberseparator")]
+        [AttributeLogicalName("numberseparator")]
         public string? NumberSeparator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("numberseparator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NumberSeparator));
+                OnPropertyChanging();
                 SetAttributeValue("numberseparator", value);
-                OnPropertyChanged(nameof(NumberSeparator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the Office Apps auto deployment is enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("officeappsautodeploymentenabled")]
+        [AttributeLogicalName("officeappsautodeploymentenabled")]
         public bool? OfficeAppsAutoDeploymentEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("officeappsautodeploymentenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OfficeAppsAutoDeploymentEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("officeappsautodeploymentenabled", value);
-                OnPropertyChanged(nameof(OfficeAppsAutoDeploymentEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The url to open the Delve for the organization.
 		/// </summary>
-		[AttributeLogicalName("officegraphdelveurl")]
+        [AttributeLogicalName("officegraphdelveurl")]
         public string? OfficeGraphDelveUrl
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("officegraphdelveurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OfficeGraphDelveUrl));
+                OnPropertyChanging();
                 SetAttributeValue("officegraphdelveurl", value);
-                OnPropertyChanged(nameof(OfficeGraphDelveUrl));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable OOB pricing calculation logic for Opportunity, Quote, Order and Invoice entities.
 		/// </summary>
-		[AttributeLogicalName("oobpricecalculationenabled")]
+        [AttributeLogicalName("oobpricecalculationenabled")]
         public bool? OOBPriceCalculationEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("oobpricecalculationenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OOBPriceCalculationEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("oobpricecalculationenabled", value);
-                OnPropertyChanged(nameof(OOBPriceCalculationEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Indicates if this organization will opt-out from automatically enabling schema v2 on the organization.
+		/// </summary>
+        [AttributeLogicalName("optoutschemav2enabledbydefault")]
+        public bool? OptOutSchemaV2EnabledByDefault
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("optoutschemav2enabledbydefault");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("optoutschemav2enabledbydefault", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Prefix to use for all orders throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("orderprefix")]
+        [AttributeLogicalName("orderprefix")]
         public string? OrderPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("orderprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OrderPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("orderprefix", value);
-                OnPropertyChanged(nameof(OrderPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates the organization lifecycle state
 		/// </summary>
-		[AttributeLogicalName("organizationstate")]
+        [AttributeLogicalName("organizationstate")]
         public OptionSetValue? OrganizationState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("organizationstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Organization settings stored in Organization Database.
 		/// </summary>
-		[AttributeLogicalName("orgdborgsettings")]
+        [AttributeLogicalName("orgdborgsettings")]
         public string? OrgDbOrgSettings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("orgdborgsettings");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OrgDbOrgSettings));
+                OnPropertyChanging();
                 SetAttributeValue("orgdborgsettings", value);
-                OnPropertyChanged(nameof(OrgDbOrgSettings));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to turn on OrgInsights for the organization.
 		/// </summary>
-		[AttributeLogicalName("orginsightsenabled")]
+        [AttributeLogicalName("orginsightsenabled")]
         public bool? OrgInsightsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("orginsightsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OrgInsightsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("orginsightsenabled", value);
-                OnPropertyChanged(nameof(OrgInsightsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Preview feature has been enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("paipreviewscenarioenabled")]
+        [AttributeLogicalName("paipreviewscenarioenabled")]
         public bool? PaiPreviewScenarioEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("paipreviewscenarioenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PaiPreviewScenarioEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("paipreviewscenarioenabled", value);
-                OnPropertyChanged(nameof(PaiPreviewScenarioEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix used for parsed table columns.
 		/// </summary>
-		[AttributeLogicalName("parsedtablecolumnprefix")]
+        [AttributeLogicalName("parsedtablecolumnprefix")]
         public string? ParsedTableColumnPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("parsedtablecolumnprefix");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix used for parsed tables.
 		/// </summary>
-		[AttributeLogicalName("parsedtableprefix")]
+        [AttributeLogicalName("parsedtableprefix")]
         public string? ParsedTablePrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("parsedtableprefix");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the maximum number of months in past for which the recurring activities can be created.
 		/// </summary>
-		[AttributeLogicalName("pastexpansionwindow")]
+        [AttributeLogicalName("pastexpansionwindow")]
         public int? PastExpansionWindow
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("pastexpansionwindow");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PastExpansionWindow));
+                OnPropertyChanging();
                 SetAttributeValue("pastexpansionwindow", value);
-                OnPropertyChanged(nameof(PastExpansionWindow));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Leave empty to use default setting. Set to on/off to enable/disable replacement of default grids with modern ones in model-driven apps.
 		/// </summary>
-		[AttributeLogicalName("pcfdatasetgridenabled")]
+        [AttributeLogicalName("pcfdatasetgridenabled")]
         public string? PcfDatasetGridEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("pcfdatasetgridenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PcfDatasetGridEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("pcfdatasetgridenabled", value);
-                OnPropertyChanged(nameof(PcfDatasetGridEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// This setting contains the date time before an ACT sync can execute.
+		/// </summary>
+        [AttributeLogicalName("performactsyncafter")]
+        public DateTime? PerformACTSyncAfter
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<DateTime?>("performactsyncafter");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("performactsyncafter", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("picture")]
+        [AttributeLogicalName("picture")]
         public string? Picture
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("picture");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Picture));
+                OnPropertyChanging();
                 SetAttributeValue("picture", value);
-                OnPropertyChanged(nameof(Picture));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("pinpointlanguagecode")]
+        
+        [AttributeLogicalName("pinpointlanguagecode")]
         public int? PinpointLanguageCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("pinpointlanguagecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PinpointLanguageCode));
+                OnPropertyChanging();
                 SetAttributeValue("pinpointlanguagecode", value);
-                OnPropertyChanged(nameof(PinpointLanguageCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Plug-in Trace Log Setting for the Organization.
 		/// </summary>
-		[AttributeLogicalName("plugintracelogsetting")]
+        [AttributeLogicalName("plugintracelogsetting")]
         public OptionSetValue? PluginTraceLogSetting
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("plugintracelogsetting");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginTraceLogSetting));
+                OnPropertyChanging();
                 SetAttributeValue("plugintracelogsetting", value);
-                OnPropertyChanged(nameof(PluginTraceLogSetting));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// PM designator to use throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("pmdesignator")]
+        [AttributeLogicalName("pmdesignator")]
         public string? PMDesignator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("pmdesignator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PMDesignator));
+                OnPropertyChanging();
                 SetAttributeValue("pmdesignator", value);
-                OnPropertyChanged(nameof(PMDesignator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("postmessagewhitelistdomains")]
+        [AttributeLogicalName("postmessagewhitelistdomains")]
         public string? PostMessageWhitelistDomains
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("postmessagewhitelistdomains");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PostMessageWhitelistDomains));
+                OnPropertyChanging();
                 SetAttributeValue("postmessagewhitelistdomains", value);
-                OnPropertyChanged(nameof(PostMessageWhitelistDomains));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether bot for makers is enabled.
 		/// </summary>
-		[AttributeLogicalName("powerappsmakerbotenabled")]
+        [AttributeLogicalName("powerappsmakerbotenabled")]
         public bool? PowerAppsMakerBotEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("powerappsmakerbotenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PowerAppsMakerBotEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("powerappsmakerbotenabled", value);
-                OnPropertyChanged(nameof(PowerAppsMakerBotEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether cross region operations are allowed for the organization
-		/// </summary>
-		[AttributeLogicalName("powerbiallowcrossregionoperations")]
-        public bool? PowerBIAllowCrossRegionOperations
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("powerbiallowcrossregionoperations");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(PowerBIAllowCrossRegionOperations));
-                SetAttributeValue("powerbiallowcrossregionoperations", value);
-                OnPropertyChanged(nameof(PowerBIAllowCrossRegionOperations));
-            }
-        }
-
-		/// <summary>
-		/// Indicates whether automatic permissions assignment to Power BI has been enabled for the organization
-		/// </summary>
-		[AttributeLogicalName("powerbiautomaticpermissionsassignment")]
-        public bool? PowerBIAutomaticPermissionsAssignment
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("powerbiautomaticpermissionsassignment");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(PowerBIAutomaticPermissionsAssignment));
-                SetAttributeValue("powerbiautomaticpermissionsassignment", value);
-                OnPropertyChanged(nameof(PowerBIAutomaticPermissionsAssignment));
-            }
-        }
-
-		/// <summary>
-		/// Indicates whether creation of Power BI components has been enabled for the organization
-		/// </summary>
-		[AttributeLogicalName("powerbicomponentscreate")]
-        public bool? PowerBIComponentsCreate
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("powerbicomponentscreate");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(PowerBIComponentsCreate));
-                SetAttributeValue("powerbicomponentscreate", value);
-                OnPropertyChanged(nameof(PowerBIComponentsCreate));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the Power BI feature should be enabled for the organization.
 		/// </summary>
-		[AttributeLogicalName("powerbifeatureenabled")]
+        [AttributeLogicalName("powerbifeatureenabled")]
         public bool? PowerBiFeatureEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("powerbifeatureenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PowerBiFeatureEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("powerbifeatureenabled", value);
-                OnPropertyChanged(nameof(PowerBiFeatureEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of decimal places that can be used for prices.
 		/// </summary>
-		[AttributeLogicalName("pricingdecimalprecision")]
+        [AttributeLogicalName("pricingdecimalprecision")]
         public int? PricingDecimalPrecision
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("pricingdecimalprecision");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PricingDecimalPrecision));
+                OnPropertyChanging();
                 SetAttributeValue("pricingdecimalprecision", value);
-                OnPropertyChanged(nameof(PricingDecimalPrecision));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Privacy Statement URL
 		/// </summary>
-		[AttributeLogicalName("privacystatementurl")]
+        [AttributeLogicalName("privacystatementurl")]
         public string? PrivacyStatementUrl
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("privacystatementurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrivacyStatementUrl));
+                OnPropertyChanging();
                 SetAttributeValue("privacystatementurl", value);
-                OnPropertyChanged(nameof(PrivacyStatementUrl));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the default privilege for users in the organization.
 		/// </summary>
-		[AttributeLogicalName("privilegeusergroupid")]
+        [AttributeLogicalName("privilegeusergroupid")]
         public Guid? PrivilegeUserGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("privilegeusergroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrivilegeUserGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("privilegeusergroupid", value);
-                OnPropertyChanged(nameof(PrivilegeUserGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("privreportinggroupid")]
+        [AttributeLogicalName("privreportinggroupid")]
         public Guid? PrivReportingGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("privreportinggroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrivReportingGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("privreportinggroupid", value);
-                OnPropertyChanged(nameof(PrivReportingGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("privreportinggroupname")]
+        [AttributeLogicalName("privreportinggroupname")]
         public string? PrivReportingGroupName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("privreportinggroupname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrivReportingGroupName));
+                OnPropertyChanging();
                 SetAttributeValue("privreportinggroupname", value);
-                OnPropertyChanged(nameof(PrivReportingGroupName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to turn on product recommendations for the organization.
 		/// </summary>
-		[AttributeLogicalName("productrecommendationsenabled")]
+        [AttributeLogicalName("productrecommendationsenabled")]
         public bool? ProductRecommendationsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("productrecommendationsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ProductRecommendationsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("productrecommendationsenabled", value);
-                OnPropertyChanged(nameof(ProductRecommendationsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether prompt should be shown for new Qualify Lead Experience
 		/// </summary>
-		[AttributeLogicalName("qualifyleadadditionaloptions")]
+        [AttributeLogicalName("qualifyleadadditionaloptions")]
         public string? QualifyLeadAdditionalOptions
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("qualifyleadadditionaloptions");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(QualifyLeadAdditionalOptions));
+                OnPropertyChanging();
                 SetAttributeValue("qualifyleadadditionaloptions", value);
-                OnPropertyChanged(nameof(QualifyLeadAdditionalOptions));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to indicate if the feature to use quick action to open records in search side pane is enabled
 		/// </summary>
-		[AttributeLogicalName("quickactiontoopenrecordsinsidepaneenabled")]
+        [AttributeLogicalName("quickactiontoopenrecordsinsidepaneenabled")]
         public bool? QuickActionToOpenRecordsInSidePaneEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("quickactiontoopenrecordsinsidepaneenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(QuickActionToOpenRecordsInSidePaneEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("quickactiontoopenrecordsinsidepaneenabled", value);
-                OnPropertyChanged(nameof(QuickActionToOpenRecordsInSidePaneEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether a quick find record limit should be enabled for this organization (allows for faster Quick Find queries but prevents overly broad searches).
 		/// </summary>
-		[AttributeLogicalName("quickfindrecordlimitenabled")]
+        [AttributeLogicalName("quickfindrecordlimitenabled")]
         public bool? QuickFindRecordLimitEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("quickfindrecordlimitenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(QuickFindRecordLimitEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("quickfindrecordlimitenabled", value);
-                OnPropertyChanged(nameof(QuickFindRecordLimitEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix to use for all quotes throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("quoteprefix")]
+        [AttributeLogicalName("quoteprefix")]
         public string? QuotePrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("quoteprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(QuotePrefix));
+                OnPropertyChanging();
                 SetAttributeValue("quoteprefix", value);
-                OnPropertyChanged(nameof(QuotePrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether SLA Recalculation has been enabled for the organization
 		/// </summary>
-		[AttributeLogicalName("recalculatesla")]
+        [AttributeLogicalName("recalculatesla")]
         public bool? RecalculateSLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("recalculatesla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RecalculateSLA));
+                OnPropertyChanging();
                 SetAttributeValue("recalculatesla", value);
-                OnPropertyChanged(nameof(RecalculateSLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the default value for number of occurrences field in the recurrence dialog.
 		/// </summary>
-		[AttributeLogicalName("recurrencedefaultnumberofoccurrences")]
+        [AttributeLogicalName("recurrencedefaultnumberofoccurrences")]
         public int? RecurrenceDefaultNumberOfOccurrences
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("recurrencedefaultnumberofoccurrences");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RecurrenceDefaultNumberOfOccurrences));
+                OnPropertyChanging();
                 SetAttributeValue("recurrencedefaultnumberofoccurrences", value);
-                OnPropertyChanged(nameof(RecurrenceDefaultNumberOfOccurrences));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the interval (in seconds) for pausing expansion job.
 		/// </summary>
-		[AttributeLogicalName("recurrenceexpansionjobbatchinterval")]
+        [AttributeLogicalName("recurrenceexpansionjobbatchinterval")]
         public int? RecurrenceExpansionJobBatchInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("recurrenceexpansionjobbatchinterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RecurrenceExpansionJobBatchInterval));
+                OnPropertyChanging();
                 SetAttributeValue("recurrenceexpansionjobbatchinterval", value);
-                OnPropertyChanged(nameof(RecurrenceExpansionJobBatchInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the value for number of instances created in on demand job in one shot.
 		/// </summary>
-		[AttributeLogicalName("recurrenceexpansionjobbatchsize")]
+        [AttributeLogicalName("recurrenceexpansionjobbatchsize")]
         public int? RecurrenceExpansionJobBatchSize
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("recurrenceexpansionjobbatchsize");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RecurrenceExpansionJobBatchSize));
+                OnPropertyChanging();
                 SetAttributeValue("recurrenceexpansionjobbatchsize", value);
-                OnPropertyChanged(nameof(RecurrenceExpansionJobBatchSize));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Specifies the maximum number of instances to be created synchronously after creating a recurring appointment.
 		/// </summary>
-		[AttributeLogicalName("recurrenceexpansionsynchcreatemax")]
+        [AttributeLogicalName("recurrenceexpansionsynchcreatemax")]
         public int? RecurrenceExpansionSynchCreateMax
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("recurrenceexpansionsynchcreatemax");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RecurrenceExpansionSynchCreateMax));
+                OnPropertyChanging();
                 SetAttributeValue("recurrenceexpansionsynchcreatemax", value);
-                OnPropertyChanged(nameof(RecurrenceExpansionSynchCreateMax));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string that defines the navigation structure for the application. This is the site map from the previously upgraded build and is used in a 3-way merge during upgrade.
 		/// </summary>
-		[AttributeLogicalName("referencesitemapxml")]
+        [AttributeLogicalName("referencesitemapxml")]
         public string? ReferenceSiteMapXml
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("referencesitemapxml");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReferenceSiteMapXml));
+                OnPropertyChanging();
                 SetAttributeValue("referencesitemapxml", value);
-                OnPropertyChanged(nameof(ReferenceSiteMapXml));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Current orgnization release cadence value
 		/// </summary>
-		[AttributeLogicalName("releasecadence")]
+        [AttributeLogicalName("releasecadence")]
         public int? ReleaseCadence
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("releasecadence");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReleaseCadence));
+                OnPropertyChanging();
                 SetAttributeValue("releasecadence", value);
-                OnPropertyChanged(nameof(ReleaseCadence));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Model app refresh channel
 		/// </summary>
-		[AttributeLogicalName("releasechannel")]
+        [AttributeLogicalName("releasechannel")]
         public OptionSetValue? ReleaseChannel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("releasechannel");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReleaseChannel));
+                OnPropertyChanging();
                 SetAttributeValue("releasechannel", value);
-                OnPropertyChanged(nameof(ReleaseChannel));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Release Wave Applied to Environment.
 		/// </summary>
-		[AttributeLogicalName("releasewavename")]
+        [AttributeLogicalName("releasewavename")]
         public string? ReleaseWaveName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("releasewavename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReleaseWaveName));
+                OnPropertyChanging();
                 SetAttributeValue("releasewavename", value);
-                OnPropertyChanged(nameof(ReleaseWaveName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether relevance search was enabled for the environment as part of Dataverse's relevance search on-by-default sweep
 		/// </summary>
-		[AttributeLogicalName("relevancesearchenabledbyplatform")]
+        [AttributeLogicalName("relevancesearchenabledbyplatform")]
         public bool? RelevanceSearchEnabledByPlatform
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("relevancesearchenabledbyplatform");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RelevanceSearchEnabledByPlatform));
+                OnPropertyChanging();
                 SetAttributeValue("relevancesearchenabledbyplatform", value);
-                OnPropertyChanged(nameof(RelevanceSearchEnabledByPlatform));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// This setting contains the last modified date for relevance search setting that appears as a toggle in PPAC.
 		/// </summary>
-		[AttributeLogicalName("relevancesearchmodifiedon")]
+        [AttributeLogicalName("relevancesearchmodifiedon")]
         public DateTime? RelevanceSearchModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("relevancesearchmodifiedon");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RelevanceSearchModifiedOn));
+                OnPropertyChanging();
                 SetAttributeValue("relevancesearchmodifiedon", value);
-                OnPropertyChanged(nameof(RelevanceSearchModifiedOn));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag to render the body of email in the Web form in an IFRAME with the security='restricted' attribute set. This is additional security but can cause a credentials prompt.
 		/// </summary>
-		[AttributeLogicalName("rendersecureiframeforemail")]
+        [AttributeLogicalName("rendersecureiframeforemail")]
         public bool? RenderSecureIFrameForEmail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("rendersecureiframeforemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RenderSecureIFrameForEmail));
+                OnPropertyChanging();
                 SetAttributeValue("rendersecureiframeforemail", value);
-                OnPropertyChanged(nameof(RenderSecureIFrameForEmail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("reportinggroupid")]
+        [AttributeLogicalName("reportinggroupid")]
         public Guid? ReportingGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("reportinggroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReportingGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("reportinggroupid", value);
-                OnPropertyChanged(nameof(ReportingGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("reportinggroupname")]
+        [AttributeLogicalName("reportinggroupname")]
         public string? ReportingGroupName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("reportinggroupname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReportingGroupName));
+                OnPropertyChanging();
                 SetAttributeValue("reportinggroupname", value);
-                OnPropertyChanged(nameof(ReportingGroupName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Picklist for selecting the organization preference for reporting scripting errors.
 		/// </summary>
-		[AttributeLogicalName("reportscripterrors")]
+        [AttributeLogicalName("reportscripterrors")]
         public OptionSetValue? ReportScriptErrors
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("reportscripterrors");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ReportScriptErrors));
+                OnPropertyChanging();
                 SetAttributeValue("reportscripterrors", value);
-                OnPropertyChanged(nameof(ReportScriptErrors));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Send As Other User privilege is enabled.
 		/// </summary>
-		[AttributeLogicalName("requireapprovalforqueueemail")]
+        [AttributeLogicalName("requireapprovalforqueueemail")]
         public bool? RequireApprovalForQueueEmail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("requireapprovalforqueueemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RequireApprovalForQueueEmail));
+                OnPropertyChanging();
                 SetAttributeValue("requireapprovalforqueueemail", value);
-                OnPropertyChanged(nameof(RequireApprovalForQueueEmail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Send As Other User privilege is enabled.
 		/// </summary>
-		[AttributeLogicalName("requireapprovalforuseremail")]
+        [AttributeLogicalName("requireapprovalforuseremail")]
         public bool? RequireApprovalForUserEmail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("requireapprovalforuseremail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RequireApprovalForUserEmail));
+                OnPropertyChanging();
                 SetAttributeValue("requireapprovalforuseremail", value);
-                OnPropertyChanged(nameof(RequireApprovalForUserEmail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Apply same email address to all unresolved matches when you manually resolve it for one
 		/// </summary>
-		[AttributeLogicalName("resolvesimilarunresolvedemailaddress")]
+        [AttributeLogicalName("resolvesimilarunresolvedemailaddress")]
         public bool? ResolveSimilarUnresolvedEmailAddress
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("resolvesimilarunresolvedemailaddress");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ResolveSimilarUnresolvedEmailAddress));
+                OnPropertyChanging();
                 SetAttributeValue("resolvesimilarunresolvedemailaddress", value);
-                OnPropertyChanged(nameof(ResolveSimilarUnresolvedEmailAddress));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information that specifies whether guest user restriction is enabled
+		/// </summary>
+        [AttributeLogicalName("restrictGuestUserAccess")]
+        public bool? RestrictGuestUserAccess
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<bool?>("restrictGuestUserAccess");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("restrictGuestUserAccess", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Flag to restrict Update on incident.
 		/// </summary>
-		[AttributeLogicalName("restrictstatusupdate")]
+        [AttributeLogicalName("restrictstatusupdate")]
         public bool? RestrictStatusUpdate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("restrictstatusupdate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RestrictStatusUpdate));
+                OnPropertyChanging();
                 SetAttributeValue("restrictstatusupdate", value);
-                OnPropertyChanged(nameof(RestrictStatusUpdate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Information that specifies Reverse Proxy IP addresses from which requests have to be allowed.
+		/// </summary>
+        [AttributeLogicalName("reverseproxyipaddresses")]
+        public string? ReverseProxyIpAddresses
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("reverseproxyipaddresses");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("reverseproxyipaddresses", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Error status of Relationship Insights provisioning.
 		/// </summary>
-		[AttributeLogicalName("rierrorstatus")]
+        [AttributeLogicalName("rierrorstatus")]
         public int? RiErrorStatus
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("rierrorstatus");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RiErrorStatus));
+                OnPropertyChanging();
                 SetAttributeValue("rierrorstatus", value);
-                OnPropertyChanged(nameof(RiErrorStatus));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Disable the option to quick create new records and activities in the Sales mobile application
+        /// <summary>
+		/// Samesite mode for Session Cookie 0 is Default, 1 is None, 2 is Lax , 3 is Strict
 		/// </summary>
-		[AttributeLogicalName("salesmobilequickcreatedisabled")]
-        public bool? SalesMobileQuickCreateDisabled
+        [AttributeLogicalName("samesitemodeforsessioncookie")]
+        public OptionSetValue? SameSiteModeForSessionCookie
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<bool?>("salesmobilequickcreatedisabled");
+                return GetAttributeValue<OptionSetValue?>("samesitemodeforsessioncookie");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SalesMobileQuickCreateDisabled));
-                SetAttributeValue("salesmobilequickcreatedisabled", value);
-                OnPropertyChanged(nameof(SalesMobileQuickCreateDisabled));
+                OnPropertyChanging();
+                SetAttributeValue("samesitemodeforsessioncookie", value);
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether Sales Mobile should use UCI forms for create
-		/// </summary>
-		[AttributeLogicalName("salesmobileuseuciformsforcreate")]
-        public bool? SalesMobileUseUCIFormsForCreate
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("salesmobileuseuciformsforcreate");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(SalesMobileUseUCIFormsForCreate));
-                SetAttributeValue("salesmobileuseuciformsforcreate", value);
-                OnPropertyChanged(nameof(SalesMobileUseUCIFormsForCreate));
-            }
-        }
-
-		/// <summary>
-		/// Indicates whether Sales Mobile should use UCI forms for view
-		/// </summary>
-		[AttributeLogicalName("salesmobileuseuciformsforview")]
-        public bool? SalesMobileUseUCIFormsForView
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("salesmobileuseuciformsforview");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(SalesMobileUseUCIFormsForView));
-                SetAttributeValue("salesmobileuseuciformsforview", value);
-                OnPropertyChanged(nameof(SalesMobileUseUCIFormsForView));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the sample data import job.
 		/// </summary>
-		[AttributeLogicalName("sampledataimportid")]
+        [AttributeLogicalName("sampledataimportid")]
         public Guid? SampleDataImportId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sampledataimportid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SampleDataImportId));
+                OnPropertyChanging();
                 SetAttributeValue("sampledataimportid", value);
-                OnPropertyChanged(nameof(SampleDataImportId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Scheduling engine for Appointments and Service Activities
+        /// <summary>
+		/// Default time to live in minutes for new Power Automate savings events records in flow aggregation.
 		/// </summary>
-		[AttributeLogicalName("schedulingengine")]
-        public OptionSetValue? SchedulingEngine
+        [AttributeLogicalName("savingeventsttlinminutes")]
+        public int? SavingEventsTTLInMinutes
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<OptionSetValue?>("schedulingengine");
+                return GetAttributeValue<int?>("savingeventsttlinminutes");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SchedulingEngine));
-                SetAttributeValue("schedulingengine", value);
-                OnPropertyChanged(nameof(SchedulingEngine));
+                OnPropertyChanging();
+                SetAttributeValue("savingeventsttlinminutes", value);
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Prefix used for custom entities and attributes.
 		/// </summary>
-		[AttributeLogicalName("schemanameprefix")]
+        [AttributeLogicalName("schemanameprefix")]
         public string? SchemaNamePrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("schemanameprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SchemaNamePrefix));
+                OnPropertyChanging();
                 SetAttributeValue("schemanameprefix", value);
-                OnPropertyChanged(nameof(SchemaNamePrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether Send Bulk Email in UCI is enabled for the org.
 		/// </summary>
-		[AttributeLogicalName("sendbulkemailinuci")]
+        [AttributeLogicalName("sendbulkemailinuci")]
         public bool? SendBulkEmailInUCI
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("sendbulkemailinuci");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SendBulkEmailInUCI));
+                OnPropertyChanging();
                 SetAttributeValue("sendbulkemailinuci", value);
-                OnPropertyChanged(nameof(SendBulkEmailInUCI));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Serve Static Content From CDN
 		/// </summary>
-		[AttributeLogicalName("servestaticresourcesfromazurecdn")]
+        [AttributeLogicalName("servestaticresourcesfromazurecdn")]
         public bool? ServeStaticResourcesFromAzureCDN
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("servestaticresourcesfromazurecdn");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ServeStaticResourcesFromAzureCDN));
+                OnPropertyChanging();
                 SetAttributeValue("servestaticresourcesfromazurecdn", value);
-                OnPropertyChanged(nameof(ServeStaticResourcesFromAzureCDN));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable the session recording feature to record user sessions in UCI
 		/// </summary>
-		[AttributeLogicalName("sessionrecordingenabled")]
+        [AttributeLogicalName("sessionrecordingenabled")]
         public bool? SessionRecordingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("sessionrecordingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SessionRecordingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("sessionrecordingenabled", value);
-                OnPropertyChanged(nameof(SessionRecordingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether session timeout is enabled
 		/// </summary>
-		[AttributeLogicalName("sessiontimeoutenabled")]
+        [AttributeLogicalName("sessiontimeoutenabled")]
         public bool? SessionTimeoutEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("sessiontimeoutenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SessionTimeoutEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("sessiontimeoutenabled", value);
-                OnPropertyChanged(nameof(SessionTimeoutEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Session timeout in minutes
 		/// </summary>
-		[AttributeLogicalName("sessiontimeoutinmins")]
+        [AttributeLogicalName("sessiontimeoutinmins")]
         public int? SessionTimeoutInMins
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("sessiontimeoutinmins");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SessionTimeoutInMins));
+                OnPropertyChanging();
                 SetAttributeValue("sessiontimeoutinmins", value);
-                OnPropertyChanged(nameof(SessionTimeoutInMins));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Session timeout reminder in minutes
 		/// </summary>
-		[AttributeLogicalName("sessiontimeoutreminderinmins")]
+        [AttributeLogicalName("sessiontimeoutreminderinmins")]
         public int? SessionTimeoutReminderInMins
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("sessiontimeoutreminderinmins");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SessionTimeoutReminderInMins));
+                OnPropertyChanging();
                 SetAttributeValue("sessiontimeoutreminderinmins", value);
-                OnPropertyChanged(nameof(SessionTimeoutReminderInMins));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates which SharePoint deployment type is configured for Server to Server. (Online or On-Premises)
 		/// </summary>
-		[AttributeLogicalName("sharepointdeploymenttype")]
+        [AttributeLogicalName("sharepointdeploymenttype")]
         public OptionSetValue? SharePointDeploymentType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("sharepointdeploymenttype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SharePointDeploymentType));
+                OnPropertyChanging();
                 SetAttributeValue("sharepointdeploymenttype", value);
-                OnPropertyChanged(nameof(SharePointDeploymentType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether to share to previous owner on assign.
 		/// </summary>
-		[AttributeLogicalName("sharetopreviousowneronassign")]
+        [AttributeLogicalName("sharetopreviousowneronassign")]
         public bool? ShareToPreviousOwnerOnAssign
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("sharetopreviousowneronassign");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ShareToPreviousOwnerOnAssign));
+                OnPropertyChanging();
                 SetAttributeValue("sharetopreviousowneronassign", value);
-                OnPropertyChanged(nameof(ShareToPreviousOwnerOnAssign));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to display a KB article deprecation notification to the user.
 		/// </summary>
-		[AttributeLogicalName("showkbarticledeprecationnotification")]
+        [AttributeLogicalName("showkbarticledeprecationnotification")]
         public bool? ShowKBArticleDeprecationNotification
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("showkbarticledeprecationnotification");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ShowKBArticleDeprecationNotification));
+                OnPropertyChanging();
                 SetAttributeValue("showkbarticledeprecationnotification", value);
-                OnPropertyChanged(nameof(ShowKBArticleDeprecationNotification));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether to display the week number in calendar displays throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("showweeknumber")]
+        [AttributeLogicalName("showweeknumber")]
         public bool? ShowWeekNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("showweeknumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ShowWeekNumber));
+                OnPropertyChanging();
                 SetAttributeValue("showweeknumber", value);
-                OnPropertyChanged(nameof(ShowWeekNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// CRM for Outlook Download URL
 		/// </summary>
-		[AttributeLogicalName("signupoutlookdownloadfwlink")]
+        [AttributeLogicalName("signupoutlookdownloadfwlink")]
         public string? SignupOutlookDownloadFWLink
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("signupoutlookdownloadfwlink");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SignupOutlookDownloadFWLink));
+                OnPropertyChanging();
                 SetAttributeValue("signupoutlookdownloadfwlink", value);
-                OnPropertyChanged(nameof(SignupOutlookDownloadFWLink));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// XML string that defines the navigation structure for the application.
 		/// </summary>
-		[AttributeLogicalName("sitemapxml")]
+        [AttributeLogicalName("sitemapxml")]
         public string? SiteMapXml
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("sitemapxml");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SiteMapXml));
+                OnPropertyChanging();
                 SetAttributeValue("sitemapxml", value);
-                OnPropertyChanged(nameof(SiteMapXml));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Indicates whether to Allow select record dialog in Enhanced Email Template.
-		/// </summary>
-		[AttributeLogicalName("skipselectrecorddialog")]
-        public bool? SkipSelectRecordDialog
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<bool?>("skipselectrecorddialog");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(SkipSelectRecordDialog));
-                SetAttributeValue("skipselectrecorddialog", value);
-                OnPropertyChanged(nameof(SkipSelectRecordDialog));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Contains the on hold case status values.
 		/// </summary>
-		[AttributeLogicalName("slapausestates")]
+        [AttributeLogicalName("slapausestates")]
         public string? SlaPauseStates
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("slapausestates");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SlaPauseStates));
+                OnPropertyChanging();
                 SetAttributeValue("slapausestates", value);
-                OnPropertyChanged(nameof(SlaPauseStates));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag for whether the organization is using Social Insights.
 		/// </summary>
-		[AttributeLogicalName("socialinsightsenabled")]
+        [AttributeLogicalName("socialinsightsenabled")]
         public bool? SocialInsightsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("socialinsightsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SocialInsightsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("socialinsightsenabled", value);
-                OnPropertyChanged(nameof(SocialInsightsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Identifier for the Social Insights instance for the organization.
 		/// </summary>
-		[AttributeLogicalName("socialinsightsinstance")]
+        [AttributeLogicalName("socialinsightsinstance")]
         public string? SocialInsightsInstance
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("socialinsightsinstance");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SocialInsightsInstance));
+                OnPropertyChanging();
                 SetAttributeValue("socialinsightsinstance", value);
-                OnPropertyChanged(nameof(SocialInsightsInstance));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag for whether the organization has accepted the Social Insights terms of use.
 		/// </summary>
-		[AttributeLogicalName("socialinsightstermsaccepted")]
+        [AttributeLogicalName("socialinsightstermsaccepted")]
         public bool? SocialInsightsTermsAccepted
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("socialinsightstermsaccepted");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SocialInsightsTermsAccepted));
+                OnPropertyChanging();
                 SetAttributeValue("socialinsightstermsaccepted", value);
-                OnPropertyChanged(nameof(SocialInsightsTermsAccepted));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("sortid")]
+        [AttributeLogicalName("sortid")]
         public int? SortId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("sortid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SortId));
+                OnPropertyChanging();
                 SetAttributeValue("sortid", value);
-                OnPropertyChanged(nameof(SortId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("sqlaccessgroupid")]
+        [AttributeLogicalName("sqlaccessgroupid")]
         public Guid? SqlAccessGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sqlaccessgroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SqlAccessGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("sqlaccessgroupid", value);
-                OnPropertyChanged(nameof(SqlAccessGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("sqlaccessgroupname")]
+        [AttributeLogicalName("sqlaccessgroupname")]
         public string? SqlAccessGroupName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("sqlaccessgroupname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SqlAccessGroupName));
+                OnPropertyChanging();
                 SetAttributeValue("sqlaccessgroupname", value);
-                OnPropertyChanged(nameof(SqlAccessGroupName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Setting for SQM data collection, 0 no, 1 yes enabled
 		/// </summary>
-		[AttributeLogicalName("sqmenabled")]
+        [AttributeLogicalName("sqmenabled")]
         public bool? SQMEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("sqmenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SQMEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("sqmenabled", value);
-                OnPropertyChanged(nameof(SQMEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the support user for the organization.
 		/// </summary>
-		[AttributeLogicalName("supportuserid")]
+        [AttributeLogicalName("supportuserid")]
         public Guid? SupportUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("supportuserid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SupportUserId));
+                OnPropertyChanging();
                 SetAttributeValue("supportuserid", value);
-                OnPropertyChanged(nameof(SupportUserId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether SLA is suppressed.
 		/// </summary>
-		[AttributeLogicalName("suppresssla")]
+        [AttributeLogicalName("suppresssla")]
         public bool? SuppressSLA
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("suppresssla");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SuppressSLA));
+                OnPropertyChanging();
                 SetAttributeValue("suppresssla", value);
-                OnPropertyChanged(nameof(SuppressSLA));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Leave empty to use default setting. Set to on/off to enable/disable Admin emails when Solution Checker validation fails.
 		/// </summary>
-		[AttributeLogicalName("suppressvalidationemails")]
+        [AttributeLogicalName("suppressvalidationemails")]
         public bool? SuppressValidationEmails
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("suppressvalidationemails");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SuppressValidationEmails));
+                OnPropertyChanging();
                 SetAttributeValue("suppressvalidationemails", value);
-                OnPropertyChanged(nameof(SuppressValidationEmails));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of records to update per operation in Sync Bulk Pause/Resume/Cancel
 		/// </summary>
-		[AttributeLogicalName("syncbulkoperationbatchsize")]
+        [AttributeLogicalName("syncbulkoperationbatchsize")]
         public int? SyncBulkOperationBatchSize
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("syncbulkoperationbatchsize");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SyncBulkOperationBatchSize));
+                OnPropertyChanging();
                 SetAttributeValue("syncbulkoperationbatchsize", value);
-                OnPropertyChanged(nameof(SyncBulkOperationBatchSize));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Max total number of records to update in database for Sync Bulk Pause/Resume/Cancel
 		/// </summary>
-		[AttributeLogicalName("syncbulkoperationmaxlimit")]
+        [AttributeLogicalName("syncbulkoperationmaxlimit")]
         public int? SyncBulkOperationMaxLimit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("syncbulkoperationmaxlimit");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SyncBulkOperationMaxLimit));
+                OnPropertyChanging();
                 SetAttributeValue("syncbulkoperationmaxlimit", value);
-                OnPropertyChanged(nameof(SyncBulkOperationMaxLimit));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates the selection to use the dynamics 365 azure sync framework or server side sync.
 		/// </summary>
-		[AttributeLogicalName("syncoptinselection")]
+        [AttributeLogicalName("syncoptinselection")]
         public bool? SyncOptInSelection
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("syncoptinselection");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SyncOptInSelection));
+                OnPropertyChanging();
                 SetAttributeValue("syncoptinselection", value);
-                OnPropertyChanged(nameof(SyncOptInSelection));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates the status of the opt-in or opt-out operation for dynamics 365 azure sync.
 		/// </summary>
-		[AttributeLogicalName("syncoptinselectionstatus")]
+        [AttributeLogicalName("syncoptinselectionstatus")]
         public OptionSetValue? SyncOptInSelectionStatus
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("syncoptinselectionstatus");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SyncOptInSelectionStatus));
+                OnPropertyChanging();
                 SetAttributeValue("syncoptinselectionstatus", value);
-                OnPropertyChanged(nameof(SyncOptInSelectionStatus));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the system user for the organization.
 		/// </summary>
-		[AttributeLogicalName("systemuserid")]
+        [AttributeLogicalName("systemuserid")]
         public Guid? SystemUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("systemuserid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SystemUserId));
+                OnPropertyChanging();
                 SetAttributeValue("systemuserid", value);
-                OnPropertyChanged(nameof(SystemUserId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Controls the appearance of option to search over a single DV search indexed table in model-driven apps’ global search in the header.
 		/// </summary>
-		[AttributeLogicalName("tablescopeddvsearchinapps")]
+        [AttributeLogicalName("tablescopeddvsearchinapps")]
         public bool? TableScopedDVSearchInApps
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("tablescopeddvsearchinapps");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TableScopedDVSearchInApps));
+                OnPropertyChanging();
                 SetAttributeValue("tablescopeddvsearchinapps", value);
-                OnPropertyChanged(nameof(TableScopedDVSearchInApps));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Maximum number of aggressive polling cycles executed for email auto-tagging when a new email is received.
 		/// </summary>
-		[AttributeLogicalName("tagmaxaggressivecycles")]
+        [AttributeLogicalName("tagmaxaggressivecycles")]
         public int? TagMaxAggressiveCycles
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("tagmaxaggressivecycles");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TagMaxAggressiveCycles));
+                OnPropertyChanging();
                 SetAttributeValue("tagmaxaggressivecycles", value);
-                OnPropertyChanged(nameof(TagMaxAggressiveCycles));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Normal polling frequency used for email receive auto-tagging in outlook.
 		/// </summary>
-		[AttributeLogicalName("tagpollingperiod")]
+        [AttributeLogicalName("tagpollingperiod")]
         public int? TagPollingPeriod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("tagpollingperiod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TagPollingPeriod));
+                OnPropertyChanging();
                 SetAttributeValue("tagpollingperiod", value);
-                OnPropertyChanged(nameof(TagPollingPeriod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to turn on task flows for the organization.
 		/// </summary>
-		[AttributeLogicalName("taskbasedflowenabled")]
+        [AttributeLogicalName("taskbasedflowenabled")]
         public bool? TaskBasedFlowEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("taskbasedflowenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TaskBasedFlowEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("taskbasedflowenabled", value);
-                OnPropertyChanged(nameof(TaskBasedFlowEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information on whether Teams Chat Data Sync is enabled.
 		/// </summary>
-		[AttributeLogicalName("teamschatdatasync")]
+        [AttributeLogicalName("teamschatdatasync")]
         public bool? TeamsChatDataSync
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("teamschatdatasync");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TeamsChatDataSync));
+                OnPropertyChanging();
                 SetAttributeValue("teamschatdatasync", value);
-                OnPropertyChanged(nameof(TeamsChatDataSync));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Instrumentation key for Application Insights used to log plugins telemetry.
 		/// </summary>
-		[AttributeLogicalName("telemetryinstrumentationkey")]
+        [AttributeLogicalName("telemetryinstrumentationkey")]
         public string? TelemetryInstrumentationKey
         {
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TelemetryInstrumentationKey));
+                OnPropertyChanging();
                 SetAttributeValue("telemetryinstrumentationkey", value);
-                OnPropertyChanged(nameof(TelemetryInstrumentationKey));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to turn on text analytics for the organization.
 		/// </summary>
-		[AttributeLogicalName("textanalyticsenabled")]
+        [AttributeLogicalName("textanalyticsenabled")]
         public bool? TextAnalyticsEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("textanalyticsenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TextAnalyticsEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("textanalyticsenabled", value);
-                OnPropertyChanged(nameof(TextAnalyticsEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the time is displayed throughout Microsoft CRM.
 		/// </summary>
-		[AttributeLogicalName("timeformatcode")]
+        [AttributeLogicalName("timeformatcode")]
         public OptionSetValue? TimeFormatCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("timeformatcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeFormatCode));
+                OnPropertyChanging();
                 SetAttributeValue("timeformatcode", value);
-                OnPropertyChanged(nameof(TimeFormatCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Text for how time is displayed in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("timeformatstring")]
+        [AttributeLogicalName("timeformatstring")]
         public string? TimeFormatString
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("timeformatstring");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeFormatString));
+                OnPropertyChanging();
                 SetAttributeValue("timeformatstring", value);
-                OnPropertyChanged(nameof(TimeFormatString));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Text for how the time separator is displayed throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("timeseparator")]
+        [AttributeLogicalName("timeseparator")]
         public string? TimeSeparator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("timeseparator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeSeparator));
+                OnPropertyChanging();
                 SetAttributeValue("timeseparator", value);
-                OnPropertyChanged(nameof(TimeSeparator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("timezoneruleversionnumber")]
+        [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Duration used for token expiration.
 		/// </summary>
-		[AttributeLogicalName("tokenexpiry")]
+        [AttributeLogicalName("tokenexpiry")]
         public int? TokenExpiry
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("tokenexpiry");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TokenExpiry));
+                OnPropertyChanging();
                 SetAttributeValue("tokenexpiry", value);
-                OnPropertyChanged(nameof(TokenExpiry));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Token key.
 		/// </summary>
-		[AttributeLogicalName("tokenkey")]
+        [AttributeLogicalName("tokenkey")]
         public string? TokenKey
         {
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TokenKey));
+                OnPropertyChanging();
                 SetAttributeValue("tokenkey", value);
-                OnPropertyChanged(nameof(TokenKey));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Tracelog record maximum age in days
 		/// </summary>
-		[AttributeLogicalName("tracelogmaximumageindays")]
+        [AttributeLogicalName("tracelogmaximumageindays")]
         public int? TraceLogMaximumAgeInDays
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("tracelogmaximumageindays");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TraceLogMaximumAgeInDays));
+                OnPropertyChanging();
                 SetAttributeValue("tracelogmaximumageindays", value);
-                OnPropertyChanged(nameof(TraceLogMaximumAgeInDays));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// History list of tracking token prefixes.
 		/// </summary>
-		[AttributeLogicalName("trackingprefix")]
+        [AttributeLogicalName("trackingprefix")]
         public string? TrackingPrefix
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("trackingprefix");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TrackingPrefix));
+                OnPropertyChanging();
                 SetAttributeValue("trackingprefix", value);
-                OnPropertyChanged(nameof(TrackingPrefix));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Base number used to provide separate tracking token identifiers to users belonging to different deployments.
 		/// </summary>
-		[AttributeLogicalName("trackingtokenidbase")]
+        [AttributeLogicalName("trackingtokenidbase")]
         public int? TrackingTokenIdBase
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("trackingtokenidbase");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TrackingTokenIdBase));
+                OnPropertyChanging();
                 SetAttributeValue("trackingtokenidbase", value);
-                OnPropertyChanged(nameof(TrackingTokenIdBase));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of digits used to represent a tracking token identifier.
 		/// </summary>
-		[AttributeLogicalName("trackingtokeniddigits")]
+        [AttributeLogicalName("trackingtokeniddigits")]
         public int? TrackingTokenIdDigits
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("trackingtokeniddigits");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TrackingTokenIdDigits));
+                OnPropertyChanging();
                 SetAttributeValue("trackingtokeniddigits", value);
-                OnPropertyChanged(nameof(TrackingTokenIdDigits));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number of characters appended to invoice, quote, and order numbers.
 		/// </summary>
-		[AttributeLogicalName("uniquespecifierlength")]
+        [AttributeLogicalName("uniquespecifierlength")]
         public int? UniqueSpecifierLength
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("uniquespecifierlength");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueSpecifierLength));
+                OnPropertyChanging();
                 SetAttributeValue("uniquespecifierlength", value);
-                OnPropertyChanged(nameof(UniqueSpecifierLength));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether email address should be unresolved if multiple matches are found
 		/// </summary>
-		[AttributeLogicalName("unresolveemailaddressifmultiplematch")]
+        [AttributeLogicalName("unresolveemailaddressifmultiplematch")]
         public bool? UnresolveEmailAddressIfMultipleMatch
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("unresolveemailaddressifmultiplematch");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UnresolveEmailAddressIfMultipleMatch));
+                OnPropertyChanging();
                 SetAttributeValue("unresolveemailaddressifmultiplematch", value);
-                OnPropertyChanged(nameof(UnresolveEmailAddressIfMultipleMatch));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag indicates whether to Use Inbuilt Rule For DefaultPricelist.
 		/// </summary>
-		[AttributeLogicalName("useinbuiltrulefordefaultpricelistselection")]
+        [AttributeLogicalName("useinbuiltrulefordefaultpricelistselection")]
         public bool? UseInbuiltRuleForDefaultPricelistSelection
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("useinbuiltrulefordefaultpricelistselection");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseInbuiltRuleForDefaultPricelistSelection));
+                OnPropertyChanging();
                 SetAttributeValue("useinbuiltrulefordefaultpricelistselection", value);
-                OnPropertyChanged(nameof(UseInbuiltRuleForDefaultPricelistSelection));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether to use legacy form rendering.
 		/// </summary>
-		[AttributeLogicalName("uselegacyrendering")]
+        [AttributeLogicalName("uselegacyrendering")]
         public bool? UseLegacyRendering
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("uselegacyrendering");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseLegacyRendering));
+                OnPropertyChanging();
                 SetAttributeValue("uselegacyrendering", value);
-                OnPropertyChanged(nameof(UseLegacyRendering));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Use position hierarchy
 		/// </summary>
-		[AttributeLogicalName("usepositionhierarchy")]
+        [AttributeLogicalName("usepositionhierarchy")]
         public bool? UsePositionHierarchy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("usepositionhierarchy");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UsePositionHierarchy));
+                OnPropertyChanging();
                 SetAttributeValue("usepositionhierarchy", value);
-                OnPropertyChanged(nameof(UsePositionHierarchy));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether searching in a grid should use the Quick Find view for the entity.
 		/// </summary>
-		[AttributeLogicalName("usequickfindviewforgridsearch")]
+        [AttributeLogicalName("usequickfindviewforgridsearch")]
         public bool? UseQuickFindViewForGridSearch
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("usequickfindviewforgridsearch");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseQuickFindViewForGridSearch));
+                OnPropertyChanging();
                 SetAttributeValue("usequickfindviewforgridsearch", value);
-                OnPropertyChanged(nameof(UseQuickFindViewForGridSearch));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The interval at which user access is checked for auditing.
 		/// </summary>
-		[AttributeLogicalName("useraccessauditinginterval")]
+        [AttributeLogicalName("useraccessauditinginterval")]
         public int? UserAccessAuditingInterval
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("useraccessauditinginterval");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UserAccessAuditingInterval));
+                OnPropertyChanging();
                 SetAttributeValue("useraccessauditinginterval", value);
-                OnPropertyChanged(nameof(UserAccessAuditingInterval));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the read-optimized form should be enabled for this organization.
 		/// </summary>
-		[AttributeLogicalName("usereadform")]
+        [AttributeLogicalName("usereadform")]
         public bool? UseReadForm
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("usereadform");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseReadForm));
+                OnPropertyChanging();
                 SetAttributeValue("usereadform", value);
-                OnPropertyChanged(nameof(UseReadForm));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the default group of users in the organization.
 		/// </summary>
-		[AttributeLogicalName("usergroupid")]
+        [AttributeLogicalName("usergroupid")]
         public Guid? UserGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("usergroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UserGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("usergroupid", value);
-                OnPropertyChanged(nameof(UserGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enable the user rating feature to show the NSAT score and comment to maker
 		/// </summary>
-		[AttributeLogicalName("userratingenabled")]
+        [AttributeLogicalName("userratingenabled")]
         public bool? UserRatingEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("userratingenabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UserRatingEnabled));
+                OnPropertyChanging();
                 SetAttributeValue("userratingenabled", value);
-                OnPropertyChanged(nameof(UserRatingEnabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates default protocol selected for organization.
 		/// </summary>
-		[AttributeLogicalName("useskypeprotocol")]
+        [AttributeLogicalName("useskypeprotocol")]
         public bool? UseSkypeProtocol
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("useskypeprotocol");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseSkypeProtocol));
+                OnPropertyChanging();
                 SetAttributeValue("useskypeprotocol", value);
-                OnPropertyChanged(nameof(UseSkypeProtocol));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
-		[AttributeLogicalName("utcconversiontimezonecode")]
+        [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Hash of the V3 callout configuration file.
 		/// </summary>
-		[AttributeLogicalName("v3calloutconfighash")]
+        [AttributeLogicalName("v3calloutconfighash")]
         public string? V3CalloutConfigHash
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("v3calloutconfighash");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Validation mode for apps in this environment
 		/// </summary>
-		[AttributeLogicalName("validationmode")]
+        [AttributeLogicalName("validationmode")]
         public OptionSetValue? ValidationMode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("validationmode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ValidationMode));
+                OnPropertyChanging();
                 SetAttributeValue("validationmode", value);
-                OnPropertyChanged(nameof(ValidationMode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version number of the organization.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Hash value of web resources.
 		/// </summary>
-		[AttributeLogicalName("webresourcehash")]
+        [AttributeLogicalName("webresourcehash")]
         public string? WebResourceHash
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("webresourcehash");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WebResourceHash));
+                OnPropertyChanging();
                 SetAttributeValue("webresourcehash", value);
-                OnPropertyChanged(nameof(WebResourceHash));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Designated first day of the week throughout Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("weekstartdaycode")]
+        [AttributeLogicalName("weekstartdaycode")]
         public OptionSetValue? WeekStartDayCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("weekstartdaycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WeekStartDayCode));
+                OnPropertyChanging();
                 SetAttributeValue("weekstartdaycode", value);
-                OnPropertyChanged(nameof(WeekStartDayCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For Internal use only.
 		/// </summary>
-		[AttributeLogicalName("widgetproperties")]
+        [AttributeLogicalName("widgetproperties")]
         public string? WidgetProperties
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("widgetproperties");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WidgetProperties));
+                OnPropertyChanging();
                 SetAttributeValue("widgetproperties", value);
-                OnPropertyChanged(nameof(WidgetProperties));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Denotes the Yammer group ID
 		/// </summary>
-		[AttributeLogicalName("yammergroupid")]
+        [AttributeLogicalName("yammergroupid")]
         public int? YammerGroupId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("yammergroupid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YammerGroupId));
+                OnPropertyChanging();
                 SetAttributeValue("yammergroupid", value);
-                OnPropertyChanged(nameof(YammerGroupId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Denotes the Yammer network permalink
 		/// </summary>
-		[AttributeLogicalName("yammernetworkpermalink")]
+        [AttributeLogicalName("yammernetworkpermalink")]
         public string? YammerNetworkPermalink
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("yammernetworkpermalink");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YammerNetworkPermalink));
+                OnPropertyChanging();
                 SetAttributeValue("yammernetworkpermalink", value);
-                OnPropertyChanged(nameof(YammerNetworkPermalink));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Denotes whether the OAuth access token for Yammer network has expired
 		/// </summary>
-		[AttributeLogicalName("yammeroauthaccesstokenexpired")]
+        [AttributeLogicalName("yammeroauthaccesstokenexpired")]
         public bool? YammerOAuthAccessTokenExpired
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("yammeroauthaccesstokenexpired");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YammerOAuthAccessTokenExpired));
+                OnPropertyChanging();
                 SetAttributeValue("yammeroauthaccesstokenexpired", value);
-                OnPropertyChanged(nameof(YammerOAuthAccessTokenExpired));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Internal Use Only
 		/// </summary>
-		[AttributeLogicalName("yammerpostmethod")]
+        [AttributeLogicalName("yammerpostmethod")]
         public OptionSetValue? YammerPostMethod
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("yammerpostmethod");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YammerPostMethod));
+                OnPropertyChanging();
                 SetAttributeValue("yammerpostmethod", value);
-                OnPropertyChanged(nameof(YammerPostMethod));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies how the first week of the year is specified in Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("yearstartweekcode")]
+        [AttributeLogicalName("yearstartweekcode")]
         public int? YearStartWeekCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("yearstartweekcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YearStartWeekCode));
+                OnPropertyChanging();
                 SetAttributeValue("yearstartweekcode", value);
-                OnPropertyChanged(nameof(YearStartWeekCode));
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region NavigationProperties
+
+        /// <summary>
+        /// 1:N lk_documenttemplatebase_organization
+        /// </summary>
+        [RelationshipSchemaName("lk_documenttemplatebase_organization")]
+        public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseOrganization
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_organization", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("lk_documenttemplatebase_organization", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N Organization_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("Organization_AsyncOperations")]
+        public IEnumerable<AsyncOperation> OrganizationAsyncOperations
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<AsyncOperation>("Organization_AsyncOperations", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("Organization_AsyncOperations", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// 1:N organization_business_units
+        /// </summary>
+        [RelationshipSchemaName("organization_business_units")]
+        public IEnumerable<BusinessUnit> OrganizationBusinessUnits
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<BusinessUnit>("organization_business_units", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_business_units", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N lk_documenttemplatebase_organization
-		/// </summary>	
-		[RelationshipSchemaName("lk_documenttemplatebase_organization")]
-		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseOrganization
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_organization", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkDocumenttemplatebaseOrganization");
-				this.SetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_organization", null, value);
-				this.OnPropertyChanged("LkDocumenttemplatebaseOrganization");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_calendars
+        /// </summary>
+        [RelationshipSchemaName("organization_calendars")]
+        public IEnumerable<Calendar> OrganizationCalendars
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Calendar>("organization_calendars", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_calendars", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N Organization_AsyncOperations
-		/// </summary>	
-		[RelationshipSchemaName("Organization_AsyncOperations")]
-		public IEnumerable<AsyncOperation> OrganizationAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("Organization_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("Organization_AsyncOperations", null, value);
-				this.OnPropertyChanged("OrganizationAsyncOperations");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_importjob
+        /// </summary>
+        [RelationshipSchemaName("organization_importjob")]
+        public IEnumerable<ImportJob> OrganizationImportjob
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<ImportJob>("organization_importjob", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_importjob", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_business_units
-		/// </summary>	
-		[RelationshipSchemaName("organization_business_units")]
-		public IEnumerable<BusinessUnit> OrganizationBusinessUnits
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<BusinessUnit>("organization_business_units", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationBusinessUnits");
-				this.SetRelatedEntities<BusinessUnit>("organization_business_units", null, value);
-				this.OnPropertyChanged("OrganizationBusinessUnits");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_pluginassembly
+        /// </summary>
+        [RelationshipSchemaName("organization_pluginassembly")]
+        public IEnumerable<PluginAssembly> OrganizationPluginassembly
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<PluginAssembly>("organization_pluginassembly", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_pluginassembly", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_calendars
-		/// </summary>	
-		[RelationshipSchemaName("organization_calendars")]
-		public IEnumerable<Calendar> OrganizationCalendars
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Calendar>("organization_calendars", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationCalendars");
-				this.SetRelatedEntities<Calendar>("organization_calendars", null, value);
-				this.OnPropertyChanged("OrganizationCalendars");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_pluginpackage
+        /// </summary>
+        [RelationshipSchemaName("organization_pluginpackage")]
+        public IEnumerable<PluginPackage> OrganizationPluginpackage
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<PluginPackage>("organization_pluginpackage", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_pluginpackage", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_importjob
-		/// </summary>	
-		[RelationshipSchemaName("organization_importjob")]
-		public IEnumerable<ImportJob> OrganizationImportjob
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<ImportJob>("organization_importjob", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationImportjob");
-				this.SetRelatedEntities<ImportJob>("organization_importjob", null, value);
-				this.OnPropertyChanged("OrganizationImportjob");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_plugintype
+        /// </summary>
+        [RelationshipSchemaName("organization_plugintype")]
+        public IEnumerable<PluginType> OrganizationPlugintype
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<PluginType>("organization_plugintype", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_plugintype", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_pluginassembly
-		/// </summary>	
-		[RelationshipSchemaName("organization_pluginassembly")]
-		public IEnumerable<PluginAssembly> OrganizationPluginassembly
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<PluginAssembly>("organization_pluginassembly", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationPluginassembly");
-				this.SetRelatedEntities<PluginAssembly>("organization_pluginassembly", null, value);
-				this.OnPropertyChanged("OrganizationPluginassembly");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_publisher
+        /// </summary>
+        [RelationshipSchemaName("organization_publisher")]
+        public IEnumerable<Publisher> OrganizationPublisher
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Publisher>("organization_publisher", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_publisher", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_pluginpackage
-		/// </summary>	
-		[RelationshipSchemaName("organization_pluginpackage")]
-		public IEnumerable<PluginPackage> OrganizationPluginpackage
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<PluginPackage>("organization_pluginpackage", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationPluginpackage");
-				this.SetRelatedEntities<PluginPackage>("organization_pluginpackage", null, value);
-				this.OnPropertyChanged("OrganizationPluginpackage");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_queues
+        /// </summary>
+        [RelationshipSchemaName("organization_queues")]
+        public IEnumerable<Queue> OrganizationQueues
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Queue>("organization_queues", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_queues", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_plugintype
-		/// </summary>	
-		[RelationshipSchemaName("organization_plugintype")]
-		public IEnumerable<PluginType> OrganizationPlugintype
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<PluginType>("organization_plugintype", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationPlugintype");
-				this.SetRelatedEntities<PluginType>("organization_plugintype", null, value);
-				this.OnPropertyChanged("OrganizationPlugintype");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_roles
+        /// </summary>
+        [RelationshipSchemaName("organization_roles")]
+        public IEnumerable<Role> OrganizationRoles
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Role>("organization_roles", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_roles", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_publisher
-		/// </summary>	
-		[RelationshipSchemaName("organization_publisher")]
-		public IEnumerable<Publisher> OrganizationPublisher
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Publisher>("organization_publisher", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationPublisher");
-				this.SetRelatedEntities<Publisher>("organization_publisher", null, value);
-				this.OnPropertyChanged("OrganizationPublisher");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_routingruleitems
+        /// </summary>
+        [RelationshipSchemaName("organization_routingruleitems")]
+        public IEnumerable<RoutingRuleItem> OrganizationRoutingruleitems
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<RoutingRuleItem>("organization_routingruleitems", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_routingruleitems", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_queues
-		/// </summary>	
-		[RelationshipSchemaName("organization_queues")]
-		public IEnumerable<Queue> OrganizationQueues
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Queue>("organization_queues", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationQueues");
-				this.SetRelatedEntities<Queue>("organization_queues", null, value);
-				this.OnPropertyChanged("OrganizationQueues");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_RoutingRules
+        /// </summary>
+        [RelationshipSchemaName("organization_RoutingRules")]
+        public IEnumerable<RoutingRule> OrganizationRoutingRules
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<RoutingRule>("organization_RoutingRules", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_RoutingRules", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_roles
-		/// </summary>	
-		[RelationshipSchemaName("organization_roles")]
-		public IEnumerable<Role> OrganizationRoles
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Role>("organization_roles", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationRoles");
-				this.SetRelatedEntities<Role>("organization_roles", null, value);
-				this.OnPropertyChanged("OrganizationRoles");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_saved_queries
+        /// </summary>
+        [RelationshipSchemaName("organization_saved_queries")]
+        public IEnumerable<SavedQuery> OrganizationSavedQueries
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SavedQuery>("organization_saved_queries", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_saved_queries", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_routingruleitems
-		/// </summary>	
-		[RelationshipSchemaName("organization_routingruleitems")]
-		public IEnumerable<RoutingRuleItem> OrganizationRoutingruleitems
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<RoutingRuleItem>("organization_routingruleitems", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationRoutingruleitems");
-				this.SetRelatedEntities<RoutingRuleItem>("organization_routingruleitems", null, value);
-				this.OnPropertyChanged("OrganizationRoutingruleitems");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_sdkmessage
+        /// </summary>
+        [RelationshipSchemaName("organization_sdkmessage")]
+        public IEnumerable<SdkMessage> OrganizationSdkmessage
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessage>("organization_sdkmessage", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_sdkmessage", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_RoutingRules
-		/// </summary>	
-		[RelationshipSchemaName("organization_RoutingRules")]
-		public IEnumerable<RoutingRule> OrganizationRoutingRules
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<RoutingRule>("organization_RoutingRules", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationRoutingRules");
-				this.SetRelatedEntities<RoutingRule>("organization_RoutingRules", null, value);
-				this.OnPropertyChanged("OrganizationRoutingRules");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_sdkmessagefilter
+        /// </summary>
+        [RelationshipSchemaName("organization_sdkmessagefilter")]
+        public IEnumerable<SdkMessageFilter> OrganizationSdkmessagefilter
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageFilter>("organization_sdkmessagefilter", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_sdkmessagefilter", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_saved_queries
-		/// </summary>	
-		[RelationshipSchemaName("organization_saved_queries")]
-		public IEnumerable<SavedQuery> OrganizationSavedQueries
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SavedQuery>("organization_saved_queries", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSavedQueries");
-				this.SetRelatedEntities<SavedQuery>("organization_saved_queries", null, value);
-				this.OnPropertyChanged("OrganizationSavedQueries");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_sdkmessageprocessingstep
+        /// </summary>
+        [RelationshipSchemaName("organization_sdkmessageprocessingstep")]
+        public IEnumerable<SdkMessageProcessingStep> OrganizationSdkmessageprocessingstep
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStep>("organization_sdkmessageprocessingstep", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_sdkmessageprocessingstep", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_sdkmessage
-		/// </summary>	
-		[RelationshipSchemaName("organization_sdkmessage")]
-		public IEnumerable<SdkMessage> OrganizationSdkmessage
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessage>("organization_sdkmessage", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSdkmessage");
-				this.SetRelatedEntities<SdkMessage>("organization_sdkmessage", null, value);
-				this.OnPropertyChanged("OrganizationSdkmessage");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_sdkmessageprocessingstepimage
+        /// </summary>
+        [RelationshipSchemaName("organization_sdkmessageprocessingstepimage")]
+        public IEnumerable<SdkMessageProcessingStepImage> OrganizationSdkmessageprocessingstepimage
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStepImage>("organization_sdkmessageprocessingstepimage", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_sdkmessageprocessingstepimage", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_sdkmessagefilter
-		/// </summary>	
-		[RelationshipSchemaName("organization_sdkmessagefilter")]
-		public IEnumerable<SdkMessageFilter> OrganizationSdkmessagefilter
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageFilter>("organization_sdkmessagefilter", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSdkmessagefilter");
-				this.SetRelatedEntities<SdkMessageFilter>("organization_sdkmessagefilter", null, value);
-				this.OnPropertyChanged("OrganizationSdkmessagefilter");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_sdkmessageprocessingstepsecureconfig
+        /// </summary>
+        [RelationshipSchemaName("organization_sdkmessageprocessingstepsecureconfig")]
+        public IEnumerable<SdkMessageProcessingStepSecureConfig> OrganizationSdkmessageprocessingstepsecureconfig
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("organization_sdkmessageprocessingstepsecureconfig", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_sdkmessageprocessingstepsecureconfig", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_sdkmessageprocessingstep
-		/// </summary>	
-		[RelationshipSchemaName("organization_sdkmessageprocessingstep")]
-		public IEnumerable<SdkMessageProcessingStep> OrganizationSdkmessageprocessingstep
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStep>("organization_sdkmessageprocessingstep", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSdkmessageprocessingstep");
-				this.SetRelatedEntities<SdkMessageProcessingStep>("organization_sdkmessageprocessingstep", null, value);
-				this.OnPropertyChanged("OrganizationSdkmessageprocessingstep");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_solution
+        /// </summary>
+        [RelationshipSchemaName("organization_solution")]
+        public IEnumerable<Solution> OrganizationSolution
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Solution>("organization_solution", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_solution", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_sdkmessageprocessingstepimage
-		/// </summary>	
-		[RelationshipSchemaName("organization_sdkmessageprocessingstepimage")]
-		public IEnumerable<SdkMessageProcessingStepImage> OrganizationSdkmessageprocessingstepimage
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStepImage>("organization_sdkmessageprocessingstepimage", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSdkmessageprocessingstepimage");
-				this.SetRelatedEntities<SdkMessageProcessingStepImage>("organization_sdkmessageprocessingstepimage", null, value);
-				this.OnPropertyChanged("OrganizationSdkmessageprocessingstepimage");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_system_users
+        /// </summary>
+        [RelationshipSchemaName("organization_system_users")]
+        public IEnumerable<SystemUser> OrganizationSystemUsers
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SystemUser>("organization_system_users", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_system_users", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_sdkmessageprocessingstepsecureconfig
-		/// </summary>	
-		[RelationshipSchemaName("organization_sdkmessageprocessingstepsecureconfig")]
-		public IEnumerable<SdkMessageProcessingStepSecureConfig> OrganizationSdkmessageprocessingstepsecureconfig
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("organization_sdkmessageprocessingstepsecureconfig", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSdkmessageprocessingstepsecureconfig");
-				this.SetRelatedEntities<SdkMessageProcessingStepSecureConfig>("organization_sdkmessageprocessingstepsecureconfig", null, value);
-				this.OnPropertyChanged("OrganizationSdkmessageprocessingstepsecureconfig");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_systemforms
+        /// </summary>
+        [RelationshipSchemaName("organization_systemforms")]
+        public IEnumerable<SystemForm> OrganizationSystemforms
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SystemForm>("organization_systemforms", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_systemforms", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_solution
-		/// </summary>	
-		[RelationshipSchemaName("organization_solution")]
-		public IEnumerable<Solution> OrganizationSolution
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Solution>("organization_solution", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSolution");
-				this.SetRelatedEntities<Solution>("organization_solution", null, value);
-				this.OnPropertyChanged("OrganizationSolution");
-			}
-		}
+        /// <summary>
+        /// 1:N organization_teams
+        /// </summary>
+        [RelationshipSchemaName("organization_teams")]
+        public IEnumerable<Team> OrganizationTeams
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Team>("organization_teams", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("organization_teams", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N organization_system_users
-		/// </summary>	
-		[RelationshipSchemaName("organization_system_users")]
-		public IEnumerable<SystemUser> OrganizationSystemUsers
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SystemUser>("organization_system_users", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSystemUsers");
-				this.SetRelatedEntities<SystemUser>("organization_system_users", null, value);
-				this.OnPropertyChanged("OrganizationSystemUsers");
-			}
-		}
+        /// <summary>
+        /// 1:N webresource_organization
+        /// </summary>
+        [RelationshipSchemaName("webresource_organization")]
+        public IEnumerable<WebResource> WebresourceOrganization
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<WebResource>("webresource_organization", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("webresource_organization", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N organization_systemforms
-		/// </summary>	
-		[RelationshipSchemaName("organization_systemforms")]
-		public IEnumerable<SystemForm> OrganizationSystemforms
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SystemForm>("organization_systemforms", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationSystemforms");
-				this.SetRelatedEntities<SystemForm>("organization_systemforms", null, value);
-				this.OnPropertyChanged("OrganizationSystemforms");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct ActivityTypeFilter
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ActivityTypeFilterV2
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AdvancedColumnEditorEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AdvancedColumnFilteringEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AdvancedFilteringEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AdvancedLookupEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiBuilderCreditsOnlyEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiPromptsAzureAIFoundryModelTypesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiPromptsBasicModelTypesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiPromptsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiPromptsPremiumModelTypesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AiPromptsStandardModelTypesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowAddressBookSyncs
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowApplicationUserAccess
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowAutoResponseCreation
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowAutoUnsubscribe
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowAutoUnsubscribeAcknowledgement
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowClientMessageBarAd
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowConnectorsOnPowerFXActions
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowEntityOnlyAudit
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowLeadingWildcardsInGridSearch
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowLegacyClientExperience
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowLegacyDialogsEmbedding
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowMarketingEmailExecution
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowMicrosoftTrustedServiceTags
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowOfflineScheduledSyncs
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowOutlookScheduledSyncs
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowRedirectAdminSettingsToModernUI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowUnresolvedPartiesOnEmailSend
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowUserFormModePreference
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowUsersHidingSystemViews
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowUsersSeeAppdownloadMessage
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowVirtualEntityPluginExecutionOnNestedPipeline
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AllowWebExcelExport
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AppDesignerExperienceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ApplicationBasedAccessControlMode
+            {
+                public const int Disabled = 0;
+                public const int Enabled = 1;
+                public const int AuditMode = 2;
+                public const int EnabledForRoles = 3;
+            }
+            public struct AppointmentRichEditorExperience
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AppointmentWithTeamsMeeting
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AppointmentWithTeamsMeetingV2
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AreAutomationCenterPreviewFeaturesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AreProcessInsightsPreviewFeaturesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AutoApplyDefaultonCaseCreate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AutoApplyDefaultonCaseUpdate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct AutoApplySLA
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct BlockAccessToSessionTranscriptsForCopilotStudio
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct BlockCopilotAuthorAuthentication
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct BlockTranscriptRecordingForCopilotStudio
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct BlockUrlsInResponsesForCopilotStudio
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct BoundDashboardDefaultCardExpanded
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CanOptOutNewSearchExperience
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CascadeStatusUpdate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CortanaProactiveExperienceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CreateProductsWithoutParentInActiveState
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CuaFlowLogsVerbosity
+            {
+                public const int AllData = 0;
+                public const int DataWithoutScreenshots = 1;
+                public const int Minimal = 2;
+            }
+            public struct CurrencyDisplayOption
+            {
+                public const int CurrencySymbol = 0;
+                public const int CurrencyCode = 1;
+            }
+            public struct CurrencyFormatCode
+            {
+                public const int _123 = 0;
+                public const int _123_ = 1;
+                public const int _123__ = 2;
+                public const int _123___ = 3;
+            }
+            public struct DateFormatCode
+            {
+            }
+            public struct DefaultRecurrenceEndRangeType
+            {
+                public const int NoEndDate = 1;
+                public const int NumberOfOccurrences = 2;
+                public const int EndByDate = 3;
+            }
+            public struct DesktopFlowRunActionLogsStatus
+            {
+                public const int Enabled = 0;
+                public const int OnFailure = 1;
+                public const int Disabled = 2;
+            }
+            public struct DesktopFlowRunActionLogVerbosity
+            {
+                public const int Full = 0;
+                public const int Debug = 1;
+                public const int Custom = 2;
+                public const int Warning = 3;
+                public const int Error = 4;
+            }
+            public struct DesktopFlowRunActionLogVersion
+            {
+                public const int AdditionalContext = 0;
+                public const int FlowLogs = 1;
+                public const int AdditionalContextAndFlowLogs = 2;
+            }
+            public struct DisableSocialCare
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct DisableSystemLabelsCacheSharing
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct DiscountCalculationMethod
+            {
+                public const int LineItem = 0;
+                public const int PerUnit = 1;
+            }
+            public struct DisplayNavigationTour
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EmailConnectionChannel
+            {
+                public const int ServerSideSynchronization = 0;
+                public const int MicrosoftDynamics365EmailRouter = 1;
+            }
+            public struct EmailCorrelationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableAsyncMergeAPIForUCI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableBingMapsIntegration
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableCanvasAppsInSolutionsByDefault
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableCopilotStudioCrossGeoShareDataWithVivaInsights
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableCopilotStudioShareDataWithVI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableCopilotStudioShareDataWithVivaInsights
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableEnvironmentSettingsApp
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableFlowsInSolutionByDefault
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableFlowsInSolutionByDefaultGracePeriod
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableImmersiveSkypeIntegration
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableIpBasedCookieBinding
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableIpBasedFirewallRule
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableIpBasedFirewallRuleInAuditMode
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableIpBasedStorageAccessSignatureRule
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableLivePersonaCardUCI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableLivePersonCardIntegrationInOffice
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableLPAuthoring
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableMakerSwitchToClassic
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableMicrosoftFlowIntegration
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnablePricingOnCreate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableSensitivityLabels
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableSmartMatching
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableUnifiedClientCDN
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnableUnifiedInterfaceShellRefresh
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct EnforceReadOnlyPlugins
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct FiscalPeriodFormatPeriod
+            {
+                public const int Quarter0 = 1;
+                public const int Q0 = 2;
+                public const int P0 = 3;
+                public const int Month0 = 4;
+                public const int M0 = 5;
+                public const int Semester0 = 6;
+                public const int MonthName = 7;
+            }
+            public struct FiscalSettingsUpdated
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct FiscalYearFormatPrefix
+            {
+                public const int FY = 1;
+                public const int _Empty = 2;
+            }
+            public struct FiscalYearFormatSuffix
+            {
+                public const int FY = 1;
+                public const int FiscalYear = 2;
+                public const int _Empty = 3;
+            }
+            public struct FiscalYearFormatYear
+            {
+                public const int YYYY = 1;
+                public const int YY = 2;
+                public const int GGYY = 3;
+            }
+            public struct FullNameConventionCode
+            {
+                public const int LastNameFirstName = 0;
+                public const int FirstName = 1;
+                public const int LastNameFirstNameMiddleInitial = 2;
+                public const int FirstNameMiddleInitialLastName = 3;
+                public const int LastNameFirstNameMiddleName = 4;
+                public const int FirstNameMiddleNameLastName = 5;
+                public const int LastNameSpaceFirstName = 6;
+                public const int LastNameNoSpaceFirstName = 7;
+            }
+            public struct GenerateAlertsForErrors
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GenerateAlertsForInformation
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GenerateAlertsForWarnings
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GetStartedPaneContentEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GlobalAppendUrlParametersEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GlobalHelpUrlEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct GrantAccessToNetworkService
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IgnoreInternalEmail
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ImproveSearchLoggingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct InactivityTimeoutEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IpBasedStorageAccessSignatureMode
+            {
+                public const int IPBindingOnly = 0;
+                public const int IPFirewallOnly = 1;
+                public const int IPBindingAndIPFirewall = 2;
+                public const int IPBindingOrIPFirewall = 3;
+            }
+            public struct IsActionCardEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsActionSupportFeatureEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsActivityAnalysisEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAllMoneyDecimal
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAppMode
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAppointmentAttachmentSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAssignedTasksSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAuditEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAutoDataCaptureEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAutoDataCaptureV2Enabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAutoInstallAppForD365InTeamsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsAutoSaveEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsBaseCardStaticFieldDataEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsBasicGeospatialIntegrationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsBPFEntityCustomizationFeatureEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsCloudFlowSavingsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsClusteringEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsCollaborationExperienceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsComputerUseInMCSEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsConflictDetectionEnabledForMobileClient
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsContactMailingAddressSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsContentSecurityPolicyEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsContentSecurityPolicyEnabledForCanvas
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsContextualEmailEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsContextualHelpEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsCopilotFeedbackEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsCuaOnHmgV2Enabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsCustomControlsInCanvasAppsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDefaultCountryCodeCheckEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDelegateAccessEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDelveActionHubIntegrationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowConnectionEmbeddingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowRuntimeRepairAttendedEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowRuntimeRepairUnattendedEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowSavingsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowSchemaV2Enabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowVanillaImageSharingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowVersionControlEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowVersionControlEnabledByDefault
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDesktopFlowVersionControlEnabledOverride
+            {
+                public const int Unset = 0;
+                public const int Enabled = 1;
+                public const int Disabled = 2;
+            }
+            public struct IsDisabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDuplicateDetectionEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDuplicateDetectionEnabledForImport
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDuplicateDetectionEnabledForOfflineSync
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsDuplicateDetectionEnabledForOnlineCreateUpdate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsEmailAddressValidationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsEmailMonitoringAllowed
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsEmailServerProfileContentFilteringEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsEnabledForAllRoles
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsExternalFileStorageEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsExternalSearchIndexEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsFiscalPeriodMonthBased
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsFolderAutoCreatedonSP
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsFolderBasedTrackingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsFullTextSearchEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsGeospatialAzureMapsIntegrationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsHierarchicalSecurityModelEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsIdeasDataCollectionEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsLUISEnabledforD365Bot
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMailboxForcedUnlockingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMailboxInactiveBackoffEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManualSalesForecastingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMobileClientOnDemandSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMobileOfflineEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsModelDrivenAppsInMSTeamsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMoneySavingsAllowed
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMSTeamsCollaborationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMSTeamsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMSTeamsSettingChangedByUser
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsMSTeamsUserSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsNewAddProductExperienceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsNotesAnalysisEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsNotificationForD365InTeamsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsOfficeGraphEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsOneDriveEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPAIEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPerProcessCapacityOverageEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPlaybookEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPresenceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPreviewEnabledForActionCard
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPreviewForAutoCaptureEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPreviewForEmailMonitoringAllowed
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsPriceListMandatory
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsProcessCapacityAutoClaimEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsProcessMiningEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsQuickCreateEnabledForOpportunityClose
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsReadAuditEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRelationshipInsightsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsResourceBookingExchangeSyncEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRichTextNotesEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRpaAutoscaleAadJoinEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRpaAutoscaleEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRpaBoxCrossGeoEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRpaBoxEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsRpaUnattendedEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSalesAssistantEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSendCuaAuditLogToPurviewEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSharingInOrgAllowed
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSOPIntegrationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsTextWrapEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsUploadCuaLogToDataverseEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsUserAccessAuditEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ISVIntegrationCode
+            {
+                public const int None = 0;
+                public const int Web = 1;
+                public const int OutlookWorkstationClient = 2;
+                public const int WebOutlookWorkstationClient = 3;
+                public const int OutlookLaptopClient = 4;
+                public const int WebOutlookLaptopClient = 5;
+                public const int Outlook = 6;
+                public const int All = 7;
+            }
+            public struct IsWorkQueueSavingsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsWriteInProductsAllowed
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct LegacyAppToggle
+            {
+                public const int Auto = 0;
+                public const int On = 1;
+                public const int Off = 2;
+            }
+            public struct ModernAdvancedFindFiltering
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ModernAppDesignerCoauthoringEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct NaturalLanguageAssistFilter
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct NegativeFormatCode
+            {
+                public const int Brackets = 0;
+                public const int Dash = 1;
+                public const int DashPlusSpace = 2;
+                public const int TrailingDash = 3;
+                public const int SpacePlusTrailingDash = 4;
+            }
+            public struct NewSearchExperienceEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct NotifyMailboxOwnerOfEmailServerLevelAlerts
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct OfficeAppsAutoDeploymentEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct OOBPriceCalculationEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct OptOutSchemaV2EnabledByDefault
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct OrganizationState
+            {
+                public const int Creating = 0;
+                public const int Upgrading = 1;
+                public const int Updating = 2;
+                public const int Active = 3;
+            }
+            public struct OrgInsightsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct PaiPreviewScenarioEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct PluginTraceLogSetting
+            {
+                public const int Off = 0;
+                public const int Exception = 1;
+                public const int All = 2;
+            }
+            public struct PowerAppsMakerBotEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct PowerBiFeatureEnabled
+            {
+                public const bool Disable = false;
+                public const bool Enable = true;
+            }
+            public struct ProductRecommendationsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct QuickActionToOpenRecordsInSidePaneEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct QuickFindRecordLimitEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct RecalculateSLA
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ReleaseChannel
+            {
+                public const int Auto = 0;
+                public const int MonthlyChannel = 1;
+                public const int MicrosoftInnerChannel = 2;
+                public const int SemiAnnualChannel = 3;
+            }
+            public struct RelevanceSearchEnabledByPlatform
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct RenderSecureIFrameForEmail
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ReportScriptErrors
+            {
+                public const int NoPreferenceForSendingAnErrorReportToMicrosoftAboutMicrosoftDynamics365 = 0;
+                public const int AskMeForPermissionToSendAnErrorReportToMicrosoft = 1;
+                public const int AutomaticallySendAnErrorReportToMicrosoftWithoutAskingMeForPermission = 2;
+                public const int NeverSendAnErrorReportToMicrosoftAboutMicrosoftDynamics365 = 3;
+            }
+            public struct RequireApprovalForQueueEmail
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct RequireApprovalForUserEmail
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ResolveSimilarUnresolvedEmailAddress
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct RestrictGuestUserAccess
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct RestrictStatusUpdate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SameSiteModeForSessionCookie
+            {
+                public const int Default = 0;
+                public const int None = 1;
+                public const int Lax = 2;
+                public const int Strict = 3;
+            }
+            public struct SendBulkEmailInUCI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ServeStaticResourcesFromAzureCDN
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SessionRecordingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SessionTimeoutEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SharePointDeploymentType
+            {
+                public const int Online = 0;
+                public const int OnPremises = 1;
+            }
+            public struct ShareToPreviousOwnerOnAssign
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ShowKBArticleDeprecationNotification
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ShowWeekNumber
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SocialInsightsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SocialInsightsTermsAccepted
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SQMEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SuppressSLA
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SuppressValidationEmails
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct SyncOptInSelection
+            {
+                public const bool Disable = false;
+                public const bool Enable = true;
+            }
+            public struct SyncOptInSelectionStatus
+            {
+                public const int Processing = 1;
+                public const int Passed = 2;
+                public const int Failed = 3;
+            }
+            public struct TableScopedDVSearchInApps
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct TaskBasedFlowEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct TeamsChatDataSync
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct TextAnalyticsEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct TimeFormatCode
+            {
+            }
+            public struct UnresolveEmailAddressIfMultipleMatch
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UseInbuiltRuleForDefaultPricelistSelection
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UseLegacyRendering
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UsePositionHierarchy
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UseQuickFindViewForGridSearch
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UseReadForm
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UserRatingEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct UseSkypeProtocol
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ValidationMode
+            {
+                public const int Off = 0;
+                public const int Warn = 1;
+                public const int Block = 2;
+            }
+            public struct WeekStartDayCode
+            {
+            }
+            public struct YammerOAuthAccessTokenExpired
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct YammerPostMethod
+            {
+                public const int Public = 0;
+                public const int Private = 1;
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N organization_teams
-		/// </summary>	
-		[RelationshipSchemaName("organization_teams")]
-		public IEnumerable<Team> OrganizationTeams
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Team>("organization_teams", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("OrganizationTeams");
-				this.SetRelatedEntities<Team>("organization_teams", null, value);
-				this.OnPropertyChanged("OrganizationTeams");
-			}
-		}
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string OrganizationId = "organizationid";
+            public const string ACIWebEndpointUrl = "aciwebendpointurl";
+            public const string AcknowledgementTemplateId = "acknowledgementtemplateid";
+            public const string ActivityTypeFilter = "activitytypefilter";
+            public const string ActivityTypeFilterV2 = "activitytypefilterv2";
+            public const string AdvancedColumnEditorEnabled = "advancedcolumneditorenabled";
+            public const string AdvancedColumnFilteringEnabled = "advancedcolumnfilteringenabled";
+            public const string AdvancedFilteringEnabled = "advancedfilteringenabled";
+            public const string AdvancedLookupEnabled = "advancedlookupenabled";
+            public const string AdvancedLookupInEditFilter = "advancedlookupineditfilter";
+            public const string AiBuilderCreditsOnlyEnabled = "aibuildercreditsonlyenabled";
+            public const string AiPromptsAzureAIFoundryModelTypesEnabled = "aipromptsazureaifoundrymodeltypesenabled";
+            public const string AiPromptsBasicModelTypesEnabled = "aipromptsbasicmodeltypesenabled";
+            public const string AiPromptsEnabled = "aipromptsenabled";
+            public const string AiPromptsPremiumModelTypesEnabled = "aipromptspremiummodeltypesenabled";
+            public const string AiPromptsStandardModelTypesEnabled = "aipromptsstandardmodeltypesenabled";
+            public const string AllowAddressBookSyncs = "allowaddressbooksyncs";
+            public const string AllowApplicationUserAccess = "allowapplicationuseraccess";
+            public const string AllowAutoResponseCreation = "allowautoresponsecreation";
+            public const string AllowAutoUnsubscribe = "allowautounsubscribe";
+            public const string AllowAutoUnsubscribeAcknowledgement = "allowautounsubscribeacknowledgement";
+            public const string AllowClientMessageBarAd = "allowclientmessagebarad";
+            public const string AllowConnectorsOnPowerFXActions = "allowconnectorsonpowerfxactions";
+            public const string AllowedApplicationsForDVAccess = "allowedapplicationsfordvaccess";
+            public const string AllowedIpRangeForFirewall = "allowediprangeforfirewall";
+            public const string AllowedIpRangeForStorageAccessSignatures = "allowediprangeforstorageaccesssignatures";
+            public const string AllowedListOfIpRangesForFirewall = "allowedlistofiprangesforfirewall";
+            public const string AllowedMimeTypes = "allowedmimetypes";
+            public const string AllowedServiceTagsForFirewall = "allowedservicetagsforfirewall";
+            public const string AllowEntityOnlyAudit = "allowentityonlyaudit";
+            public const string AllowLeadingWildcardsInGridSearch = "allowleadingwildcardsingridsearch";
+            public const string AllowLeadingWildcardsInQuickFind = "allowleadingwildcardsinquickfind";
+            public const string AllowLegacyClientExperience = "allowlegacyclientexperience";
+            public const string AllowLegacyDialogsEmbedding = "allowlegacydialogsembedding";
+            public const string AllowMarketingEmailExecution = "allowmarketingemailexecution";
+            public const string AllowMicrosoftTrustedServiceTags = "allowmicrosofttrustedservicetags";
+            public const string AllowOfflineScheduledSyncs = "allowofflinescheduledsyncs";
+            public const string AllowOutlookScheduledSyncs = "allowoutlookscheduledsyncs";
+            public const string AllowRedirectAdminSettingsToModernUI = "allowredirectadminsettingstomodernui";
+            public const string AllowUnresolvedPartiesOnEmailSend = "allowunresolvedpartiesonemailsend";
+            public const string AllowUserFormModePreference = "allowuserformmodepreference";
+            public const string AllowUsersHidingSystemViews = "allowusershidingsystemviews";
+            public const string AllowUsersSeeAppdownloadMessage = "allowusersseeappdownloadmessage";
+            public const string AllowVirtualEntityPluginExecutionOnNestedPipeline = "allowvirtualentitypluginexecutiononnestedpipeline";
+            public const string AllowWebExcelExport = "allowwebexcelexport";
+            public const string AMDesignator = "amdesignator";
+            public const string AppDesignerExperienceEnabled = "appdesignerexperienceenabled";
+            public const string ApplicationBasedAccessControlMode = "applicationbasedaccesscontrolmode";
+            public const string AppointmentRichEditorExperience = "appointmentricheditorexperience";
+            public const string AppointmentWithTeamsMeeting = "appointmentwithteamsmeeting";
+            public const string AppointmentWithTeamsMeetingV2 = "appointmentwithteamsmeetingv2";
+            public const string AreAutomationCenterPreviewFeaturesEnabled = "areautomationcenterpreviewfeaturesenabled";
+            public const string AreProcessInsightsPreviewFeaturesEnabled = "areprocessinsightspreviewfeaturesenabled";
+            public const string AuditRetentionPeriod = "auditretentionperiod";
+            public const string AuditRetentionPeriodV2 = "auditretentionperiodv2";
+            public const string AuditSettings = "auditsettings";
+            public const string AutoApplyDefaultonCaseCreate = "autoapplydefaultoncasecreate";
+            public const string AutoApplyDefaultonCaseUpdate = "autoapplydefaultoncaseupdate";
+            public const string AutoApplySLA = "autoapplysla";
+            public const string AzureSchedulerJobCollectionName = "azureschedulerjobcollectionname";
+            public const string BaseCurrencyId = "basecurrencyid";
+            public const string BaseCurrencyPrecision = "basecurrencyprecision";
+            public const string BaseCurrencySymbol = "basecurrencysymbol";
+            public const string BingMapsApiKey = "bingmapsapikey";
+            public const string BlockAccessToSessionTranscriptsForCopilotStudio = "blockaccesstosessiontranscriptsforcopilotstudio";
+            public const string BlockCopilotAuthorAuthentication = "blockcopilotauthorauthentication";
+            public const string BlockedApplicationsForDVAccess = "blockedapplicationsfordvaccess";
+            public const string BlockedAttachments = "blockedattachments";
+            public const string BlockedMimeTypes = "blockedmimetypes";
+            public const string BlockTranscriptRecordingForCopilotStudio = "blocktranscriptrecordingforcopilotstudio";
+            public const string BlockUrlsInResponsesForCopilotStudio = "blockurlsinresponsesforcopilotstudio";
+            public const string BoundDashboardDefaultCardExpanded = "bounddashboarddefaultcardexpanded";
+            public const string BulkOperationPrefix = "bulkoperationprefix";
+            public const string BusinessCardOptions = "businesscardoptions";
+            public const string BusinessClosureCalendarId = "businessclosurecalendarid";
+            public const string CalendarType = "calendartype";
+            public const string CampaignPrefix = "campaignprefix";
+            public const string CanOptOutNewSearchExperience = "canoptoutnewsearchexperience";
+            public const string CascadeStatusUpdate = "cascadestatusupdate";
+            public const string CasePrefix = "caseprefix";
+            public const string CategoryPrefix = "categoryprefix";
+            public const string ClientFeatureSet = "clientfeatureset";
+            public const string ContentSecurityPolicyConfiguration = "contentsecuritypolicyconfiguration";
+            public const string ContentSecurityPolicyConfigurationForCanvas = "contentsecuritypolicyconfigurationforcanvas";
+            public const string ContentSecurityPolicyOptions = "contentsecuritypolicyoptions";
+            public const string ContentSecurityPolicyReportUri = "contentsecuritypolicyreporturi";
+            public const string ContractPrefix = "contractprefix";
+            public const string CopresenceRefreshRate = "copresencerefreshrate";
+            public const string CortanaProactiveExperienceEnabled = "cortanaproactiveexperienceenabled";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string CreateProductsWithoutParentInActiveState = "createproductswithoutparentinactivestate";
+            public const string CuaFlowLogsTtlInMinutes = "cuaflowlogsttlinminutes";
+            public const string CuaFlowLogsVerbosity = "cuaflowlogsverbosity";
+            public const string CurrencyDecimalPrecision = "currencydecimalprecision";
+            public const string CurrencyDisplayOption = "currencydisplayoption";
+            public const string CurrencyFormatCode = "currencyformatcode";
+            public const string CurrencySymbol = "currencysymbol";
+            public const string CurrentBulkOperationNumber = "currentbulkoperationnumber";
+            public const string CurrentCampaignNumber = "currentcampaignnumber";
+            public const string CurrentCaseNumber = "currentcasenumber";
+            public const string CurrentCategoryNumber = "currentcategorynumber";
+            public const string CurrentContractNumber = "currentcontractnumber";
+            public const string CurrentImportSequenceNumber = "currentimportsequencenumber";
+            public const string CurrentInvoiceNumber = "currentinvoicenumber";
+            public const string CurrentKaNumber = "currentkanumber";
+            public const string CurrentKbNumber = "currentkbnumber";
+            public const string CurrentOrderNumber = "currentordernumber";
+            public const string CurrentParsedTableNumber = "currentparsedtablenumber";
+            public const string CurrentQuoteNumber = "currentquotenumber";
+            public const string DateFormatCode = "dateformatcode";
+            public const string DateFormatString = "dateformatstring";
+            public const string DateSeparator = "dateseparator";
+            public const string DaysBeforeEmailDescriptionIsMigrated = "daysbeforeemaildescriptionismigrated";
+            public const string DaysBeforeInactiveTeamsChatSyncDisabled = "daysbeforeinactiveteamschatsyncdisabled";
+            public const string DaysSinceRecordLastModifiedMaxValue = "dayssincerecordlastmodifiedmaxvalue";
+            public const string DecimalSymbol = "decimalsymbol";
+            public const string DefaultCountryCode = "defaultcountrycode";
+            public const string DefaultCrmCustomName = "defaultcrmcustomname";
+            public const string DefaultEmailServerProfileId = "defaultemailserverprofileid";
+            public const string DefaultEmailSettings = "defaultemailsettings";
+            public const string DefaultMobileOfflineProfileId = "defaultmobileofflineprofileid";
+            public const string DefaultRecurrenceEndRangeType = "defaultrecurrenceendrangetype";
+            public const string DefaultThemeData = "defaultthemedata";
+            public const string DelegatedAdminUserId = "delegatedadminuserid";
+            public const string DesktopFlowQueueLogsTtlInMinutes = "desktopflowqueuelogsttlinminutes";
+            public const string DesktopFlowRunActionLogsStatus = "desktopflowrunactionlogsstatus";
+            public const string DesktopFlowRunActionLogVerbosity = "desktopflowrunactionlogverbosity";
+            public const string DesktopFlowRunActionLogVersion = "desktopflowrunactionlogversion";
+            public const string DisabledReason = "disabledreason";
+            public const string DisableSocialCare = "disablesocialcare";
+            public const string DisableSystemLabelsCacheSharing = "disablesystemlabelscachesharing";
+            public const string DiscountCalculationMethod = "discountcalculationmethod";
+            public const string DisplayNavigationTour = "displaynavigationtour";
+            public const string EmailConnectionChannel = "emailconnectionchannel";
+            public const string EmailCorrelationEnabled = "emailcorrelationenabled";
+            public const string EmailSendPollingPeriod = "emailsendpollingperiod";
+            public const string EnableAsyncMergeAPIForUCI = "enableasyncmergeapiforuci";
+            public const string EnableBingMapsIntegration = "enablebingmapsintegration";
+            public const string EnableCanvasAppsInSolutionsByDefault = "enablecanvasappsinsolutionsbydefault";
+            public const string EnableCopilotStudioCrossGeoShareDataWithVivaInsights = "enablecopilotstudiocrossgeosharedatawithvivainsights";
+            public const string EnableCopilotStudioShareDataWithVI = "enablecopilotstudiosharedatawithvi";
+            public const string EnableCopilotStudioShareDataWithVivaInsights = "enablecopilotstudiosharedatawithvivainsights";
+            public const string EnableEnvironmentSettingsApp = "enableenvironmentsettingsapp";
+            public const string EnableFlowsInSolutionByDefault = "enableflowsinsolutionbydefault";
+            public const string EnableFlowsInSolutionByDefaultGracePeriod = "enableflowsinsolutionbydefaultgraceperiod";
+            public const string EnableImmersiveSkypeIntegration = "enableimmersiveskypeintegration";
+            public const string EnableIpBasedCookieBinding = "enableipbasedcookiebinding";
+            public const string EnableIpBasedFirewallRule = "enableipbasedfirewallrule";
+            public const string EnableIpBasedFirewallRuleInAuditMode = "enableipbasedfirewallruleinauditmode";
+            public const string EnableIpBasedStorageAccessSignatureRule = "enableipbasedstorageaccesssignaturerule";
+            public const string EnableLivePersonaCardUCI = "enablelivepersonacarduci";
+            public const string EnableLivePersonCardIntegrationInOffice = "enablelivepersoncardintegrationinoffice";
+            public const string EnableLPAuthoring = "enablelpauthoring";
+            public const string EnableMakerSwitchToClassic = "enablemakerswitchtoclassic";
+            public const string EnableMicrosoftFlowIntegration = "enablemicrosoftflowintegration";
+            public const string EnablePricingOnCreate = "enablepricingoncreate";
+            public const string EnableSensitivityLabels = "enablesensitivitylabels";
+            public const string EnableSmartMatching = "enablesmartmatching";
+            public const string EnableUnifiedClientCDN = "enableunifiedclientcdn";
+            public const string EnableUnifiedInterfaceShellRefresh = "enableunifiedinterfaceshellrefresh";
+            public const string EnforceReadOnlyPlugins = "enforcereadonlyplugins";
+            public const string EntityImage = "entityimage";
+            public const string EntityImageTimestamp = "entityimage_timestamp";
+            public const string EntityImageURL = "entityimage_url";
+            public const string EntityImageId = "entityimageid";
+            public const string ExpireChangeTrackingInDays = "expirechangetrackingindays";
+            public const string ExpireSubscriptionsInDays = "expiresubscriptionsindays";
+            public const string ExternalBaseUrl = "externalbaseurl";
+            public const string ExternalPartyCorrelationKeys = "externalpartycorrelationkeys";
+            public const string ExternalPartyEntitySettings = "externalpartyentitysettings";
+            public const string FeatureSet = "featureset";
+            public const string FiscalCalendarStart = "fiscalcalendarstart";
+            public const string FiscalPeriodFormat = "fiscalperiodformat";
+            public const string FiscalPeriodFormatPeriod = "fiscalperiodformatperiod";
+            public const string FiscalPeriodType = "fiscalperiodtype";
+            public const string FiscalSettingsUpdated = "fiscalsettingsupdated";
+            public const string FiscalYearDisplayCode = "fiscalyeardisplaycode";
+            public const string FiscalYearFormat = "fiscalyearformat";
+            public const string FiscalYearFormatPrefix = "fiscalyearformatprefix";
+            public const string FiscalYearFormatSuffix = "fiscalyearformatsuffix";
+            public const string FiscalYearFormatYear = "fiscalyearformatyear";
+            public const string FiscalYearPeriodConnect = "fiscalyearperiodconnect";
+            public const string FlowLogsTtlInMinutes = "flowlogsttlinminutes";
+            public const string FlowRunTimeToLiveInSeconds = "flowruntimetoliveinseconds";
+            public const string FullNameConventionCode = "fullnameconventioncode";
+            public const string FutureExpansionWindow = "futureexpansionwindow";
+            public const string GenerateAlertsForErrors = "generatealertsforerrors";
+            public const string GenerateAlertsForInformation = "generatealertsforinformation";
+            public const string GenerateAlertsForWarnings = "generatealertsforwarnings";
+            public const string GetStartedPaneContentEnabled = "getstartedpanecontentenabled";
+            public const string GlobalAppendUrlParametersEnabled = "globalappendurlparametersenabled";
+            public const string GlobalHelpUrl = "globalhelpurl";
+            public const string GlobalHelpUrlEnabled = "globalhelpurlenabled";
+            public const string GoalRollupExpiryTime = "goalrollupexpirytime";
+            public const string GoalRollupFrequency = "goalrollupfrequency";
+            public const string GrantAccessToNetworkService = "grantaccesstonetworkservice";
+            public const string HashDeltaSubjectCount = "hashdeltasubjectcount";
+            public const string HashFilterKeywords = "hashfilterkeywords";
+            public const string HashMaxCount = "hashmaxcount";
+            public const string HashMinAddressCount = "hashminaddresscount";
+            public const string HighContrastThemeData = "highcontrastthemedata";
+            public const string IgnoreInternalEmail = "ignoreinternalemail";
+            public const string ImproveSearchLoggingEnabled = "improvesearchloggingenabled";
+            public const string InactivityTimeoutEnabled = "inactivitytimeoutenabled";
+            public const string InactivityTimeoutInMins = "inactivitytimeoutinmins";
+            public const string InactivityTimeoutReminderInMins = "inactivitytimeoutreminderinmins";
+            public const string IncomingEmailExchangeEmailRetrievalBatchSize = "incomingemailexchangeemailretrievalbatchsize";
+            public const string InitialVersion = "initialversion";
+            public const string IntegrationUserId = "integrationuserid";
+            public const string InvoicePrefix = "invoiceprefix";
+            public const string IpBasedStorageAccessSignatureMode = "ipbasedstorageaccesssignaturemode";
+            public const string IsActionCardEnabled = "isactioncardenabled";
+            public const string IsActionSupportFeatureEnabled = "isactionsupportfeatureenabled";
+            public const string IsActivityAnalysisEnabled = "isactivityanalysisenabled";
+            public const string IsAllMoneyDecimal = "isallmoneydecimal";
+            public const string IsAppMode = "isappmode";
+            public const string IsAppointmentAttachmentSyncEnabled = "isappointmentattachmentsyncenabled";
+            public const string IsAssignedTasksSyncEnabled = "isassignedtaskssyncenabled";
+            public const string IsAuditEnabled = "isauditenabled";
+            public const string IsAutoDataCaptureEnabled = "isautodatacaptureenabled";
+            public const string IsAutoDataCaptureV2Enabled = "isautodatacapturev2enabled";
+            public const string IsAutoInstallAppForD365InTeamsEnabled = "isautoinstallappford365inteamsenabled";
+            public const string IsAutoSaveEnabled = "isautosaveenabled";
+            public const string IsBaseCardStaticFieldDataEnabled = "isbasecardstaticfielddataenabled";
+            public const string IsBasicGeospatialIntegrationEnabled = "isbasicgeospatialintegrationenabled";
+            public const string IsBPFEntityCustomizationFeatureEnabled = "isbpfentitycustomizationfeatureenabled";
+            public const string IsCloudFlowSavingsEnabled = "iscloudflowsavingsenabled";
+            public const string IsClusteringEnabled = "isclusteringenabled";
+            public const string IsCollaborationExperienceEnabled = "iscollaborationexperienceenabled";
+            public const string IsComputerUseInMCSEnabled = "iscomputeruseinmcsenabled";
+            public const string IsConflictDetectionEnabledForMobileClient = "isconflictdetectionenabledformobileclient";
+            public const string IsContactMailingAddressSyncEnabled = "iscontactmailingaddresssyncenabled";
+            public const string IsContentSecurityPolicyEnabled = "iscontentsecuritypolicyenabled";
+            public const string IsContentSecurityPolicyEnabledForCanvas = "iscontentsecuritypolicyenabledforcanvas";
+            public const string IsContextualEmailEnabled = "iscontextualemailenabled";
+            public const string IsContextualHelpEnabled = "iscontextualhelpenabled";
+            public const string IsCopilotFeedbackEnabled = "iscopilotfeedbackenabled";
+            public const string IsCuaOnHmgV2Enabled = "iscuaonhmgv2enabled";
+            public const string IsCustomControlsInCanvasAppsEnabled = "iscustomcontrolsincanvasappsenabled";
+            public const string IsDefaultCountryCodeCheckEnabled = "isdefaultcountrycodecheckenabled";
+            public const string IsDelegateAccessEnabled = "isdelegateaccessenabled";
+            public const string IsDelveActionHubIntegrationEnabled = "isdelveactionhubintegrationenabled";
+            public const string IsDesktopFlowConnectionEmbeddingEnabled = "isdesktopflowconnectionembeddingenabled";
+            public const string IsDesktopFlowRuntimeRepairAttendedEnabled = "isdesktopflowruntimerepairattendedenabled";
+            public const string IsDesktopFlowRuntimeRepairUnattendedEnabled = "isdesktopflowruntimerepairunattendedenabled";
+            public const string IsDesktopFlowSavingsEnabled = "isdesktopflowsavingsenabled";
+            public const string IsDesktopFlowSchemaV2Enabled = "isdesktopflowschemav2enabled";
+            public const string IsDesktopFlowVanillaImageSharingEnabled = "isdesktopflowvanillaimagesharingenabled";
+            public const string IsDesktopFlowVersionControlEnabled = "isdesktopflowversioncontrolenabled";
+            public const string IsDesktopFlowVersionControlEnabledByDefault = "isdesktopflowversioncontrolenabledbydefault";
+            public const string IsDesktopFlowVersionControlEnabledOverride = "isdesktopflowversioncontrolenabledoverride";
+            public const string IsDisabled = "isdisabled";
+            public const string IsDuplicateDetectionEnabled = "isduplicatedetectionenabled";
+            public const string IsDuplicateDetectionEnabledForImport = "isduplicatedetectionenabledforimport";
+            public const string IsDuplicateDetectionEnabledForOfflineSync = "isduplicatedetectionenabledforofflinesync";
+            public const string IsDuplicateDetectionEnabledForOnlineCreateUpdate = "isduplicatedetectionenabledforonlinecreateupdate";
+            public const string IsEmailAddressValidationEnabled = "isemailaddressvalidationenabled";
+            public const string IsEmailMonitoringAllowed = "isemailmonitoringallowed";
+            public const string IsEmailServerProfileContentFilteringEnabled = "isemailserverprofilecontentfilteringenabled";
+            public const string IsEnabledForAllRoles = "isenabledforallroles";
+            public const string IsExternalFileStorageEnabled = "isexternalfilestorageenabled";
+            public const string IsExternalSearchIndexEnabled = "isexternalsearchindexenabled";
+            public const string IsFiscalPeriodMonthBased = "isfiscalperiodmonthbased";
+            public const string IsFolderAutoCreatedonSP = "isfolderautocreatedonsp";
+            public const string IsFolderBasedTrackingEnabled = "isfolderbasedtrackingenabled";
+            public const string IsFullTextSearchEnabled = "isfulltextsearchenabled";
+            public const string IsGeospatialAzureMapsIntegrationEnabled = "isgeospatialazuremapsintegrationenabled";
+            public const string IsHierarchicalSecurityModelEnabled = "ishierarchicalsecuritymodelenabled";
+            public const string IsIdeasDataCollectionEnabled = "isideasdatacollectionenabled";
+            public const string IsLUISEnabledforD365Bot = "isluisenabledford365bot";
+            public const string IsMailboxForcedUnlockingEnabled = "ismailboxforcedunlockingenabled";
+            public const string IsMailboxInactiveBackoffEnabled = "ismailboxinactivebackoffenabled";
+            public const string IsManualSalesForecastingEnabled = "ismanualsalesforecastingenabled";
+            public const string IsMobileClientOnDemandSyncEnabled = "ismobileclientondemandsyncenabled";
+            public const string IsMobileOfflineEnabled = "ismobileofflineenabled";
+            public const string IsModelDrivenAppsInMSTeamsEnabled = "ismodeldrivenappsinmsteamsenabled";
+            public const string IsMoneySavingsAllowed = "ismoneysavingsallowed";
+            public const string IsMSTeamsCollaborationEnabled = "ismsteamscollaborationenabled";
+            public const string IsMSTeamsEnabled = "ismsteamsenabled";
+            public const string IsMSTeamsSettingChangedByUser = "ismsteamssettingchangedbyuser";
+            public const string IsMSTeamsUserSyncEnabled = "ismsteamsusersyncenabled";
+            public const string IsNewAddProductExperienceEnabled = "isnewaddproductexperienceenabled";
+            public const string IsNotesAnalysisEnabled = "isnotesanalysisenabled";
+            public const string IsNotificationForD365InTeamsEnabled = "isnotificationford365inteamsenabled";
+            public const string IsOfficeGraphEnabled = "isofficegraphenabled";
+            public const string IsOneDriveEnabled = "isonedriveenabled";
+            public const string IsPAIEnabled = "ispaienabled";
+            public const string IsPDFGenerationEnabled = "ispdfgenerationenabled";
+            public const string IsPerProcessCapacityOverageEnabled = "isperprocesscapacityoverageenabled";
+            public const string IsPlaybookEnabled = "isplaybookenabled";
+            public const string IsPresenceEnabled = "ispresenceenabled";
+            public const string IsPreviewEnabledForActionCard = "ispreviewenabledforactioncard";
+            public const string IsPreviewForAutoCaptureEnabled = "ispreviewforautocaptureenabled";
+            public const string IsPreviewForEmailMonitoringAllowed = "ispreviewforemailmonitoringallowed";
+            public const string IsPriceListMandatory = "ispricelistmandatory";
+            public const string IsProcessCapacityAutoClaimEnabled = "isprocesscapacityautoclaimenabled";
+            public const string IsProcessMiningEnabled = "isprocessminingenabled";
+            public const string IsQuickCreateEnabledForOpportunityClose = "isquickcreateenabledforopportunityclose";
+            public const string IsReadAuditEnabled = "isreadauditenabled";
+            public const string IsRelationshipInsightsEnabled = "isrelationshipinsightsenabled";
+            public const string IsResourceBookingExchangeSyncEnabled = "isresourcebookingexchangesyncenabled";
+            public const string IsRichTextNotesEnabled = "isrichtextnotesenabled";
+            public const string IsRpaAutoscaleAadJoinEnabled = "isrpaautoscaleaadjoinenabled";
+            public const string IsRpaAutoscaleEnabled = "isrpaautoscaleenabled";
+            public const string IsRpaBoxCrossGeoEnabled = "isrpaboxcrossgeoenabled";
+            public const string IsRpaBoxEnabled = "isrpaboxenabled";
+            public const string IsRpaUnattendedEnabled = "isrpaunattendedenabled";
+            public const string IsSalesAssistantEnabled = "issalesassistantenabled";
+            public const string IsSendCuaAuditLogToPurviewEnabled = "issendcuaauditlogtopurviewenabled";
+            public const string IsSharingInOrgAllowed = "issharinginorgallowed";
+            public const string IsSOPIntegrationEnabled = "issopintegrationenabled";
+            public const string IsTextWrapEnabled = "istextwrapenabled";
+            public const string IsUploadCuaLogToDataverseEnabled = "isuploadcualogtodataverseenabled";
+            public const string IsUserAccessAuditEnabled = "isuseraccessauditenabled";
+            public const string ISVIntegrationCode = "isvintegrationcode";
+            public const string IsWorkQueueSavingsEnabled = "isworkqueuesavingsenabled";
+            public const string IsWriteInProductsAllowed = "iswriteinproductsallowed";
+            public const string KaPrefix = "kaprefix";
+            public const string KbPrefix = "kbprefix";
+            public const string KMSettings = "kmsettings";
+            public const string LanguageCode = "languagecode";
+            public const string LegacyAppToggle = "legacyapptoggle";
+            public const string LocaleId = "localeid";
+            public const string LongDateFormatCode = "longdateformatcode";
+            public const string LookupCharacterCountBeforeResolve = "lookupcharactercountbeforeresolve";
+            public const string LookupResolveDelayMS = "lookupresolvedelayms";
+            public const string MailboxIntermittentIssueMinRange = "mailboxintermittentissueminrange";
+            public const string MailboxPermanentIssueMinRange = "mailboxpermanentissueminrange";
+            public const string MaxActionStepsInBPF = "maxactionstepsinbpf";
+            public const string MaxAllowedPendingRollupJobCount = "maxallowedpendingrollupjobcount";
+            public const string MaxAllowedPendingRollupJobPercentage = "maxallowedpendingrollupjobpercentage";
+            public const string MaxAppointmentDurationDays = "maxappointmentdurationdays";
+            public const string MaxConditionsForMobileOfflineFilters = "maxconditionsformobileofflinefilters";
+            public const string MaxDepthForHierarchicalSecurityModel = "maxdepthforhierarchicalsecuritymodel";
+            public const string MaxFolderBasedTrackingMappings = "maxfolderbasedtrackingmappings";
+            public const string MaximumActiveBusinessProcessFlowsAllowedPerEntity = "maximumactivebusinessprocessflowsallowedperentity";
+            public const string MaximumDynamicPropertiesAllowed = "maximumdynamicpropertiesallowed";
+            public const string MaximumEntitiesWithActiveSLA = "maximumentitieswithactivesla";
+            public const string MaximumSLAKPIPerEntityWithActiveSLA = "maximumslakpiperentitywithactivesla";
+            public const string MaximumTrackingNumber = "maximumtrackingnumber";
+            public const string MaxProductsInBundle = "maxproductsinbundle";
+            public const string MaxRecordsForExportToExcel = "maxrecordsforexporttoexcel";
+            public const string MaxRecordsForLookupFilters = "maxrecordsforlookupfilters";
+            public const string MaxRollupFieldsPerEntity = "maxrollupfieldsperentity";
+            public const string MaxRollupFieldsPerOrg = "maxrollupfieldsperorg";
+            public const string MaxSLAItemsPerSLA = "maxslaitemspersla";
+            public const string MaxSupportedInternetExplorerVersion = "maxsupportedinternetexplorerversion";
+            public const string MaxUploadFileSize = "maxuploadfilesize";
+            public const string MaxVerboseLoggingMailbox = "maxverboseloggingmailbox";
+            public const string MaxVerboseLoggingSyncCycles = "maxverboseloggingsynccycles";
+            public const string MicrosoftFlowEnvironment = "microsoftflowenvironment";
+            public const string MinAddressBookSyncInterval = "minaddressbooksyncinterval";
+            public const string MinOfflineSyncInterval = "minofflinesyncinterval";
+            public const string MinOutlookSyncInterval = "minoutlooksyncinterval";
+            public const string MobileOfflineMinLicenseProd = "mobileofflineminlicenseprod";
+            public const string MobileOfflineMinLicenseTrial = "mobileofflineminlicensetrial";
+            public const string MobileOfflineSyncInterval = "mobileofflinesyncinterval";
+            public const string ModernAdvancedFindFiltering = "modernadvancedfindfiltering";
+            public const string ModernAppDesignerCoauthoringEnabled = "modernappdesignercoauthoringenabled";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string MultiColumnSortEnabled = "multicolumnsortenabled";
+            public const string Name = "name";
+            public const string NaturalLanguageAssistFilter = "naturallanguageassistfilter";
+            public const string NegativeCurrencyFormatCode = "negativecurrencyformatcode";
+            public const string NegativeFormatCode = "negativeformatcode";
+            public const string NewSearchExperienceEnabled = "newsearchexperienceenabled";
+            public const string NextTrackingNumber = "nexttrackingnumber";
+            public const string NotifyMailboxOwnerOfEmailServerLevelAlerts = "notifymailboxownerofemailserverlevelalerts";
+            public const string NumberFormat = "numberformat";
+            public const string NumberGroupFormat = "numbergroupformat";
+            public const string NumberSeparator = "numberseparator";
+            public const string OfficeAppsAutoDeploymentEnabled = "officeappsautodeploymentenabled";
+            public const string OfficeGraphDelveUrl = "officegraphdelveurl";
+            public const string OOBPriceCalculationEnabled = "oobpricecalculationenabled";
+            public const string OptOutSchemaV2EnabledByDefault = "optoutschemav2enabledbydefault";
+            public const string OrderPrefix = "orderprefix";
+            public const string OrganizationState = "organizationstate";
+            public const string OrgDbOrgSettings = "orgdborgsettings";
+            public const string OrgInsightsEnabled = "orginsightsenabled";
+            public const string PaiPreviewScenarioEnabled = "paipreviewscenarioenabled";
+            public const string ParsedTableColumnPrefix = "parsedtablecolumnprefix";
+            public const string ParsedTablePrefix = "parsedtableprefix";
+            public const string PastExpansionWindow = "pastexpansionwindow";
+            public const string PcfDatasetGridEnabled = "pcfdatasetgridenabled";
+            public const string PerformACTSyncAfter = "performactsyncafter";
+            public const string Picture = "picture";
+            public const string PinpointLanguageCode = "pinpointlanguagecode";
+            public const string PluginTraceLogSetting = "plugintracelogsetting";
+            public const string PMDesignator = "pmdesignator";
+            public const string PostMessageWhitelistDomains = "postmessagewhitelistdomains";
+            public const string PowerAppsMakerBotEnabled = "powerappsmakerbotenabled";
+            public const string PowerBiFeatureEnabled = "powerbifeatureenabled";
+            public const string PricingDecimalPrecision = "pricingdecimalprecision";
+            public const string PrivacyStatementUrl = "privacystatementurl";
+            public const string PrivilegeUserGroupId = "privilegeusergroupid";
+            public const string PrivReportingGroupId = "privreportinggroupid";
+            public const string PrivReportingGroupName = "privreportinggroupname";
+            public const string ProductRecommendationsEnabled = "productrecommendationsenabled";
+            public const string QualifyLeadAdditionalOptions = "qualifyleadadditionaloptions";
+            public const string QuickActionToOpenRecordsInSidePaneEnabled = "quickactiontoopenrecordsinsidepaneenabled";
+            public const string QuickFindRecordLimitEnabled = "quickfindrecordlimitenabled";
+            public const string QuotePrefix = "quoteprefix";
+            public const string RecalculateSLA = "recalculatesla";
+            public const string RecurrenceDefaultNumberOfOccurrences = "recurrencedefaultnumberofoccurrences";
+            public const string RecurrenceExpansionJobBatchInterval = "recurrenceexpansionjobbatchinterval";
+            public const string RecurrenceExpansionJobBatchSize = "recurrenceexpansionjobbatchsize";
+            public const string RecurrenceExpansionSynchCreateMax = "recurrenceexpansionsynchcreatemax";
+            public const string ReferenceSiteMapXml = "referencesitemapxml";
+            public const string ReleaseCadence = "releasecadence";
+            public const string ReleaseChannel = "releasechannel";
+            public const string ReleaseWaveName = "releasewavename";
+            public const string RelevanceSearchEnabledByPlatform = "relevancesearchenabledbyplatform";
+            public const string RelevanceSearchModifiedOn = "relevancesearchmodifiedon";
+            public const string RenderSecureIFrameForEmail = "rendersecureiframeforemail";
+            public const string ReportingGroupId = "reportinggroupid";
+            public const string ReportingGroupName = "reportinggroupname";
+            public const string ReportScriptErrors = "reportscripterrors";
+            public const string RequireApprovalForQueueEmail = "requireapprovalforqueueemail";
+            public const string RequireApprovalForUserEmail = "requireapprovalforuseremail";
+            public const string ResolveSimilarUnresolvedEmailAddress = "resolvesimilarunresolvedemailaddress";
+            public const string RestrictGuestUserAccess = "restrictGuestUserAccess";
+            public const string RestrictStatusUpdate = "restrictstatusupdate";
+            public const string ReverseProxyIpAddresses = "reverseproxyipaddresses";
+            public const string RiErrorStatus = "rierrorstatus";
+            public const string SameSiteModeForSessionCookie = "samesitemodeforsessioncookie";
+            public const string SampleDataImportId = "sampledataimportid";
+            public const string SavingEventsTTLInMinutes = "savingeventsttlinminutes";
+            public const string SchemaNamePrefix = "schemanameprefix";
+            public const string SendBulkEmailInUCI = "sendbulkemailinuci";
+            public const string ServeStaticResourcesFromAzureCDN = "servestaticresourcesfromazurecdn";
+            public const string SessionRecordingEnabled = "sessionrecordingenabled";
+            public const string SessionTimeoutEnabled = "sessiontimeoutenabled";
+            public const string SessionTimeoutInMins = "sessiontimeoutinmins";
+            public const string SessionTimeoutReminderInMins = "sessiontimeoutreminderinmins";
+            public const string SharePointDeploymentType = "sharepointdeploymenttype";
+            public const string ShareToPreviousOwnerOnAssign = "sharetopreviousowneronassign";
+            public const string ShowKBArticleDeprecationNotification = "showkbarticledeprecationnotification";
+            public const string ShowWeekNumber = "showweeknumber";
+            public const string SignupOutlookDownloadFWLink = "signupoutlookdownloadfwlink";
+            public const string SiteMapXml = "sitemapxml";
+            public const string SlaPauseStates = "slapausestates";
+            public const string SocialInsightsEnabled = "socialinsightsenabled";
+            public const string SocialInsightsInstance = "socialinsightsinstance";
+            public const string SocialInsightsTermsAccepted = "socialinsightstermsaccepted";
+            public const string SortId = "sortid";
+            public const string SqlAccessGroupId = "sqlaccessgroupid";
+            public const string SqlAccessGroupName = "sqlaccessgroupname";
+            public const string SQMEnabled = "sqmenabled";
+            public const string SupportUserId = "supportuserid";
+            public const string SuppressSLA = "suppresssla";
+            public const string SuppressValidationEmails = "suppressvalidationemails";
+            public const string SyncBulkOperationBatchSize = "syncbulkoperationbatchsize";
+            public const string SyncBulkOperationMaxLimit = "syncbulkoperationmaxlimit";
+            public const string SyncOptInSelection = "syncoptinselection";
+            public const string SyncOptInSelectionStatus = "syncoptinselectionstatus";
+            public const string SystemUserId = "systemuserid";
+            public const string TableScopedDVSearchInApps = "tablescopeddvsearchinapps";
+            public const string TagMaxAggressiveCycles = "tagmaxaggressivecycles";
+            public const string TagPollingPeriod = "tagpollingperiod";
+            public const string TaskBasedFlowEnabled = "taskbasedflowenabled";
+            public const string TeamsChatDataSync = "teamschatdatasync";
+            public const string TelemetryInstrumentationKey = "telemetryinstrumentationkey";
+            public const string TextAnalyticsEnabled = "textanalyticsenabled";
+            public const string TimeFormatCode = "timeformatcode";
+            public const string TimeFormatString = "timeformatstring";
+            public const string TimeSeparator = "timeseparator";
+            public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
+            public const string TokenExpiry = "tokenexpiry";
+            public const string TokenKey = "tokenkey";
+            public const string TraceLogMaximumAgeInDays = "tracelogmaximumageindays";
+            public const string TrackingPrefix = "trackingprefix";
+            public const string TrackingTokenIdBase = "trackingtokenidbase";
+            public const string TrackingTokenIdDigits = "trackingtokeniddigits";
+            public const string UniqueSpecifierLength = "uniquespecifierlength";
+            public const string UnresolveEmailAddressIfMultipleMatch = "unresolveemailaddressifmultiplematch";
+            public const string UseInbuiltRuleForDefaultPricelistSelection = "useinbuiltrulefordefaultpricelistselection";
+            public const string UseLegacyRendering = "uselegacyrendering";
+            public const string UsePositionHierarchy = "usepositionhierarchy";
+            public const string UseQuickFindViewForGridSearch = "usequickfindviewforgridsearch";
+            public const string UserAccessAuditingInterval = "useraccessauditinginterval";
+            public const string UseReadForm = "usereadform";
+            public const string UserGroupId = "usergroupid";
+            public const string UserRatingEnabled = "userratingenabled";
+            public const string UseSkypeProtocol = "useskypeprotocol";
+            public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string V3CalloutConfigHash = "v3calloutconfighash";
+            public const string ValidationMode = "validationmode";
+            public const string VersionNumber = "versionnumber";
+            public const string WebResourceHash = "webresourcehash";
+            public const string WeekStartDayCode = "weekstartdaycode";
+            public const string WidgetProperties = "widgetproperties";
+            public const string YammerGroupId = "yammergroupid";
+            public const string YammerNetworkPermalink = "yammernetworkpermalink";
+            public const string YammerOAuthAccessTokenExpired = "yammeroauthaccesstokenexpired";
+            public const string YammerPostMethod = "yammerpostmethod";
+            public const string YearStartWeekCode = "yearstartweekcode";
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N webresource_organization
-		/// </summary>	
-		[RelationshipSchemaName("webresource_organization")]
-		public IEnumerable<WebResource> WebresourceOrganization
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<WebResource>("webresource_organization", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("WebresourceOrganization");
-				this.SetRelatedEntities<WebResource>("webresource_organization", null, value);
-				this.OnPropertyChanged("WebresourceOrganization");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-                public struct ActivityTypeFilter
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ActivityTypeFilterV2
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AdvancedColumnEditorEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AdvancedColumnFilteringEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AdvancedFilteringEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AdvancedLookupEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowAddressBookSyncs
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowApplicationUserAccess
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowAutoResponseCreation
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowAutoUnsubscribe
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowAutoUnsubscribeAcknowledgement
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowClientMessageBarAd
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowEntityOnlyAudit
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowLeadingWildcardsInGridSearch
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowLegacyClientExperience
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowLegacyDialogsEmbedding
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowMarketingEmailExecution
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowMicrosoftTrustedServiceTags
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowOfflineScheduledSyncs
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowOutlookScheduledSyncs
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowRedirectAdminSettingsToModernUI
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowUnresolvedPartiesOnEmailSend
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowUserFormModePreference
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowUsersHidingSystemViews
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowUsersSeeAppdownloadMessage
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AllowWebExcelExport
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AppDesignerExperienceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AppointmentRichEditorExperience
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AppointmentWithTeamsMeeting
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AppointmentWithTeamsMeetingV2
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AutoApplyDefaultonCaseCreate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AutoApplyDefaultonCaseUpdate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct AutoApplySLA
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct BoundDashboardDefaultCardExpanded
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct CanOptOutNewSearchExperience
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct CascadeStatusUpdate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct CortanaProactiveExperienceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct CreateProductsWithoutParentInActiveState
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct CurrencyDisplayOption
-                {
-					public const int CurrencySymbol = 0;
-					public const int CurrencyCode = 1;
-                }
-			    public struct CurrencyFormatCode
-                {
-					public const int _123 = 0;
-					public const int _123_ = 1;
-					public const int _123__ = 2;
-					public const int _123___ = 3;
-                }
-			    public struct DateFormatCode
-                {
-                }
-			    public struct DefaultRecurrenceEndRangeType
-                {
-					public const int NoEndDate = 1;
-					public const int NumberOfOccurrences = 2;
-					public const int EndByDate = 3;
-                }
-                public struct DefaultTeamsChatTitleRecordName
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct DisableSocialCare
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct DiscountCalculationMethod
-                {
-					public const int LineItem = 0;
-					public const int PerUnit = 1;
-                }
-                public struct DisplayNavigationTour
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct EmailConnectionChannel
-                {
-					public const int ServerSideSynchronization = 0;
-					public const int MicrosoftDynamics365EmailRouter = 1;
-                }
-                public struct EmailCorrelationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct EmailTemplateDefaultView
-                {
-					public const int TilesView = 1;
-					public const int GridView = 2;
-					public const int ListView = 3;
-                }
-                public struct EnableAsyncMergeAPIForUCI
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableBingMapsIntegration
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableCalendarImportExport
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableCanvasAppsInSolutionsByDefault
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableEmailTemplateViews
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableFlowsInSolutionByDefault
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableImmersiveSkypeIntegration
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableIpBasedCookieBinding
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableIpBasedFirewallRule
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableIpBasedStorageAccessSignatureRule
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableLivePersonaCardUCI
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableLivePersonCardIntegrationInOffice
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableLPAuthoring
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableMakerSwitchToClassic
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableMicrosoftFlowIntegration
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnablePricingOnCreate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableSensitivityLabelsForTeamsCollab
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableSmartMatching
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableUnifiedClientCDN
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnableUnifiedInterfaceShellRefresh
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnforceReadOnlyPlugins
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct EnforceValidations
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct FiscalPeriodFormatPeriod
-                {
-					public const int Quarter_0_ = 1;
-					public const int Q_0_ = 2;
-					public const int P_0_ = 3;
-					public const int Month_0_ = 4;
-					public const int M_0_ = 5;
-					public const int Semester_0_ = 6;
-					public const int MonthName = 7;
-                }
-                public struct FiscalSettingsUpdated
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct FiscalYearFormatPrefix
-                {
-					public const int FY = 1;
-					public const int _Empty = 2;
-                }
-			    public struct FiscalYearFormatSuffix
-                {
-					public const int FY = 1;
-					public const int FiscalYear = 2;
-					public const int _Empty = 3;
-                }
-			    public struct FiscalYearFormatYear
-                {
-					public const int YYYY = 1;
-					public const int YY = 2;
-					public const int GGYY = 3;
-                }
-			    public struct FullNameConventionCode
-                {
-					public const int LastName_FirstName = 0;
-					public const int FirstName = 1;
-					public const int LastName_FirstName_MiddleInitial = 2;
-					public const int FirstName_MiddleInitial_LastName = 3;
-					public const int LastName_FirstName_MiddleName = 4;
-					public const int FirstName_MiddleName_LastName = 5;
-					public const int LastName_Space_FirstName = 6;
-					public const int LastName_NoSpace_FirstName = 7;
-                }
-                public struct GenerateAlertsForErrors
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GenerateAlertsForInformation
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GenerateAlertsForWarnings
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GetStartedPaneContentEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GlobalAppendUrlParametersEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GlobalHelpUrlEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct GrantAccessToNetworkService
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IgnoreInternalEmail
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ImproveSearchLoggingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct InactivityTimeoutEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct IpBasedStorageAccessSignatureMode
-                {
-					public const int IPBindingOnly = 0;
-					public const int IPFirewallOnly = 1;
-					public const int IPBindingAndIPFirewall = 2;
-					public const int IPBindingOrIPFirewall = 3;
-                }
-                public struct IsActionCardEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsActionSupportFeatureEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsActivityAnalysisEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAllMoneyDecimal
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAppMode
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAppointmentAttachmentSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAssignedTasksSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAuditEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAutoDataCaptureEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAutoDataCaptureV2Enabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsAutoSaveEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsBaseCardStaticFieldDataEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsBasicGeospatialIntegrationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsBPFEntityCustomizationFeatureEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsCollaborationExperienceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsConflictDetectionEnabledForMobileClient
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsContactMailingAddressSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsContentSecurityPolicyEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsContentSecurityPolicyEnabledForCanvas
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsContextualEmailEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsContextualHelpEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsCustomControlsInCanvasAppsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDefaultCountryCodeCheckEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDelegateAccessEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDelveActionHubIntegrationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDesktopFlowSchemaV2Enabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDisabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDuplicateDetectionEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDuplicateDetectionEnabledForImport
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDuplicateDetectionEnabledForOfflineSync
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsDuplicateDetectionEnabledForOnlineCreateUpdate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsEmailMonitoringAllowed
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsEmailServerProfileContentFilteringEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsEmbedTeamsCollabEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsEnabledForAllRoles
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsExternalFileStorageEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsExternalSearchIndexEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsFiscalPeriodMonthBased
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsFolderAutoCreatedonSP
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsFolderBasedTrackingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsFullTextSearchEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsGeospatialAzureMapsIntegrationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsHierarchicalSecurityModelEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsIdeasDataCollectionEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsLUISEnabledforD365Bot
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMailboxForcedUnlockingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMailboxInactiveBackoffEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsManualSalesForecastingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMobileClientOnDemandSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMobileOfflineEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsModelDrivenAppsInMSTeamsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMSTeamsCollaborationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMSTeamsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMSTeamsSettingChangedByUser
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsMSTeamsUserSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsNewAddProductExperienceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsNotesAnalysisEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsOfficeGraphEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsOneDriveEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPAIEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPlaybookEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPresenceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPreviewEnabledForActionCard
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPreviewForAutoCaptureEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPreviewForEmailMonitoringAllowed
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsPriceListMandatory
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsQuickCreateEnabledForOpportunityClose
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsReadAuditEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRelationshipInsightsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsResourceBookingExchangeSyncEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRichTextNotesEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRpaAutoscaleAadJoinEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRpaAutoscaleEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRpaBoxEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsRpaUnattendedEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSalesAssistantEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSalesMobilePreviewEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSharingInOrgAllowed
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSOPIntegrationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsTextWrapEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsUserAccessAuditEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct ISVIntegrationCode
-                {
-					public const int None = 0;
-					public const int Web = 1;
-					public const int OutlookWorkstationClient = 2;
-					public const int Web_OutlookWorkstationClient = 3;
-					public const int OutlookLaptopClient = 4;
-					public const int Web_OutlookLaptopClient = 5;
-					public const int Outlook = 6;
-					public const int All = 7;
-                }
-                public struct IsWriteInProductsAllowed
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ModernAdvancedFindFiltering
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ModernAppDesignerCoauthoringEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct NaturalLanguageAssistFilter
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct NegativeFormatCode
-                {
-					public const int Brackets = 0;
-					public const int Dash = 1;
-					public const int DashPlusSpace = 2;
-					public const int TrailingDash = 3;
-					public const int SpacePlusTrailingDash = 4;
-                }
-                public struct NewSearchExperienceEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct NotifyMailboxOwnerOfEmailServerLevelAlerts
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct OfficeAppsAutoDeploymentEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct OOBPriceCalculationEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct OrganizationState
-                {
-					public const int Creating = 0;
-					public const int Upgrading = 1;
-					public const int Updating = 2;
-					public const int Active = 3;
-                }
-                public struct OrgInsightsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct PaiPreviewScenarioEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct PluginTraceLogSetting
-                {
-					public const int Off = 0;
-					public const int Exception = 1;
-					public const int All = 2;
-                }
-                public struct PowerAppsMakerBotEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct PowerBIAllowCrossRegionOperations
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct PowerBIAutomaticPermissionsAssignment
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct PowerBIComponentsCreate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct PowerBiFeatureEnabled
-                {
-                    public const bool Disable = false;
-                    public const bool Enable = true;
-                }
-                public struct ProductRecommendationsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct QuickActionToOpenRecordsInSidePaneEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct QuickFindRecordLimitEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct RecalculateSLA
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct ReleaseChannel
-                {
-					public const int SemiAnnualChannel = 0;
-					public const int MonthlyChannel = 1;
-                }
-                public struct RelevanceSearchEnabledByPlatform
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct RenderSecureIFrameForEmail
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct ReportScriptErrors
-                {
-					public const int NoPreferenceForSendingAnErrorReportToMicrosoftAboutMicrosoftDynamics365 = 0;
-					public const int AskMeForPermissionToSendAnErrorReportToMicrosoft = 1;
-					public const int AutomaticallySendAnErrorReportToMicrosoftWithoutAskingMeForPermission = 2;
-					public const int NeverSendAnErrorReportToMicrosoftAboutMicrosoftDynamics365 = 3;
-                }
-                public struct RequireApprovalForQueueEmail
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct RequireApprovalForUserEmail
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ResolveSimilarUnresolvedEmailAddress
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct RestrictStatusUpdate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SalesMobileQuickCreateDisabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SalesMobileUseUCIFormsForCreate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SalesMobileUseUCIFormsForView
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct SchedulingEngine
-                {
-					public const int LegacySchedulingEngine = 0;
-                }
-                public struct SendBulkEmailInUCI
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ServeStaticResourcesFromAzureCDN
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SessionRecordingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SessionTimeoutEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct SharePointDeploymentType
-                {
-					public const int Online = 0;
-					public const int OnPremises = 1;
-                }
-                public struct ShareToPreviousOwnerOnAssign
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ShowKBArticleDeprecationNotification
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct ShowWeekNumber
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SkipSelectRecordDialog
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SocialInsightsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SocialInsightsTermsAccepted
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SQMEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SuppressSLA
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SuppressValidationEmails
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct SyncOptInSelection
-                {
-                    public const bool Disable = false;
-                    public const bool Enable = true;
-                }
-			    public struct SyncOptInSelectionStatus
-                {
-					public const int Processing = 1;
-					public const int Passed = 2;
-					public const int Failed = 3;
-                }
-                public struct TableScopedDVSearchInApps
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct TaskBasedFlowEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct TeamsChatDataSync
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct TextAnalyticsEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct TimeFormatCode
-                {
-                }
-                public struct UnresolveEmailAddressIfMultipleMatch
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UseInbuiltRuleForDefaultPricelistSelection
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UseLegacyRendering
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UsePositionHierarchy
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UseQuickFindViewForGridSearch
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UseReadForm
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UserRatingEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct UseSkypeProtocol
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct ValidationMode
-                {
-					public const int Off = 0;
-					public const int Warn = 1;
-					public const int Block = 2;
-                }
-			    public struct WeekStartDayCode
-                {
-                }
-                public struct YammerOAuthAccessTokenExpired
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct YammerPostMethod
-                {
-					public const int Public = 0;
-					public const int Private = 1;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string OrganizationId = "organizationid";
-				public const string ACIWebEndpointUrl = "aciwebendpointurl";
-				public const string AcknowledgementTemplateId = "acknowledgementtemplateid";
-				public const string ActivityTypeFilter = "activitytypefilter";
-				public const string ActivityTypeFilterV2 = "activitytypefilterv2";
-				public const string AdvancedColumnEditorEnabled = "advancedcolumneditorenabled";
-				public const string AdvancedColumnFilteringEnabled = "advancedcolumnfilteringenabled";
-				public const string AdvancedFilteringEnabled = "advancedfilteringenabled";
-				public const string AdvancedLookupEnabled = "advancedlookupenabled";
-				public const string AdvancedLookupInEditFilter = "advancedlookupineditfilter";
-				public const string AllowAddressBookSyncs = "allowaddressbooksyncs";
-				public const string AllowApplicationUserAccess = "allowapplicationuseraccess";
-				public const string AllowAutoResponseCreation = "allowautoresponsecreation";
-				public const string AllowAutoUnsubscribe = "allowautounsubscribe";
-				public const string AllowAutoUnsubscribeAcknowledgement = "allowautounsubscribeacknowledgement";
-				public const string AllowClientMessageBarAd = "allowclientmessagebarad";
-				public const string AllowedIpRangeForFirewall = "allowediprangeforfirewall";
-				public const string AllowedIpRangeForStorageAccessSignatures = "allowediprangeforstorageaccesssignatures";
-				public const string AllowedMimeTypes = "allowedmimetypes";
-				public const string AllowEntityOnlyAudit = "allowentityonlyaudit";
-				public const string AllowLeadingWildcardsInGridSearch = "allowleadingwildcardsingridsearch";
-				public const string AllowLeadingWildcardsInQuickFind = "allowleadingwildcardsinquickfind";
-				public const string AllowLegacyClientExperience = "allowlegacyclientexperience";
-				public const string AllowLegacyDialogsEmbedding = "allowlegacydialogsembedding";
-				public const string AllowMarketingEmailExecution = "allowmarketingemailexecution";
-				public const string AllowMicrosoftTrustedServiceTags = "allowmicrosofttrustedservicetags";
-				public const string AllowOfflineScheduledSyncs = "allowofflinescheduledsyncs";
-				public const string AllowOutlookScheduledSyncs = "allowoutlookscheduledsyncs";
-				public const string AllowRedirectAdminSettingsToModernUI = "allowredirectadminsettingstomodernui";
-				public const string AllowUnresolvedPartiesOnEmailSend = "allowunresolvedpartiesonemailsend";
-				public const string AllowUserFormModePreference = "allowuserformmodepreference";
-				public const string AllowUsersHidingSystemViews = "allowusershidingsystemviews";
-				public const string AllowUsersSeeAppdownloadMessage = "allowusersseeappdownloadmessage";
-				public const string AllowWebExcelExport = "allowwebexcelexport";
-				public const string AMDesignator = "amdesignator";
-				public const string AppDesignerExperienceEnabled = "appdesignerexperienceenabled";
-				public const string AppointmentRichEditorExperience = "appointmentricheditorexperience";
-				public const string AppointmentWithTeamsMeeting = "appointmentwithteamsmeeting";
-				public const string AppointmentWithTeamsMeetingV2 = "appointmentwithteamsmeetingv2";
-				public const string AuditRetentionPeriod = "auditretentionperiod";
-				public const string AuditRetentionPeriodV2 = "auditretentionperiodv2";
-				public const string AutoApplyDefaultonCaseCreate = "autoapplydefaultoncasecreate";
-				public const string AutoApplyDefaultonCaseUpdate = "autoapplydefaultoncaseupdate";
-				public const string AutoApplySLA = "autoapplysla";
-				public const string AzureSchedulerJobCollectionName = "azureschedulerjobcollectionname";
-				public const string BaseCurrencyId = "basecurrencyid";
-				public const string BaseCurrencyPrecision = "basecurrencyprecision";
-				public const string BaseCurrencySymbol = "basecurrencysymbol";
-				public const string BingMapsApiKey = "bingmapsapikey";
-				public const string BlockedAttachments = "blockedattachments";
-				public const string BlockedMimeTypes = "blockedmimetypes";
-				public const string BoundDashboardDefaultCardExpanded = "bounddashboarddefaultcardexpanded";
-				public const string BulkOperationPrefix = "bulkoperationprefix";
-				public const string BusinessCardOptions = "businesscardoptions";
-				public const string BusinessClosureCalendarId = "businessclosurecalendarid";
-				public const string CalendarType = "calendartype";
-				public const string CampaignPrefix = "campaignprefix";
-				public const string CanOptOutNewSearchExperience = "canoptoutnewsearchexperience";
-				public const string CascadeStatusUpdate = "cascadestatusupdate";
-				public const string CasePrefix = "caseprefix";
-				public const string CategoryPrefix = "categoryprefix";
-				public const string ClientFeatureSet = "clientfeatureset";
-				public const string ContentSecurityPolicyConfiguration = "contentsecuritypolicyconfiguration";
-				public const string ContentSecurityPolicyConfigurationForCanvas = "contentsecuritypolicyconfigurationforcanvas";
-				public const string ContentSecurityPolicyReportUri = "contentsecuritypolicyreporturi";
-				public const string ContractPrefix = "contractprefix";
-				public const string CopresenceRefreshRate = "copresencerefreshrate";
-				public const string CortanaProactiveExperienceEnabled = "cortanaproactiveexperienceenabled";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CreateProductsWithoutParentInActiveState = "createproductswithoutparentinactivestate";
-				public const string CurrencyDecimalPrecision = "currencydecimalprecision";
-				public const string CurrencyDisplayOption = "currencydisplayoption";
-				public const string CurrencyFormatCode = "currencyformatcode";
-				public const string CurrencySymbol = "currencysymbol";
-				public const string CurrentBulkOperationNumber = "currentbulkoperationnumber";
-				public const string CurrentCampaignNumber = "currentcampaignnumber";
-				public const string CurrentCaseNumber = "currentcasenumber";
-				public const string CurrentCategoryNumber = "currentcategorynumber";
-				public const string CurrentContractNumber = "currentcontractnumber";
-				public const string CurrentImportSequenceNumber = "currentimportsequencenumber";
-				public const string CurrentInvoiceNumber = "currentinvoicenumber";
-				public const string CurrentKaNumber = "currentkanumber";
-				public const string CurrentKbNumber = "currentkbnumber";
-				public const string CurrentOrderNumber = "currentordernumber";
-				public const string CurrentParsedTableNumber = "currentparsedtablenumber";
-				public const string CurrentQuoteNumber = "currentquotenumber";
-				public const string DateFormatCode = "dateformatcode";
-				public const string DateFormatString = "dateformatstring";
-				public const string DateSeparator = "dateseparator";
-				public const string DaysBeforeInactiveTeamsChatSyncDisabled = "daysbeforeinactiveteamschatsyncdisabled";
-				public const string DaysSinceRecordLastModifiedMaxValue = "dayssincerecordlastmodifiedmaxvalue";
-				public const string DecimalSymbol = "decimalsymbol";
-				public const string DefaultCountryCode = "defaultcountrycode";
-				public const string DefaultCrmCustomName = "defaultcrmcustomname";
-				public const string DefaultEmailServerProfileId = "defaultemailserverprofileid";
-				public const string DefaultEmailSettings = "defaultemailsettings";
-				public const string DefaultMobileOfflineProfileId = "defaultmobileofflineprofileid";
-				public const string DefaultRecurrenceEndRangeType = "defaultrecurrenceendrangetype";
-				public const string DefaultRecurrenceEndRangeTypeName = "defaultrecurrenceendrangetypename";
-				public const string DefaultTeamsChatTitleRecordName = "defaultteamschattitlerecordname";
-				public const string DefaultThemeData = "defaultthemedata";
-				public const string DelegatedAdminUserId = "delegatedadminuserid";
-				public const string DisabledReason = "disabledreason";
-				public const string DisableSocialCare = "disablesocialcare";
-				public const string DiscountCalculationMethod = "discountcalculationmethod";
-				public const string DisplayNavigationTour = "displaynavigationtour";
-				public const string EmailConnectionChannel = "emailconnectionchannel";
-				public const string EmailCorrelationEnabled = "emailcorrelationenabled";
-				public const string EmailSendPollingPeriod = "emailsendpollingperiod";
-				public const string EmailTemplateDefaultView = "emailtemplatedefaultview";
-				public const string EnableAsyncMergeAPIForUCI = "enableasyncmergeapiforuci";
-				public const string EnableBingMapsIntegration = "enablebingmapsintegration";
-				public const string EnableCalendarImportExport = "enablecalendarimportexport";
-				public const string EnableCanvasAppsInSolutionsByDefault = "enablecanvasappsinsolutionsbydefault";
-				public const string EnableEmailTemplateViews = "enableemailtemplateviews";
-				public const string EnableFlowsInSolutionByDefault = "enableflowsinsolutionbydefault";
-				public const string EnableImmersiveSkypeIntegration = "enableimmersiveskypeintegration";
-				public const string EnableIpBasedCookieBinding = "enableipbasedcookiebinding";
-				public const string EnableIpBasedFirewallRule = "enableipbasedfirewallrule";
-				public const string EnableIpBasedStorageAccessSignatureRule = "enableipbasedstorageaccesssignaturerule";
-				public const string EnableLivePersonaCardUCI = "enablelivepersonacarduci";
-				public const string EnableLivePersonCardIntegrationInOffice = "enablelivepersoncardintegrationinoffice";
-				public const string EnableLPAuthoring = "enablelpauthoring";
-				public const string EnableMakerSwitchToClassic = "enablemakerswitchtoclassic";
-				public const string EnableMicrosoftFlowIntegration = "enablemicrosoftflowintegration";
-				public const string EnablePricingOnCreate = "enablepricingoncreate";
-				public const string EnableSensitivityLabelsForTeamsCollab = "enablesensitivitylabelsforteamscollab";
-				public const string EnableSmartMatching = "enablesmartmatching";
-				public const string EnableUnifiedClientCDN = "enableunifiedclientcdn";
-				public const string EnableUnifiedInterfaceShellRefresh = "enableunifiedinterfaceshellrefresh";
-				public const string EnforceReadOnlyPlugins = "enforcereadonlyplugins";
-				public const string EnforceValidations = "enforcevalidations";
-				public const string EnhancedOQOIAddProductsSettings = "enhancedoqoiaddproductssettings";
-				public const string EntityImage = "entityimage";
-				public const string EntityImageTimestamp = "entityimage_timestamp";
-				public const string EntityImageURL = "entityimage_url";
-				public const string EntityImageId = "entityimageid";
-				public const string ExpireChangeTrackingInDays = "expirechangetrackingindays";
-				public const string ExpireSubscriptionsInDays = "expiresubscriptionsindays";
-				public const string ExternalBaseUrl = "externalbaseurl";
-				public const string ExternalPartyCorrelationKeys = "externalpartycorrelationkeys";
-				public const string ExternalPartyEntitySettings = "externalpartyentitysettings";
-				public const string FeatureSet = "featureset";
-				public const string FiscalCalendarStart = "fiscalcalendarstart";
-				public const string FiscalPeriodFormat = "fiscalperiodformat";
-				public const string FiscalPeriodFormatPeriod = "fiscalperiodformatperiod";
-				public const string FiscalPeriodType = "fiscalperiodtype";
-				public const string FiscalSettingsUpdated = "fiscalsettingsupdated";
-				public const string FiscalYearDisplayCode = "fiscalyeardisplaycode";
-				public const string FiscalYearFormat = "fiscalyearformat";
-				public const string FiscalYearFormatPrefix = "fiscalyearformatprefix";
-				public const string FiscalYearFormatSuffix = "fiscalyearformatsuffix";
-				public const string FiscalYearFormatYear = "fiscalyearformatyear";
-				public const string FiscalYearPeriodConnect = "fiscalyearperiodconnect";
-				public const string FullNameConventionCode = "fullnameconventioncode";
-				public const string FutureExpansionWindow = "futureexpansionwindow";
-				public const string GenerateAlertsForErrors = "generatealertsforerrors";
-				public const string GenerateAlertsForInformation = "generatealertsforinformation";
-				public const string GenerateAlertsForWarnings = "generatealertsforwarnings";
-				public const string GetStartedPaneContentEnabled = "getstartedpanecontentenabled";
-				public const string GlobalAppendUrlParametersEnabled = "globalappendurlparametersenabled";
-				public const string GlobalHelpUrl = "globalhelpurl";
-				public const string GlobalHelpUrlEnabled = "globalhelpurlenabled";
-				public const string GoalRollupExpiryTime = "goalrollupexpirytime";
-				public const string GoalRollupFrequency = "goalrollupfrequency";
-				public const string GrantAccessToNetworkService = "grantaccesstonetworkservice";
-				public const string HashDeltaSubjectCount = "hashdeltasubjectcount";
-				public const string HashFilterKeywords = "hashfilterkeywords";
-				public const string HashMaxCount = "hashmaxcount";
-				public const string HashMinAddressCount = "hashminaddresscount";
-				public const string HighContrastThemeData = "highcontrastthemedata";
-				public const string IgnoreInternalEmail = "ignoreinternalemail";
-				public const string ImproveSearchLoggingEnabled = "improvesearchloggingenabled";
-				public const string InactivityTimeoutEnabled = "inactivitytimeoutenabled";
-				public const string InactivityTimeoutInMins = "inactivitytimeoutinmins";
-				public const string InactivityTimeoutReminderInMins = "inactivitytimeoutreminderinmins";
-				public const string IncomingEmailExchangeEmailRetrievalBatchSize = "incomingemailexchangeemailretrievalbatchsize";
-				public const string InitialVersion = "initialversion";
-				public const string IntegrationUserId = "integrationuserid";
-				public const string InvoicePrefix = "invoiceprefix";
-				public const string IpBasedStorageAccessSignatureMode = "ipbasedstorageaccesssignaturemode";
-				public const string IsActionCardEnabled = "isactioncardenabled";
-				public const string IsActionSupportFeatureEnabled = "isactionsupportfeatureenabled";
-				public const string IsActivityAnalysisEnabled = "isactivityanalysisenabled";
-				public const string IsAllMoneyDecimal = "isallmoneydecimal";
-				public const string IsAppMode = "isappmode";
-				public const string IsAppointmentAttachmentSyncEnabled = "isappointmentattachmentsyncenabled";
-				public const string IsAssignedTasksSyncEnabled = "isassignedtaskssyncenabled";
-				public const string IsAuditEnabled = "isauditenabled";
-				public const string IsAutoDataCaptureEnabled = "isautodatacaptureenabled";
-				public const string IsAutoDataCaptureV2Enabled = "isautodatacapturev2enabled";
-				public const string IsAutoSaveEnabled = "isautosaveenabled";
-				public const string IsBaseCardStaticFieldDataEnabled = "isbasecardstaticfielddataenabled";
-				public const string IsBasicGeospatialIntegrationEnabled = "isbasicgeospatialintegrationenabled";
-				public const string IsBPFEntityCustomizationFeatureEnabled = "isbpfentitycustomizationfeatureenabled";
-				public const string IsCollaborationExperienceEnabled = "iscollaborationexperienceenabled";
-				public const string IsConflictDetectionEnabledForMobileClient = "isconflictdetectionenabledformobileclient";
-				public const string IsContactMailingAddressSyncEnabled = "iscontactmailingaddresssyncenabled";
-				public const string IsContentSecurityPolicyEnabled = "iscontentsecuritypolicyenabled";
-				public const string IsContentSecurityPolicyEnabledForCanvas = "iscontentsecuritypolicyenabledforcanvas";
-				public const string IsContextualEmailEnabled = "iscontextualemailenabled";
-				public const string IsContextualHelpEnabled = "iscontextualhelpenabled";
-				public const string IsCustomControlsInCanvasAppsEnabled = "iscustomcontrolsincanvasappsenabled";
-				public const string IsDefaultCountryCodeCheckEnabled = "isdefaultcountrycodecheckenabled";
-				public const string IsDelegateAccessEnabled = "isdelegateaccessenabled";
-				public const string IsDelveActionHubIntegrationEnabled = "isdelveactionhubintegrationenabled";
-				public const string IsDesktopFlowSchemaV2Enabled = "isdesktopflowschemav2enabled";
-				public const string IsDisabled = "isdisabled";
-				public const string IsDuplicateDetectionEnabled = "isduplicatedetectionenabled";
-				public const string IsDuplicateDetectionEnabledForImport = "isduplicatedetectionenabledforimport";
-				public const string IsDuplicateDetectionEnabledForOfflineSync = "isduplicatedetectionenabledforofflinesync";
-				public const string IsDuplicateDetectionEnabledForOnlineCreateUpdate = "isduplicatedetectionenabledforonlinecreateupdate";
-				public const string IsEmailMonitoringAllowed = "isemailmonitoringallowed";
-				public const string IsEmailServerProfileContentFilteringEnabled = "isemailserverprofilecontentfilteringenabled";
-				public const string IsEmbedTeamsCollabEnabled = "isembedteamscollabenabled";
-				public const string IsEnabledForAllRoles = "isenabledforallroles";
-				public const string IsExternalFileStorageEnabled = "isexternalfilestorageenabled";
-				public const string IsExternalSearchIndexEnabled = "isexternalsearchindexenabled";
-				public const string IsFiscalPeriodMonthBased = "isfiscalperiodmonthbased";
-				public const string IsFolderAutoCreatedonSP = "isfolderautocreatedonsp";
-				public const string IsFolderBasedTrackingEnabled = "isfolderbasedtrackingenabled";
-				public const string IsFullTextSearchEnabled = "isfulltextsearchenabled";
-				public const string IsGeospatialAzureMapsIntegrationEnabled = "isgeospatialazuremapsintegrationenabled";
-				public const string IsHierarchicalSecurityModelEnabled = "ishierarchicalsecuritymodelenabled";
-				public const string IsIdeasDataCollectionEnabled = "isideasdatacollectionenabled";
-				public const string IsLUISEnabledforD365Bot = "isluisenabledford365bot";
-				public const string IsMailboxForcedUnlockingEnabled = "ismailboxforcedunlockingenabled";
-				public const string IsMailboxInactiveBackoffEnabled = "ismailboxinactivebackoffenabled";
-				public const string IsManualSalesForecastingEnabled = "ismanualsalesforecastingenabled";
-				public const string IsMobileClientOnDemandSyncEnabled = "ismobileclientondemandsyncenabled";
-				public const string IsMobileOfflineEnabled = "ismobileofflineenabled";
-				public const string IsModelDrivenAppsInMSTeamsEnabled = "ismodeldrivenappsinmsteamsenabled";
-				public const string IsMSTeamsCollaborationEnabled = "ismsteamscollaborationenabled";
-				public const string IsMSTeamsEnabled = "ismsteamsenabled";
-				public const string IsMSTeamsSettingChangedByUser = "ismsteamssettingchangedbyuser";
-				public const string IsMSTeamsUserSyncEnabled = "ismsteamsusersyncenabled";
-				public const string IsNewAddProductExperienceEnabled = "isnewaddproductexperienceenabled";
-				public const string IsNotesAnalysisEnabled = "isnotesanalysisenabled";
-				public const string IsOfficeGraphEnabled = "isofficegraphenabled";
-				public const string IsOneDriveEnabled = "isonedriveenabled";
-				public const string IsPAIEnabled = "ispaienabled";
-				public const string IsPDFGenerationEnabled = "ispdfgenerationenabled";
-				public const string IsPlaybookEnabled = "isplaybookenabled";
-				public const string IsPresenceEnabled = "ispresenceenabled";
-				public const string IsPresenceEnabledName = "ispresenceenabledname";
-				public const string IsPreviewEnabledForActionCard = "ispreviewenabledforactioncard";
-				public const string IsPreviewForAutoCaptureEnabled = "ispreviewforautocaptureenabled";
-				public const string IsPreviewForEmailMonitoringAllowed = "ispreviewforemailmonitoringallowed";
-				public const string IsPriceListMandatory = "ispricelistmandatory";
-				public const string IsQuickCreateEnabledForOpportunityClose = "isquickcreateenabledforopportunityclose";
-				public const string IsReadAuditEnabled = "isreadauditenabled";
-				public const string IsRelationshipInsightsEnabled = "isrelationshipinsightsenabled";
-				public const string IsResourceBookingExchangeSyncEnabled = "isresourcebookingexchangesyncenabled";
-				public const string IsRichTextNotesEnabled = "isrichtextnotesenabled";
-				public const string IsRpaAutoscaleAadJoinEnabled = "isrpaautoscaleaadjoinenabled";
-				public const string IsRpaAutoscaleEnabled = "isrpaautoscaleenabled";
-				public const string IsRpaBoxEnabled = "isrpaboxenabled";
-				public const string IsRpaUnattendedEnabled = "isrpaunattendedenabled";
-				public const string IsSalesAssistantEnabled = "issalesassistantenabled";
-				public const string IsSalesMobilePreviewEnabled = "issalesmobilepreviewenabled";
-				public const string IsSharingInOrgAllowed = "issharinginorgallowed";
-				public const string IsSOPIntegrationEnabled = "issopintegrationenabled";
-				public const string IsTextWrapEnabled = "istextwrapenabled";
-				public const string IsUserAccessAuditEnabled = "isuseraccessauditenabled";
-				public const string ISVIntegrationCode = "isvintegrationcode";
-				public const string IsWriteInProductsAllowed = "iswriteinproductsallowed";
-				public const string KaPrefix = "kaprefix";
-				public const string KbPrefix = "kbprefix";
-				public const string KMSettings = "kmsettings";
-				public const string LanguageCode = "languagecode";
-				public const string LocaleId = "localeid";
-				public const string LongDateFormatCode = "longdateformatcode";
-				public const string LookupCharacterCountBeforeResolve = "lookupcharactercountbeforeresolve";
-				public const string LookupResolveDelayMS = "lookupresolvedelayms";
-				public const string MailboxIntermittentIssueMinRange = "mailboxintermittentissueminrange";
-				public const string MailboxPermanentIssueMinRange = "mailboxpermanentissueminrange";
-				public const string MaxActionStepsInBPF = "maxactionstepsinbpf";
-				public const string MaxAllowedPendingRollupJobCount = "maxallowedpendingrollupjobcount";
-				public const string MaxAllowedPendingRollupJobPercentage = "maxallowedpendingrollupjobpercentage";
-				public const string MaxAppointmentDurationDays = "maxappointmentdurationdays";
-				public const string MaxConditionsForMobileOfflineFilters = "maxconditionsformobileofflinefilters";
-				public const string MaxDepthForHierarchicalSecurityModel = "maxdepthforhierarchicalsecuritymodel";
-				public const string MaxFolderBasedTrackingMappings = "maxfolderbasedtrackingmappings";
-				public const string MaximumActiveBusinessProcessFlowsAllowedPerEntity = "maximumactivebusinessprocessflowsallowedperentity";
-				public const string MaximumDynamicPropertiesAllowed = "maximumdynamicpropertiesallowed";
-				public const string MaximumEntitiesWithActiveSLA = "maximumentitieswithactivesla";
-				public const string MaximumSLAKPIPerEntityWithActiveSLA = "maximumslakpiperentitywithactivesla";
-				public const string MaximumTrackingNumber = "maximumtrackingnumber";
-				public const string MaxProductsInBundle = "maxproductsinbundle";
-				public const string MaxRecordsForExportToExcel = "maxrecordsforexporttoexcel";
-				public const string MaxRecordsForLookupFilters = "maxrecordsforlookupfilters";
-				public const string MaxRollupFieldsPerEntity = "maxrollupfieldsperentity";
-				public const string MaxRollupFieldsPerOrg = "maxrollupfieldsperorg";
-				public const string MaxSLAItemsPerSLA = "maxslaitemspersla";
-				public const string MaxSupportedInternetExplorerVersion = "maxsupportedinternetexplorerversion";
-				public const string MaxUploadFileSize = "maxuploadfilesize";
-				public const string MaxVerboseLoggingMailbox = "maxverboseloggingmailbox";
-				public const string MaxVerboseLoggingSyncCycles = "maxverboseloggingsynccycles";
-				public const string MicrosoftFlowEnvironment = "microsoftflowenvironment";
-				public const string MinAddressBookSyncInterval = "minaddressbooksyncinterval";
-				public const string MinOfflineSyncInterval = "minofflinesyncinterval";
-				public const string MinOutlookSyncInterval = "minoutlooksyncinterval";
-				public const string MobileOfflineMinLicenseProd = "mobileofflineminlicenseprod";
-				public const string MobileOfflineMinLicenseTrial = "mobileofflineminlicensetrial";
-				public const string MobileOfflineSyncInterval = "mobileofflinesyncinterval";
-				public const string ModernAdvancedFindFiltering = "modernadvancedfindfiltering";
-				public const string ModernAppDesignerCoauthoringEnabled = "modernappdesignercoauthoringenabled";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string MultiColumnSortEnabled = "multicolumnsortenabled";
-				public const string Name = "name";
-				public const string NaturalLanguageAssistFilter = "naturallanguageassistfilter";
-				public const string NegativeCurrencyFormatCode = "negativecurrencyformatcode";
-				public const string NegativeFormatCode = "negativeformatcode";
-				public const string NewSearchExperienceEnabled = "newsearchexperienceenabled";
-				public const string NextTrackingNumber = "nexttrackingnumber";
-				public const string NotifyMailboxOwnerOfEmailServerLevelAlerts = "notifymailboxownerofemailserverlevelalerts";
-				public const string NumberFormat = "numberformat";
-				public const string NumberGroupFormat = "numbergroupformat";
-				public const string NumberSeparator = "numberseparator";
-				public const string OfficeAppsAutoDeploymentEnabled = "officeappsautodeploymentenabled";
-				public const string OfficeGraphDelveUrl = "officegraphdelveurl";
-				public const string OOBPriceCalculationEnabled = "oobpricecalculationenabled";
-				public const string OrderPrefix = "orderprefix";
-				public const string OrganizationState = "organizationstate";
-				public const string OrgDbOrgSettings = "orgdborgsettings";
-				public const string OrgInsightsEnabled = "orginsightsenabled";
-				public const string PaiPreviewScenarioEnabled = "paipreviewscenarioenabled";
-				public const string ParsedTableColumnPrefix = "parsedtablecolumnprefix";
-				public const string ParsedTablePrefix = "parsedtableprefix";
-				public const string PastExpansionWindow = "pastexpansionwindow";
-				public const string PcfDatasetGridEnabled = "pcfdatasetgridenabled";
-				public const string Picture = "picture";
-				public const string PinpointLanguageCode = "pinpointlanguagecode";
-				public const string PluginTraceLogSetting = "plugintracelogsetting";
-				public const string PMDesignator = "pmdesignator";
-				public const string PostMessageWhitelistDomains = "postmessagewhitelistdomains";
-				public const string PowerAppsMakerBotEnabled = "powerappsmakerbotenabled";
-				public const string PowerBIAllowCrossRegionOperations = "powerbiallowcrossregionoperations";
-				public const string PowerBIAutomaticPermissionsAssignment = "powerbiautomaticpermissionsassignment";
-				public const string PowerBIComponentsCreate = "powerbicomponentscreate";
-				public const string PowerBiFeatureEnabled = "powerbifeatureenabled";
-				public const string PricingDecimalPrecision = "pricingdecimalprecision";
-				public const string PrivacyStatementUrl = "privacystatementurl";
-				public const string PrivilegeUserGroupId = "privilegeusergroupid";
-				public const string PrivReportingGroupId = "privreportinggroupid";
-				public const string PrivReportingGroupName = "privreportinggroupname";
-				public const string ProductRecommendationsEnabled = "productrecommendationsenabled";
-				public const string QualifyLeadAdditionalOptions = "qualifyleadadditionaloptions";
-				public const string QuickActionToOpenRecordsInSidePaneEnabled = "quickactiontoopenrecordsinsidepaneenabled";
-				public const string QuickFindRecordLimitEnabled = "quickfindrecordlimitenabled";
-				public const string QuotePrefix = "quoteprefix";
-				public const string RecalculateSLA = "recalculatesla";
-				public const string RecurrenceDefaultNumberOfOccurrences = "recurrencedefaultnumberofoccurrences";
-				public const string RecurrenceExpansionJobBatchInterval = "recurrenceexpansionjobbatchinterval";
-				public const string RecurrenceExpansionJobBatchSize = "recurrenceexpansionjobbatchsize";
-				public const string RecurrenceExpansionSynchCreateMax = "recurrenceexpansionsynchcreatemax";
-				public const string ReferenceSiteMapXml = "referencesitemapxml";
-				public const string ReleaseCadence = "releasecadence";
-				public const string ReleaseChannel = "releasechannel";
-				public const string ReleaseWaveName = "releasewavename";
-				public const string RelevanceSearchEnabledByPlatform = "relevancesearchenabledbyplatform";
-				public const string RelevanceSearchModifiedOn = "relevancesearchmodifiedon";
-				public const string RenderSecureIFrameForEmail = "rendersecureiframeforemail";
-				public const string ReportingGroupId = "reportinggroupid";
-				public const string ReportingGroupName = "reportinggroupname";
-				public const string ReportScriptErrors = "reportscripterrors";
-				public const string RequireApprovalForQueueEmail = "requireapprovalforqueueemail";
-				public const string RequireApprovalForUserEmail = "requireapprovalforuseremail";
-				public const string ResolveSimilarUnresolvedEmailAddress = "resolvesimilarunresolvedemailaddress";
-				public const string RestrictStatusUpdate = "restrictstatusupdate";
-				public const string RiErrorStatus = "rierrorstatus";
-				public const string SalesMobileQuickCreateDisabled = "salesmobilequickcreatedisabled";
-				public const string SalesMobileUseUCIFormsForCreate = "salesmobileuseuciformsforcreate";
-				public const string SalesMobileUseUCIFormsForView = "salesmobileuseuciformsforview";
-				public const string SampleDataImportId = "sampledataimportid";
-				public const string SchedulingEngine = "schedulingengine";
-				public const string SchemaNamePrefix = "schemanameprefix";
-				public const string SendBulkEmailInUCI = "sendbulkemailinuci";
-				public const string ServeStaticResourcesFromAzureCDN = "servestaticresourcesfromazurecdn";
-				public const string SessionRecordingEnabled = "sessionrecordingenabled";
-				public const string SessionTimeoutEnabled = "sessiontimeoutenabled";
-				public const string SessionTimeoutInMins = "sessiontimeoutinmins";
-				public const string SessionTimeoutReminderInMins = "sessiontimeoutreminderinmins";
-				public const string SharePointDeploymentType = "sharepointdeploymenttype";
-				public const string ShareToPreviousOwnerOnAssign = "sharetopreviousowneronassign";
-				public const string ShowKBArticleDeprecationNotification = "showkbarticledeprecationnotification";
-				public const string ShowWeekNumber = "showweeknumber";
-				public const string SignupOutlookDownloadFWLink = "signupoutlookdownloadfwlink";
-				public const string SiteMapXml = "sitemapxml";
-				public const string SkipSelectRecordDialog = "skipselectrecorddialog";
-				public const string SlaPauseStates = "slapausestates";
-				public const string SocialInsightsEnabled = "socialinsightsenabled";
-				public const string SocialInsightsInstance = "socialinsightsinstance";
-				public const string SocialInsightsTermsAccepted = "socialinsightstermsaccepted";
-				public const string SortId = "sortid";
-				public const string SqlAccessGroupId = "sqlaccessgroupid";
-				public const string SqlAccessGroupName = "sqlaccessgroupname";
-				public const string SQMEnabled = "sqmenabled";
-				public const string SupportUserId = "supportuserid";
-				public const string SuppressSLA = "suppresssla";
-				public const string SuppressValidationEmails = "suppressvalidationemails";
-				public const string SyncBulkOperationBatchSize = "syncbulkoperationbatchsize";
-				public const string SyncBulkOperationMaxLimit = "syncbulkoperationmaxlimit";
-				public const string SyncOptInSelection = "syncoptinselection";
-				public const string SyncOptInSelectionStatus = "syncoptinselectionstatus";
-				public const string SystemUserId = "systemuserid";
-				public const string TableScopedDVSearchInApps = "tablescopeddvsearchinapps";
-				public const string TagMaxAggressiveCycles = "tagmaxaggressivecycles";
-				public const string TagPollingPeriod = "tagpollingperiod";
-				public const string TaskBasedFlowEnabled = "taskbasedflowenabled";
-				public const string TeamsChatDataSync = "teamschatdatasync";
-				public const string TelemetryInstrumentationKey = "telemetryinstrumentationkey";
-				public const string TextAnalyticsEnabled = "textanalyticsenabled";
-				public const string TimeFormatCode = "timeformatcode";
-				public const string TimeFormatString = "timeformatstring";
-				public const string TimeSeparator = "timeseparator";
-				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string TokenExpiry = "tokenexpiry";
-				public const string TokenKey = "tokenkey";
-				public const string TraceLogMaximumAgeInDays = "tracelogmaximumageindays";
-				public const string TrackingPrefix = "trackingprefix";
-				public const string TrackingTokenIdBase = "trackingtokenidbase";
-				public const string TrackingTokenIdDigits = "trackingtokeniddigits";
-				public const string UniqueSpecifierLength = "uniquespecifierlength";
-				public const string UnresolveEmailAddressIfMultipleMatch = "unresolveemailaddressifmultiplematch";
-				public const string UseInbuiltRuleForDefaultPricelistSelection = "useinbuiltrulefordefaultpricelistselection";
-				public const string UseLegacyRendering = "uselegacyrendering";
-				public const string UsePositionHierarchy = "usepositionhierarchy";
-				public const string UseQuickFindViewForGridSearch = "usequickfindviewforgridsearch";
-				public const string UserAccessAuditingInterval = "useraccessauditinginterval";
-				public const string UseReadForm = "usereadform";
-				public const string UserGroupId = "usergroupid";
-				public const string UserRatingEnabled = "userratingenabled";
-				public const string UseSkypeProtocol = "useskypeprotocol";
-				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
-				public const string V3CalloutConfigHash = "v3calloutconfighash";
-				public const string ValidationMode = "validationmode";
-				public const string VersionNumber = "versionnumber";
-				public const string WebResourceHash = "webresourcehash";
-				public const string WeekStartDayCode = "weekstartdaycode";
-				public const string WidgetProperties = "widgetproperties";
-				public const string YammerGroupId = "yammergroupid";
-				public const string YammerNetworkPermalink = "yammernetworkpermalink";
-				public const string YammerOAuthAccessTokenExpired = "yammeroauthaccesstokenexpired";
-				public const string YammerPostMethod = "yammerpostmethod";
-				public const string YearStartWeekCode = "yearstartweekcode";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string ChannelpropertyOrganization = "channelproperty_organization";
-				public const string ChannelpropertygroupOrganization = "channelpropertygroup_organization";
-				public const string CustomcontrolOrganization = "customcontrol_organization";
-				public const string CustomcontroldefaultconfigOrganization = "customcontroldefaultconfig_organization";
-				public const string CustomcontrolresourceOrganization = "customcontrolresource_organization";
-				public const string DynamicpropertyOrganization = "dynamicproperty_organization";
-				public const string DynamicPropertyAssociationOrganization = "DynamicPropertyAssociation_organization";
-				public const string DynamicPropertyOptionSetItemOrganization = "DynamicPropertyOptionSetItem_organization";
-				public const string EntitlementchannelOrganization = "entitlementchannel_organization";
-				public const string EntitlementtemplateOrganization = "entitlementtemplate_organization";
-				public const string EntitlementtemplatechannelOrganization = "entitlementtemplatechannel_organization";
-				public const string LanguagelocaleOrganization = "languagelocale_organization";
-				public const string LkAuthorizationserverOrganizationid = "lk_authorizationserver_organizationid";
-				public const string LkDataperformanceOrganizationid = "lk_dataperformance_organizationid";
-				public const string LkDocumenttemplatebaseOrganization = "lk_documenttemplatebase_organization";
-				public const string LkFieldsecurityprofileOrganizationid = "lk_fieldsecurityprofile_organizationid";
-				public const string LkOrganizationuiOrganizationid = "lk_organizationui_organizationid";
-				public const string LkPartnerapplicationOrganizationid = "lk_partnerapplication_organizationid";
-				public const string LkPrincipalobjectattributeaccessOrganizationid = "lk_principalobjectattributeaccess_organizationid";
-				public const string LkPrincipalsyncattributemapOrganizationid = "lk_principalsyncattributemap_organizationid";
-				public const string LkSyncattributemappingprofileOrganizationid = "lk_syncattributemappingprofile_organizationid";
-				public const string MobileOfflineProfileOrganization = "MobileOfflineProfile_organization";
-				public const string MobileOfflineProfileItemOrganization = "MobileOfflineProfileItem_organization";
-				public const string MobileOfflineProfileItemAssociationOrganization = "MobileOfflineProfileItemAssociation_organization";
-				public const string OfflinecommanddefinitionOrganization = "offlinecommanddefinition_organization";
-				public const string OrganizationAciviewmapper = "organization_aciviewmapper";
-				public const string OrganizationAdvancedsimilarityrule = "organization_advancedsimilarityrule";
-				public const string OrganizationAppaction = "organization_appaction";
-				public const string OrganizationAppactionmigration = "organization_appactionmigration";
-				public const string OrganizationAppactionrule = "organization_appactionrule";
-				public const string OrganizationAppconfig = "organization_appconfig";
-				public const string OrganizationAppconfiginstance = "organization_appconfiginstance";
-				public const string OrganizationAppconfigmaster = "organization_appconfigmaster";
-				public const string OrganizationAppelement = "organization_appelement";
-				public const string OrganizationApplicationfile = "organization_applicationfile";
-				public const string OrganizationAppmodule = "organization_appmodule";
-				public const string OrganizationAppmodulecomponentedge = "organization_appmodulecomponentedge";
-				public const string OrganizationAppmodulecomponentnode = "organization_appmodulecomponentnode";
-				public const string OrganizationAppsetting = "organization_appsetting";
-				public const string OrganizationAppusersetting = "organization_appusersetting";
-				public const string OrganizationAsyncOperations = "Organization_AsyncOperations";
-				public const string OrganizationAttributemap = "organization_attributemap";
-				public const string OrganizationAzureserviceconnection = "organization_azureserviceconnection";
-				public const string OrganizationBulkDeleteFailures = "Organization_BulkDeleteFailures";
-				public const string OrganizationBusinessUnitNewsArticles = "organization_business_unit_news_articles";
-				public const string OrganizationBusinessUnits = "organization_business_units";
-				public const string OrganizationCalendars = "organization_calendars";
-				public const string OrganizationCatalog = "organization_catalog";
-				public const string OrganizationCatalogassignment = "organization_catalogassignment";
-				public const string OrganizationCompetitors = "organization_competitors";
-				public const string OrganizationComplexcontrols = "organization_complexcontrols";
-				public const string OrganizationConnectionRoles = "organization_connection_roles";
-				public const string OrganizationConstraintBasedGroups = "organization_constraint_based_groups";
-				public const string OrganizationContractTemplates = "organization_contract_templates";
-				public const string OrganizationCustomDisplaystrings = "organization_custom_displaystrings";
-				public const string OrganizationDatalakeworkspace = "organization_datalakeworkspace";
-				public const string OrganizationDatalakeworkspacepermission = "organization_datalakeworkspacepermission";
-				public const string OrganizationDataprocessingconfiguration = "organization_dataprocessingconfiguration";
-				public const string OrganizationDelveactionhub = "organization_delveactionhub";
-				public const string OrganizationDiscountTypes = "organization_discount_types";
-				public const string OrganizationEc4uGdprBpfCorrection = "organization_ec4u_gdpr_bpf_correction";
-				public const string OrganizationEc4uGdprBpfDeletion = "organization_ec4u_gdpr_bpf_deletion";
-				public const string OrganizationEc4uGdprBpfInformation = "organization_ec4u_gdpr_bpf_information";
-				public const string OrganizationEc4uGdprConfigEntity = "organization_ec4u_gdpr_config_entity";
-				public const string OrganizationEc4uGdprConfigField = "organization_ec4u_gdpr_config_field";
-				public const string OrganizationEc4uGdprConfigHierarchy = "organization_ec4u_gdpr_config_hierarchy";
-				public const string OrganizationEc4uLegalbasistype = "organization_ec4u_legalbasistype";
-				public const string OrganizationEmailserverprofile = "organization_emailserverprofile";
-				public const string OrganizationEntityanalyticsconfig = "organization_entityanalyticsconfig";
-				public const string OrganizationEntitydataprovider = "organization_entitydataprovider";
-				public const string OrganizationEntitydatasource = "organization_entitydatasource";
-				public const string OrganizationEntitymap = "organization_entitymap";
-				public const string OrganizationEntityrecordfilter = "organization_entityrecordfilter";
-				public const string OrganizationEquipment = "organization_equipment";
-				public const string OrganizationExpanderevent = "organization_expanderevent";
-				public const string OrganizationExpiredprocess = "organization_expiredprocess";
-				public const string OrganizationHierarchyrules = "organization_hierarchyrules";
-				public const string OrganizationImportjob = "organization_importjob";
-				public const string OrganizationIndexedDocuments = "organization_indexed_documents";
-				public const string OrganizationIntegrationStatuses = "organization_integration_statuses";
-				public const string OrganizationInternalcatalogassignment = "organization_internalcatalogassignment";
-				public const string OrganizationIsvconfigs = "organization_isvconfigs";
-				public const string OrganizationKbArticleTemplates = "organization_kb_article_templates";
-				public const string OrganizationKbArticles = "organization_kb_articles";
-				public const string OrganizationKnowledgeBaseRecord = "organization_KnowledgeBaseRecord";
-				public const string OrganizationKnowledgesearchmodel = "organization_knowledgesearchmodel";
-				public const string OrganizationLeadtoopportunitysalesprocess = "organization_leadtoopportunitysalesprocess";
-				public const string OrganizationLicenses = "organization_licenses";
-				public const string OrganizationMailbox = "organization_mailbox";
-				public const string OrganizationMailboxstatistics = "organization_mailboxstatistics";
-				public const string OrganizationMailboxTrackingFolder = "Organization_MailboxTrackingFolder";
-				public const string OrganizationMarketingformdisplayattributes = "organization_marketingformdisplayattributes";
-				public const string OrganizationMetric = "organization_metric";
-				public const string OrganizationMobileofflineprofileextension = "organization_mobileofflineprofileextension";
-				public const string OrganizationMsdynAccountkpiitem = "organization_msdyn_accountkpiitem";
-				public const string OrganizationMsdynActivityanalysiscleanupstate = "organization_msdyn_activityanalysiscleanupstate";
-				public const string OrganizationMsdynActivityanalysisconfig = "organization_msdyn_activityanalysisconfig";
-				public const string OrganizationMsdynAdaptivecardconfiguration = "organization_msdyn_adaptivecardconfiguration";
-				public const string OrganizationMsdynAgentresourceforecasting = "organization_msdyn_agentresourceforecasting";
-				public const string OrganizationMsdynAppinsightsmetadata = "organization_msdyn_appinsightsmetadata";
-				public const string OrganizationMsdynAttributeinfluencestatistics = "organization_msdyn_attributeinfluencestatistics";
-				public const string OrganizationMsdynCannedmessage = "organization_msdyn_cannedmessage";
-				public const string OrganizationMsdynCaseenrichment = "organization_msdyn_caseenrichment";
-				public const string OrganizationMsdynCasesuggestionrequestpayload = "organization_msdyn_casesuggestionrequestpayload";
-				public const string OrganizationMsdynCasetopic = "organization_msdyn_casetopic";
-				public const string OrganizationMsdynCasetopicIncident = "organization_msdyn_casetopic_incident";
-				public const string OrganizationMsdynCasetopicsetting = "organization_msdyn_casetopicsetting";
-				public const string OrganizationMsdynCasetopicsummary = "organization_msdyn_casetopicsummary";
-				public const string OrganizationMsdynChannelcapability = "organization_msdyn_channelcapability";
-				public const string OrganizationMsdynCiprovider = "organization_msdyn_ciprovider";
-				public const string OrganizationMsdynConsoleapplicationtype = "organization_msdyn_consoleapplicationtype";
-				public const string OrganizationMsdynConsoleappparameterdefinition = "organization_msdyn_consoleappparameterdefinition";
-				public const string OrganizationMsdynContactkpiitem = "organization_msdyn_contactkpiitem";
-				public const string OrganizationMsdynCustomeremailcommunication = "organization_msdyn_customeremailcommunication";
-				public const string OrganizationMsdynDailyaccountkpiitem = "organization_msdyn_dailyaccountkpiitem";
-				public const string OrganizationMsdynDailycontactkpiitem = "organization_msdyn_dailycontactkpiitem";
-				public const string OrganizationMsdynDailyleadkpiitem = "organization_msdyn_dailyleadkpiitem";
-				public const string OrganizationMsdynDailyopportunitykpiitem = "organization_msdyn_dailyopportunitykpiitem";
-				public const string OrganizationMsdynDataanalyticsreportCsrmanager = "organization_msdyn_dataanalyticsreport_csrmanager";
-				public const string OrganizationMsdynDataanalyticsreportForecast = "organization_msdyn_dataanalyticsreport_forecast";
-				public const string OrganizationMsdynDataanalyticsreportKsinsights = "organization_msdyn_dataanalyticsreport_ksinsights";
-				public const string OrganizationMsdynDataanalyticsreportSutreporting = "organization_msdyn_dataanalyticsreport_sutreporting";
-				public const string OrganizationMsdynDatabaseversion = "organization_msdyn_databaseversion";
-				public const string OrganizationMsdynDatahygienesettinginfo = "organization_msdyn_datahygienesettinginfo";
-				public const string OrganizationMsdynDatainsightsandanalyticsfeature = "organization_msdyn_datainsightsandanalyticsfeature";
-				public const string OrganizationMsdynDigitalsellingactivetask = "organization_msdyn_digitalsellingactivetask";
-				public const string OrganizationMsdynDigitalsellingcompletedtask = "organization_msdyn_digitalsellingcompletedtask";
-				public const string OrganizationMsdynDistributedlock = "organization_msdyn_distributedlock";
-				public const string OrganizationMsdynDuplicatedetectionpluginrun = "organization_msdyn_duplicatedetectionpluginrun";
-				public const string OrganizationMsdynFederatedarticleincident = "organization_msdyn_federatedarticleincident";
-				public const string OrganizationMsdynForecastingcache = "organization_msdyn_forecastingcache";
-				public const string OrganizationMsdynForecastpredictionstatus = "organization_msdyn_forecastpredictionstatus";
-				public const string OrganizationMsdynForecastsettingsandsummary = "organization_msdyn_forecastsettingsandsummary";
-				public const string OrganizationMsdynHelppage = "organization_msdyn_helppage";
-				public const string OrganizationMsdynInboxconfiguration = "organization_msdyn_inboxconfiguration";
-				public const string OrganizationMsdynInsightsstorevirtualentity = "organization_msdyn_insightsstorevirtualentity";
-				public const string OrganizationMsdynIottocaseprocess = "organization_msdyn_iottocaseprocess";
-				public const string OrganizationMsdynKbenrichment = "organization_msdyn_kbenrichment";
-				public const string OrganizationMsdynKbkeywordsdescsuggestionsetting = "organization_msdyn_kbkeywordsdescsuggestionsetting";
-				public const string OrganizationMsdynKmpersonalizationsetting = "organization_msdyn_kmpersonalizationsetting";
-				public const string OrganizationMsdynKnowledgeconfiguration = "organization_msdyn_knowledgeconfiguration";
-				public const string OrganizationMsdynLeadhygienesetting = "organization_msdyn_leadhygienesetting";
-				public const string OrganizationMsdynLeadkpiitem = "organization_msdyn_leadkpiitem";
-				public const string OrganizationMsdynLinkedentityattributevalidity = "organization_msdyn_linkedentityattributevalidity";
-				public const string OrganizationMsdynMaskingrule = "organization_msdyn_maskingrule";
-				public const string OrganizationMsdynMostcontacted = "organization_msdyn_mostcontacted";
-				public const string OrganizationMsdynMostcontactedby = "organization_msdyn_mostcontactedby";
-				public const string OrganizationMsdynOcchannelconfiguration = "organization_msdyn_occhannelconfiguration";
-				public const string OrganizationMsdynOcchannelstateconfiguration = "organization_msdyn_occhannelstateconfiguration";
-				public const string OrganizationMsdynOclocalizationdata = "organization_msdyn_oclocalizationdata";
-				public const string OrganizationMsdynOcsystemmessage = "organization_msdyn_ocsystemmessage";
-				public const string OrganizationMsdynOctag = "organization_msdyn_octag";
-				public const string OrganizationMsdynOmnichannelconfiguration = "organization_msdyn_omnichannelconfiguration";
-				public const string OrganizationMsdynOpportunitykpiitem = "organization_msdyn_opportunitykpiitem";
-				public const string OrganizationMsdynPaneconfiguration = "organization_msdyn_paneconfiguration";
-				public const string OrganizationMsdynPanetabconfiguration = "organization_msdyn_panetabconfiguration";
-				public const string OrganizationMsdynPanetoolconfiguration = "organization_msdyn_panetoolconfiguration";
-				public const string OrganizationMsdynPersonasecurityrolemapping = "organization_msdyn_personasecurityrolemapping";
-				public const string OrganizationMsdynPostconfig = "organization_msdyn_postconfig";
-				public const string OrganizationMsdynPostruleconfig = "organization_msdyn_postruleconfig";
-				public const string OrganizationMsdynPredictivemodelscore = "organization_msdyn_predictivemodelscore";
-				public const string OrganizationMsdynPredictivescore = "organization_msdyn_predictivescore";
-				public const string OrganizationMsdynPresence = "organization_msdyn_presence";
-				public const string OrganizationMsdynProvider = "organization_msdyn_provider";
-				public const string OrganizationMsdynRecomputetracker = "organization_msdyn_recomputetracker";
-				public const string OrganizationMsdynRecurringsalesaction = "organization_msdyn_recurringsalesaction";
-				public const string OrganizationMsdynRoutingrulesetsetting = "organization_msdyn_routingrulesetsetting";
-				public const string OrganizationMsdynSabackupdiagnostic = "organization_msdyn_sabackupdiagnostic";
-				public const string OrganizationMsdynSabatchruninstance = "organization_msdyn_sabatchruninstance";
-				public const string OrganizationMsdynSalesaccelerationinsight = "organization_msdyn_salesaccelerationinsight";
-				public const string OrganizationMsdynSalesaccelerationsettings = "organization_msdyn_salesaccelerationsettings";
-				public const string OrganizationMsdynSalesassignmentsetting = "organization_msdyn_salesassignmentsetting";
-				public const string OrganizationMsdynSalesroutingdiagnostic = "organization_msdyn_salesroutingdiagnostic";
-				public const string OrganizationMsdynSaruninstance = "organization_msdyn_saruninstance";
-				public const string OrganizationMsdynSegmentationsetting = "organization_msdyn_segmentationsetting";
-				public const string OrganizationMsdynSegmentattribute = "organization_msdyn_segmentattribute";
-				public const string OrganizationMsdynSegmentcatalogue = "organization_msdyn_segmentcatalogue";
-				public const string OrganizationMsdynSentimentanalysis = "organization_msdyn_sentimentanalysis";
-				public const string OrganizationMsdynShareasconfiguration = "organization_msdyn_shareasconfiguration";
-				public const string OrganizationMsdynSikeyvalueconfig = "organization_msdyn_sikeyvalueconfig";
-				public const string OrganizationMsdynSimilarentitiesfeatureimportance = "organization_msdyn_similarentitiesfeatureimportance";
-				public const string OrganizationMsdynSmartassistconfig = "organization_msdyn_smartassistconfig";
-				public const string OrganizationMsdynSolutionhealthruleset = "organization_msdyn_solutionhealthruleset";
-				public const string OrganizationMsdynSoundfile = "organization_msdyn_soundfile";
-				public const string OrganizationMsdynSuggestioninteraction = "organization_msdyn_suggestioninteraction";
-				public const string OrganizationMsdynSuggestionrequestpayload = "organization_msdyn_suggestionrequestpayload";
-				public const string OrganizationMsdynSuggestionsmodelsummary = "organization_msdyn_suggestionsmodelsummary";
-				public const string OrganizationMsdynSuggestionssetting = "organization_msdyn_suggestionssetting";
-				public const string OrganizationMsdynTeamsdialeradminsettings = "organization_msdyn_teamsdialeradminsettings";
-				public const string OrganizationMsdynTour = "organization_msdyn_tour";
-				public const string OrganizationMsdynUnifiedroutingsetuptracker = "organization_msdyn_unifiedroutingsetuptracker";
-				public const string OrganizationMsdynUpgraderun = "organization_msdyn_upgraderun";
-				public const string OrganizationMsdynUpgradestep = "organization_msdyn_upgradestep";
-				public const string OrganizationMsdynUpgradeversion = "organization_msdyn_upgradeversion";
-				public const string OrganizationMsdynUsagemetric = "organization_msdyn_usagemetric";
-				public const string OrganizationMsdynUsagereporting = "organization_msdyn_usagereporting";
-				public const string OrganizationMsdynUsersetting = "organization_msdyn_usersetting";
-				public const string OrganizationMsdynVivaentitysetting = "organization_msdyn_vivaentitysetting";
-				public const string OrganizationMsdynVivaorgsetting = "organization_msdyn_vivaorgsetting";
-				public const string OrganizationMsdynWallsavedquery = "organization_msdyn_wallsavedquery";
-				public const string OrganizationMsdynWkwcolleaguesforcompany = "organization_msdyn_wkwcolleaguesforcompany";
-				public const string OrganizationMsdynWkwcolleaguesforcontact = "organization_msdyn_wkwcolleaguesforcontact";
-				public const string OrganizationMsdynWorkflowactionstatus = "organization_msdyn_workflowactionstatus";
-				public const string OrganizationMsdynWorklistviewconfiguration = "organization_msdyn_worklistviewconfiguration";
-				public const string OrganizationMsdynmktEventmetadataSdkmessageprocessingstep = "organization_msdynmkt_eventmetadata_sdkmessageprocessingstep";
-				public const string OrganizationNavigationsetting = "organization_navigationsetting";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10050c3cae86 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_050c3cae86";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1005f8960225 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_05f8960225";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10175176e791 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_175176e791";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT101ae9aba71b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_1ae9aba71b";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1043904e4236 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_43904e4236";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT1046d78dc4c0 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_46d78dc4c0";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10840de5be5b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_840de5be5b";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10A65901ff6b = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_a65901ff6b";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10Bbe8491a4c = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_bbe8491a4c";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaT10C6216089e7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_t10_c6216089e7";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa80ab8691386 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_0ab8691386";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa81359a424a7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_1359a424a7";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa840c23450ed = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_40c23450ed";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa890efed25db = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_90efed25db";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa898fb4824c8 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_98fb4824c8";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8A797a12af6 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a797a12af6";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8A944cae038 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_a944cae038";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8F28d1abf40 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f28d1abf40";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8F9956aedb7 = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_f9956aedb7";
-				public const string OrganizationNewSystemDonotuseentityRp53fd1p1ekxpaTa8Feedd2fd0e = "organization_new_system_donotuseentity_rp53fd1p1ekxpa_ta8_feedd2fd0e";
-				public const string OrganizationNewprocess = "organization_newprocess";
-				public const string OrganizationOfficegraphdocument = "organization_officegraphdocument";
-				public const string OrganizationOpportunitysalesprocess = "organization_opportunitysalesprocess";
-				public const string OrganizationOrganizationdatasyncstate = "organization_organizationdatasyncstate";
-				public const string OrganizationOrganizationdatasyncsubscription = "organization_organizationdatasyncsubscription";
-				public const string OrganizationOrganizationdatasyncsubscriptionentity = "organization_organizationdatasyncsubscriptionentity";
-				public const string OrganizationOrganizationsetting = "organization_organizationsetting";
-				public const string OrganizationOrginsightsmetric = "organization_orginsightsmetric";
-				public const string OrganizationOrginsightsnotification = "organization_orginsightsnotification";
-				public const string OrganizationPackage = "organization_package";
-				public const string OrganizationPhonetocaseprocess = "organization_phonetocaseprocess";
-				public const string OrganizationPluginassembly = "organization_pluginassembly";
-				public const string OrganizationPluginpackage = "organization_pluginpackage";
-				public const string OrganizationPlugintype = "organization_plugintype";
-				public const string OrganizationPlugintypestatistic = "organization_plugintypestatistic";
-				public const string OrganizationPosition = "organization_position";
-				public const string OrganizationPost = "organization_post";
-				public const string OrganizationPostComment = "organization_PostComment";
-				public const string OrganizationPostlike = "organization_postlike";
-				public const string OrganizationPostrole = "organization_postrole";
-				public const string OrganizationPriceLevels = "organization_price_levels";
-				public const string OrganizationPrivilegesremovalsetting = "organization_privilegesremovalsetting";
-				public const string OrganizationProductAssociation = "organization_ProductAssociation";
-				public const string OrganizationProducts = "organization_products";
-				public const string OrganizationProductSubstitute = "organization_ProductSubstitute";
-				public const string OrganizationPublisher = "organization_publisher";
-				public const string OrganizationQueueitems = "organization_queueitems";
-				public const string OrganizationQueues = "organization_queues";
-				public const string OrganizationRecommendeddocument = "organization_recommendeddocument";
-				public const string OrganizationRecordfilter = "organization_recordfilter";
-				public const string OrganizationRelationshipRoles = "organization_relationship_roles";
-				public const string OrganizationRelationshipattribute = "organization_relationshipattribute";
-				public const string OrganizationResourceGroups = "organization_resource_groups";
-				public const string OrganizationResourceSpecs = "organization_resource_specs";
-				public const string OrganizationResources = "organization_resources";
-				public const string OrganizationRibbonCommand = "organization_ribbon_command";
-				public const string OrganizationRibbonContextGroup = "organization_ribbon_context_group";
-				public const string OrganizationRibbonCustomization = "organization_ribbon_customization";
-				public const string OrganizationRibbonDiff = "organization_ribbon_diff";
-				public const string OrganizationRibbonRule = "organization_ribbon_rule";
-				public const string OrganizationRibbonTabToCommandMap = "organization_ribbon_tab_to_command_map";
-				public const string OrganizationRoleeditorlayout = "organization_roleeditorlayout";
-				public const string OrganizationRoles = "organization_roles";
-				public const string OrganizationRoutingruleitems = "organization_routingruleitems";
-				public const string OrganizationRoutingRules = "organization_RoutingRules";
-				public const string OrganizationSalesLiterature = "organization_sales_literature";
-				public const string OrganizationSavedQueries = "organization_saved_queries";
-				public const string OrganizationSavedQueryVisualizations = "organization_saved_query_visualizations";
-				public const string OrganizationSavedorginsightsconfiguration = "organization_savedorginsightsconfiguration";
-				public const string OrganizationSdkmessage = "organization_sdkmessage";
-				public const string OrganizationSdkmessagefilter = "organization_sdkmessagefilter";
-				public const string OrganizationSdkmessagepair = "organization_sdkmessagepair";
-				public const string OrganizationSdkmessageprocessingstep = "organization_sdkmessageprocessingstep";
-				public const string OrganizationSdkmessageprocessingstepimage = "organization_sdkmessageprocessingstepimage";
-				public const string OrganizationSdkmessageprocessingstepsecureconfig = "organization_sdkmessageprocessingstepsecureconfig";
-				public const string OrganizationSdkmessagerequest = "organization_sdkmessagerequest";
-				public const string OrganizationSdkmessagerequestfield = "organization_sdkmessagerequestfield";
-				public const string OrganizationSdkmessageresponse = "organization_sdkmessageresponse";
-				public const string OrganizationSdkmessageresponsefield = "organization_sdkmessageresponsefield";
-				public const string OrganizationSearchrelationshipsettings = "organization_searchrelationshipsettings";
-				public const string OrganizationServiceendpoint = "organization_serviceendpoint";
-				public const string OrganizationServices = "organization_services";
-				public const string OrganizationSettingdefinition = "organization_settingdefinition";
-				public const string OrganizationSharedlinksetting = "organization_sharedlinksetting";
-				public const string OrganizationSharedobject = "organization_sharedobject";
-				public const string OrganizationSharedworkspace = "organization_sharedworkspace";
-				public const string OrganizationSharepointdata = "organization_sharepointdata";
-				public const string OrganizationSharepointdocument = "organization_sharepointdocument";
-				public const string OrganizationSimilarityrule = "organization_similarityrule";
-				public const string OrganizationSitemap = "organization_sitemap";
-				public const string OrganizationSites = "organization_sites";
-				public const string OrganizationSocialinsightsconfiguration = "organization_socialinsightsconfiguration";
-				public const string OrganizationSolution = "organization_solution";
-				public const string OrganizationSolutioncomponentattributeconfiguration = "organization_solutioncomponentattributeconfiguration";
-				public const string OrganizationSolutioncomponentconfiguration = "organization_solutioncomponentconfiguration";
-				public const string OrganizationSolutioncomponentrelationshipconfiguration = "organization_solutioncomponentrelationshipconfiguration";
-				public const string OrganizationStatusMaps = "organization_status_maps";
-				public const string OrganizationStringMaps = "organization_string_maps";
-				public const string OrganizationSubjects = "organization_subjects";
-				public const string OrganizationSuggestioncardtemplate = "organization_suggestioncardtemplate";
-				public const string OrganizationSupportusertable = "organization_supportusertable";
-				public const string OrganizationSynapselinkexternaltablestate = "organization_synapselinkexternaltablestate";
-				public const string OrganizationSynapselinkprofile = "organization_synapselinkprofile";
-				public const string OrganizationSynapselinkprofileentity = "organization_synapselinkprofileentity";
-				public const string OrganizationSynapselinkprofileentitystate = "organization_synapselinkprofileentitystate";
-				public const string OrganizationSynapselinkschedule = "organization_synapselinkschedule";
-				public const string OrganizationSyncErrors = "Organization_SyncErrors";
-				public const string OrganizationSystemUsers = "organization_system_users";
-				public const string OrganizationSystemapplicationmetadata = "organization_systemapplicationmetadata";
-				public const string OrganizationSystemforms = "organization_systemforms";
-				public const string OrganizationTeammobileofflineprofilemembership = "organization_teammobileofflineprofilemembership";
-				public const string OrganizationTeams = "organization_teams";
-				public const string OrganizationTerritories = "organization_territories";
-				public const string OrganizationTextanalyticsentitymapping = "organization_textanalyticsentitymapping";
-				public const string OrganizationTheme = "organization_theme";
-				public const string OrganizationTopicmodel = "organization_topicmodel";
-				public const string OrganizationTopicmodelconfiguration = "organization_topicmodelconfiguration";
-				public const string OrganizationTopicmodelexecutionhistory = "organization_topicmodelexecutionhistory";
-				public const string OrganizationTraceassociation = "organization_traceassociation";
-				public const string OrganizationTracelog = "organization_tracelog";
-				public const string OrganizationTransactioncurrencies = "organization_transactioncurrencies";
-				public const string OrganizationTranslationprocess = "organization_translationprocess";
-				public const string OrganizationUofSchedules = "organization_uof_schedules";
-				public const string OrganizationUserMapping = "organization_UserMapping";
-				public const string OrganizationUsermobileofflineprofilemembership = "organization_usermobileofflineprofilemembership";
-				public const string OrganizationUserrating = "organization_userrating";
-				public const string OrganizationVirtualentitymetadata = "organization_virtualentitymetadata";
-				public const string OrganizationWebwizard = "organization_webwizard";
-				public const string OrganizationWizardaccessprivilege = "organization_wizardaccessprivilege";
-				public const string OrganizationWizardpage = "organization_wizardpage";
-				public const string UserentityinstancedataOrganization = "userentityinstancedata_organization";
-				public const string WebresourceOrganization = "webresource_organization";
+                public const string ChannelpropertyOrganization = "channelproperty_organization";
+                public const string ChannelpropertygroupOrganization = "channelpropertygroup_organization";
+                public const string CustomcontrolOrganization = "customcontrol_organization";
+                public const string CustomcontroldefaultconfigOrganization = "customcontroldefaultconfig_organization";
+                public const string CustomcontrolresourceOrganization = "customcontrolresource_organization";
+                public const string LanguagelocaleOrganization = "languagelocale_organization";
+                public const string LkAuthorizationserverOrganizationid = "lk_authorizationserver_organizationid";
+                public const string LkDataperformanceOrganizationid = "lk_dataperformance_organizationid";
+                public const string LkDocumenttemplatebaseOrganization = "lk_documenttemplatebase_organization";
+                public const string LkFieldsecurityprofileOrganizationid = "lk_fieldsecurityprofile_organizationid";
+                public const string LkOrganizationuiOrganizationid = "lk_organizationui_organizationid";
+                public const string LkPartnerapplicationOrganizationid = "lk_partnerapplication_organizationid";
+                public const string LkPrincipalobjectattributeaccessOrganizationid = "lk_principalobjectattributeaccess_organizationid";
+                public const string LkPrincipalsyncattributemapOrganizationid = "lk_principalsyncattributemap_organizationid";
+                public const string LkSyncattributemappingprofileOrganizationid = "lk_syncattributemappingprofile_organizationid";
+                public const string MobileOfflineProfileOrganization = "MobileOfflineProfile_organization";
+                public const string MobileOfflineProfileItemOrganization = "MobileOfflineProfileItem_organization";
+                public const string MobileOfflineProfileItemAssociationOrganization = "MobileOfflineProfileItemAssociation_organization";
+                public const string OfflinecommanddefinitionOrganization = "offlinecommanddefinition_organization";
+                public const string OrganizationAciviewmapper = "organization_aciviewmapper";
+                public const string OrganizationAdvancedsimilarityrule = "organization_advancedsimilarityrule";
+                public const string OrganizationAdxExternalidentity = "organization_adx_externalidentity";
+                public const string OrganizationAdxWebformsession = "organization_adx_webformsession";
+                public const string OrganizationAicopilot = "organization_aicopilot";
+                public const string OrganizationAiplugintitle = "organization_aiplugintitle";
+                public const string OrganizationAllowedmcpclient = "organization_allowedmcpclient";
+                public const string OrganizationAnyprivilegeentity = "organization_anyprivilegeentity";
+                public const string OrganizationAppaction = "organization_appaction";
+                public const string OrganizationAppactionmigration = "organization_appactionmigration";
+                public const string OrganizationAppactionrule = "organization_appactionrule";
+                public const string OrganizationAppconfig = "organization_appconfig";
+                public const string OrganizationAppconfiginstance = "organization_appconfiginstance";
+                public const string OrganizationAppconfigmaster = "organization_appconfigmaster";
+                public const string OrganizationAppelement = "organization_appelement";
+                public const string OrganizationAppentitysearchview = "organization_appentitysearchview";
+                public const string OrganizationApplication = "organization_application";
+                public const string OrganizationApplicationfile = "organization_applicationfile";
+                public const string OrganizationAppmodule = "organization_appmodule";
+                public const string OrganizationAppmodulecomponentedge = "organization_appmodulecomponentedge";
+                public const string OrganizationAppmodulecomponentnode = "organization_appmodulecomponentnode";
+                public const string OrganizationAppsetting = "organization_appsetting";
+                public const string OrganizationAppusersetting = "organization_appusersetting";
+                public const string OrganizationAsyncOperations = "Organization_AsyncOperations";
+                public const string OrganizationAthenareconciliationinfo = "organization_athenareconciliationinfo";
+                public const string OrganizationAttributeclusterconfig = "organization_attributeclusterconfig";
+                public const string OrganizationAttributemap = "organization_attributemap";
+                public const string OrganizationAzureserviceconnection = "organization_azureserviceconnection";
+                public const string OrganizationBulkarchiveoperationdetail = "organization_bulkarchiveoperationdetail";
+                public const string OrganizationBulkDeleteFailures = "Organization_BulkDeleteFailures";
+                public const string OrganizationBusinessUnitNewsArticles = "organization_business_unit_news_articles";
+                public const string OrganizationBusinessUnits = "organization_business_units";
+                public const string OrganizationCalendars = "organization_calendars";
+                public const string OrganizationCatalog = "organization_catalog";
+                public const string OrganizationCatalogassignment = "organization_catalogassignment";
+                public const string OrganizationComplexcontrols = "organization_complexcontrols";
+                public const string OrganizationConnectionRoles = "organization_connection_roles";
+                public const string OrganizationCopilotexamplequestion = "organization_copilotexamplequestion";
+                public const string OrganizationCustomDisplaystrings = "organization_custom_displaystrings";
+                public const string OrganizationDatalakeworkspace = "organization_datalakeworkspace";
+                public const string OrganizationDatalakeworkspacepermission = "organization_datalakeworkspacepermission";
+                public const string OrganizationDataprocessingconfiguration = "organization_dataprocessingconfiguration";
+                public const string OrganizationDelegatedauthorization = "organization_delegatedauthorization";
+                public const string OrganizationDeleteditemreference = "organization_deleteditemreference";
+                public const string OrganizationDelveactionhub = "organization_delveactionhub";
+                public const string OrganizationEmailaddressconfiguration = "organization_emailaddressconfiguration";
+                public const string OrganizationEmailserverprofile = "organization_emailserverprofile";
+                public const string OrganizationEntityanalyticsconfig = "organization_entityanalyticsconfig";
+                public const string OrganizationEntityclusterconfig = "organization_entityclusterconfig";
+                public const string OrganizationEntitydataprovider = "organization_entitydataprovider";
+                public const string OrganizationEntitydatasource = "organization_entitydatasource";
+                public const string OrganizationEntitymap = "organization_entitymap";
+                public const string OrganizationEntityrecordfilter = "organization_entityrecordfilter";
+                public const string OrganizationExpanderevent = "organization_expanderevent";
+                public const string OrganizationExpiredprocess = "organization_expiredprocess";
+                public const string OrganizationHierarchyrules = "organization_hierarchyrules";
+                public const string OrganizationImportjob = "organization_importjob";
+                public const string OrganizationIndexedDocuments = "organization_indexed_documents";
+                public const string OrganizationIntegrationStatuses = "organization_integration_statuses";
+                public const string OrganizationInternalcatalogassignment = "organization_internalcatalogassignment";
+                public const string OrganizationIsvconfigs = "organization_isvconfigs";
+                public const string OrganizationKbArticleTemplates = "organization_kb_article_templates";
+                public const string OrganizationKbArticles = "organization_kb_articles";
+                public const string OrganizationKnowledgeBaseRecord = "organization_KnowledgeBaseRecord";
+                public const string OrganizationKnowledgesearchmodel = "organization_knowledgesearchmodel";
+                public const string OrganizationLicenses = "organization_licenses";
+                public const string OrganizationMailbox = "organization_mailbox";
+                public const string OrganizationMailboxstatistics = "organization_mailboxstatistics";
+                public const string OrganizationMailboxTrackingFolder = "Organization_MailboxTrackingFolder";
+                public const string OrganizationMainfewshot = "organization_mainfewshot";
+                public const string OrganizationMakerfewshot = "organization_makerfewshot";
+                public const string OrganizationMaskingrule = "organization_maskingrule";
+                public const string OrganizationMetadataforarchival = "organization_metadataforarchival";
+                public const string OrganizationMetric = "organization_metric";
+                public const string OrganizationMobileofflineprofileextension = "organization_mobileofflineprofileextension";
+                public const string OrganizationMsdynAppinsightsmetadata = "organization_msdyn_appinsightsmetadata";
+                public const string OrganizationMsdynFederatedarticleincident = "organization_msdyn_federatedarticleincident";
+                public const string OrganizationMsdynHelppage = "organization_msdyn_helppage";
+                public const string OrganizationMsdynInsightsstorevirtualentity = "organization_msdyn_insightsstorevirtualentity";
+                public const string OrganizationMsdynKmpersonalizationsetting = "organization_msdyn_kmpersonalizationsetting";
+                public const string OrganizationMsdynKnowledgeconfiguration = "organization_msdyn_knowledgeconfiguration";
+                public const string OrganizationMsdynModulerundetail = "organization_msdyn_modulerundetail";
+                public const string OrganizationMsdynRtestructuredtemplate = "organization_msdyn_rtestructuredtemplate";
+                public const string OrganizationMsdynRtetemplatemapping = "organization_msdyn_rtetemplatemapping";
+                public const string OrganizationMsdynSolutionhealthruleset = "organization_msdyn_solutionhealthruleset";
+                public const string OrganizationMsdynTour = "organization_msdyn_tour";
+                public const string OrganizationMsdynWorkflowactionstatus = "organization_msdyn_workflowactionstatus";
+                public const string OrganizationNavigationsetting = "organization_navigationsetting";
+                public const string OrganizationNewprocess = "organization_newprocess";
+                public const string OrganizationOfficegraphdocument = "organization_officegraphdocument";
+                public const string OrganizationOrganizationdatasyncfnostate = "organization_organizationdatasyncfnostate";
+                public const string OrganizationOrganizationdatasyncstate = "organization_organizationdatasyncstate";
+                public const string OrganizationOrganizationdatasyncsubscription = "organization_organizationdatasyncsubscription";
+                public const string OrganizationOrganizationdatasyncsubscriptionentity = "organization_organizationdatasyncsubscriptionentity";
+                public const string OrganizationOrganizationdatasyncsubscriptionfnotable = "organization_organizationdatasyncsubscriptionfnotable";
+                public const string OrganizationOrganizationsetting = "organization_organizationsetting";
+                public const string OrganizationOrginsightsmetric = "organization_orginsightsmetric";
+                public const string OrganizationOrginsightsnotification = "organization_orginsightsnotification";
+                public const string OrganizationPackage = "organization_package";
+                public const string OrganizationPackagehistory = "organization_packagehistory";
+                public const string OrganizationPluginassembly = "organization_pluginassembly";
+                public const string OrganizationPluginpackage = "organization_pluginpackage";
+                public const string OrganizationPlugintype = "organization_plugintype";
+                public const string OrganizationPlugintypestatistic = "organization_plugintypestatistic";
+                public const string OrganizationPosition = "organization_position";
+                public const string OrganizationPost = "organization_post";
+                public const string OrganizationPostComment = "organization_PostComment";
+                public const string OrganizationPostlike = "organization_postlike";
+                public const string OrganizationPostrole = "organization_postrole";
+                public const string OrganizationPrivilegesremovalsetting = "organization_privilegesremovalsetting";
+                public const string OrganizationPublisher = "organization_publisher";
+                public const string OrganizationPurviewlabelinfo = "organization_purviewlabelinfo";
+                public const string OrganizationPurviewlabelsynccache = "organization_purviewlabelsynccache";
+                public const string OrganizationQueueitems = "organization_queueitems";
+                public const string OrganizationQueues = "organization_queues";
+                public const string OrganizationRecommendeddocument = "organization_recommendeddocument";
+                public const string OrganizationRecordfilter = "organization_recordfilter";
+                public const string OrganizationRecyclebinconfig = "organization_recyclebinconfig";
+                public const string OrganizationRelationshipRoles = "organization_relationship_roles";
+                public const string OrganizationRelationshipattribute = "organization_relationshipattribute";
+                public const string OrganizationRetentionoperationdetail = "organization_retentionoperationdetail";
+                public const string OrganizationRibbonCommand = "organization_ribbon_command";
+                public const string OrganizationRibbonContextGroup = "organization_ribbon_context_group";
+                public const string OrganizationRibbonCustomization = "organization_ribbon_customization";
+                public const string OrganizationRibbonDiff = "organization_ribbon_diff";
+                public const string OrganizationRibbonRule = "organization_ribbon_rule";
+                public const string OrganizationRibbonTabToCommandMap = "organization_ribbon_tab_to_command_map";
+                public const string OrganizationRoleeditorlayout = "organization_roleeditorlayout";
+                public const string OrganizationRoles = "organization_roles";
+                public const string OrganizationRoutingruleitems = "organization_routingruleitems";
+                public const string OrganizationRoutingRules = "organization_RoutingRules";
+                public const string OrganizationSaSuggestedaction = "organization_sa_suggestedaction";
+                public const string OrganizationSaSuggestedactioncriteria = "organization_sa_suggestedactioncriteria";
+                public const string OrganizationSavedQueries = "organization_saved_queries";
+                public const string OrganizationSavedQueryVisualizations = "organization_saved_query_visualizations";
+                public const string OrganizationSavedorginsightsconfiguration = "organization_savedorginsightsconfiguration";
+                public const string OrganizationSdkmessage = "organization_sdkmessage";
+                public const string OrganizationSdkmessagefilter = "organization_sdkmessagefilter";
+                public const string OrganizationSdkmessagepair = "organization_sdkmessagepair";
+                public const string OrganizationSdkmessageprocessingstep = "organization_sdkmessageprocessingstep";
+                public const string OrganizationSdkmessageprocessingstepimage = "organization_sdkmessageprocessingstepimage";
+                public const string OrganizationSdkmessageprocessingstepsecureconfig = "organization_sdkmessageprocessingstepsecureconfig";
+                public const string OrganizationSdkmessagerequest = "organization_sdkmessagerequest";
+                public const string OrganizationSdkmessagerequestfield = "organization_sdkmessagerequestfield";
+                public const string OrganizationSdkmessageresponse = "organization_sdkmessageresponse";
+                public const string OrganizationSdkmessageresponsefield = "organization_sdkmessageresponsefield";
+                public const string OrganizationSearchattributesettings = "organization_searchattributesettings";
+                public const string OrganizationSearchcustomanalyzer = "organization_searchcustomanalyzer";
+                public const string OrganizationSearchrelationshipsettings = "organization_searchrelationshipsettings";
+                public const string OrganizationSensitivitylabelattributemapping = "organization_sensitivitylabelattributemapping";
+                public const string OrganizationServiceendpoint = "organization_serviceendpoint";
+                public const string OrganizationSettingdefinition = "organization_settingdefinition";
+                public const string OrganizationSharedlinksetting = "organization_sharedlinksetting";
+                public const string OrganizationSharepointdata = "organization_sharepointdata";
+                public const string OrganizationSharepointdocument = "organization_sharepointdocument";
+                public const string OrganizationSharepointmanagedidentity = "organization_sharepointmanagedidentity";
+                public const string OrganizationSimilarityrule = "organization_similarityrule";
+                public const string OrganizationSitemap = "organization_sitemap";
+                public const string OrganizationSocialinsightsconfiguration = "organization_socialinsightsconfiguration";
+                public const string OrganizationSolution = "organization_solution";
+                public const string OrganizationSolutioncomponentattributeconfiguration = "organization_solutioncomponentattributeconfiguration";
+                public const string OrganizationSolutioncomponentconfiguration = "organization_solutioncomponentconfiguration";
+                public const string OrganizationSolutioncomponentrelationshipconfiguration = "organization_solutioncomponentrelationshipconfiguration";
+                public const string OrganizationStatusMaps = "organization_status_maps";
+                public const string OrganizationStringMaps = "organization_string_maps";
+                public const string OrganizationSubjects = "organization_subjects";
+                public const string OrganizationSuggestioncardtemplate = "organization_suggestioncardtemplate";
+                public const string OrganizationSupportusertable = "organization_supportusertable";
+                public const string OrganizationSynapselinkexternaltablestate = "organization_synapselinkexternaltablestate";
+                public const string OrganizationSynapselinkprofile = "organization_synapselinkprofile";
+                public const string OrganizationSynapselinkprofileentity = "organization_synapselinkprofileentity";
+                public const string OrganizationSynapselinkprofileentitystate = "organization_synapselinkprofileentitystate";
+                public const string OrganizationSynapselinkschedule = "organization_synapselinkschedule";
+                public const string OrganizationSyncErrors = "Organization_SyncErrors";
+                public const string OrganizationSystemUsers = "organization_system_users";
+                public const string OrganizationSystemapplicationmetadata = "organization_systemapplicationmetadata";
+                public const string OrganizationSystemforms = "organization_systemforms";
+                public const string OrganizationTeammobileofflineprofilemembership = "organization_teammobileofflineprofilemembership";
+                public const string OrganizationTeams = "organization_teams";
+                public const string OrganizationTerritories = "organization_territories";
+                public const string OrganizationTextanalyticsentitymapping = "organization_textanalyticsentitymapping";
+                public const string OrganizationTheme = "organization_theme";
+                public const string OrganizationTraceassociation = "organization_traceassociation";
+                public const string OrganizationTracelog = "organization_tracelog";
+                public const string OrganizationTransactioncurrencies = "organization_transactioncurrencies";
+                public const string OrganizationTranslationprocess = "organization_translationprocess";
+                public const string OrganizationUserMapping = "organization_UserMapping";
+                public const string OrganizationUsermobileofflineprofilemembership = "organization_usermobileofflineprofilemembership";
+                public const string OrganizationUserrating = "organization_userrating";
+                public const string OrganizationUxagentproject = "organization_uxagentproject";
+                public const string OrganizationUxagentprojectfile = "organization_uxagentprojectfile";
+                public const string OrganizationViewasexamplequestion = "organization_viewasexamplequestion";
+                public const string OrganizationVirtualentitymetadata = "organization_virtualentitymetadata";
+                public const string OrganizationWebwizard = "organization_webwizard";
+                public const string OrganizationWizardaccessprivilege = "organization_wizardaccessprivilege";
+                public const string OrganizationWizardpage = "organization_wizardpage";
+                public const string UserentityinstancedataOrganization = "userentityinstancedata_organization";
+                public const string WebresourceOrganization = "webresource_organization";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string BasecurrencyOrganization = "basecurrency_organization";
-				public const string CalendarOrganization = "calendar_organization";
-				public const string DefaultMobileOfflineProfileOrganization = "DefaultMobileOfflineProfile_Organization";
-				public const string EmailServerProfileOrganization = "EmailServerProfile_Organization";
-				public const string LkOrganizationCreatedonbehalfby = "lk_organization_createdonbehalfby";
-				public const string LkOrganizationEntityimage = "lk_organization_entityimage";
-				public const string LkOrganizationModifiedonbehalfby = "lk_organization_modifiedonbehalfby";
-				public const string LkOrganizationbaseCreatedby = "lk_organizationbase_createdby";
-				public const string LkOrganizationbaseModifiedby = "lk_organizationbase_modifiedby";
-				public const string TemplateOrganization = "Template_Organization";
+                public const string BasecurrencyOrganization = "basecurrency_organization";
+                public const string CalendarOrganization = "calendar_organization";
+                public const string DefaultMobileOfflineProfileOrganization = "DefaultMobileOfflineProfile_Organization";
+                public const string EmailServerProfileOrganization = "EmailServerProfile_Organization";
+                public const string LkOrganizationCreatedonbehalfby = "lk_organization_createdonbehalfby";
+                public const string LkOrganizationEntityimage = "lk_organization_entityimage";
+                public const string LkOrganizationModifiedonbehalfby = "lk_organization_modifiedonbehalfby";
+                public const string LkOrganizationbaseCreatedby = "lk_organizationbase_createdby";
+                public const string LkOrganizationbaseModifiedby = "lk_organizationbase_modifiedby";
+                public const string TemplateOrganization = "Template_Organization";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static Organization Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static Organization Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -11421,30 +12542,30 @@ namespace dgt.power.dataverse
 
         public Organization GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  Organization(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new Organization(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<Organization> OrganizationSet
-		{
-			get
-			{
-				return CreateQuery<Organization>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<Organization> OrganizationSet
+        {
+            get
+            {
+                return CreateQuery<Organization>();
+            }
+        }
+    }
+    #endregion
 }

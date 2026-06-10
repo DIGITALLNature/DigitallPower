@@ -165,7 +165,7 @@ public class SampleDataverse
         Name = "Disabled Workflow",
         UniqueName = "disabled_workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
-        Category = new OptionSetValue(Workflow.Options.Category.Workflow_),
+        Category = new OptionSetValue(Workflow.Options.Category.Workflow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
@@ -175,7 +175,7 @@ public class SampleDataverse
     {
         Name = "Active Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
-        Category = new OptionSetValue(Workflow.Options.Category.Workflow_),
+        Category = new OptionSetValue(Workflow.Options.Category.Workflow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft),
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
@@ -185,7 +185,7 @@ public class SampleDataverse
     {
         Name = "Owner Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
-        Category = new OptionSetValue(Workflow.Options.Category.Workflow_),
+        Category = new OptionSetValue(Workflow.Options.Category.Workflow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
     };
@@ -194,7 +194,7 @@ public class SampleDataverse
     {
         Name = "System Owned Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
-        Category = new OptionSetValue(Workflow.Options.Category.Workflow_),
+        Category = new OptionSetValue(Workflow.Options.Category.Workflow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
     };
@@ -203,7 +203,7 @@ public class SampleDataverse
     {
         Name = "Whitelisted Owned Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
-        Category = new OptionSetValue(Workflow.Options.Category.Workflow_),
+        Category = new OptionSetValue(Workflow.Options.Category.Workflow),
         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated),
         OwnerId = new SystemUser(Guid.NewGuid())

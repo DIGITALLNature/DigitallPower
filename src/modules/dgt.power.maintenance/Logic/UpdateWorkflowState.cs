@@ -182,8 +182,8 @@ public class UpdateWorkflowState(
         switch (workflowCategory.Value)
         {
             case Workflow.Options.Category.ModernFlow:
-            case Workflow.Options.Category.Workflow_:
-            case Workflow.Options.Category.WebClientAPIFlow:
+            case Workflow.Options.Category.Workflow:
+            case Workflow.Options.Category.AIFlow:
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory}) has no name");
                 if (workflowConfig.Flows?.TryGetValue(workflowName, out var flowConfig) == true)
                 {

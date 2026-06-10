@@ -21,18 +21,18 @@ public class WebresourcesProcessor(
 {
     private readonly WebresourcesPattern[] _knownWebresourcesPattern =
     [
-        new WebresourcesPattern(WebResource.Options.WebResourceType.Webpage_HTML_, "*.html"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheet_CSS_, "*.css"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.Script_JScript_, "*.js"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.Data_XML_, "*.xml"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.WebpageHTML, "*.html"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheetCSS, "*.css"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.ScriptJScript, "*.js"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.DataXML, "*.xml"),
         new WebresourcesPattern(WebResource.Options.WebResourceType.PNGFormat, "*.png"),
         new WebresourcesPattern(WebResource.Options.WebResourceType.JPGFormat, "*.jpg"),
         new WebresourcesPattern(WebResource.Options.WebResourceType.GIFFormat, "*.gif"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.Silverlight_XAP_, "*.xap"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheet_XSL_, "*.xsl"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.SilverlightXAP, "*.xap"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.StyleSheetXSL, "*.xsl"),
         new WebresourcesPattern(WebResource.Options.WebResourceType.ICOFormat, "*.ico"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.VectorFormat_SVG_, "*.svg"),
-        new WebresourcesPattern(WebResource.Options.WebResourceType.String_RESX_, "*.resx")
+        new WebresourcesPattern(WebResource.Options.WebResourceType.VectorFormatSVG, "*.svg"),
+        new WebresourcesPattern(WebResource.Options.WebResourceType.StringRESX, "*.resx")
     ];
 
     private readonly DataContext _context = new(connection) { MergeOption = MergeOption.NoTracking };

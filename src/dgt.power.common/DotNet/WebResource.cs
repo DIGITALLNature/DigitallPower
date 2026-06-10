@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Data equivalent to files used in Web development. Web resources provide client-side components that are used to provide custom user interface elements.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("webresource")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("webresource")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class WebResource : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class WebResource : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public WebResource() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public WebResource() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public WebResource(bool trackChanges = false) : base(EntityLogicalName)
+        public WebResource(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public WebResource(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public WebResource(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public WebResource(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public WebResource(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public WebResource(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public WebResource(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,714 +61,727 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("webresourceid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("webresourceid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				WebResourceId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                WebResourceId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the web resource.
 		/// </summary>
-		[AttributeLogicalName("webresourceid")]
+        [AttributeLogicalName("webresourceid")]
         public Guid? WebResourceId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("webresourceid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WebResourceId));
+                OnPropertyChanging();
                 SetAttributeValue("webresourceid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(WebResourceId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component can be deleted.
 		/// </summary>
-		[AttributeLogicalName("canbedeleted")]
+        [AttributeLogicalName("canbedeleted")]
         public BooleanManagedProperty? CanBeDeleted
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("canbedeleted");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CanBeDeleted));
+                OnPropertyChanging();
                 SetAttributeValue("canbedeleted", value);
-                OnPropertyChanged(nameof(CanBeDeleted));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Bytes of the web resource, in Base64 format.
 		/// </summary>
-		[AttributeLogicalName("content")]
+        [AttributeLogicalName("content")]
         public string? Content
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("content");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Content));
+                OnPropertyChanging();
                 SetAttributeValue("content", value);
-                OnPropertyChanged(nameof(Content));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Reference to the content file on Azure.
 		/// </summary>
-		[AttributeLogicalName("contentfileref")]
+        [AttributeLogicalName("contentfileref")]
         public Guid? ContentFileRef
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("contentfileref");
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("contentfileref_name")]
+        public string? ContentFileRefName
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("contentfileref_name");
+            }
+        }
+
+        /// <summary>
 		/// Json representation of the content of the resource.
 		/// </summary>
-		[AttributeLogicalName("contentjson")]
+        [AttributeLogicalName("contentjson")]
         public string? ContentJson
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("contentjson");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ContentJson));
+                OnPropertyChanging();
                 SetAttributeValue("contentjson", value);
-                OnPropertyChanged(nameof(ContentJson));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Reference to the Json content file on Azure.
 		/// </summary>
-		[AttributeLogicalName("contentjsonfileref")]
+        [AttributeLogicalName("contentjsonfileref")]
         public Guid? ContentJsonFileRef
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("contentjsonfileref");
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("contentjsonfileref_name")]
+        public string? ContentJsonFileRefName
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("contentjsonfileref_name");
+            }
+        }
+
+        /// <summary>
 		/// Unique identifier of the user who created the web resource.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the web resource was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the web resource.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("dependencyxml")]
+        [AttributeLogicalName("dependencyxml")]
         public string? DependencyXml
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("dependencyxml");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DependencyXml));
+                OnPropertyChanging();
                 SetAttributeValue("dependencyxml", value);
-                OnPropertyChanged(nameof(DependencyXml));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Description of the web resource.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Display name of the web resource.
 		/// </summary>
-		[AttributeLogicalName("displayname")]
+        [AttributeLogicalName("displayname")]
         public string? DisplayName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("displayname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DisplayName));
+                OnPropertyChanging();
                 SetAttributeValue("displayname", value);
-                OnPropertyChanged(nameof(DisplayName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version in which the form is introduced.
 		/// </summary>
-		[AttributeLogicalName("introducedversion")]
+        [AttributeLogicalName("introducedversion")]
         public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntroducedVersion));
+                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged(nameof(IntroducedVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this web resource is available for mobile client in offline mode.
 		/// </summary>
-		[AttributeLogicalName("isavailableformobileoffline")]
+        [AttributeLogicalName("isavailableformobileoffline")]
         public bool? IsAvailableForMobileOffline
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isavailableformobileoffline");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsAvailableForMobileOffline));
+                OnPropertyChanging();
                 SetAttributeValue("isavailableformobileoffline", value);
-                OnPropertyChanged(nameof(IsAvailableForMobileOffline));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component can be customized.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this web resource is enabled for mobile client.
 		/// </summary>
-		[AttributeLogicalName("isenabledformobileclient")]
+        [AttributeLogicalName("isenabledformobileclient")]
         public bool? IsEnabledForMobileClient
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isenabledformobileclient");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsEnabledForMobileClient));
+                OnPropertyChanging();
                 SetAttributeValue("isenabledformobileclient", value);
-                OnPropertyChanged(nameof(IsEnabledForMobileClient));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component should be hidden.
 		/// </summary>
-		[AttributeLogicalName("ishidden")]
+        [AttributeLogicalName("ishidden")]
         public BooleanManagedProperty? IsHidden
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("ishidden");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsHidden));
+                OnPropertyChanging();
                 SetAttributeValue("ishidden", value);
-                OnPropertyChanged(nameof(IsHidden));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("ismanaged")]
+        
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Language of the web resource.
 		/// </summary>
-		[AttributeLogicalName("languagecode")]
+        [AttributeLogicalName("languagecode")]
         public int? LanguageCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("languagecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LanguageCode));
+                OnPropertyChanging();
                 SetAttributeValue("languagecode", value);
-                OnPropertyChanged(nameof(LanguageCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the web resource.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the web resource was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who modified the web resource.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the web resource.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization associated with the web resource.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Silverlight runtime version number required by a silverlight web resource.
 		/// </summary>
-		[AttributeLogicalName("silverlightversion")]
+        [AttributeLogicalName("silverlightversion")]
         public string? SilverlightVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("silverlightversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SilverlightVersion));
+                OnPropertyChanging();
                 SetAttributeValue("silverlightversion", value);
-                OnPropertyChanged(nameof(SilverlightVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("webresourceidunique")]
+        [AttributeLogicalName("webresourceidunique")]
         public Guid? WebResourceIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("webresourceidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Drop-down list for selecting the type of the web resource.
 		/// </summary>
-		[AttributeLogicalName("webresourcetype")]
+        [AttributeLogicalName("webresourcetype")]
         public OptionSetValue? WebResourceType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("webresourcetype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WebResourceType));
+                OnPropertyChanging();
                 SetAttributeValue("webresourcetype", value);
-                OnPropertyChanged(nameof(WebResourceType));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
+        /// <summary>
+        /// 1:N solution_configuration_webresource
+        /// </summary>
+        [RelationshipSchemaName("solution_configuration_webresource")]
+        public IEnumerable<Solution> SolutionConfigurationWebresource
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Solution>("solution_configuration_webresource", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("solution_configuration_webresource", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N solution_configuration_webresource
-		/// </summary>	
-		[RelationshipSchemaName("solution_configuration_webresource")]
-		public IEnumerable<Solution> SolutionConfigurationWebresource
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Solution>("solution_configuration_webresource", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SolutionConfigurationWebresource");
-				this.SetRelatedEntities<Solution>("solution_configuration_webresource", null, value);
-				this.OnPropertyChanged("SolutionConfigurationWebresource");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsAvailableForMobileOffline
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsEnabledForMobileClient
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct WebResourceType
+            {
+                public const int WebpageHTML = 1;
+                public const int StyleSheetCSS = 2;
+                public const int ScriptJScript = 3;
+                public const int DataXML = 4;
+                public const int PNGFormat = 5;
+                public const int JPGFormat = 6;
+                public const int GIFFormat = 7;
+                public const int SilverlightXAP = 8;
+                public const int StyleSheetXSL = 9;
+                public const int ICOFormat = 10;
+                public const int VectorFormatSVG = 11;
+                public const int StringRESX = 12;
+            }
+        }
+        #endregion
 
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string WebResourceId = "webresourceid";
+            public const string CanBeDeleted = "canbedeleted";
+            public const string ComponentState = "componentstate";
+            public const string Content = "content";
+            public const string ContentFileRef = "contentfileref";
+            public const string ContentFileRefName = "contentfileref_name";
+            public const string ContentJson = "contentjson";
+            public const string ContentJsonFileRef = "contentjsonfileref";
+            public const string ContentJsonFileRefName = "contentjsonfileref_name";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string DependencyXml = "dependencyxml";
+            public const string Description = "description";
+            public const string DisplayName = "displayname";
+            public const string IntroducedVersion = "introducedversion";
+            public const string IsAvailableForMobileOffline = "isavailableformobileoffline";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsEnabledForMobileClient = "isenabledformobileclient";
+            public const string IsHidden = "ishidden";
+            public const string IsManaged = "ismanaged";
+            public const string LanguageCode = "languagecode";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string SilverlightVersion = "silverlightversion";
+            public const string SolutionId = "solutionid";
+            public const string VersionNumber = "versionnumber";
+            public const string WebResourceIdUnique = "webresourceidunique";
+            public const string WebResourceType = "webresourcetype";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsAvailableForMobileOffline
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsEnabledForMobileClient
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-			    public struct WebResourceType
-                {
-					public const int Webpage_HTML_ = 1;
-					public const int StyleSheet_CSS_ = 2;
-					public const int Script_JScript_ = 3;
-					public const int Data_XML_ = 4;
-					public const int PNGFormat = 5;
-					public const int JPGFormat = 6;
-					public const int GIFFormat = 7;
-					public const int Silverlight_XAP_ = 8;
-					public const int StyleSheet_XSL_ = 9;
-					public const int ICOFormat = 10;
-					public const int VectorFormat_SVG_ = 11;
-					public const int String_RESX_ = 12;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string WebResourceId = "webresourceid";
-				public const string CanBeDeleted = "canbedeleted";
-				public const string ComponentState = "componentstate";
-				public const string Content = "content";
-				public const string ContentFileRef = "contentfileref";
-				public const string ContentJson = "contentjson";
-				public const string ContentJsonFileRef = "contentjsonfileref";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string DependencyXml = "dependencyxml";
-				public const string Description = "description";
-				public const string DisplayName = "displayname";
-				public const string IntroducedVersion = "introducedversion";
-				public const string IsAvailableForMobileOffline = "isavailableformobileoffline";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsEnabledForMobileClient = "isenabledformobileclient";
-				public const string IsHidden = "ishidden";
-				public const string IsManaged = "ismanaged";
-				public const string LanguageCode = "languagecode";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string SilverlightVersion = "silverlightversion";
-				public const string SolutionId = "solutionid";
-				public const string VersionNumber = "versionnumber";
-				public const string WebResourceIdUnique = "webresourceidunique";
-				public const string WebResourceType = "webresourcetype";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string LkThemeLogoid = "lk_theme_logoid";
-				public const string MsdynWebresourceMsdynToolconfigIcon = "msdyn_webresource_msdyn_toolconfig_icon";
-				public const string MsdynWebresourceSessiontemplateSessionicon = "msdyn_webresource_sessiontemplate_sessionicon";
-				public const string SolutionConfigurationWebresource = "solution_configuration_webresource";
-				public const string UserentityinstancedataWebresource = "userentityinstancedata_webresource";
-				public const string WebresourceAppactionIconwebresourceid = "webresource_appaction_iconwebresourceid";
-				public const string WebresourceAppactionOnclickeventjavascriptwebresourceid = "webresource_appaction_onclickeventjavascriptwebresourceid";
-				public const string WebresourceFileAttachments = "webresource_FileAttachments";
-				public const string WebresourceSavedqueryvisualizations = "webresource_savedqueryvisualizations";
-				public const string WebresourceUserqueryvisualizations = "webresource_userqueryvisualizations";
+                public const string LkThemeLogoid = "lk_theme_logoid";
+                public const string SolutionConfigurationWebresource = "solution_configuration_webresource";
+                public const string UserentityinstancedataWebresource = "userentityinstancedata_webresource";
+                public const string WebresourceAppactionIconwebresourceid = "webresource_appaction_iconwebresourceid";
+                public const string WebresourceAppactionOnclickeventjavascriptwebresourceid = "webresource_appaction_onclickeventjavascriptwebresourceid";
+                public const string WebresourceFileAttachments = "webresource_FileAttachments";
+                public const string WebresourceSavedqueryvisualizations = "webresource_savedqueryvisualizations";
+                public const string WebresourceUserqueryvisualizations = "webresource_userqueryvisualizations";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string FileAttachmentWebResourceContentFileRef = "FileAttachment_WebResource_ContentFileRef";
-				public const string FileAttachmentWebResourceContentJsonFileRef = "FileAttachment_WebResource_ContentJsonFileRef";
-				public const string LkWebresourcebaseCreatedonbehalfby = "lk_webresourcebase_createdonbehalfby";
-				public const string LkWebresourcebaseModifiedonbehalfby = "lk_webresourcebase_modifiedonbehalfby";
-				public const string WebresourceCreatedby = "webresource_createdby";
-				public const string WebresourceModifiedby = "webresource_modifiedby";
-				public const string WebresourceOrganization = "webresource_organization";
+                public const string FileAttachmentWebResourceContentFileRef = "FileAttachment_WebResource_ContentFileRef";
+                public const string FileAttachmentWebResourceContentJsonFileRef = "FileAttachment_WebResource_ContentJsonFileRef";
+                public const string LkWebresourcebaseCreatedonbehalfby = "lk_webresourcebase_createdonbehalfby";
+                public const string LkWebresourcebaseModifiedonbehalfby = "lk_webresourcebase_modifiedonbehalfby";
+                public const string WebresourceCreatedby = "webresource_createdby";
+                public const string WebresourceModifiedby = "webresource_modifiedby";
+                public const string WebresourceOrganization = "webresource_organization";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
-				public const string AppactionruleWebresourceScripts = "appactionrule_webresource_scripts";
+                public const string AppactionruleWebresourceScripts = "appactionrule_webresource_scripts";
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static WebResource Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static WebResource Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -786,30 +791,30 @@ namespace dgt.power.dataverse
 
         public WebResource GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  WebResource(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new WebResource(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<WebResource> WebResourceSet
-		{
-			get
-			{
-				return CreateQuery<WebResource>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<WebResource> WebResourceSet
+        {
+            get
+            {
+                return CreateQuery<WebResource>();
+            }
+        }
+    }
+    #endregion
 }

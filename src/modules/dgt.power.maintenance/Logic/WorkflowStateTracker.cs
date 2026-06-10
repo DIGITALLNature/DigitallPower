@@ -35,7 +35,7 @@ public sealed class WorkflowStateTracker
         workflowChange.CategoryName = workflow.Category?.Value switch
         {
             Workflow.Options.Category.ModernFlow => ":cloud: Modern Flow",
-            Workflow.Options.Category.Workflow_ => ":gear: Workflow",
+            Workflow.Options.Category.Workflow => ":gear: Workflow",
             Workflow.Options.Category.Action => ":gear: Action",
             Workflow.Options.Category.BusinessProcessFlow => ":bookmark: Business Process Flow",
             Workflow.Options.Category.BusinessRule => ":scroll: Business Rule",
@@ -152,19 +152,19 @@ internal sealed class WorflowChange
     {
         // No change desired
         if (OwnerPre == OwnerTarget) return $"[grey]{OwnerPre}[/]";
-        
+
         // Successful change: OwnerPost matches the target and is not empty
         if (!string.IsNullOrWhiteSpace(OwnerPost) && OwnerPost == OwnerTarget)
         {
             return $"[blue]{OwnerPre}[/] {Emoji.Known.RightArrow} [green]{OwnerPost}[/]";
         }
-        
+
         // Failed change: OwnerPost doesn't match target
         if (OwnerPost != OwnerTarget)
         {
             return $"[red]{OwnerPre}[/] [strikethrough grey]{Emoji.Known.RightArrow} {OwnerPost ?? "[grey italic]null[/]"}[/]";
         }
-        
+
         // Fallback (shouldn't reach here in normal cases)
         return $"[blue]{OwnerPre}[/]";
     }

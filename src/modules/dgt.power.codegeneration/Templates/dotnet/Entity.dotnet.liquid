@@ -108,7 +108,6 @@ namespace {{ NameSpace }}
 {%- else %}
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 {%- endif %}
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
@@ -236,7 +235,7 @@ namespace {{ NameSpace }}
 {%- unless SuppressOptions %}
 
         #region Options
-        public static class Options
+        public static partial class Options
         {
 {%- for optionField in OptionFields %}
 {%- if optionField.AttributeType == "Picklist" or optionField.AttributeType == "Virtual" or optionField.AttributeType == "Status" or optionField.AttributeType == "State" %}
@@ -260,7 +259,7 @@ namespace {{ NameSpace }}
 {%- unless SuppressLogicalNames %}
 
         #region LogicalNames
-        public static class LogicalNames
+        public static partial class LogicalNames
         {
 {%- for attr in LogicalNameEntries %}
             public const string {{ attr.Name }} = "{{ attr.LogicalName }}";
@@ -271,7 +270,7 @@ namespace {{ NameSpace }}
 {%- if SuppressAlternateKeys == false and AlternateKeys.size > 0 %}
 
         #region AlternateKeys
-        public static class AlternateKeys
+        public static partial class AlternateKeys
         {
 {%- for key in AlternateKeys %}
             public const string {{ key.Name }} = "{{ key.LogicalName }}";
@@ -282,7 +281,7 @@ namespace {{ NameSpace }}
 {%- unless SuppressRelations %}
 
         #region Relations
-        public static class Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
@@ -291,14 +290,14 @@ namespace {{ NameSpace }}
 {%- endfor %}
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
 {%- for attr in ManyToOneRelationships %}
                 public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
 {%- endfor %}
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
 {%- for attr in ManyToManyRelationships %}
                 public const string {{ attr.Name }} = "{{ attr.SchemaName }}";

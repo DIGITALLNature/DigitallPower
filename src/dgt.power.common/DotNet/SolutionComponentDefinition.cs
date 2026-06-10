@@ -1,7 +1,6 @@
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -13,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
-	/// Enthält alle erforderlichen Informationen zum Verarbeiten einer lösungsfähigen Entität
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
+	/// Contains all the information required to process a solution aware entity
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("solutioncomponentdefinition")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("solutioncomponentdefinition")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class SolutionComponentDefinition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SolutionComponentDefinition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public SolutionComponentDefinition() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public SolutionComponentDefinition() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public SolutionComponentDefinition(bool trackChanges = false) : base(EntityLogicalName)
+        public SolutionComponentDefinition(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SolutionComponentDefinition(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public SolutionComponentDefinition(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SolutionComponentDefinition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public SolutionComponentDefinition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SolutionComponentDefinition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public SolutionComponentDefinition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -66,966 +61,956 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("solutioncomponentdefinitionid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("solutioncomponentdefinitionid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				SolutionComponentDefinitionId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                SolutionComponentDefinitionId = value;
+            }
+        }
 
-		/// <summary>
-		/// Eindeutiger Bezeichner der Lösungskomponentendefinition
+        /// <summary>
+		/// Unique identifier of the solution component definition
 		/// </summary>
-		[AttributeLogicalName("solutioncomponentdefinitionid")]
+        [AttributeLogicalName("solutioncomponentdefinitionid")]
         public Guid? SolutionComponentDefinitionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutioncomponentdefinitionid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SolutionComponentDefinitionId));
+                OnPropertyChanging();
                 SetAttributeValue("solutioncomponentdefinitionid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(SolutionComponentDefinitionId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Nur zur internen Verwendung.
+        /// <summary>
+		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("solutioncomponentdefinitionidunique")]
+        [AttributeLogicalName("solutioncomponentdefinitionidunique")]
         public Guid? SolutionComponentDefinitionIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutioncomponentdefinitionidunique");
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner zum Löschen von Basisebenen.
+        /// <summary>
+		/// Boolean identifier for using deleting base layers.
 		/// </summary>
-		[AttributeLogicalName("allowdeletebasesolutionrowandfakedelete")]
+        [AttributeLogicalName("allowdeletebasesolutionrowandfakedelete")]
         public bool? AllowDeleteBaseSolutionRowAndFakeDelete
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowdeletebasesolutionrowandfakedelete");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowDeleteBaseSolutionRowAndFakeDelete));
+                OnPropertyChanging();
                 SetAttributeValue("allowdeletebasesolutionrowandfakedelete", value);
-                OnPropertyChanged(nameof(AllowDeleteBaseSolutionRowAndFakeDelete));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Gibt an, ob diese Komponente beim Update der verwalteten Lösung zulässt, dass Anpassungen überschrieben werden
+        /// <summary>
+		/// Whether this component allows Overwrite Customizations when update managed solution
 		/// </summary>
-		[AttributeLogicalName("allowoverwritecustomizations")]
+        [AttributeLogicalName("allowoverwritecustomizations")]
         public bool? AllowOverwriteCustomizations
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowoverwritecustomizations");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowOverwriteCustomizations));
+                OnPropertyChanging();
                 SetAttributeValue("allowoverwritecustomizations", value);
-                OnPropertyChanged(nameof(AllowOverwriteCustomizations));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner für eine Zeile, die in der aktiven Lösung als logisch gelöscht markiert wurde, die jedoch neu erstellt werden soll
+        /// <summary>
+		/// Boolean identifier for a row that is marked as logically deleted in the Active solution and should be re-created back
 		/// </summary>
-		[AttributeLogicalName("allowrecreateforlogicallydeletedrow")]
+        [AttributeLogicalName("allowrecreateforlogicallydeletedrow")]
         public bool? AllowRecreateForLogicallyDeletedRow
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("allowrecreateforlogicallydeletedrow");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AllowRecreateForLogicallyDeletedRow));
+                OnPropertyChanging();
                 SetAttributeValue("allowrecreateforlogicallydeletedrow", value);
-                OnPropertyChanged(nameof(AllowRecreateForLogicallyDeletedRow));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Flag, das verwendet wird, um anzugeben, ob die Komponente aktive Anpassungen beim Deinstallieren immer entfernt
+        /// <summary>
+		/// Flag used to indicate whether this component always removes active customizations on uninstall
 		/// </summary>
-		[AttributeLogicalName("alwaysremoveactivecustomizationsonuninstall")]
+        [AttributeLogicalName("alwaysremoveactivecustomizationsonuninstall")]
         public bool? AlwaysRemoveActiveCustomizationsOnUninstall
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("alwaysremoveactivecustomizationsonuninstall");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AlwaysRemoveActiveCustomizationsOnUninstall));
+                OnPropertyChanging();
                 SetAttributeValue("alwaysremoveactivecustomizationsonuninstall", value);
-                OnPropertyChanged(nameof(AlwaysRemoveActiveCustomizationsOnUninstall));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Gibt an, ob die Unterkomponente direkt zur SolutionComponents-Tabelle hinzugefügt werden kann
+        /// <summary>
+		/// Flag indicating whether the subcomponent can be added directly to the SolutionComponents table
 		/// </summary>
-		[AttributeLogicalName("canbeaddedtosolutioncomponents")]
+        [AttributeLogicalName("canbeaddedtosolutioncomponents")]
         public bool? CanBeAddedToSolutionComponents
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("canbeaddedtosolutioncomponents");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CanBeAddedToSolutionComponents));
+                OnPropertyChanging();
                 SetAttributeValue("canbeaddedtosolutioncomponents", value);
-                OnPropertyChanged(nameof(CanBeAddedToSolutionComponents));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Gibt an, ob diese Komponente mithilfe der verwalteten IsHidden-Eigenschaft ausgeblendet werden kann
+        /// <summary>
+		/// Whether this component is hidden using an IsHidden managed property
 		/// </summary>
-		[AttributeLogicalName("canbehidden")]
+        [AttributeLogicalName("canbehidden")]
         public bool? CanBeHidden
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("canbehidden");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CanBeHidden));
+                OnPropertyChanging();
                 SetAttributeValue("canbehidden", value);
-                OnPropertyChanged(nameof(CanBeHidden));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Nur zur internen Verwendung.
+        /// <summary>
+		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
-        public OptionSetValue ComponentState
+        [AttributeLogicalName("componentstate")]
+        public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<OptionSetValue>("componentstate");
+                return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
-		/// Pfad zum XML-Knoten der Komponente
+        /// <summary>
+		/// Path to component's XML node
 		/// </summary>
-		[AttributeLogicalName("componentxpath")]
-        public string ComponentXPath
+        [AttributeLogicalName("componentxpath")]
+        public string? ComponentXPath
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("componentxpath");
+                return GetAttributeValue<string?>("componentxpath");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ComponentXPath));
+                OnPropertyChanging();
                 SetAttributeValue("componentxpath", value);
-                OnPropertyChanged(nameof(ComponentXPath));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Flag, das angibt, ob die Komponente ihren Vorgänger als sichtbare Komponente verwendet
+        /// <summary>
+		/// Flag that indicates whether this component uses its descendent as its viewable component
 		/// </summary>
-		[AttributeLogicalName("descendentisviewablecomponent")]
+        [AttributeLogicalName("descendentisviewablecomponent")]
         public bool? DescendentIsViewableComponent
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("descendentisviewablecomponent");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DescendentIsViewableComponent));
+                OnPropertyChanging();
                 SetAttributeValue("descendentisviewablecomponent", value);
-                OnPropertyChanged(nameof(DescendentIsViewableComponent));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Übergeordneter Gruppenkomponenten-Attributname
+        /// <summary>
+		/// Group Parent Component Attribute Name
 		/// </summary>
-		[AttributeLogicalName("groupparentcomponentattributename")]
-        public string GroupParentComponentAttributeName
+        [AttributeLogicalName("groupparentcomponentattributename")]
+        public string? GroupParentComponentAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("groupparentcomponentattributename");
+                return GetAttributeValue<string?>("groupparentcomponentattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GroupParentComponentAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("groupparentcomponentattributename", value);
-                OnPropertyChanged(nameof(GroupParentComponentAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Übergeordneter Gruppenkomponententyp
+        /// <summary>
+		/// Group Parent Component Type
 		/// </summary>
-		[AttributeLogicalName("groupparentcomponenttype")]
+        [AttributeLogicalName("groupparentcomponenttype")]
         public int? GroupParentComponentType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("groupparentcomponenttype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GroupParentComponentType));
+                OnPropertyChanging();
                 SetAttributeValue("groupparentcomponenttype", value);
-                OnPropertyChanged(nameof(GroupParentComponentType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Wert, der angibt, ob die Komponente ein umbenennbares Attribut hat
+        /// <summary>
+		/// Boolean that indicates if the component has a renamable attribute
 		/// </summary>
-		[AttributeLogicalName("hasisrenameableattribute")]
+        [AttributeLogicalName("hasisrenameableattribute")]
         public bool? HasIsRenameableAttribute
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("hasisrenameableattribute");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(HasIsRenameableAttribute));
+                OnPropertyChanging();
                 SetAttributeValue("hasisrenameableattribute", value);
-                OnPropertyChanged(nameof(HasIsRenameableAttribute));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Eindeutiger Bezeichner des Datenimports oder der Datenmigration, durch den/die dieser Datensatz erstellt wurde.
+        /// <summary>
+		/// Unique identifier of the data import or data migration that created this record.
 		/// </summary>
-		[AttributeLogicalName("importsequencenumber")]
+        [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ImportSequenceNumber));
+                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged(nameof(ImportSequenceNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Version, in der die Komponente eingeführt wird.
+        /// <summary>
+		/// Version in which the component is introduced.
 		/// </summary>
-		[AttributeLogicalName("introducedversion")]
-        public string IntroducedVersion
+        [AttributeLogicalName("introducedversion")]
+        public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("introducedversion");
+                return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntroducedVersion));
+                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged(nameof(IntroducedVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Abhängigkeit ist für die Komponente deaktiviert
+        /// <summary>
+		/// Is dependency disabled for the component
 		/// </summary>
-		[AttributeLogicalName("isdependencydisabled")]
+        [AttributeLogicalName("isdependencydisabled")]
         public bool? IsDependencyDisabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdependencydisabled");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDependencyDisabled));
+                OnPropertyChanging();
                 SetAttributeValue("isdependencydisabled", value);
-                OnPropertyChanged(nameof(IsDependencyDisabled));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Wert, der angibt, ob für die Komponente eine Benutzeroberfläche aktiviert ist
+        /// <summary>
+		/// Boolean that indicates if the component has user interface enabled
 		/// </summary>
-		[AttributeLogicalName("isdisplayable")]
+        [AttributeLogicalName("isdisplayable")]
         public bool? IsDisplayable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isdisplayable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsDisplayable));
+                OnPropertyChanging();
                 SetAttributeValue("isdisplayable", value);
-                OnPropertyChanged(nameof(IsDisplayable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Wert, der angibt, ob die Komponente verwaltet ist
+        /// <summary>
+		/// Boolean that indicates if the component is managed
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsManaged));
+                OnPropertyChanging();
                 SetAttributeValue("ismanaged", value);
-                OnPropertyChanged(nameof(IsManaged));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Gibt an, ob die Komponente eine zusammenführbare Komponente oder Teil einer zusammenführbaren Komponente ist
+        /// <summary>
+		/// Whether this component is either a mergeable component, or part of a mergeable component
 		/// </summary>
-		[AttributeLogicalName("ismergeable")]
+        [AttributeLogicalName("ismergeable")]
         public bool? IsMergeable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismergeable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMergeable));
+                OnPropertyChanging();
                 SetAttributeValue("ismergeable", value);
-                OnPropertyChanged(nameof(IsMergeable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner für Metadatenkomponenten
+        /// <summary>
+		/// Boolean identifier for metadata components
 		/// </summary>
-		[AttributeLogicalName("ismetadata")]
+        [AttributeLogicalName("ismetadata")]
         public bool? IsMetadata
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismetadata");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsMetadata));
+                OnPropertyChanging();
                 SetAttributeValue("ismetadata", value);
-                OnPropertyChanged(nameof(IsMetadata));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Gibt an, ob die Komponente im SDK und in der Benutzeroberfläche angezeigt werden kann
+        /// <summary>
+		/// Whether this component is viewable in the SDK and UI
 		/// </summary>
-		[AttributeLogicalName("isviewable")]
+        [AttributeLogicalName("isviewable")]
         public bool? IsViewable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isviewable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsViewable));
+                OnPropertyChanging();
                 SetAttributeValue("isviewable", value);
-                OnPropertyChanged(nameof(IsViewable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Beschriftungstypcode
+        /// <summary>
+		/// Label Type Code
 		/// </summary>
-		[AttributeLogicalName("labeltypecode")]
+        [AttributeLogicalName("labeltypecode")]
         public int? LabelTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("labeltypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LabelTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("labeltypecode", value);
-                OnPropertyChanged(nameof(LabelTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name
 		/// </summary>
-		[AttributeLogicalName("name")]
-        public string Name
+        [AttributeLogicalName("name")]
+        public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("name");
+                return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Objekttypcode
+        /// <summary>
+		/// Object Type Code
 		/// </summary>
-		[AttributeLogicalName("objecttypecode")]
+        [AttributeLogicalName("objecttypecode")]
         public int? ObjectTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("objecttypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ObjectTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("objecttypecode", value);
-                OnPropertyChanged(nameof(ObjectTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Datum und Uhrzeit der Datensatzmigration.
+        /// <summary>
+		/// Date and time that the record was migrated.
 		/// </summary>
-		[AttributeLogicalName("overriddencreatedon")]
+        [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OverriddenCreatedOn));
+                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged(nameof(OverriddenCreatedOn));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Nur zur internen Verwendung.
+        /// <summary>
+		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
-		/// Der Attributname des übergeordneten Attributs
+        /// <summary>
+		/// The attribute name of the parent attribute
 		/// </summary>
-		[AttributeLogicalName("parentattributename")]
-        public string ParentAttributeName
+        [AttributeLogicalName("parentattributename")]
+        public string? ParentAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("parentattributename");
+                return GetAttributeValue<string?>("parentattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ParentAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("parentattributename", value);
-                OnPropertyChanged(nameof(ParentAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Logischer Name der Komponentenentität
+        /// <summary>
+		/// Component Entity Logical Name
 		/// </summary>
-		[AttributeLogicalName("primaryentityname")]
-        public string PrimaryEntityName
+        [AttributeLogicalName("primaryentityname")]
+        public string? PrimaryEntityName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("primaryentityname");
+                return GetAttributeValue<string?>("primaryentityname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrimaryEntityName));
+                OnPropertyChanging();
                 SetAttributeValue("primaryentityname", value);
-                OnPropertyChanged(nameof(PrimaryEntityName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Entfernen Sie das aktive Anpassungsverhalten.
+        /// <summary>
+		/// Remove Active Customizations Behavior.
 		/// </summary>
-		[AttributeLogicalName("removeactivecustomizationsbehavior")]
-        public OptionSetValue RemoveActiveCustomizationsBehavior
+        [AttributeLogicalName("removeactivecustomizationsbehavior")]
+        public OptionSetValue? RemoveActiveCustomizationsBehavior
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<OptionSetValue>("removeactivecustomizationsbehavior");
+                return GetAttributeValue<OptionSetValue?>("removeactivecustomizationsbehavior");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RemoveActiveCustomizationsBehavior));
+                OnPropertyChanging();
                 SetAttributeValue("removeactivecustomizationsbehavior", value);
-                OnPropertyChanged(nameof(RemoveActiveCustomizationsBehavior));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Typenname der Stammlösungskomponente
+        /// <summary>
+		/// Root Solution Component Type Name
 		/// </summary>
-		[AttributeLogicalName("rootattributename")]
-        public string RootAttributeName
+        [AttributeLogicalName("rootattributename")]
+        public string? RootAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string>("rootattributename");
+                return GetAttributeValue<string?>("rootattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RootAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("rootattributename", value);
-                OnPropertyChanged(nameof(RootAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Typ der Stammlösungskomponente
+        /// <summary>
+		/// Root Solution Component Type
 		/// </summary>
-		[AttributeLogicalName("rootcomponent")]
+        [AttributeLogicalName("rootcomponent")]
         public int? RootComponent
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("rootcomponent");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RootComponent));
+                OnPropertyChanging();
                 SetAttributeValue("rootcomponent", value);
-                OnPropertyChanged(nameof(RootComponent));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Lösungskomponententyp
+        /// <summary>
+		/// Solution Component Type
 		/// </summary>
-		[AttributeLogicalName("solutioncomponenttype")]
+        [AttributeLogicalName("solutioncomponenttype")]
         public int? SolutionComponentType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("solutioncomponenttype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SolutionComponentType));
+                OnPropertyChanging();
                 SetAttributeValue("solutioncomponenttype", value);
-                OnPropertyChanged(nameof(SolutionComponentType));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Eindeutiger Bezeichner der zugeordneten Lösung.
+        /// <summary>
+		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner für erzwungenes Löschen des Lösungsupdates.
+        /// <summary>
+		/// Boolean identifier for forcing delete for solution update.
 		/// </summary>
-		[AttributeLogicalName("useforcedeleteforsolutionupdate")]
+        [AttributeLogicalName("useforcedeleteforsolutionupdate")]
         public bool? UseForceDeleteForSolutionUpdate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("useforcedeleteforsolutionupdate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseForceDeleteForSolutionUpdate));
+                OnPropertyChanging();
                 SetAttributeValue("useforcedeleteforsolutionupdate", value);
-                OnPropertyChanged(nameof(UseForceDeleteForSolutionUpdate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner für immer erzwungene Updates.
+        /// <summary>
+		/// Boolean identifier for always forcing update.
 		/// </summary>
-		[AttributeLogicalName("useforceupdatealways")]
+        [AttributeLogicalName("useforceupdatealways")]
         public bool? UseForceUpdateAlways
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("useforceupdatealways");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseForceUpdateAlways));
+                OnPropertyChanging();
                 SetAttributeValue("useforceupdatealways", value);
-                OnPropertyChanged(nameof(UseForceUpdateAlways));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Boolescher Bezeichner für die Verwendung von Sentinel-Zeilen.
+        /// <summary>
+		/// Boolean identifier for using sentine rows.
 		/// </summary>
-		[AttributeLogicalName("usesentinelrowinbasesolution")]
+        [AttributeLogicalName("usesentinelrowinbasesolution")]
         public bool? UseSentinelRowInBaseSolution
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("usesentinelrowinbasesolution");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UseSentinelRowInBaseSolution));
+                OnPropertyChanging();
                 SetAttributeValue("usesentinelrowinbasesolution", value);
-                OnPropertyChanged(nameof(UseSentinelRowInBaseSolution));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Der Komponententyp des sichtbaren Vorgängers
+        /// <summary>
+		/// The component type of the viewable descendent
 		/// </summary>
-		[AttributeLogicalName("viewabledescendentcomponenttype")]
+        [AttributeLogicalName("viewabledescendentcomponenttype")]
         public int? ViewableDescendentComponentType
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("viewabledescendentcomponenttype");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ViewableDescendentComponentType));
+                OnPropertyChanging();
                 SetAttributeValue("viewabledescendentcomponenttype", value);
-                OnPropertyChanged(nameof(ViewableDescendentComponentType));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+            public struct AllowDeleteBaseSolutionRowAndFakeDelete
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct AllowOverwriteCustomizations
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct AllowRecreateForLogicallyDeletedRow
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct AlwaysRemoveActiveCustomizationsOnUninstall
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct CanBeAddedToSolutionComponents
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct CanBeHidden
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct DescendentIsViewableComponent
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct HasIsRenameableAttribute
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct IsDependencyDisabled
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct IsDisplayable
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsMergeable
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct IsMetadata
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct IsViewable
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct RemoveActiveCustomizationsBehavior
+            {
+                public const int None = 0;
+                public const int NoCascade = 1;
+                public const int Cascade = 2;
+            }
+            public struct UseForceDeleteForSolutionUpdate
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct UseForceUpdateAlways
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+            public struct UseSentinelRowInBaseSolution
+            {
+                public const bool False = false;
+                public const bool True = true;
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string SolutionComponentDefinitionId = "solutioncomponentdefinitionid";
+            public const string SolutionComponentDefinitionIdUnique = "solutioncomponentdefinitionidunique";
+            public const string AllowDeleteBaseSolutionRowAndFakeDelete = "allowdeletebasesolutionrowandfakedelete";
+            public const string AllowOverwriteCustomizations = "allowoverwritecustomizations";
+            public const string AllowRecreateForLogicallyDeletedRow = "allowrecreateforlogicallydeletedrow";
+            public const string AlwaysRemoveActiveCustomizationsOnUninstall = "alwaysremoveactivecustomizationsonuninstall";
+            public const string CanBeAddedToSolutionComponents = "canbeaddedtosolutioncomponents";
+            public const string CanBeHidden = "canbehidden";
+            public const string ComponentState = "componentstate";
+            public const string ComponentXPath = "componentxpath";
+            public const string DescendentIsViewableComponent = "descendentisviewablecomponent";
+            public const string GroupParentComponentAttributeName = "groupparentcomponentattributename";
+            public const string GroupParentComponentType = "groupparentcomponenttype";
+            public const string HasIsRenameableAttribute = "hasisrenameableattribute";
+            public const string ImportSequenceNumber = "importsequencenumber";
+            public const string IntroducedVersion = "introducedversion";
+            public const string IsDependencyDisabled = "isdependencydisabled";
+            public const string IsDisplayable = "isdisplayable";
+            public const string IsManaged = "ismanaged";
+            public const string IsMergeable = "ismergeable";
+            public const string IsMetadata = "ismetadata";
+            public const string IsViewable = "isviewable";
+            public const string LabelTypeCode = "labeltypecode";
+            public const string Name = "name";
+            public const string ObjectTypeCode = "objecttypecode";
+            public const string OverriddenCreatedOn = "overriddencreatedon";
+            public const string OverwriteTime = "overwritetime";
+            public const string ParentAttributeName = "parentattributename";
+            public const string PrimaryEntityName = "primaryentityname";
+            public const string RemoveActiveCustomizationsBehavior = "removeactivecustomizationsbehavior";
+            public const string RootAttributeName = "rootattributename";
+            public const string RootComponent = "rootcomponent";
+            public const string SolutionComponentType = "solutioncomponenttype";
+            public const string SolutionId = "solutionid";
+            public const string UseForceDeleteForSolutionUpdate = "useforcedeleteforsolutionupdate";
+            public const string UseForceUpdateAlways = "useforceupdatealways";
+            public const string UseSentinelRowInBaseSolution = "usesentinelrowinbasesolution";
+            public const string ViewableDescendentComponentType = "viewabledescendentcomponenttype";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-                public struct AllowDeleteBaseSolutionRowAndFakeDelete
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct AllowOverwriteCustomizations
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct AllowRecreateForLogicallyDeletedRow
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct AlwaysRemoveActiveCustomizationsOnUninstall
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct CanBeAddedToSolutionComponents
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct CanBeHidden
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-			    public struct ComponentState
-                {
-					public const int Veröffentlicht = 0;
-					public const int Unveröffentlicht = 1;
-					public const int Gelöscht = 2;
-					public const int NichtVeröffentlichtGelöscht = 3;
-                }
-                public struct DescendentIsViewableComponent
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct HasIsRenameableAttribute
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct IsDependencyDisabled
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct IsDisplayable
-                {
-                    public const bool Nein = false;
-                    public const bool Ja = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool NichtVerwaltet = false;
-                    public const bool Verwaltet = true;
-                }
-                public struct IsMergeable
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct IsMetadata
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct IsViewable
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-			    public struct RemoveActiveCustomizationsBehavior
-                {
-					public const int Ohne = 0;
-					public const int NichtKaskadieren = 1;
-					public const int Kaskadieren = 2;
-                }
-                public struct UseForceDeleteForSolutionUpdate
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct UseForceUpdateAlways
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-                public struct UseSentinelRowInBaseSolution
-                {
-                    public const bool Falsch = false;
-                    public const bool Wahr = true;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string SolutionComponentDefinitionId = "solutioncomponentdefinitionid";
-				public const string SolutionComponentDefinitionIdUnique = "solutioncomponentdefinitionidunique";
-				public const string AllowDeleteBaseSolutionRowAndFakeDelete = "allowdeletebasesolutionrowandfakedelete";
-				public const string AllowOverwriteCustomizations = "allowoverwritecustomizations";
-				public const string AllowRecreateForLogicallyDeletedRow = "allowrecreateforlogicallydeletedrow";
-				public const string AlwaysRemoveActiveCustomizationsOnUninstall = "alwaysremoveactivecustomizationsonuninstall";
-				public const string CanBeAddedToSolutionComponents = "canbeaddedtosolutioncomponents";
-				public const string CanBeHidden = "canbehidden";
-				public const string ComponentState = "componentstate";
-				public const string ComponentXPath = "componentxpath";
-				public const string DescendentIsViewableComponent = "descendentisviewablecomponent";
-				public const string GroupParentComponentAttributeName = "groupparentcomponentattributename";
-				public const string GroupParentComponentType = "groupparentcomponenttype";
-				public const string HasIsRenameableAttribute = "hasisrenameableattribute";
-				public const string ImportSequenceNumber = "importsequencenumber";
-				public const string IntroducedVersion = "introducedversion";
-				public const string IsDependencyDisabled = "isdependencydisabled";
-				public const string IsDisplayable = "isdisplayable";
-				public const string IsManaged = "ismanaged";
-				public const string IsMergeable = "ismergeable";
-				public const string IsMetadata = "ismetadata";
-				public const string IsViewable = "isviewable";
-				public const string LabelTypeCode = "labeltypecode";
-				public const string Name = "name";
-				public const string ObjectTypeCode = "objecttypecode";
-				public const string OverriddenCreatedOn = "overriddencreatedon";
-				public const string OverwriteTime = "overwritetime";
-				public const string ParentAttributeName = "parentattributename";
-				public const string PrimaryEntityName = "primaryentityname";
-				public const string RemoveActiveCustomizationsBehavior = "removeactivecustomizationsbehavior";
-				public const string RootAttributeName = "rootattributename";
-				public const string RootComponent = "rootcomponent";
-				public const string SolutionComponentType = "solutioncomponenttype";
-				public const string SolutionId = "solutionid";
-				public const string UseForceDeleteForSolutionUpdate = "useforcedeleteforsolutionupdate";
-				public const string UseForceUpdateAlways = "useforceupdatealways";
-				public const string UseSentinelRowInBaseSolution = "usesentinelrowinbasesolution";
-				public const string ViewableDescendentComponentType = "viewabledescendentcomponenttype";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
-            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
-
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static SolutionComponentDefinition Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static SolutionComponentDefinition Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -1035,40 +1020,30 @@ namespace dgt.power.dataverse
 
         public SolutionComponentDefinition GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var changedProperty in _changedProperties.Value)
-                {
-                    var propInfo = GetType().GetProperty(changedProperty);
-                    if (propInfo is null) continue;
-                    
-                    var attrAttr = (AttributeLogicalNameAttribute?)propInfo.GetCustomAttribute(typeof(AttributeLogicalNameAttribute));
-                    if (attrAttr?.LogicalName is null) continue;
-                    
-                    var attrName = attrAttr.LogicalName;
-                    if (Contains(attrName))
-                    {
-                        attr.Add(attrName, this[attrName]);
-                    }
-                }
-                return new SolutionComponentDefinition(Id) { Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new SolutionComponentDefinition(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<SolutionComponentDefinition> SolutionComponentDefinitionSet
-		{
-			get
-			{
-				return CreateQuery<SolutionComponentDefinition>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<SolutionComponentDefinition> SolutionComponentDefinitionSet
+        {
+            get
+            {
+                return CreateQuery<SolutionComponentDefinition>();
+            }
+        }
+    }
+    #endregion
 }

@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Type that inherits from the IPlugin interface and is contained within a plug-in assembly.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("plugintype")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("plugintype")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class PluginType : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class PluginType : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public PluginType() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public PluginType() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public PluginType(bool trackChanges = false) : base(EntityLogicalName)
+        public PluginType(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginType(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public PluginType(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginType(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public PluginType(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginType(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public PluginType(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,656 +61,655 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("plugintypeid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("plugintypeid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				PluginTypeId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                PluginTypeId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("plugintypeid")]
+        [AttributeLogicalName("plugintypeid")]
         public Guid? PluginTypeId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("plugintypeid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginTypeId));
+                OnPropertyChanging();
                 SetAttributeValue("plugintypeid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(PluginTypeId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Full path name of the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("assemblyname")]
+        [AttributeLogicalName("assemblyname")]
         public string? AssemblyName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("assemblyname");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the plug-in type was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the plugintype.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Culture code for the plug-in assembly.
 		/// </summary>
-		[AttributeLogicalName("culture")]
+        [AttributeLogicalName("culture")]
         public string? Culture
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("culture");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Customization level of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("customizationlevel")]
+        [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("customizationlevel");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Serialized Custom Activity Type information, including required arguments. For more information, see SandboxCustomActivityInfo.
 		/// </summary>
-		[AttributeLogicalName("customworkflowactivityinfo")]
+        [AttributeLogicalName("customworkflowactivityinfo")]
         public string? CustomWorkflowActivityInfo
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("customworkflowactivityinfo");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Description of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// User friendly name for the plug-in.
 		/// </summary>
-		[AttributeLogicalName("friendlyname")]
+        [AttributeLogicalName("friendlyname")]
         public string? FriendlyName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("friendlyname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FriendlyName));
+                OnPropertyChanging();
                 SetAttributeValue("friendlyname", value);
-                OnPropertyChanged(nameof(FriendlyName));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("ismanaged")]
+        
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates if the plug-in is a custom activity for workflows.
 		/// </summary>
-		[AttributeLogicalName("isworkflowactivity")]
+        [AttributeLogicalName("isworkflowactivity")]
         public bool? IsWorkflowActivity
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isworkflowactivity");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Major of the version number of the assembly for the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("major")]
+        [AttributeLogicalName("major")]
         public int? Major
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("major");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Minor of the version number of the assembly for the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("minor")]
+        [AttributeLogicalName("minor")]
         public int? Minor
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("minor");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the plug-in type was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the plugintype.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization with which the plug-in type is associated.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the plug-in assembly that contains this plug-in type.
 		/// </summary>
-		[AttributeLogicalName("pluginassemblyid")]
+        [AttributeLogicalName("pluginassemblyid")]
         public EntityReference? PluginAssemblyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("pluginassemblyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginAssemblyId));
+                OnPropertyChanging();
                 SetAttributeValue("pluginassemblyid", value);
-                OnPropertyChanged(nameof(PluginAssemblyId));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("plugintypeexportkey")]
+        /// <summary>
+		/// Uniquely identifies the plug-in type associated with a plugin package when exporting a solution.
+		/// </summary>
+        [AttributeLogicalName("plugintypeexportkey")]
         public string? PluginTypeExportKey
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("plugintypeexportkey");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginTypeExportKey));
+                OnPropertyChanging();
                 SetAttributeValue("plugintypeexportkey", value);
-                OnPropertyChanged(nameof(PluginTypeExportKey));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("plugintypeidunique")]
+        [AttributeLogicalName("plugintypeidunique")]
         public Guid? PluginTypeIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("plugintypeidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Public key token of the assembly for the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("publickeytoken")]
+        [AttributeLogicalName("publickeytoken")]
         public string? PublicKeyToken
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("publickeytoken");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Fully qualified type name of the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("typename")]
+        [AttributeLogicalName("typename")]
         public string? TypeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("typename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TypeName));
+                OnPropertyChanging();
                 SetAttributeValue("typename", value);
-                OnPropertyChanged(nameof(TypeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version number of the assembly for the plug-in type.
 		/// </summary>
-		[AttributeLogicalName("version")]
+        [AttributeLogicalName("version")]
         public string? Version
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("version");
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Group name of workflow custom activity.
 		/// </summary>
-		[AttributeLogicalName("workflowactivitygroupname")]
+        [AttributeLogicalName("workflowactivitygroupname")]
         public string? WorkflowActivityGroupName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("workflowactivitygroupname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WorkflowActivityGroupName));
+                OnPropertyChanging();
                 SetAttributeValue("workflowactivitygroupname", value);
-                OnPropertyChanged(nameof(WorkflowActivityGroupName));
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region NavigationProperties
+
+        /// <summary>
+        /// 1:N plugintype_customapi
+        /// </summary>
+        [RelationshipSchemaName("plugintype_customapi")]
+        public IEnumerable<CustomAPI> PlugintypeCustomapi
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<CustomAPI>("plugintype_customapi", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("plugintype_customapi", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N plugintype_sdkmessageprocessingstep
+        /// </summary>
+        [RelationshipSchemaName("plugintype_sdkmessageprocessingstep")]
+        public IEnumerable<SdkMessageProcessingStep> PlugintypeSdkmessageprocessingstep
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStep>("plugintype_sdkmessageprocessingstep", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("plugintype_sdkmessageprocessingstep", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// 1:N plugintypeid_sdkmessageprocessingstep
+        /// </summary>
+        [RelationshipSchemaName("plugintypeid_sdkmessageprocessingstep")]
+        public IEnumerable<SdkMessageProcessingStep> PlugintypeidSdkmessageprocessingstep
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStep>("plugintypeid_sdkmessageprocessingstep", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("plugintypeid_sdkmessageprocessingstep", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N plugintype_customapi
-		/// </summary>	
-		[RelationshipSchemaName("plugintype_customapi")]
-		public IEnumerable<CustomAPI> PlugintypeCustomapi
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<CustomAPI>("plugintype_customapi", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PlugintypeCustomapi");
-				this.SetRelatedEntities<CustomAPI>("plugintype_customapi", null, value);
-				this.OnPropertyChanged("PlugintypeCustomapi");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsWorkflowActivity
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N plugintype_sdkmessageprocessingstep
-		/// </summary>	
-		[RelationshipSchemaName("plugintype_sdkmessageprocessingstep")]
-		public IEnumerable<SdkMessageProcessingStep> PlugintypeSdkmessageprocessingstep
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStep>("plugintype_sdkmessageprocessingstep", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PlugintypeSdkmessageprocessingstep");
-				this.SetRelatedEntities<SdkMessageProcessingStep>("plugintype_sdkmessageprocessingstep", null, value);
-				this.OnPropertyChanged("PlugintypeSdkmessageprocessingstep");
-			}
-		}
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string PluginTypeId = "plugintypeid";
+            public const string AssemblyName = "assemblyname";
+            public const string ComponentState = "componentstate";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string Culture = "culture";
+            public const string CustomizationLevel = "customizationlevel";
+            public const string CustomWorkflowActivityInfo = "customworkflowactivityinfo";
+            public const string Description = "description";
+            public const string FriendlyName = "friendlyname";
+            public const string IsManaged = "ismanaged";
+            public const string IsWorkflowActivity = "isworkflowactivity";
+            public const string Major = "major";
+            public const string Minor = "minor";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string PluginAssemblyId = "pluginassemblyid";
+            public const string PluginTypeExportKey = "plugintypeexportkey";
+            public const string PluginTypeIdUnique = "plugintypeidunique";
+            public const string PublicKeyToken = "publickeytoken";
+            public const string SolutionId = "solutionid";
+            public const string TypeName = "typename";
+            public const string Version = "version";
+            public const string VersionNumber = "versionnumber";
+            public const string WorkflowActivityGroupName = "workflowactivitygroupname";
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N plugintypeid_sdkmessageprocessingstep
-		/// </summary>	
-		[RelationshipSchemaName("plugintypeid_sdkmessageprocessingstep")]
-		public IEnumerable<SdkMessageProcessingStep> PlugintypeidSdkmessageprocessingstep
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStep>("plugintypeid_sdkmessageprocessingstep", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PlugintypeidSdkmessageprocessingstep");
-				this.SetRelatedEntities<SdkMessageProcessingStep>("plugintypeid_sdkmessageprocessingstep", null, value);
-				this.OnPropertyChanged("PlugintypeidSdkmessageprocessingstep");
-			}
-		}
+        #region AlternateKeys
+        public static partial class AlternateKeys
+        {
+            public const string PluginTypeEntityKey1 = "plugintypeentitykey";
+        }
+        #endregion
 
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct IsWorkflowActivity
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string PluginTypeId = "plugintypeid";
-				public const string AssemblyName = "assemblyname";
-				public const string ComponentState = "componentstate";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Culture = "culture";
-				public const string CustomizationLevel = "customizationlevel";
-				public const string CustomWorkflowActivityInfo = "customworkflowactivityinfo";
-				public const string Description = "description";
-				public const string FriendlyName = "friendlyname";
-				public const string IsManaged = "ismanaged";
-				public const string IsWorkflowActivity = "isworkflowactivity";
-				public const string Major = "major";
-				public const string Minor = "minor";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string PluginAssemblyId = "pluginassemblyid";
-				public const string PluginTypeExportKey = "plugintypeexportkey";
-				public const string PluginTypeIdUnique = "plugintypeidunique";
-				public const string PublicKeyToken = "publickeytoken";
-				public const string SolutionId = "solutionid";
-				public const string TypeName = "typename";
-				public const string Version = "version";
-				public const string VersionNumber = "versionnumber";
-				public const string WorkflowActivityGroupName = "workflowactivitygroupname";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string PluginTypeService = "plugin_type_service";
-				public const string PlugintypeCustomapi = "plugintype_customapi";
-				public const string PlugintypePlugintypestatistic = "plugintype_plugintypestatistic";
-				public const string PlugintypeSdkmessageprocessingstep = "plugintype_sdkmessageprocessingstep";
-				public const string PlugintypeidSdkmessageprocessingstep = "plugintypeid_sdkmessageprocessingstep";
-				public const string UserentityinstancedataPlugintype = "userentityinstancedata_plugintype";
+                public const string PlugintypeCustomapi = "plugintype_customapi";
+                public const string PlugintypePlugintypestatistic = "plugintype_plugintypestatistic";
+                public const string PlugintypeSdkmessageprocessingstep = "plugintype_sdkmessageprocessingstep";
+                public const string PlugintypeidSdkmessageprocessingstep = "plugintypeid_sdkmessageprocessingstep";
+                public const string UserentityinstancedataPlugintype = "userentityinstancedata_plugintype";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string CreatedbyPlugintype = "createdby_plugintype";
-				public const string LkPlugintypeCreatedonbehalfby = "lk_plugintype_createdonbehalfby";
-				public const string LkPlugintypeModifiedonbehalfby = "lk_plugintype_modifiedonbehalfby";
-				public const string ModifiedbyPlugintype = "modifiedby_plugintype";
-				public const string OrganizationPlugintype = "organization_plugintype";
-				public const string PluginassemblyPlugintype = "pluginassembly_plugintype";
+                public const string CreatedbyPlugintype = "createdby_plugintype";
+                public const string LkPlugintypeCreatedonbehalfby = "lk_plugintype_createdonbehalfby";
+                public const string LkPlugintypeModifiedonbehalfby = "lk_plugintype_modifiedonbehalfby";
+                public const string ModifiedbyPlugintype = "modifiedby_plugintype";
+                public const string OrganizationPlugintype = "organization_plugintype";
+                public const string PluginassemblyPlugintype = "pluginassembly_plugintype";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static PluginType Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static PluginType Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -728,30 +719,30 @@ namespace dgt.power.dataverse
 
         public PluginType GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  PluginType(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new PluginType(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<PluginType> PluginTypeSet
-		{
-			get
-			{
-				return CreateQuery<PluginType>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<PluginType> PluginTypeSet
+        {
+            get
+            {
+                return CreateQuery<PluginType>();
+            }
+        }
+    }
+    #endregion
 }
