@@ -242,7 +242,7 @@ internal sealed class AssemblyProcessor : IDisposable
             foreach (var oldType in oldAssembly.PluginTypes)
             {
                 var newType = newAssembly.PluginTypes
-                    .SingleOrDefault(t => t.TypeName == oldType.TypeName);
+                    .FirstOrDefault(t => t.TypeName == oldType.TypeName);
 
                 if (newType == null)
                 {
@@ -278,7 +278,7 @@ internal sealed class AssemblyProcessor : IDisposable
             foreach (var oldType in oldAssembly.PluginTypes)
             {
                 var newType = newAssembly.PluginTypes
-                    .SingleOrDefault(t => t.TypeName == oldType.TypeName);
+                    .FirstOrDefault(t => t.TypeName == oldType.TypeName);
 
                 if (newType == null)
                 {
