@@ -11,7 +11,10 @@ using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
@@ -27,15 +30,16 @@ public sealed class OutlookTemplateImport(
 {
     private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
+        ArgumentNullException.ThrowIfNull(args);
+        return InvokeCoreAsync(args, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(ImportVerb args, CancellationToken cancellationToken)
+    {
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
-
 
         if (!ConfigResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
         {
@@ -43,35 +47,46 @@ public sealed class OutlookTemplateImport(
         }
 
         var result = true;
+        var orgAsync = (IOrganizationServiceAsync2)Connection;
 
-        using var context = new DataContext(Connection);
-        var savedQueries = (from sq in context.SavedQuerySet
-            where sq.QueryType == SavedQueryQueryType.OutlookTemplate
-            orderby sq.Name
-            select sq).ToList();
+        var savedQueryExpression = new QueryExpression(SavedQuery.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                SavedQuery.LogicalNames.Name,
+                SavedQuery.LogicalNames.IsDefault,
+                SavedQuery.LogicalNames.FetchXml)
+        };
+        savedQueryExpression.Criteria.AddCondition(
+            SavedQuery.LogicalNames.QueryType,
+            ConditionOperator.Equal,
+            SavedQueryQueryType.OutlookTemplate);
+        savedQueryExpression.AddOrder(SavedQuery.LogicalNames.Name, OrderType.Ascending);
+        var retrieveResponse = (RetrieveMultipleResponse)await orgAsync.ExecuteAsync(
+            new RetrieveMultipleRequest { Query = savedQueryExpression },
+            cancellationToken);
+        var savedQueries = retrieveResponse.EntityCollection.Entities.Cast<SavedQuery>().ToList();
 
         foreach (var savedQuery in savedQueries)
         {
             if (queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == true)
             {
                 Tracer.Log($"Deactivate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
-                result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
+                result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
-                }) && result;
+                }, cancellationToken) && result;
             }
 
             if (!queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == false)
             {
                 Tracer.Log($"Activate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
-                result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
+                result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = true
-                }) && result;
+                }, cancellationToken) && result;
             }
         }
 
-        //anything to do?
         if (queries.OutlookTemplates.Count == 0)
         {
             return Tracer.End(this, result);
@@ -79,20 +94,24 @@ public sealed class OutlookTemplateImport(
 
         foreach (var outlookTemplate in queries.OutlookTemplates)
         {
-            result = UpsertOutlookTemplate(savedQueries, outlookTemplate) && result;
+            result = await UpsertOutlookTemplateAsync(orgAsync, savedQueries, outlookTemplate, cancellationToken) && result;
         }
 
         return Tracer.End(this, result);
     }
 
-    private bool UpsertOutlookTemplate(List<SavedQuery> savedQueries, OutlookTemplate outlookTemplate)
+    private async Task<bool> UpsertOutlookTemplateAsync(
+        IOrganizationServiceAsync2 orgAsync,
+        List<SavedQuery> savedQueries,
+        OutlookTemplate outlookTemplate,
+        CancellationToken cancellationToken)
     {
         var result = true;
         var savedQuery = savedQueries.Find(e => e.Name == outlookTemplate.Name);
         if (savedQuery == null)
         {
             Tracer.Log($"Create OutlookTemplate {outlookTemplate.Name}", TraceEventType.Information);
-            result = Connection.TryCreate(new SavedQuery
+            result = await orgAsync.TryCreateAsync(new SavedQuery
             {
                 FetchXml = outlookTemplate.FetchXml,
                 IsQuickFindQuery = false,
@@ -101,26 +120,26 @@ public sealed class OutlookTemplateImport(
                 ReturnedTypeCode = outlookTemplate.Entity,
                 Name = outlookTemplate.Name,
                 Description = $"{outlookTemplate.Description} ({DateTime.UtcNow:yyyy-MM-dd HH:mm:ss})"
-            }, out _);
+            }, cancellationToken);
         }
         else
         {
-            var current = VerifyFetchXml(savedQuery.FetchXml!);
-            var update = VerifyFetchXml(outlookTemplate.FetchXml);
+            var current = await VerifyFetchXmlAsync(orgAsync, savedQuery.FetchXml!, cancellationToken);
+            var update = await VerifyFetchXmlAsync(orgAsync, outlookTemplate.FetchXml, cancellationToken);
 
             if (!XmlCompare(XElement.Parse(current), XElement.Parse(update)))
             {
                 Tracer.Log($"Update OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
                 Tracer.Log("Update OutlookTemplate does not affect existing rule for users!",
                     TraceEventType.Warning);
-                result = Connection.TryUpdate(new SavedQuery(savedQuery.Id)
+                result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
-                }) && result;
-                Thread.Sleep(_sleepTime);
-                result = Connection.TryDelete(SavedQuery.EntityLogicalName, savedQuery.Id) && result;
-                Thread.Sleep(_sleepTime);
-                result = Connection.TryCreate(new SavedQuery
+                }, cancellationToken) && result;
+                await Task.Delay(_sleepTime, cancellationToken);
+                result = await orgAsync.TryDeleteAsync(SavedQuery.EntityLogicalName, savedQuery.Id, cancellationToken) && result;
+                await Task.Delay(_sleepTime, cancellationToken);
+                result = await orgAsync.TryCreateAsync(new SavedQuery
                 {
                     FetchXml = update,
                     IsQuickFindQuery = false,
@@ -129,7 +148,7 @@ public sealed class OutlookTemplateImport(
                     ReturnedTypeCode = outlookTemplate.Entity,
                     Name = outlookTemplate.Name,
                     Description = $"{outlookTemplate.Description} ({DateTime.UtcNow:yyyy-MM-dd HH:mm:ss})"
-                }, out _) && result;
+                }, cancellationToken) && result;
             }
             else
             {
@@ -140,16 +159,14 @@ public sealed class OutlookTemplateImport(
         return result;
     }
 
-    private string VerifyFetchXml(string current)
+    private static async Task<string> VerifyFetchXmlAsync(IOrganizationServiceAsync2 orgAsync, string fetchXml, CancellationToken cancellationToken)
     {
-        var queryResponse = (FetchXmlToQueryExpressionResponse)Connection.Execute(new FetchXmlToQueryExpressionRequest
-        {
-            FetchXml = current
-        });
-        var xmlResponse = (QueryExpressionToFetchXmlResponse)Connection.Execute(new QueryExpressionToFetchXmlRequest
-        {
-            Query = queryResponse.Query
-        });
+        var queryResponse = (FetchXmlToQueryExpressionResponse)await orgAsync.ExecuteAsync(
+            new FetchXmlToQueryExpressionRequest { FetchXml = fetchXml },
+            cancellationToken);
+        var xmlResponse = (QueryExpressionToFetchXmlResponse)await orgAsync.ExecuteAsync(
+            new QueryExpressionToFetchXmlRequest { Query = queryResponse.Query },
+            cancellationToken);
         return xmlResponse.FetchXml;
     }
 
