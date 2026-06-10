@@ -1,3 +1,15 @@
+# [2.1.0-beta.51](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.50...v2.1.0-beta.51) (2026-06-10)
+
+
+### Bug Fixes
+
+* replace Thread.Sleep with Task.Delay in push-adjacent modules ([bd9ab75](https://github.com/DIGITALLNature/DigitallPower/commit/bd9ab756fc84db8958b963e9d111dcbbb5014599)), closes [#78](https://github.com/DIGITALLNature/DigitallPower/issues/78)
+
+
+### Features
+
+* **codegeneration:** remove brownout warnings for Actions, AdditionalSdkMessages and CustomAPIs ([0c58601](https://github.com/DIGITALLNature/DigitallPower/commit/0c58601948d6ebc34907de14103ff6400121e4b6)), closes [#89](https://github.com/DIGITALLNature/DigitallPower/issues/89)
+
 # [2.1.0-beta.50](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.49...v2.1.0-beta.50) (2026-06-10)
 
 
