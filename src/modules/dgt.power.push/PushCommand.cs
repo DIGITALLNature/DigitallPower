@@ -184,8 +184,31 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
             if (settings.DeleteOnUpgrade  && state == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin))
             {
-                ctx.Status("Purge outdated plugin types");
+                ctx.Status("Build outdated assembly references");
                 var outdated = modelBuilder.BuildOutdatedAssemblyContentFromCrm(localAssembly.Name);
+
+                // Migrate steps to new assembly before deleting old one (non-PowerPlugin only,
+                // PowerPlugins re-create steps from attributes above)
+                if (!localAssembly.Type.HasFlag(AssemblyType.PowerPlugin) && outdated.Count > 0)
+                {
+                    ctx.Status("Migrate plugin steps to new assembly");
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate plugin steps from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigratePluginSteps(outdated, crmAssembly);
+                }
+
+                // Custom APIs must always be migrated when deleting old assembly (regardless of --no-migrate-custom-apis)
+                if (!localAssembly.Type.HasFlag(AssemblyType.PowerPlugin) && outdated.Count > 0)
+                {
+                    ctx.Status("Migrate Custom API references to new assembly");
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate Custom API references from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigrateCustomApis(outdated, crmAssembly);
+                }
+
+                ctx.Status("Purge outdated plugin types");
                 foreach (var assemblyContent in outdated)
                 {
                     foreach (var pluginType in assemblyContent.PluginTypes)
@@ -194,6 +217,21 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     }
 
                     processor.DeletePluginAssembly(assemblyContent.Id);
+                }
+            }
+            else if (!settings.NoMigrateCustomApis && state == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin)
+                     && !localAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
+            {
+                // Migrate Custom APIs by default on Upgrade (even without --delete-on-upgrade)
+                // PowerPlugins handle Custom API linking via CreatePluginType already
+                ctx.Status("Migrate Custom API references to new assembly");
+                var outdated = modelBuilder.BuildOutdatedAssemblyContentFromCrm(localAssembly.Name);
+                if (outdated.Count > 0)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate Custom API references from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigrateCustomApis(outdated, crmAssembly);
                 }
             }
         }

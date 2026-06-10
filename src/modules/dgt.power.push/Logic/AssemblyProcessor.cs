@@ -230,6 +230,95 @@ internal sealed class AssemblyProcessor : IDisposable
         _service.Delete(PluginAssembly.EntityLogicalName, assemblyId);
     }
 
+    /// <summary>
+    /// Migrates plugin steps from old assembly types to new assembly types (matched by TypeName).
+    /// Used during upgrade with --delete-on-upgrade for non-PowerPlugin assemblies to preserve
+    /// manually registered steps that would otherwise be lost when the old assembly is deleted.
+    /// </summary>
+    public void MigratePluginSteps(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .SingleOrDefault(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - steps will be deleted[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                foreach (var step in oldType.PluginSteps)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Step [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        step.Name, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new SdkMessageProcessingStep(step.Id)
+                    {
+                        EventHandler = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Migrates Custom API references from old assembly types to new assembly types (matched by TypeName).
+    /// By default, Custom APIs should point to the latest assembly version so they execute the newest code.
+    /// </summary>
+    public void MigrateCustomApis(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .SingleOrDefault(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - Custom API references cannot be migrated[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                var query = new QueryExpression
+                {
+                    EntityName = CustomAPI.EntityLogicalName,
+                    ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName, CustomAPI.LogicalNames.PluginTypeId),
+                    NoLock = true,
+                    Criteria = new FilterExpression(LogicalOperator.And)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(CustomAPI.LogicalNames.PluginTypeId,
+                                ConditionOperator.Equal, oldType.Id)
+                        }
+                    }
+                };
+
+                var apis = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).ToList();
+                foreach (var api in apis)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Custom API [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        api.UniqueName, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new CustomAPI(api.Id)
+                    {
+                        PluginTypeId = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
     private void AddPluginAssemblyToSolution(PluginAssembly pluginAssembly, string solution)
     {
         // PluginAssembly = 91
