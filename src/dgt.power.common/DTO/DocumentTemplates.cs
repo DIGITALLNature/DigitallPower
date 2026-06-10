@@ -11,5 +11,5 @@ public sealed class DocumentTemplates
 
     [JsonPropertyName("documenttemplates")]
     [JsonRequired]
-    public List<DocumentTemplate> Templates { get; init; } = new();
+    public IReadOnlyList<DocumentTemplate> Templates { get; init; } = new List<DocumentTemplate>();
 }

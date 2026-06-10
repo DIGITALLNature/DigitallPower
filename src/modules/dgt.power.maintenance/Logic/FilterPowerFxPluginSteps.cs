@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -30,7 +30,7 @@ public class FilterPowerFxPluginSteps(
             throw new NotSupportedException("Inline arguments are not yet supported");
         }
 
-        if (!ConfigResolver.TryGetConfigFile<PowerFxPluginsConfigs>(args.Config, out var powerfxpluginConfig))
+        if (!ConfigResolver.TryGetConfigFile<List<PowerFxPluginsConfig>>(args.Config, out var powerfxpluginConfig))
         {
             return Tracer.End(this, false);
         }
@@ -49,8 +49,9 @@ public class FilterPowerFxPluginSteps(
                     var step = SearchPowerFxPluginStep(config.Name,config.MessageName);
 
                     ctx.Status($"Build filter for {config.Name}");
-                    var filter = config.FilterAttributes.Length > 0
-                        ? string.Join(",", config.FilterAttributes.Order()): null;
+                    var filter = config.FilterAttributes.Count > 0
+                        ? string.Join(",", config.FilterAttributes.OrderBy(attribute => attribute, StringComparer.Ordinal))
+                        : null;
 
                     step.FilteringAttributesField = filter;
 

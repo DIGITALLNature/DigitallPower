@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -35,13 +35,13 @@ public class ExportCarrierInfo(
             LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        var isSuccessfulEc4u = !isSuccessfulDgt && Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulEc4U = !isSuccessfulDgt && Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
             LogicalName = Ec4uCarrier.EntityLogicalName
         }, out _);
 
-        return (isSuccessfulDgt || isSuccessfulEc4u)
+        return (isSuccessfulDgt || isSuccessfulEc4U)
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }
@@ -65,11 +65,11 @@ public class ExportCarrierInfo(
             LogicalName = DgtCarrier.EntityLogicalName
         }, out _);
 
-        List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
+        var carriers = new List<Ec4uCarrier>();
         if (isSuccessfulOld)
         {
             carriers = dataContext.Ec4uCarrierSet
-                .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
+                .Where(x => x.Statecode != null && x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
                 .OrderBy(x => x.Ec4uCarTransportOrderNo)
                 .Select(x => new Ec4uCarrier
                 {
@@ -85,7 +85,7 @@ public class ExportCarrierInfo(
                 .ToList();
         }
 
-        if(isSuccessfulDgt)
+        if (isSuccessfulDgt)
         {
             carriers = dataContext.DgtCarrierSet
                 .Where(x => x.Statecode.Value == Ec4uCarrier.Options.Statecode.Active)
@@ -110,32 +110,36 @@ public class ExportCarrierInfo(
             return Tracer.End(this, false);
         }
 
-        var carrierInfo = carriers
-            .Where(IsCarrierValid)
-            .Select(ExtractIdAndOrder)
-            .Select(tuple => GetSolution(dataContext, tuple))
-            .Where(SolutionIsNotNull)
-            .Select(ToCarrierInfo)
-            .OrderBy(carrier => carrier.Order);
+        var carrierInfo = new List<Carrier>();
+        foreach (var carrier in carriers)
+        {
+            if (!IsCarrierValid(carrier))
+            {
+                continue;
+            }
 
-        fileService.ExportJsonFile(settings.FileDir, settings.FileName, new Carriers(carrierInfo));
+            var solutionLookup = GetSolution(dataContext, ExtractIdAndOrder(carrier));
+            if (solutionLookup.Solution == null)
+            {
+                continue;
+            }
+
+            carrierInfo.Add(ToCarrierInfo(solutionLookup.Solution, solutionLookup.Carrier));
+        }
+
+        fileService.ExportJsonFile(settings.FileDir, settings.FileName, carrierInfo.OrderBy(carrier => carrier.Order).ToList());
 
         return Tracer.End(this, true);
     }
 
-    private static bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
+    private static Carrier ToCarrierInfo(Solution solution, Ec4uCarrier carrier) => new()
     {
-        return tuple.Solution != null;
-    }
-
-    private static Carrier ToCarrierInfo((Solution? Solution, Ec4uCarrier Carrier) tuple) => new()
-    {
-        UniqueName = tuple.Solution!.UniqueName!,
-        FriendlyName = tuple.Solution.FriendlyName!,
-        SolutionId = tuple.Solution.Id,
-        CarrierId = tuple.Carrier.Id,
-        Order = tuple.Carrier.Ec4uCarTransportOrderNo!.Value,
-        Version = tuple.Solution.Version!
+        UniqueName = solution.UniqueName!,
+        FriendlyName = solution.FriendlyName!,
+        SolutionId = solution.Id,
+        CarrierId = carrier.Id,
+        Order = carrier.Ec4uCarTransportOrderNo!.Value,
+        Version = solution.Version!
     };
 
 

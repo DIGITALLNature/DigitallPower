@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Activities;
@@ -19,7 +19,7 @@ using PluginType = dgt.power.dataverse.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class AssemblyModelBuilder : IDisposable
+internal sealed class AssemblyModelBuilder : IDisposable
 {
     private readonly DataContext _context;
 
@@ -43,7 +43,7 @@ internal class AssemblyModelBuilder : IDisposable
 
     public Package? BuildPackageFromFile(string packageFile)
     {
-        Package result = default(Package);
+        Package? result = null;
         try
         {
             var content = Convert.ToBase64String(File.ReadAllBytes(packageFile));
@@ -54,11 +54,11 @@ internal class AssemblyModelBuilder : IDisposable
             result = new Package
             {
                 Name = nuspec.GetId(),
-                Version = nuspec.GetVersion().OriginalVersion,
+                Version = nuspec.GetVersion().OriginalVersion ?? nuspec.GetVersion().ToFullString(),
                 Content = content
             };
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             _console.MarkupLine(Markup.Escape(e.RootMessage()));
         }
@@ -68,24 +68,26 @@ internal class AssemblyModelBuilder : IDisposable
 
     public Package BuildPackageFromCrm(string name, string version)
     {
-        var result = new Package();
         var state = GetPluginPackage(name, version, out var pluginPackage);
-        result.State = state;
-        if (state != AssemblyState.Create)
-        {
-            result.Name = pluginPackage!.Name!;
-            result.Version = pluginPackage.Version!;
-            result.Content = pluginPackage.Content!;
-            result.Id = pluginPackage.PluginPackageId!.Value;
 
-            result.Solutions = GetSolutions(pluginPackage.ToEntityReference());
+        if (state == AssemblyState.Create)
+        {
+            return new Package { Name = name, Version = version, State = state };
         }
 
-        return result;
+        return new Package
+        {
+            Name = pluginPackage!.Name!,
+            Version = pluginPackage.Version!,
+            Content = pluginPackage.Content!,
+            Id = pluginPackage.PluginPackageId!.Value,
+            State = state,
+            Solutions = GetSolutions(pluginPackage.ToEntityReference())
+        };
     }
 
 
-    public List<Assembly?> BuildAssemblyFromPackage(Package packageFile)
+    public IReadOnlyList<Assembly?> BuildAssemblyFromPackage(Package packageFile)
     {
         using var inputStream = new MemoryStream(Convert.FromBase64String(packageFile.Content!));
         using var reader = new PackageArchiveReader(inputStream);
@@ -110,7 +112,7 @@ internal class AssemblyModelBuilder : IDisposable
             }
 
 
-            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(AssemblyModelBuilder).Assembly.Location)!,"*.dll").Concat(Directory.GetFiles(tempPath, "*.dll"))));
             using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
 
             foreach (var nugetDlls in Directory.GetFiles(tempPath, "*.dll"))
@@ -126,8 +128,9 @@ internal class AssemblyModelBuilder : IDisposable
         return results;
     }
 
-    public Assembly? BuildAssemblyFromDll(string dllFile, MetadataLoadContext? metadataLoadContext)
+    public Assembly? BuildAssemblyFromDll(string dllFile, MetadataLoadContext metadataLoadContext)
     {
+        ArgumentNullException.ThrowIfNull(metadataLoadContext);
         var result = default(Assembly);
         try
         {
@@ -150,7 +153,7 @@ internal class AssemblyModelBuilder : IDisposable
             _console.MarkupLine(Markup.Escape(e.RootMessage()));
             throw;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             _console.MarkupLine(Markup.Escape(e.RootMessage()));
         }
@@ -214,7 +217,7 @@ internal class AssemblyModelBuilder : IDisposable
     /// </summary>
     /// <param name="name">The name of the assembly.</param>
     /// <returns>The list of outdated assembly content.</returns>
-    public List<AssemblyContent> BuildOutdatedAssemblyContentFromCrm(string name)
+    public IReadOnlyList<AssemblyContent> BuildOutdatedAssemblyContentFromCrm(string name)
     {
         // Get the list of plugin assemblies from CRM
         var assemblies = GetPluginAssemblies(name);
@@ -243,7 +246,7 @@ internal class AssemblyModelBuilder : IDisposable
                     FriendlyName = pluginType.FriendlyName!,
                     Id = pluginType.PluginTypeId!.Value,
                     ParentId = pluginAssembly.Id,
-                    ParentName = pluginAssembly!.Name
+                    ParentName = pluginAssembly.Name
                 };
 
                 // Get the list of plugin steps from CRM
@@ -265,9 +268,9 @@ internal class AssemblyModelBuilder : IDisposable
 
     private AssemblyState GetPluginPackage(string name, string version, out PluginPackage? pluginPackage)
     {
-        pluginPackage = default;
+        pluginPackage = null;
         var packages = (from pa in _context.PluginPackageSet
-            where pa.Name.EndsWith(name)
+            where pa.Name != null && pa.Name.EndsWith(name)
             orderby pa.Version
             select pa).ToList();
         if (packages.Count == 0)
@@ -313,10 +316,7 @@ internal class AssemblyModelBuilder : IDisposable
                 FriendlyName =
                     Guid.NewGuid()
                         .ToString("D"), //fixes: Message: Cannot insert duplicate key exception when executing non-query: System.Data.SqlClient.SqlCommand Exception: System.Data.SqlClient.SqlException (0x80131904): Cannot insert duplicate key row in object 'dbo.PluginTypeBase' with unique index 'UQ1_PluginType'. The statement has been terminated.
-                WorkflowActivityGroupName = (customAttribute?.Group ?? $"{result.Name} ({result.Version})") +
-                                            (customAttribute != null && customAttribute.IncludeVersion
-                                                ? $" ({result.Version})"
-                                                : null),
+                WorkflowActivityGroupName = BuildWorkflowActivityGroupName(customAttribute, result),
                 ParentName = result.Name
             });
         }
@@ -353,11 +353,22 @@ internal class AssemblyModelBuilder : IDisposable
                     }
                 }
 
-                type.PluginSteps.AddRange(GetPluginSteps(pluginType));
+                type.PluginSteps.AddRange(GetRegistrationPluginSteps(pluginType));
             }
 
             result.PluginTypes.Add(type);
         }
+    }
+
+    private static string BuildWorkflowActivityGroupName(WorkflowRegistrationAttribute? customAttribute, Assembly result)
+    {
+        var workflowActivityGroupName = customAttribute?.Group ?? $"{result.Name} ({result.Version})";
+        if (customAttribute?.IncludeVersion == true)
+        {
+            return $"{workflowActivityGroupName} ({result.Version})";
+        }
+
+        return workflowActivityGroupName;
     }
 
     #endregion
@@ -368,14 +379,14 @@ internal class AssemblyModelBuilder : IDisposable
 
     private AssemblyState GetPluginAssembly(string name, string version, out PluginAssembly? pluginAssembly)
     {
-        pluginAssembly = default;
+        pluginAssembly = null;
         var assemblies = GetPluginAssemblies(name);
         if (assemblies.Count == 0)
         {
             return AssemblyState.Create;
         }
 
-        pluginAssembly = assemblies.First();
+        pluginAssembly = assemblies[0];
 
         if (pluginAssembly.PackageId != null)
         {
@@ -523,17 +534,12 @@ internal class AssemblyModelBuilder : IDisposable
             where mpsi.SdkMessageProcessingStepId.Equals(pluginStep)
             select mpsi).ToList().ForEach(e =>
         {
-            if ((e.ImageType!.Value == SdkMessageProcessingStepImage.Options.ImageType.PreImage &&
-                 "PreImage".Equals(e.Name, StringComparison.Ordinal) &&
-                 "PreImage".Equals(e.EntityAlias, StringComparison.Ordinal)) ||
-                (e.ImageType.Value == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&
-                 "PostImage".Equals(e.Name, StringComparison.Ordinal) &&
-                 "PostImage".Equals(e.EntityAlias, StringComparison.Ordinal)))
+            if (HasDefaultImageIdentity(e))
             {
                 images.Add(new PluginStepImage
                 {
-                    Name = e.Name,
-                    EntityAlias = e.EntityAlias,
+                    Name = e.Name ?? string.Empty,
+                    EntityAlias = e.EntityAlias ?? string.Empty,
                     ImageType = e.ImageType.Value,
                     Attributes = e.AttributesField?.Split(',', StringSplitOptions.RemoveEmptyEntries),
                     MessagePropertyName = e.MessagePropertyName!,
@@ -551,6 +557,23 @@ internal class AssemblyModelBuilder : IDisposable
         });
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         return images;
+    }
+
+    private static bool HasDefaultImageIdentity(SdkMessageProcessingStepImage image)
+    {
+        if (image.ImageType?.Value == SdkMessageProcessingStepImage.Options.ImageType.PreImage)
+        {
+            return "PreImage".Equals(image.Name, StringComparison.Ordinal)
+                   && "PreImage".Equals(image.EntityAlias, StringComparison.Ordinal);
+        }
+
+        if (image.ImageType?.Value == SdkMessageProcessingStepImage.Options.ImageType.PostImage)
+        {
+            return "PostImage".Equals(image.Name, StringComparison.Ordinal)
+                   && "PostImage".Equals(image.EntityAlias, StringComparison.Ordinal);
+        }
+
+        return false;
     }
 
     #endregion
@@ -571,7 +594,7 @@ internal class AssemblyModelBuilder : IDisposable
 
     #region dgt.registration
 
-    private List<PluginStep> GetPluginSteps(Type pluginType)
+    private List<PluginStep> GetRegistrationPluginSteps(Type pluginType)
     {
         var steps = new List<PluginStep>();
 
@@ -760,18 +783,20 @@ internal class AssemblyModelBuilder : IDisposable
 
     #region Support
 
-    private static string?[]? GetArrayValues(CustomAttributeData customAttribute, string property)
+    private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {
         if (customAttribute.NamedArguments.Any(a => a.MemberName == property))
         {
             var propertyInfo = customAttribute.NamedArguments.Single(a => a.MemberName == property);
-            var valuesRaw = (IReadOnlyCollection<CustomAttributeTypedArgument>)propertyInfo.TypedValue.Value;
-            var result = valuesRaw?.Select(x => x.Value as string).ToArray();
+            if (propertyInfo.TypedValue.Value is not IReadOnlyCollection<CustomAttributeTypedArgument> valuesRaw)
+            {
+                return null;
+            }
 
-            return result;
+            return valuesRaw.Select(x => x.Value as string).OfType<string>().ToArray();
         }
 
-        return default;
+        return null;
     }
 
     private T? GetValue<T>(CustomAttributeData customAttribute, string property)
@@ -807,20 +832,6 @@ internal class AssemblyModelBuilder : IDisposable
         ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value
         : default;
 
-
-    private static byte[] ReadFully(Stream input)
-    {
-        var buffer = new byte[16 * 1024];
-        using var ms = new MemoryStream();
-        int read;
-        while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-        {
-            ms.Write(buffer, 0, read);
-        }
-
-        return ms.ToArray();
-    }
-
     private static IEnumerable<Type> GetLoadableTypes(System.Reflection.Assembly assembly)
     {
         ArgumentNullException.ThrowIfNull(assembly);
@@ -850,7 +861,6 @@ internal class AssemblyModelBuilder : IDisposable
     public void Dispose()
     {
         _context.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     #endregion

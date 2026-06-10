@@ -57,7 +57,7 @@ public sealed class BulkDeleteExport(
             var data = operation.Data!;
             var start = data.IndexOf("<string>&lt;fetch", StringComparison.InvariantCultureIgnoreCase) + 8;
             var end = data.IndexOf("fetch&gt;</string>", StringComparison.InvariantCultureIgnoreCase) + 9;
-            var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<").Replace("&gt;", ">");
+            var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<", StringComparison.Ordinal).Replace("&gt;", ">", StringComparison.Ordinal);
             var bulkDelete = new BulkDelete
             {
                 Name = operation.Name!,

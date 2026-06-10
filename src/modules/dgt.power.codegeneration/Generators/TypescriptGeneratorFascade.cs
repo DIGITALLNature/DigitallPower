@@ -13,7 +13,10 @@ namespace dgt.power.codegeneration.Generators;
 public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiConsole console)
     : ITypescriptGeneratorFascade
 {
-    private ITypescriptGenerator _generator;
+    private ITypescriptGenerator? _generator;
+
+    private ITypescriptGenerator Generator =>
+        _generator ?? throw new InvalidOperationException("Generator version is not set. Call SetGenerationVersion first.");
 
     #region ITypescriptGeneratorFascade Members
 
@@ -25,18 +28,16 @@ public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiC
     {
         // Ensure that the arguments are not null
         Debug.Assert(args != null, nameof(args) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.PrepareDirectory(args);
+        Generator.PrepareDirectory(args);
     }
 
     public void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateBoilerPlateFull(args, config);
+        Generator.GenerateBoilerPlateFull(args, config);
     }
 
     /// <summary>
@@ -49,27 +50,24 @@ public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiC
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateEntities(args, config);
+        Generator.GenerateEntities(args, config);
     }
 
     public void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateEntityRefsFull(args, config);
+        Generator.GenerateEntityRefsFull(args, config);
     }
 
     public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateEntityForms(args, config);
+        Generator.GenerateEntityForms(args, config);
     }
 
     /// <summary>
@@ -82,9 +80,8 @@ public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiC
         // Check if the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateSdkMessages(args, config);
+        Generator.GenerateSdkMessages(args, config);
     }
 
     /// <summary>
@@ -97,27 +94,24 @@ public class TypescriptGeneratorFascade(IMetadataService metadataService, IAnsiC
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateOptionSets(args, config);
+        Generator.GenerateOptionSets(args, config);
     }
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateBusinessProcessFlowsFull(args, config);
+        Generator.GenerateBusinessProcessFlowsFull(args, config);
     }
 
     public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
-        Debug.Assert(_generator != null, nameof(_generator) + " != null");
 
-        _generator.GenerateCustomApis(args, config);
+        Generator.GenerateCustomApis(args, config);
     }
 
     public void SetGenerationVersion(TypescriptGeneratorVersion generatorVersion)

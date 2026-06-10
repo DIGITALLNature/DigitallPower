@@ -23,5 +23,5 @@ public sealed class DuplicateRule
     public required bool ExcludeInactiveRecords { get; set; }
 
     [JsonPropertyName("duplicate_rule_conditions")]
-    public required List<DuplicateRuleCondition> DuplicateRuleConditions { get; set; } = new();
+    public IReadOnlyList<DuplicateRuleCondition> DuplicateRuleConditions { get; init; } = new List<DuplicateRuleCondition>();
 }

@@ -13,12 +13,12 @@ public static class Formatter
     public static readonly Regex NewlineRegex = new (@"\r\n|\r|\n", RegexOptions.Compiled);
 
     // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
-    public static string CamelCase(string? phrase) => ConvertCaseString(phrase, Case.CamelCase);
+    public static string CamelCase(string? phrase) => ConvertCaseString(phrase, NameCase.CamelCase);
 
     // TODO: This method is not really pascal casing. It is actually camel casing.
-    public static string PascalCase(string? phrase) => ConvertCaseString(phrase, Case.PascalCase);
+    public static string PascalCase(string? phrase) => ConvertCaseString(phrase, NameCase.PascalCase);
 
-    private static string ConvertCaseString(string? phrase, Case cases)
+    private static string ConvertCaseString(string? phrase, NameCase cases)
     {
         if (string.IsNullOrWhiteSpace(phrase))
         {
@@ -30,7 +30,7 @@ public static class Formatter
         var splittedPhrase = phrase.Split(' ', '-', '_');
         var sb = new StringBuilder();
 
-        if (cases == Case.PascalCase)
+        if (cases == NameCase.PascalCase)
         {
             sb.Append(splittedPhrase[0].ToLower(CultureInfo.InvariantCulture));
             splittedPhrase[0] = string.Empty;
@@ -64,15 +64,16 @@ public static class Formatter
         // leading number
         var result = PreventFirstNumber(value, allowFirstNumber);
         result = result
-            .Replace("...", "_ellipsis_")
-            .Replace("@", "_euro_")
-            .Replace("%", "_percent_");
+            .Replace("...", "_ellipsis_", StringComparison.Ordinal)
+            .Replace("@", "_euro_", StringComparison.Ordinal)
+            .Replace("%", "_percent_", StringComparison.Ordinal);
         return value.ToLowerInvariant().Where(character => !IsValidFieldNameCharacter(character, allowWhiteSpace, allowSafeStringChars))
             .Aggregate(result, (current, character) => current.Replace(character, '_'));
     }
 
     public static string GetLocalizedLabel(Label label, bool useBaseLanguage, int systemLanguage)
     {
+        ArgumentNullException.ThrowIfNull(label);
         var txt = useBaseLanguage
             ? label.LocalizedLabels?.SingleOrDefault(l => l.LanguageCode == systemLanguage)?.Label
             : label.UserLocalizedLabel?.Label;
@@ -96,7 +97,7 @@ public static class Formatter
             validValues += "(/)-.";
         }
 
-        return validValues.Contains(character);
+        return validValues.Contains(character, StringComparison.Ordinal);
     }
 
     public static string PreventFirstNumber(string input, bool allowFirstNumber = false)
@@ -110,12 +111,13 @@ public static class Formatter
 
     public static string MaskDoubleQuote(string input)
     {
-        return input.Replace("\"", "\\\"");
+        ArgumentNullException.ThrowIfNull(input);
+        return input.Replace("\"", "\\\"", StringComparison.Ordinal);
     }
 
-    #region Nested type: Case
+    #region Nested type: NameCase
 
-    private enum Case
+    private enum NameCase
     {
         PascalCase,
         CamelCase

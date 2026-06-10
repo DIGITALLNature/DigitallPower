@@ -33,7 +33,4 @@ public sealed class DocumentTemplate
 
     [JsonPropertyName("associated_entity")]
     public required string AssociatedEntityTypeCode { get; init; }
-
-    //[JsonPropertyName("client_data")]
-    //public string ClientData { get; set; }
 }

@@ -4,13 +4,12 @@
 using System.Diagnostics;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.codegeneration.Templates;
 using dgt.power.codegeneration.Templates.dotnet;
 using dgt.power.codegeneration.Templates.tsl.ViewModels;
 using Fluid;
-using Fluid.Values;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using static dgt.power.codegeneration.Constants.FileNames;
@@ -51,7 +50,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
 
         var actions = metadataService.RetrieveActions(config);
-        var apis = metadataService.RetrieveCustomAPIs(config);
+        var apis = metadataService.RetrieveCustomApis(config);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
 
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");

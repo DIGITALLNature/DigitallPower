@@ -8,8 +8,8 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.analyzer.Reports;
 using dgt.power.analyzer.tests.Base;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
@@ -149,7 +149,7 @@ public class ActiveLayerAnalyzeTest : AnalyzeTestsBase<ActiveLayerAnalyze>
         await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv"))).IsTrue();
 
         // Check Summary
-        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json")));
+        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(await File.ReadAllBytesAsync(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json")));
         await Assert.That(summary.Anomalies).IsEqualTo(1);
 
         // Check Result

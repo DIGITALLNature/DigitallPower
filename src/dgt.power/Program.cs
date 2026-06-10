@@ -16,11 +16,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
-// ReSharper disable RedundantUsingDirective
 using dgt.power.common.Commands;
-using dgt.power.common.Exceptions;
-using dgt.power.common.Extensions;
-// ReSharper restore RedundantUsingDirective
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.export.Base;
@@ -43,6 +39,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Tracer = dgt.power.Tracer;
 
 var defaultConfiguration = new Dictionary<string, string?>
 {
@@ -89,7 +86,7 @@ if (telemetryEnabled)
     }
 }
 
-registrations.AddSingleton<ITracer>(_ => new dgt.power.Tracer(telemetryEnabled, installId, appConsole));
+registrations.AddSingleton<ITracer>(_ => new Tracer(telemetryEnabled, installId, appConsole));
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<TypescriptWorker, TypescriptWorker>();
@@ -111,8 +108,8 @@ registrations.AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetWorker, DotNetWorker>();
 registrations.AddScoped<IFileService, FileService>();
-registrations.AddSingleton<IAnsiConsole>(appConsole);
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().Connect());
+registrations.AddSingleton(appConsole);
+registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().ConnectAsync().GetAwaiter().GetResult());
 registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
@@ -247,15 +244,9 @@ app.Configure(config =>
 
     config.SetExceptionHandler((exception, _) =>
     {
-        var errorMessage = exception.Message;
-        if (exception.IsDerivedFrom<AbstractPowerException>())
-        {
-            var innerException = exception.GetInnerException<AbstractPowerException>();
-            errorMessage = innerException!.Message;
-        }
-
 #if RELEASE
-        AnsiConsole.MarkupLineInterpolated($"[red]{errorMessage}[/]");
+        AnsiConsole.MarkupLineInterpolated(
+            $"[red]{(exception.IsDerivedFrom<AbstractPowerException>() ? exception.GetInnerException<AbstractPowerException>()?.Message ?? exception.Message : exception.Message)}[/]");
 #elif DEBUG
         AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
 #endif
@@ -274,7 +265,7 @@ if (args.Length == 0)
 }
 
 
-var exitCode = app.Run(args);
+var exitCode = await app.RunAsync(args);
 
 tracerProvider?.ForceFlush(5000);
 tracerProvider?.Dispose();

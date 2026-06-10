@@ -7,8 +7,8 @@ using System.Globalization;
 using System.Text.Json;
 using CsvHelper;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -154,6 +154,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     /// <returns>The top component layer that is not active.</returns>
     protected static MsdynComponentlayer GetTopNotActiveLayer(IList<MsdynComponentlayer> layers)
     {
+        ArgumentNullException.ThrowIfNull(layers);
         // If there is only one layer, return it
         if (layers.Count == 1)
         {
@@ -209,6 +210,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
     protected static Solution GetSolution(DataContext context, string uniqueName)
     {
+        ArgumentNullException.ThrowIfNull(context);
         var solution = (from su in context.SolutionSet
                         where su.UniqueName == uniqueName
                         select su).Single();
@@ -269,6 +271,8 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
 
     protected static string GetComponentName(SolutionComponent component, IEnumerable<EntityMetadata> entities, MsdynComponentlayer first)
     {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(first);
         string componentName;
         if (component.RootSolutionComponentId != null &&
             ((OptionSetValue)component

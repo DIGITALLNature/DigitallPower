@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -69,7 +69,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
-        List<Assembly?> assemblies;
+        IReadOnlyList<Assembly?> assemblies;
         using var modelBuilder = new AssemblyModelBuilder(_connection, _console);
         using var processor = new AssemblyProcessor(_connection, _console);
 
@@ -81,6 +81,12 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             _console.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
             var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
+            if (packageLocal == null)
+            {
+                _console.MarkupLine("[red]Failed to read package metadata - aborting[/]");
+                return;
+            }
+
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
             if (packageCrm.State == AssemblyState.Create)
@@ -103,15 +109,15 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
         }
         else
         {
-            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,"*.dll")));
-            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PushCommand).Assembly.Location)!,"*.dll")));
+            using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
             assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(settings.Target,loadContext) };
         }
 
 
         foreach (var localAssembly in assemblies)
         {
-            if (localAssembly == default(Assembly))
+            if (localAssembly == null)
             {
                 continue;
             }

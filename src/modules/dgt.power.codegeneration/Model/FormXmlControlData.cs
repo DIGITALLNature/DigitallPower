@@ -34,9 +34,10 @@ public class FormXmlControlData: IComparable<FormXmlControlData>
         }
         return false;
     }
+    // ReSharper disable once NonReadonlyMemberInGetHashCode — ControlId is mutated only before object is added to any collection
     public override int GetHashCode()
     {
-        return ControlId.GetHashCode();
+        return ControlId.GetHashCode(StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator ==(FormXmlControlData? left, FormXmlControlData? right)

@@ -11,17 +11,17 @@ namespace dgt.power.codegeneration.Services.Contracts;
 public interface IMetadataService
 {
     IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
-    IEnumerable<WfAction> RetrieveCustomAPIs(CodeGenerationConfig config);
-    List<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
+    IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config);
+    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
     SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
     EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
     int RetrieveOrganizationLanguage();
-    List<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
-    List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
+    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
+    IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
 
     Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
 
     Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
-    List<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
+    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
     void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
 }

@@ -64,7 +64,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         var attributePath = Path.Combine(dotNetPath, "Attribute.cs");
         await Assert.That(File.Exists(attributePath)).IsTrue();
-        var attributeCode = File.ReadAllText(attributePath);
+        var attributeCode = await File.ReadAllTextAsync(attributePath);
 
         // TODO: Use Analyzer or compiler to assert this
         await Assert.That(attributeCode).Contains($"public const bool {Labels.DefaultFalse} = false;");
@@ -94,7 +94,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         Directory.CreateDirectory(modelPath);
         Directory.CreateDirectory(dotNetPath);
         var existingFilePath = $"{dotNetPath}/Testentity.cs";
-        File.WriteAllText(existingFilePath, "public class TestEntity : Entity { }");
+        await File.WriteAllTextAsync(existingFilePath, "public class TestEntity : Entity { }");
 
         await Assert.That(GetContext()
             .Execute(args)).IsTrue();
@@ -164,7 +164,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
         await Assert.That(File.Exists(messagesPath)).IsTrue();
-        var messagesCode = File.ReadAllText(messagesPath);
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(action.Name)} = \"{action.Name}\";");
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(customApi.Name)} = \"{customApi.Name}\";");
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(additionalMessage.Name)} = \"{additionalMessage.Name}\";");
@@ -220,7 +220,7 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
         await Assert.That(File.Exists(messagesPath)).IsTrue();
-        var messagesCode = File.ReadAllText(messagesPath);
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
         await Assert.That(messagesCode).Contains($"public class {Formatter.CamelCase(actionProcess.UniqueName)}Request : OrganizationRequest");
         await Assert.That(messagesCode).Contains($"public class {Formatter.CamelCase(customApi.UniqueName)}Request : OrganizationRequest");
     }

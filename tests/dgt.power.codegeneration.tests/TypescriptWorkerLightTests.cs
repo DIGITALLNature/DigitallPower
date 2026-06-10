@@ -1,201 +1,148 @@
-﻿// // Copyright (c) DIGITALL Nature. All rights reserved
-// // DIGITALL Nature licenses this file to you under the Microsoft Public License.
-//
-// using dgt.power.codegeneration.Base;
-// using dgt.power.codegeneration.Constants;
-// using dgt.power.codegeneration.Logic;
-// using dgt.power.codegeneration.tests.Base;
-// using dgt.power.dataverse;
-// using dgt.power.tests;
-// using DiffPlex;
-// using DiffPlex.DiffBuilder;
-// using DiffPlex.DiffBuilder.Model;
-// using AwesomeAssertions;
-// using Microsoft.Xrm.Sdk;
-// using Microsoft.Xrm.Sdk.Metadata;
-// using Spectre.Console;
-// using Xunit.Abstractions;
-// using ChangeType = DiffPlex.DiffBuilder.Model.ChangeType;
-// #pragma warning disable CS8602
-//
-// namespace dgt.power.codegeneration.tests;
-//
-// public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWorker>
-// {
-//     private readonly EntityMetadata _testTableMetadata;
-//
-//     public TypescriptWorkerLightTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-//     {
-//         _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
-//     }
-//
-//     protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
-//     {
-//         var organization = new Organization(Guid.NewGuid())
-//         {
-//             LanguageCode = 1031
-//         };
-//         return base.GetBuilder()
-//             .WithMetaData(_testTableMetadata)
-//             .WithData(organization);
-//     }
-//
-//     [Theory]
-//     [MemberData(nameof(GetTestScenariosDirectories))]
-//     public void ShouldGenerateExactFiles(string directoryName)
-//     {
-//         var args = new CodeGenerationVerb
-//         {
-//             Config = Path.Combine(directoryName, "model.config.json"),
-//             TargetDirectory = ArtifactDirectory,
-//         };
-//
-//         var context = GetBuilder()
-//             .WithData(GetTestTableForm())
-//             .Build();
-//
-//         context
-//             .Execute(args)
-//             .Should().BeTrue();
-//
-//         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
-//
-//         var expectedFiles = new DirectoryInfo(directoryName).GetFiles("*.ts").Select(f => new { f.Name, f.FullName }).ToList();
-//         var actualFiles = new DirectoryInfo(typescriptPath).GetFiles("*.ts").Select(f => new { f.Name, f.FullName }).ToList();
-//
-//         actualFiles.Select(f => f.Name).Should().BeEquivalentTo(expectedFiles.Select(f => f.Name));
-//
-//         foreach (var expectedFile in expectedFiles)
-//         {
-//             var actualFile = actualFiles.Single(f => f.Name == expectedFile.Name);
-//             actualFiles.Remove(actualFile);
-//
-//             var expectedFileContent = File.ReadAllText(expectedFile.FullName);
-//             var actualFileContent = File.ReadAllText(actualFile.FullName);
-//
-//             if (expectedFileContent == actualFileContent)
-//             {
-//                 continue;
-//             }
-//
-//             var diffBuidler = new InlineDiffBuilder(new Differ());
-//             var diff = diffBuidler.BuildDiffModel(expectedFileContent, actualFileContent);
-//
-//             if (diff.HasDifferences == false)
-//             {
-//                 continue;
-//             }
-//
-//             var diffOutput = GenerateDiffOutput(diff);
-//
-//             Assert.Fail($"File {expectedFile.Name} is different:\n{diffOutput}");
-//         }
-//
-//         foreach (var actualFile in actualFiles)
-//         {
-//             Assert.Fail($"File {actualFile.Name} should not be generated");
-//         }
-//     }
-//
-//     public static IEnumerable<object[]> GetTestScenariosDirectories()
-//     {
-//         var testScenariosDirectory = new DirectoryInfo(Path.Combine("Resources", nameof(TypescriptCommand), "TestScenarios"));
-//
-//         return testScenariosDirectory.EnumerateDirectories()
-//             .Select(d => new object[] { d.FullName });
-//     }
-//
-//     private (SystemForm mainForm, SystemForm quickCreate, SystemForm quickView) GetForms()
-//     {
-//         var mainForm = new SystemForm(Guid.NewGuid())
-//         {
-//             Name = "Account",
-//             FormXml = GetResourceAsString("account.main.form.xml"),
-//             ObjectTypeCode = Account.EntityLogicalName,
-//             Type = new OptionSetValue(SystemForm.Options.Type.Main),
-//             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
-//         };
-//         var quickCreateForm = new SystemForm(Guid.NewGuid())
-//         {
-//             Name = "Account Quick Create",
-//             FormXml = GetResourceAsString("account.quick.create.form.xml"),
-//             ObjectTypeCode = Account.EntityLogicalName,
-//             Type = new OptionSetValue(SystemForm.Options.Type.QuickCreate),
-//             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
-//         };
-//         var quickViewForm = new SystemForm(Guid.NewGuid())
-//         {
-//             Name = "App for Outlook Account Quick View",
-//             FormXml = GetResourceAsString("account.quick.view.form.xml"),
-//             ObjectTypeCode = Account.EntityLogicalName,
-//             Type = new OptionSetValue(SystemForm.Options.Type.QuickViewForm),
-//             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
-//         };
-//         return (mainForm, quickCreateForm, quickViewForm);
-//     }
-//
-//     private SystemForm GetTestTableForm() =>
-//         new(Guid.NewGuid())
-//         {
-//             Name = "Test Table",
-//             FormXml = GetResourceAsString("dgt_test_table.main.form.xml"),
-//             ObjectTypeCode = "dgt_test_table",
-//             Type = new OptionSetValue(SystemForm.Options.Type.Main),
-//             FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
-//         };
-//
-//     private string GenerateDiffOutput(DiffPaneModel diff, int contextLines = 2)
-//     {
-//         List<string> output = new List<string>();
-//         int lastChangeLine = -1;
-//         int maxDigits = diff.Lines.Count.ToString().Length;
-//
-//         for (int i = 0; i < diff.Lines.Count; i++)
-//         {
-//             var line = diff.Lines[i];
-//             if (line.Type != ChangeType.Unchanged)
-//             {
-//                 // Add context lines before the change
-//                 if (lastChangeLine != -1 && i - lastChangeLine > contextLines)
-//                 {
-//                     output.Add("...");
-//                 }
-//
-//                 for (int j = Math.Max(lastChangeLine + 1, i - contextLines); j < i; j++)
-//                 {
-//                     if (diff.Lines[j].Type == ChangeType.Unchanged)
-//                     {
-//                         output.Add($"{(j + 1).ToString().PadLeft(maxDigits, '0')}: {diff.Lines[j].Text}");
-//                     }
-//                 }
-//                 // Add the changed line with line number
-//                 switch (line.Type)
-//                 {
-//                     case ChangeType.Inserted:
-//                         output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: + {line.Text}");
-//                         break;
-//                     case ChangeType.Deleted:
-//                         output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: - {line.Text}");
-//                         break;
-//                     case ChangeType.Modified:
-//                         output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: {line.Text}");
-//                         break;
-//                 }
-//
-//                 lastChangeLine = i;
-//             }
-//         }
-//
-//         // Add context lines after the last change
-//         for (int i = lastChangeLine + 1; i < Math.Min(lastChangeLine + 1 + contextLines, diff.Lines.Count); i++)
-//         {
-//             if (diff.Lines[i].Type == ChangeType.Unchanged)
-//             {
-//                 output.Add($"{(i + 1).ToString().PadLeft(maxDigits, '0')}: {diff.Lines[i].Text}");
-//             }
-//         }
-//
-//         // Print the output
-//         return string.Join(Environment.NewLine, output);
-//     }
-// }
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.codegeneration.Base;
+using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.tests.Base;
+using dgt.power.dataverse;
+using dgt.power.tests;
+using dgt.power.tests.FakeExecutor;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
+
+namespace dgt.power.codegeneration.tests;
+
+[NotInParallel("Win_Shared_File_Issue")]
+public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWorker>
+{
+    private readonly EntityMetadata _testTableMetadata;
+
+    public TypescriptWorkerLightTests()
+    {
+        _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
+    }
+
+    protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
+    {
+        var organization = new Organization(Guid.NewGuid()) { LanguageCode = 1031 };
+        return base.GetBuilder()
+            .WithFakeMessageExecutor(new RetrieveOptionSetExecutor())
+            .WithMetaData(_testTableMetadata)
+            .WithData(organization);
+    }
+
+    [Test]
+    public async Task ShouldGenerateExpectedArtifactsForTslEntityScenario()
+    {
+        var args = new CodeGenerationVerb
+        {
+            Config = GetScenarioFilePath("GenerateEntities", "model.config.json"),
+            TargetDirectory = ArtifactDirectory
+        };
+
+        var context = GetBuilder()
+            .WithData(GetTestTableMainForm())
+            .Build();
+
+        await Assert.That(context.Execute(args)).IsTrue();
+
+        var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
+        var generatedFiles = new DirectoryInfo(typescriptPath)
+            .GetFiles("*.d.ts", SearchOption.AllDirectories)
+            .Select(file => Path.GetRelativePath(typescriptPath, file.FullName))
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToList();
+
+        await Assert.That(generatedFiles).Contains("xrm_types_ext.d.ts");
+        await Assert.That(generatedFiles.Count).IsEqualTo(3);
+
+        var entityFile = new DirectoryInfo(typescriptPath).GetFiles("*.entity.d.ts", SearchOption.AllDirectories).Single();
+        var formFile = new DirectoryInfo(typescriptPath).GetFiles("*.form.d.ts", SearchOption.AllDirectories).Single();
+
+        var entityCode = await File.ReadAllTextAsync(entityFile.FullName);
+        var formCode = await File.ReadAllTextAsync(formFile.FullName);
+
+        await Assert.That(entityCode).Contains("declare namespace XrmTable.DgtTestTable");
+        await Assert.That(entityCode).Contains("export interface FormContext extends Xrm.FormContext");
+        await Assert.That(entityCode).Contains("LogicalName = \"dgt_test_table\"");
+
+        await Assert.That(formCode).Contains("declare namespace XrmForm.");
+        await Assert.That(formCode).Contains("export interface FormContext extends Xrm.FormContext");
+        await Assert.That(formCode).Contains("export interface Ui extends Xrm.Ui");
+    }
+
+    [Test]
+    public async Task ShouldGenerateExpectedArtifactsForTslGlobalOptionSetsScenario()
+    {
+        var args = new CodeGenerationVerb
+        {
+            Config = GetScenarioFilePath("GenerateGlobalOptionSets", "model.config.json"),
+            TargetDirectory = ArtifactDirectory
+        };
+
+        var context = GetBuilder().Build();
+        await Assert.That(context.Execute(args)).IsTrue();
+
+        var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
+        var generatedFiles = new DirectoryInfo(typescriptPath)
+            .GetFiles("*.d.ts")
+            .Select(file => file.Name)
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToList();
+
+        await Assert.That(generatedFiles.Count).IsEqualTo(2);
+        await Assert.That(generatedFiles).Contains("xrm_types_ext.d.ts");
+        await Assert.That(generatedFiles).Contains("optionsetvalues.d.ts");
+
+        var expectedContent = await File.ReadAllTextAsync(GetScenarioFilePath("GenerateGlobalOptionSets", "optionsetvalues.d.ts"));
+        var actualContent = await File.ReadAllTextAsync(Path.Combine(typescriptPath, "optionsetvalues.d.ts"));
+
+        await Assert.That(NormalizeLineEndings(actualContent)).IsEqualTo(NormalizeLineEndings(expectedContent));
+    }
+
+    [Test]
+    public async Task ShouldGenerateExpectedArtifactsForTslSdkMessagesScenario()
+    {
+        var args = new CodeGenerationVerb
+        {
+            Config = GetScenarioFilePath("GenerateSdkMessageNames", "model.config.json"),
+            TargetDirectory = ArtifactDirectory
+        };
+
+        var context = GetBuilder().Build();
+        await Assert.That(context.Execute(args)).IsTrue();
+
+        var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
+        var generatedFiles = new DirectoryInfo(typescriptPath)
+            .GetFiles("*.d.ts")
+            .Select(file => file.Name)
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToList();
+
+        await Assert.That(generatedFiles.Count).IsEqualTo(2);
+        await Assert.That(generatedFiles).Contains("xrm_types_ext.d.ts");
+        await Assert.That(generatedFiles).Contains("sdkmessagenames.d.ts");
+
+        var expectedContent = await File.ReadAllTextAsync(GetScenarioFilePath("GenerateSdkMessageNames", "sdkmessagenames.d.ts"));
+        var actualContent = await File.ReadAllTextAsync(Path.Combine(typescriptPath, "sdkmessagenames.d.ts"));
+
+        await Assert.That(NormalizeLineEndings(actualContent)).IsEqualTo(NormalizeLineEndings(expectedContent));
+    }
+
+    private static string GetScenarioFilePath(string scenarioName, string fileName) =>
+        Path.Combine("Resources", "TypescriptWorkerTsl", "TestScenarios", scenarioName, fileName);
+
+    private SystemForm GetTestTableMainForm() =>
+        new()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Table",
+            FormXml = GetResourceAsString("dgt_test_table.main.form.xml"),
+            ObjectTypeCode = "dgt_test_table",
+            Type = new OptionSetValue(SystemForm.Options.Type.Main),
+            FormActivationState = new OptionSetValue(SystemForm.Options.FormActivationState.Active)
+        };
+
+    private static string NormalizeLineEndings(string value) => value.ReplaceLineEndings("\n").Trim();
+}

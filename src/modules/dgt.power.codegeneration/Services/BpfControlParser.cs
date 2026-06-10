@@ -1,9 +1,9 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Text.Json;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
-using System.Text.Json;
 
 namespace dgt.power.codegeneration.Services;
 
@@ -15,8 +15,9 @@ public static class BpfControlParser
     /// <param name="worflow"></param>
     /// <param name="entityName"></param>
     /// <returns></returns>
-    public static List<BpfControlDetail> ParseBpfClientDetail(Workflow worflow, string entityName)
+    public static IReadOnlyList<BpfControlDetail> ParseBpfClientDetail(Workflow worflow, string entityName)
     {
+        ArgumentNullException.ThrowIfNull(worflow);
         var clientDetail = worflow.GetAttributeValue<string>(Workflow.LogicalNames.ClientData);
         var doc = JsonSerializer.Deserialize<BpfClientData>(clientDetail);
         if (doc?.Steps == null)
@@ -76,7 +77,7 @@ public static class BpfControlParser
 
         return clientDataSteps
             .SelectMany(x => {
-                if (recurringStepClass.Any(rt => x.Class.StartsWith(rt, StringComparison.InvariantCulture)))
+                if (Array.Exists(recurringStepClass, rt => x.Class.StartsWith(rt, StringComparison.InvariantCulture)))
                 {
                     return x.Steps == null ? [] : RecurringFilterRelevantSteps(x.Steps.StepList, entityStepEntityName);
                 }

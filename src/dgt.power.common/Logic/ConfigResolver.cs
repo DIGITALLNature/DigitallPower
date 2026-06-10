@@ -36,7 +36,7 @@ public class ConfigResolver(ITracer tracer) : IConfigResolver
             obj = JsonSerializer.Deserialize<T>(File.ReadAllText(file, Encoding.UTF8), _options) ?? throw new InvalidOperationException();
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             tracer.Log(e.Message, TraceEventType.Error);
             obj = new T();

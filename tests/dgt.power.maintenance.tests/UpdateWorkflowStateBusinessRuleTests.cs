@@ -14,7 +14,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 namespace dgt.power.maintenance.tests;
 
 [NotInParallel("AnsiConsole")]
-public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
+public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowStateSettings>
 {
     [Test]
     public async Task DefaultShouldActivateBusinessRules()
@@ -50,7 +50,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(activatedBusinessRule)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("empty.json")
         }).Succeed();
@@ -131,7 +131,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithFakeMessageExecutor(new FakeRetrieveEntityRequest())
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("filter-solution.json")
         }).Succeed();
@@ -188,7 +188,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(activatedBusinessRule)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("businessrules-deactivate.json")
         }).Succeed();
@@ -297,7 +297,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(currentToDefaultSpecifiedBusinessRule)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("businessrules-owner.json")
         }).Succeed();
@@ -377,7 +377,7 @@ public class UpdateWorkflowStateBusinessRuleTests : CommandTestsBase<UpdateWorkf
             .WithData(otherComponent)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath(config)
         }).Succeed();

@@ -3,4 +3,19 @@
 
 namespace dgt.power.push.Model;
 
-public class AssemblyException(string message) : Exception(message);
+public class AssemblyException : Exception
+{
+    public AssemblyException()
+    {
+    }
+
+    public AssemblyException(string message)
+        : base(message)
+    {
+    }
+
+    public AssemblyException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+}

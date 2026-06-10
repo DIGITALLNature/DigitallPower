@@ -11,6 +11,7 @@ public class OptionMetadataViewModel
 {
     public OptionMetadataViewModel(OptionMetadata optionMetadata)
     {
+        ArgumentNullException.ThrowIfNull(optionMetadata);
         Value = optionMetadata.Value.GetValueOrDefault(-1);
         Label = optionMetadata.Label;
     }

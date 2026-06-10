@@ -5,7 +5,7 @@ namespace dgt.power.codegeneration.Constants;
 
 public static class ControlClassNames
 {
-    public static class XrmClassId { 
+    internal static class XrmClassId { 
         public const string CheckBox = "B0C6723A-8503-4FD7-BB28-C8A06AC933C2";
         public const string DateTime = "5B773807-9FB2-42DB-97C3-7A91EFF8ADFF"; // DateTime
         public const string DecimalClass = "C3EFE0C3-0EC6-42BE-8349-CBD9079DFD8E"; // Decimal
@@ -38,7 +38,7 @@ public static class ControlClassNames
         public const string CustomControl = "F9A8A302-114E-466A-B582-6771B2AE0D92"; // CustomControl
     }
 
-    public static class XrmTypesControlClass
+    internal static class XrmTypesControlClass
     {
         public static string BooleanCtl => "Xrm.Controls.BooleanControl";
         public static string DateCtl => "Xrm.Controls.DateControl";
@@ -67,7 +67,7 @@ public static class ControlClassNames
         public static string FramedControl => "Xrm.Controls.FramedControl";
     }
 
-    public static class XrmTypesAttributeClass
+    internal static class XrmTypesAttributeClass
     {
         public static string BooleanAttr => "Xrm.Attributes.BooleanAttribute";
         public static string DateAttr => "Xrm.Attributes.DateAttribute";

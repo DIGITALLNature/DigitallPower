@@ -1,12 +1,15 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Text;
 using System.Text.RegularExpressions;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+
+#pragma warning disable CA1002 // Liquid ViewModel records use List<T> intentionally - IReadOnlyList<T> is not needed for internal models
 
 namespace dgt.power.codegeneration.Templates.ts;
 
@@ -51,7 +54,7 @@ internal static class TsLiquidTemplateModelFactory
         };
     }
 
-    public static TsBusinessProcessFlowTemplateModel CreateBusinessProcessFlowModel(string typingPath, Tuple<string, string, Guid, string> process, List<Tuple<string, string, List<Guid>>> stages)
+    public static TsBusinessProcessFlowTemplateModel CreateBusinessProcessFlowModel(string typingPath, Tuple<string, string, Guid, string> process, IReadOnlyList<Tuple<string, string, List<Guid>>> stages)
     {
         return new TsBusinessProcessFlowTemplateModel
         {
@@ -123,7 +126,7 @@ internal static class TsLiquidTemplateModelFactory
             AttributeFields = attributes
                 .Select(attribute =>
                 {
-                    var typeSet = TSTypeSet.ConvertType(attribute.AttributeType, attribute.LogicalName);
+                    var typeSet = TsTypeSet.ConvertType(attribute.AttributeType, attribute.LogicalName);
                     return new TsAttributeFieldModel
                     {
                         Name = uniqueNames.GetName(Formatter.CamelCase(Formatter.Sanitize(attribute.SchemaName)), $"B{entityMetadata.LogicalName}"),
@@ -207,7 +210,7 @@ internal static class TsLiquidTemplateModelFactory
             AttributeFields = filteredAttributes
                 .Select(attribute =>
                 {
-                    var typeSet = TSTypeSet.ConvertType(attribute.AttributeType, attribute.LogicalName);
+                    var typeSet = TsTypeSet.ConvertType(attribute.AttributeType, attribute.LogicalName);
                     return new TsAttributeFieldModel
                     {
                         Name = uniqueNames.GetName(Formatter.CamelCase(Formatter.Sanitize(attribute.SchemaName)), $"B{entityMetadata.LogicalName}"),
@@ -236,15 +239,14 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<AttributeMetadata> FilterEntityAttributes(EntityMetadata entityMetadata, CodeGenerationConfig config)
     {
         var filteredAttributes = entityMetadata.Attributes
-            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute || attribute.IsPrimaryId == true)
-                && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
+            .Where(IsEntityReadableAttribute)
             .Where(attribute => !attribute.LogicalName.Contains("entityimage", StringComparison.Ordinal))
             .Where(attribute => attribute.AttributeType != AttributeTypeCode.ManagedProperty);
 
         if (config.EntityFilters.Count > 0)
         {
             var match = config.EntityFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Attributes != null && match.Attributes.Length > 0)
+            if (match?.Attributes != null && match.Attributes.Count > 0)
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -256,19 +258,13 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<OptionField> FilterEntityOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
-            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute)
-                    && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
-                && (attribute.AttributeType == AttributeTypeCode.Picklist
-                    || attribute.AttributeType == AttributeTypeCode.State
-                    || attribute.AttributeType == AttributeTypeCode.Status
-                    || attribute.AttributeType == AttributeTypeCode.Boolean
-                    || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
+            .Where(IsEntityOptionField)
             .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityFilters.Count > 0)
         {
             var match = config.EntityFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Optionsets != null && match.Optionsets.Length > 0)
+            if (match?.Optionsets != null && match.Optionsets.Count > 0)
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -280,15 +276,14 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<AttributeMetadata> FilterEntityRefAttributes(EntityMetadata entityMetadata, CodeGenerationConfig config)
     {
         var filteredAttributes = entityMetadata.Attributes
-            .Where(attribute => (attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute || attribute.IsPrimaryId == true)
-                && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
+            .Where(IsEntityReadableAttribute)
             .Where(attribute => !attribute.LogicalName.Contains("entityimage", StringComparison.Ordinal))
             .Where(attribute => attribute.AttributeType != AttributeTypeCode.ManagedProperty);
 
         if (config.EntityRefFilters.Count > 0)
         {
             var match = config.EntityRefFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Attributes != null && match.Attributes.Length > 0)
+            if (match?.Attributes != null && match.Attributes.Count > 0)
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -300,19 +295,13 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<OptionField> FilterEntityRefOptionFields(EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
-            .Where(attribute => ((attribute.IsValidForGrid == true || attribute.IsValidForForm == true || attribute.IsValidODataAttribute)
-                    && (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true))
-                && (attribute.AttributeType == AttributeTypeCode.Picklist
-                    || attribute.AttributeType == AttributeTypeCode.State
-                    || attribute.AttributeType == AttributeTypeCode.Status
-                    || attribute.AttributeType == AttributeTypeCode.Boolean
-                    || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
+            .Where(IsEntityOptionField)
             .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityRefFilters.Count > 0)
         {
             var match = config.EntityRefFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Optionsets != null && match.Optionsets.Length > 0)
+            if (match?.Optionsets != null && match.Optionsets.Count > 0)
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -332,7 +321,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Attributes != null && match.Attributes.Length > 0)
+            if (match?.Attributes != null && match.Attributes.Count > 0)
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -344,19 +333,15 @@ internal static class TsLiquidTemplateModelFactory
     private static IEnumerable<OptionField> FilterFormOptionFields(string form, FormDetail formDetail, EntityMetadata entityMetadata, CodeGenerationConfig config, int systemLanguage)
     {
         var filteredOptionFields = entityMetadata.Attributes
-            .Where(attribute => (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true || attribute.IsValidForRead == true)
-                && (attribute.AttributeType == AttributeTypeCode.Picklist
-                    || attribute.AttributeType == AttributeTypeCode.State
-                    || attribute.AttributeType == AttributeTypeCode.Status
-                    || attribute.AttributeType == AttributeTypeCode.Boolean
-                    || attribute.AttributeType == AttributeTypeCode.Virtual && attribute.AttributeTypeName?.Value == "MultiSelectPicklistType"))
+            .Where(IsReadableForForm)
+            .Where(IsOptionAttribute)
             .Where(attribute => formDetail.Attributes.Any(formAttribute => formAttribute.DataFieldName == attribute.LogicalName))
             .Select(attribute => new OptionField(attribute, config.UseBaseLanguage, systemLanguage));
 
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Optionsets != null && match.Optionsets.Length > 0)
+            if (match?.Optionsets != null && match.Optionsets.Count > 0)
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -372,13 +357,73 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Tabs != null && match.Tabs.Length > 0)
+            if (match?.Tabs != null && match.Tabs.Count > 0)
             {
                 filteredTabs = filteredTabs.Where(tab => match.Tabs.Contains(tab.Key));
             }
         }
 
         return filteredTabs;
+    }
+
+    private static bool IsEntityReadableAttribute(AttributeMetadata attribute)
+    {
+        if (!IsVisibleInEntity(attribute))
+        {
+            return false;
+        }
+
+        return IsReadableForForm(attribute);
+    }
+
+    private static bool IsEntityOptionField(AttributeMetadata attribute)
+    {
+        if (!IsVisibleInEntity(attribute))
+        {
+            return false;
+        }
+
+        if (!IsReadableForForm(attribute))
+        {
+            return false;
+        }
+
+        return IsOptionAttribute(attribute);
+    }
+
+    private static bool IsVisibleInEntity(AttributeMetadata attribute)
+    {
+        if (attribute.IsValidForGrid == true || attribute.IsValidForForm == true)
+        {
+            return true;
+        }
+
+        if (attribute.IsValidODataAttribute)
+        {
+            return true;
+        }
+
+        return attribute.IsPrimaryId == true;
+    }
+
+    private static bool IsReadableForForm(AttributeMetadata attribute)
+    {
+        if (attribute.IsValidForCreate == true || attribute.IsValidForUpdate == true)
+        {
+            return true;
+        }
+
+        return attribute.IsValidForRead == true;
+    }
+
+    private static bool IsOptionAttribute(AttributeMetadata attribute)
+    {
+        return attribute.AttributeType switch
+        {
+            AttributeTypeCode.Picklist or AttributeTypeCode.State or AttributeTypeCode.Status or AttributeTypeCode.Boolean => true,
+            AttributeTypeCode.Virtual => attribute.AttributeTypeName?.Value == "MultiSelectPicklistType",
+            _ => false
+        };
     }
 
     private static IEnumerable<string> FilterGrids(string form, FormDetail formDetail, CodeGenerationConfig config)
@@ -388,7 +433,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Grids != null && match.Grids.Length > 0)
+            if (match?.Grids != null && match.Grids.Count > 0)
             {
                 filteredGrids = filteredGrids.Where(grid => match.Grids.Contains(grid));
             }
@@ -415,7 +460,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Sections != null && match.Sections.Length > 0)
+            if (match?.Sections != null && match.Sections.Count > 0)
             {
                 filteredSections = filteredSections.Where(section => match.Sections.Contains(section));
             }
@@ -459,11 +504,16 @@ internal static class TsLiquidTemplateModelFactory
             return string.Empty;
         }
 
-        return "/*"
-               + Environment.NewLine
-               + $"{new string('\t', indent)}* {description.Replace("\n", $"\n{new string('\t', indent)}* ").Trim()}"
-               + Environment.NewLine
-               + $"{new string('\t', indent)}*/";
+        var indentation = new string('\t', indent);
+        var builder = new StringBuilder();
+        builder.AppendLine("/*");
+        builder.Append(indentation);
+        builder.Append("* ");
+        builder.Append(description.Replace("\n", $"\n{indentation}* ", StringComparison.Ordinal).Trim());
+        builder.AppendLine();
+        builder.Append(indentation);
+        builder.Append("*/");
+        return builder.ToString();
     }
 
     private static string SanitizeStageName(string value)

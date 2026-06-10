@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates;
 
-internal class OptionField
+internal sealed class OptionField
 {
     public OptionField(AttributeMetadata attributeMetadata, bool useBaseLanguage, int systemLanguage)
     {

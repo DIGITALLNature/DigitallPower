@@ -9,6 +9,18 @@ namespace dgt.power.common.Logic;
 public class Identity
 {
     public required string ConnectionString { get; init; }
-    public string SecurityProtocol { get; init; } = "Tls12";
+
+    /// <summary>
+    /// Preserved for backward compatibility when reading existing profile files.
+    /// Has no effect — removed as a user-facing option in favour of OS-level TLS configuration.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? SecurityProtocol { get; init; }
+
+    /// <summary>
+    /// Preserved for backward compatibility when reading existing profile files.
+    /// Has no effect — removed as a user-facing option.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Insecure { get; init; }
 }

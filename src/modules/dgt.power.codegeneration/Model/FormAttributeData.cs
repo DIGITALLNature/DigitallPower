@@ -31,7 +31,7 @@ public class FormAttributeData : IComparable<FormAttributeData>
 
     public override int GetHashCode()
     {
-        return DataFieldName.GetHashCode();
+        return DataFieldName.GetHashCode(StringComparison.Ordinal);
     }
 
     public static bool operator ==(FormAttributeData? left, FormAttributeData? right)

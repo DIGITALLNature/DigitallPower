@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;

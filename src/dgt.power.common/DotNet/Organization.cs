@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("organization")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class Organization : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("organizationid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -8881,8 +8882,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_documenttemplatebase_organization
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_organization")]
-		public System.Collections.Generic.IEnumerable<DocumentTemplate> LkDocumenttemplatebaseOrganization
+		[RelationshipSchemaName("lk_documenttemplatebase_organization")]
+		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseOrganization
 		{
 			[DebuggerNonUserCode]
 			get
@@ -8901,8 +8902,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N Organization_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Organization_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> OrganizationAsyncOperations
+		[RelationshipSchemaName("Organization_AsyncOperations")]
+		public IEnumerable<AsyncOperation> OrganizationAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
@@ -8921,8 +8922,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_business_units
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_business_units")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> OrganizationBusinessUnits
+		[RelationshipSchemaName("organization_business_units")]
+		public IEnumerable<BusinessUnit> OrganizationBusinessUnits
 		{
 			[DebuggerNonUserCode]
 			get
@@ -8941,8 +8942,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_calendars
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_calendars")]
-		public System.Collections.Generic.IEnumerable<Calendar> OrganizationCalendars
+		[RelationshipSchemaName("organization_calendars")]
+		public IEnumerable<Calendar> OrganizationCalendars
 		{
 			[DebuggerNonUserCode]
 			get
@@ -8961,8 +8962,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_importjob
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_importjob")]
-		public System.Collections.Generic.IEnumerable<ImportJob> OrganizationImportjob
+		[RelationshipSchemaName("organization_importjob")]
+		public IEnumerable<ImportJob> OrganizationImportjob
 		{
 			[DebuggerNonUserCode]
 			get
@@ -8981,8 +8982,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_pluginassembly
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_pluginassembly")]
-		public System.Collections.Generic.IEnumerable<PluginAssembly> OrganizationPluginassembly
+		[RelationshipSchemaName("organization_pluginassembly")]
+		public IEnumerable<PluginAssembly> OrganizationPluginassembly
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9001,8 +9002,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_pluginpackage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_pluginpackage")]
-		public System.Collections.Generic.IEnumerable<PluginPackage> OrganizationPluginpackage
+		[RelationshipSchemaName("organization_pluginpackage")]
+		public IEnumerable<PluginPackage> OrganizationPluginpackage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9021,8 +9022,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_plugintype
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_plugintype")]
-		public System.Collections.Generic.IEnumerable<PluginType> OrganizationPlugintype
+		[RelationshipSchemaName("organization_plugintype")]
+		public IEnumerable<PluginType> OrganizationPlugintype
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9041,8 +9042,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_publisher
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_publisher")]
-		public System.Collections.Generic.IEnumerable<Publisher> OrganizationPublisher
+		[RelationshipSchemaName("organization_publisher")]
+		public IEnumerable<Publisher> OrganizationPublisher
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9061,8 +9062,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_queues
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_queues")]
-		public System.Collections.Generic.IEnumerable<Queue> OrganizationQueues
+		[RelationshipSchemaName("organization_queues")]
+		public IEnumerable<Queue> OrganizationQueues
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9081,8 +9082,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_roles
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_roles")]
-		public System.Collections.Generic.IEnumerable<Role> OrganizationRoles
+		[RelationshipSchemaName("organization_roles")]
+		public IEnumerable<Role> OrganizationRoles
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9101,8 +9102,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_routingruleitems
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_routingruleitems")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> OrganizationRoutingruleitems
+		[RelationshipSchemaName("organization_routingruleitems")]
+		public IEnumerable<RoutingRuleItem> OrganizationRoutingruleitems
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9121,8 +9122,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_RoutingRules
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_RoutingRules")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> OrganizationRoutingRules
+		[RelationshipSchemaName("organization_RoutingRules")]
+		public IEnumerable<RoutingRule> OrganizationRoutingRules
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9141,8 +9142,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_saved_queries
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_saved_queries")]
-		public System.Collections.Generic.IEnumerable<SavedQuery> OrganizationSavedQueries
+		[RelationshipSchemaName("organization_saved_queries")]
+		public IEnumerable<SavedQuery> OrganizationSavedQueries
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9161,8 +9162,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_sdkmessage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_sdkmessage")]
-		public System.Collections.Generic.IEnumerable<SdkMessage> OrganizationSdkmessage
+		[RelationshipSchemaName("organization_sdkmessage")]
+		public IEnumerable<SdkMessage> OrganizationSdkmessage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9181,8 +9182,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_sdkmessagefilter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_sdkmessagefilter")]
-		public System.Collections.Generic.IEnumerable<SdkMessageFilter> OrganizationSdkmessagefilter
+		[RelationshipSchemaName("organization_sdkmessagefilter")]
+		public IEnumerable<SdkMessageFilter> OrganizationSdkmessagefilter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9201,8 +9202,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_sdkmessageprocessingstep
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> OrganizationSdkmessageprocessingstep
+		[RelationshipSchemaName("organization_sdkmessageprocessingstep")]
+		public IEnumerable<SdkMessageProcessingStep> OrganizationSdkmessageprocessingstep
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9221,8 +9222,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_sdkmessageprocessingstepimage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_sdkmessageprocessingstepimage")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepImage> OrganizationSdkmessageprocessingstepimage
+		[RelationshipSchemaName("organization_sdkmessageprocessingstepimage")]
+		public IEnumerable<SdkMessageProcessingStepImage> OrganizationSdkmessageprocessingstepimage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9241,8 +9242,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_sdkmessageprocessingstepsecureconfig
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_sdkmessageprocessingstepsecureconfig")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepSecureConfig> OrganizationSdkmessageprocessingstepsecureconfig
+		[RelationshipSchemaName("organization_sdkmessageprocessingstepsecureconfig")]
+		public IEnumerable<SdkMessageProcessingStepSecureConfig> OrganizationSdkmessageprocessingstepsecureconfig
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9261,8 +9262,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_solution
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_solution")]
-		public System.Collections.Generic.IEnumerable<Solution> OrganizationSolution
+		[RelationshipSchemaName("organization_solution")]
+		public IEnumerable<Solution> OrganizationSolution
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9281,8 +9282,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_system_users
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_system_users")]
-		public System.Collections.Generic.IEnumerable<SystemUser> OrganizationSystemUsers
+		[RelationshipSchemaName("organization_system_users")]
+		public IEnumerable<SystemUser> OrganizationSystemUsers
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9301,8 +9302,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_systemforms
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_systemforms")]
-		public System.Collections.Generic.IEnumerable<SystemForm> OrganizationSystemforms
+		[RelationshipSchemaName("organization_systemforms")]
+		public IEnumerable<SystemForm> OrganizationSystemforms
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9321,8 +9322,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N organization_teams
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("organization_teams")]
-		public System.Collections.Generic.IEnumerable<Team> OrganizationTeams
+		[RelationshipSchemaName("organization_teams")]
+		public IEnumerable<Team> OrganizationTeams
 		{
 			[DebuggerNonUserCode]
 			get
@@ -9341,8 +9342,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N webresource_organization
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("webresource_organization")]
-		public System.Collections.Generic.IEnumerable<WebResource> WebresourceOrganization
+		[RelationshipSchemaName("webresource_organization")]
+		public IEnumerable<WebResource> WebresourceOrganization
 		{
 			[DebuggerNonUserCode]
 			get

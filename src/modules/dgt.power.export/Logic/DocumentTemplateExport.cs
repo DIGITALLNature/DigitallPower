@@ -23,7 +23,7 @@ public sealed class DocumentTemplateExport(
     IAnsiConsole console)
     : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    private static readonly char[] Separators = new[] {'|', ',', ';'};
+    private static readonly char[] s_separators = ['|', ',', ';'];
 
     protected override bool Invoke(ExportVerb args)
     {
@@ -39,11 +39,11 @@ public sealed class DocumentTemplateExport(
         var filter = args.InlineData;
         if (!string.IsNullOrWhiteSpace(args.InlineData) && !args.InlineData.StartsWith('<'))
         {
-            var idx = args.InlineData.IndexOf('<');
+            var idx = args.InlineData.IndexOf('<', StringComparison.Ordinal);
             var commandData = idx >= 0 ? args.InlineData.Substring(0, idx) : args.InlineData;
             filter = idx >= 0 ? args.InlineData.Substring(idx) : string.Empty;
 
-            foreach (var fragment in commandData.Split(Separators, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var fragment in commandData.Split(s_separators, StringSplitOptions.RemoveEmptyEntries))
             {
                 var pair = fragment.Split('=', StringSplitOptions.RemoveEmptyEntries);
                 if (pair.Length == 2)
@@ -109,7 +109,7 @@ public sealed class DocumentTemplateExport(
     private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
-        query = default;
+        query = null;
         try
         {
             fetchXml = "<fetch no-lock=\"true\" >" +
@@ -129,7 +129,7 @@ public sealed class DocumentTemplateExport(
             query = response.Query;
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             tracer.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
             return false;

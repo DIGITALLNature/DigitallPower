@@ -12,11 +12,11 @@ public class RemoveRedundantComponentsVerb: BaseProgramSettings
 {
     [CommandArgument(1, "<SourceSolutions>")]
     [Description("The unique name of the solutions where the elements are read out, can be comma separeted if multiple")]
-    public string SourceSolutions { get; set; }
+    public string SourceSolutions { get; set; } = string.Empty;
 
     [CommandArgument(2, "<TargetSolution>")]
     [Description("The unique name of the solution where elements that are also contained in the source solution are removed")]
-    public string TargetSolution { get; set; }
+    public string TargetSolution { get; set; } = string.Empty;
 
     [CommandOption("--dryrun")]
     [Description("Report only what would be removed")]

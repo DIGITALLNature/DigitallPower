@@ -10,16 +10,18 @@ internal static class AssemblyValidator
 {
     public static void ValidateImage(string step, string message, int stage, int imageType)
     {
+        var isPreOperationStage = IsPreOperationStage(stage);
         if (message == "Create" &&
             imageType == SdkMessageProcessingStepImage.Options.ImageType.PreImage &&
-            (stage == SdkMessageProcessingStep.Options.Stage.PreValidation || stage == SdkMessageProcessingStep.Options.Stage.PreOperation))
+            isPreOperationStage)
         {
             throw new AssemblyException($"Invalid step image setup! Check: {step}");
         }
 
-        if ((message == "Create" || message == "Update" || message == "Delete") &&
+        var isMutationMessage = message is "Create" or "Update" or "Delete";
+        if (isMutationMessage &&
             imageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&
-            (stage == SdkMessageProcessingStep.Options.Stage.PreValidation || stage == SdkMessageProcessingStep.Options.Stage.PreOperation))
+            isPreOperationStage)
         {
             throw new AssemblyException($"Invalid step image setup! Check: {step}");
         }
@@ -35,9 +37,13 @@ internal static class AssemblyValidator
     public static void Validate(SdkMessageProcessingStep step)
     {
         if (step.Mode!.Value == SdkMessageProcessingStep.Options.Mode.Asynchronous &&
-            (step.Stage!.Value == SdkMessageProcessingStep.Options.Stage.PreValidation || step.Stage.Value == SdkMessageProcessingStep.Options.Stage.PreOperation))
+            IsPreOperationStage(step.Stage!.Value))
         {
             throw new AssemblyException($"Invalid step setup! Check: {step.Name}");
         }
     }
+
+    private static bool IsPreOperationStage(int stage) =>
+        stage == SdkMessageProcessingStep.Options.Stage.PreValidation
+        || stage == SdkMessageProcessingStep.Options.Stage.PreOperation;
 }

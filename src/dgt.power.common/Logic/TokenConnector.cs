@@ -6,12 +6,12 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.common.Logic;
 
-internal class TokenConnector : IConnector
+internal sealed class TokenConnector : IConnector
 {
     private readonly TokenIdentity _identity;
     private readonly IProfileManager _profileManager;
     private readonly IPublicClientApplication _application;
-    private          IAccount _account;
+    private          IAccount? _account;
     private readonly string[] _scopes;
     private readonly Uri _uri;
 
@@ -31,11 +31,11 @@ internal class TokenConnector : IConnector
         _scopes = new [] { $"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default" };
     }
 
-    public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
+    public async Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
     {
         if (!string.IsNullOrWhiteSpace(_identity.Username))
         {
-            _account = _application.GetAccountAsync(_identity.Username).Result;
+            _account = await _application.GetAccountAsync(_identity.Username);
         }
 
         return new ServiceClient(_uri, GetTokenAsync);

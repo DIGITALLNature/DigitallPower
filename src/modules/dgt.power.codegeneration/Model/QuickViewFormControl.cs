@@ -8,7 +8,9 @@ public class QuickViewFormControl : IComparable<QuickViewFormControl>
     public required string ControlName { get; init; }
     public required string QuickViewFormId { get; init; }
 
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public required string QuickViewFormClass { get; set; }
+    // ReSharper restore UnusedAutoPropertyAccessor.Global
 
     public int CompareTo(QuickViewFormControl? other)
     {
@@ -31,7 +33,7 @@ public class QuickViewFormControl : IComparable<QuickViewFormControl>
 
     public override int GetHashCode()
     {
-        return ControlName.GetHashCode();
+        return ControlName.GetHashCode(StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator ==(QuickViewFormControl? left, QuickViewFormControl? right)

@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("routingruleitem")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class RoutingRuleItem : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("routingruleitemid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(RoutingRuleItemId));
             }
@@ -686,8 +687,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N routingruleitem_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("routingruleitem_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> RoutingruleitemAsyncOperations
+		[RelationshipSchemaName("routingruleitem_AsyncOperations")]
+		public IEnumerable<AsyncOperation> RoutingruleitemAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get

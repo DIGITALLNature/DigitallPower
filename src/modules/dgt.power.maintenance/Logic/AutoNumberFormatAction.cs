@@ -24,7 +24,7 @@ public sealed class AutoNumberFormatAction(
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         //read config
-        if (!ConfigResolver.TryGetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
+        if (!ConfigResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))
         {
             return Tracer.End(this, false);
         }

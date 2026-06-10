@@ -9,5 +9,7 @@ public sealed class BulkDeletes
 {
     [JsonPropertyName("bulk_deletes")]
     [JsonRequired]
+#pragma warning disable CA1002 // List is mutated by export logic
     public List<BulkDelete> Deletes { get; init; } = new();
+#pragma warning restore CA1002
 }

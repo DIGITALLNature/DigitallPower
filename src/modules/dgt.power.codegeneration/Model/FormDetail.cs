@@ -11,7 +11,7 @@ public class FormDetail
     public SortedSet<FormXmlControlData> FormControls { get; } = [];
     public string? FormId { get; set; }
     public string FormUniqueName { get; set; } = string.Empty;
-    public string FormEntityName { get; set; }
+    public string FormEntityName { get; set; } = string.Empty;
     public int FormType { get; set; }
     public string FormTypeName { get; set; } = string.Empty;
     public SortedSet<string> Grids { get; } = [];

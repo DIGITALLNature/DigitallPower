@@ -43,16 +43,9 @@ public class ProfileManager(IsolatedStorageFile storage, string identityFileName
             _identities = JsonSerializer.Deserialize<Identities>(protectedMemory);
 #pragma warning restore CS8601
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             _console.WriteException(e);
-        }
-
-        // TODO Remove 2025 - Mitigation of changed Key-Format
-        if (_identities != null)
-        {
-            _identities.IdentityStore =
-                _identities.IdentityStore.ToDictionary(k => k.Key.ToUpperInvariant(), v => v.Value);
         }
 
         return _identities ??= new Identities();

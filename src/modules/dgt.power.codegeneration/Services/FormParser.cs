@@ -2,10 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using dgt.power.codegeneration.Logic;
 using System.Text.RegularExpressions;
 using System.Xml;
 using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
@@ -22,16 +22,18 @@ public static class FormParser
     /// <param name="formUniqueName"></param>
     /// <param name="entityLogicalName"></param>
     /// <param name="bpfControls"></param>
+    /// <param name="console"></param>
     /// <returns></returns>
     public static FormDetail ParseForm(Entity form, string formUniqueName, string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, IAnsiConsole? console = null)
     {
+        ArgumentNullException.ThrowIfNull(form);
         var formId = form.GetAttributeValue<Guid>(SystemForm.LogicalNames.FormId).ToString();
         var formxml = form.GetAttributeValue<string>(SystemForm.LogicalNames.FormXml);
         var formType = form.GetAttributeValue<OptionSetValue>(SystemForm.LogicalNames.Type).Value;
         var doc = new XmlDocument();
         doc.LoadXml(formxml);
 
-        var formDetail = new FormDetail()
+        var formDetail = new FormDetail
         {
             FormType = formType,
             FormTypeName = FormatFormType(GetFormType(formType)),
@@ -67,11 +69,13 @@ public static class FormParser
     /// <param name="formDetail"></param>
     /// <param name="allForms"></param>
     /// <returns></returns>
-    public static void MapQuickFormId(FormDetail formDetail, List<FormDetail> allForms)
+    public static void MapQuickFormId(FormDetail formDetail, IReadOnlyList<FormDetail> allForms)
     {
-        foreach(var quickView in formDetail.QuickViews)
+        ArgumentNullException.ThrowIfNull(formDetail);
+        ArgumentNullException.ThrowIfNull(allForms);
+        foreach (var quickView in formDetail.QuickViews)
         {
-            quickView.QuickViewFormClass = GetQuickViewFormClass(quickView.QuickViewFormId, allForms) ?? quickView.QuickViewFormClass ?? "Xrm.Controls.QuickFormControl";
+            quickView.QuickViewFormClass = GetQuickViewFormClass(quickView.QuickViewFormId, allForms);
         }
     }
 
@@ -81,34 +85,34 @@ public static class FormParser
     /// <param name="formDetail"></param>
     /// <param name="doc"></param>
     /// <param name="tab"></param>
+    /// <param name="console"></param>
     private static void MapFormXmlTabIntoFormDetail(FormDetail formDetail, XmlDocument doc, XmlNode tab, IAnsiConsole? console)
     {
-        var tabId = Regex.Replace(tab.Attributes?["id"]?.Value.ToUpperInvariant() ?? "", "[{}]", "", RegexOptions.NonBacktracking);
-        var tabName = tab.Attributes?["name"]?.Value;
+        var tabAttributes = tab.Attributes;
+        var tabId = Regex.Replace(tabAttributes?["id"]?.Value.ToUpperInvariant() ?? string.Empty, "[{}]", "", RegexOptions.NonBacktracking);
+        var tabName = tabAttributes?["name"]?.Value;
         if (string.IsNullOrWhiteSpace(tabName) && formDetail.FormType != SystemForm.Options.Type.QuickViewForm)
         {
             (console ?? AnsiConsole.Console).MarkupLine($"[bold red]Warning:[/] tabName empty for form: {formDetail.FormEntityName} - {formDetail.FormTypeName} - {formDetail.FormUniqueName}");
         }
         var tabDetailName = !string.IsNullOrWhiteSpace(tabName) ? tabName : tabId;
+        var tabDetail = new TabDetail
         {
-            var tabDetail = new TabDetail()
+            TabName = tabDetailName
+        };
+        var columns = tab.SelectNodes(".//columns/column[*]");
+        var sectionList = new List<string>();
+        if (columns != null)
+        {
+            // Loop over columns in tab
+            foreach (XmlNode column in columns)
             {
-                TabName = tabDetailName
-            };
-            var columns = tab.SelectNodes(".//columns/column[*]");
-            var sectionList = new List<string>();
-            if(columns != null)
-            {
-                // Loop over columns in tab
-                foreach (XmlNode column in columns)
-                {
-                    // Loop over sections in the column
-                    MapFormXmlTabColumnIntoFormDetail(formDetail, doc, tabDetail, column, sectionList, console);
-                }
+                // Loop over sections in the column
+                MapFormXmlTabColumnIntoFormDetail(formDetail, doc, tabDetail, column, sectionList, console);
             }
-            formDetail.Tabs.Add(tabDetailName, sectionList);
-            formDetail.TabDetails.Add(tabDetail);
         }
+        formDetail.Tabs.Add(tabDetailName, sectionList);
+        formDetail.TabDetails.Add(tabDetail);
     }
 
     /// <summary>
@@ -119,6 +123,7 @@ public static class FormParser
     /// <param name="tabDetail"></param>
     /// <param name="column"></param>
     /// <param name="sectionList"></param>
+    /// <param name="console"></param>
     private static void MapFormXmlTabColumnIntoFormDetail(
         FormDetail formDetail,
         XmlDocument doc,
@@ -297,13 +302,14 @@ public static class FormParser
     /// <returns></returns>
     private static string RetrieveQuickViewFormId(string? quickViewFormIdNodeText)
     {
-        if(string.IsNullOrWhiteSpace(quickViewFormIdNodeText))
+        if (string.IsNullOrWhiteSpace(quickViewFormIdNodeText))
         {
             return string.Empty;
         }
         var doc = new XmlDocument();
         doc.LoadXml(quickViewFormIdNodeText);
-        return doc.SelectSingleNode("//QuickFormIds/QuickFormId")?.InnerText.ToLowerInvariant() ?? string.Empty;
+        var quickFormIdNode = doc.SelectSingleNode("//QuickFormIds/QuickFormId");
+        return quickFormIdNode is null ? string.Empty : quickFormIdNode.InnerText.ToLowerInvariant();
     }
     /// <summary>
     /// Map form xml header controls into the attributes and header controls
@@ -413,9 +419,9 @@ public static class FormParser
     /// <param name="quickViewFormId"></param>
     /// <param name="allForms"></param>
     /// <returns></returns>
-    private static string GetQuickViewFormClass(string quickViewFormId, List<FormDetail> allForms)
+    private static string GetQuickViewFormClass(string quickViewFormId, IReadOnlyList<FormDetail> allForms)
     {
-        var quickViewForm = allForms.FirstOrDefault(x => x.FormId != null && x.FormId.ToString() == quickViewFormId);
+        var quickViewForm = allForms.FirstOrDefault(x => x.FormId != null && x.FormId == quickViewFormId);
         if (quickViewForm != null)
         {
             return MapFormClass(quickViewForm);
@@ -438,10 +444,11 @@ public static class FormParser
 
     public static string FormatFormType(string formType)
     {
+        ArgumentNullException.ThrowIfNull(formType);
         return formType
-            .Replace("main", "Main")
-            .Replace("quickview", "Quick View")
-            .Replace("quickcreate", "Quick Create");
+            .Replace("main", "Main", StringComparison.Ordinal)
+            .Replace("quickview", "Quick View", StringComparison.Ordinal)
+            .Replace("quickcreate", "Quick Create", StringComparison.Ordinal);
     }
 
     public static string GetFormType(int? type)

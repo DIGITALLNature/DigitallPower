@@ -1,11 +1,12 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -19,7 +20,7 @@ namespace dgt.power.dataverse
 
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("dgt_carrier")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class DgtCarrier : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -89,7 +90,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("dgt_carrierid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -125,7 +126,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(DgtCarrierId));
             }
@@ -172,12 +173,12 @@ namespace dgt.power.dataverse
 
 
 		[AttributeLogicalName("dgt_constraint_mset")]
-        public Microsoft.Xrm.Sdk.OptionSetValueCollection DgtConstraintMset
+        public OptionSetValueCollection DgtConstraintMset
         {
             [DebuggerNonUserCode]
 			get
             {
-                return GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValueCollection>("dgt_constraint_mset");
+                return GetAttributeValue<OptionSetValueCollection>("dgt_constraint_mset");
             }
             [DebuggerNonUserCode]
 			set

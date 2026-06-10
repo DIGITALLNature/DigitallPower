@@ -9,17 +9,18 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public record BpfControlViewModel
 {
-    public string DataFieldName { get; set; }
-    public string DefinitelyTypedControlType { get; set; }
-    public string DefinitelyTypedAttributeType { get; set; }
+    public string DataFieldName { get; set; } = string.Empty;
+    public string DefinitelyTypedControlType { get; set; } = string.Empty;
+    public string DefinitelyTypedAttributeType { get; set; } = string.Empty;
 
-    public string XrmMockControlType { get; set; }
-    public string XrmMockAttributeType { get; set; }
+    public string XrmMockControlType { get; set; } = string.Empty;
+    public string XrmMockAttributeType { get; set; } = string.Empty;
 
     public BpfControlViewModel(BpfControlDetail bpfControlDetail) => ToViewModel(bpfControlDetail);
 
     public BpfControlViewModel ToViewModel(BpfControlDetail bpfControlDetail)
     {
+        ArgumentNullException.ThrowIfNull(bpfControlDetail);
         DataFieldName = bpfControlDetail.DataFieldName;
         switch (bpfControlDetail.ClassId)
         {

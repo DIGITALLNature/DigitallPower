@@ -16,9 +16,9 @@ public class EntityFilter
 
     public required string Entity { get; init; }
 
-    public string[] Attributes
+    public IReadOnlyCollection<string> Attributes
     {
-        get => _attributes.ToArray();
+        get => _attributes;
         init
         {
             _attributes = new HashSet<string>(value);
@@ -26,9 +26,9 @@ public class EntityFilter
         }
     }
 
-    public string[] Optionsets
+    public IReadOnlyCollection<string> Optionsets
     {
-        get => _optionsets.ToArray();
+        get => _optionsets;
         init
         {
             _optionsets = new HashSet<string>(value);

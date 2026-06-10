@@ -1,10 +1,11 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common;
-using Spectre.Console.Cli;
 using System.ComponentModel;
 using dgt.power.codegeneration.Constants;
+using dgt.power.common;
+using Spectre.Console.Cli;
+
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618

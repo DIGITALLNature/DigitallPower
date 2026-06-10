@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("workflow")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class Workflow : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("workflowid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(WorkflowId));
             }
@@ -1521,8 +1522,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_asyncoperation_workflowactivationid
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_asyncoperation_workflowactivationid")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> LkAsyncoperationWorkflowactivationid
+		[RelationshipSchemaName("lk_asyncoperation_workflowactivationid")]
+		public IEnumerable<AsyncOperation> LkAsyncoperationWorkflowactivationid
 		{
 			[DebuggerNonUserCode]
 			get
@@ -1541,8 +1542,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N process_processstage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("process_processstage")]
-		public System.Collections.Generic.IEnumerable<ProcessStage> ProcessProcessstage
+		[RelationshipSchemaName("process_processstage")]
+		public IEnumerable<ProcessStage> ProcessProcessstage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -1561,8 +1562,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N slabase_workflowid
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("slabase_workflowid")]
-		public System.Collections.Generic.IEnumerable<SLA> SlabaseWorkflowid
+		[RelationshipSchemaName("slabase_workflowid")]
+		public IEnumerable<SLA> SlabaseWorkflowid
 		{
 			[DebuggerNonUserCode]
 			get
@@ -1581,8 +1582,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_active_workflow
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_active_workflow")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowActiveWorkflow
+		[RelationshipSchemaName("workflow_active_workflow")]
+		public IEnumerable<Workflow> WorkflowActiveWorkflow
 		{
 			[DebuggerNonUserCode]
 			get
@@ -1601,8 +1602,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_parent_workflow
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_parent_workflow")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowParentWorkflow
+		[RelationshipSchemaName("workflow_parent_workflow")]
+		public IEnumerable<Workflow> WorkflowParentWorkflow
 		{
 			[DebuggerNonUserCode]
 			get
@@ -1621,8 +1622,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N Workflow_routingrule
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Workflow_routingrule")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> WorkflowRoutingrule
+		[RelationshipSchemaName("Workflow_routingrule")]
+		public IEnumerable<RoutingRule> WorkflowRoutingrule
 		{
 			[DebuggerNonUserCode]
 			get

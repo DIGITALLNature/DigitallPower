@@ -15,32 +15,28 @@ public class CreateProfileCommand(
     IProfileManager profileManager,
     IXrmConnection connection,
     IAnsiConsole console)
-    : Command<CreateProfileSettings>
+    : AsyncCommand<CreateProfileSettings>
 {
-    protected override int Execute(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
+    protected override async Task<int> ExecuteAsync(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
         var identities = profileManager.LoadIdentities();
         if (settings.TokenBased)
         {
-            identities.Upsert(settings.Name.ToUpperInvariant(),
+            identities.Upsert(settings.Name,
                 new TokenIdentity
                 {
                     ConnectionString = settings.ConnectionString,
-                    Insecure = settings.Insecure,
-                    SecurityProtocol = settings.SecurityProtocol,
                     Token = string.Empty
                 });
         }
         else
         {
-            identities.Upsert(settings.Name.ToUpperInvariant(),
+            identities.Upsert(settings.Name,
                 new Identity
                 {
-                    ConnectionString = settings.ConnectionString,
-                    Insecure = settings.Insecure,
-                    SecurityProtocol = settings.SecurityProtocol
+                    ConnectionString = settings.ConnectionString
                 });
         }
 
@@ -50,7 +46,7 @@ public class CreateProfileCommand(
         {
             try
             {
-                connection.Connect();
+                await connection.ConnectAsync();
             }
             catch (FailedConnectionException fc)
             {

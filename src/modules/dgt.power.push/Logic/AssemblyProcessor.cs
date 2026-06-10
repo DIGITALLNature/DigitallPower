@@ -14,12 +14,15 @@ using PluginType = dgt.power.push.Model.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class AssemblyProcessor : IDisposable
+// CA1031 suppressed: outer catches wrap Dataverse exceptions into InvalidOperationException (Category A);
+// inner rollback catches must catch broadly to avoid masking the original exception (Category C)
+#pragma warning disable CA1031
+internal sealed class AssemblyProcessor : IDisposable
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
     private readonly IAnsiConsole _console;
-    private static readonly string[] separator = [","];
+    private static readonly string[] s_separator = [","];
 
     public AssemblyProcessor(IOrganizationService service, IAnsiConsole? console = null)
     {
@@ -64,6 +67,7 @@ internal class AssemblyProcessor : IDisposable
         var package = new PluginPackage
         {
             Id = packageCrm.Id,
+            Name = packageCrm.Name,
             Content = packageLocal.Content,
             Version = packageCrm.Version
         };
@@ -87,7 +91,7 @@ internal class AssemblyProcessor : IDisposable
 
        return new Package
         {
-            Name = package.Name,
+            Name = packageCrm.Name,
             Version = packageCrm.Version,
             Content = package.Content,
             Id = package.Id
@@ -186,7 +190,7 @@ internal class AssemblyProcessor : IDisposable
         _console.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
             crm.Name, crm.Version, dll.Version);
         //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly"
-        foreach (var oldType in crm.PluginTypes.ToList().Where(t => dll.PluginTypes.All(d => d.TypeName != t.TypeName)))
+        foreach (var oldType in crm.PluginTypes.Where(t => dll.PluginTypes.TrueForAll(d => d.TypeName != t.TypeName)).ToList())
         {
             crm.PluginTypes.Remove(DeletePluginType(oldType));
         }
@@ -274,7 +278,7 @@ internal class AssemblyProcessor : IDisposable
         }
 
         // New
-        foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.All(t => t.TypeName != d.TypeName)))
+        foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.TrueForAll(t => t.TypeName != d.TypeName)))
         {
             crm.PluginTypes.Add(CreatePluginType(crm, newType));
         }
@@ -434,14 +438,15 @@ internal class AssemblyProcessor : IDisposable
     public Assembly UpsertAndPurgeWorkflowTypes(Assembly dll, Assembly crm)
     {
         // New
-        foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.All(t => t.TypeName != d.TypeName)))
+        foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.TrueForAll(t => t.TypeName != d.TypeName)))
         {
             crm.WorkflowTypes.Add(CreateWorkflowType(crm, newType));
         }
 
         // Purge
-        foreach (var oldType in crm.WorkflowTypes.ToList()
-                     .Where(t => dll.WorkflowTypes.All(d => d.TypeName != t.TypeName)))
+        foreach (var oldType in crm.WorkflowTypes
+                     .Where(t => dll.WorkflowTypes.TrueForAll(d => d.TypeName != t.TypeName))
+                     .ToList())
         {
             crm.WorkflowTypes.Remove(DeleteWorkflowType(oldType));
         }
@@ -510,14 +515,15 @@ internal class AssemblyProcessor : IDisposable
 
             // New
             foreach (var newStep in dllPluginType.PluginSteps.Where(d =>
-                         crmPluginType.PluginSteps.All(t => !t.Equals(d))))
+                         crmPluginType.PluginSteps.TrueForAll(t => !t.Equals(d))))
             {
                 crmPluginType.PluginSteps.Add(CreatePluginStep(crmPluginType, newStep, solution));
             }
 
             // Purge
-            foreach (var oldStep in crmPluginType.PluginSteps.ToList()
-                         .Where(t => dllPluginType.PluginSteps.All(d => !d.Equals(t))))
+            foreach (var oldStep in crmPluginType.PluginSteps
+                         .Where(t => dllPluginType.PluginSteps.TrueForAll(d => !d.Equals(t)))
+                         .ToList())
             {
                 crmPluginType.PluginSteps.Remove(DeletePluginStep(oldStep));
             }
@@ -537,7 +543,7 @@ internal class AssemblyProcessor : IDisposable
             Name = pluginStep.Name,
             Mode = new OptionSetValue(pluginStep.Mode),
             AsyncAutoDelete = SdkMessageProcessingStep.Options.Mode.Asynchronous == pluginStep.Mode,
-            FilteringAttributesField = pluginStep.FilterAttributes == null || pluginStep.FilterAttributes.Length < 1
+            FilteringAttributesField = pluginStep.FilterAttributes == null || pluginStep.FilterAttributes.Count == 0
                 ? null
                 : string.Join(",", pluginStep.FilterAttributes),
             Configuration = pluginStep.Configuration
@@ -634,18 +640,18 @@ internal class AssemblyProcessor : IDisposable
         return pluginStep;
     }
 
-    private PluginStep UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
+    private void UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
     {
         _console.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
 
-        var name = dllPluginStep.Name;
+        var name = dllPluginStep.Name ?? string.Empty;
 
         var updatedStep = _service
             .Retrieve(SdkMessageProcessingStep.EntityLogicalName, crmPluginStep.Id, new ColumnSet(true))
             ?.ToEntity<SdkMessageProcessingStep>();
         if (updatedStep == null)
         {
-            return crmPluginStep;
+            return;
         }
 
         var updated = false;
@@ -661,16 +667,18 @@ internal class AssemblyProcessor : IDisposable
         {
             _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update ExecutionOrder from [navy]{0}[/] to [green]{1}[/] for PluginStep {2}",
-                crmPluginStep.ExecutionOrder, dllPluginStep.ExecutionOrder, name);
+                crmPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                dllPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                name);
             updatedStep.Rank = dllPluginStep.ExecutionOrder;
             crmPluginStep.ExecutionOrder = dllPluginStep.ExecutionOrder;
             updated = true;
         }
 
-        var crmFilter = crmPluginStep.FilterAttributes == null || crmPluginStep.FilterAttributes.Length < 1
+        var crmFilter = crmPluginStep.FilterAttributes == null || crmPluginStep.FilterAttributes.Count == 0
             ? null
             : string.Join(",", crmPluginStep.FilterAttributes);
-        var dllFilter = dllPluginStep.FilterAttributes == null || dllPluginStep.FilterAttributes.Length < 1
+        var dllFilter = dllPluginStep.FilterAttributes == null || dllPluginStep.FilterAttributes.Count == 0
             ? null
             : string.Join(",", dllPluginStep.FilterAttributes);
 
@@ -692,12 +700,15 @@ internal class AssemblyProcessor : IDisposable
         }
         else if (!string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
         {
-            var crmFilteringAttributes = crmFilter.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            var dllFilteringAttributes = dllPluginStep.FilterAttributes;
-            Array.Sort(crmFilteringAttributes);
-            Array.Sort(dllFilteringAttributes!);
-            if (!string.Join(",", crmFilteringAttributes)
-                    .Equals(string.Join(",", dllFilteringAttributes!), StringComparison.Ordinal))
+            var normalizedCrmFilteringAttributes = crmFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+            var normalizedDllFilteringAttributes = dllFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+
+            if (!string.Join(",", normalizedCrmFilteringAttributes)
+                    .Equals(string.Join(",", normalizedDllFilteringAttributes), StringComparison.Ordinal))
             {
                 _console.MarkupLine(CultureInfo.InvariantCulture,
                     "   Update PluginStep [green]{0}[/] filters from '{1}' to '{2}'", name, crmFilter, dllFilter);
@@ -738,7 +749,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (!updated)
         {
-            return crmPluginStep;
+            return;
         }
 
         _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
@@ -746,7 +757,6 @@ internal class AssemblyProcessor : IDisposable
 
         _console.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
         _service.Update(updatedStep);
-        return crmPluginStep;
     }
 
     #endregion
@@ -777,14 +787,15 @@ internal class AssemblyProcessor : IDisposable
 
                 // New
                 foreach (var newStepImage in dllPluginStep.PluginStepImages.Where(d =>
-                             crmPluginStep.PluginStepImages.All(t => !t.Equals(d))))
+                             crmPluginStep.PluginStepImages.TrueForAll(t => !t.Equals(d))))
                 {
                     crmPluginStep.PluginStepImages.Add(CreatePluginStepImage(crmPluginStep, newStepImage));
                 }
 
                 // Purge
-                foreach (var oldStepImage in crmPluginStep.PluginStepImages.ToList()
-                             .Where(t => dllPluginStep.PluginStepImages.All(d => !d.Equals(t))))
+                foreach (var oldStepImage in crmPluginStep.PluginStepImages
+                                 .Where(t => dllPluginStep.PluginStepImages.TrueForAll(d => !d.Equals(t)))
+                                 .ToList())
                 {
                     crmPluginStep.PluginStepImages.Remove(DeletePluginStepImage(oldStepImage));
                 }
@@ -803,7 +814,7 @@ internal class AssemblyProcessor : IDisposable
             Name = pluginStepImage.Name,
             EntityAlias = pluginStepImage.EntityAlias,
             MessagePropertyName = pluginStepImage.MessagePropertyName,
-            AttributesField = pluginStepImage.Attributes == null || pluginStepImage.Attributes.Length < 1
+            AttributesField = pluginStepImage.Attributes == null || pluginStepImage.Attributes.Count == 0
                 ? null
                 : string.Join(",", pluginStepImage.Attributes)
         };
@@ -840,7 +851,7 @@ internal class AssemblyProcessor : IDisposable
         return pluginStepImage;
     }
 
-    private PluginStepImage UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
+    private void UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
         PluginStepImage crmPluginStepImage)
     {
         _console.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
@@ -854,12 +865,12 @@ internal class AssemblyProcessor : IDisposable
             ?.ToEntity<SdkMessageProcessingStepImage>();
         if (updatedStepImage == null)
         {
-            return crmPluginStepImage;
+            return;
         }
 
         var updated = false;
 
-        if (!(crmFilter == null || crmFilter.Length < 1) && (dllFilter == null || dllFilter.Length < 1))
+        if (!(crmFilter == null || crmFilter.Count == 0) && (dllFilter == null || dllFilter.Count == 0))
         {
             _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from [green]{0}[/] to <empty>", string.Join(",", crmFilter));
@@ -867,7 +878,7 @@ internal class AssemblyProcessor : IDisposable
             crmPluginStepImage.Attributes = null;
             updated = true;
         }
-        else if ((crmFilter == null || crmFilter.Length < 1) && !(dllFilter == null || dllFilter.Length < 1))
+        else if ((crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
         {
             _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from <empty> to [green]{0}[/]", string.Join(",", dllFilter));
@@ -875,15 +886,16 @@ internal class AssemblyProcessor : IDisposable
             crmPluginStepImage.Attributes = dllFilter;
             updated = true;
         }
-        else if (!(crmFilter == null || crmFilter.Length < 1) && !(dllFilter == null || dllFilter.Length < 1))
+        else if (!(crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
         {
-            Array.Sort(crmFilter);
-            Array.Sort(dllFilter);
-            if (!string.Join(",", crmFilter).Equals(string.Join(",", dllFilter), StringComparison.Ordinal))
+            var normalizedCrmFilter = crmFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+            var normalizedDllFilter = dllFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+
+            if (!string.Join(",", normalizedCrmFilter).Equals(string.Join(",", normalizedDllFilter), StringComparison.Ordinal))
             {
                 _console.MarkupLine(CultureInfo.InvariantCulture,
-                    "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", crmFilter),
-                    string.Join(",", dllFilter));
+                    "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", normalizedCrmFilter),
+                    string.Join(",", normalizedDllFilter));
                 updatedStepImage.AttributesField = string.Join(",", dllFilter);
                 crmPluginStepImage.Attributes = dllFilter;
                 updated = true;
@@ -892,7 +904,7 @@ internal class AssemblyProcessor : IDisposable
 
         if (!updated)
         {
-            return crmPluginStepImage;
+            return;
         }
 
         _console.Markup(CultureInfo.InvariantCulture,
@@ -904,7 +916,6 @@ internal class AssemblyProcessor : IDisposable
             "   Update PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         _service.Update(updatedStepImage);
-        return crmPluginStepImage;
     }
 
     #endregion
@@ -922,6 +933,5 @@ internal class AssemblyProcessor : IDisposable
     public void Dispose()
     {
         _context.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

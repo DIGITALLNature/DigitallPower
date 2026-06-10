@@ -1,4 +1,4 @@
-<h1 align="center"> DigitallPower CLI </h1> <br>
+﻿<h1 align="center"> DigitallPower CLI </h1> <br>
 
 <br/>
 <p align="center">
@@ -128,7 +128,7 @@ dgtp <branch> <command> [arguments] [options]
 | Command | Description |
 |---------|-------------|
 | `profile list` | List configured profiles |
-| `profile create <name> <url> [--msal\|--clientsecret …]` | Create a new connection profile |
+| `profile create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection profile |
 | `profile select <name>` | Set the active profile |
 | `profile delete <name>` | Delete a profile |
 | `profile purge` | Remove all profiles |
@@ -231,7 +231,14 @@ dgtp codegeneration ./generated -c ./genconfig.json
 dgtp cg ./generated -c ./genconfig.json
 ```
 
-The JSON schema for the generation configuration is available at [`schemas/codegeneration`](schemas/codegeneration).
+The JSON schema for the generation configuration is available at [`schemas/codegeneration`](schemas/codegeneration). The codegeneration runtime normalizes list-based selectors and filters (entities, forms, solutions, actions, custom APIs, SDK messages) into de-duplicated collection sets for reuse during generation.
+
+For TypeScript Light (TSL) generation validation in CI/test environments:
+
+| Environment variable | Purpose | Default |
+|---|---|---|
+| `DGT_POWER_TSL_STRICT_MODE` | Enables fail-fast handling for undefined Liquid values (`1` / `true` / `yes`) | Falls back to CI-agent detection |
+| `DGT_POWER_TSL_MAX_STEPS` | Overrides Fluid template execution step limit with a positive integer | `20000` |
 
 ### `push` — Deploy artifacts
 
@@ -283,7 +290,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 Key design principles:
 
 - **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `export`, `import`, `maintenance`, `profile`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, profile management, file I/O helpers, base commands, tracing and exception types.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, profile management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, profile manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active profile via `IXrmConnection.Connect()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
@@ -315,6 +322,7 @@ DigitallPower/
 ## 🛠️ Build & Test
 
 ```bash
+pnpm install                 # Install JS tooling dependencies (includes TypeScript compiler for TSL gates)
 dotnet restore                # Restore dependencies (uses lock files)
 dotnet build                  # Build the solution
 dotnet test                   # Run all tests
@@ -336,6 +344,7 @@ dotnet tool install --global --add-source ./packages dgt.power --version <versio
 ## ✅ Requirements
 
 - **.NET SDK 10.0** (the SDK version is pinned via [`global.json`](global.json))
+- **Node.js 22 + pnpm** (needed for the TypeScript compile gate in `dgt.power.codegeneration.tests`)
 - Network access to your Dataverse environment (`*.dynamics.com`) and to `api.nuget.org` (for the version check)
 - An account with sufficient privileges on the target Dataverse environment
 
@@ -355,6 +364,8 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | Anonymous install ID | `a1b2c3d4-...` | Count unique installations |
 
 **No personally identifiable information is collected.** No usernames, organization URLs, file contents, or environment-specific data is ever transmitted.
+
+CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 
 ### How to disable telemetry
 

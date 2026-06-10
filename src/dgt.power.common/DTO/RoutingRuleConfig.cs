@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json.Serialization;
+using dgt.power.common.DTO;
 
 namespace dgt.power.dto;
 

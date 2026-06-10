@@ -28,7 +28,7 @@ public class ConsoleInjectionTests
     [Test]
     public async Task CommandTestContextBuilder_WithAnsiConsole_ShouldReturnBuilder()
     {
-        var testConsole = new TestConsole();
+        using var testConsole = new TestConsole();
         var builder = new CommandTestContextBuilder<StubCommand, StubCommand.StubSettings>()
             .WithAnsiConsole(testConsole);
         await Assert.That(builder).IsNotNull();

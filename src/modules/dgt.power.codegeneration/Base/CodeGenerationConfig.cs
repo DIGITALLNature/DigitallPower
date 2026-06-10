@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base.Config;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable CollectionNeverUpdated.Global
@@ -9,6 +10,7 @@ using dgt.power.codegeneration.Base.Config;
 
 namespace dgt.power.codegeneration.Base;
 
+#pragma warning disable CA2227 // Entities and Forms are assigned post-construction
 public class CodeGenerationConfig
 {
     private HashSet<string> _actions = new();
@@ -23,7 +25,7 @@ public class CodeGenerationConfig
 
     public ICollection<string> Entities
     {
-        get => _entities.ToHashSet();
+        get => _entities;
         set
         {
             _entities = new HashSet<string>(value);
@@ -31,9 +33,9 @@ public class CodeGenerationConfig
         }
     }
 
-    public string[] Actions
+    public IReadOnlyCollection<string> Actions
     {
-        get => _actions.ToArray();
+        get => _actions;
         init
         {
             _actions = new HashSet<string>(value);
@@ -42,9 +44,9 @@ public class CodeGenerationConfig
     }
 
     // ReSharper disable once InconsistentNaming
-    public string[] CustomAPIs
+    public IReadOnlyCollection<string> CustomAPIs
     {
-        get => _customApis.ToArray();
+        get => _customApis;
         init
         {
             _customApis = new HashSet<string>(value);
@@ -53,9 +55,9 @@ public class CodeGenerationConfig
     }
 
     //additional sdk messages
-    public string[] AdditionalSdkMessages
+    public IReadOnlyCollection<string> AdditionalSdkMessages
     {
-        get => _sdkMessages.ToArray();
+        get => _sdkMessages;
         init
         {
             _sdkMessages = new HashSet<string>(value);
@@ -63,9 +65,9 @@ public class CodeGenerationConfig
         }
     }
 
-    public string[] Solutions
+    public IReadOnlyCollection<string> Solutions
     {
-        get => _solutions.ToArray();
+        get => _solutions;
         init
         {
             _solutions = new HashSet<string>(value);
@@ -73,9 +75,9 @@ public class CodeGenerationConfig
         }
     }
 
-    public string[] Forms
+    public IReadOnlyCollection<string> Forms
     {
-        get => _forms.ToArray();
+        get => _forms;
         set
         {
             _forms = new HashSet<string>(value);
@@ -213,3 +215,4 @@ public class CodeGenerationConfig
     /// </summary>
     public bool SuppressNullableSupport { get; init; }
 }
+#pragma warning restore CA2227

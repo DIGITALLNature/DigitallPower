@@ -31,7 +31,6 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     /// Creates an file from an artifact. Uses System.Text.Json to serialize the artifact.
     /// </summary>
     /// <param name="artifact">The artifact to write to a file.</param>
-    /// <param name="fileName">The name of the artifact file.</param>
     /// <typeparam name="TArtifact">The type of the artifact.</typeparam>
     /// <returns>The file info for the the artifact.</returns>
     protected FileInfo WriteConfigurationArtifact<TArtifact>(TArtifact artifact)

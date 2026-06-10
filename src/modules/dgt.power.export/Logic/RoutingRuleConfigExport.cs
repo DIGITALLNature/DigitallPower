@@ -8,8 +8,8 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
-using RoutingRuleItem = dgt.power.dto.RoutingRuleItem;
 using Spectre.Console;
+using RoutingRuleItem = dgt.power.common.DTO.RoutingRuleItem;
 
 namespace dgt.power.export.Logic;
 
@@ -31,7 +31,7 @@ public sealed class RoutingRuleConfigExport(
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
-        var export = new RoutingRuleConfigs();
+        var export = new List<RoutingRuleConfig>();
 
         using var context = new DataContext(Connection);
         context.RoutingRuleSet
@@ -64,24 +64,45 @@ public sealed class RoutingRuleConfigExport(
     private List<RoutingRuleItem> GetRuleItems(DataContext context, RoutingRule rule) =>
         context.RoutingRuleItemSet
             .Where(rri => rri.RoutingRuleId != null && rri.RoutingRuleId.Id == rule.RoutingRuleId)
+            .AsEnumerable()
             .Select(rri => new RoutingRuleItem
                 {
                     Name = rri.Name!,
                     RoutingRuleItemId = rri.RoutingRuleItemId ?? Guid.Empty,
                     RoutingRuleId = rri.RoutingRuleId!.Id,
-                    MsdynRouteto = rri.MsdynRouteto != null ? rri.MsdynRouteto.Value :
-                        rri.RoutedQueueId != null ? dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue :
-                        dataverse.RoutingRuleItem.Options.MsdynRouteto.User_Team,
-                    RoutedQueueId = rri.RoutedQueueId != null ? rri.RoutedQueueId.Id : default(Guid?),
-                    AssignObjectIdType =
-                        rri.AssignObjectId != null ? rri.AssignObjectId.LogicalName : default,
-                    AssignObjectIdName = rri.AssignObjectId != null
-                        ? rri.AssignObjectId.LogicalName == Team.EntityLogicalName
-                            ? rri.AssignObjectId.Name
-                            : GetSystemUserDomainName(Connection, rri.AssignObjectId.Id)
-                        : default
+                    MsdynRouteto = ResolveRouteTarget(rri),
+                    RoutedQueueId = rri.RoutedQueueId?.Id,
+                    AssignObjectIdType = rri.AssignObjectId?.LogicalName,
+                    AssignObjectIdName = ResolveAssignedObjectName(rri.AssignObjectId)
                 }
             ).ToList();
+
+    private static int ResolveRouteTarget(dataverse.RoutingRuleItem ruleItem)
+    {
+        if (ruleItem.MsdynRouteto != null)
+        {
+            return ruleItem.MsdynRouteto.Value;
+        }
+
+        return ruleItem.RoutedQueueId != null
+            ? dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue
+            : dataverse.RoutingRuleItem.Options.MsdynRouteto.User_Team;
+    }
+
+    private string? ResolveAssignedObjectName(EntityReference? assignObjectId)
+    {
+        if (assignObjectId == null)
+        {
+            return null;
+        }
+
+        if (assignObjectId.LogicalName == Team.EntityLogicalName)
+        {
+            return assignObjectId.Name;
+        }
+
+        return GetSystemUserDomainName(Connection, assignObjectId.Id);
+    }
 
     private static string? GetSystemUserDomainName(IOrganizationService service, Guid systemuserId)
     {

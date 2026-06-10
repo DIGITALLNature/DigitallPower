@@ -1,13 +1,13 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.analyzer.tests.Base;
-using dgt.power.analyzer.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
-using Microsoft.Xrm.Sdk;
 using Digitall.Dataverse.Testing;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.analyzer.tests;
 

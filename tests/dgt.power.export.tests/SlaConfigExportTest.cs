@@ -8,6 +8,7 @@ using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
 using Microsoft.Xrm.Sdk;
+using Calendar = dgt.power.dataverse.Calendar;
 
 namespace dgt.power.export.tests;
 
@@ -22,7 +23,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                     Name = "Sla1 Draft",
                     StatusCode = new OptionSetValue(SLA.Options.StatusCode.Draft),
                     StateCode = new OptionSetValue(SLA.Options.StateCode.Draft),
-                    BusinessHoursId = new EntityReference(dataverse.Calendar.EntityLogicalName, Guid.NewGuid())
+                    BusinessHoursId = new EntityReference(Calendar.EntityLogicalName, Guid.NewGuid())
                 },
                 new SLA(Guid.Parse("6555bb4d-6c3a-454a-9bda-36ee77e7e0ed"))
                 {
@@ -43,7 +44,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                     FileDir = ArtifactDirectory
                 }
             )).IsTrue();
-        var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>(GetTestFileName());
+        var slaConfigs = GetConfigurationTestArtifact<List<SlaConfig>>(GetTestFileName());
         await Assert.That(slaConfigs).Count().IsEqualTo(2);
     }
 
@@ -57,7 +58,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                 FileDir = ArtifactDirectory
             }
         )).IsTrue();
-        var slaConfigs = GetConfigurationTestArtifact<SlaConfigs>("slaconfig.json");
+        var slaConfigs = GetConfigurationTestArtifact<List<SlaConfig>>("slaconfig.json");
         await Assert.That(slaConfigs).Count().IsEqualTo(2);
     }
 }

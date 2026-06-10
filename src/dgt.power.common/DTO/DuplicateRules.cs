@@ -9,5 +9,5 @@ public sealed class DuplicateRules : Assignee
 {
     [JsonPropertyName("duplicate_rules")]
     [JsonRequired]
-    public List<DuplicateRule> Rules { get; set; } = new();
+    public IReadOnlyList<DuplicateRule> Rules { get; init; } = new List<DuplicateRule>();
 }

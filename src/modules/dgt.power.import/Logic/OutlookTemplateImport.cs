@@ -12,8 +12,8 @@ using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xrm.Sdk;
-using SavedQuery = dgt.power.dataverse.SavedQuery;
 using Spectre.Console;
+using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.import.Logic;
 

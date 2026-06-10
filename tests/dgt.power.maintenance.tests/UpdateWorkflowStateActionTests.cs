@@ -10,7 +10,7 @@ using Microsoft.Xrm.Sdk;
 namespace dgt.power.maintenance.tests;
 
 [NotInParallel("AnsiConsole")]
-public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
+public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowStateSettings>
 {
     [Test]
     public async Task DefaultShouldActivateWorkflows()
@@ -46,7 +46,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(activatedAction)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("empty.json")
         }).Succeed();
@@ -97,7 +97,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(activatedAction)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("actions-deactivate.json")
         }).Succeed();
@@ -201,7 +201,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(currentToDefaultSpecifiedAction)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("actions-owner.json")
         }).Succeed();
@@ -279,7 +279,7 @@ public class UpdateWorkflowStateActionTests : CommandTestsBase<UpdateWorkflowSta
             .WithData(otherComponent)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath(config)
         }).Succeed();

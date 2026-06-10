@@ -9,5 +9,5 @@ namespace dgt.power.push.Model;
 public class WebresourceConfig
 {
     [JsonPropertyName("maps")]
-    public Dictionary<string, string>? Maps { get; set; }
+    public Dictionary<string, string>? Maps { get; init; }
 }

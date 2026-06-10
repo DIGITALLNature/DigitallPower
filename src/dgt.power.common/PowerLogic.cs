@@ -13,7 +13,7 @@ public abstract class PowerLogic<TConfig>(
     IOrganizationService connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : Command<TConfig>, IPowerLogic
+    : AsyncCommand<TConfig>, IPowerLogic
     where TConfig : BaseProgramSettings
 {
     protected const int PageSize = 5000;
@@ -24,12 +24,15 @@ public abstract class PowerLogic<TConfig>(
     protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
-    protected override int Execute(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken) => Execute(settings) ? 0 : 1;
+    protected override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken) =>
+        await ExecuteAsync(settings, cancellationToken) ? 0 : 1;
 
-    private bool Execute(TConfig args)
+    private async Task<bool> ExecuteAsync(TConfig args, CancellationToken cancellationToken)
     {
-        return Invoke(args);
+        return await InvokeAsync(args, cancellationToken);
     }
+
+    protected virtual Task<bool> InvokeAsync(TConfig args, CancellationToken cancellationToken) => Task.FromResult(Invoke(args));
 
     protected abstract bool Invoke(TConfig args);
 }

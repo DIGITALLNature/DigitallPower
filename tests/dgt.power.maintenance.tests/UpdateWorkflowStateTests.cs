@@ -6,14 +6,14 @@ using dgt.power.tests;
 
 namespace dgt.power.maintenance.tests;
 
-public class UpdateWorkflowStateTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
+public class UpdateWorkflowStateTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowStateSettings>
 {
     [Test]
     [Arguments("")]
     [Arguments("missing.json")]
     public async Task InvalidConfigPathsShouldFail(string config) =>
         await Assert.That(GetBuilder().Build()
-            .Execute(new UpdateWorkflowState.Settings
+            .Execute(new UpdateWorkflowStateSettings
             {
                 Config = GetResourcePath(config)
             })).IsFalse();
@@ -23,7 +23,7 @@ public class UpdateWorkflowStateTests : CommandTestsBase<UpdateWorkflowState, Up
     [Arguments("simple.json")]
     public async Task ValidConfigShouldSucceed(string config) =>
         await Assert.That(GetBuilder().Build()
-            .Execute(new UpdateWorkflowState.Settings
+            .Execute(new UpdateWorkflowStateSettings
             {
                 Config = GetResourcePath(config)
             })).IsTrue();

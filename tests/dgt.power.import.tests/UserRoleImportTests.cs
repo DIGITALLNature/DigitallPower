@@ -8,6 +8,7 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using Microsoft.Xrm.Sdk.Metadata;
+
 #pragma warning disable CS8601
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -40,7 +41,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
     public async Task ShouldFailOnEmptyConfiguration() =>
         await Assert.That(GetContext().Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles()).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole>()).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -56,7 +57,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "very much separators/s/s/", SecurityRoles = new[] { data.adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = "very much separators/s/s/", SecurityRoles = new[] { data.adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -77,7 +78,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = "Some Unit", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -92,7 +93,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = "Some Unit", SecurityRoles = ["some role"], UserName = "some.user@test.de" } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = "Some Unit", SecurityRoles = ["some role"], UserName = "some.user@test.de" } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -117,7 +118,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnitSeparator = '/', BusinessUnit = $"{childBusinessUnit.Name}/{businessUnit.Name}", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnitSeparator = '/', BusinessUnit = $"{childBusinessUnit.Name}/{businessUnit.Name}", SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -139,7 +140,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name!, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = businessUnit.Name!, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -167,7 +168,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = businessUnit.Name, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -189,7 +190,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = businessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = businessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -212,7 +213,7 @@ public class UserRoleImportTests : ImportTestBase<UserRoleImport>
 
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new UserRoles { new() { BusinessUnit = newBusinessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
+            FileName = WriteConfigurationArtifact(new List<UserRole> { new() { BusinessUnit = newBusinessUnit.Name, SecurityRoles = new[] { adminRole.Name }!, UserName = adminUser.DomainName } }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 

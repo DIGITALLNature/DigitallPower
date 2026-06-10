@@ -7,5 +7,5 @@ namespace dgt.power.common;
 
 public interface IConnector
 {
-    IOrganizationServiceAsync2 CreateOrganizationServiceProxy();
+    Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync();
 }

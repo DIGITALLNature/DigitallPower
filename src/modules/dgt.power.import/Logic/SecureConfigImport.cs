@@ -41,7 +41,7 @@ public sealed class SecureConfigImport(
             where ps.Name == config.PluginStep
             select ps).SingleOrDefault();
 
-        if (pluginStep == default)
+        if (pluginStep == null)
         {
             Tracer.Log("Can't find PluginStep...", TraceEventType.Warning);
             return Tracer.NotConfigured(this);
@@ -57,7 +57,7 @@ public sealed class SecureConfigImport(
             {
                 CreateSecureConfig(secureConfig, pluginStep, out created);
             }
-            catch (Exception e)
+            catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
             {
                 if (created)
                 {
@@ -83,7 +83,7 @@ public sealed class SecureConfigImport(
                     Connection.Update(secureConfig);
                     Tracer.Log("updated SecureConfig!", TraceEventType.Information);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
                     Tracer.Log(e.Message, TraceEventType.Error);
                     Tracer.Log("ERROR: Could not update SecureConfig!", TraceEventType.Error);

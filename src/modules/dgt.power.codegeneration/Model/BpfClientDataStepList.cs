@@ -3,6 +3,8 @@
 
 using System.Text.Json.Serialization;
 
+#pragma warning disable CA1002 // JSON-deserialized list properties require List<T> for population
+
 namespace dgt.power.codegeneration.Model;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 

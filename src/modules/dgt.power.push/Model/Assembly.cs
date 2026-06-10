@@ -6,11 +6,12 @@ using System.Runtime.Serialization;
 using dgt.power.dataverse;
 
 #pragma warning disable CA1067
+#pragma warning disable CA1002 // WorkflowTypes and PluginTypes populated via .Add() by AssemblyModelBuilder
 
 namespace dgt.power.push.Model;
 
 [DataContract]
-public class Assembly : AssemblyContent, IEquatable<Assembly>
+public sealed class Assembly : AssemblyContent, IEquatable<Assembly>
 {
     [DataMember(Name = "name", IsRequired = true)]
     [Required]
@@ -34,7 +35,7 @@ public class Assembly : AssemblyContent, IEquatable<Assembly>
     public List<WorkflowType> WorkflowTypes { get; set; } = new();
 
     [DataMember(Name = "solutions", IsRequired = false)]
-    public List<string> Solutions { get; set; } = new();
+    public IReadOnlyList<string> Solutions { get; set; } = [];
 
     [IgnoreDataMember] public string TypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 

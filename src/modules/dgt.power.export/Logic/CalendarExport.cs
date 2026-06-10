@@ -9,8 +9,8 @@ using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
-using Calendar = dgt.power.dto.Calendar;
 using Spectre.Console;
+using Calendar = dgt.power.dto.Calendar;
 
 namespace dgt.power.export.Logic;
 

@@ -3,6 +3,8 @@
 
 using System.Runtime.Serialization;
 
+#pragma warning disable CA1002 // PluginTypes populated via .Add() by AssemblyModelBuilder
+
 namespace dgt.power.push.Model;
 
 [DataContract]

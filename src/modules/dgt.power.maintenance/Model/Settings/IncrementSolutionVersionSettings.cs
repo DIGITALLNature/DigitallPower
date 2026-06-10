@@ -11,7 +11,7 @@ public class IncrementSolutionVersionSettings : BaseProgramSettings
 {
     [CommandArgument(1, "<Solution>")]
     [Description("The unique name of the solution to increment version")]
-    public string Solution { get; set; }
+    public string Solution { get; set; } = string.Empty;
 
     [CommandOption("--major")]
     [Description("Increment the major version eg 1.0.0.0 -> 2.0.0.0")]

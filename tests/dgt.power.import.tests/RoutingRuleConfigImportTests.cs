@@ -8,7 +8,7 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using Microsoft.Xrm.Sdk;
 using Queue = dgt.power.dataverse.Queue;
-using RoutingRuleItem = dgt.power.dto.RoutingRuleItem;
+using RoutingRuleItem = dgt.power.common.DTO.RoutingRuleItem;
 #pragma warning disable CS8601
 #pragma warning disable CS8602
 
@@ -29,7 +29,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
     public async Task ShouldFailOnEmptyConfiguration() =>
         await Assert.That(GetContext().Execute(new ImportVerb
             {
-                FileName = WriteConfigurationArtifact(new RoutingRuleConfigs()).Name,
+                FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig>()).Name,
                 FileDir = ArtifactDirectory
             }
         )).IsFalse();
@@ -42,7 +42,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
         var teamRuleItem = data.teamRuleItem;
         var queueRuleItem = data.queueRuleItem;
         var userRuleItem = data.userRuleItem;
-        var ruleConfig = new RoutingRuleConfigs
+        var ruleConfig = new List<RoutingRuleConfig>
         {
             new()
             {
@@ -124,7 +124,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
         await Assert.That(context
             .Execute(new ImportVerb
                 {
-                    FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = $"{teamRuleItem.Name} Updated", MsdynRouteto = teamRuleItem.MsdynRouteto.Value, RoutingRuleId = teamRuleItem.RoutingRuleId.Id, RoutingRuleItemId = teamRuleItem.Id, AssignObjectIdType = teamRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = teamRuleItem.AssignObjectId.Name }, new RoutingRuleItem { Name = $"{queueRuleItem.Name}Updated", MsdynRouteto = queueRuleItem.MsdynRouteto.Value, RoutingRuleId = queueRuleItem.RoutingRuleId.Id, RoutingRuleItemId = queueRuleItem.Id, RoutedQueueId = queueRuleItem.RoutedQueueId.Id }, new RoutingRuleItem { Name = $"{userRuleItem.Name} Updated", MsdynRouteto = userRuleItem.MsdynRouteto.Value, RoutingRuleId = userRuleItem.RoutingRuleId.Id, RoutingRuleItemId = userRuleItem.Id, AssignObjectIdType = userRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = userRuleItem.AssignObjectId.Name } } } }).Name,
+                    FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig> { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = $"{teamRuleItem.Name} Updated", MsdynRouteto = teamRuleItem.MsdynRouteto.Value, RoutingRuleId = teamRuleItem.RoutingRuleId.Id, RoutingRuleItemId = teamRuleItem.Id, AssignObjectIdType = teamRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = teamRuleItem.AssignObjectId.Name }, new RoutingRuleItem { Name = $"{queueRuleItem.Name}Updated", MsdynRouteto = queueRuleItem.MsdynRouteto.Value, RoutingRuleId = queueRuleItem.RoutingRuleId.Id, RoutingRuleItemId = queueRuleItem.Id, RoutedQueueId = queueRuleItem.RoutedQueueId.Id }, new RoutingRuleItem { Name = $"{userRuleItem.Name} Updated", MsdynRouteto = userRuleItem.MsdynRouteto.Value, RoutingRuleId = userRuleItem.RoutingRuleId.Id, RoutingRuleItemId = userRuleItem.Id, AssignObjectIdType = userRuleItem.AssignObjectId.LogicalName, AssignObjectIdName = userRuleItem.AssignObjectId.Name } } } }).Name,
                     FileDir = ArtifactDirectory
                 }
             )).IsTrue();
@@ -146,7 +146,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .Execute(new ImportVerb
                 {
                     Assignee = "owner@test.de",
-                    FileName = WriteConfigurationArtifact(new RoutingRuleConfigs
+                    FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig>
                         {
                             new()
                             {
@@ -177,7 +177,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .Execute(new ImportVerb
                 {
                     Assignee = "owner@test.de",
-                    FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = false, RoutingRuleId = routingRule.Id, RoutingRuleItems = Array.Empty<RoutingRuleItem>() } }).Name,
+                    FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig> { new() { Name = routingRule.Name, Active = false, RoutingRuleId = routingRule.Id, RoutingRuleItems = Array.Empty<RoutingRuleItem>() } }).Name,
                     FileDir = ArtifactDirectory
                 }
             )).IsTrue();
@@ -201,7 +201,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
             .Execute(new ImportVerb
                 {
                     Assignee = data.owner.DomainName,
-                    FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = "No Existing Rule Item", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
+                    FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig> { new() { Name = routingRule.Name, Active = routingRule.StateCode.Value == RoutingRule.Options.StateCode.Active, RoutingRuleId = routingRule.Id, RoutingRuleItems = new[] { new RoutingRuleItem { Name = "No Existing Rule Item", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
                     FileDir = ArtifactDirectory
                 }
             )).IsFalse();
@@ -282,7 +282,7 @@ public class RoutingRuleConfigImportTests : ImportTestBase<RoutingRuleConfigImpo
     {
         await Assert.That(GetContext().Execute(new ImportVerb
             {
-                FileName = WriteConfigurationArtifact(new RoutingRuleConfigs { new() { Name = "Not Existing Rule", Active = true, RoutingRuleId = Guid.NewGuid(), RoutingRuleItems = new[] { new RoutingRuleItem { Name = "Rule Item 1", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
+                FileName = WriteConfigurationArtifact(new List<RoutingRuleConfig> { new() { Name = "Not Existing Rule", Active = true, RoutingRuleId = Guid.NewGuid(), RoutingRuleItems = new[] { new RoutingRuleItem { Name = "Rule Item 1", RoutingRuleId = Guid.NewGuid(), MsdynRouteto = dataverse.RoutingRuleItem.Options.MsdynRouteto.Queue, RoutingRuleItemId = Guid.NewGuid() } } } }).Name,
                 FileDir = ArtifactDirectory
             }
         )).IsFalse();

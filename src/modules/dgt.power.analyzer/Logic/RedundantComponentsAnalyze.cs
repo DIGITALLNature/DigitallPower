@@ -6,8 +6,8 @@ using System.Text;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -25,6 +25,7 @@ public sealed class RedundantComponentsAnalyze(
 {
     protected override bool Invoke(AnalyzeVerb args)
     {
+        ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))

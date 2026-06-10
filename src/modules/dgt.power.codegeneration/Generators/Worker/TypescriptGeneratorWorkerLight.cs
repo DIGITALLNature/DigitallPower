@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -18,48 +18,9 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators.Worker;
 
-public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypescriptGenerator
+public class TypescriptGeneratorWorkerLight(IMetadataService metadataService, IAnsiConsole console) : TypescriptGeneratorWorker(console), ITypescriptGenerator
 {
-    private readonly IMetadataService _metadataService;
-    private readonly TemplateOptions _templateOptions;
-
-    public TypescriptGeneratorWorkerLight(IMetadataService metadataService, IAnsiConsole console)
-        : base(console)
-    {
-        _metadataService = metadataService;
-        _templateOptions = new TemplateOptions();
-        CustomLiquidFilters.SetConsole(console);
-        LiquidTemplateEngine.RegisterCoreFilters(_templateOptions);
-        _templateOptions.Filters.AddFilter("controltype",CustomLiquidFilters.Controltype);
-        _templateOptions.Filters.AddFilter("attributetype", CustomLiquidFilters.Attributetype);
-        _templateOptions.Filters.AddFilter("localize", CustomLiquidFilters.Localize);
-        _templateOptions.Filters.AddFilter("formControlType", CustomLiquidFilters.GetControlTypeFromFormControl);
-        _templateOptions.Filters.AddFilter("xrmMockAttributeType", CustomLiquidFilters.XrmMockAttributetype);
-        _templateOptions.Filters.AddFilter("xrmMockControlType", CustomLiquidFilters.GetControlXrmMockFormFromAttribute);
-        _templateOptions.Filters.AddFilter("requiredAttributeLevel", CustomLiquidFilters.GetRequiredAttributeLevel);
-        _templateOptions.Filters.AddFilter("getAttributeItem", CustomLiquidFilters.GetAttributeItem);
-        _templateOptions.ValueConverters.Add(o => o is AttributeMetadata p ? new AttributeMetadataViewModel(p) : null);
-        _templateOptions.ValueConverters.Add(o => o is OptionMetadata l ? new OptionMetadataViewModel(l) : null);
-        _templateOptions.ValueConverters.Add(o => o is BpfControlDetail r ? new BpfControlViewModel(r): null);
-        _templateOptions.ValueConverters.Add(o => o is FormXmlControlData r ? new FormControlViewModel(r) : null);
-        _templateOptions.ValueConverters.Add(o => o is WfParameter wp ? new CustomApiParameterViewModel(wp) : null);
-        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, List<Option>> k ? new OptionViewModel(k) : null);
-        _templateOptions.ValueConverters.Add(o => o is KeyValuePair<string, SectionDetail> td ? new SectionDetailsViewModel(td) : null);
-        _templateOptions.MemberAccessStrategy.Register<AttributeMetadataViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<OptionMetadataViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<OptionViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<Option>();
-        _templateOptions.MemberAccessStrategy.Register<SdkMessageViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<FormDetail>();
-        _templateOptions.MemberAccessStrategy.Register<QuickViewFormControl>();
-        _templateOptions.MemberAccessStrategy.Register<FormAttributeData>();
-        _templateOptions.MemberAccessStrategy.Register<FormControlViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<BpfControlViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<CustomApiParameterViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<TabDetail>();
-        _templateOptions.MemberAccessStrategy.Register<SectionDetailsViewModel>();
-        _templateOptions.MemberAccessStrategy.Register<SectionDetail>();
-    }
+    private readonly TemplateOptions _templateOptions = TslTemplateOptionsFactory.Create();
 
     private const string TslResourcePrefix = "dgt.power.codegeneration.Templates.tsl";
 
@@ -86,7 +47,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         int? languageCode = 1031;
         if (config.UseBaseLanguage)
         {
-            languageCode = _metadataService.RetrieveOrganizationLanguage();
+            languageCode = metadataService.RetrieveOrganizationLanguage();
             Console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
@@ -96,7 +57,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
             // Retrieve the metadata for the entity
-            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
             var viewModel = new EntityViewModel
             {
@@ -105,9 +66,16 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                 LanguageCode = languageCode,
                 Attributes = FilterEntityMetadataAttributes(metadata)
             };
-            var context = new TemplateContext(viewModel, _templateOptions);
-            var content = liquidTemplate.Render(context);
+
             var formEntityName = metadata.LogicalName.ToLowerInvariant().Trim();
+            var artifactName = $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}.{FileNames.Typescript.FileExtension.TypeExtension}";
+            var content = RenderTemplateWithDiagnostics(
+                liquidTemplate,
+                "Entity.liquid",
+                viewModel,
+                entityKey: metadata.LogicalName,
+                artifact: artifactName);
+
             CreateFile(content,
                 $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}",
                 args,
@@ -141,10 +109,24 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
-                CreateFormFile(parsedForm, entityMetada, liquidTemplateForm, args, formName, bpfControlsForEntity);
+                CreateFormFile(
+                    parsedForm,
+                    entityMetada,
+                    liquidTemplateForm,
+                    "EntityForm.liquid",
+                    args,
+                    formName,
+                    bpfControlsForEntity);
                 if (config.XrmMockFormHelpers)
                 {
-                    CreateFormTestHelperFile(parsedForm, entityMetada, liquidTemplateFormTestHelpers, args, $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}", bpfControlsForEntity);
+                    CreateFormTestHelperFile(
+                        parsedForm,
+                        entityMetada,
+                        liquidTemplateFormTestHelpers,
+                        "EntityFormTestHelper.liquid",
+                        args,
+                        $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
+                        bpfControlsForEntity);
                 }
             }
         }
@@ -170,11 +152,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
 
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
-            var entityMetadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
-            if (entityMetadata == null)
-            {
-                continue;
-            }
+            var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
             // do not create forms for bpf entities
             if (entityMetadata.IsBPFEntity == true)
             {
@@ -185,10 +163,10 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
             var forms = config.OnlyFormsFromSolutions
-                ? _metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, config.Solutions, bpfControlsForEntity)
-                : _metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
+                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], bpfControlsForEntity)
+                : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
 
-            entityWithMetadataForms.Add(new EntityWithMetadataFormData()
+            entityWithMetadataForms.Add(new EntityWithMetadataFormData
             {
                 EntityMetadata = entityMetadata,
                 ParsedFormDetail = forms
@@ -227,15 +205,18 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var liquidTemplate = InitializeLiquidTemplate("SdkMessages.liquid");
 
         // Retrieve SDK message names from the metadata service
-        var sdkMessages = _metadataService.RetrieveSdkMessageNames(config);
+        var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
 
         var viewModel = new SdkMessagesViewModel
         {
             SdkMessages = sdkMessages.Select(sdkm => new SdkMessageViewModel(sdkm)).ToList()
         };
 
-        var context = new TemplateContext(viewModel, _templateOptions);
-        var content = liquidTemplate.Render(context);
+        var content = RenderTemplateWithDiagnostics(
+            liquidTemplate,
+            "SdkMessages.liquid",
+            viewModel,
+            artifact: $"{FileNames.Typescript.FileNames.SdkMessageNames}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
         CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
@@ -252,27 +233,32 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         Debug.Assert(config != null, nameof(config) + " != null");
 
         // Check if SDK messages should be suppressed
-        if (config.CustomAPIs == null || config.CustomAPIs.Length < 1)
+        if (config.CustomAPIs.Count < 1)
         {
             return;
         }
 
-       var customApis = _metadataService.RetrieveCustomAPIs(config);
-       CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
-       var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
+        var customApis = metadataService.RetrieveCustomApis(config);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
+        var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
 
         foreach (var customApi in customApis)
         {
-            var viewModel = new CustomApiViewModel()
+            var viewModel = new CustomApiViewModel
             {
                 Name = customApi.LogicalName,
                 InParameters = customApi.InParameters,
                 OutParameters = customApi.OutParameters
             };
-            var context = new TemplateContext(viewModel, _templateOptions);
-            var content = liquidTemplate.Render(context);
 
             var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.CustomApi}";
+            var content = RenderTemplateWithDiagnostics(
+                liquidTemplate,
+                "CustomApi.liquid",
+                viewModel,
+                entityKey: customApi.LogicalName,
+                artifact: $"{customApiName}.{FileNames.Typescript.FileExtension.TypeExtension}");
+
             CreateFile(content, customApiName, args, FileNames.Typescript.FileExtension.TypeExtension, [Folders.TypescriptCustomApis]);
         }
     }
@@ -297,15 +283,18 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var liquidTemplate = InitializeLiquidTemplate("OptionSets.liquid");
 
         // Retrieve option sets from the metadata service
-        var optionSets = _metadataService.RetrieveOptionSets(config);
+        var optionSets = metadataService.RetrieveOptionSets(config);
 
         var viewModel = new OptionSetViewModel
         {
             OptionSets = optionSets.ToList()
         };
 
-        var context = new TemplateContext(viewModel, _templateOptions);
-        var content = liquidTemplate.Render(context);
+        var content = RenderTemplateWithDiagnostics(
+            liquidTemplate,
+            "OptionSets.liquid",
+            viewModel,
+            artifact: $"{FileNames.Typescript.FileNames.OptionSetValues}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
@@ -316,17 +305,21 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="formDetail"></param>
     /// <param name="metadata"></param>
     /// <param name="liquidTemplate"></param>
+    /// <param name="templateName"></param>
     /// <param name="args"></param>
     /// <param name="form"></param>
+    /// <param name="bpfControls"></param>
     private void CreateFormFile(
         KeyValuePair<string, FormDetail> formDetail,
         EntityMetadata metadata,
         IFluidTemplate liquidTemplate,
+        string templateName,
         CodeGenerationVerb args,
         string form,
         SortedSet<BpfControlDetail> bpfControls)
     {
-        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, bpfControls);
+        var artifact = $"{form}.{FileNames.Typescript.FileExtension.TypeExtension}";
+        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, templateName, bpfControls, artifact);
         CreateFile(content, form, args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityForms));
     }
 
@@ -336,17 +329,21 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="formDetail"></param>
     /// <param name="metadata"></param>
     /// <param name="liquidTemplate"></param>
+    /// <param name="templateName"></param>
     /// <param name="args"></param>
     /// <param name="form"></param>
+    /// <param name="bpfControls"></param>
     private void CreateFormTestHelperFile(
         KeyValuePair<string, FormDetail> formDetail,
         EntityMetadata metadata,
         IFluidTemplate liquidTemplate,
+        string templateName,
         CodeGenerationVerb args,
         string form,
         SortedSet<BpfControlDetail> bpfControls)
     {
-        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, bpfControls);
+        var artifact = $"{form}.{FileNames.Typescript.FileExtension.TsExtension}";
+        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, templateName, bpfControls, artifact);
         CreateFile(content, form, args, FileNames.Typescript.FileExtension.TsExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityTestHelper));
     }
 
@@ -357,20 +354,22 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="formDetail"></param>
     /// <param name="metadata"></param>
     /// <param name="liquidTemplate"></param>
-    /// <param name="args"></param>
-    /// <param name="form"></param>
+    /// <param name="templateName"></param>
     /// <param name="bpfControls"></param>
+    /// <param name="artifact"></param>
     /// <returns></returns>
     private string CreateFormFileContent(
       KeyValuePair<string, FormDetail> formDetail,
       EntityMetadata metadata,
       IFluidTemplate liquidTemplate,
-      SortedSet<BpfControlDetail> bpfControls)
+      string templateName,
+      SortedSet<BpfControlDetail> bpfControls,
+      string artifact)
     {
         var formname = formDetail.Key
-                    .Replace(".main", "Main")
-                    .Replace(".quickview", "QuickView")
-                    .Replace(".quickcreate", "QuickCreate");
+                    .Replace(".main", "Main", StringComparison.Ordinal)
+                    .Replace(".quickview", "QuickView", StringComparison.Ordinal)
+                    .Replace(".quickcreate", "QuickCreate", StringComparison.Ordinal);
 
         var viewModel = new FormViewModel
         {
@@ -379,8 +378,13 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
             Attributes = FilterEntityMetadataAttributes(metadata),
             BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList()
         };
-        var context = new TemplateContext(viewModel, _templateOptions);
-        return liquidTemplate.Render(context);
+        return RenderTemplateWithDiagnostics(
+            liquidTemplate,
+            templateName,
+            viewModel,
+            entityKey: metadata.LogicalName,
+            formKey: formDetail.Key,
+            artifact: artifact);
     }
 
 
@@ -390,7 +394,7 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.OrderBy(entityName => entityName))
         {
-            var bpfControlsForEntityMain = _metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config, entityName);
+            var bpfControlsForEntityMain = metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config, entityName);
             foreach(var bpfControlForEntityMain in bpfControlsForEntityMain)
             {
                 if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
@@ -412,9 +416,9 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     /// <param name="configForms"></param>
     /// <param name="form"></param>
     /// <returns></returns>
-    private bool ShouldSkipFormForConfig(string[] configForms, string form)
+    private bool ShouldSkipFormForConfig(IReadOnlyCollection<string> configForms, string form)
     {
-        if (configForms.Length == 0)
+        if (configForms.Count == 0)
         {
             return false;
         }
@@ -437,19 +441,33 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
     private static List<AttributeMetadata> FilterEntityMetadataAttributes(EntityMetadata metadata)
     {
         return metadata.Attributes
-            .Where(a =>
-                (a.IsValidForGrid == true || a.IsValidForForm == true || a.IsValidODataAttribute ||
-                    a.IsPrimaryId == true) && (a.IsValidForCreate == true || a.IsValidForUpdate == true ||
-                                            a.IsValidForRead == true))
-            .Where(a => !a.LogicalName.Contains("entityimage"))
+            .Where(IsVisibleInTsEntity)
+            .Where(a => !a.LogicalName.Contains("entityimage", StringComparison.Ordinal))
             .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
             .OrderBy(a => a.LogicalName).ToList();
+    }
+
+    private static bool IsVisibleInTsEntity(AttributeMetadata attribute)
+    {
+        var isVisibleInLayout = attribute.IsValidForGrid == true
+                                || attribute.IsValidForForm == true
+                                || attribute.IsValidODataAttribute
+                                || attribute.IsPrimaryId == true;
+        if (!isVisibleInLayout)
+        {
+            return false;
+        }
+
+        return attribute.IsValidForCreate == true
+               || attribute.IsValidForUpdate == true
+               || attribute.IsValidForRead == true;
     }
 
     /// <summary>
     /// Given the entity logical name calculates a folder name for the given ts files
     /// </summary>
     /// <param name="entityLogicalName"></param>
+    /// <param name="subFolder"></param>
     /// <returns></returns>
     private static string[] GetEntityFolderName(string entityLogicalName, string subFolder)
     {
@@ -457,18 +475,37 @@ public class TypescriptGeneratorWorkerLight : TypescriptGeneratorWorker, ITypesc
         return [Folders.TypescriptEntities, Formatter.CamelCase(Formatter.Sanitize(formEntityName)), subFolder];
     }
 
+    private TemplateContext CreateTemplateContext(object viewModel)
+    {
+        var context = new TemplateContext(viewModel, _templateOptions);
+        CustomLiquidFilters.ConfigureTemplateContext(context, Console);
+        return context;
+    }
+
+    private string RenderTemplateWithDiagnostics(
+        IFluidTemplate template,
+        string templateName,
+        object viewModel,
+        string? entityKey = null,
+        string? formKey = null,
+        string? artifact = null)
+    {
+        var context = CreateTemplateContext(viewModel);
+        return TslRenderDiagnostics.Render(template, context, templateName, entityKey, formKey, artifact);
+    }
+
     #endregion
 
-    #region Not Implemented
+    #region Not Supported
 
     public void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config) =>
-        throw new NotImplementedException();
+        throw new NotSupportedException("Full boilerplate generation is only available in full TypeScript generator mode.");
 
     public void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config) =>
-        throw new NotImplementedException();
+        throw new NotSupportedException("Entity reference generation is only available in full TypeScript generator mode.");
 
     public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config) =>
-        throw new NotImplementedException();
+        throw new NotSupportedException("Business process flow generation is only available in full TypeScript generator mode.");
 
     #endregion
 }

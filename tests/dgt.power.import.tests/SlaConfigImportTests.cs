@@ -27,7 +27,7 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
     public async Task ShouldFailOnEmptyConfiguration() =>
         await Assert.That(GetContext().Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new SlaConfigs()).Name,
+            FileName = WriteConfigurationArtifact(new List<SlaConfig>()).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -44,10 +44,11 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
             .WithData(sla2)
             .Build();
 
-        var slaConfig = new SlaConfigs
+        var slaConfig = new List<SlaConfig>
         {
             new()
             {
+                Name = "sla1",
                 Active = true,
                 BusinessHours = data.calendar.Id,
                 SlaId = sla1.Id,
@@ -55,6 +56,7 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
             },
             new()
             {
+                Name = "sla2",
                 Active = false,
                 BusinessHours = null,
                 SlaId = sla2.Id,
@@ -87,10 +89,11 @@ public class SlaConfigImportTests : ImportTestBase<SlaConfigImport>
         var context = GetBuilder()
             .Build();
 
-        var slaConfig = new SlaConfigs
+        var slaConfig = new List<SlaConfig>
         {
             new()
             {
+                Name = "sla1",
                 Active = false,
                 BusinessHours = null,
                 SlaId = Guid.NewGuid(),

@@ -35,7 +35,7 @@ public sealed class UserRoleExport(
         var filter = string.Empty;
         if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
-            var idx = args.InlineData.IndexOf('<');
+            var idx = args.InlineData.IndexOf('<', StringComparison.Ordinal);
             if (idx >= 0)
             {
                 separator = args.InlineData.Substring(0, idx);
@@ -161,7 +161,7 @@ public sealed class UserRoleExport(
     private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
-        query = default;
+        query = null;
         try
         {
             fetchXml = "<fetch no-lock=\"true\" >" +
@@ -180,7 +180,7 @@ public sealed class UserRoleExport(
             query = response.Query;
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             tracer.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
             return false;

@@ -91,7 +91,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";
         Directory.CreateDirectory(metadataDirectoryPath);
         var testEntityMetdataPath = $"{metadataDirectoryPath}/testentity.xml";
-        File.WriteAllText(testEntityMetdataPath, "<entity/>");
+        await File.WriteAllTextAsync(testEntityMetdataPath, "<entity/>");
         await Assert.That(File.Exists(testEntityMetdataPath)).IsTrue();
 
         await Assert.That(context

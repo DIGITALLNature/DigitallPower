@@ -5,8 +5,8 @@ using System.Globalization;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
@@ -16,6 +16,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
 {
     protected override bool Invoke(AnalyzeVerb args)
     {
+        ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -61,7 +62,8 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                 ctx.Refresh();
                 foreach (var patch in patches)
                 {
-                    table.AddRow(patch.UniqueName!, patch.FriendlyName ?? patch.UniqueName!, "", "", "Checking");
+                    var patchUniqueName = patch.UniqueName ?? string.Empty;
+                    table.AddRow(patchUniqueName, patch.FriendlyName ?? patchUniqueName, "", "", "Checking");
                     ctx.Refresh();
                     table.RemoveRow(table.Rows.Count - 1);
                     var components = GetSolutionComponents(patch.Id);
@@ -77,7 +79,10 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                         }
 
                         var first = GetTopNotActiveLayer(layers);
-                        if (!first.MsdynSolutionname!.ToUpperInvariant().StartsWith(patch.UniqueName.ToUpperInvariant(),StringComparison.Ordinal))
+                        var layerSolutionName = first.MsdynSolutionname;
+                        if (string.IsNullOrWhiteSpace(patchUniqueName) ||
+                            string.IsNullOrWhiteSpace(layerSolutionName) ||
+                            !layerSolutionName.StartsWith(patchUniqueName, StringComparison.OrdinalIgnoreCase))
                         {
                             notTopLayers++;
                         }
@@ -99,7 +104,12 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                     }
 
 
-                    table.AddRow(patch.UniqueName, patch.FriendlyName, topLayers.ToString("D",CultureInfo.InvariantCulture), notTopLayers.ToString("D", CultureInfo.InvariantCulture), topLayers == 0 ? "Obsolete": "Needed");
+                    table.AddRow(
+                        patchUniqueName,
+                        patch.FriendlyName ?? string.Empty,
+                        topLayers.ToString("D", CultureInfo.InvariantCulture),
+                        notTopLayers.ToString("D", CultureInfo.InvariantCulture),
+                        topLayers == 0 ? "Obsolete" : "Needed");
                     ctx.Refresh();
                 }
 
@@ -113,7 +123,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution));
+            WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution ?? string.Empty, StringComparer.OrdinalIgnoreCase));
         }
 
         return Tracer.End(this, true);
@@ -122,7 +132,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
     private static List<Solution> GetPatchSolutions(DataContext context, Guid parentSolutionId)
     {
         return (from su in context.SolutionSet
-            where su.ParentSolutionId.Id == parentSolutionId
+            where su.ParentSolutionId != null && su.ParentSolutionId.Id == parentSolutionId
                 select su).ToList();
     }
 }

@@ -10,7 +10,7 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal partial class CrmConnector: IConnector
+internal sealed partial class CrmConnector: IConnector
 {
     private readonly string _connectionString;
     private readonly IAnsiConsole _console;
@@ -21,7 +21,7 @@ internal partial class CrmConnector: IConnector
         _console = console ?? AnsiConsole.Console;
     }
 
-    public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
+    public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
     {
         if (!SkipDiscoveryRegex().IsMatch(_connectionString))
         {
@@ -35,7 +35,7 @@ internal partial class CrmConnector: IConnector
 
         var serviceClient = new ServiceClient(_connectionString);
 
-        return GetOrganizationService(serviceClient);
+        return Task.FromResult(GetOrganizationService(serviceClient));
     }
 
     [SuppressMessage("Performance", "CA1859:Verwenden Sie nach Möglichkeit konkrete Typen, um die Leistung zu verbessern.")]

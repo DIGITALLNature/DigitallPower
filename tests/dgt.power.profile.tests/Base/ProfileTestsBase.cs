@@ -36,9 +36,9 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
         return base.GetBuilder().WithServiceCollection(_services);
     }
 
-    protected ProfileManager ProfileManager => (ProfileManager)_serviceProvider.GetRequiredService<IProfileManager>();
+    protected IProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>();
 
-    protected Identities GetIdentities() => (Identities)ProfileManager.LoadIdentities();
+    protected IIdentities GetIdentities() => ProfileManager.LoadIdentities();
 
     protected void AddIdentity(string name, string connectionString)
     {
@@ -51,6 +51,7 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
     {
         _storage.Remove();
         _storage.Dispose();
+        _serviceProvider.Dispose();
         base.Dispose();
         GC.SuppressFinalize(this);
     }

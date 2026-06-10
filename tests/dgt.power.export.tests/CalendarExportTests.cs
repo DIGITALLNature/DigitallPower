@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
+using System.Globalization;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
@@ -51,7 +51,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 {
                     Name = "New Year",
                     CalendarId = calendar1.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -61,14 +61,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.Parse("2a17af31-25c6-4c8d-adae-7ac26e3899e8"))
                 {
                     Name = "Easter Sunday",
                     CalendarId = calendar1.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -78,14 +78,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.NewGuid())
                 {
                     Name = "New Year",
                     CalendarId = calendar2.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Weekly Rec Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -96,14 +96,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.NewGuid())
                 {
                     Name = "Easter Sunday",
                     CalendarId = calendar2.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -113,8 +113,8 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
                 }
             }).Build();
     }
@@ -128,7 +128,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 FileDir = ArtifactDirectory
             }
         )).IsTrue();
-        var calendars = GetConfigurationTestArtifact<Calendars>(GetTestFileName());
+        var calendars = GetConfigurationTestArtifact<List<dto.Calendar>>(GetTestFileName());
         await Assert.That(calendars).Count().IsEqualTo(2);
         await Assert.That(calendars.Single(x => !x.IsVaryByDay).Rules).Count().IsEqualTo(2);
         await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
@@ -143,7 +143,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 FileDir = ArtifactDirectory
             }
         )).IsTrue();
-        var calendars = GetConfigurationTestArtifact<Calendars>("calendar.json");
+        var calendars = GetConfigurationTestArtifact<List<dto.Calendar>>("calendar.json");
         await Assert.That(calendars).Count().IsEqualTo(2);
         await Assert.That(calendars.Single(x => !x.IsVaryByDay).Rules).Count().IsEqualTo(2);
         await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();

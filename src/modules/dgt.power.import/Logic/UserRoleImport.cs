@@ -26,7 +26,7 @@ public sealed class UserRoleImport(
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<UserRoles>(args.FileDir, fileName, out var userRoles))
+        if (!ConfigResolver.TryGetConfigFile<List<UserRole>>(args.FileDir, fileName, out var userRoles))
         {
             return Tracer.NotConfigured(this);
         }

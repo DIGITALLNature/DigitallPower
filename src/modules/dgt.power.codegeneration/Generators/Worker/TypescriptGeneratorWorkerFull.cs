@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -184,7 +184,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
                 metadataService.RetrieveEntityMetadata(entityLogicalName, EntityFilters.Attributes | EntityFilters.Entity);
 
         var forms = config.OnlyFormsFromSolutions
-            ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, config.Solutions, null)
+            ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], null)
             : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, null);
 
         foreach (var formDetail in forms)
@@ -204,7 +204,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
     {
         var form =
                $"{entityMetadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
-        if (config.Forms.Length != 0)
+        if (config.Forms.Count != 0)
         {
             config.Forms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
                 .ToList()
@@ -217,22 +217,25 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
                 .ToArray();
         }
 
-        if (config.Forms.Length != 0 && !config.Forms.Contains(form))
+        if (config.Forms.Count != 0 && !config.Forms.Contains(form))
         {
             Console.MarkupLine($"Skip: {form}");
             return;
         }
 
         var formname = formDetail.Key
-            .Replace(".main", "Main").Replace(".quickview", "QuickView")
-            .Replace(".quickcreate", "QuickCreate");
+            .Replace(".main", "Main", StringComparison.Ordinal).Replace(".quickview", "QuickView", StringComparison.Ordinal)
+            .Replace(".quickcreate", "QuickCreate", StringComparison.Ordinal);
 
 
         var model = TsLiquidTemplateModelFactory.CreateEntityFormModel(config.TypingPath, form, formname, formDetail.Value, entityMetadata, config, metadataService.RetrieveOrganizationLanguage());
         CreateLiquidTemplateFile("D365EntityForm.liquid", model, form, args);
     }
 
-    #region NotImplemented
-    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) => throw new NotImplementedException();
+    #region Not Supported
+
+    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) =>
+        throw new NotSupportedException("Custom API generation is not supported by the full TypeScript generator.");
+
     #endregion
 }

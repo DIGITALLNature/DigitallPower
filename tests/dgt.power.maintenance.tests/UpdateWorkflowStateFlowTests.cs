@@ -10,7 +10,7 @@ using Microsoft.Xrm.Sdk;
 namespace dgt.power.maintenance.tests;
 
 [NotInParallel("AnsiConsole")]
-public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowState.Settings>
+public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowStateSettings>
 {
     [Test]
     [Arguments(Workflow.Options.Category.Workflow_)]
@@ -48,7 +48,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("empty.json")
         }).Succeed();
@@ -101,7 +101,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(activatedFlow)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("flows-deactivate.json")
         }).Succeed();
@@ -207,7 +207,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(currentToDefaultSpecifiedFlow)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath("flows-owner.json")
         }).Succeed();
@@ -287,7 +287,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(otherComponent)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath(config)
         }).Succeed();
@@ -373,7 +373,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
             .WithData(otherPublisher)
             .Build();
 
-        await context.Execute(new UpdateWorkflowState.Settings
+        await context.Execute(new UpdateWorkflowStateSettings
         {
             Config = GetResourcePath(config)
         }).Succeed();

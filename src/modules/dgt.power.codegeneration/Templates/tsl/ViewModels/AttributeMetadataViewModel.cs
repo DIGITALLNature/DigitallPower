@@ -9,28 +9,29 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public record AttributeMetadataViewModel
 {
-    public string DefinitelyType { get; set; }
-    public string DefinitelyTypedAttributeType { get; set; }
-    public string DefinitelyTypedControlType { get; set; }
+    public string DefinitelyType { get; set; } = string.Empty;
+    public string DefinitelyTypedAttributeType { get; set; } = string.Empty;
+    public string DefinitelyTypedControlType { get; set; } = string.Empty;
     public bool IsPrimaryId { get; set; }
-    public string LogicalName { get; set; }
-    public string NativeType { get; set; }
-    public string XrmMockTypeAttributeType { get; set; }
-    public string XrmMockControlType { get; set; }
+    public string LogicalName { get; set; } = string.Empty;
+    public string NativeType { get; set; } = string.Empty;
+    public string XrmMockTypeAttributeType { get; set; } = string.Empty;
+    public string XrmMockControlType { get; set; } = string.Empty;
 
-    public string RequiredLevel { get; set; }
+    public string RequiredLevel { get; set; } = string.Empty;
 
-    public string[] TargetEntityNames { get; set; }
+    public IReadOnlyList<string> TargetEntityNames { get; set; } = [];
 
-    public OptionMetadataCollection Options { get; set; }
-    public string SchemaName { get; set; }
+    public OptionMetadataCollection Options { get; private set; } = new();
+    public string SchemaName { get; set; } = string.Empty;
 
     public AttributeMetadataViewModel(AttributeMetadata attributeMetadata) => ToViewModel(attributeMetadata);
 
     public AttributeMetadataViewModel ToViewModel(AttributeMetadata attributeMetadata)
     {
-        LogicalName = attributeMetadata.LogicalName;
-        SchemaName = attributeMetadata.SchemaName;
+        ArgumentNullException.ThrowIfNull(attributeMetadata);
+        LogicalName = attributeMetadata.LogicalName ?? string.Empty;
+        SchemaName = attributeMetadata.SchemaName ?? string.Empty;
         IsPrimaryId = attributeMetadata.IsPrimaryId.GetValueOrDefault();
         RequiredLevel = MapAttributeRequiredLevel(attributeMetadata.RequiredLevel);
         TargetEntityNames = [];
@@ -46,13 +47,17 @@ public record AttributeMetadataViewModel
                 XrmMockControlType = XrmMock.Control.BooleanControl;
                 break;
             case AttributeTypeCode.DateTime:
+            {
                 DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.DateAttr;
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.DateCtl;
-                DefinitelyType = GetDateTimeType(attributeMetadata as DateTimeAttributeMetadata);
+                DefinitelyType = attributeMetadata is DateTimeAttributeMetadata dateTimeAttributeMetadata
+                    ? GetDateTimeType(dateTimeAttributeMetadata)
+                    : "DateAndTime:UserLocal";
                 NativeType = "string";
                 XrmMockTypeAttributeType = XrmMock.Attributes.DateAttribute;
                 XrmMockControlType = XrmMock.Control.StringControl;
                 break;
+            }
             case AttributeTypeCode.Decimal:
                 DefinitelyTypedAttributeType = ControlClassNames.XrmTypesAttributeClass.NumberAtt;
                 DefinitelyTypedControlType = ControlClassNames.XrmTypesControlClass.NumberCtl;
@@ -202,15 +207,14 @@ public record AttributeMetadataViewModel
         }
     }
 
-    private static string GetDateTimeType(DateTimeAttributeMetadata? attr)
+    private static string GetDateTimeType(DateTimeAttributeMetadata attr)
     {
-
-        if (attr?.DateTimeBehavior == DateTimeBehavior.DateOnly && attr.Format == DateTimeFormat.DateOnly)
+        if (attr.DateTimeBehavior == DateTimeBehavior.DateOnly && attr.Format == DateTimeFormat.DateOnly)
         {
             return "DateOnly:DateOnly";
         }
 
-        if (attr?.DateTimeBehavior == DateTimeBehavior.TimeZoneIndependent)
+        if (attr.DateTimeBehavior == DateTimeBehavior.TimeZoneIndependent)
         {
             return "DateOnly:TimeZoneIndependent";
         }
@@ -219,4 +223,3 @@ public record AttributeMetadataViewModel
     }
 
 }
-
