@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,48 +12,44 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("msdyn_componentlayer")]
-	[GeneratedCode("dgtp", "2023")]
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    
+    [DataContract]
+    [EntityLogicalName("msdyn_componentlayer")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class MsdynComponentlayer : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class MsdynComponentlayer : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public MsdynComponentlayer() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public MsdynComponentlayer() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public MsdynComponentlayer(bool trackChanges = false) : base(EntityLogicalName)
+        public MsdynComponentlayer(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public MsdynComponentlayer(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public MsdynComponentlayer(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public MsdynComponentlayer(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public MsdynComponentlayer(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public MsdynComponentlayer(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public MsdynComponentlayer(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -67,310 +59,301 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("msdyn_componentlayerid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("msdyn_componentlayerid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				MsdynComponentlayerId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                MsdynComponentlayerId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("msdyn_componentlayerid")]
+        [AttributeLogicalName("msdyn_componentlayerid")]
         public Guid? MsdynComponentlayerId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("msdyn_componentlayerid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynComponentlayerId));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentlayerid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(MsdynComponentlayerId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_changes")]
+        
+        [AttributeLogicalName("msdyn_changes")]
         public string? MsdynChanges
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_changes");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynChanges));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_changes", value);
-                OnPropertyChanged(nameof(MsdynChanges));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_children")]
+        
+        [AttributeLogicalName("msdyn_children")]
         public string? MsdynChildren
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_children");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynChildren));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_children", value);
-                OnPropertyChanged(nameof(MsdynChildren));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_componentid")]
+        
+        [AttributeLogicalName("msdyn_componentid")]
         public string? MsdynComponentid
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_componentid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynComponentid));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentid", value);
-                OnPropertyChanged(nameof(MsdynComponentid));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_componentjson")]
+        
+        [AttributeLogicalName("msdyn_componentjson")]
         public string? MsdynComponentjson
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_componentjson");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynComponentjson));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentjson", value);
-                OnPropertyChanged(nameof(MsdynComponentjson));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The name of the component.
 		/// </summary>
-		[AttributeLogicalName("msdyn_name")]
+        [AttributeLogicalName("msdyn_name")]
         public string? MsdynName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynName));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_name", value);
-                OnPropertyChanged(nameof(MsdynName));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_order")]
+        
+        [AttributeLogicalName("msdyn_order")]
         public int? MsdynOrder
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("msdyn_order");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynOrder));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_order", value);
-                OnPropertyChanged(nameof(MsdynOrder));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_overwritetime")]
+        
+        [AttributeLogicalName("msdyn_overwritetime")]
         public DateTime? MsdynEndtime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("msdyn_overwritetime");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynEndtime));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_overwritetime", value);
-                OnPropertyChanged(nameof(MsdynEndtime));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_publishername")]
+        
+        [AttributeLogicalName("msdyn_publishername")]
         public string? MsdynPublishername
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_publishername");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynPublishername));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_publishername", value);
-                OnPropertyChanged(nameof(MsdynPublishername));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_solutioncomponentname")]
+        
+        [AttributeLogicalName("msdyn_solutioncomponentname")]
         public string? MsdynSolutioncomponentname
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_solutioncomponentname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynSolutioncomponentname));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_solutioncomponentname", value);
-                OnPropertyChanged(nameof(MsdynSolutioncomponentname));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_solutionname")]
+        
+        [AttributeLogicalName("msdyn_solutionname")]
         public string? MsdynSolutionname
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("msdyn_solutionname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynSolutionname));
+                OnPropertyChanging();
                 SetAttributeValue("msdyn_solutionname", value);
-                OnPropertyChanged(nameof(MsdynSolutionname));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string MsdynComponentlayerId = "msdyn_componentlayerid";
+            public const string MsdynChanges = "msdyn_changes";
+            public const string MsdynChildren = "msdyn_children";
+            public const string MsdynComponentid = "msdyn_componentid";
+            public const string MsdynComponentjson = "msdyn_componentjson";
+            public const string MsdynName = "msdyn_name";
+            public const string MsdynOrder = "msdyn_order";
+            public const string MsdynEndtime = "msdyn_overwritetime";
+            public const string MsdynPublishername = "msdyn_publishername";
+            public const string MsdynSolutioncomponentname = "msdyn_solutioncomponentname";
+            public const string MsdynSolutionname = "msdyn_solutionname";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string MsdynComponentlayerId = "msdyn_componentlayerid";
-				public const string MsdynChanges = "msdyn_changes";
-				public const string MsdynChildren = "msdyn_children";
-				public const string MsdynComponentid = "msdyn_componentid";
-				public const string MsdynComponentjson = "msdyn_componentjson";
-				public const string MsdynName = "msdyn_name";
-				public const string MsdynOrder = "msdyn_order";
-				public const string MsdynEndtime = "msdyn_overwritetime";
-				public const string MsdynPublishername = "msdyn_publishername";
-				public const string MsdynSolutioncomponentname = "msdyn_solutioncomponentname";
-				public const string MsdynSolutionname = "msdyn_solutionname";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static MsdynComponentlayer Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static MsdynComponentlayer Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -380,30 +363,30 @@ namespace dgt.power.dataverse
 
         public MsdynComponentlayer GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  MsdynComponentlayer(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new MsdynComponentlayer(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<MsdynComponentlayer> MsdynComponentlayerSet
-		{
-			get
-			{
-				return CreateQuery<MsdynComponentlayer>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<MsdynComponentlayer> MsdynComponentlayerSet
+        {
+            get
+            {
+                return CreateQuery<MsdynComponentlayer>();
+            }
+        }
+    }
+    #endregion
 }

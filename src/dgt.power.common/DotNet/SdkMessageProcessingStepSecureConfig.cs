@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Non-public custom configuration that is passed to a plug-in's constructor.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("sdkmessageprocessingstepsecureconfig")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("sdkmessageprocessingstepsecureconfig")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class SdkMessageProcessingStepSecureConfig : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SdkMessageProcessingStepSecureConfig : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public SdkMessageProcessingStepSecureConfig() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public SdkMessageProcessingStepSecureConfig() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public SdkMessageProcessingStepSecureConfig(bool trackChanges = false) : base(EntityLogicalName)
+        public SdkMessageProcessingStepSecureConfig(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessageProcessingStepSecureConfig(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public SdkMessageProcessingStepSecureConfig(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessageProcessingStepSecureConfig(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public SdkMessageProcessingStepSecureConfig(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessageProcessingStepSecureConfig(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public SdkMessageProcessingStepSecureConfig(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -68,286 +60,276 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("sdkmessageprocessingstepsecureconfigid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("sdkmessageprocessingstepsecureconfigid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				SdkMessageProcessingStepSecureConfigId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                SdkMessageProcessingStepSecureConfigId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the SDK message processing step secure configuration.
 		/// </summary>
-		[AttributeLogicalName("sdkmessageprocessingstepsecureconfigid")]
+        [AttributeLogicalName("sdkmessageprocessingstepsecureconfigid")]
         public Guid? SdkMessageProcessingStepSecureConfigId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sdkmessageprocessingstepsecureconfigid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SdkMessageProcessingStepSecureConfigId));
+                OnPropertyChanging();
                 SetAttributeValue("sdkmessageprocessingstepsecureconfigid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(SdkMessageProcessingStepSecureConfigId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the SDK message processing step.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the SDK message processing step was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the sdkmessageprocessingstepsecureconfig.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Customization level of the SDK message processing step secure configuration.
 		/// </summary>
-		[AttributeLogicalName("customizationlevel")]
+        [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("customizationlevel");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the SDK message processing step.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the SDK message processing step was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the sdkmessageprocessingstepsecureconfig.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization with which the SDK message processing step is associated.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the SDK message processing step.
 		/// </summary>
-		[AttributeLogicalName("sdkmessageprocessingstepsecureconfigidunique")]
+        [AttributeLogicalName("sdkmessageprocessingstepsecureconfigidunique")]
         public Guid? SdkMessageProcessingStepSecureConfigIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sdkmessageprocessingstepsecureconfigidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Secure step-specific configuration for the plug-in type that is passed to the plug-in's constructor at run time.
 		/// </summary>
-		[AttributeLogicalName("secureconfig")]
+        [AttributeLogicalName("secureconfig")]
         public string? SecureConfig
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("secureconfig");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SecureConfig));
+                OnPropertyChanging();
                 SetAttributeValue("secureconfig", value);
-                OnPropertyChanged(nameof(SecureConfig));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
+        /// <summary>
+        /// 1:N sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep
+        /// </summary>
+        [RelationshipSchemaName("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep")]
+        public IEnumerable<SdkMessageProcessingStep> SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep
-		/// </summary>	
-		[RelationshipSchemaName("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep")]
-		public IEnumerable<SdkMessageProcessingStep> SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep");
-				this.SetRelatedEntities<SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null, value);
-				this.OnPropertyChanged("SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+        }
+        #endregion
 
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string SdkMessageProcessingStepSecureConfigId = "sdkmessageprocessingstepsecureconfigid";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string CustomizationLevel = "customizationlevel";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string OrganizationId = "organizationid";
+            public const string SdkMessageProcessingStepSecureConfigIdUnique = "sdkmessageprocessingstepsecureconfigidunique";
+            public const string SecureConfig = "secureconfig";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string SdkMessageProcessingStepSecureConfigId = "sdkmessageprocessingstepsecureconfigid";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CustomizationLevel = "customizationlevel";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string OrganizationId = "organizationid";
-				public const string SdkMessageProcessingStepSecureConfigIdUnique = "sdkmessageprocessingstepsecureconfigidunique";
-				public const string SecureConfig = "secureconfig";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep = "sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep";
-				public const string UserentityinstancedataSdkmessageprocessingstepsecureconfig = "userentityinstancedata_sdkmessageprocessingstepsecureconfig";
+                public const string SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep = "sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep";
+                public const string UserentityinstancedataSdkmessageprocessingstepsecureconfig = "userentityinstancedata_sdkmessageprocessingstepsecureconfig";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string CreatedbySdkmessageprocessingstepsecureconfig = "createdby_sdkmessageprocessingstepsecureconfig";
-				public const string LkSdkmessageprocessingstepsecureconfigCreatedonbehalfby = "lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby";
-				public const string LkSdkmessageprocessingstepsecureconfigModifiedonbehalfby = "lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby";
-				public const string ModifiedbySdkmessageprocessingstepsecureconfig = "modifiedby_sdkmessageprocessingstepsecureconfig";
-				public const string OrganizationSdkmessageprocessingstepsecureconfig = "organization_sdkmessageprocessingstepsecureconfig";
+                public const string CreatedbySdkmessageprocessingstepsecureconfig = "createdby_sdkmessageprocessingstepsecureconfig";
+                public const string LkSdkmessageprocessingstepsecureconfigCreatedonbehalfby = "lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby";
+                public const string LkSdkmessageprocessingstepsecureconfigModifiedonbehalfby = "lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby";
+                public const string ModifiedbySdkmessageprocessingstepsecureconfig = "modifiedby_sdkmessageprocessingstepsecureconfig";
+                public const string OrganizationSdkmessageprocessingstepsecureconfig = "organization_sdkmessageprocessingstepsecureconfig";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public static SdkMessageProcessingStepSecureConfig Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static SdkMessageProcessingStepSecureConfig Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -357,30 +339,30 @@ namespace dgt.power.dataverse
 
         public SdkMessageProcessingStepSecureConfig GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  SdkMessageProcessingStepSecureConfig(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new SdkMessageProcessingStepSecureConfig(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<SdkMessageProcessingStepSecureConfig> SdkMessageProcessingStepSecureConfigSet
-		{
-			get
-			{
-				return CreateQuery<SdkMessageProcessingStepSecureConfig>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<SdkMessageProcessingStepSecureConfig> SdkMessageProcessingStepSecureConfigSet
+        {
+            get
+            {
+                return CreateQuery<SdkMessageProcessingStepSecureConfig>();
+            }
+        }
+    }
+    #endregion
 }

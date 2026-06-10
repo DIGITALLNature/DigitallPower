@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,48 +12,44 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("attribute")]
-	[GeneratedCode("dgtp", "2023")]
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    
+    [DataContract]
+    [EntityLogicalName("attribute")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class Attribute : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Attribute : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public Attribute() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public Attribute() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public Attribute(bool trackChanges = false) : base(EntityLogicalName)
+        public Attribute(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Attribute(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public Attribute(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Attribute(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public Attribute(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Attribute(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public Attribute(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -67,378 +59,375 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("attributeid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("attributeid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				AttributeId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                AttributeId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the attribute.
 		/// </summary>
-		[AttributeLogicalName("attributeid")]
+        [AttributeLogicalName("attributeid")]
         public Guid? AttributeId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("attributeid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AttributeId));
+                OnPropertyChanging();
                 SetAttributeValue("attributeid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(AttributeId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Attribute Of
 		/// </summary>
-		[AttributeLogicalName("attributeof")]
+        [AttributeLogicalName("attributeof")]
         public Guid? AttributeOf
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("attributeof");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Attribute Type Id
 		/// </summary>
-		[AttributeLogicalName("attributetypeid")]
+        [AttributeLogicalName("attributetypeid")]
         public Guid? AttributeTypeId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("attributetypeid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The external name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("externalname")]
+        [AttributeLogicalName("externalname")]
         public string? ExternalName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("externalname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExternalName));
+                OnPropertyChanging();
                 SetAttributeValue("externalname", value);
-                OnPropertyChanged(nameof(ExternalName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The logical name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("logicalname")]
-        public new string? LogicalName
+        [AttributeLogicalName("logicalname")]
+        public string? LogicalName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("logicalname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LogicalName));
+                OnPropertyChanging();
                 SetAttributeValue("logicalname", value);
-                OnPropertyChanged(nameof(LogicalName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The managed property logical name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("managedpropertylogicalname")]
+        [AttributeLogicalName("managedpropertylogicalname")]
         public string? ManagedPropertyLogicalName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("managedpropertylogicalname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ManagedPropertyLogicalName));
+                OnPropertyChanging();
                 SetAttributeValue("managedpropertylogicalname", value);
-                OnPropertyChanged(nameof(ManagedPropertyLogicalName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The managed property parent attribute name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("managedpropertyparentattributename")]
+        [AttributeLogicalName("managedpropertyparentattributename")]
         public string? ManagedPropertyParentAttributeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("managedpropertyparentattributename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ManagedPropertyParentAttributeName));
+                OnPropertyChanging();
                 SetAttributeValue("managedpropertyparentattributename", value);
-                OnPropertyChanged(nameof(ManagedPropertyParentAttributeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The name of this Attribute.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The physical name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("physicalname")]
+        [AttributeLogicalName("physicalname")]
         public string? PhysicalName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("physicalname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PhysicalName));
+                OnPropertyChanging();
                 SetAttributeValue("physicalname", value);
-                OnPropertyChanged(nameof(PhysicalName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The table column name of this attribute.
 		/// </summary>
-		[AttributeLogicalName("tablecolumnname")]
+        [AttributeLogicalName("tablecolumnname")]
         public string? TableColumnName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("tablecolumnname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TableColumnName));
+                OnPropertyChanging();
                 SetAttributeValue("tablecolumnname", value);
-                OnPropertyChanged(nameof(TableColumnName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Valid For Read API
 		/// </summary>
-		[AttributeLogicalName("validforreadapi")]
+        [AttributeLogicalName("validforreadapi")]
         public bool? ValidForReadAPI
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("validforreadapi");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The version number of this attribute.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct ValidForReadAPI
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string AttributeId = "attributeid";
+            public const string AttributeOf = "attributeof";
+            public const string AttributeTypeId = "attributetypeid";
+            public const string ComponentState = "componentstate";
+            public const string ExternalName = "externalname";
+            public const string LogicalName = "logicalname";
+            public const string ManagedPropertyLogicalName = "managedpropertylogicalname";
+            public const string ManagedPropertyParentAttributeName = "managedpropertyparentattributename";
+            public const string Name = "name";
+            public const string OverwriteTime = "overwritetime";
+            public const string PhysicalName = "physicalname";
+            public const string SolutionId = "solutionid";
+            public const string TableColumnName = "tablecolumnname";
+            public const string ValidForReadAPI = "validforreadapi";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct ValidForReadAPI
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string AttributeId = "attributeid";
-				public const string AttributeOf = "attributeof";
-				public const string AttributeTypeId = "attributetypeid";
-				public const string ComponentState = "componentstate";
-				public const string ExternalName = "externalname";
-				public const string LogicalName = "logicalname";
-				public const string ManagedPropertyLogicalName = "managedpropertylogicalname";
-				public const string ManagedPropertyParentAttributeName = "managedpropertyparentattributename";
-				public const string Name = "name";
-				public const string OverwriteTime = "overwritetime";
-				public const string PhysicalName = "physicalname";
-				public const string SolutionId = "solutionid";
-				public const string TableColumnName = "tablecolumnname";
-				public const string ValidForReadAPI = "validforreadapi";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string AttributeSolutioncomponentattrconfig = "attribute_solutioncomponentattrconfig";
-				public const string ReferencedattributeRelationshipattribute = "referencedattribute_relationshipattribute";
-				public const string ReferencingattributeRelationshipattribute = "referencingattribute_relationshipattribute";
+                public const string AttributeAiskillconfigAttribute = "attribute_aiskillconfig_Attribute";
+                public const string AttributeDvfilesearchattribute = "attribute_dvfilesearchattribute";
+                public const string AttributeDvtablesearchattribute = "attribute_dvtablesearchattribute";
+                public const string AttributeSensitivitylabelattributemappingAttributeId = "attribute_sensitivitylabelattributemapping_AttributeId";
+                public const string AttributeSolutioncomponentattrconfig = "attribute_solutioncomponentattrconfig";
+                public const string AttributeclusterconfigExtensionofrecordidAttribute = "attributeclusterconfig_extensionofrecordid_attribute";
+                public const string EmailaddressconfigurationAttributeAttributeId = "emailaddressconfiguration_attribute_AttributeId";
+                public const string ReferencedattributeRelationshipattribute = "referencedattribute_relationshipattribute";
+                public const string ReferencingattributeRelationshipattribute = "referencingattribute_relationshipattribute";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static Attribute Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static Attribute Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -448,30 +437,30 @@ namespace dgt.power.dataverse
 
         public Attribute GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  Attribute(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new Attribute(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<Attribute> AttributeSet
-		{
-			get
-			{
-				return CreateQuery<Attribute>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<Attribute> AttributeSet
+        {
+            get
+            {
+                return CreateQuery<Attribute>();
+            }
+        }
+    }
+    #endregion
 }

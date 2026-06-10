@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,692 +12,746 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("pluginpackage")]
-	[GeneratedCode("dgtp", "2023")]
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    
+    [DataContract]
+    [EntityLogicalName("pluginpackage")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class PluginPackage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class PluginPackage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public PluginPackage() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public PluginPackage() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public PluginPackage(bool trackChanges = false) : base(EntityLogicalName)
+        public PluginPackage(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginPackage(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public PluginPackage(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginPackage(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public PluginPackage(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public PluginPackage(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public PluginPackage(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
         public const string EntityLogicalName = "pluginpackage";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10109;
+        public const int EntityTypeCode = 10041;
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("pluginpackageid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("pluginpackageid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				PluginPackageId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                PluginPackageId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("pluginpackageid")]
+        [AttributeLogicalName("pluginpackageid")]
         public Guid? PluginPackageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("pluginpackageid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PluginPackageId));
+                OnPropertyChanging();
                 SetAttributeValue("pluginpackageid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(PluginPackageId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentidunique")]
+        [AttributeLogicalName("componentidunique")]
         public Guid? ComponentIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("componentidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		
-		[AttributeLogicalName("content")]
+        
+        [AttributeLogicalName("content")]
         public string? Content
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("content");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Content));
+                OnPropertyChanging();
                 SetAttributeValue("content", value);
-                OnPropertyChanged(nameof(Content));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Export Key Version
+		/// </summary>
+        [AttributeLogicalName("exportkeyversion")]
+        public int? ExportKeyVersion
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<int?>("exportkeyversion");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("exportkeyversion", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Lookup to FileAttachment
 		/// </summary>
-		[AttributeLogicalName("fileid")]
+        [AttributeLogicalName("fileid")]
         public Guid? FileId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("fileid");
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("fileid_name")]
+        public string? FileIdName
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("fileid_name");
+            }
+        }
+
+        /// <summary>
 		/// Sequence number of the import that created this record.
 		/// </summary>
-		[AttributeLogicalName("importsequencenumber")]
+        [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ImportSequenceNumber));
+                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged(nameof(ImportSequenceNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("iscustomizable")]
+        [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsCustomizable));
+                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged(nameof(IsCustomizable));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the solution component is part of a managed solution.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
+		/// Managed Identity Id to look up to ManagedIdentity Entity
+		/// </summary>
+        [AttributeLogicalName("managedidentityid")]
+        public EntityReference? Managedidentityid
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<EntityReference?>("managedidentityid");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("managedidentityid", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// Unique identifier of the user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The name of the plugin package entity.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the organization
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time that the record was migrated.
 		/// </summary>
-		[AttributeLogicalName("overriddencreatedon")]
+        [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OverriddenCreatedOn));
+                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged(nameof(OverriddenCreatedOn));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Lookup to FileAttachment
 		/// </summary>
-		[AttributeLogicalName("package")]
+        [AttributeLogicalName("package")]
         public Guid? Package
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("package");
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("package_name")]
+        public string? PackageName
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("package_name");
+            }
+        }
+
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Status of the Plugin Package
 		/// </summary>
-		[AttributeLogicalName("statecode")]
+        [AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Statecode));
+                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged(nameof(Statecode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Reason for the status of the Plugin Package
 		/// </summary>
-		[AttributeLogicalName("statuscode")]
+        [AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Statuscode));
+                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged(nameof(Statuscode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("timezoneruleversionnumber")]
+        [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique name for the package
 		/// </summary>
-		[AttributeLogicalName("uniquename")]
+        [AttributeLogicalName("uniquename")]
         public string? UniqueName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("uniquename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UniqueName));
+                OnPropertyChanging();
                 SetAttributeValue("uniquename", value);
-                OnPropertyChanged(nameof(UniqueName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
-		[AttributeLogicalName("utcconversiontimezonecode")]
+        [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version of the package
 		/// </summary>
-		[AttributeLogicalName("version")]
+        [AttributeLogicalName("version")]
         public string? Version
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("version");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Version));
+                OnPropertyChanging();
                 SetAttributeValue("version", value);
-                OnPropertyChanged(nameof(Version));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version Number
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
-
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N pluginpackage_AsyncOperations
-		/// </summary>	
-		[RelationshipSchemaName("pluginpackage_AsyncOperations")]
-		public IEnumerable<AsyncOperation> PluginpackageAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("pluginpackage_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PluginpackageAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("pluginpackage_AsyncOperations", null, value);
-				this.OnPropertyChanged("PluginpackageAsyncOperations");
-			}
-		}
-
-		/// <summary>
-		/// 1:N pluginpackage_pluginassembly
-		/// </summary>	
-		[RelationshipSchemaName("pluginpackage_pluginassembly")]
-		public IEnumerable<PluginAssembly> PluginpackagePluginassembly
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<PluginAssembly>("pluginpackage_pluginassembly", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("PluginpackagePluginassembly");
-				this.SetRelatedEntities<PluginAssembly>("pluginpackage_pluginassembly", null, value);
-				this.OnPropertyChanged("PluginpackagePluginassembly");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct Statecode
-                {
-					public const int Active = 0;
-					public const int Inactive = 1;
-                }
-                public struct Statuscode
-                {
-					public const int Active = 1;
-					public const int Inactive = 2;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string PluginPackageId = "pluginpackageid";
-				public const string ComponentIdUnique = "componentidunique";
-				public const string ComponentState = "componentstate";
-				public const string Content = "content";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string FileId = "fileid";
-				public const string ImportSequenceNumber = "importsequencenumber";
-				public const string IsCustomizable = "iscustomizable";
-				public const string IsManaged = "ismanaged";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverriddenCreatedOn = "overriddencreatedon";
-				public const string OverwriteTime = "overwritetime";
-				public const string Package = "package";
-				public const string SolutionId = "solutionid";
-				public const string Statecode = "statecode";
-				public const string Statuscode = "statuscode";
-				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string UniqueName = "uniquename";
-				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
-				public const string Version = "version";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region AlternateKeys
-		public static class AlternateKeys
-		{
-				public const string FullNameOfPackage = "uniquename\"";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        /// <summary>
+        /// 1:N pluginpackage_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("pluginpackage_AsyncOperations")]
+        public IEnumerable<AsyncOperation> PluginpackageAsyncOperations
         {
-            public static class OneToMany
+            [DebuggerNonUserCode]
+            get
             {
-				public const string PluginpackageAsyncOperations = "pluginpackage_AsyncOperations";
-				public const string PluginpackageBulkDeleteFailures = "pluginpackage_BulkDeleteFailures";
-				public const string PluginpackageFileAttachments = "pluginpackage_FileAttachments";
-				public const string PluginpackageMailboxTrackingFolders = "pluginpackage_MailboxTrackingFolders";
-				public const string PluginpackagePluginassembly = "pluginpackage_pluginassembly";
-				public const string PluginpackagePrincipalObjectAttributeAccesses = "pluginpackage_PrincipalObjectAttributeAccesses";
-				public const string PluginpackageSyncErrors = "pluginpackage_SyncErrors";
-				public const string PluginpackageUserEntityInstanceDatas = "pluginpackage_UserEntityInstanceDatas";
+                return GetRelatedEntities<AsyncOperation>("pluginpackage_AsyncOperations", null);
             }
-
-            public static class ManyToOne
+            [DebuggerNonUserCode]
+            set
             {
-				public const string FileAttachmentPluginpackageFileId = "FileAttachment_pluginpackage_FileId";
-				public const string FileAttachmentPluginpackagePackage = "FileAttachment_pluginpackage_Package";
-				public const string LkPluginpackageCreatedby = "lk_pluginpackage_createdby";
-				public const string LkPluginpackageCreatedonbehalfby = "lk_pluginpackage_createdonbehalfby";
-				public const string LkPluginpackageModifiedby = "lk_pluginpackage_modifiedby";
-				public const string LkPluginpackageModifiedonbehalfby = "lk_pluginpackage_modifiedonbehalfby";
-				public const string OrganizationPluginpackage = "organization_pluginpackage";
-            }
-
-            public static class ManyToMany
-            {
+                OnPropertyChanging();
+                SetRelatedEntities("pluginpackage_AsyncOperations", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N pluginpackage_pluginassembly
+        /// </summary>
+        [RelationshipSchemaName("pluginpackage_pluginassembly")]
+        public IEnumerable<PluginAssembly> PluginpackagePluginassembly
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<PluginAssembly>("pluginpackage_pluginassembly", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("pluginpackage_pluginassembly", null, value);
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-		#region Methods
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct Statecode
+            {
+                public const int Active = 0;
+                public const int Inactive = 1;
+            }
+            public struct Statuscode
+            {
+                public const int Active = 1;
+                public const int Inactive = 2;
+            }
+        }
+        #endregion
+
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string PluginPackageId = "pluginpackageid";
+            public const string ComponentIdUnique = "componentidunique";
+            public const string ComponentState = "componentstate";
+            public const string Content = "content";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string ExportKeyVersion = "exportkeyversion";
+            public const string FileId = "fileid";
+            public const string FileIdName = "fileid_name";
+            public const string ImportSequenceNumber = "importsequencenumber";
+            public const string IsCustomizable = "iscustomizable";
+            public const string IsManaged = "ismanaged";
+            public const string Managedidentityid = "managedidentityid";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverriddenCreatedOn = "overriddencreatedon";
+            public const string OverwriteTime = "overwritetime";
+            public const string Package = "package";
+            public const string PackageName = "package_name";
+            public const string SolutionId = "solutionid";
+            public const string Statecode = "statecode";
+            public const string Statuscode = "statuscode";
+            public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
+            public const string UniqueName = "uniquename";
+            public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string Version = "version";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
+
+        #region AlternateKeys
+        public static partial class AlternateKeys
+        {
+            public const string FullNameOfPackage = "uniquename";
+        }
+        #endregion
+
+        #region Relations
+        public static partial class Relations
+        {
+            public static class OneToMany
+            {
+                public const string PluginpackageAsyncOperations = "pluginpackage_AsyncOperations";
+                public const string PluginpackageBulkDeleteFailures = "pluginpackage_BulkDeleteFailures";
+                public const string PluginpackageFileAttachments = "pluginpackage_FileAttachments";
+                public const string PluginpackageMailboxTrackingFolders = "pluginpackage_MailboxTrackingFolders";
+                public const string PluginpackagePluginassembly = "pluginpackage_pluginassembly";
+                public const string PluginpackagePrincipalObjectAttributeAccesses = "pluginpackage_PrincipalObjectAttributeAccesses";
+                public const string PluginpackageSyncErrors = "pluginpackage_SyncErrors";
+                public const string PluginpackageUserEntityInstanceDatas = "pluginpackage_UserEntityInstanceDatas";
+            }
+
+            public static partial class ManyToOne
+            {
+                public const string FileAttachmentPluginpackageFileId = "FileAttachment_pluginpackage_FileId";
+                public const string FileAttachmentPluginpackagePackage = "FileAttachment_pluginpackage_Package";
+                public const string LkPluginpackageCreatedby = "lk_pluginpackage_createdby";
+                public const string LkPluginpackageCreatedonbehalfby = "lk_pluginpackage_createdonbehalfby";
+                public const string LkPluginpackageModifiedby = "lk_pluginpackage_modifiedby";
+                public const string LkPluginpackageModifiedonbehalfby = "lk_pluginpackage_modifiedonbehalfby";
+                public const string ManagedidentityPluginpackage = "managedidentity_pluginpackage";
+                public const string OrganizationPluginpackage = "organization_pluginpackage";
+            }
+
+            public static partial class ManyToMany
+            {
+            }
+        }
+        #endregion
+
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static PluginPackage Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static PluginPackage Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -711,30 +761,30 @@ namespace dgt.power.dataverse
 
         public PluginPackage GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  PluginPackage(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new PluginPackage(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<PluginPackage> PluginPackageSet
-		{
-			get
-			{
-				return CreateQuery<PluginPackage>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<PluginPackage> PluginPackageSet
+        {
+            get
+            {
+                return CreateQuery<PluginPackage>();
+            }
+        }
+    }
+    #endregion
 }

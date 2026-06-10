@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,48 +12,44 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("systemuserroles")]
-	[GeneratedCode("dgtp", "2023")]
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    
+    [DataContract]
+    [EntityLogicalName("systemuserroles")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class SystemUserRoles : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SystemUserRoles : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public SystemUserRoles() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public SystemUserRoles() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public SystemUserRoles(bool trackChanges = false) : base(EntityLogicalName)
+        public SystemUserRoles(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemUserRoles(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public SystemUserRoles(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemUserRoles(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public SystemUserRoles(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SystemUserRoles(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public SystemUserRoles(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -66,149 +58,139 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("systemuserroleid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("systemuserroleid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				SystemUserRoleId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                SystemUserRoleId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("systemuserroleid")]
+        [AttributeLogicalName("systemuserroleid")]
         public Guid? SystemUserRoleId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("systemuserroleid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SystemUserRoleId));
+                OnPropertyChanging();
                 SetAttributeValue("systemuserroleid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(SystemUserRoleId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("roleid")]
+        
+        [AttributeLogicalName("roleid")]
         public Guid? RoleId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("roleid");
             }
         }
 
-		
-		[AttributeLogicalName("systemuserid")]
+        
+        [AttributeLogicalName("systemuserid")]
         public Guid? SystemUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("systemuserid");
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string SystemUserRoleId = "systemuserroleid";
+            public const string RoleId = "roleid";
+            public const string SystemUserId = "systemuserid";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string SystemUserRoleId = "systemuserroleid";
-				public const string RoleId = "roleid";
-				public const string SystemUserId = "systemuserid";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
-				public const string SystemuserrolesAssociation = "systemuserroles_association";
+                public const string SystemuserrolesAssociation = "systemuserroles_association";
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public static SystemUserRoles Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static SystemUserRoles Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -218,30 +200,30 @@ namespace dgt.power.dataverse
 
         public SystemUserRoles GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  SystemUserRoles(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new SystemUserRoles(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<SystemUserRoles> SystemUserRolesSet
-		{
-			get
-			{
-				return CreateQuery<SystemUserRoles>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<SystemUserRoles> SystemUserRolesSet
+        {
+            get
+            {
+                return CreateQuery<SystemUserRoles>();
+            }
+        }
+    }
+    #endregion
 }

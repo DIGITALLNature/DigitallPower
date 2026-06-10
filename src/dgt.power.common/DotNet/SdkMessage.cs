@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Message that is supported by the SDK.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("sdkmessage")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("sdkmessage")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class SdkMessage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SdkMessage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public SdkMessage() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public SdkMessage() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public SdkMessage(bool trackChanges = false) : base(EntityLogicalName)
+        public SdkMessage(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessage(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public SdkMessage(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessage(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public SdkMessage(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public SdkMessage(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public SdkMessage(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,711 +61,703 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("sdkmessageid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("sdkmessageid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				SdkMessageId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                SdkMessageId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the SDK message entity.
 		/// </summary>
-		[AttributeLogicalName("sdkmessageid")]
+        [AttributeLogicalName("sdkmessageid")]
         public Guid? SdkMessageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sdkmessageid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SdkMessageId));
+                OnPropertyChanging();
                 SetAttributeValue("sdkmessageid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(SdkMessageId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about whether the SDK message is automatically transacted.
 		/// </summary>
-		[AttributeLogicalName("autotransact")]
+        [AttributeLogicalName("autotransact")]
         public bool? AutoTransact
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("autotransact");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AutoTransact));
+                OnPropertyChanging();
                 SetAttributeValue("autotransact", value);
-                OnPropertyChanged(nameof(AutoTransact));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Identifies where a method will be exposed. 0 - Server, 1 - Client, 2 - both.
 		/// </summary>
-		[AttributeLogicalName("availability")]
+        [AttributeLogicalName("availability")]
         public int? Availability
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("availability");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Availability));
+                OnPropertyChanging();
                 SetAttributeValue("availability", value);
-                OnPropertyChanged(nameof(Availability));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// If this is a categorized method, this is the name, otherwise None.
 		/// </summary>
-		[AttributeLogicalName("categoryname")]
+        [AttributeLogicalName("categoryname")]
         public string? CategoryName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("categoryname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CategoryName));
+                OnPropertyChanging();
                 SetAttributeValue("categoryname", value);
-                OnPropertyChanged(nameof(CategoryName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the SDK message.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the SDK message was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the sdkmessage.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Customization level of the SDK message.
 		/// </summary>
-		[AttributeLogicalName("customizationlevel")]
+        [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("customizationlevel");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the privilege that allows execution of the SDK message
 		/// </summary>
-		[AttributeLogicalName("executeprivilegename")]
+        [AttributeLogicalName("executeprivilegename")]
         public string? ExecutePrivilegeName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("executeprivilegename");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExecutePrivilegeName));
+                OnPropertyChanging();
                 SetAttributeValue("executeprivilegename", value);
-                OnPropertyChanged(nameof(ExecutePrivilegeName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the SDK message should have its requests expanded per primary entity defined in its filters.
 		/// </summary>
-		[AttributeLogicalName("expand")]
+        [AttributeLogicalName("expand")]
         public bool? Expand
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("expand");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Expand));
+                OnPropertyChanging();
                 SetAttributeValue("expand", value);
-                OnPropertyChanged(nameof(Expand));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version in which the component is introduced.
 		/// </summary>
-		[AttributeLogicalName("introducedversion")]
+        [AttributeLogicalName("introducedversion")]
         public string? IntroducedVersion
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("introducedversion");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IntroducedVersion));
+                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged(nameof(IntroducedVersion));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about whether the SDK message is active.
 		/// </summary>
-		[AttributeLogicalName("isactive")]
+        [AttributeLogicalName("isactive")]
         public bool? IsActive
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isactive");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsActive));
+                OnPropertyChanging();
                 SetAttributeValue("isactive", value);
-                OnPropertyChanged(nameof(IsActive));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information that specifies whether this component is managed.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the SDK message is private.
 		/// </summary>
-		[AttributeLogicalName("isprivate")]
+        [AttributeLogicalName("isprivate")]
         public bool? IsPrivate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isprivate");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsPrivate));
+                OnPropertyChanging();
                 SetAttributeValue("isprivate", value);
-                OnPropertyChanged(nameof(IsPrivate));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Identifies whether an SDK message will be ReadOnly or Read Write. false - ReadWrite, true - ReadOnly .
 		/// </summary>
-		[AttributeLogicalName("isreadonly")]
+        [AttributeLogicalName("isreadonly")]
         public bool? IsReadOnly
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isreadonly");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsReadOnly));
+                OnPropertyChanging();
                 SetAttributeValue("isreadonly", value);
-                OnPropertyChanged(nameof(IsReadOnly));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("isvalidforexecuteasync")]
+        [AttributeLogicalName("isvalidforexecuteasync")]
         public bool? IsValidForExecuteAsync
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isvalidforexecuteasync");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the SDK message.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the SDK message was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the sdkmessage.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the SDK message.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization with which the SDK message is associated.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the SDK message.
 		/// </summary>
-		[AttributeLogicalName("sdkmessageidunique")]
+        [AttributeLogicalName("sdkmessageidunique")]
         public Guid? SdkMessageIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("sdkmessageidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Indicates whether the SDK message is a template.
 		/// </summary>
-		[AttributeLogicalName("template")]
+        [AttributeLogicalName("template")]
         public bool? Template
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("template");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Template));
+                OnPropertyChanging();
                 SetAttributeValue("template", value);
-                OnPropertyChanged(nameof(Template));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("throttlesettings")]
+        [AttributeLogicalName("throttlesettings")]
         public string? ThrottleSettings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("throttlesettings");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Number that identifies a specific revision of the SDK message.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Whether or not the SDK message can be called from a workflow.
 		/// </summary>
-		[AttributeLogicalName("workflowsdkstepenabled")]
+        [AttributeLogicalName("workflowsdkstepenabled")]
         public bool? WorkflowSdkStepEnabled
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("workflowsdkstepenabled");
             }
         }
+        #endregion
 
+        #region NavigationProperties
 
-		#endregion
-
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N sdkmessage_customapi
-		/// </summary>	
-		[RelationshipSchemaName("sdkmessage_customapi")]
-		public IEnumerable<CustomAPI> SdkmessageCustomapi
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<CustomAPI>("sdkmessage_customapi", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SdkmessageCustomapi");
-				this.SetRelatedEntities<CustomAPI>("sdkmessage_customapi", null, value);
-				this.OnPropertyChanged("SdkmessageCustomapi");
-			}
-		}
-
-		/// <summary>
-		/// 1:N sdkmessageid_sdkmessagefilter
-		/// </summary>	
-		[RelationshipSchemaName("sdkmessageid_sdkmessagefilter")]
-		public IEnumerable<SdkMessageFilter> SdkmessageidSdkmessagefilter
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageFilter>("sdkmessageid_sdkmessagefilter", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SdkmessageidSdkmessagefilter");
-				this.SetRelatedEntities<SdkMessageFilter>("sdkmessageid_sdkmessagefilter", null, value);
-				this.OnPropertyChanged("SdkmessageidSdkmessagefilter");
-			}
-		}
-
-		/// <summary>
-		/// 1:N sdkmessageid_sdkmessageprocessingstep
-		/// </summary>	
-		[RelationshipSchemaName("sdkmessageid_sdkmessageprocessingstep")]
-		public IEnumerable<SdkMessageProcessingStep> SdkmessageidSdkmessageprocessingstep
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<SdkMessageProcessingStep>("sdkmessageid_sdkmessageprocessingstep", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("SdkmessageidSdkmessageprocessingstep");
-				this.SetRelatedEntities<SdkMessageProcessingStep>("sdkmessageid_sdkmessageprocessingstep", null, value);
-				this.OnPropertyChanged("SdkmessageidSdkmessageprocessingstep");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-                public struct AutoTransact
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct Expand
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsActive
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct IsPrivate
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsReadOnly
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsValidForExecuteAsync
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct Template
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct WorkflowSdkStepEnabled
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string SdkMessageId = "sdkmessageid";
-				public const string AutoTransact = "autotransact";
-				public const string Availability = "availability";
-				public const string CategoryName = "categoryname";
-				public const string ComponentState = "componentstate";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CustomizationLevel = "customizationlevel";
-				public const string ExecutePrivilegeName = "executeprivilegename";
-				public const string Expand = "expand";
-				public const string IntroducedVersion = "introducedversion";
-				public const string IsActive = "isactive";
-				public const string IsManaged = "ismanaged";
-				public const string IsPrivate = "isprivate";
-				public const string IsReadOnly = "isreadonly";
-				public const string IsValidForExecuteAsync = "isvalidforexecuteasync";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string SdkMessageIdUnique = "sdkmessageidunique";
-				public const string SolutionId = "solutionid";
-				public const string Template = "template";
-				public const string ThrottleSettings = "throttlesettings";
-				public const string VersionNumber = "versionnumber";
-				public const string WorkflowSdkStepEnabled = "workflowsdkstepenabled";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        /// <summary>
+        /// 1:N sdkmessage_customapi
+        /// </summary>
+        [RelationshipSchemaName("sdkmessage_customapi")]
+        public IEnumerable<CustomAPI> SdkmessageCustomapi
         {
-            public static class OneToMany
+            [DebuggerNonUserCode]
+            get
             {
-				public const string MessageSdkmessagepair = "message_sdkmessagepair";
-				public const string SdkmessageCustomapi = "sdkmessage_customapi";
-				public const string SdkmessageServiceplanmapping = "sdkmessage_serviceplanmapping";
-				public const string SdkmessageidSdkmessagefilter = "sdkmessageid_sdkmessagefilter";
-				public const string SdkmessageidSdkmessageprocessingstep = "sdkmessageid_sdkmessageprocessingstep";
-				public const string SdkmessageidWorkflowDependency = "sdkmessageid_workflow_dependency";
-				public const string UserentityinstancedataSdkmessage = "userentityinstancedata_sdkmessage";
+                return GetRelatedEntities<CustomAPI>("sdkmessage_customapi", null);
             }
-
-            public static class ManyToOne
+            [DebuggerNonUserCode]
+            set
             {
-				public const string CreatedbySdkmessage = "createdby_sdkmessage";
-				public const string LkSdkmessageCreatedonbehalfby = "lk_sdkmessage_createdonbehalfby";
-				public const string LkSdkmessageModifiedonbehalfby = "lk_sdkmessage_modifiedonbehalfby";
-				public const string ModifiedbySdkmessage = "modifiedby_sdkmessage";
-				public const string OrganizationSdkmessage = "organization_sdkmessage";
-            }
-
-            public static class ManyToMany
-            {
+                OnPropertyChanging();
+                SetRelatedEntities("sdkmessage_customapi", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N sdkmessageid_sdkmessagefilter
+        /// </summary>
+        [RelationshipSchemaName("sdkmessageid_sdkmessagefilter")]
+        public IEnumerable<SdkMessageFilter> SdkmessageidSdkmessagefilter
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageFilter>("sdkmessageid_sdkmessagefilter", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("sdkmessageid_sdkmessagefilter", null, value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// 1:N sdkmessageid_sdkmessageprocessingstep
+        /// </summary>
+        [RelationshipSchemaName("sdkmessageid_sdkmessageprocessingstep")]
+        public IEnumerable<SdkMessageProcessingStep> SdkmessageidSdkmessageprocessingstep
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<SdkMessageProcessingStep>("sdkmessageid_sdkmessageprocessingstep", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("sdkmessageid_sdkmessageprocessingstep", null, value);
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-		#region Methods
+        #region Options
+        public static partial class Options
+        {
+            public struct AutoTransact
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct Expand
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsActive
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct IsPrivate
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsReadOnly
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsValidForExecuteAsync
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct Template
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct WorkflowSdkStepEnabled
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+        }
+        #endregion
+
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string SdkMessageId = "sdkmessageid";
+            public const string AutoTransact = "autotransact";
+            public const string Availability = "availability";
+            public const string CategoryName = "categoryname";
+            public const string ComponentState = "componentstate";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string CustomizationLevel = "customizationlevel";
+            public const string ExecutePrivilegeName = "executeprivilegename";
+            public const string Expand = "expand";
+            public const string IntroducedVersion = "introducedversion";
+            public const string IsActive = "isactive";
+            public const string IsManaged = "ismanaged";
+            public const string IsPrivate = "isprivate";
+            public const string IsReadOnly = "isreadonly";
+            public const string IsValidForExecuteAsync = "isvalidforexecuteasync";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string SdkMessageIdUnique = "sdkmessageidunique";
+            public const string SolutionId = "solutionid";
+            public const string Template = "template";
+            public const string ThrottleSettings = "throttlesettings";
+            public const string VersionNumber = "versionnumber";
+            public const string WorkflowSdkStepEnabled = "workflowsdkstepenabled";
+        }
+        #endregion
+
+        #region Relations
+        public static partial class Relations
+        {
+            public static class OneToMany
+            {
+                public const string MessageSdkmessagepair = "message_sdkmessagepair";
+                public const string SdkmessageAiskillconfigSdkmessageid = "sdkmessage_aiskillconfig_sdkmessageid";
+                public const string SdkmessageCustomapi = "sdkmessage_customapi";
+                public const string SdkmessageServiceplanmapping = "sdkmessage_serviceplanmapping";
+                public const string SdkmessageidSdkmessagefilter = "sdkmessageid_sdkmessagefilter";
+                public const string SdkmessageidSdkmessageprocessingstep = "sdkmessageid_sdkmessageprocessingstep";
+                public const string SdkmessageidWorkflowDependency = "sdkmessageid_workflow_dependency";
+                public const string UserentityinstancedataSdkmessage = "userentityinstancedata_sdkmessage";
+            }
+
+            public static partial class ManyToOne
+            {
+                public const string CreatedbySdkmessage = "createdby_sdkmessage";
+                public const string LkSdkmessageCreatedonbehalfby = "lk_sdkmessage_createdonbehalfby";
+                public const string LkSdkmessageModifiedonbehalfby = "lk_sdkmessage_modifiedonbehalfby";
+                public const string ModifiedbySdkmessage = "modifiedby_sdkmessage";
+                public const string OrganizationSdkmessage = "organization_sdkmessage";
+            }
+
+            public static partial class ManyToMany
+            {
+            }
+        }
+        #endregion
+
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static SdkMessage Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static SdkMessage Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -783,30 +767,30 @@ namespace dgt.power.dataverse
 
         public SdkMessage GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  SdkMessage(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new SdkMessage(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<SdkMessage> SdkMessageSet
-		{
-			get
-			{
-				return CreateQuery<SdkMessage>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<SdkMessage> SdkMessageSet
+        {
+            get
+            {
+                return CreateQuery<SdkMessage>();
+            }
+        }
+    }
+    #endregion
 }

@@ -1,6 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Messages;
@@ -9,7 +8,9 @@ using Microsoft.Xrm.Sdk.Query;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-   	public partial class DataContext : OrganizationServiceContext
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
+    public partial class DataContext : OrganizationServiceContext
     {
         private readonly bool _noLock;
 
@@ -30,5 +31,5 @@ namespace dgt.power.dataverse
 
             base.OnExecuting(request);
         }
-	}
+    }
 }

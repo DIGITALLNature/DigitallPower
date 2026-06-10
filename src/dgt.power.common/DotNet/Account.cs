@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Business that represents a customer or potential customer. The company that is billed in business transactions.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("account")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("account")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class Account : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Account : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public Account() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public Account() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public Account(bool trackChanges = false) : base(EntityLogicalName)
+        public Account(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Account(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public Account(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Account(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public Account(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public Account(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public Account(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,3682 +61,3413 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("accountid")]
-		public new System.Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("accountid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				AccountId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                AccountId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the account.
 		/// </summary>
-		[AttributeLogicalName("accountid")]
+        [AttributeLogicalName("accountid")]
         public Guid? AccountId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("accountid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AccountId));
+                OnPropertyChanging();
                 SetAttributeValue("accountid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(AccountId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for address 1.
 		/// </summary>
-		[AttributeLogicalName("address1_addressid")]
+        [AttributeLogicalName("address1_addressid")]
         public Guid? Address1AddressId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("address1_addressid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1AddressId));
+                OnPropertyChanging();
                 SetAttributeValue("address1_addressid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(Address1AddressId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for address 2.
 		/// </summary>
-		[AttributeLogicalName("address2_addressid")]
+        [AttributeLogicalName("address2_addressid")]
         public Guid? Address2AddressId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("address2_addressid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2AddressId));
+                OnPropertyChanging();
                 SetAttributeValue("address2_addressid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(Address2AddressId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a category to indicate whether the customer account is standard or preferred.
 		/// </summary>
-		[AttributeLogicalName("accountcategorycode")]
+        [AttributeLogicalName("accountcategorycode")]
         public OptionSetValue? AccountCategoryCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("accountcategorycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AccountCategoryCode));
+                OnPropertyChanging();
                 SetAttributeValue("accountcategorycode", value);
-                OnPropertyChanged(nameof(AccountCategoryCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a classification code to indicate the potential value of the customer account based on the projected return on investment, cooperation level, sales cycle length or other criteria.
 		/// </summary>
-		[AttributeLogicalName("accountclassificationcode")]
+        [AttributeLogicalName("accountclassificationcode")]
         public OptionSetValue? AccountClassificationCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("accountclassificationcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AccountClassificationCode));
+                OnPropertyChanging();
                 SetAttributeValue("accountclassificationcode", value);
-                OnPropertyChanged(nameof(AccountClassificationCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type an ID number or code for the account to quickly search and identify the account in system views.
 		/// </summary>
-		[AttributeLogicalName("accountnumber")]
+        [AttributeLogicalName("accountnumber")]
         public string? AccountNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("accountnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AccountNumber));
+                OnPropertyChanging();
                 SetAttributeValue("accountnumber", value);
-                OnPropertyChanged(nameof(AccountNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a rating to indicate the value of the customer account.
 		/// </summary>
-		[AttributeLogicalName("accountratingcode")]
+        [AttributeLogicalName("accountratingcode")]
         public OptionSetValue? AccountRatingCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("accountratingcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(AccountRatingCode));
+                OnPropertyChanging();
                 SetAttributeValue("accountratingcode", value);
-                OnPropertyChanged(nameof(AccountRatingCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the primary address type.
 		/// </summary>
-		[AttributeLogicalName("address1_addresstypecode")]
+        [AttributeLogicalName("address1_addresstypecode")]
         public OptionSetValue? Address1AddressTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address1_addresstypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1AddressTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("address1_addresstypecode", value);
-                OnPropertyChanged(nameof(Address1AddressTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the city for the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_city")]
+        [AttributeLogicalName("address1_city")]
         public string? Address1City
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_city");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1City));
+                OnPropertyChanging();
                 SetAttributeValue("address1_city", value);
-                OnPropertyChanged(nameof(Address1City));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the complete primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_composite")]
+        [AttributeLogicalName("address1_composite")]
         public string? Address1Composite
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_composite");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the country or region for the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_country")]
+        [AttributeLogicalName("address1_country")]
         public string? Address1Country
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_country");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Country));
+                OnPropertyChanging();
                 SetAttributeValue("address1_country", value);
-                OnPropertyChanged(nameof(Address1Country));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the county for the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_county")]
+        [AttributeLogicalName("address1_county")]
         public string? Address1County
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_county");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1County));
+                OnPropertyChanging();
                 SetAttributeValue("address1_county", value);
-                OnPropertyChanged(nameof(Address1County));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the fax number associated with the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_fax")]
+        [AttributeLogicalName("address1_fax")]
         public string? Address1Fax
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_fax");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Fax));
+                OnPropertyChanging();
                 SetAttributeValue("address1_fax", value);
-                OnPropertyChanged(nameof(Address1Fax));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the freight terms for the primary address to make sure shipping orders are processed correctly.
 		/// </summary>
-		[AttributeLogicalName("address1_freighttermscode")]
+        [AttributeLogicalName("address1_freighttermscode")]
         public OptionSetValue? Address1FreightTermsCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address1_freighttermscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1FreightTermsCode));
+                OnPropertyChanging();
                 SetAttributeValue("address1_freighttermscode", value);
-                OnPropertyChanged(nameof(Address1FreightTermsCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the latitude value for the primary address for use in mapping and other applications.
 		/// </summary>
-		[AttributeLogicalName("address1_latitude")]
+        [AttributeLogicalName("address1_latitude")]
         public double? Address1Latitude
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<double?>("address1_latitude");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Latitude));
+                OnPropertyChanging();
                 SetAttributeValue("address1_latitude", value);
-                OnPropertyChanged(nameof(Address1Latitude));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the first line of the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_line1")]
+        [AttributeLogicalName("address1_line1")]
         public string? Address1Line1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_line1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Line1));
+                OnPropertyChanging();
                 SetAttributeValue("address1_line1", value);
-                OnPropertyChanged(nameof(Address1Line1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the second line of the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_line2")]
+        [AttributeLogicalName("address1_line2")]
         public string? Address1Line2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_line2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Line2));
+                OnPropertyChanging();
                 SetAttributeValue("address1_line2", value);
-                OnPropertyChanged(nameof(Address1Line2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the third line of the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_line3")]
+        [AttributeLogicalName("address1_line3")]
         public string? Address1Line3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_line3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Line3));
+                OnPropertyChanging();
                 SetAttributeValue("address1_line3", value);
-                OnPropertyChanged(nameof(Address1Line3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the longitude value for the primary address for use in mapping and other applications.
 		/// </summary>
-		[AttributeLogicalName("address1_longitude")]
+        [AttributeLogicalName("address1_longitude")]
         public double? Address1Longitude
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<double?>("address1_longitude");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Longitude));
+                OnPropertyChanging();
                 SetAttributeValue("address1_longitude", value);
-                OnPropertyChanged(nameof(Address1Longitude));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a descriptive name for the primary address, such as Corporate Headquarters.
 		/// </summary>
-		[AttributeLogicalName("address1_name")]
+        [AttributeLogicalName("address1_name")]
         public string? Address1Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Name));
+                OnPropertyChanging();
                 SetAttributeValue("address1_name", value);
-                OnPropertyChanged(nameof(Address1Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the ZIP Code or postal code for the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_postalcode")]
+        [AttributeLogicalName("address1_postalcode")]
         public string? Address1PostalCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_postalcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1PostalCode));
+                OnPropertyChanging();
                 SetAttributeValue("address1_postalcode", value);
-                OnPropertyChanged(nameof(Address1PostalCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the post office box number of the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_postofficebox")]
+        [AttributeLogicalName("address1_postofficebox")]
         public string? Address1PostOfficeBox
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_postofficebox");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1PostOfficeBox));
+                OnPropertyChanging();
                 SetAttributeValue("address1_postofficebox", value);
-                OnPropertyChanged(nameof(Address1PostOfficeBox));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the name of the main contact at the account's primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_primarycontactname")]
+        [AttributeLogicalName("address1_primarycontactname")]
         public string? Address1PrimaryContactName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_primarycontactname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1PrimaryContactName));
+                OnPropertyChanging();
                 SetAttributeValue("address1_primarycontactname", value);
-                OnPropertyChanged(nameof(Address1PrimaryContactName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a shipping method for deliveries sent to this address.
 		/// </summary>
-		[AttributeLogicalName("address1_shippingmethodcode")]
+        [AttributeLogicalName("address1_shippingmethodcode")]
         public OptionSetValue? Address1ShippingMethodCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address1_shippingmethodcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1ShippingMethodCode));
+                OnPropertyChanging();
                 SetAttributeValue("address1_shippingmethodcode", value);
-                OnPropertyChanged(nameof(Address1ShippingMethodCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the state or province of the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_stateorprovince")]
+        [AttributeLogicalName("address1_stateorprovince")]
         public string? Address1StateOrProvince
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_stateorprovince");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1StateOrProvince));
+                OnPropertyChanging();
                 SetAttributeValue("address1_stateorprovince", value);
-                OnPropertyChanged(nameof(Address1StateOrProvince));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the main phone number associated with the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_telephone1")]
+        [AttributeLogicalName("address1_telephone1")]
         public string? Address1Telephone1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_telephone1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Telephone1));
+                OnPropertyChanging();
                 SetAttributeValue("address1_telephone1", value);
-                OnPropertyChanged(nameof(Address1Telephone1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a second phone number associated with the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_telephone2")]
+        [AttributeLogicalName("address1_telephone2")]
         public string? Address1Telephone2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_telephone2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Telephone2));
+                OnPropertyChanging();
                 SetAttributeValue("address1_telephone2", value);
-                OnPropertyChanged(nameof(Address1Telephone2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a third phone number associated with the primary address.
 		/// </summary>
-		[AttributeLogicalName("address1_telephone3")]
+        [AttributeLogicalName("address1_telephone3")]
         public string? Address1Telephone3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_telephone3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1Telephone3));
+                OnPropertyChanging();
                 SetAttributeValue("address1_telephone3", value);
-                OnPropertyChanged(nameof(Address1Telephone3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the UPS zone of the primary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.
 		/// </summary>
-		[AttributeLogicalName("address1_upszone")]
+        [AttributeLogicalName("address1_upszone")]
         public string? Address1UPSZone
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address1_upszone");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1UPSZone));
+                OnPropertyChanging();
                 SetAttributeValue("address1_upszone", value);
-                OnPropertyChanged(nameof(Address1UPSZone));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.
 		/// </summary>
-		[AttributeLogicalName("address1_utcoffset")]
+        [AttributeLogicalName("address1_utcoffset")]
         public int? Address1UTCOffset
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("address1_utcoffset");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address1UTCOffset));
+                OnPropertyChanging();
                 SetAttributeValue("address1_utcoffset", value);
-                OnPropertyChanged(nameof(Address1UTCOffset));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the secondary address type.
 		/// </summary>
-		[AttributeLogicalName("address2_addresstypecode")]
+        [AttributeLogicalName("address2_addresstypecode")]
         public OptionSetValue? Address2AddressTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address2_addresstypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2AddressTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("address2_addresstypecode", value);
-                OnPropertyChanged(nameof(Address2AddressTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the city for the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_city")]
+        [AttributeLogicalName("address2_city")]
         public string? Address2City
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_city");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2City));
+                OnPropertyChanging();
                 SetAttributeValue("address2_city", value);
-                OnPropertyChanged(nameof(Address2City));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the complete secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_composite")]
+        [AttributeLogicalName("address2_composite")]
         public string? Address2Composite
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_composite");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the country or region for the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_country")]
+        [AttributeLogicalName("address2_country")]
         public string? Address2Country
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_country");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Country));
+                OnPropertyChanging();
                 SetAttributeValue("address2_country", value);
-                OnPropertyChanged(nameof(Address2Country));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the county for the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_county")]
+        [AttributeLogicalName("address2_county")]
         public string? Address2County
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_county");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2County));
+                OnPropertyChanging();
                 SetAttributeValue("address2_county", value);
-                OnPropertyChanged(nameof(Address2County));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the fax number associated with the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_fax")]
+        [AttributeLogicalName("address2_fax")]
         public string? Address2Fax
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_fax");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Fax));
+                OnPropertyChanging();
                 SetAttributeValue("address2_fax", value);
-                OnPropertyChanged(nameof(Address2Fax));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the freight terms for the secondary address to make sure shipping orders are processed correctly.
 		/// </summary>
-		[AttributeLogicalName("address2_freighttermscode")]
+        [AttributeLogicalName("address2_freighttermscode")]
         public OptionSetValue? Address2FreightTermsCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address2_freighttermscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2FreightTermsCode));
+                OnPropertyChanging();
                 SetAttributeValue("address2_freighttermscode", value);
-                OnPropertyChanged(nameof(Address2FreightTermsCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the latitude value for the secondary address for use in mapping and other applications.
 		/// </summary>
-		[AttributeLogicalName("address2_latitude")]
+        [AttributeLogicalName("address2_latitude")]
         public double? Address2Latitude
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<double?>("address2_latitude");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Latitude));
+                OnPropertyChanging();
                 SetAttributeValue("address2_latitude", value);
-                OnPropertyChanged(nameof(Address2Latitude));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the first line of the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_line1")]
+        [AttributeLogicalName("address2_line1")]
         public string? Address2Line1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_line1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Line1));
+                OnPropertyChanging();
                 SetAttributeValue("address2_line1", value);
-                OnPropertyChanged(nameof(Address2Line1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the second line of the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_line2")]
+        [AttributeLogicalName("address2_line2")]
         public string? Address2Line2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_line2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Line2));
+                OnPropertyChanging();
                 SetAttributeValue("address2_line2", value);
-                OnPropertyChanged(nameof(Address2Line2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the third line of the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_line3")]
+        [AttributeLogicalName("address2_line3")]
         public string? Address2Line3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_line3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Line3));
+                OnPropertyChanging();
                 SetAttributeValue("address2_line3", value);
-                OnPropertyChanged(nameof(Address2Line3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the longitude value for the secondary address for use in mapping and other applications.
 		/// </summary>
-		[AttributeLogicalName("address2_longitude")]
+        [AttributeLogicalName("address2_longitude")]
         public double? Address2Longitude
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<double?>("address2_longitude");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Longitude));
+                OnPropertyChanging();
                 SetAttributeValue("address2_longitude", value);
-                OnPropertyChanged(nameof(Address2Longitude));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a descriptive name for the secondary address, such as Corporate Headquarters.
 		/// </summary>
-		[AttributeLogicalName("address2_name")]
+        [AttributeLogicalName("address2_name")]
         public string? Address2Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Name));
+                OnPropertyChanging();
                 SetAttributeValue("address2_name", value);
-                OnPropertyChanged(nameof(Address2Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the ZIP Code or postal code for the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_postalcode")]
+        [AttributeLogicalName("address2_postalcode")]
         public string? Address2PostalCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_postalcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2PostalCode));
+                OnPropertyChanging();
                 SetAttributeValue("address2_postalcode", value);
-                OnPropertyChanged(nameof(Address2PostalCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the post office box number of the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_postofficebox")]
+        [AttributeLogicalName("address2_postofficebox")]
         public string? Address2PostOfficeBox
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_postofficebox");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2PostOfficeBox));
+                OnPropertyChanging();
                 SetAttributeValue("address2_postofficebox", value);
-                OnPropertyChanged(nameof(Address2PostOfficeBox));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the name of the main contact at the account's secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_primarycontactname")]
+        [AttributeLogicalName("address2_primarycontactname")]
         public string? Address2PrimaryContactName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_primarycontactname");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2PrimaryContactName));
+                OnPropertyChanging();
                 SetAttributeValue("address2_primarycontactname", value);
-                OnPropertyChanged(nameof(Address2PrimaryContactName));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a shipping method for deliveries sent to this address.
 		/// </summary>
-		[AttributeLogicalName("address2_shippingmethodcode")]
+        [AttributeLogicalName("address2_shippingmethodcode")]
         public OptionSetValue? Address2ShippingMethodCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("address2_shippingmethodcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2ShippingMethodCode));
+                OnPropertyChanging();
                 SetAttributeValue("address2_shippingmethodcode", value);
-                OnPropertyChanged(nameof(Address2ShippingMethodCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the state or province of the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_stateorprovince")]
+        [AttributeLogicalName("address2_stateorprovince")]
         public string? Address2StateOrProvince
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_stateorprovince");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2StateOrProvince));
+                OnPropertyChanging();
                 SetAttributeValue("address2_stateorprovince", value);
-                OnPropertyChanged(nameof(Address2StateOrProvince));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the main phone number associated with the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_telephone1")]
+        [AttributeLogicalName("address2_telephone1")]
         public string? Address2Telephone1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_telephone1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Telephone1));
+                OnPropertyChanging();
                 SetAttributeValue("address2_telephone1", value);
-                OnPropertyChanged(nameof(Address2Telephone1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a second phone number associated with the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_telephone2")]
+        [AttributeLogicalName("address2_telephone2")]
         public string? Address2Telephone2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_telephone2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Telephone2));
+                OnPropertyChanging();
                 SetAttributeValue("address2_telephone2", value);
-                OnPropertyChanged(nameof(Address2Telephone2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a third phone number associated with the secondary address.
 		/// </summary>
-		[AttributeLogicalName("address2_telephone3")]
+        [AttributeLogicalName("address2_telephone3")]
         public string? Address2Telephone3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_telephone3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2Telephone3));
+                OnPropertyChanging();
                 SetAttributeValue("address2_telephone3", value);
-                OnPropertyChanged(nameof(Address2Telephone3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the UPS zone of the secondary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.
 		/// </summary>
-		[AttributeLogicalName("address2_upszone")]
+        [AttributeLogicalName("address2_upszone")]
         public string? Address2UPSZone
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("address2_upszone");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2UPSZone));
+                OnPropertyChanging();
                 SetAttributeValue("address2_upszone", value);
-                OnPropertyChanged(nameof(Address2UPSZone));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.
 		/// </summary>
-		[AttributeLogicalName("address2_utcoffset")]
+        [AttributeLogicalName("address2_utcoffset")]
         public int? Address2UTCOffset
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("address2_utcoffset");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Address2UTCOffset));
+                OnPropertyChanging();
                 SetAttributeValue("address2_utcoffset", value);
-                OnPropertyChanged(nameof(Address2UTCOffset));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        
+        [AttributeLogicalName("adx_createdbyipaddress")]
+        public string? AdxCreatedByIPAddress
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("adx_createdbyipaddress");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("adx_createdbyipaddress", value);
+                OnPropertyChanged();
+            }
+        }
+
+        
+        [AttributeLogicalName("adx_createdbyusername")]
+        public string? AdxCreatedByUsername
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("adx_createdbyusername");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("adx_createdbyusername", value);
+                OnPropertyChanged();
+            }
+        }
+
+        
+        [AttributeLogicalName("adx_modifiedbyipaddress")]
+        public string? AdxModifiedByIPAddress
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyipaddress");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("adx_modifiedbyipaddress", value);
+                OnPropertyChanged();
+            }
+        }
+
+        
+        [AttributeLogicalName("adx_modifiedbyusername")]
+        public string? AdxModifiedByUsername
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetAttributeValue<string?>("adx_modifiedbyusername");
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetAttributeValue("adx_modifiedbyusername", value);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
 		/// For system use only.
 		/// </summary>
-		[AttributeLogicalName("aging30")]
+        [AttributeLogicalName("aging30")]
         public Money? Aging30
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging30");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The base currency equivalent of the aging 30 field.
 		/// </summary>
-		[AttributeLogicalName("aging30_base")]
+        [AttributeLogicalName("aging30_base")]
         public Money? Aging30Base
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging30_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For system use only.
 		/// </summary>
-		[AttributeLogicalName("aging60")]
+        [AttributeLogicalName("aging60")]
         public Money? Aging60
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging60");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The base currency equivalent of the aging 60 field.
 		/// </summary>
-		[AttributeLogicalName("aging60_base")]
+        [AttributeLogicalName("aging60_base")]
         public Money? Aging60Base
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging60_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For system use only.
 		/// </summary>
-		[AttributeLogicalName("aging90")]
+        [AttributeLogicalName("aging90")]
         public Money? Aging90
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging90");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// The base currency equivalent of the aging 90 field.
 		/// </summary>
-		[AttributeLogicalName("aging90_base")]
+        [AttributeLogicalName("aging90_base")]
         public Money? Aging90Base
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("aging90_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the legal designation or other business type of the account for contracts or reporting purposes.
 		/// </summary>
-		[AttributeLogicalName("businesstypecode")]
+        [AttributeLogicalName("businesstypecode")]
         public OptionSetValue? BusinessTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("businesstypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(BusinessTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("businesstypecode", value);
-                OnPropertyChanged(nameof(BusinessTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the external party who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdbyexternalparty")]
+        [AttributeLogicalName("createdbyexternalparty")]
         public EntityReference? CreatedByExternalParty
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdbyexternalparty");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the date and time when the record was created. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows who created the record on behalf of another user.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the credit limit of the account. This is a useful reference when you address invoice and accounting issues with the customer.
 		/// </summary>
-		[AttributeLogicalName("creditlimit")]
+        [AttributeLogicalName("creditlimit")]
         public Money? CreditLimit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("creditlimit");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CreditLimit));
+                OnPropertyChanging();
                 SetAttributeValue("creditlimit", value);
-                OnPropertyChanged(nameof(CreditLimit));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the credit limit converted to the system's default base currency for reporting purposes.
 		/// </summary>
-		[AttributeLogicalName("creditlimit_base")]
+        [AttributeLogicalName("creditlimit_base")]
         public Money? CreditLimitBase
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("creditlimit_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the credit for the account is on hold. This is a useful reference while addressing the invoice and accounting issues with the customer.
 		/// </summary>
-		[AttributeLogicalName("creditonhold")]
+        [AttributeLogicalName("creditonhold")]
         public bool? CreditOnHold
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("creditonhold");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CreditOnHold));
+                OnPropertyChanging();
                 SetAttributeValue("creditonhold", value);
-                OnPropertyChanged(nameof(CreditOnHold));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the size category or range of the account for segmentation and reporting purposes.
 		/// </summary>
-		[AttributeLogicalName("customersizecode")]
+        [AttributeLogicalName("customersizecode")]
         public OptionSetValue? CustomerSizeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("customersizecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CustomerSizeCode));
+                OnPropertyChanging();
                 SetAttributeValue("customersizecode", value);
-                OnPropertyChanged(nameof(CustomerSizeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the category that best describes the relationship between the account and your organization.
 		/// </summary>
-		[AttributeLogicalName("customertypecode")]
+        [AttributeLogicalName("customertypecode")]
         public OptionSetValue? CustomerTypeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("customertypecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CustomerTypeCode));
+                OnPropertyChanging();
                 SetAttributeValue("customertypecode", value);
-                OnPropertyChanged(nameof(CustomerTypeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Choose the default price list associated with the account to make sure the correct product prices for this customer are applied in sales opportunities, quotes, and orders.
-		/// </summary>
-		[AttributeLogicalName("defaultpricelevelid")]
-        public EntityReference? DefaultPriceLevelId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("defaultpricelevelid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(DefaultPriceLevelId));
-                SetAttributeValue("defaultpricelevelid", value);
-                OnPropertyChanged(nameof(DefaultPriceLevelId));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Type additional information to describe the account, such as an excerpt from the company's website.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows bulk email sent through campaigns. If Do Not Allow is selected, the account can be added to marketing lists, but is excluded from email.
 		/// </summary>
-		[AttributeLogicalName("donotbulkemail")]
+        [AttributeLogicalName("donotbulkemail")]
         public bool? DoNotBulkEMail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotbulkemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotBulkEMail));
+                OnPropertyChanging();
                 SetAttributeValue("donotbulkemail", value);
-                OnPropertyChanged(nameof(DoNotBulkEMail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows bulk postal mail sent through marketing campaigns or quick campaigns. If Do Not Allow is selected, the account can be added to marketing lists, but will be excluded from the postal mail.
 		/// </summary>
-		[AttributeLogicalName("donotbulkpostalmail")]
+        [AttributeLogicalName("donotbulkpostalmail")]
         public bool? DoNotBulkPostalMail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotbulkpostalmail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotBulkPostalMail));
+                OnPropertyChanging();
                 SetAttributeValue("donotbulkpostalmail", value);
-                OnPropertyChanged(nameof(DoNotBulkPostalMail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows direct email sent from Microsoft Dynamics 365.
 		/// </summary>
-		[AttributeLogicalName("donotemail")]
+        [AttributeLogicalName("donotemail")]
         public bool? DoNotEMail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotEMail));
+                OnPropertyChanging();
                 SetAttributeValue("donotemail", value);
-                OnPropertyChanged(nameof(DoNotEMail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows faxes. If Do Not Allow is selected, the account will be excluded from fax activities distributed in marketing campaigns.
 		/// </summary>
-		[AttributeLogicalName("donotfax")]
+        [AttributeLogicalName("donotfax")]
         public bool? DoNotFax
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotfax");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotFax));
+                OnPropertyChanging();
                 SetAttributeValue("donotfax", value);
-                OnPropertyChanged(nameof(DoNotFax));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows phone calls. If Do Not Allow is selected, the account will be excluded from phone call activities distributed in marketing campaigns.
 		/// </summary>
-		[AttributeLogicalName("donotphone")]
+        [AttributeLogicalName("donotphone")]
         public bool? DoNotPhone
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotphone");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotPhone));
+                OnPropertyChanging();
                 SetAttributeValue("donotphone", value);
-                OnPropertyChanged(nameof(DoNotPhone));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account allows direct mail. If Do Not Allow is selected, the account will be excluded from letter activities distributed in marketing campaigns.
 		/// </summary>
-		[AttributeLogicalName("donotpostalmail")]
+        [AttributeLogicalName("donotpostalmail")]
         public bool? DoNotPostalMail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotpostalmail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotPostalMail));
+                OnPropertyChanging();
                 SetAttributeValue("donotpostalmail", value);
-                OnPropertyChanged(nameof(DoNotPostalMail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select whether the account accepts marketing materials, such as brochures or catalogs.
 		/// </summary>
-		[AttributeLogicalName("donotsendmm")]
+        [AttributeLogicalName("donotsendmm")]
         public bool? DoNotSendMM
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("donotsendmm");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(DoNotSendMM));
+                OnPropertyChanging();
                 SetAttributeValue("donotsendmm", value);
-                OnPropertyChanged(nameof(DoNotSendMM));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the primary email address for the account.
 		/// </summary>
-		[AttributeLogicalName("emailaddress1")]
+        [AttributeLogicalName("emailaddress1")]
         public string? EMailAddress1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("emailaddress1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EMailAddress1));
+                OnPropertyChanging();
                 SetAttributeValue("emailaddress1", value);
-                OnPropertyChanged(nameof(EMailAddress1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the secondary email address for the account.
 		/// </summary>
-		[AttributeLogicalName("emailaddress2")]
+        [AttributeLogicalName("emailaddress2")]
         public string? EMailAddress2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("emailaddress2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EMailAddress2));
+                OnPropertyChanging();
                 SetAttributeValue("emailaddress2", value);
-                OnPropertyChanged(nameof(EMailAddress2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type an alternate email address for the account.
 		/// </summary>
-		[AttributeLogicalName("emailaddress3")]
+        [AttributeLogicalName("emailaddress3")]
         public string? EMailAddress3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("emailaddress3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EMailAddress3));
+                OnPropertyChanging();
                 SetAttributeValue("emailaddress3", value);
-                OnPropertyChanged(nameof(EMailAddress3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the default image for the record.
 		/// </summary>
-		[AttributeLogicalName("entityimage")]
+        [AttributeLogicalName("entityimage")]
         public byte[]? EntityImage
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<byte[]?>("entityimage");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EntityImage));
+                OnPropertyChanging();
                 SetAttributeValue("entityimage", value);
-                OnPropertyChanged(nameof(EntityImage));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("entityimage_timestamp")]
+        
+        [AttributeLogicalName("entityimage_timestamp")]
         public long? EntityImageTimestamp
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("entityimage_timestamp");
             }
         }
 
-		
-		[AttributeLogicalName("entityimage_url")]
+        
+        [AttributeLogicalName("entityimage_url")]
         public string? EntityImageURL
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("entityimage_url");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("entityimageid")]
+        [AttributeLogicalName("entityimageid")]
         public Guid? EntityImageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("entityimageid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the conversion rate of the record's currency. The exchange rate is used to convert all money fields in the record from the local currency to the system's default currency.
 		/// </summary>
-		[AttributeLogicalName("exchangerate")]
+        [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the fax number for the account.
 		/// </summary>
-		[AttributeLogicalName("fax")]
+        [AttributeLogicalName("fax")]
         public string? Fax
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("fax");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Fax));
+                OnPropertyChanging();
                 SetAttributeValue("fax", value);
-                OnPropertyChanged(nameof(Fax));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Information about whether to allow following email activity like opens, attachment views and link clicks for emails sent to the account.
 		/// </summary>
-		[AttributeLogicalName("followemail")]
+        [AttributeLogicalName("followemail")]
         public bool? FollowEmail
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("followemail");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FollowEmail));
+                OnPropertyChanging();
                 SetAttributeValue("followemail", value);
-                OnPropertyChanged(nameof(FollowEmail));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the URL for the account's FTP site to enable users to access data and share documents.
 		/// </summary>
-		[AttributeLogicalName("ftpsiteurl")]
+        [AttributeLogicalName("ftpsiteurl")]
         public string? FtpSiteURL
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("ftpsiteurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(FtpSiteURL));
+                OnPropertyChanging();
                 SetAttributeValue("ftpsiteurl", value);
-                OnPropertyChanged(nameof(FtpSiteURL));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the data import or data migration that created this record.
 		/// </summary>
-		[AttributeLogicalName("importsequencenumber")]
+        [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ImportSequenceNumber));
+                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged(nameof(ImportSequenceNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the account's primary industry for use in marketing segmentation and demographic analysis.
 		/// </summary>
-		[AttributeLogicalName("industrycode")]
+        [AttributeLogicalName("industrycode")]
         public OptionSetValue? IndustryCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("industrycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IndustryCode));
+                OnPropertyChanging();
                 SetAttributeValue("industrycode", value);
-                OnPropertyChanged(nameof(IndustryCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Contains the date and time stamp of the last on hold time.
 		/// </summary>
-		[AttributeLogicalName("lastonholdtime")]
+        [AttributeLogicalName("lastonholdtime")]
         public DateTime? LastOnHoldTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("lastonholdtime");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LastOnHoldTime));
+                OnPropertyChanging();
                 SetAttributeValue("lastonholdtime", value);
-                OnPropertyChanged(nameof(LastOnHoldTime));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the date when the account was last included in a marketing campaign or quick campaign.
 		/// </summary>
-		[AttributeLogicalName("lastusedincampaign")]
+        [AttributeLogicalName("lastusedincampaign")]
         public DateTime? LastUsedInCampaign
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("lastusedincampaign");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(LastUsedInCampaign));
+                OnPropertyChanging();
                 SetAttributeValue("lastusedincampaign", value);
-                OnPropertyChanged(nameof(LastUsedInCampaign));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the market capitalization of the account to identify the company's equity, used as an indicator in financial performance analysis.
 		/// </summary>
-		[AttributeLogicalName("marketcap")]
+        [AttributeLogicalName("marketcap")]
         public Money? MarketCap
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("marketcap");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MarketCap));
+                OnPropertyChanging();
                 SetAttributeValue("marketcap", value);
-                OnPropertyChanged(nameof(MarketCap));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the market capitalization converted to the system's default base currency.
 		/// </summary>
-		[AttributeLogicalName("marketcap_base")]
+        [AttributeLogicalName("marketcap_base")]
         public Money? MarketCapBase
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("marketcap_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Whether is only for marketing
 		/// </summary>
-		[AttributeLogicalName("marketingonly")]
+        [AttributeLogicalName("marketingonly")]
         public bool? MarketingOnly
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("marketingonly");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MarketingOnly));
+                OnPropertyChanging();
                 SetAttributeValue("marketingonly", value);
-                OnPropertyChanged(nameof(MarketingOnly));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the master account that the account was merged with.
 		/// </summary>
-		[AttributeLogicalName("masterid")]
+        [AttributeLogicalName("masterid")]
         public EntityReference? MasterId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("masterid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows whether the account has been merged with another account.
 		/// </summary>
-		[AttributeLogicalName("merged")]
+        [AttributeLogicalName("merged")]
         public bool? Merged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("merged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows who last updated the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the external party who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedbyexternalparty")]
+        [AttributeLogicalName("modifiedbyexternalparty")]
         public EntityReference? ModifiedByExternalParty
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedbyexternalparty");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the date and time when the record was last updated. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows who created the record on behalf of another user.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		
-		[AttributeLogicalName("msdyn_accountkpiid")]
-        public EntityReference? MsdynAccountkpiid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("msdyn_accountkpiid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(MsdynAccountkpiid));
-                SetAttributeValue("msdyn_accountkpiid", value);
-                OnPropertyChanged(nameof(MsdynAccountkpiid));
-            }
-        }
-
-		/// <summary>
-		/// Describes whether account is opted out or not
+        /// <summary>
+		/// Unique identifier for Account associated with Account.
 		/// </summary>
-		[AttributeLogicalName("msdyn_gdproptout")]
-        public bool? MsdynGdproptout
+        [AttributeLogicalName("msa_managingpartnerid")]
+        public EntityReference? MsaManagingpartnerid
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<bool?>("msdyn_gdproptout");
+                return GetAttributeValue<EntityReference?>("msa_managingpartnerid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(MsdynGdproptout));
-                SetAttributeValue("msdyn_gdproptout", value);
-                OnPropertyChanged(nameof(MsdynGdproptout));
+                OnPropertyChanging();
+                SetAttributeValue("msa_managingpartnerid", value);
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Sales Acceleration Insights ID
-		/// </summary>
-		[AttributeLogicalName("msdyn_salesaccelerationinsightid")]
-        public EntityReference? MsdynSalesaccelerationinsightid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("msdyn_salesaccelerationinsightid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(MsdynSalesaccelerationinsightid));
-                SetAttributeValue("msdyn_salesaccelerationinsightid", value);
-                OnPropertyChanged(nameof(MsdynSalesaccelerationinsightid));
-            }
-        }
-
-		/// <summary>
-		/// Unique identifier for Segment associated with account.
-		/// </summary>
-		[AttributeLogicalName("msdyn_segmentid")]
-        public EntityReference? MsdynSegmentid
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("msdyn_segmentid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(MsdynSegmentid));
-                SetAttributeValue("msdyn_segmentid", value);
-                OnPropertyChanged(nameof(MsdynSegmentid));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Type the company or business name.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the number of employees that work at the account for use in marketing segmentation and demographic analysis.
 		/// </summary>
-		[AttributeLogicalName("numberofemployees")]
+        [AttributeLogicalName("numberofemployees")]
         public int? NumberOfEmployees
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("numberofemployees");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(NumberOfEmployees));
+                OnPropertyChanging();
                 SetAttributeValue("numberofemployees", value);
-                OnPropertyChanged(nameof(NumberOfEmployees));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows how long, in minutes, that the record was on hold.
 		/// </summary>
-		[AttributeLogicalName("onholdtime")]
+        [AttributeLogicalName("onholdtime")]
         public int? OnHoldTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("onholdtime");
             }
         }
 
-		/// <summary>
-		/// Number of open opportunities against an account and its child accounts.
-		/// </summary>
-		[AttributeLogicalName("opendeals")]
-        public int? OpenDeals
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<int?>("opendeals");
-            }
-        }
-
-		/// <summary>
-		/// Last Updated time of rollup field Open Deals.
-		/// </summary>
-		[AttributeLogicalName("opendeals_date")]
-        public DateTime? OpenDealsDate
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<DateTime?>("opendeals_date");
-            }
-        }
-
-		/// <summary>
-		/// State of rollup field Open Deals.
-		/// </summary>
-		[AttributeLogicalName("opendeals_state")]
-        public int? OpenDealsState
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<int?>("opendeals_state");
-            }
-        }
-
-		/// <summary>
-		/// Sum of open revenue against an account and its child accounts.
-		/// </summary>
-		[AttributeLogicalName("openrevenue")]
-        public Money? OpenRevenue
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Money?>("openrevenue");
-            }
-        }
-
-		/// <summary>
-		/// Value of the Open Revenue in base currency.
-		/// </summary>
-		[AttributeLogicalName("openrevenue_base")]
-        public Money? OpenRevenueBase
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<Money?>("openrevenue_base");
-            }
-        }
-
-		/// <summary>
-		/// Last Updated time of rollup field Open Revenue.
-		/// </summary>
-		[AttributeLogicalName("openrevenue_date")]
-        public DateTime? OpenRevenueDate
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<DateTime?>("openrevenue_date");
-            }
-        }
-
-		/// <summary>
-		/// State of rollup field Open Revenue.
-		/// </summary>
-		[AttributeLogicalName("openrevenue_state")]
-        public int? OpenRevenueState
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<int?>("openrevenue_state");
-            }
-        }
-
-		/// <summary>
-		/// Shows the lead that the account was created from if the account was created by converting a lead in Microsoft Dynamics 365. This is used to relate the account to data on the originating lead for use in reporting and analytics.
-		/// </summary>
-		[AttributeLogicalName("originatingleadid")]
-        public EntityReference? OriginatingLeadId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("originatingleadid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OriginatingLeadId));
-                SetAttributeValue("originatingleadid", value);
-                OnPropertyChanged(nameof(OriginatingLeadId));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Date and time that the record was migrated.
 		/// </summary>
-		[AttributeLogicalName("overriddencreatedon")]
+        [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OverriddenCreatedOn));
+                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged(nameof(OverriddenCreatedOn));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Enter the user or team who is assigned to manage the record. This field is updated every time the record is assigned to a different user.
 		/// </summary>
-		[AttributeLogicalName("ownerid")]
+        [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwnerId));
+                OnPropertyChanging();
                 SetAttributeValue("ownerid", value);
-                OnPropertyChanged(nameof(OwnerId));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Select the account's ownership structure, such as public or private.
 		/// </summary>
-		[AttributeLogicalName("ownershipcode")]
+        [AttributeLogicalName("ownershipcode")]
         public OptionSetValue? OwnershipCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("ownershipcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwnershipCode));
+                OnPropertyChanging();
                 SetAttributeValue("ownershipcode", value);
-                OnPropertyChanged(nameof(OwnershipCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the business unit that the record owner belongs to.
 		/// </summary>
-		[AttributeLogicalName("owningbusinessunit")]
+        [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the team who owns the account.
 		/// </summary>
-		[AttributeLogicalName("owningteam")]
+        [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who owns the account.
 		/// </summary>
-		[AttributeLogicalName("owninguser")]
+        [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Choose the parent account associated with this account to show parent and child businesses in reporting and analytics.
 		/// </summary>
-		[AttributeLogicalName("parentaccountid")]
+        [AttributeLogicalName("parentaccountid")]
         public EntityReference? ParentAccountId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("parentaccountid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ParentAccountId));
+                OnPropertyChanging();
                 SetAttributeValue("parentaccountid", value);
-                OnPropertyChanged(nameof(ParentAccountId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For system use only. Legacy Microsoft Dynamics CRM 3.0 workflow data.
 		/// </summary>
-		[AttributeLogicalName("participatesinworkflow")]
+        [AttributeLogicalName("participatesinworkflow")]
         public bool? ParticipatesInWorkflow
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("participatesinworkflow");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ParticipatesInWorkflow));
+                OnPropertyChanging();
                 SetAttributeValue("participatesinworkflow", value);
-                OnPropertyChanged(nameof(ParticipatesInWorkflow));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the payment terms to indicate when the customer needs to pay the total amount.
 		/// </summary>
-		[AttributeLogicalName("paymenttermscode")]
+        [AttributeLogicalName("paymenttermscode")]
         public OptionSetValue? PaymentTermsCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("paymenttermscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PaymentTermsCode));
+                OnPropertyChanging();
                 SetAttributeValue("paymenttermscode", value);
-                OnPropertyChanged(nameof(PaymentTermsCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the preferred day of the week for service appointments.
 		/// </summary>
-		[AttributeLogicalName("preferredappointmentdaycode")]
+        [AttributeLogicalName("preferredappointmentdaycode")]
         public OptionSetValue? PreferredAppointmentDayCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredappointmentdaycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PreferredAppointmentDayCode));
+                OnPropertyChanging();
                 SetAttributeValue("preferredappointmentdaycode", value);
-                OnPropertyChanged(nameof(PreferredAppointmentDayCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the preferred time of day for service appointments.
 		/// </summary>
-		[AttributeLogicalName("preferredappointmenttimecode")]
+        [AttributeLogicalName("preferredappointmenttimecode")]
         public OptionSetValue? PreferredAppointmentTimeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredappointmenttimecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PreferredAppointmentTimeCode));
+                OnPropertyChanging();
                 SetAttributeValue("preferredappointmenttimecode", value);
-                OnPropertyChanged(nameof(PreferredAppointmentTimeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the preferred method of contact.
 		/// </summary>
-		[AttributeLogicalName("preferredcontactmethodcode")]
+        [AttributeLogicalName("preferredcontactmethodcode")]
         public OptionSetValue? PreferredContactMethodCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredcontactmethodcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PreferredContactMethodCode));
+                OnPropertyChanging();
                 SetAttributeValue("preferredcontactmethodcode", value);
-                OnPropertyChanged(nameof(PreferredContactMethodCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Choose the account's preferred service facility or equipment to make sure services are scheduled correctly for the customer.
-		/// </summary>
-		[AttributeLogicalName("preferredequipmentid")]
-        public EntityReference? PreferredEquipmentId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("preferredequipmentid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(PreferredEquipmentId));
-                SetAttributeValue("preferredequipmentid", value);
-                OnPropertyChanged(nameof(PreferredEquipmentId));
-            }
-        }
-
-		/// <summary>
-		/// Choose the account's preferred service for reference when you schedule service activities.
-		/// </summary>
-		[AttributeLogicalName("preferredserviceid")]
-        public EntityReference? PreferredServiceId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("preferredserviceid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(PreferredServiceId));
-                SetAttributeValue("preferredserviceid", value);
-                OnPropertyChanged(nameof(PreferredServiceId));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Choose the preferred service representative for reference when you schedule service activities for the account.
 		/// </summary>
-		[AttributeLogicalName("preferredsystemuserid")]
+        [AttributeLogicalName("preferredsystemuserid")]
         public EntityReference? PreferredSystemUserId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("preferredsystemuserid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PreferredSystemUserId));
+                OnPropertyChanging();
                 SetAttributeValue("preferredsystemuserid", value);
-                OnPropertyChanged(nameof(PreferredSystemUserId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Choose the primary contact for the account to provide quick access to contact details.
 		/// </summary>
-		[AttributeLogicalName("primarycontactid")]
+        [AttributeLogicalName("primarycontactid")]
         public EntityReference? PrimaryContactId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("primarycontactid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrimaryContactId));
+                OnPropertyChanging();
                 SetAttributeValue("primarycontactid", value);
-                OnPropertyChanged(nameof(PrimaryContactId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Primary Satori ID for Account
 		/// </summary>
-		[AttributeLogicalName("primarysatoriid")]
+        [AttributeLogicalName("primarysatoriid")]
         public string? PrimarySatoriId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("primarysatoriid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrimarySatoriId));
+                OnPropertyChanging();
                 SetAttributeValue("primarysatoriid", value);
-                OnPropertyChanged(nameof(PrimarySatoriId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Primary Twitter ID for Account
 		/// </summary>
-		[AttributeLogicalName("primarytwitterid")]
+        [AttributeLogicalName("primarytwitterid")]
         public string? PrimaryTwitterId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("primarytwitterid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(PrimaryTwitterId));
+                OnPropertyChanging();
                 SetAttributeValue("primarytwitterid", value);
-                OnPropertyChanged(nameof(PrimaryTwitterId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the ID of the process.
 		/// </summary>
-		[AttributeLogicalName("processid")]
+        [AttributeLogicalName("processid")]
         public Guid? ProcessId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("processid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ProcessId));
+                OnPropertyChanging();
                 SetAttributeValue("processid", value);
-                OnPropertyChanged(nameof(ProcessId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the annual revenue for the account, used as an indicator in financial performance analysis.
 		/// </summary>
-		[AttributeLogicalName("revenue")]
+        [AttributeLogicalName("revenue")]
         public Money? Revenue
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("revenue");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Revenue));
+                OnPropertyChanging();
                 SetAttributeValue("revenue", value);
-                OnPropertyChanged(nameof(Revenue));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the annual revenue converted to the system's default base currency. The calculations use the exchange rate specified in the Currencies area.
 		/// </summary>
-		[AttributeLogicalName("revenue_base")]
+        [AttributeLogicalName("revenue_base")]
         public Money? RevenueBase
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Money?>("revenue_base");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the number of shares available to the public for the account. This number is used as an indicator in financial performance analysis.
 		/// </summary>
-		[AttributeLogicalName("sharesoutstanding")]
+        [AttributeLogicalName("sharesoutstanding")]
         public int? SharesOutstanding
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("sharesoutstanding");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SharesOutstanding));
+                OnPropertyChanging();
                 SetAttributeValue("sharesoutstanding", value);
-                OnPropertyChanged(nameof(SharesOutstanding));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a shipping method for deliveries sent to the account's address to designate the preferred carrier or other delivery option.
 		/// </summary>
-		[AttributeLogicalName("shippingmethodcode")]
+        [AttributeLogicalName("shippingmethodcode")]
         public OptionSetValue? ShippingMethodCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("shippingmethodcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ShippingMethodCode));
+                OnPropertyChanging();
                 SetAttributeValue("shippingmethodcode", value);
-                OnPropertyChanged(nameof(ShippingMethodCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the Standard Industrial Classification (SIC) code that indicates the account's primary industry of business, for use in marketing segmentation and demographic analysis.
 		/// </summary>
-		[AttributeLogicalName("sic")]
+        [AttributeLogicalName("sic")]
         public string? SIC
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("sic");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SIC));
+                OnPropertyChanging();
                 SetAttributeValue("sic", value);
-                OnPropertyChanged(nameof(SIC));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Choose the service level agreement (SLA) that you want to apply to the Account record.
 		/// </summary>
-		[AttributeLogicalName("slaid")]
+        [AttributeLogicalName("slaid")]
         public EntityReference? SLAId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("slaid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SLAId));
+                OnPropertyChanging();
                 SetAttributeValue("slaid", value);
-                OnPropertyChanged(nameof(SLAId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Last SLA that was applied to this case. This field is for internal use only.
 		/// </summary>
-		[AttributeLogicalName("slainvokedid")]
+        [AttributeLogicalName("slainvokedid")]
         public EntityReference? SLAInvokedId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("slainvokedid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows the ID of the stage.
 		/// </summary>
-		[AttributeLogicalName("stageid")]
+        [AttributeLogicalName("stageid")]
         public Guid? StageId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("stageid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StageId));
+                OnPropertyChanging();
                 SetAttributeValue("stageid", value);
-                OnPropertyChanged(nameof(StageId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Shows whether the account is active or inactive. Inactive accounts are read-only and can't be edited unless they are reactivated.
 		/// </summary>
-		[AttributeLogicalName("statecode")]
+        [AttributeLogicalName("statecode")]
         public OptionSetValue? StateCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StateCode));
+                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged(nameof(StateCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select the account's status.
 		/// </summary>
-		[AttributeLogicalName("statuscode")]
+        [AttributeLogicalName("statuscode")]
         public OptionSetValue? StatusCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StatusCode));
+                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged(nameof(StatusCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the stock exchange at which the account is listed to track their stock and financial performance of the company.
 		/// </summary>
-		[AttributeLogicalName("stockexchange")]
+        [AttributeLogicalName("stockexchange")]
         public string? StockExchange
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("stockexchange");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StockExchange));
+                OnPropertyChanging();
                 SetAttributeValue("stockexchange", value);
-                OnPropertyChanged(nameof(StockExchange));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Number of users or conversations followed the record
-		/// </summary>
-		[AttributeLogicalName("teamsfollowed")]
-        public int? TeamsFollowed
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<int?>("teamsfollowed");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(TeamsFollowed));
-                SetAttributeValue("teamsfollowed", value);
-                OnPropertyChanged(nameof(TeamsFollowed));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Type the main phone number for this account.
 		/// </summary>
-		[AttributeLogicalName("telephone1")]
+        [AttributeLogicalName("telephone1")]
         public string? Telephone1
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("telephone1");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Telephone1));
+                OnPropertyChanging();
                 SetAttributeValue("telephone1", value);
-                OnPropertyChanged(nameof(Telephone1));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a second phone number for this account.
 		/// </summary>
-		[AttributeLogicalName("telephone2")]
+        [AttributeLogicalName("telephone2")]
         public string? Telephone2
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("telephone2");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Telephone2));
+                OnPropertyChanging();
                 SetAttributeValue("telephone2", value);
-                OnPropertyChanged(nameof(Telephone2));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type a third phone number for this account.
 		/// </summary>
-		[AttributeLogicalName("telephone3")]
+        [AttributeLogicalName("telephone3")]
         public string? Telephone3
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("telephone3");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Telephone3));
+                OnPropertyChanging();
                 SetAttributeValue("telephone3", value);
-                OnPropertyChanged(nameof(Telephone3));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Select a region or territory for the account for use in segmentation and analysis.
 		/// </summary>
-		[AttributeLogicalName("territorycode")]
+        [AttributeLogicalName("territorycode")]
         public OptionSetValue? TerritoryCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("territorycode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TerritoryCode));
+                OnPropertyChanging();
                 SetAttributeValue("territorycode", value);
-                OnPropertyChanged(nameof(TerritoryCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Choose the sales region or territory for the account to make sure the account is assigned to the correct representative and for use in segmentation and analysis.
-		/// </summary>
-		[AttributeLogicalName("territoryid")]
-        public EntityReference? TerritoryId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("territoryid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(TerritoryId));
-                SetAttributeValue("territoryid", value);
-                OnPropertyChanged(nameof(TerritoryId));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Type the stock exchange symbol for the account to track financial performance of the company. You can click the code entered in this field to access the latest trading information from MSN Money.
 		/// </summary>
-		[AttributeLogicalName("tickersymbol")]
+        [AttributeLogicalName("tickersymbol")]
         public string? TickerSymbol
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("tickersymbol");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TickerSymbol));
+                OnPropertyChanging();
                 SetAttributeValue("tickersymbol", value);
-                OnPropertyChanged(nameof(TickerSymbol));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Total time spent for emails (read and write) and meetings by me in relation to account record.
 		/// </summary>
-		[AttributeLogicalName("timespentbymeonemailandmeetings")]
+        [AttributeLogicalName("timespentbymeonemailandmeetings")]
         public string? TimeSpentByMeOnEmailAndMeetings
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("timespentbymeonemailandmeetings");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("timezoneruleversionnumber")]
+        [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Choose the local currency for the record to make sure budgets are reported in the correct currency.
 		/// </summary>
-		[AttributeLogicalName("transactioncurrencyid")]
+        [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TransactionCurrencyId));
+                OnPropertyChanging();
                 SetAttributeValue("transactioncurrencyid", value);
-                OnPropertyChanged(nameof(TransactionCurrencyId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("traversedpath")]
+        [AttributeLogicalName("traversedpath")]
         public string? TraversedPath
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("traversedpath");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TraversedPath));
+                OnPropertyChanging();
                 SetAttributeValue("traversedpath", value);
-                OnPropertyChanged(nameof(TraversedPath));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
-		[AttributeLogicalName("utcconversiontimezonecode")]
+        [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version number of the account.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the account's website URL to get quick details about the company profile.
 		/// </summary>
-		[AttributeLogicalName("websiteurl")]
+        [AttributeLogicalName("websiteurl")]
         public string? WebSiteURL
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("websiteurl");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WebSiteURL));
+                OnPropertyChanging();
                 SetAttributeValue("websiteurl", value);
-                OnPropertyChanged(nameof(WebSiteURL));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type the phonetic spelling of the company name, if specified in Japanese, to make sure the name is pronounced correctly in phone calls and other communications.
 		/// </summary>
-		[AttributeLogicalName("yominame")]
+        [AttributeLogicalName("yominame")]
         public string? YomiName
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("yominame");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(YomiName));
+                OnPropertyChanging();
                 SetAttributeValue("yominame", value);
-                OnPropertyChanged(nameof(YomiName));
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region NavigationProperties
+
+        /// <summary>
+        /// 1:N Account_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("Account_AsyncOperations")]
+        public IEnumerable<AsyncOperation> AccountAsyncOperations
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<AsyncOperation>("Account_AsyncOperations", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("Account_AsyncOperations", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N account_master_account
+        /// </summary>
+        [RelationshipSchemaName("account_master_account")]
+        public IEnumerable<Account> AccountMasterAccount
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Account>("account_master_account", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("account_master_account", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// 1:N account_parent_account
+        /// </summary>
+        [RelationshipSchemaName("account_parent_account")]
+        public IEnumerable<Account> AccountParentAccount
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Account>("account_parent_account", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("account_parent_account", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N Account_AsyncOperations
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Account_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> AccountAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("Account_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("AccountAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("Account_AsyncOperations", null, value);
-				this.OnPropertyChanged("AccountAsyncOperations");
-			}
-		}
+        /// <summary>
+        /// 1:N contact_customer_accounts
+        /// </summary>
+        [RelationshipSchemaName("contact_customer_accounts")]
+        public IEnumerable<Contact> ContactCustomerAccounts
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Contact>("contact_customer_accounts", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("contact_customer_accounts", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N account_master_account
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("account_master_account")]
-		public System.Collections.Generic.IEnumerable<Account> AccountMasterAccount
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Account>("account_master_account", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("AccountMasterAccount");
-				this.SetRelatedEntities<Account>("account_master_account", null, value);
-				this.OnPropertyChanged("AccountMasterAccount");
-			}
-		}
+        /// <summary>
+        /// 1:N msa_account_managingpartner
+        /// </summary>
+        [RelationshipSchemaName("msa_account_managingpartner")]
+        public IEnumerable<Account> MsaAccountManagingpartner
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Account>("msa_account_managingpartner", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("msa_account_managingpartner", null, value);
+                OnPropertyChanged();
+            }
+        }
 
-		/// <summary>
-		/// 1:N account_parent_account
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("account_parent_account")]
-		public System.Collections.Generic.IEnumerable<Account> AccountParentAccount
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Account>("account_parent_account", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("AccountParentAccount");
-				this.SetRelatedEntities<Account>("account_parent_account", null, value);
-				this.OnPropertyChanged("AccountParentAccount");
-			}
-		}
+        /// <summary>
+        /// 1:N msa_contact_managingpartner
+        /// </summary>
+        [RelationshipSchemaName("msa_contact_managingpartner")]
+        public IEnumerable<Contact> MsaContactManagingpartner
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<Contact>("msa_contact_managingpartner", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("msa_contact_managingpartner", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N contact_customer_accounts
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("contact_customer_accounts")]
-		public System.Collections.Generic.IEnumerable<Contact> ContactCustomerAccounts
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Contact>("contact_customer_accounts", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("ContactCustomerAccounts");
-				this.SetRelatedEntities<Contact>("contact_customer_accounts", null, value);
-				this.OnPropertyChanged("ContactCustomerAccounts");
-			}
-		}
+        #region Options
+        public static partial class Options
+        {
+            public struct AccountCategoryCode
+            {
+                public const int PreferredCustomer = 1;
+                public const int Standard = 2;
+            }
+            public struct AccountClassificationCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct AccountRatingCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct Address1AddressTypeCode
+            {
+                public const int BillTo = 1;
+                public const int ShipTo = 2;
+                public const int Primary = 3;
+                public const int Other = 4;
+            }
+            public struct Address1FreightTermsCode
+            {
+                public const int FOB = 1;
+                public const int NoCharge = 2;
+            }
+            public struct Address1ShippingMethodCode
+            {
+                public const int Airborne = 1;
+                public const int DHL = 2;
+                public const int FedEx = 3;
+                public const int UPS = 4;
+                public const int PostalMail = 5;
+                public const int FullLoad = 6;
+                public const int WillCall = 7;
+            }
+            public struct Address2AddressTypeCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct Address2FreightTermsCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct Address2ShippingMethodCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct BusinessTypeCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct CreditOnHold
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct CustomerSizeCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct CustomerTypeCode
+            {
+                public const int Competitor = 1;
+                public const int Consultant = 2;
+                public const int Customer = 3;
+                public const int Investor = 4;
+                public const int Partner = 5;
+                public const int Influencer = 6;
+                public const int Press = 7;
+                public const int Prospect = 8;
+                public const int Reseller = 9;
+                public const int Supplier = 10;
+                public const int Vendor = 11;
+                public const int Other = 12;
+            }
+            public struct DoNotBulkEMail
+            {
+                public const bool Allow = false;
+                public const bool DoNotAllow = true;
+            }
+            public struct DoNotBulkPostalMail
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct DoNotEMail
+            {
+                public const bool Allow = false;
+                public const bool DoNotAllow = true;
+            }
+            public struct DoNotFax
+            {
+                public const bool Allow = false;
+                public const bool DoNotAllow = true;
+            }
+            public struct DoNotPhone
+            {
+                public const bool Allow = false;
+                public const bool DoNotAllow = true;
+            }
+            public struct DoNotPostalMail
+            {
+                public const bool Allow = false;
+                public const bool DoNotAllow = true;
+            }
+            public struct DoNotSendMM
+            {
+                public const bool Send = false;
+                public const bool DoNotSend = true;
+            }
+            public struct FollowEmail
+            {
+                public const bool DoNotAllow = false;
+                public const bool Allow = true;
+            }
+            public struct IndustryCode
+            {
+                public const int Accounting = 1;
+                public const int AgricultureAndNonPetrolNaturalResourceExtraction = 2;
+                public const int BroadcastingPrintingAndPublishing = 3;
+                public const int Brokers = 4;
+                public const int BuildingSupplyRetail = 5;
+                public const int BusinessServices = 6;
+                public const int Consulting = 7;
+                public const int ConsumerServices = 8;
+                public const int DesignDirectionAndCreativeManagement = 9;
+                public const int DistributorsDispatchersAndProcessors = 10;
+                public const int DoctorSOfficesAndClinics = 11;
+                public const int DurableManufacturing = 12;
+                public const int EatingAndDrinkingPlaces = 13;
+                public const int EntertainmentRetail = 14;
+                public const int EquipmentRentalAndLeasing = 15;
+                public const int Financial = 16;
+                public const int FoodAndTobaccoProcessing = 17;
+                public const int InboundCapitalIntensiveProcessing = 18;
+                public const int InboundRepairAndServices = 19;
+                public const int Insurance = 20;
+                public const int LegalServices = 21;
+                public const int NonDurableMerchandiseRetail = 22;
+                public const int OutboundConsumerService = 23;
+                public const int PetrochemicalExtractionAndDistribution = 24;
+                public const int ServiceRetail = 25;
+                public const int SIGAffiliations = 26;
+                public const int SocialServices = 27;
+                public const int SpecialOutboundTradeContractors = 28;
+                public const int SpecialtyRealty = 29;
+                public const int Transportation = 30;
+                public const int UtilityCreationAndDistribution = 31;
+                public const int VehicleRetail = 32;
+                public const int Wholesale = 33;
+            }
+            public struct MarketingOnly
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct Merged
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct OwnershipCode
+            {
+                public const int Public = 1;
+                public const int Private = 2;
+                public const int Subsidiary = 3;
+                public const int Other = 4;
+            }
+            public struct ParticipatesInWorkflow
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct PaymentTermsCode
+            {
+                public const int Net30 = 1;
+                public const int _2Percent10Net30 = 2;
+                public const int Net45 = 3;
+                public const int Net60 = 4;
+            }
+            public struct PreferredAppointmentDayCode
+            {
+                public const int Sunday = 0;
+                public const int Monday = 1;
+                public const int Tuesday = 2;
+                public const int Wednesday = 3;
+                public const int Thursday = 4;
+                public const int Friday = 5;
+                public const int Saturday = 6;
+            }
+            public struct PreferredAppointmentTimeCode
+            {
+                public const int Morning = 1;
+                public const int Afternoon = 2;
+                public const int Evening = 3;
+            }
+            public struct PreferredContactMethodCode
+            {
+                public const int Any = 1;
+                public const int Email = 2;
+                public const int Phone = 3;
+                public const int Fax = 4;
+                public const int Mail = 5;
+            }
+            public struct ShippingMethodCode
+            {
+                public const int DefaultValue = 1;
+            }
+            public struct StateCode
+            {
+                public const int Active = 0;
+                public const int Inactive = 1;
+            }
+            public struct StatusCode
+            {
+                public const int Active = 1;
+                public const int Inactive = 2;
+            }
+            public struct TerritoryCode
+            {
+                public const int DefaultValue = 1;
+            }
+        }
+        #endregion
 
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string AccountId = "accountid";
+            public const string Address1AddressId = "address1_addressid";
+            public const string Address2AddressId = "address2_addressid";
+            public const string AccountCategoryCode = "accountcategorycode";
+            public const string AccountClassificationCode = "accountclassificationcode";
+            public const string AccountNumber = "accountnumber";
+            public const string AccountRatingCode = "accountratingcode";
+            public const string Address1AddressTypeCode = "address1_addresstypecode";
+            public const string Address1City = "address1_city";
+            public const string Address1Composite = "address1_composite";
+            public const string Address1Country = "address1_country";
+            public const string Address1County = "address1_county";
+            public const string Address1Fax = "address1_fax";
+            public const string Address1FreightTermsCode = "address1_freighttermscode";
+            public const string Address1Latitude = "address1_latitude";
+            public const string Address1Line1 = "address1_line1";
+            public const string Address1Line2 = "address1_line2";
+            public const string Address1Line3 = "address1_line3";
+            public const string Address1Longitude = "address1_longitude";
+            public const string Address1Name = "address1_name";
+            public const string Address1PostalCode = "address1_postalcode";
+            public const string Address1PostOfficeBox = "address1_postofficebox";
+            public const string Address1PrimaryContactName = "address1_primarycontactname";
+            public const string Address1ShippingMethodCode = "address1_shippingmethodcode";
+            public const string Address1StateOrProvince = "address1_stateorprovince";
+            public const string Address1Telephone1 = "address1_telephone1";
+            public const string Address1Telephone2 = "address1_telephone2";
+            public const string Address1Telephone3 = "address1_telephone3";
+            public const string Address1UPSZone = "address1_upszone";
+            public const string Address1UTCOffset = "address1_utcoffset";
+            public const string Address2AddressTypeCode = "address2_addresstypecode";
+            public const string Address2City = "address2_city";
+            public const string Address2Composite = "address2_composite";
+            public const string Address2Country = "address2_country";
+            public const string Address2County = "address2_county";
+            public const string Address2Fax = "address2_fax";
+            public const string Address2FreightTermsCode = "address2_freighttermscode";
+            public const string Address2Latitude = "address2_latitude";
+            public const string Address2Line1 = "address2_line1";
+            public const string Address2Line2 = "address2_line2";
+            public const string Address2Line3 = "address2_line3";
+            public const string Address2Longitude = "address2_longitude";
+            public const string Address2Name = "address2_name";
+            public const string Address2PostalCode = "address2_postalcode";
+            public const string Address2PostOfficeBox = "address2_postofficebox";
+            public const string Address2PrimaryContactName = "address2_primarycontactname";
+            public const string Address2ShippingMethodCode = "address2_shippingmethodcode";
+            public const string Address2StateOrProvince = "address2_stateorprovince";
+            public const string Address2Telephone1 = "address2_telephone1";
+            public const string Address2Telephone2 = "address2_telephone2";
+            public const string Address2Telephone3 = "address2_telephone3";
+            public const string Address2UPSZone = "address2_upszone";
+            public const string Address2UTCOffset = "address2_utcoffset";
+            public const string AdxCreatedByIPAddress = "adx_createdbyipaddress";
+            public const string AdxCreatedByUsername = "adx_createdbyusername";
+            public const string AdxModifiedByIPAddress = "adx_modifiedbyipaddress";
+            public const string AdxModifiedByUsername = "adx_modifiedbyusername";
+            public const string Aging30 = "aging30";
+            public const string Aging30Base = "aging30_base";
+            public const string Aging60 = "aging60";
+            public const string Aging60Base = "aging60_base";
+            public const string Aging90 = "aging90";
+            public const string Aging90Base = "aging90_base";
+            public const string BusinessTypeCode = "businesstypecode";
+            public const string CreatedBy = "createdby";
+            public const string CreatedByExternalParty = "createdbyexternalparty";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string CreditLimit = "creditlimit";
+            public const string CreditLimitBase = "creditlimit_base";
+            public const string CreditOnHold = "creditonhold";
+            public const string CustomerSizeCode = "customersizecode";
+            public const string CustomerTypeCode = "customertypecode";
+            public const string Description = "description";
+            public const string DoNotBulkEMail = "donotbulkemail";
+            public const string DoNotBulkPostalMail = "donotbulkpostalmail";
+            public const string DoNotEMail = "donotemail";
+            public const string DoNotFax = "donotfax";
+            public const string DoNotPhone = "donotphone";
+            public const string DoNotPostalMail = "donotpostalmail";
+            public const string DoNotSendMM = "donotsendmm";
+            public const string EMailAddress1 = "emailaddress1";
+            public const string EMailAddress2 = "emailaddress2";
+            public const string EMailAddress3 = "emailaddress3";
+            public const string EntityImage = "entityimage";
+            public const string EntityImageTimestamp = "entityimage_timestamp";
+            public const string EntityImageURL = "entityimage_url";
+            public const string EntityImageId = "entityimageid";
+            public const string ExchangeRate = "exchangerate";
+            public const string Fax = "fax";
+            public const string FollowEmail = "followemail";
+            public const string FtpSiteURL = "ftpsiteurl";
+            public const string ImportSequenceNumber = "importsequencenumber";
+            public const string IndustryCode = "industrycode";
+            public const string LastOnHoldTime = "lastonholdtime";
+            public const string LastUsedInCampaign = "lastusedincampaign";
+            public const string MarketCap = "marketcap";
+            public const string MarketCapBase = "marketcap_base";
+            public const string MarketingOnly = "marketingonly";
+            public const string MasterId = "masterid";
+            public const string Merged = "merged";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedByExternalParty = "modifiedbyexternalparty";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string MsaManagingpartnerid = "msa_managingpartnerid";
+            public const string Name = "name";
+            public const string NumberOfEmployees = "numberofemployees";
+            public const string OnHoldTime = "onholdtime";
+            public const string OverriddenCreatedOn = "overriddencreatedon";
+            public const string OwnerId = "ownerid";
+            public const string OwnershipCode = "ownershipcode";
+            public const string OwningBusinessUnit = "owningbusinessunit";
+            public const string OwningTeam = "owningteam";
+            public const string OwningUser = "owninguser";
+            public const string ParentAccountId = "parentaccountid";
+            public const string ParticipatesInWorkflow = "participatesinworkflow";
+            public const string PaymentTermsCode = "paymenttermscode";
+            public const string PreferredAppointmentDayCode = "preferredappointmentdaycode";
+            public const string PreferredAppointmentTimeCode = "preferredappointmenttimecode";
+            public const string PreferredContactMethodCode = "preferredcontactmethodcode";
+            public const string PreferredSystemUserId = "preferredsystemuserid";
+            public const string PrimaryContactId = "primarycontactid";
+            public const string PrimarySatoriId = "primarysatoriid";
+            public const string PrimaryTwitterId = "primarytwitterid";
+            public const string ProcessId = "processid";
+            public const string Revenue = "revenue";
+            public const string RevenueBase = "revenue_base";
+            public const string SharesOutstanding = "sharesoutstanding";
+            public const string ShippingMethodCode = "shippingmethodcode";
+            public const string SIC = "sic";
+            public const string SLAId = "slaid";
+            public const string SLAInvokedId = "slainvokedid";
+            public const string StageId = "stageid";
+            public const string StateCode = "statecode";
+            public const string StatusCode = "statuscode";
+            public const string StockExchange = "stockexchange";
+            public const string Telephone1 = "telephone1";
+            public const string Telephone2 = "telephone2";
+            public const string Telephone3 = "telephone3";
+            public const string TerritoryCode = "territorycode";
+            public const string TickerSymbol = "tickersymbol";
+            public const string TimeSpentByMeOnEmailAndMeetings = "timespentbymeonemailandmeetings";
+            public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
+            public const string TransactionCurrencyId = "transactioncurrencyid";
+            public const string TraversedPath = "traversedpath";
+            public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string VersionNumber = "versionnumber";
+            public const string WebSiteURL = "websiteurl";
+            public const string YomiName = "yominame";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-			    public struct AccountCategoryCode
-                {
-					public const int PreferredCustomer = 1;
-					public const int Standard = 2;
-                }
-			    public struct AccountClassificationCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct AccountRatingCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct Address1AddressTypeCode
-                {
-					public const int BillTo = 1;
-					public const int ShipTo = 2;
-					public const int Primary = 3;
-					public const int Other = 4;
-                }
-			    public struct Address1FreightTermsCode
-                {
-					public const int FOB = 1;
-					public const int NoCharge = 2;
-                }
-			    public struct Address1ShippingMethodCode
-                {
-					public const int Airborne = 1;
-					public const int DHL = 2;
-					public const int FedEx = 3;
-					public const int UPS = 4;
-					public const int PostalMail = 5;
-					public const int FullLoad = 6;
-					public const int WillCall = 7;
-                }
-			    public struct Address2AddressTypeCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct Address2FreightTermsCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct Address2ShippingMethodCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct BusinessTypeCode
-                {
-					public const int DefaultValue = 1;
-                }
-                public struct CreditOnHold
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct CustomerSizeCode
-                {
-					public const int DefaultValue = 1;
-                }
-			    public struct CustomerTypeCode
-                {
-					public const int Competitor = 1;
-					public const int Consultant = 2;
-					public const int Customer = 3;
-					public const int Investor = 4;
-					public const int Partner = 5;
-					public const int Influencer = 6;
-					public const int Press = 7;
-					public const int Prospect = 8;
-					public const int Reseller = 9;
-					public const int Supplier = 10;
-					public const int Vendor = 11;
-					public const int Other = 12;
-                }
-                public struct DoNotBulkEMail
-                {
-                    public const bool Allow = false;
-                    public const bool DoNotAllow = true;
-                }
-                public struct DoNotBulkPostalMail
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct DoNotEMail
-                {
-                    public const bool Allow = false;
-                    public const bool DoNotAllow = true;
-                }
-                public struct DoNotFax
-                {
-                    public const bool Allow = false;
-                    public const bool DoNotAllow = true;
-                }
-                public struct DoNotPhone
-                {
-                    public const bool Allow = false;
-                    public const bool DoNotAllow = true;
-                }
-                public struct DoNotPostalMail
-                {
-                    public const bool Allow = false;
-                    public const bool DoNotAllow = true;
-                }
-                public struct DoNotSendMM
-                {
-                    public const bool Send = false;
-                    public const bool DoNotSend = true;
-                }
-                public struct FollowEmail
-                {
-                    public const bool DoNotAllow = false;
-                    public const bool Allow = true;
-                }
-			    public struct IndustryCode
-                {
-					public const int Accounting = 1;
-					public const int AgricultureAndNonPetrolNaturalResourceExtraction = 2;
-					public const int BroadcastingPrintingAndPublishing = 3;
-					public const int Brokers = 4;
-					public const int BuildingSupplyRetail = 5;
-					public const int BusinessServices = 6;
-					public const int Consulting = 7;
-					public const int ConsumerServices = 8;
-					public const int Design_DirectionAndCreativeManagement = 9;
-					public const int Distributors_DispatchersAndProcessors = 10;
-					public const int Doctor_sOfficesAndClinics = 11;
-					public const int DurableManufacturing = 12;
-					public const int EatingAndDrinkingPlaces = 13;
-					public const int EntertainmentRetail = 14;
-					public const int EquipmentRentalAndLeasing = 15;
-					public const int Financial = 16;
-					public const int FoodAndTobaccoProcessing = 17;
-					public const int InboundCapitalIntensiveProcessing = 18;
-					public const int InboundRepairAndServices = 19;
-					public const int Insurance = 20;
-					public const int LegalServices = 21;
-					public const int NonDurableMerchandiseRetail = 22;
-					public const int OutboundConsumerService = 23;
-					public const int PetrochemicalExtractionAndDistribution = 24;
-					public const int ServiceRetail = 25;
-					public const int SIGAffiliations = 26;
-					public const int SocialServices = 27;
-					public const int SpecialOutboundTradeContractors = 28;
-					public const int SpecialtyRealty = 29;
-					public const int Transportation = 30;
-					public const int UtilityCreationAndDistribution = 31;
-					public const int VehicleRetail = 32;
-					public const int Wholesale = 33;
-                }
-                public struct MarketingOnly
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct Merged
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct MsdynGdproptout
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct OwnershipCode
-                {
-					public const int Public = 1;
-					public const int Private = 2;
-					public const int Subsidiary = 3;
-					public const int Other = 4;
-                }
-                public struct ParticipatesInWorkflow
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-			    public struct PaymentTermsCode
-                {
-					public const int Net30 = 1;
-					public const int _2_percent_10_Net30 = 2;
-					public const int Net45 = 3;
-					public const int Net60 = 4;
-                }
-			    public struct PreferredAppointmentDayCode
-                {
-					public const int Sunday = 0;
-					public const int Monday = 1;
-					public const int Tuesday = 2;
-					public const int Wednesday = 3;
-					public const int Thursday = 4;
-					public const int Friday = 5;
-					public const int Saturday = 6;
-                }
-			    public struct PreferredAppointmentTimeCode
-                {
-					public const int Morning = 1;
-					public const int Afternoon = 2;
-					public const int Evening = 3;
-                }
-			    public struct PreferredContactMethodCode
-                {
-					public const int Any = 1;
-					public const int Email = 2;
-					public const int Phone = 3;
-					public const int Fax = 4;
-					public const int Mail = 5;
-                }
-			    public struct ShippingMethodCode
-                {
-					public const int DefaultValue = 1;
-                }
-                public struct StateCode
-                {
-					public const int Active = 0;
-					public const int Inactive = 1;
-                }
-                public struct StatusCode
-                {
-					public const int Active = 1;
-					public const int Inactive = 2;
-                }
-			    public struct TerritoryCode
-                {
-					public const int DefaultValue = 1;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string AccountId = "accountid";
-				public const string Address1AddressId = "address1_addressid";
-				public const string Address2AddressId = "address2_addressid";
-				public const string AccountCategoryCode = "accountcategorycode";
-				public const string AccountClassificationCode = "accountclassificationcode";
-				public const string AccountNumber = "accountnumber";
-				public const string AccountRatingCode = "accountratingcode";
-				public const string Address1AddressTypeCode = "address1_addresstypecode";
-				public const string Address1City = "address1_city";
-				public const string Address1Composite = "address1_composite";
-				public const string Address1Country = "address1_country";
-				public const string Address1County = "address1_county";
-				public const string Address1Fax = "address1_fax";
-				public const string Address1FreightTermsCode = "address1_freighttermscode";
-				public const string Address1Latitude = "address1_latitude";
-				public const string Address1Line1 = "address1_line1";
-				public const string Address1Line2 = "address1_line2";
-				public const string Address1Line3 = "address1_line3";
-				public const string Address1Longitude = "address1_longitude";
-				public const string Address1Name = "address1_name";
-				public const string Address1PostalCode = "address1_postalcode";
-				public const string Address1PostOfficeBox = "address1_postofficebox";
-				public const string Address1PrimaryContactName = "address1_primarycontactname";
-				public const string Address1ShippingMethodCode = "address1_shippingmethodcode";
-				public const string Address1StateOrProvince = "address1_stateorprovince";
-				public const string Address1Telephone1 = "address1_telephone1";
-				public const string Address1Telephone2 = "address1_telephone2";
-				public const string Address1Telephone3 = "address1_telephone3";
-				public const string Address1UPSZone = "address1_upszone";
-				public const string Address1UTCOffset = "address1_utcoffset";
-				public const string Address2AddressTypeCode = "address2_addresstypecode";
-				public const string Address2City = "address2_city";
-				public const string Address2Composite = "address2_composite";
-				public const string Address2Country = "address2_country";
-				public const string Address2County = "address2_county";
-				public const string Address2Fax = "address2_fax";
-				public const string Address2FreightTermsCode = "address2_freighttermscode";
-				public const string Address2Latitude = "address2_latitude";
-				public const string Address2Line1 = "address2_line1";
-				public const string Address2Line2 = "address2_line2";
-				public const string Address2Line3 = "address2_line3";
-				public const string Address2Longitude = "address2_longitude";
-				public const string Address2Name = "address2_name";
-				public const string Address2PostalCode = "address2_postalcode";
-				public const string Address2PostOfficeBox = "address2_postofficebox";
-				public const string Address2PrimaryContactName = "address2_primarycontactname";
-				public const string Address2ShippingMethodCode = "address2_shippingmethodcode";
-				public const string Address2StateOrProvince = "address2_stateorprovince";
-				public const string Address2Telephone1 = "address2_telephone1";
-				public const string Address2Telephone2 = "address2_telephone2";
-				public const string Address2Telephone3 = "address2_telephone3";
-				public const string Address2UPSZone = "address2_upszone";
-				public const string Address2UTCOffset = "address2_utcoffset";
-				public const string Aging30 = "aging30";
-				public const string Aging30Base = "aging30_base";
-				public const string Aging60 = "aging60";
-				public const string Aging60Base = "aging60_base";
-				public const string Aging90 = "aging90";
-				public const string Aging90Base = "aging90_base";
-				public const string BusinessTypeCode = "businesstypecode";
-				public const string CreatedBy = "createdby";
-				public const string CreatedByExternalParty = "createdbyexternalparty";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string CreditLimit = "creditlimit";
-				public const string CreditLimitBase = "creditlimit_base";
-				public const string CreditOnHold = "creditonhold";
-				public const string CustomerSizeCode = "customersizecode";
-				public const string CustomerTypeCode = "customertypecode";
-				public const string DefaultPriceLevelId = "defaultpricelevelid";
-				public const string Description = "description";
-				public const string DoNotBulkEMail = "donotbulkemail";
-				public const string DoNotBulkPostalMail = "donotbulkpostalmail";
-				public const string DoNotEMail = "donotemail";
-				public const string DoNotFax = "donotfax";
-				public const string DoNotPhone = "donotphone";
-				public const string DoNotPostalMail = "donotpostalmail";
-				public const string DoNotSendMM = "donotsendmm";
-				public const string EMailAddress1 = "emailaddress1";
-				public const string EMailAddress2 = "emailaddress2";
-				public const string EMailAddress3 = "emailaddress3";
-				public const string EntityImage = "entityimage";
-				public const string EntityImageTimestamp = "entityimage_timestamp";
-				public const string EntityImageURL = "entityimage_url";
-				public const string EntityImageId = "entityimageid";
-				public const string ExchangeRate = "exchangerate";
-				public const string Fax = "fax";
-				public const string FollowEmail = "followemail";
-				public const string FtpSiteURL = "ftpsiteurl";
-				public const string ImportSequenceNumber = "importsequencenumber";
-				public const string IndustryCode = "industrycode";
-				public const string LastOnHoldTime = "lastonholdtime";
-				public const string LastUsedInCampaign = "lastusedincampaign";
-				public const string MarketCap = "marketcap";
-				public const string MarketCapBase = "marketcap_base";
-				public const string MarketingOnly = "marketingonly";
-				public const string MasterId = "masterid";
-				public const string Merged = "merged";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedByExternalParty = "modifiedbyexternalparty";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string MsdynAccountkpiid = "msdyn_accountkpiid";
-				public const string MsdynGdproptout = "msdyn_gdproptout";
-				public const string MsdynSalesaccelerationinsightid = "msdyn_salesaccelerationinsightid";
-				public const string MsdynSegmentid = "msdyn_segmentid";
-				public const string Name = "name";
-				public const string NumberOfEmployees = "numberofemployees";
-				public const string OnHoldTime = "onholdtime";
-				public const string OpenDeals = "opendeals";
-				public const string OpenDealsDate = "opendeals_date";
-				public const string OpenDealsState = "opendeals_state";
-				public const string OpenRevenue = "openrevenue";
-				public const string OpenRevenueBase = "openrevenue_base";
-				public const string OpenRevenueDate = "openrevenue_date";
-				public const string OpenRevenueState = "openrevenue_state";
-				public const string OriginatingLeadId = "originatingleadid";
-				public const string OverriddenCreatedOn = "overriddencreatedon";
-				public const string OwnerId = "ownerid";
-				public const string OwnerIdType = "owneridtype";
-				public const string OwnershipCode = "ownershipcode";
-				public const string OwningBusinessUnit = "owningbusinessunit";
-				public const string OwningTeam = "owningteam";
-				public const string OwningUser = "owninguser";
-				public const string ParentAccountId = "parentaccountid";
-				public const string ParticipatesInWorkflow = "participatesinworkflow";
-				public const string PaymentTermsCode = "paymenttermscode";
-				public const string PreferredAppointmentDayCode = "preferredappointmentdaycode";
-				public const string PreferredAppointmentTimeCode = "preferredappointmenttimecode";
-				public const string PreferredContactMethodCode = "preferredcontactmethodcode";
-				public const string PreferredEquipmentId = "preferredequipmentid";
-				public const string PreferredServiceId = "preferredserviceid";
-				public const string PreferredSystemUserId = "preferredsystemuserid";
-				public const string PrimaryContactId = "primarycontactid";
-				public const string PrimarySatoriId = "primarysatoriid";
-				public const string PrimaryTwitterId = "primarytwitterid";
-				public const string ProcessId = "processid";
-				public const string Revenue = "revenue";
-				public const string RevenueBase = "revenue_base";
-				public const string SharesOutstanding = "sharesoutstanding";
-				public const string ShippingMethodCode = "shippingmethodcode";
-				public const string SIC = "sic";
-				public const string SLAId = "slaid";
-				public const string SLAInvokedId = "slainvokedid";
-				public const string StageId = "stageid";
-				public const string StateCode = "statecode";
-				public const string StatusCode = "statuscode";
-				public const string StockExchange = "stockexchange";
-				public const string TeamsFollowed = "teamsfollowed";
-				public const string Telephone1 = "telephone1";
-				public const string Telephone2 = "telephone2";
-				public const string Telephone3 = "telephone3";
-				public const string TerritoryCode = "territorycode";
-				public const string TerritoryId = "territoryid";
-				public const string TickerSymbol = "tickersymbol";
-				public const string TimeSpentByMeOnEmailAndMeetings = "timespentbymeonemailandmeetings";
-				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string TransactionCurrencyId = "transactioncurrencyid";
-				public const string TraversedPath = "traversedpath";
-				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
-				public const string VersionNumber = "versionnumber";
-				public const string WebSiteURL = "websiteurl";
-				public const string YomiName = "yominame";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string AccountActioncard = "account_actioncard";
-				public const string AccountActivityParties = "account_activity_parties";
-				public const string AccountActivityPointers = "Account_ActivityPointers";
-				public const string AccountAnnotation = "Account_Annotation";
-				public const string AccountAppointments = "Account_Appointments";
-				public const string AccountAsyncOperations = "Account_AsyncOperations";
-				public const string AccountBookableresourceAccountId = "account_bookableresource_AccountId";
-				public const string AccountBulkDeleteFailures = "Account_BulkDeleteFailures";
-				public const string AccountBulkOperations = "account_BulkOperations";
-				public const string AccountCampaignResponses = "account_CampaignResponses";
-				public const string AccountChats = "account_chats";
-				public const string AccountConnections1 = "account_connections1";
-				public const string AccountConnections2 = "account_connections2";
-				public const string AccountCustomerOpportunityRoles = "account_customer_opportunity_roles";
-				public const string AccountCustomerRelationshipCustomer = "account_customer_relationship_customer";
-				public const string AccountCustomerRelationshipPartner = "account_customer_relationship_partner";
-				public const string AccountCustomerAddress = "Account_CustomerAddress";
-				public const string AccountDuplicateBaseRecord = "Account_DuplicateBaseRecord";
-				public const string AccountDuplicateMatchingRecord = "Account_DuplicateMatchingRecord";
-				public const string AccountEmailEmailSender = "Account_Email_EmailSender";
-				public const string AccountEmailSendersAccount = "Account_Email_SendersAccount";
-				public const string AccountEmails = "Account_Emails";
-				public const string AccountEntitlementAccount = "account_entitlement_Account";
-				public const string AccountEntitlementCustomer = "account_entitlement_Customer";
-				public const string AccountFaxes = "Account_Faxes";
-				public const string AccountIncidentResolutions = "account_IncidentResolutions";
-				public const string AccountLetters = "Account_Letters";
-				public const string AccountMailboxTrackingFolder = "Account_MailboxTrackingFolder";
-				public const string AccountMasterAccount = "account_master_account";
-				public const string AccountMsdynOcliveworkitems = "account_msdyn_ocliveworkitems";
-				public const string AccountMsdynOcsessions = "account_msdyn_ocsessions";
-				public const string AccountMsfpAlerts = "account_msfp_alerts";
-				public const string AccountMsfpSurveyinvites = "account_msfp_surveyinvites";
-				public const string AccountMsfpSurveyresponses = "account_msfp_surveyresponses";
-				public const string AccountOpportunityCloses = "account_OpportunityCloses";
-				public const string AccountOrderCloses = "account_OrderCloses";
-				public const string AccountParentAccount = "account_parent_account";
-				public const string AccountPhonecalls = "Account_Phonecalls";
-				public const string AccountPostFollows = "account_PostFollows";
-				public const string AccountPostRegardings = "account_PostRegardings";
-				public const string AccountPostRoles = "account_PostRoles";
-				public const string AccountPosts = "account_Posts";
-				public const string AccountPrincipalobjectattributeaccess = "account_principalobjectattributeaccess";
-				public const string AccountProcessSessions = "Account_ProcessSessions";
-				public const string AccountQuoteCloses = "account_QuoteCloses";
-				public const string AccountRecurringAppointmentMasters = "Account_RecurringAppointmentMasters";
-				public const string AccountServiceAppointments = "Account_ServiceAppointments";
-				public const string AccountSharepointDocument = "Account_SharepointDocument";
-				public const string AccountSharepointDocumentLocation = "Account_SharepointDocumentLocation";
-				public const string AccountSocialActivities = "Account_SocialActivities";
-				public const string AccountSyncErrors = "Account_SyncErrors";
-				public const string AccountTasks = "Account_Tasks";
-				public const string ContactCustomerAccounts = "contact_customer_accounts";
-				public const string ContractBillingcustomerAccounts = "contract_billingcustomer_accounts";
-				public const string ContractCustomerAccounts = "contract_customer_accounts";
-				public const string ContractlineitemCustomerAccounts = "contractlineitem_customer_accounts";
-				public const string CreatedAccountBulkOperationLogs2 = "CreatedAccount_BulkOperationLogs2";
-				public const string IncidentCustomerAccounts = "incident_customer_accounts";
-				public const string InvoiceCustomerAccounts = "invoice_customer_accounts";
-				public const string LeadCustomerAccounts = "lead_customer_accounts";
-				public const string LeadParentAccount = "lead_parent_account";
-				public const string MsdynAccountDailyaccountkpiitemEntityid = "msdyn_account_dailyaccountkpiitem_entityid";
-				public const string MsdynAccountMsdynAccountkpiitemAccountid = "msdyn_account_msdyn_accountkpiitem_accountid";
-				public const string MsdynAccountMsdynAicontactsuggestionSourcerecord = "msdyn_account_msdyn_aicontactsuggestion_sourcerecord";
-				public const string MsdynAccountMsdynCustomerassetAccount = "msdyn_account_msdyn_customerasset_Account";
-				public const string MsdynAccountMsdynIotdeviceAccount = "msdyn_account_msdyn_iotdevice_Account";
-				public const string MsdynAccountMsdynLiveconversationCustomer = "msdyn_account_msdyn_liveconversation_Customer";
-				public const string MsdynAccountMsdynMostcontactedRegardingObjectId = "msdyn_account_msdyn_mostcontacted_regardingObjectId";
-				public const string MsdynAccountMsdynMostcontactedbyRegardingObjectId = "msdyn_account_msdyn_mostcontactedby_regardingObjectId";
-				public const string MsdynAccountMsdynOcliveworkitemCustomer = "msdyn_account_msdyn_ocliveworkitem_Customer";
-				public const string MsdynMsdynPreferredagentAccountMsdynRecordId = "msdyn_msdyn_preferredagent_account_msdyn_recordId";
-				public const string MsdynPlaybookinstanceAccount = "msdyn_playbookinstance_account";
-				public const string MsdynSabackupdiagnosticAccountMsdynTarget = "msdyn_sabackupdiagnostic_account_msdyn_target";
-				public const string MsdynSalesaccelerationinsightsAccount = "msdyn_salesaccelerationinsights_account";
-				public const string MsdynSalesroutingdiagnosticAccountMsdynTarget = "msdyn_salesroutingdiagnostic_account_msdyn_target";
-				public const string MsdynSalessuggestionAccount = "msdyn_salessuggestion_account";
-				public const string MsdynSequencetargetAccountMsdynTarget = "msdyn_sequencetarget_account_msdyn_target";
-				public const string MsdynSwarmAccount = "msdyn_swarm_account";
-				public const string OpportunityCustomerAccounts = "opportunity_customer_accounts";
-				public const string OpportunityParentAccount = "opportunity_parent_account";
-				public const string OrderCustomerAccounts = "order_customer_accounts";
-				public const string QuoteCustomerAccounts = "quote_customer_accounts";
-				public const string SlakpiinstanceAccount = "slakpiinstance_account";
-				public const string SocialActivityPostAuthorAccounts = "SocialActivity_PostAuthor_accounts";
-				public const string SocialActivityPostAuthorAccountAccounts = "SocialActivity_PostAuthorAccount_accounts";
-				public const string SocialprofileCustomerAccounts = "Socialprofile_customer_accounts";
-				public const string SourceAccountBulkOperationLogs = "SourceAccount_BulkOperationLogs";
-				public const string UserentityinstancedataAccount = "userentityinstancedata_account";
+                public const string AccountActioncard = "account_actioncard";
+                public const string AccountActivityParties = "account_activity_parties";
+                public const string AccountActivityPointers = "Account_ActivityPointers";
+                public const string AccountAdxInviteredemptions = "account_adx_inviteredemptions";
+                public const string AccountAdxPortalcomments = "account_adx_portalcomments";
+                public const string AccountAnnotation = "Account_Annotation";
+                public const string AccountAppointments = "Account_Appointments";
+                public const string AccountAsyncOperations = "Account_AsyncOperations";
+                public const string AccountBulkDeleteFailures = "Account_BulkDeleteFailures";
+                public const string AccountChats = "account_chats";
+                public const string AccountConnections1 = "account_connections1";
+                public const string AccountConnections2 = "account_connections2";
+                public const string AccountCustomerRelationshipCustomer = "account_customer_relationship_customer";
+                public const string AccountCustomerRelationshipPartner = "account_customer_relationship_partner";
+                public const string AccountCustomerAddress = "Account_CustomerAddress";
+                public const string AccountDuplicateBaseRecord = "Account_DuplicateBaseRecord";
+                public const string AccountDuplicateMatchingRecord = "Account_DuplicateMatchingRecord";
+                public const string AccountEmailEmailSender = "Account_Email_EmailSender";
+                public const string AccountEmailSendersAccount = "Account_Email_SendersAccount";
+                public const string AccountEmails = "Account_Emails";
+                public const string AccountFaxes = "Account_Faxes";
+                public const string AccountLetters = "Account_Letters";
+                public const string AccountMailboxTrackingFolder = "Account_MailboxTrackingFolder";
+                public const string AccountMasterAccount = "account_master_account";
+                public const string AccountParentAccount = "account_parent_account";
+                public const string AccountPhonecalls = "Account_Phonecalls";
+                public const string AccountPostFollows = "account_PostFollows";
+                public const string AccountPostRegardings = "account_PostRegardings";
+                public const string AccountPostRoles = "account_PostRoles";
+                public const string AccountPrincipalobjectattributeaccess = "account_principalobjectattributeaccess";
+                public const string AccountProcessSessions = "Account_ProcessSessions";
+                public const string AccountRecurringAppointmentMasters = "Account_RecurringAppointmentMasters";
+                public const string AccountSharepointDocument = "Account_SharepointDocument";
+                public const string AccountSharepointDocumentLocation = "Account_SharepointDocumentLocation";
+                public const string AccountSocialActivities = "Account_SocialActivities";
+                public const string AccountSyncErrors = "Account_SyncErrors";
+                public const string AccountTasks = "Account_Tasks";
+                public const string AdxInvitationAssigntoaccount = "adx_invitation_assigntoaccount";
+                public const string ContactCustomerAccounts = "contact_customer_accounts";
+                public const string MsaAccountManagingpartner = "msa_account_managingpartner";
+                public const string MsaContactManagingpartner = "msa_contact_managingpartner";
+                public const string SlakpiinstanceAccount = "slakpiinstance_account";
+                public const string SocialActivityPostAuthorAccounts = "SocialActivity_PostAuthor_accounts";
+                public const string SocialActivityPostAuthorAccountAccounts = "SocialActivity_PostAuthorAccount_accounts";
+                public const string SocialprofileCustomerAccounts = "Socialprofile_customer_accounts";
+                public const string UserentityinstancedataAccount = "userentityinstancedata_account";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string AccountMasterAccount = "account_master_account";
-				public const string AccountOriginatingLead = "account_originating_lead";
-				public const string AccountParentAccount = "account_parent_account";
-				public const string AccountPrimaryContact = "account_primary_contact";
-				public const string BusinessUnitAccounts = "business_unit_accounts";
-				public const string EquipmentAccounts = "equipment_accounts";
-				public const string LkAccountEntityimage = "lk_account_entityimage";
-				public const string LkAccountbaseCreatedby = "lk_accountbase_createdby";
-				public const string LkAccountbaseCreatedonbehalfby = "lk_accountbase_createdonbehalfby";
-				public const string LkAccountbaseModifiedby = "lk_accountbase_modifiedby";
-				public const string LkAccountbaseModifiedonbehalfby = "lk_accountbase_modifiedonbehalfby";
-				public const string LkExternalpartyAccountCreatedby = "lk_externalparty_account_createdby";
-				public const string LkExternalpartyAccountModifiedby = "lk_externalparty_account_modifiedby";
-				public const string ManualslaAccount = "manualsla_account";
-				public const string MsdynInsightsidSalesaccelerationinsights = "msdyn_insightsid_salesaccelerationinsights";
-				public const string MsdynMsdynAccountkpiitemAccountAccountkpiid = "msdyn_msdyn_accountkpiitem_account_accountkpiid";
-				public const string MsdynMsdynSegmentAccount = "msdyn_msdyn_segment_account";
-				public const string OwnerAccounts = "owner_accounts";
-				public const string PriceLevelAccounts = "price_level_accounts";
-				public const string ProcessstageAccount = "processstage_account";
-				public const string ServiceAccounts = "service_accounts";
-				public const string SlaAccount = "sla_account";
-				public const string SystemUserAccounts = "system_user_accounts";
-				public const string TeamAccounts = "team_accounts";
-				public const string TerritoryAccounts = "territory_accounts";
-				public const string TransactioncurrencyAccount = "transactioncurrency_account";
-				public const string UserAccounts = "user_accounts";
+                public const string AccountMasterAccount = "account_master_account";
+                public const string AccountParentAccount = "account_parent_account";
+                public const string AccountPrimaryContact = "account_primary_contact";
+                public const string BusinessUnitAccounts = "business_unit_accounts";
+                public const string LkAccountEntityimage = "lk_account_entityimage";
+                public const string LkAccountbaseCreatedby = "lk_accountbase_createdby";
+                public const string LkAccountbaseCreatedonbehalfby = "lk_accountbase_createdonbehalfby";
+                public const string LkAccountbaseModifiedby = "lk_accountbase_modifiedby";
+                public const string LkAccountbaseModifiedonbehalfby = "lk_accountbase_modifiedonbehalfby";
+                public const string LkExternalpartyAccountCreatedby = "lk_externalparty_account_createdby";
+                public const string LkExternalpartyAccountModifiedby = "lk_externalparty_account_modifiedby";
+                public const string ManualslaAccount = "manualsla_account";
+                public const string MsaAccountManagingpartner = "msa_account_managingpartner";
+                public const string OwnerAccounts = "owner_accounts";
+                public const string ProcessstageAccount = "processstage_account";
+                public const string SlaAccount = "sla_account";
+                public const string SystemUserAccounts = "system_user_accounts";
+                public const string TeamAccounts = "team_accounts";
+                public const string TransactioncurrencyAccount = "transactioncurrency_account";
+                public const string UserAccounts = "user_accounts";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
-				public const string AccountleadsAssociation = "accountleads_association";
-				public const string BulkOperationAccounts = "BulkOperation_Accounts";
-				public const string CampaignActivityAccounts = "CampaignActivity_Accounts";
-				public const string ListaccountAssociation = "listaccount_association";
-				public const string MsdynMsdynFunctionallocationAccount = "msdyn_msdyn_functionallocation_account";
+                public const string PowerpagecomponentMsppWebroleAccount = "powerpagecomponent_mspp_webrole_account";
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static Account Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static Account Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -3754,30 +3477,30 @@ namespace dgt.power.dataverse
 
         public Account GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  Account(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new Account(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<Account> AccountSet
-		{
-			get
-			{
-				return CreateQuery<Account>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<Account> AccountSet
+        {
+            get
+            {
+                return CreateQuery<Account>();
+            }
+        }
+    }
+    #endregion
 }

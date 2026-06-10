@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Defines free/busy times for a service and for resources or resource groups, such as working, non-working, vacation, and blocked.
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("calendarrule")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("calendarrule")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class CalendarRule : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class CalendarRule : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public CalendarRule() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public CalendarRule() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public CalendarRule(bool trackChanges = false) : base(EntityLogicalName)
+        public CalendarRule(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CalendarRule(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public CalendarRule(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CalendarRule(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public CalendarRule(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public CalendarRule(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public CalendarRule(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,753 +61,722 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("calendarruleid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("calendarruleid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				CalendarRuleId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                CalendarRuleId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("calendarruleid")]
+        [AttributeLogicalName("calendarruleid")]
         public Guid? CalendarRuleId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("calendarruleid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CalendarRuleId));
+                OnPropertyChanging();
                 SetAttributeValue("calendarruleid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(CalendarRuleId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the business unit with which the calendar rule is associated.
 		/// </summary>
-		[AttributeLogicalName("businessunitid")]
+        [AttributeLogicalName("businessunitid")]
         public Guid? BusinessUnitId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("businessunitid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the calendar with which the calendar rule is associated.
 		/// </summary>
-		[AttributeLogicalName("calendarid")]
+        [AttributeLogicalName("calendarid")]
         public EntityReference? CalendarId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("calendarid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(CalendarId));
+                OnPropertyChanging();
                 SetAttributeValue("calendarid", value);
-                OnPropertyChanged(nameof(CalendarId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the calendar rule was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the calendarrule.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Defines free/busy times for a service and for resources or resource groups, such as working, non-working, vacation, and blocked.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Duration of the calendar rule in minutes.
 		/// </summary>
-		[AttributeLogicalName("duration")]
+        [AttributeLogicalName("duration")]
         public int? Duration
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("duration");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Duration));
+                OnPropertyChanging();
                 SetAttributeValue("duration", value);
-                OnPropertyChanged(nameof(Duration));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Effective interval end of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("effectiveintervalend")]
+        [AttributeLogicalName("effectiveintervalend")]
         public DateTime? EffectiveIntervalEnd
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("effectiveintervalend");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EffectiveIntervalEnd));
+                OnPropertyChanging();
                 SetAttributeValue("effectiveintervalend", value);
-                OnPropertyChanged(nameof(EffectiveIntervalEnd));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Effective interval start of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("effectiveintervalstart")]
+        [AttributeLogicalName("effectiveintervalstart")]
         public DateTime? EffectiveIntervalStart
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("effectiveintervalstart");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EffectiveIntervalStart));
+                OnPropertyChanging();
                 SetAttributeValue("effectiveintervalstart", value);
-                OnPropertyChanged(nameof(EffectiveIntervalStart));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Effort available for a resource during the time described by the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("effort")]
+        [AttributeLogicalName("effort")]
         public double? Effort
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<double?>("effort");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Effort));
+                OnPropertyChanging();
                 SetAttributeValue("effort", value);
-                OnPropertyChanged(nameof(Effort));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("endtime")]
+        [AttributeLogicalName("endtime")]
         public DateTime? EndTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("endtime");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(EndTime));
+                OnPropertyChanging();
                 SetAttributeValue("endtime", value);
-                OnPropertyChanged(nameof(EndTime));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Extent of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("extentcode")]
+        [AttributeLogicalName("extentcode")]
         public int? ExtentCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("extentcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(ExtentCode));
+                OnPropertyChanging();
                 SetAttributeValue("extentcode", value);
-                OnPropertyChanged(nameof(ExtentCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the group.
 		/// </summary>
-		[AttributeLogicalName("groupdesignator")]
+        [AttributeLogicalName("groupdesignator")]
         public string? GroupDesignator
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("groupdesignator");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(GroupDesignator));
+                OnPropertyChanging();
                 SetAttributeValue("groupdesignator", value);
-                OnPropertyChanged(nameof(GroupDesignator));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the inner calendar for non-leaf calendar rules.
 		/// </summary>
-		[AttributeLogicalName("innercalendarid")]
+        [AttributeLogicalName("innercalendarid")]
         public EntityReference? InnerCalendarId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("innercalendarid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(InnerCalendarId));
+                OnPropertyChanging();
                 SetAttributeValue("innercalendarid", value);
-                OnPropertyChanged(nameof(InnerCalendarId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("ismodified")]
+        [AttributeLogicalName("ismodified")]
         public bool? IsModified
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismodified");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsModified));
+                OnPropertyChanging();
                 SetAttributeValue("ismodified", value);
-                OnPropertyChanged(nameof(IsModified));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag used in vary-by-day calendar rules.
 		/// </summary>
-		[AttributeLogicalName("isselected")]
+        [AttributeLogicalName("isselected")]
         public bool? IsSelected
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isselected");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSelected));
+                OnPropertyChanging();
                 SetAttributeValue("isselected", value);
-                OnPropertyChanged(nameof(IsSelected));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag used in vary-by-day calendar rules.
 		/// </summary>
-		[AttributeLogicalName("issimple")]
+        [AttributeLogicalName("issimple")]
         public bool? IsSimple
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("issimple");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsSimple));
+                OnPropertyChanging();
                 SetAttributeValue("issimple", value);
-                OnPropertyChanged(nameof(IsSimple));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Flag used in leaf nonrecurring rules.
 		/// </summary>
-		[AttributeLogicalName("isvaried")]
+        [AttributeLogicalName("isvaried")]
         public bool? IsVaried
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("isvaried");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(IsVaried));
+                OnPropertyChanging();
                 SetAttributeValue("isvaried", value);
-                OnPropertyChanged(nameof(IsVaried));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who last modified the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the calendar rule was last modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who last modified the calendarrule.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Name of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Start offset for leaf nonrecurring rules.
 		/// </summary>
-		[AttributeLogicalName("offset")]
+        [AttributeLogicalName("offset")]
         public int? Offset
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("offset");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Offset));
+                OnPropertyChanging();
                 SetAttributeValue("offset", value);
-                OnPropertyChanged(nameof(Offset));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the organization with which the calendar rule is associated.
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public Guid? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Pattern of the rule recurrence.
 		/// </summary>
-		[AttributeLogicalName("pattern")]
+        [AttributeLogicalName("pattern")]
         public string? Pattern
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("pattern");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Pattern));
+                OnPropertyChanging();
                 SetAttributeValue("pattern", value);
-                OnPropertyChanged(nameof(Pattern));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Rank of the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("rank")]
+        [AttributeLogicalName("rank")]
         public int? Rank
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("rank");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Rank));
+                OnPropertyChanging();
                 SetAttributeValue("rank", value);
-                OnPropertyChanged(nameof(Rank));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// Unique identifier of the service with which the calendar rule is associated.
-		/// </summary>
-		[AttributeLogicalName("serviceid")]
-        public EntityReference? ServiceId
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<EntityReference?>("serviceid");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(ServiceId));
-                SetAttributeValue("serviceid", value);
-                OnPropertyChanged(nameof(ServiceId));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// Start time for the rule.
 		/// </summary>
-		[AttributeLogicalName("starttime")]
+        [AttributeLogicalName("starttime")]
         public DateTime? StartTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("starttime");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StartTime));
+                OnPropertyChanging();
                 SetAttributeValue("starttime", value);
-                OnPropertyChanged(nameof(StartTime));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Sub-type of calendar rule.
 		/// </summary>
-		[AttributeLogicalName("subcode")]
+        [AttributeLogicalName("subcode")]
         public int? SubCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("subcode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(SubCode));
+                OnPropertyChanging();
                 SetAttributeValue("subcode", value);
-                OnPropertyChanged(nameof(SubCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Type of calendar rule such as working hours, break, holiday, or time off.
 		/// </summary>
-		[AttributeLogicalName("timecode")]
+        [AttributeLogicalName("timecode")]
         public int? TimeCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeCode));
+                OnPropertyChanging();
                 SetAttributeValue("timecode", value);
-                OnPropertyChanged(nameof(TimeCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Local time zone for the calendar rule.
 		/// </summary>
-		[AttributeLogicalName("timezonecode")]
+        [AttributeLogicalName("timezonecode")]
         public int? TimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("timezonecode", value);
-                OnPropertyChanged(nameof(TimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		
-		[AttributeLogicalName("versionnumber")]
+        
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
+        #endregion
 
+        #region NavigationProperties
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+            public struct IsModified
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSelected
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsSimple
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+            public struct IsVaried
+            {
+                public const bool No = false;
+                public const bool Yes = true;
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		#endregion
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string CalendarRuleId = "calendarruleid";
+            public const string BusinessUnitId = "businessunitid";
+            public const string CalendarId = "calendarid";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string Description = "description";
+            public const string Duration = "duration";
+            public const string EffectiveIntervalEnd = "effectiveintervalend";
+            public const string EffectiveIntervalStart = "effectiveintervalstart";
+            public const string Effort = "effort";
+            public const string EndTime = "endtime";
+            public const string ExtentCode = "extentcode";
+            public const string GroupDesignator = "groupdesignator";
+            public const string InnerCalendarId = "innercalendarid";
+            public const string IsModified = "ismodified";
+            public const string IsSelected = "isselected";
+            public const string IsSimple = "issimple";
+            public const string IsVaried = "isvaried";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string Offset = "offset";
+            public const string OrganizationId = "organizationid";
+            public const string Pattern = "pattern";
+            public const string Rank = "rank";
+            public const string StartTime = "starttime";
+            public const string SubCode = "subcode";
+            public const string TimeCode = "timecode";
+            public const string TimeZoneCode = "timezonecode";
+            public const string VersionNumber = "versionnumber";
+        }
+        #endregion
 
-		#region Options
-		public static class Options
-		{
-                public struct IsModified
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSelected
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsSimple
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-                public struct IsVaried
-                {
-                    public const bool No = false;
-                    public const bool Yes = true;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string CalendarRuleId = "calendarruleid";
-				public const string BusinessUnitId = "businessunitid";
-				public const string CalendarId = "calendarid";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Description = "description";
-				public const string Duration = "duration";
-				public const string EffectiveIntervalEnd = "effectiveintervalend";
-				public const string EffectiveIntervalStart = "effectiveintervalstart";
-				public const string Effort = "effort";
-				public const string EndTime = "endtime";
-				public const string ExtentCode = "extentcode";
-				public const string GroupDesignator = "groupdesignator";
-				public const string InnerCalendarId = "innercalendarid";
-				public const string IsModified = "ismodified";
-				public const string IsSelected = "isselected";
-				public const string IsSimple = "issimple";
-				public const string IsVaried = "isvaried";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string Name = "name";
-				public const string Offset = "offset";
-				public const string OrganizationId = "organizationid";
-				public const string Pattern = "pattern";
-				public const string Rank = "rank";
-				public const string ServiceId = "serviceid";
-				public const string StartTime = "starttime";
-				public const string SubCode = "subcode";
-				public const string TimeCode = "timecode";
-				public const string TimeZoneCode = "timezonecode";
-				public const string VersionNumber = "versionnumber";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string UserentityinstancedataCalendarrule = "userentityinstancedata_calendarrule";
+                public const string UserentityinstancedataCalendarrule = "userentityinstancedata_calendarrule";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string CalendarCalendarRules = "calendar_calendar_rules";
-				public const string InnerCalendarCalendarRules = "inner_calendar_calendar_rules";
-				public const string LkCalendarruleCreatedby = "lk_calendarrule_createdby";
-				public const string LkCalendarruleCreatedonbehalfby = "lk_calendarrule_createdonbehalfby";
-				public const string LkCalendarruleModifiedby = "lk_calendarrule_modifiedby";
-				public const string LkCalendarruleModifiedonbehalfby = "lk_calendarrule_modifiedonbehalfby";
-				public const string ServiceCalendarRules = "service_calendar_rules";
+                public const string CalendarCalendarRules = "calendar_calendar_rules";
+                public const string InnerCalendarCalendarRules = "inner_calendar_calendar_rules";
+                public const string LkCalendarruleCreatedby = "lk_calendarrule_createdby";
+                public const string LkCalendarruleCreatedonbehalfby = "lk_calendarrule_createdonbehalfby";
+                public const string LkCalendarruleModifiedby = "lk_calendarrule_modifiedby";
+                public const string LkCalendarruleModifiedonbehalfby = "lk_calendarrule_modifiedonbehalfby";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static CalendarRule Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static CalendarRule Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -825,30 +786,30 @@ namespace dgt.power.dataverse
 
         public CalendarRule GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  CalendarRule(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new CalendarRule(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<CalendarRule> CalendarRuleSet
-		{
-			get
-			{
-				return CreateQuery<CalendarRule>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<CalendarRule> CalendarRuleSet
+        {
+            get
+            {
+                return CreateQuery<CalendarRule>();
+            }
+        }
+    }
+    #endregion
 }

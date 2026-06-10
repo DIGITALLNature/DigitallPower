@@ -104,7 +104,7 @@ public class CreateWorkflowStateConfig(
                 };
 
                 // collect modern flow and legacy workflow configs (both identified by name)
-                foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow_).OrderBy(f => f.Name))
+                foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow).OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? flow.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;

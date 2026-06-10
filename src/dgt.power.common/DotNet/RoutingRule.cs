@@ -1,10 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,50 +12,46 @@ using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
-	/// <inheritdoc />
-	/// <summary>
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    /// <summary>
 	/// Define Routing Rule to route cases to right people at the right time
 	/// </summary>
-	[DataContractAttribute()]
-	[EntityLogicalNameAttribute("routingrule")]
-	[GeneratedCode("dgtp", "2023")]
+    [DataContract]
+    [EntityLogicalName("routingrule")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
-	public partial class RoutingRule : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class RoutingRule : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
-	    #region ctor
-		[DebuggerNonUserCode]
-		public RoutingRule() : this(false)
+        #region ctor
+        [DebuggerNonUserCode]
+        public RoutingRule() : this(false)
         {
         }
-
         [DebuggerNonUserCode]
-		public RoutingRule(bool trackChanges = false) : base(EntityLogicalName)
+        public RoutingRule(bool trackChanges = false) : base(EntityLogicalName)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public RoutingRule(Guid id, bool trackChanges = false) : base(EntityLogicalName,id)
+        public RoutingRule(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public RoutingRule(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName,keyAttributes)
+        public RoutingRule(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
-
         [DebuggerNonUserCode]
-		public RoutingRule(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
+        public RoutingRule(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
         {
-			_trackChanges = trackChanges;
+            _trackChanges = trackChanges;
         }
         #endregion
 
-		#region fields
+        #region fields
         private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
+        private readonly Lazy<HashSet<string>> _changedProperties = new();
         #endregion
 
         #region consts
@@ -69,748 +61,636 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Events
+        #pragma warning disable CS8612
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
-
+        #pragma warning restore CS8612
         [DebuggerNonUserCode]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (_trackChanges)
             {
                 _changedProperties.Value.Add(propertyName);
             }
         }
-
         [DebuggerNonUserCode]
-		private void OnPropertyChanging([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
-
         #endregion
 
-		#region Attributes
-		[AttributeLogicalNameAttribute("routingruleid")]
-		public new Guid Id
-		{
-		    [DebuggerNonUserCode]
-			get
-			{
-				return base.Id;
-			}
+        #region Attributes
+        [AttributeLogicalName("routingruleid")]
+        public new Guid Id
+        {
             [DebuggerNonUserCode]
-			set
-			{
-				RoutingRuleId = value;
-			}
-		}
+            get
+            {
+                return base.Id;
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                RoutingRuleId = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for entity instances
 		/// </summary>
-		[AttributeLogicalName("routingruleid")]
+        [AttributeLogicalName("routingruleid")]
         public Guid? RoutingRuleId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("routingruleid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(RoutingRuleId));
+                OnPropertyChanging();
                 SetAttributeValue("routingruleid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = Guid.Empty;
-				}
-                OnPropertyChanged(nameof(RoutingRuleId));
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("componentstate")]
+        [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdby")]
+        [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was created.
 		/// </summary>
-		[AttributeLogicalName("createdon")]
+        [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("createdon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who created the record.
 		/// </summary>
-		[AttributeLogicalName("createdonbehalfby")]
+        [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
             }
         }
 
-		/// <summary>
-		/// Provide a description about the objective of the routing rule.
+        /// <summary>
+		/// Type a short description about the objective of the routing rule.
 		/// </summary>
-		[AttributeLogicalName("description")]
+        [AttributeLogicalName("description")]
         public string? Description
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("description");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Description));
+                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged(nameof(Description));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Exchange rate for the currency associated with the queue with respect to the base currency.
 		/// </summary>
-		[AttributeLogicalName("exchangerate")]
+        [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("ismanaged")]
+        [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedby")]
+        [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Date and time when the record was modified.
 		/// </summary>
-		[AttributeLogicalName("modifiedon")]
+        [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the delegate user who modified the record.
 		/// </summary>
-		[AttributeLogicalName("modifiedonbehalfby")]
+        [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
             }
         }
 
-		/// <summary>
-		/// Logical name of the entity (deprecated).
+        /// <summary>
+		/// Name of the Routing Rule.
 		/// </summary>
-		[AttributeLogicalName("msdyn_entitylogicalname")]
-        public string? MsdynEntitylogicalname
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("msdyn_entitylogicalname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(MsdynEntitylogicalname));
-                SetAttributeValue("msdyn_entitylogicalname", value);
-                OnPropertyChanged(nameof(MsdynEntitylogicalname));
-            }
-        }
-
-		/// <summary>
-		/// Provide a name for the routing rule.
-		/// </summary>
-		[AttributeLogicalName("name")]
+        [AttributeLogicalName("name")]
         public string? Name
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<string?>("name");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// the organization associated with the Routing Rule
 		/// </summary>
-		[AttributeLogicalName("organizationid")]
+        [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("overwritetime")]
+        [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("ownerid")]
+        [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwnerId));
+                OnPropertyChanging();
                 SetAttributeValue("ownerid", value);
-                OnPropertyChanged(nameof(OwnerId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		[AttributeLogicalName("owneridname")]
-        public string? OwnerIdName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridname");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdName));
-                SetAttributeValue("owneridname", value);
-                OnPropertyChanged(nameof(OwnerIdName));
-            }
-        }
-
-		/// <summary>
-		/// Owner Id Type
-		/// </summary>
-		[AttributeLogicalName("owneridtype")]
-        public string? OwnerIdType
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridtype");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdType));
-                SetAttributeValue("owneridtype", value);
-                OnPropertyChanged(nameof(OwnerIdType));
-            }
-        }
-
-		/// <summary>
+        /// <summary>
 		/// For internal use only
 		/// </summary>
-		[AttributeLogicalName("owneridyominame")]
-        public string? OwnerIdYomiName
-        {
-            [DebuggerNonUserCode]
-			get
-            {
-                return GetAttributeValue<string?>("owneridyominame");
-            }
-            [DebuggerNonUserCode]
-			set
-            {
-                OnPropertyChanging(nameof(OwnerIdYomiName));
-                SetAttributeValue("owneridyominame", value);
-                OnPropertyChanged(nameof(OwnerIdYomiName));
-            }
-        }
-
-		/// <summary>
-		/// For internal use only
-		/// </summary>
-		[AttributeLogicalName("owningbusinessunit")]
+        [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwningBusinessUnit));
+                OnPropertyChanging();
                 SetAttributeValue("owningbusinessunit", value);
-                OnPropertyChanged(nameof(OwningBusinessUnit));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the team that owns the record.
 		/// </summary>
-		[AttributeLogicalName("owningteam")]
+        [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwningTeam));
+                OnPropertyChanging();
                 SetAttributeValue("owningteam", value);
-                OnPropertyChanged(nameof(OwningTeam));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for the user that owns the record.
 		/// </summary>
-		[AttributeLogicalName("owninguser")]
+        [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(OwningUser));
+                OnPropertyChanging();
                 SetAttributeValue("owninguser", value);
-                OnPropertyChanged(nameof(OwningUser));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("routingruleidunique")]
+        [AttributeLogicalName("routingruleidunique")]
         public Guid? RoutingRuleIdUnique
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("routingruleidunique");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the associated solution.
 		/// </summary>
-		[AttributeLogicalName("solutionid")]
+        [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<Guid?>("solutionid");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Status of the Routing Rule
 		/// </summary>
-		[AttributeLogicalName("statecode")]
+        [AttributeLogicalName("statecode")]
         public OptionSetValue? StateCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StateCode));
+                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged(nameof(StateCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Reason for the status of the Routing Rule
 		/// </summary>
-		[AttributeLogicalName("statuscode")]
+        [AttributeLogicalName("statuscode")]
         public OptionSetValue? StatusCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(StatusCode));
+                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged(nameof(StatusCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// For internal use only.
 		/// </summary>
-		[AttributeLogicalName("timezoneruleversionnumber")]
+        [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged(nameof(TimeZoneRuleVersionNumber));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier of the currency associated with the Routing Rule.
 		/// </summary>
-		[AttributeLogicalName("transactioncurrencyid")]
+        [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(TransactionCurrencyId));
+                OnPropertyChanging();
                 SetAttributeValue("transactioncurrencyid", value);
-                OnPropertyChanged(nameof(TransactionCurrencyId));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Time zone code that was in use when the record was created.
 		/// </summary>
-		[AttributeLogicalName("utcconversiontimezonecode")]
+        [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged(nameof(UTCConversionTimeZoneCode));
+                OnPropertyChanged();
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Version number of the Routing Rule.
 		/// </summary>
-		[AttributeLogicalName("versionnumber")]
+        [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<long?>("versionnumber");
             }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Unique identifier for Workflow.
 		/// </summary>
-		[AttributeLogicalName("workflowid")]
+        [AttributeLogicalName("workflowid")]
         public EntityReference? WorkflowId
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
                 return GetAttributeValue<EntityReference?>("workflowid");
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WorkflowId));
+                OnPropertyChanging();
                 SetAttributeValue("workflowid", value);
-                OnPropertyChanged(nameof(WorkflowId));
+                OnPropertyChanged();
             }
         }
+        #endregion
 
-		
-		[AttributeLogicalName("workflowidname")]
-        public string? WorkflowIdName
+        #region NavigationProperties
+
+        /// <summary>
+        /// 1:N routingrule_AsyncOperations
+        /// </summary>
+        [RelationshipSchemaName("routingrule_AsyncOperations")]
+        public IEnumerable<AsyncOperation> RoutingruleAsyncOperations
         {
             [DebuggerNonUserCode]
-			get
+            get
             {
-                return GetAttributeValue<string?>("workflowidname");
+                return GetRelatedEntities<AsyncOperation>("routingrule_AsyncOperations", null);
             }
             [DebuggerNonUserCode]
-			set
+            set
             {
-                OnPropertyChanging(nameof(WorkflowIdName));
-                SetAttributeValue("workflowidname", value);
-                OnPropertyChanged(nameof(WorkflowIdName));
+                OnPropertyChanging();
+                SetRelatedEntities("routingrule_AsyncOperations", null, value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// 1:N routingrule_entries
+        /// </summary>
+        [RelationshipSchemaName("routingrule_entries")]
+        public IEnumerable<RoutingRuleItem> RoutingruleEntries
+        {
+            [DebuggerNonUserCode]
+            get
+            {
+                return GetRelatedEntities<RoutingRuleItem>("routingrule_entries", null);
+            }
+            [DebuggerNonUserCode]
+            set
+            {
+                OnPropertyChanging();
+                SetRelatedEntities("routingrule_entries", null, value);
+                OnPropertyChanged();
+            }
+        }
+        #endregion
 
-		#endregion
+        #region Options
+        public static partial class Options
+        {
+            public struct ComponentState
+            {
+                public const int Published = 0;
+                public const int Unpublished = 1;
+                public const int Deleted = 2;
+                public const int DeletedUnpublished = 3;
+            }
+            public struct IsManaged
+            {
+                public const bool Unmanaged = false;
+                public const bool Managed = true;
+            }
+            public struct StateCode
+            {
+                public const int Draft = 0;
+                public const int Active = 1;
+            }
+            public struct StatusCode
+            {
+                public const int Draft = 1;
+                public const int Active = 2;
+            }
+        }
+        #endregion
 
-		#region NavigationProperties
-		/// <summary>
-		/// 1:N routingrule_AsyncOperations
-		/// </summary>	
-		[RelationshipSchemaName("routingrule_AsyncOperations")]
-		public IEnumerable<AsyncOperation> RoutingruleAsyncOperations
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<AsyncOperation>("routingrule_AsyncOperations", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("RoutingruleAsyncOperations");
-				this.SetRelatedEntities<AsyncOperation>("routingrule_AsyncOperations", null, value);
-				this.OnPropertyChanged("RoutingruleAsyncOperations");
-			}
-		}
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+            public const string RoutingRuleId = "routingruleid";
+            public const string ComponentState = "componentstate";
+            public const string CreatedBy = "createdby";
+            public const string CreatedOn = "createdon";
+            public const string CreatedOnBehalfBy = "createdonbehalfby";
+            public const string Description = "description";
+            public const string ExchangeRate = "exchangerate";
+            public const string IsManaged = "ismanaged";
+            public const string ModifiedBy = "modifiedby";
+            public const string ModifiedOn = "modifiedon";
+            public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
+            public const string Name = "name";
+            public const string OrganizationId = "organizationid";
+            public const string OverwriteTime = "overwritetime";
+            public const string OwnerId = "ownerid";
+            public const string OwningBusinessUnit = "owningbusinessunit";
+            public const string OwningTeam = "owningteam";
+            public const string OwningUser = "owninguser";
+            public const string RoutingRuleIdUnique = "routingruleidunique";
+            public const string SolutionId = "solutionid";
+            public const string StateCode = "statecode";
+            public const string StatusCode = "statuscode";
+            public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
+            public const string TransactionCurrencyId = "transactioncurrencyid";
+            public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+            public const string VersionNumber = "versionnumber";
+            public const string WorkflowId = "workflowid";
+        }
+        #endregion
 
-		/// <summary>
-		/// 1:N routingrule_entries
-		/// </summary>	
-		[RelationshipSchemaName("routingrule_entries")]
-		public IEnumerable<RoutingRuleItem> RoutingruleEntries
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<RoutingRuleItem>("routingrule_entries", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("RoutingruleEntries");
-				this.SetRelatedEntities<RoutingRuleItem>("routingrule_entries", null, value);
-				this.OnPropertyChanged("RoutingruleEntries");
-			}
-		}
-
-		#endregion
-
-		#region Options
-		public static class Options
-		{
-			    public struct ComponentState
-                {
-					public const int Published = 0;
-					public const int Unpublished = 1;
-					public const int Deleted = 2;
-					public const int DeletedUnpublished = 3;
-                }
-                public struct IsManaged
-                {
-                    public const bool Unmanaged = false;
-                    public const bool Managed = true;
-                }
-                public struct StateCode
-                {
-					public const int Draft = 0;
-					public const int Active = 1;
-                }
-                public struct StatusCode
-                {
-					public const int Draft = 1;
-					public const int Active = 2;
-                }
-		}
-		#endregion
-
-		#region LogicalNames
-		public static class LogicalNames
-		{
-				public const string RoutingRuleId = "routingruleid";
-				public const string ComponentState = "componentstate";
-				public const string CreatedBy = "createdby";
-				public const string CreatedOn = "createdon";
-				public const string CreatedOnBehalfBy = "createdonbehalfby";
-				public const string Description = "description";
-				public const string ExchangeRate = "exchangerate";
-				public const string IsManaged = "ismanaged";
-				public const string ModifiedBy = "modifiedby";
-				public const string ModifiedOn = "modifiedon";
-				public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
-				public const string MsdynEntitylogicalname = "msdyn_entitylogicalname";
-				public const string Name = "name";
-				public const string OrganizationId = "organizationid";
-				public const string OverwriteTime = "overwritetime";
-				public const string OwnerId = "ownerid";
-				public const string OwnerIdName = "owneridname";
-				public const string OwnerIdType = "owneridtype";
-				public const string OwnerIdYomiName = "owneridyominame";
-				public const string OwningBusinessUnit = "owningbusinessunit";
-				public const string OwningTeam = "owningteam";
-				public const string OwningUser = "owninguser";
-				public const string RoutingRuleIdUnique = "routingruleidunique";
-				public const string SolutionId = "solutionid";
-				public const string StateCode = "statecode";
-				public const string StatusCode = "statuscode";
-				public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
-				public const string TransactionCurrencyId = "transactioncurrencyid";
-				public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
-				public const string VersionNumber = "versionnumber";
-				public const string WorkflowId = "workflowid";
-				public const string WorkflowIdName = "workflowidname";
-		}
-		#endregion
-
-		#region Relations
-        public static class Relations
+        #region Relations
+        public static partial class Relations
         {
             public static class OneToMany
             {
-				public const string RoutingruleAnnotation = "routingrule_Annotation";
-				public const string RoutingruleAsyncOperations = "routingrule_AsyncOperations";
-				public const string RoutingruleBulkDeleteFailures = "routingrule_BulkDeleteFailures";
-				public const string RoutingruleEntries = "routingrule_entries";
-				public const string RoutingruleProcessSessions = "routingrule_ProcessSessions";
-				public const string RoutingruleUserentityinstancedatas = "routingrule_userentityinstancedatas";
+                public const string RoutingruleAnnotation = "routingrule_Annotation";
+                public const string RoutingruleAsyncOperations = "routingrule_AsyncOperations";
+                public const string RoutingruleBulkDeleteFailures = "routingrule_BulkDeleteFailures";
+                public const string RoutingruleEntries = "routingrule_entries";
+                public const string RoutingruleProcessSessions = "routingrule_ProcessSessions";
+                public const string RoutingruleUserentityinstancedatas = "routingrule_userentityinstancedatas";
             }
 
-            public static class ManyToOne
+            public static partial class ManyToOne
             {
-				public const string BusinessUnitRoutingrule = "business_unit_routingrule";
-				public const string LkRoutingruleCreatedby = "lk_routingrule_createdby";
-				public const string LkRoutingruleCreatedonbehalfby = "lk_routingrule_createdonbehalfby";
-				public const string LkRoutingruleModifiedby = "lk_routingrule_modifiedby";
-				public const string LkRoutingruleModifiedonbehalfby = "lk_routingrule_modifiedonbehalfby";
-				public const string OrganizationRoutingRules = "organization_RoutingRules";
-				public const string OwnerRoutingrule = "owner_routingrule";
-				public const string TeamRoutingrule = "team_routingrule";
-				public const string TransactionCurrencyRoutingrule = "TransactionCurrency_Routingrule";
-				public const string UserRoutingrule = "user_routingrule";
-				public const string WorkflowRoutingrule = "Workflow_routingrule";
+                public const string BusinessUnitRoutingrule = "business_unit_routingrule";
+                public const string LkRoutingruleCreatedby = "lk_routingrule_createdby";
+                public const string LkRoutingruleCreatedonbehalfby = "lk_routingrule_createdonbehalfby";
+                public const string LkRoutingruleModifiedby = "lk_routingrule_modifiedby";
+                public const string LkRoutingruleModifiedonbehalfby = "lk_routingrule_modifiedonbehalfby";
+                public const string OrganizationRoutingRules = "organization_RoutingRules";
+                public const string OwnerRoutingrule = "owner_routingrule";
+                public const string TeamRoutingrule = "team_routingrule";
+                public const string TransactionCurrencyRoutingrule = "TransactionCurrency_Routingrule";
+                public const string UserRoutingrule = "user_routingrule";
+                public const string WorkflowRoutingrule = "Workflow_routingrule";
             }
 
-            public static class ManyToMany
+            public static partial class ManyToMany
             {
             }
         }
-
         #endregion
 
-		#region Methods
+        #region Methods
+
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
         }
+
         public static RoutingRule Retrieve(IOrganizationService service, Guid id)
         {
-            return Retrieve(service,id, new ColumnSet(true));
+            return Retrieve(service, id, new ColumnSet(true));
         }
 
         public static RoutingRule Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
@@ -820,30 +700,30 @@ namespace dgt.power.dataverse
 
         public RoutingRule GetChangedEntity()
         {
-            if (_trackChanges)
+            if (!_trackChanges)
             {
-                var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof (AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
-                {
-                    attr.Add(attrName,this[attrName]);
-                }
-                return new  RoutingRule(Id) {Attributes = attr };
+                return this;
             }
-            return this;
+                var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            {
+                attr.Add(attrName, this[attrName]);
+            }
+            return new RoutingRule(Id) { Attributes = attr };
         }
         #endregion
-	}
+    }
 
-	#region Context
-	public partial class DataContext
-	{
-		public IQueryable<RoutingRule> RoutingRuleSet
-		{
-			get
-			{
-				return CreateQuery<RoutingRule>();
-			}
-		}
-	}
-	#endregion
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<RoutingRule> RoutingRuleSet
+        {
+            get
+            {
+                return CreateQuery<RoutingRule>();
+            }
+        }
+    }
+    #endregion
 }
