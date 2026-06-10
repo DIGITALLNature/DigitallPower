@@ -622,7 +622,7 @@ internal sealed class AssemblyModelBuilder : IDisposable
                 PrimaryEntityName = primaryEntityName,
                 SecondaryEntityName = secondaryEntityName,
                 FilterAttributes = GetArrayValues(customAttribute, "FilterAttributes"),
-                ExecutionOrder = GetValue<int?>(customAttribute, "ExecutionOrder") ?? 1,
+                ExecutionOrder = GetValue<int?>(customAttribute, "ExecutionOrder") ?? 100,
                 ParentName = pluginType.FullName!,
                 Configuration = GetValue<string>(customAttribute, "Configuration")
             };
