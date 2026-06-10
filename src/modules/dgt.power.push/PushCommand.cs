@@ -198,8 +198,10 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     processor.MigratePluginSteps(outdated, crmAssembly);
                 }
 
-                // Custom APIs must always be migrated when deleting old assembly (regardless of --no-migrate-custom-apis)
-                if (!localAssembly.Type.HasFlag(AssemblyType.PowerPlugin) && outdated.Count > 0)
+                // Custom APIs must always be migrated when deleting old assembly to prevent broken references.
+                // This applies to ALL assembly types including PowerPlugins (covers manually linked Custom APIs
+                // that aren't handled by the attribute-based CreatePluginType linking).
+                if (outdated.Count > 0)
                 {
                     ctx.Status("Migrate Custom API references to new assembly");
                     _console.MarkupLine(CultureInfo.InvariantCulture,
