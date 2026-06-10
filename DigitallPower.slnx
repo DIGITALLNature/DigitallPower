@@ -8,7 +8,6 @@
     <Project Path="src/modules/dgt.power.profile/dgt.power.profile.csproj" />
     <Project Path="src/modules/dgt.power.push/dgt.power.push.csproj" />
   </Folder>
-  <Folder Name="/src/" />
   <Folder Name="/Tests/">
     <Project Path="tests/dgt.power.analyzer.tests/dgt.power.analyzer.tests.csproj" />
     <Project Path="tests/dgt.power.codegeneration.tests/dgt.power.codegeneration.tests.csproj" />

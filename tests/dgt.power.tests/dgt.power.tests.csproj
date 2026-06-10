@@ -12,10 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit.Assertions" Version="1.45.29" />
-    <PackageReference Include="TUnit.Core" Version="1.45.29" />
+    <PackageReference Include="TUnit.Assertions" Version="1.51.0" />
+    <PackageReference Include="TUnit.Core" Version="1.51.0" />
     <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0-beta.8" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.55.2" />
+    <PackageReference Include="Spectre.Console.Testing" Version="0.56.0" />
     <PackageReference Include="System.Runtime.Caching" Version="10.0.8" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
