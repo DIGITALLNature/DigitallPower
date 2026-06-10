@@ -11,6 +11,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+max_line_length = 200
 
 # Generated code
 [*{_AssemblyInfo.cs}]
@@ -150,6 +151,11 @@ csharp_space_between_method_declaration_name_and_open_parenthesis = false
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
+
+# Suppressed analyzer rules
+dotnet_diagnostic.S109.severity = none
+dotnet_diagnostic.CA1308.severity = none
+dotnet_diagnostic.CA2007.severity = none
 
 # License header
 file_header_template = Copyright (c) DIGITALL Nature. All rights reserved\nDIGITALL Nature licenses this file to you under the Microsoft Public License.
