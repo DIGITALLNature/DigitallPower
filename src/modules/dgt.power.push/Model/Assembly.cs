@@ -43,6 +43,18 @@ public sealed class Assembly : AssemblyContent, IEquatable<Assembly>
 
     [IgnoreDataMember] public AssemblyType Type { get; set; } = AssemblyType.Undefined;
 
+    /// <summary>
+    /// Client ID from ManagedIdentityRegistrationAttribute (assembly-level).
+    /// When set, the assembly should be linked to a managed identity in Dataverse.
+    /// </summary>
+    [IgnoreDataMember] public string? ManagedIdentityClientId { get; set; }
+
+    /// <summary>
+    /// Optional Tenant ID from ManagedIdentityRegistrationAttribute.
+    /// Defaults to the environment's tenant if not provided.
+    /// </summary>
+    [IgnoreDataMember] public string? ManagedIdentityTenantId { get; set; }
+
     public bool Equals(Assembly? other)
     {
         if (other == null)

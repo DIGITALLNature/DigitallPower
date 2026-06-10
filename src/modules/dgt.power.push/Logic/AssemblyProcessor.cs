@@ -266,6 +266,98 @@ internal sealed class AssemblyProcessor : IDisposable
 
     #endregion
 
+    #region ManagedIdentity
+
+    /// <summary>
+    /// Links a plugin assembly to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginAssembly.ManagedIdentityId.
+    /// </summary>
+    internal void LinkManagedIdentity(Guid assemblyId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Assembly [green]{1:D}[/]", clientId, assemblyId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginAssembly(assemblyId)
+        {
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Links a plugin package to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginPackage.Managedidentityid.
+    /// The managed identity is typically derived from the ManagedIdentityRegistrationAttribute on the
+    /// assemblies contained within the package.
+    /// </summary>
+    internal void LinkManagedIdentityToPackage(Guid packageId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Package [green]{1:D}[/]", clientId, packageId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginPackage(packageId)
+        {
+            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Looks up an existing managed identity by ApplicationId, or creates a new one.
+    /// </summary>
+    /// <returns>The Guid of the existing or newly created managed identity record.</returns>
+    private Guid EnsureManagedIdentity(string clientId, string? tenantId)
+    {
+        var applicationId = Guid.Parse(clientId);
+
+        var query = new QueryExpression(ManagedIdentity.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                ManagedIdentity.LogicalNames.ApplicationId,
+                ManagedIdentity.LogicalNames.TenantId),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId,
+                        ConditionOperator.Equal, applicationId)
+                }
+            }
+        };
+
+        var existing = _service.RetrieveMultiple(query).Entities.FirstOrDefault();
+
+        if (existing != null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "  Found existing ManagedIdentity [italic]{0:D}[/]", existing.Id);
+            return existing.Id;
+        }
+
+        var managedIdentity = new ManagedIdentity
+        {
+            ApplicationId = applicationId,
+            CredentialSource = new OptionSetValue(ManagedIdentity.Options.CredentialSource.IsManaged),
+            SubjectScope = new OptionSetValue(ManagedIdentity.Options.SubjectScope.EnviornmentScope)
+        };
+
+        if (!string.IsNullOrWhiteSpace(tenantId))
+        {
+            managedIdentity.TenantId = Guid.Parse(tenantId);
+        }
+
+        var managedIdentityId = _service.Create(managedIdentity);
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "  Created ManagedIdentity [italic]{0:D}[/]", managedIdentityId);
+        return managedIdentityId;
+    }
+
+    #endregion
+
     #region PluginType
 
     public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm, string solution)

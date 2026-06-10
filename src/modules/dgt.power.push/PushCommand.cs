@@ -70,6 +70,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
         IReadOnlyList<Assembly?> assemblies;
+        Guid? currentPackageId = null;
         using var modelBuilder = new AssemblyModelBuilder(_connection, _console);
         using var processor = new AssemblyProcessor(_connection, _console);
 
@@ -106,6 +107,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             }
 
             assemblies = modelBuilder.BuildAssemblyFromPackage(packageCrm);
+            currentPackageId = packageCrm.Id;
         }
         else
         {
@@ -149,6 +151,21 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             {
                 ctx.Status("UpsertAndPurgeWorkflowTypes");
                 processor.UpsertAndPurgeWorkflowTypes(localAssembly, crmAssembly);
+            }
+
+            // Link managed identity if attribute is present
+            if (!string.IsNullOrWhiteSpace(localAssembly.ManagedIdentityClientId))
+            {
+                ctx.Status("LinkManagedIdentity");
+                processor.LinkManagedIdentity(crmAssembly.Id, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
+
+                // For package deployments, also link the managed identity to the package entity itself
+                if (currentPackageId.HasValue)
+                {
+                    ctx.Status("LinkManagedIdentityToPackage");
+                    processor.LinkManagedIdentityToPackage(currentPackageId.Value, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
+                    currentPackageId = null; // only link once per package (first assembly with the attribute wins)
+                }
             }
 
             if (localAssembly.Type.HasFlag(AssemblyType.Plugin))
