@@ -279,15 +279,13 @@ internal sealed class AssemblyModelBuilder : IDisposable
         }
 
 
-        var split1 = GetVersion(version);
-        var majorMinor1 = $"{split1[0]}.{split1[1]}";
+        var v1 = Version.Parse(version);
 
         var package = packages.Single();
 
         pluginPackage = package;
-        var split2 = GetVersion(package.Version!);
-        var majorMinor2 = $"{split2[0]}.{split2[1]}";
-        if (majorMinor1.Equals(majorMinor2, StringComparison.Ordinal))
+        var v2 = Version.Parse(package.Version!);
+        if (v1.Major == v2.Major && v1.Minor == v2.Minor)
         {
             pluginPackage = package;
             return AssemblyState.Update;
@@ -393,11 +391,9 @@ internal sealed class AssemblyModelBuilder : IDisposable
             return AssemblyState.Package;
         }
 
-        var split1 = GetVersion(version);
-        var majorMinor1 = $"{split1[0]}.{split1[1]}";
-        var split2 = GetVersion(pluginAssembly.Version!);
-        var majorMinor2 = $"{split2[0]}.{split2[1]}";
-        if (majorMinor1.Equals(majorMinor2, StringComparison.Ordinal))
+        var v1 = Version.Parse(version);
+        var v2 = Version.Parse(pluginAssembly.Version!);
+        if (v1.Major == v2.Major && v1.Minor == v2.Minor)
         {
             return AssemblyState.Update;
         }
@@ -846,17 +842,6 @@ internal sealed class AssemblyModelBuilder : IDisposable
         }
     }
 
-
-    private static string[] GetVersion(string version)
-    {
-        var result = version.Split('.', StringSplitOptions.RemoveEmptyEntries);
-        if (result.Length is < 3 or > 4) //major.minor.build.patch
-        {
-            throw new ArgumentException($"Version {version} does not match 'major.minor.build[.patch]'");
-        }
-
-        return result;
-    }
 
     public void Dispose()
     {
