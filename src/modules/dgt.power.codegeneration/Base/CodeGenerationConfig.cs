@@ -93,8 +93,6 @@ public class CodeGenerationConfig
 
     public bool SuppressMetaData { get; init; }
 
-    public bool Hints { get; init; } = true;
-
     public TypescriptGeneratorVersion TypescriptGeneratorVersion { get; init; } = TypescriptGeneratorVersion.Light;
 
     /// <summary>
