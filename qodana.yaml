@@ -31,10 +31,10 @@ bootstrap: dotnet restore ./DigitallPower.slnx && dotnet build ./DigitallPower.s
 # severityThresholds - configures maximum thresholds for different problem severities
 # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
 # Code Coverage is available in Ultimate and Ultimate Plus plans
-#failureConditions:
-#  severityThresholds:
-#    any: 15
-#    critical: 5
+failureConditions:
+  severityThresholds:
+    any: 15
+    critical: 5
 #  testCoverageThresholds:
 #    fresh: 70
 #    total: 50
