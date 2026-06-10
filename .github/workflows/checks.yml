@@ -21,6 +21,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
@@ -37,6 +46,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: dotnet build --no-restore

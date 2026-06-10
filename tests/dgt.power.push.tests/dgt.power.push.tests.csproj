@@ -10,7 +10,6 @@
 
 
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="1.45.29" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>

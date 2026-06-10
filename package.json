@@ -1,13 +1,14 @@
 {
     "devDependencies": {
-        "@commitlint/cli": "^21.0.1",
-        "@commitlint/config-conventional": "^21.0.1",
+        "@commitlint/cli": "^21.0.2",
+        "@commitlint/config-conventional": "^21.0.2",
         "@droidsolutions-oss/semantic-release-nuget": "^2.1.0",
         "@droidsolutions-oss/semantic-release-update-file": "^1.4.0",
         "@semantic-release/changelog": "github:semantic-release/changelog",
         "@semantic-release/git": "github:semantic-release/git",
         "husky": "^9.1.7",
-        "semantic-release": "^25.0.3"
+        "semantic-release": "^25.0.5",
+        "typescript": "6.0.3"
     },
     "release": {
         "branches": [
