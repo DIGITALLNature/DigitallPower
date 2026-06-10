@@ -31,8 +31,12 @@ public class PushVerb : BaseProgramSettings
     public bool Publish { get; set; }
 
     [CommandOption("--delete-on-upgrade")]
-    [Description("Delete old pluginsteps on Upgrade of PluginAssembly")]
+    [Description("Delete old assembly on Upgrade; migrates plugin steps and Custom API references to new assembly before deletion")]
     public bool DeleteOnUpgrade { get; set; }
+
+    [CommandOption("--no-migrate-custom-apis")]
+    [Description("Do not migrate Custom API references to new assembly on Upgrade (ignored when --delete-on-upgrade is set)")]
+    public bool NoMigrateCustomApis { get; set; }
 
     [CommandOption("--config")]
     [Description("Configuration file for webressources mapping")]

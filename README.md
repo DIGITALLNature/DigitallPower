@@ -246,6 +246,7 @@ Pushes a plugin assembly or web resource into a target solution.
 
 ```bash
 dgtp push ./bin/Release/MyPlugin.dll --solution mysolution
+dgtp push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
 ```
 
 #### Supported Registration Attributes
@@ -268,6 +269,18 @@ When a plugin assembly is decorated with `ManagedIdentityRegistrationAttribute` 
 3. Links the `PluginAssembly.ManagedIdentityId` to the managed identity record
 
 This enables plugins to use Azure Managed Identity for secure service-to-service authentication without manual registration steps.
+
+#### Assembly Version Upgrade
+
+When a plugin assembly's **major or minor** version changes (e.g. `1.0.0.0` → `1.1.0.0`), the push command creates a **new** assembly record in Dataverse (since a different version constitutes a different assembly identity). The tool handles reference migration:
+
+| Flag | Behavior |
+|------|----------|
+| *(default)* | New assembly is created; Custom API references are migrated to new types automatically |
+| `--delete-on-upgrade` | Migrates **plugin steps** and Custom APIs to the new assembly, then deletes the old assembly |
+| `--no-migrate-custom-apis` | Skips Custom API migration (ignored when `--delete-on-upgrade` is set, since deletion requires migration) |
+
+> **Plugin Packages (.nupkg):** No special handling needed — the platform manages assembly GUIDs within a package. Content updates preserve all references automatically.
 
 ## 🏗 Solution Architecture
 
