@@ -300,6 +300,9 @@ internal sealed class AssemblyModelBuilder : IDisposable
 
     private void ParseAssembly(System.Reflection.Assembly assembly, ref Assembly result)
     {
+        // Parse assembly-level attributes (e.g., ManagedIdentityRegistrationAttribute)
+        ParseAssemblyLevelAttributes(assembly, result);
+
         var workflowTypes = GetLoadableTypes(assembly).Where(IsCodeActivityBased).ToList();
         var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
 
@@ -360,6 +363,31 @@ internal sealed class AssemblyModelBuilder : IDisposable
             }
 
             result.PluginTypes.Add(type);
+        }
+    }
+
+    /// <summary>
+    /// Parses assembly-level attributes such as ManagedIdentityRegistrationAttribute.
+    /// </summary>
+    private void ParseAssemblyLevelAttributes(System.Reflection.Assembly assembly, Assembly result)
+    {
+        var assemblyAttributes = CustomAttributeData.GetCustomAttributes(assembly);
+        foreach (var attr in assemblyAttributes)
+        {
+            if (!_knownNamespaces.Contains(attr.AttributeType.Namespace))
+            {
+                continue;
+            }
+
+            if (attr.AttributeType.Name == "ManagedIdentityRegistrationAttribute")
+            {
+                result.ManagedIdentityClientId = GetValue<string>(attr, "clientId");
+                result.ManagedIdentityTenantId = GetValue<string>(attr, "TenantId");
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "[blue]ManagedIdentity[/] ClientId=[italic]{0}[/] TenantId=[italic]{1}[/]",
+                    result.ManagedIdentityClientId ?? "(none)",
+                    result.ManagedIdentityTenantId ?? "(environment default)");
+            }
         }
     }
 

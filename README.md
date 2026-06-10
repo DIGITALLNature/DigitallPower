@@ -258,6 +258,16 @@ When pushing a plugin assembly, `push` evaluates the following attributes from t
 | `CustomApiRegistrationAttribute` | Links a plugin type to a Custom API by message name |
 | `CustomDataProviderRegistrationAttribute` | Generates data provider steps (Retrieve, RetrieveMultiple, Create, Update, Delete) for virtual entities |
 | `WorkflowRegistrationAttribute` | Marks workflow activities with group/name metadata |
+| `ManagedIdentityRegistrationAttribute` | Links the assembly to an Azure Managed Identity for secure authentication |
+
+#### Managed Identity Support
+
+When a plugin assembly is decorated with `ManagedIdentityRegistrationAttribute` (assembly-level), the push module automatically:
+1. Looks up an existing `managedidentity` record by `ApplicationId` (ClientId)
+2. Creates one if not found (with `CredentialSource=ManagedIdentity`, `SubjectScope=Global`)
+3. Links the `PluginAssembly.ManagedIdentityId` to the managed identity record
+
+This enables plugins to use Azure Managed Identity for secure service-to-service authentication without manual registration steps.
 
 ## 🏗 Solution Architecture
 

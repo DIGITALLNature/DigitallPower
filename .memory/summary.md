@@ -110,5 +110,6 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-code-quality-patterns.md` | guide | Anti-patterns with canonical fixes (DI downcasts, GetHashCode, covariant arrays) |
 | `implementation-centralized-ci-environment-detection.md` | implementation | ExecutionEnvironment in common; reused by telemetry + codegen |
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
+| `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
