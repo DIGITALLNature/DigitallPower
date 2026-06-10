@@ -13,7 +13,7 @@ namespace dgt.power.maintenance.tests;
 public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState, UpdateWorkflowStateSettings>
 {
     [Test]
-    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.Workflow)]
     [Arguments(Workflow.Options.Category.ModernFlow)]
     public async Task DefaultShouldActivateFlows(int category)
     {
@@ -66,7 +66,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     }
 
     [Test]
-    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.Workflow)]
     [Arguments(Workflow.Options.Category.ModernFlow)]
     public async Task ShouldDeactivateFlows(int category)
     {
@@ -119,7 +119,7 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     }
 
     [Test]
-    [Arguments(Workflow.Options.Category.Workflow_)]
+    [Arguments(Workflow.Options.Category.Workflow)]
     [Arguments(Workflow.Options.Category.ModernFlow)]
     public async Task ShouldOverwriteFlowOwner(int category)
     {
@@ -229,9 +229,9 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     }
 
     [Test]
-    [Arguments("filter-solution.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-solution.json", Workflow.Options.Category.Workflow)]
     [Arguments("filter-solution.json", Workflow.Options.Category.ModernFlow)]
-    [Arguments("filter-solution-pattern.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-solution-pattern.json", Workflow.Options.Category.Workflow)]
     [Arguments("filter-solution-pattern.json", Workflow.Options.Category.ModernFlow)]
     public async Task ShouldFilterFlowsBySolution(string config, int category)
     {
@@ -302,9 +302,9 @@ public class UpdateWorkflowStateFlowTests : CommandTestsBase<UpdateWorkflowState
     }
 
     [Test]
-    [Arguments("filter-publisher.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-publisher.json", Workflow.Options.Category.Workflow)]
     [Arguments("filter-publisher.json", Workflow.Options.Category.ModernFlow)]
-    [Arguments("filter-publisher-pattern.json", Workflow.Options.Category.Workflow_)]
+    [Arguments("filter-publisher-pattern.json", Workflow.Options.Category.Workflow)]
     [Arguments("filter-publisher-pattern.json", Workflow.Options.Category.ModernFlow)]
     public async Task ShouldFilterFlowsByPublisher(string config, int category)
     {
