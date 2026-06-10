@@ -1,3 +1,10 @@
+# [2.1.0-beta.49](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.48...v2.1.0-beta.49) (2026-06-10)
+
+
+### Bug Fixes
+
+* extend known namespaces list ([2cd1174](https://github.com/DIGITALLNature/DigitallPower/commit/2cd1174481284222ae2ad8280ccf12cf6f0ca25b))
+
 # [2.1.0-beta.48](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.47...v2.1.0-beta.48) (2026-06-08)
 
 
