@@ -14,19 +14,12 @@ internal static class TelemetryConfig
 {
     private const string OptOutEnvVar = "DGT_TELEMETRY_OPTOUT";
     private const string InstallIdFileName = "telemetry-install-id";
-    private static readonly HashSet<string> s_optOutValues = ["1", "true", "yes"];
 
     /// <summary>
     /// True when the user has opted out of telemetry via environment variable.
     /// </summary>
-    public static bool IsOptedOut
-    {
-        get
-        {
-            var value = Environment.GetEnvironmentVariable(OptOutEnvVar);
-            return value != null && s_optOutValues.Contains(value);
-        }
-    }
+    public static bool IsOptedOut =>
+        ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(OptOutEnvVar));
 
     /// <summary>
     /// True when running on a known CI/CD build agent.

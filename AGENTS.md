@@ -50,6 +50,48 @@ When making changes to this codebase, **you MUST keep the documentation up to da
 - **Licensing header:** All source files start with `// Copyright (c) DIGITALL Nature. All rights reserved`
 - **Tests:** Use TUnit framework with TUnit.Assertions and TUnit.Mocks
 
+### Async Migration Checklist (MANDATORY for Logic changes)
+
+When **modifying or adding** any `PowerLogic<T>` subclass, **always check**:
+
+> ❓ Can this class be migrated from `Task.FromResult(InvokeCore(...))` to a true `async/await` implementation using `IOrganizationServiceAsync2`?
+
+- If **yes**: migrate in the same PR. Replace `((IOrganizationService)Connection).Execute(...)` with `await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(...)`, replace LINQ `DataContext` queries with `QueryExpression` + `RetrieveMultipleAsync`.
+- If **no** (e.g., touching unrelated logic, or migration is too large for the current scope): leave a `// TODO(async): migrate to IOrganizationServiceAsync2` comment and add an entry to `todo.md`.
+
+**Pattern for truly async logic:**
+```csharp
+protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken)
+{
+    var orgAsync = (IOrganizationServiceAsync2)Connection;
+    var response = await orgAsync.ExecuteAsync(new RetrieveMultipleRequest { Query = query }, cancellationToken);
+    // ...
+}
+```
+
+See `todo.md` for full migration backlog and module-by-module scope.
+
+### Async Migration Checklist (MANDATORY for Logic changes)
+
+When **modifying or adding** any `PowerLogic<T>` subclass, **always check**:
+
+> ❓ Can this class be migrated from `Task.FromResult(InvokeCore(...))` to a true `async/await` implementation using `IOrganizationServiceAsync2`?
+
+- If **yes**: migrate in the same PR. Replace `((IOrganizationService)Connection).Execute(...)` with `await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(...)`, replace LINQ `DataContext` queries with `QueryExpression` + `RetrieveMultipleAsync`.
+- If **no** (e.g., touching unrelated logic, or migration is too large for the current scope): leave a `// TODO(async): migrate to IOrganizationServiceAsync2` comment and add an entry to `todo.md`.
+
+**Pattern for truly async logic:**
+```csharp
+protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken)
+{
+    var orgAsync = (IOrganizationServiceAsync2)Connection;
+    var response = await orgAsync.ExecuteAsync(new RetrieveMultipleRequest { Query = query }, cancellationToken);
+    // ...
+}
+```
+
+See `todo.md` for full migration backlog and module-by-module scope.
+
 ---
 
 ## Commit Messages
