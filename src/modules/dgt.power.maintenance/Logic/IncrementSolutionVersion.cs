@@ -18,6 +18,7 @@ public class IncrementSolutionVersion(
 {
     protected override bool Invoke(IncrementSolutionVersionSettings settings)
     {
+        ArgumentNullException.ThrowIfNull(settings);
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(settings.Solution))

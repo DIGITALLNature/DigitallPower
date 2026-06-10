@@ -278,7 +278,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
 
         await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
-#pragma warning disable TUnitAssertions0015 - bool is earlybound
+#pragma warning disable TUnitAssertions0015 // bool is earlybound
         await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Activated);
 #pragma warning restore TUnitAssertions0015
     }
@@ -308,7 +308,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
 
         await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
-#pragma warning disable TUnitAssertions0015 - bool is earlybound
+#pragma warning disable TUnitAssertions0015 // bool is earlybound
         await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Draft);
 #pragma warning restore TUnitAssertions0015
     }

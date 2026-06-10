@@ -19,5 +19,8 @@ public sealed class Calendar
 
     [JsonPropertyName("HolidaySchedule")] public Guid? HolidayScheduleId { get; init; }
 
-    [JsonPropertyName("CalendarRules")] public List<CalendarRule> Rules { get; set; } = new();
+    [JsonPropertyName("CalendarRules")]
+#pragma warning disable CA1002 // List is mutated by export logic
+    public List<CalendarRule> Rules { get; init; } = new();
+#pragma warning restore CA1002
 }

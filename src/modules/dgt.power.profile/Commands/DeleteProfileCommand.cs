@@ -15,7 +15,7 @@ public class DeleteProfileCommand(IProfileManager profileManager, IAnsiConsole c
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
         var identities = profileManager.LoadIdentities();
-        identities.Remove(settings.Name.ToUpperInvariant());
+        identities.Remove(settings.Name);
         profileManager.Save();
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] is removed.");

@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,7 +10,6 @@ using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
-using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -22,59 +20,41 @@ public class CreateWorkflowStateConfig(
     IConfigResolver configResolver,
     JsonSerializerOptions jsonSerializerOptions,
     IAnsiConsole console)
-    : PowerLogic<CreateWorkflowStateConfig.Settings>(tracer, connection, configResolver, console)
+    : PowerLogic<CreateWorkflowStateConfigSettings>(tracer, connection, configResolver, console)
 {
-    public class Settings : BaseProgramSettings
-    {
-        [CommandOption("-o|--output")]
-        [Description("Full path to the output file, e.g. C:\\temp\\config.json")]
-        [DefaultValue("config.json")]
-        public required string Config { get; init; }
-
-        [CommandOption("--overwrite")]
-        [Description("If set to true the output file will be overwritten if it exists")]
-        [DefaultValue(false)]
-        public bool Overwrite { get; init; }
-
-        [CommandOption("-s|--solutions")]
-        [Description("Comma separated list of solution uniquenames to consider. Wildcards (%) are allowed")]
-        public string? Solutions { get; set; }
-
-        [CommandOption("-p|--publishers")]
-        [Description("Comma separated list of publisher names to consider. Wildcards (%) are allowed")]
-        public string? Publishers { get; set; }
-
-        [CommandOption("--tablereport")]
-        [Description("Print a table report to the console after the config file has been created")]
-        [DefaultValue(true)]
-        public bool TableReport { get; init; }
-
-        [CommandOption("--detailed")]
-        [Description("If set to true, a full config of all processes will be created instead of only listing processes that are disabled or where the owner is changed")]
-        [DefaultValue(false)]
-        public bool Detailed { get; init; }
-    }
-
     private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override bool Invoke(Settings args)
+    protected override bool Invoke(CreateWorkflowStateConfigSettings args)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(args.Config, nameof(args.Config));
-        Tracer.Start(this);
-
-        // Check if output file exists and if so abort if overwrite is not set
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentException.ThrowIfNullOrWhiteSpace(args.Config);
+        
         if (File.Exists(args.Config) && !args.Overwrite)
         {
             throw new InvalidOperationException($"Output file '{args.Config}' already exists. Use --overwrite flag to overwrite the existng file");
         }
+        
+        throw new NotSupportedException("This command requires async execution. Use InvokeAsync.");
+    }
+
+    protected override Task<bool> InvokeAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+
+        return InvokeCoreAsync(args, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+        Tracer.Start(this);
 
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');
 
         // Do the actual work
-        var task = CollectWorkflowStates(solutions, publishers, args.Config, args.Detailed);
-        task.Wait();
+        await CollectWorkflowStatesAsync(solutions, publishers, args.Config, args.Detailed);
 
         // Print table report if requested
         if (args.TableReport)
@@ -85,7 +65,7 @@ public class CreateWorkflowStateConfig(
         return Tracer.End(this, true);
     }
 
-    private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile, bool detailed)
+    private async Task CollectWorkflowStatesAsync(string[]? solutions, string[]? publishers, string configFile, bool detailed)
     {
         await Console.Progress()
             .StartAsync(async ctx =>
@@ -110,7 +90,7 @@ public class CreateWorkflowStateConfig(
                 var workflowStateManager = new WorkflowStateManager((IOrganizationServiceAsync2)Connection, solutions ?? [], publishers ?? [], Tracer, progress);
 
                 Tracer.Log("Loading all workflows", TraceEventType.Information);
-                var workflows = await workflowStateManager.LoadAllWorkflows();
+                var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
                 Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
@@ -142,9 +122,9 @@ public class CreateWorkflowStateConfig(
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? flow.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (detailed || disabled || owner != default)
+                    if (detailed || disabled || owner != null)
                     {
-                        config.Flows.TryAdd(flow.Name!, new WorkflowConfig.FlowConfig
+                        config.Flows.TryAdd(flow.Name!, new WorkflowFlowConfig
                         {
                             Disabled = disabled,
                             Owner = owner
@@ -158,9 +138,9 @@ public class CreateWorkflowStateConfig(
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = action.OwnerId?.Id != defaultOwnerId ? action.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (detailed || disabled || owner != default)
+                    if (detailed || disabled || owner != null)
                     {
-                        config.Actions.TryAdd(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
+                        config.Actions.TryAdd(action.UniqueName!, new WorkflowBaseConfig
                         {
                             Disabled = disabled,
                             Owner = owner
@@ -172,15 +152,15 @@ public class CreateWorkflowStateConfig(
                 var businessRuleTables = workflows.Where(w => w.Category!.Value == Workflow.Options.Category.BusinessRule).GroupBy(b => b.PrimaryEntity).ToList();
                 foreach (var table in businessRuleTables.OrderBy(t => t.Key))
                 {
-                    var tableEntries = new Dictionary<string, WorkflowConfig.BaseWorkflowConfig>();
+                    var tableEntries = new Dictionary<string, WorkflowBaseConfig>();
                     foreach (var rule in table)
                     {
                         var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
                         var owner = rule.OwnerId?.Id != defaultOwnerId ? rule.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                        if (detailed || disabled || owner != default)
+                        if (detailed || disabled || owner != null)
                         {
-                            tableEntries.TryAdd(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
+                            tableEntries.TryAdd(rule.Name!, new WorkflowBaseConfig
                             {
                                 Disabled = disabled,
                                 Owner = owner

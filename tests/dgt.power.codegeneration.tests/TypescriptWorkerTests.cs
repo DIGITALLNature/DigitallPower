@@ -10,6 +10,7 @@ using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.codegeneration.tests;
@@ -83,7 +84,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         Directory.CreateDirectory(modelPath);
         Directory.CreateDirectory(typescriptPath);
         var existingFilePath = $"{typescriptPath}/testentity.form.ts";
-        File.WriteAllText(existingFilePath, "import * from '.'");
+        await File.WriteAllTextAsync(existingFilePath, "import * from '.'");
 
         await Assert.That(GetContext()
             .Execute(args)).IsTrue();
@@ -114,24 +115,24 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var servicePath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Services}.ts";
         File.Exists(servicePath);
-        await Assert.That(File.ReadAllText(servicePath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(await File.ReadAllTextAsync(servicePath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
 
         var odataPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Odata}.ts";
         File.Exists(odataPath);
-        await Assert.That(File.ReadAllText(odataPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(await File.ReadAllTextAsync(odataPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var webapiPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Webapi}.ts";
         File.Exists(webapiPath);
-        await Assert.That(File.ReadAllText(webapiPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(await File.ReadAllTextAsync(webapiPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var modelPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Model}.ts";
         File.Exists(modelPath);
-        await Assert.That(File.ReadAllText(modelPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(await File.ReadAllTextAsync(modelPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
 
         var utilsPath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Utils}.ts";
         File.Exists(utilsPath);
-        await Assert.That(File.ReadAllText(utilsPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
+        await Assert.That(await File.ReadAllTextAsync(utilsPath)).Contains($@"/// <reference path=""{config.TypingPath}"" />");
     }
 
     [Test]
@@ -166,10 +167,10 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         await Assert.That(File.Exists(entityPath)).IsTrue();
         await Assert.That(File.Exists(entityRefPath)).IsTrue();
-        await Assert.That(File.ReadAllText(entityPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}Entity {{");
-        await Assert.That(File.ReadAllText(entityPath)).Contains($"public static {primaryIdToken}: string = \"{primaryId.LogicalName}\";");
-        await Assert.That(File.ReadAllText(entityRefPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}EntityRef {{");
-        await Assert.That(File.ReadAllText(entityRefPath)).Contains($"public static EntitylogicalName: string = \"{_accountMetadata.LogicalName}\";");
+        await Assert.That(await File.ReadAllTextAsync(entityPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}Entity {{");
+        await Assert.That(await File.ReadAllTextAsync(entityPath)).Contains($"public static {primaryIdToken}: string = \"{primaryId.LogicalName}\";");
+        await Assert.That(await File.ReadAllTextAsync(entityRefPath)).Contains($"export module D365{Formatter.CamelCase(_accountMetadata.SchemaName)}EntityRef {{");
+        await Assert.That(await File.ReadAllTextAsync(entityRefPath)).Contains($"public static EntitylogicalName: string = \"{_accountMetadata.LogicalName}\";");
     }
 
     [Test]
@@ -288,7 +289,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
         var mainFormName = forms.mainForm.Name.ToLowerInvariant().Replace(' ', '_');
         var mainFormPath = $"{typescriptPath}/{_accountMetadata.LogicalName}.{mainFormName}_main.form.ts";
         await Assert.That(File.Exists(mainFormPath)).IsTrue();
-        var mainFormCode = File.ReadAllText(mainFormPath);
+        var mainFormCode = await File.ReadAllTextAsync(mainFormPath);
         await Assert.That(mainFormCode).Contains("export module D365AccountAccountMainForm {");
         await Assert.That(mainFormCode).Contains("export module FormTabs {");
         var quickViewName = forms.quickView.Name.ToLowerInvariant().Replace(' ', '_');
@@ -393,7 +394,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
         await Assert.That(File.Exists(messagesPath)).IsTrue();
-        await Assert.That(File.ReadAllText(messagesPath)).Contains("export class D365SdkMessages {");
+        await Assert.That(await File.ReadAllTextAsync(messagesPath)).Contains("export class D365SdkMessages {");
     }
 
     [Test]
@@ -447,7 +448,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
         await Assert.That(File.Exists(messagesPath)).IsTrue();
-        var messagesCode = File.ReadAllText(messagesPath);
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
         await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(action.Name)}: string = \"{action.Name}\";");
         await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(customApi.Name)}: string = \"{customApi.Name}\";");
         await Assert.That(messagesCode).Contains($"public static {Formatter.CamelCase(additionalMessage.Name)}: string = \"{additionalMessage.Name}\";");
@@ -513,7 +514,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var optionSetsPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts";
         await Assert.That(File.Exists(optionSetsPath)).IsTrue();
-        await Assert.That(File.ReadAllText(optionSetsPath)).Contains($"export class {Formatter.CamelCase(globalOptionSet.Name)} {{");
+        await Assert.That(await File.ReadAllTextAsync(optionSetsPath)).Contains($"export class {Formatter.CamelCase(globalOptionSet.Name)} {{");
     }
 
     [Test]
@@ -557,7 +558,7 @@ public class TypescriptWorkerTests : CodeGenerationTestsBase<TypescriptWorker>
 
         var businessProcessFlowPath = $"{typescriptPath}/{businessProcessFlow.UniqueName}.bpf.ts";
         await Assert.That(File.Exists(businessProcessFlowPath)).IsTrue();
-        var businessProcessFlowCode = File.ReadAllText(businessProcessFlowPath);
+        var businessProcessFlowCode = await File.ReadAllTextAsync(businessProcessFlowPath);
         await Assert.That(businessProcessFlowCode).Contains("export module D365TestBPFBPF {");
         await Assert.That(businessProcessFlowCode).Contains("public static ProcessName = \"Test BPF\";");
         await Assert.That(businessProcessFlowCode).Contains("public static TestStage = {");

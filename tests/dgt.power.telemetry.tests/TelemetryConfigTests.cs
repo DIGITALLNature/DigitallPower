@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.IO.IsolatedStorage;
+using dgt.power.common;
 using dgt.power.Telemetry;
 
 namespace dgt.power.telemetry.tests;
@@ -57,15 +58,9 @@ public class TelemetryConfigTests
     public async Task IsCi_ReturnsFalse_WhenNoCiEnvVarsSet()
     {
         // Save and clear all CI env vars
-        var savedVars = new Dictionary<string, string?>
-        {
-            ["TF_BUILD"] = Environment.GetEnvironmentVariable("TF_BUILD"),
-            ["BUILD_BUILDURI"] = Environment.GetEnvironmentVariable("BUILD_BUILDURI"),
-            ["GITHUB_ACTIONS"] = Environment.GetEnvironmentVariable("GITHUB_ACTIONS"),
-            ["GITLAB_CI"] = Environment.GetEnvironmentVariable("GITLAB_CI"),
-            ["JENKINS_URL"] = Environment.GetEnvironmentVariable("JENKINS_URL"),
-            ["CI"] = Environment.GetEnvironmentVariable("CI")
-        };
+        var savedVars = ExecutionEnvironment.CiEnvironmentVariables
+            .ToDictionary(environmentVariable => environmentVariable,
+                environmentVariable => Environment.GetEnvironmentVariable(environmentVariable));
 
         try
         {
@@ -95,8 +90,8 @@ public class TelemetryConfigTests
     public async Task IsCi_ReturnsTrue_WhenCiEnvVarSet(string envVar, string envValue)
     {
         // Save all CI env vars and clear them to isolate
-        var ciVars = new[] { "TF_BUILD", "BUILD_BUILDURI", "GITHUB_ACTIONS", "GITLAB_CI", "JENKINS_URL", "CI" };
-        var saved = ciVars.ToDictionary(k => k, k => Environment.GetEnvironmentVariable(k));
+        var ciVars = ExecutionEnvironment.CiEnvironmentVariables.ToArray();
+        var saved = ciVars.ToDictionary(k => k, Environment.GetEnvironmentVariable);
 
         try
         {

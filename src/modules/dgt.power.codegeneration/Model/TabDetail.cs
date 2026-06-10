@@ -4,6 +4,7 @@
 
 namespace dgt.power.codegeneration.Model;
 // ReSharper disable CollectionNeverQueried.Global
+#pragma warning disable CA1002 // Sections is populated via .Add() during parsing
 
 public class TabDetail : IComparable<TabDetail>
 {
@@ -32,7 +33,7 @@ public class TabDetail : IComparable<TabDetail>
 
     public override int GetHashCode()
     {
-        return TabName.GetHashCode();
+        return TabName.GetHashCode(StringComparison.Ordinal);
     }
 
     public static bool operator ==(TabDetail? left, TabDetail? right)

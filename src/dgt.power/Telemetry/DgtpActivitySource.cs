@@ -17,7 +17,7 @@ internal static class DgtpActivitySource
 
     private static string GetVersion()
     {
-        var assembly = Assembly.GetExecutingAssembly();
+        var assembly = typeof(DgtpActivitySource).Assembly;
         var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
         if (!string.IsNullOrWhiteSpace(informationalVersion))

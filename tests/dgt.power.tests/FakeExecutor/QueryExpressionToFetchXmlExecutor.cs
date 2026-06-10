@@ -7,6 +7,7 @@ using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.tests.FakeExecutor;

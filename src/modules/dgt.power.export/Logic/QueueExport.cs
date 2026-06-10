@@ -8,8 +8,8 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Queue = dgt.power.dataverse.Queue;
 using Spectre.Console;
+using Queue = dgt.power.dataverse.Queue;
 
 namespace dgt.power.export.Logic;
 

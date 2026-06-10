@@ -1,6 +1,9 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.IO.IsolatedStorage;
+using dgt.power.common;
+
 namespace dgt.power.Telemetry;
 
 /// <summary>
@@ -11,6 +14,7 @@ internal static class TelemetryConfig
 {
     private const string OptOutEnvVar = "DGT_TELEMETRY_OPTOUT";
     private const string InstallIdFileName = "telemetry-install-id";
+    private static readonly HashSet<string> s_optOutValues = ["1", "true", "yes"];
 
     /// <summary>
     /// True when the user has opted out of telemetry via environment variable.
@@ -20,30 +24,19 @@ internal static class TelemetryConfig
         get
         {
             var value = Environment.GetEnvironmentVariable(OptOutEnvVar);
-            return value is "1" or "true" or "yes";
+            return value != null && s_optOutValues.Contains(value);
         }
     }
 
     /// <summary>
     /// True when running on a known CI/CD build agent.
     /// </summary>
-    public static bool IsCi =>
-        // Azure DevOps
-        Environment.GetEnvironmentVariable("TF_BUILD") != null ||
-        Environment.GetEnvironmentVariable("BUILD_BUILDURI") != null ||
-        // GitHub Actions
-        Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null ||
-        // GitLab CI
-        Environment.GetEnvironmentVariable("GITLAB_CI") != null ||
-        // Jenkins
-        Environment.GetEnvironmentVariable("JENKINS_URL") != null ||
-        // Generic CI marker
-        Environment.GetEnvironmentVariable("CI") != null;
+    public static bool IsCi => ExecutionEnvironment.IsCiAgent;
 
     /// <summary>
     /// Retrieves or creates a persistent anonymous install ID from isolated storage.
     /// </summary>
-    public static string GetOrCreateInstallId(System.IO.IsolatedStorage.IsolatedStorageFile store)
+    public static string GetOrCreateInstallId(IsolatedStorageFile store)
     {
         if (store.FileExists(InstallIdFileName))
         {

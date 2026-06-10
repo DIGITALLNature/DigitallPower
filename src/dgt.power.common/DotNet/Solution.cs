@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("solution")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class Solution : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("solutionid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(SolutionId));
             }
@@ -578,8 +579,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N solution_parent_solution
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("solution_parent_solution")]
-		public System.Collections.Generic.IEnumerable<Solution> SolutionParentSolution
+		[RelationshipSchemaName("solution_parent_solution")]
+		public IEnumerable<Solution> SolutionParentSolution
 		{
 			[DebuggerNonUserCode]
 			get
@@ -598,8 +599,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N solution_role
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("solution_role")]
-		public System.Collections.Generic.IEnumerable<Role> SolutionRole
+		[RelationshipSchemaName("solution_role")]
+		public IEnumerable<Role> SolutionRole
 		{
 			[DebuggerNonUserCode]
 			get
@@ -618,8 +619,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N solution_solutioncomponent
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("solution_solutioncomponent")]
-		public System.Collections.Generic.IEnumerable<SolutionComponent> SolutionSolutioncomponent
+		[RelationshipSchemaName("solution_solutioncomponent")]
+		public IEnumerable<SolutionComponent> SolutionSolutioncomponent
 		{
 			[DebuggerNonUserCode]
 			get

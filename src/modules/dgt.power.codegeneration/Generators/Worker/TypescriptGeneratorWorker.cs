@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Reflection;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using Spectre.Console;
@@ -27,7 +26,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
         // Ensure that the template and args are not null
         Debug.Assert(content != null, $"{nameof(content)} {NotNull}");
         Debug.Assert(args != null, $"{nameof(args)} {NotNull}");
-        Debug.Assert(name != null, $"{nameof(name)} + { NotNull}");
+        Debug.Assert(name != null, $"{nameof(name)} {NotNull}");
         // Combine the target directory, folder, and file name to create the full path
         var path = Path.Combine([
             args.TargetDirectory,
@@ -56,7 +55,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 
         Console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
-        var reader = new StreamReader(Assembly.GetCallingAssembly()
+        using var reader = new StreamReader(typeof(TypescriptGeneratorWorker).Assembly
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
 
         var content = reader.ReadToEnd();

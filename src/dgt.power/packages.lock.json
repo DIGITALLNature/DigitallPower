@@ -45,6 +45,16 @@
           "Microsoft.Extensions.FileProviders.Abstractions": "10.0.8"
         }
       },
+      "Microsoft.Extensions.StaticAnalysis": {
+        "type": "Direct",
+        "requested": "[10.6.0, )",
+        "resolved": "10.6.0",
+        "contentHash": "d8iWaGaU9gTlYjertff0P1D3zyXbShDyGeXDnzat4QigcWt0I2yy/gSnAwjhCN5p7BvlTfl//VOa6mo+gSvg1w==",
+        "dependencies": {
+          "Microsoft.VisualStudio.Threading.Analyzers": "17.14.15",
+          "SonarAnalyzer.CSharp": "10.16.0.128591"
+        }
+      },
       "Microsoft.PowerPlatform.Dataverse.Client": {
         "type": "Direct",
         "requested": "[1.2.10, )",
@@ -493,6 +503,11 @@
         "resolved": "10.0.300",
         "contentHash": "0jlkXaUGjYlWTIVPve5MftjKHnT3SlAtq9BCLV4J9IjdPrxV/+4rMlBSjfr1khG8/GC6KGojjola8E1VvWF0qQ=="
       },
+      "Microsoft.VisualStudio.Threading.Analyzers": {
+        "type": "Transitive",
+        "resolved": "17.14.15",
+        "contentHash": "mXQPJsbuUD2ydq4/ffd8h8tSOFCXec+2xJOVNCvXjuMOq/+5EKHq3D2m2MC2+nUaXeFMSt66VS/J4HdKBixgcw=="
+      },
       "Microsoft.Win32.SystemEvents": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -599,6 +614,11 @@
         "type": "Transitive",
         "resolved": "4.1.0",
         "contentHash": "5gsbb2VLQVS//2DjyOWztkd1JaT5B4M3qFXs1n40I8E7SEVSP19CEGLT8Gf++d2YB4UkZf4gE+FZ8QWBbG3Dng=="
+      },
+      "SonarAnalyzer.CSharp": {
+        "type": "Transitive",
+        "resolved": "10.16.0.128591",
+        "contentHash": "W/jZGbsMFvnTY112Ab2WZArzWtkGQuMrQdromFpDak+GO/DKcgn4O2tTun/fQgDBpnQJOyyTdzQrQPzPJ544jg=="
       },
       "Spectre.Console": {
         "type": "Transitive",
@@ -758,7 +778,7 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.1.0, )",
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -768,7 +788,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.10, )",
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.10, )",
           "Spectre.Console.Cli": "[0.55.0, )",
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.common": {
@@ -776,6 +796,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.DataProtection": "[10.0.8, )",
           "Microsoft.AspNetCore.DataProtection.Extensions": "[10.0.8, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.8, )",
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.10, )",
           "Spectre.Console.Cli": "[0.55.0, )"
         }
@@ -783,26 +804,26 @@
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.5.1, )",
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[2.1.0-beta.46, )"
+          "dgt.power.common": "[2.1.0-beta.47, )"
         }
       },
       "dgt.power.push": {
@@ -811,7 +832,7 @@
           "NuGet.Packaging": "[7.6.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.8, )",
           "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[2.1.0-beta.46, )",
+          "dgt.power.common": "[2.1.0-beta.47, )",
           "dgt.registration": "[1.0.1, )"
         }
       }

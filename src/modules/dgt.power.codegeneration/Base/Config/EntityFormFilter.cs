@@ -18,33 +18,33 @@ public class EntityFormFilter
 
     public required string EntityForm { get; init; }
 
-    public string[] Attributes
+    public IReadOnlyCollection<string> Attributes
     {
-        get => _attributes.ToArray();
+        get => _attributes;
         init => _attributes = new HashSet<string>(value);
     }
 
-    public string[] Optionsets
+    public IReadOnlyCollection<string> Optionsets
     {
-        get => _optionsets.ToArray();
+        get => _optionsets;
         init => _optionsets = new HashSet<string>(value);
     }
 
-    public string[] Tabs
+    public IReadOnlyCollection<string> Tabs
     {
-        get => _tabs.ToArray();
+        get => _tabs;
         init => _tabs = new HashSet<string>(value);
     }
 
-    public string[] Sections
+    public IReadOnlyCollection<string> Sections
     {
-        get => _sections.ToArray();
+        get => _sections;
         init => _sections = new HashSet<string>(value);
     }
 
-    public string[] Grids
+    public IReadOnlyCollection<string> Grids
     {
-        get => _grids.ToArray();
+        get => _grids;
         init => _grids = new HashSet<string>(value);
     }
 }

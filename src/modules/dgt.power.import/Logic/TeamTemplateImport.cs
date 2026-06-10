@@ -5,13 +5,12 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using TeamTemplate = dgt.power.dto.TeamTemplate;
 using Spectre.Console;
+using TeamTemplate = dgt.power.dto.TeamTemplate;
 
 namespace dgt.power.import.Logic;
 
@@ -28,7 +27,7 @@ public sealed class TeamTemplateImport(
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<TeamTemplates>(args.FileDir, fileName, out var templates))
+        if (!ConfigResolver.TryGetConfigFile<List<TeamTemplate>>(args.FileDir, fileName, out var templates))
         {
             return Tracer.NotConfigured(this);
         }
@@ -149,26 +148,32 @@ public sealed class TeamTemplateImport(
 
     private static bool Unchanged(dataverse.TeamTemplate existing, int entity, TeamTemplate config)
     {
-        return
-            (
-                existing.TeamTemplateName == config.TeamTemplateName ||
-                (existing.TeamTemplateName != null &&
-                 existing.TeamTemplateName.Equals(config.TeamTemplateName, StringComparison.Ordinal))
-            ) &&
-            (
-                existing.Description == config.Description ||
-                (existing.Description != null &&
-                 existing.Description.Equals(config.Description, StringComparison.Ordinal))
-            ) &&
-            (
-                existing.DefaultAccessRightsMask == config.DefaultAccessRightsMask ||
-                (existing.DefaultAccessRightsMask != null &&
-                 existing.DefaultAccessRightsMask.Equals(config.DefaultAccessRightsMask))
-            ) &&
-            (
-                existing.ObjectTypeCode == entity ||
-                (existing.ObjectTypeCode != null &&
-                 existing.ObjectTypeCode.Equals(entity))
-            );
+        if (!HasSameText(existing.TeamTemplateName, config.TeamTemplateName))
+        {
+            return false;
+        }
+
+        if (!HasSameText(existing.Description, config.Description))
+        {
+            return false;
+        }
+
+        if (!HasSameNullableValue(existing.DefaultAccessRightsMask, config.DefaultAccessRightsMask))
+        {
+            return false;
+        }
+
+        return HasSameValue(existing.ObjectTypeCode, entity);
     }
+
+    private static bool HasSameText(string? current, string? expected) =>
+        string.Equals(current, expected, StringComparison.Ordinal);
+
+    private static bool HasSameNullableValue<T>(T? current, T? expected)
+        where T : struct =>
+        Nullable.Equals(current, expected);
+
+    private static bool HasSameValue<T>(T? current, T expected)
+        where T : struct =>
+        current.HasValue && EqualityComparer<T>.Default.Equals(current.Value, expected);
 }

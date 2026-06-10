@@ -8,5 +8,5 @@ namespace dgt.power.codegeneration.Model;
 public class EntityWithMetadataFormData
 {
     public required EntityMetadata EntityMetadata { get; set; }
-    public required Dictionary<string, FormDetail> ParsedFormDetail {get; set; }
+    public required Dictionary<string, FormDetail> ParsedFormDetail { get; init; }
 }

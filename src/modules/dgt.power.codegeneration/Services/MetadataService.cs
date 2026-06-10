@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
@@ -26,6 +26,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public void PopulateEntitiesAndSolutions(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var entities = (RetrieveAllEntitiesResponse)connection.Execute(new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
@@ -45,7 +46,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             }
         }
 
-        if (config.Solutions.Length != 0)
+        if (config.Solutions.Count != 0)
         {
             var componentsQuery = new QueryExpression
             {
@@ -105,6 +106,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         if (config.Hints)
         {
             var rule = new Rule("[red]Generating ALL actions by default is deprecated![/]");
@@ -141,7 +143,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         sdkmessageLink.EntityAlias = "msg";
 
         var names = new List<string>();
-        if (config.Actions.Length != 0)
+        if (config.Actions.Count != 0)
         {
             names.AddRange(config.Actions);
         }
@@ -162,10 +164,11 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
         foreach (var action in actions.Entities)
         {
-            var doc = XDocument.Load(XmlReader.Create(new StringReader((string)action["xaml"])));
+            using var stringReader = new StringReader((string)action["xaml"]);
+            using var xmlReader = XmlReader.Create(stringReader);
+            var doc = XDocument.Load(xmlReader);
             var extract = doc.Descendants(x + "Property")
                 .Where(i => i.DescendantsAndSelf(x + "Property.Attributes").Any())
-                .ToList()
                 .Select(i => new
                 {
                     Name = i.Attribute("Name")?.Value,
@@ -177,7 +180,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                     Description =
                         i.DescendantsAndSelf()
                             .SingleOrDefault(d => d.Name.LocalName == "ArgumentDescriptionAttribute")?
-                            .Attribute("Value")?.Value.Replace("\\r\\n", "///\r\n"),
+                            .Attribute("Value")?.Value.Replace("\\r\\n", "///\r\n", StringComparison.Ordinal),
                     EntityName =
                         i.DescendantsAndSelf()
                             .SingleOrDefault(d => d.Name.LocalName == "ArgumentEntityAttribute")?
@@ -217,8 +220,9 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return result;
     }
 
-    public IEnumerable<WfAction> RetrieveCustomAPIs(CodeGenerationConfig config)
+    public IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
         {
             NoLock = true,
@@ -237,7 +241,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         sdkmessageLink.EntityAlias = "msg";
 
         var names = new List<string>();
-        if (config.CustomAPIs.Length != 0)
+        if (config.CustomAPIs.Count != 0)
         {
             names.AddRange(config.CustomAPIs);
         }
@@ -358,8 +362,9 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return result;
     }
 
-    public List<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
+    public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var result = new List<(string Name, string Message)>();
         if (config.Hints)
         {
@@ -387,17 +392,17 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         result.Add(("Update", "Update"));
 
         var names = new List<string>();
-        if (config.AdditionalSdkMessages.Length != 0)
+        if (config.AdditionalSdkMessages.Count != 0)
         {
             names.AddRange(config.AdditionalSdkMessages);
         }
 
-        if (config.Actions.Length != 0)
+        if (config.Actions.Count != 0)
         {
             names.AddRange(config.Actions);
         }
 
-        if (config.CustomAPIs.Length != 0)
+        if (config.CustomAPIs.Count != 0)
         {
             names.AddRange(config.CustomAPIs);
         }
@@ -439,6 +444,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var result = new SortedDictionary<string, List<Option>>();
         foreach (var globalOptionSet in config.GlobalOptionSets)
         {
@@ -461,6 +467,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default)
     {
+        ArgumentNullException.ThrowIfNull(entity);
         var key = $"{entity.ToLowerInvariant()}_{filter:D}";
         if (!metadataCache.Contains(key))
         {
@@ -488,8 +495,9 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return organization.Entities.Single().ToEntity<Organization>().LanguageCode!.Value;
     }
 
-    public List<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config)
+    public IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var result = new List<Tuple<string, string, Guid, string>>();
         var query = new QueryExpression(Workflow.EntityLogicalName)
         {
@@ -529,8 +537,9 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return result;
     }
 
-    public List<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName)
+    public IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName)
     {
+        ArgumentNullException.ThrowIfNull(config);
         var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
         {
             ColumnSet = new ColumnSet(
@@ -553,7 +562,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
-        if (config.OnlyFormsFromSolutions && config.Solutions.Length > 0)
+        if (config.OnlyFormsFromSolutions && config.Solutions.Count > 0)
         {
             var queryAnd = new FilterExpression(LogicalOperator.And);
             var querySolutionComponent = new LinkEntity(
@@ -566,7 +575,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             querySolutionComponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.Workflow);
 
             var querySolutionAndSolutionComponent = querySolutionComponent.AddLink(Solution.EntityLogicalName, Solution.LogicalNames.SolutionId, SolutionComponent.LogicalNames.SolutionId);
-            querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions);
+            querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions.Select(static s => (object)s).ToArray());
 
             queryWorkflow.Criteria.AddFilter(queryAnd);
         }
@@ -590,7 +599,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             .ThenBy(x => x.DataFieldName)
             .ToList();
     }
-    public List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
+    public IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
     {
         var result = new List<Tuple<string, string, List<Guid>>>();
         var query = new QueryExpression(ProcessStage.EntityLogicalName)
@@ -636,6 +645,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls)
     {
+        ArgumentNullException.ThrowIfNull(configSolutions);
         var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
         querySystemForm.ColumnSet.AddColumns(
             SystemForm.LogicalNames.ObjectTypeCode,
@@ -656,71 +666,71 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             SystemForm.Options.FormActivationState.Active);
 
         // System form linked through the solution component
-        var query_Or = new FilterExpression(LogicalOperator.Or);
-        querySystemForm.Criteria.AddFilter(query_Or);
-        var query_Or_Or1 = new FilterExpression(LogicalOperator.Or);
-        query_Or.AddFilter(query_Or_Or1);
-        var query_Or_Or1_solutioncomponent = new LinkEntity(
+        var orFilter = new FilterExpression(LogicalOperator.Or);
+        querySystemForm.Criteria.AddFilter(orFilter);
+        var solutionComponentFilter = new FilterExpression(LogicalOperator.Or);
+        orFilter.AddFilter(solutionComponentFilter);
+        var formToComponentLink = new LinkEntity(
             SystemForm.EntityLogicalName,
             SolutionComponent.EntityLogicalName,
             SystemForm.LogicalNames.FormId,
             SolutionComponent.LogicalNames.ObjectId,
             JoinOperator.Any);
-        query_Or_Or1.AnyAllFilterLinkEntity = query_Or_Or1_solutioncomponent;
-        query_Or_Or1_solutioncomponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.SystemForm);
+        solutionComponentFilter.AnyAllFilterLinkEntity = formToComponentLink;
+        formToComponentLink.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.SystemForm);
 
-        var query_Or_Or1_solutioncomponent_And = new FilterExpression();
-        query_Or_Or1_solutioncomponent.LinkCriteria = query_Or_Or1_solutioncomponent_And;
-        var query_Or_Or1_solutioncomponent_And_solution = new LinkEntity(
+        var formToComponentCriteria = new FilterExpression();
+        formToComponentLink.LinkCriteria = formToComponentCriteria;
+        var componentToSolutionLink = new LinkEntity(
             SystemForm.EntityLogicalName,
             Solution.EntityLogicalName,
             SystemForm.LogicalNames.SolutionId,
             Solution.LogicalNames.SolutionId,
             JoinOperator.Any);
-        query_Or_Or1_solutioncomponent_And.AnyAllFilterLinkEntity = query_Or_Or1_solutioncomponent_And_solution;
+        formToComponentCriteria.AnyAllFilterLinkEntity = componentToSolutionLink;
 
         foreach (var solutionName in configSolutions)
         {
-            query_Or_Or1_solutioncomponent_And_solution.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
+            componentToSolutionLink.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
         // System form linked through the entity component
-        var query_Or_Or2 = new FilterExpression(LogicalOperator.Or);
-        query_Or.AddFilter(query_Or_Or2);
-        var query_Or_Or2_entity = new LinkEntity(
+        var entityComponentFilter = new FilterExpression(LogicalOperator.Or);
+        orFilter.AddFilter(entityComponentFilter);
+        var formToEntityLink = new LinkEntity(
             SystemForm.EntityLogicalName,
             "entity", //Should be generated with a vanilla org
             SystemForm.LogicalNames.ObjectTypeCode,
             "objecttypecode",
             JoinOperator.Any);
-        query_Or_Or2.AnyAllFilterLinkEntity = query_Or_Or2_entity;
+        entityComponentFilter.AnyAllFilterLinkEntity = formToEntityLink;
 
-        var query_Or_Or2_entity_And = new FilterExpression();
-        query_Or_Or2_entity.LinkCriteria = query_Or_Or2_entity_And;
-        var query_Or_Or2_entity_And_solutioncomponent = new LinkEntity(
+        var entityLinkCriteria = new FilterExpression();
+        formToEntityLink.LinkCriteria = entityLinkCriteria;
+        var entityToComponentLink = new LinkEntity(
             SystemForm.EntityLogicalName,
             SolutionComponent.EntityLogicalName,
             "entityid",//Should be generated with a vanilla org
             SolutionComponent.LogicalNames.ObjectId,
             JoinOperator.Any);
-        query_Or_Or2_entity_And.AnyAllFilterLinkEntity = query_Or_Or2_entity_And_solutioncomponent;
+        entityLinkCriteria.AnyAllFilterLinkEntity = entityToComponentLink;
 
-        query_Or_Or2_entity_And_solutioncomponent.LinkCriteria.AddCondition(
+        entityToComponentLink.LinkCriteria.AddCondition(
             SolutionComponent.LogicalNames.RootComponentBehavior,
             ConditionOperator.Equal,
             SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents);
-        var query_Or_Or2_entity_And_solutioncomponent_And = new FilterExpression();
-        query_Or_Or2_entity_And_solutioncomponent.LinkCriteria.AddFilter(query_Or_Or2_entity_And_solutioncomponent_And);
-        var query_Or_Or2_entity_And_solutioncomponent_And_solution = new LinkEntity(
+        var entityComponentCriteria = new FilterExpression();
+        entityToComponentLink.LinkCriteria.AddFilter(entityComponentCriteria);
+        var entityComponentToSolutionLink = new LinkEntity(
              SystemForm.EntityLogicalName,
             Solution.EntityLogicalName,
             SystemForm.LogicalNames.SolutionId,
             Solution.LogicalNames.SolutionId,
             JoinOperator.Any);
-        query_Or_Or2_entity_And_solutioncomponent_And.AnyAllFilterLinkEntity = query_Or_Or2_entity_And_solutioncomponent_And_solution;
+        entityComponentCriteria.AnyAllFilterLinkEntity = entityComponentToSolutionLink;
         foreach (var solutionName in configSolutions)
         {
-            query_Or_Or2_entity_And_solutioncomponent_And_solution.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
+            entityComponentToSolutionLink.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
         var systemForms = connection.RetrieveMultiple(querySystemForm);
@@ -784,7 +794,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     private static string WildCardToRegular(string value)
     {
-        return "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+        return "^" + Regex.Escape(value).Replace("\\?", ".", StringComparison.Ordinal).Replace("\\*", ".*", StringComparison.Ordinal) + "$";
     }
 
     private static string GetParamType(int paramType) =>

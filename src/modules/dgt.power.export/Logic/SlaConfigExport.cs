@@ -29,15 +29,15 @@ public sealed class SlaConfigExport(
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        var configs = new SlaConfigs();
+        var configs = new List<SlaConfig>();
 
         using (var context = new DataContext(Connection))
         {
             configs.AddRange(context.SLASet.Select(s => new SlaConfig
             {
-                Name = s.Name,
+                Name = s.Name ?? string.Empty,
                 SlaId = s.SLAId,
-                BusinessHours = s.BusinessHoursId != null ? s.BusinessHoursId.Id : default(Guid?),
+                BusinessHours = s.BusinessHoursId != null ? s.BusinessHoursId.Id : null,
                 Active = s.StatusCode != null && s.StatusCode.Value == SLA.Options.StatusCode.Active
             }).ToList());
         }

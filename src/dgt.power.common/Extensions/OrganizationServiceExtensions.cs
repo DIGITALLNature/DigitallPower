@@ -10,12 +10,14 @@ using Spectre.Console;
 
 namespace dgt.power.common.Extensions;
 
+#pragma warning disable CA1031 // Intentional: all methods are Try-* boundary methods that convert any CRM operation failure to bool
 public static class OrganizationServiceExtensions
 {
 #pragma warning disable S3242
     public static bool TryAssign(this IOrganizationService service, EntityReference record, SystemUser owner)
 #pragma warning restore S3242
     {
+        ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(record);
         ArgumentNullException.ThrowIfNull(owner);
 
@@ -38,6 +40,7 @@ public static class OrganizationServiceExtensions
 
     public static bool TrySetState(this IOrganizationService service, EntityReference reference, int state, int status)
     {
+        ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(reference);
 
         try
@@ -61,6 +64,7 @@ public static class OrganizationServiceExtensions
     public static bool TrySetStateDocumentTemplate(this IOrganizationService service, EntityReference reference,
         bool status)
     {
+        ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(reference);
 
         try
@@ -182,7 +186,7 @@ public static class OrganizationServiceExtensions
         Debug.Assert(service != null, nameof(service) + " != null");
         ArgumentNullException.ThrowIfNull(request);
 
-        response = default!;
+        response = null!;
         try
         {
             response = (TO)service.Execute(request);
@@ -204,7 +208,7 @@ public static class OrganizationServiceExtensions
         Debug.Assert(service != null, nameof(service) + " != null");
 
 
-        entity = default!;
+        entity = null!;
         try
         {
             entity = service.Retrieve(entityName, entityId, columns).ToEntity<T>();
@@ -222,3 +226,4 @@ public static class OrganizationServiceExtensions
     private static void LogToConsole(string message, TraceEventType type) =>
         AnsiConsole.Console.MarkupLine($"[underline red]{type}:[/]  {message}");
 }
+#pragma warning restore CA1031

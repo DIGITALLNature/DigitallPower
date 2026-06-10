@@ -35,6 +35,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 
     public bool Execute(TCommandSettings settings)
     {
+        // Intentional sync-over-async: test infrastructure requires a synchronous entry point
         return _command.ExecuteAsync(GetCommandContext(), settings,CancellationToken.None).GetAwaiter().GetResult() == 0;
     }
 

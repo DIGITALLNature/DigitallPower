@@ -7,11 +7,12 @@ using dgt.power.dataverse;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CA1067
+#pragma warning disable CA1002 // PluginSteps populated via .AddRange() by AssemblyModelBuilder
 
 namespace dgt.power.push.Model;
 
 [DataContract]
-public class PluginType : IEquatable<PluginType>
+public sealed class PluginType : IEquatable<PluginType>
 {
     [DataMember(Name = "name", IsRequired = true)]
     [Required]

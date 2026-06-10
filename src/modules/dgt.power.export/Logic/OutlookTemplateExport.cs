@@ -9,8 +9,8 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Xrm.Sdk;
-using SavedQuery = dgt.power.dataverse.SavedQuery;
 using Spectre.Console;
+using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.export.Logic;
 

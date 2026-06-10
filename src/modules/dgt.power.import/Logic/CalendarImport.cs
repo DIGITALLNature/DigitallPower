@@ -5,12 +5,11 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
-using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
@@ -28,7 +27,7 @@ public sealed class CalendarImport(
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<Calendars>(args.FileDir, fileName, out var calendars))
+        if (!ConfigResolver.TryGetConfigFile<List<dto.Calendar>>(args.FileDir, fileName, out var calendars))
         {
             return Tracer.NotConfigured(this);
         }

@@ -22,6 +22,7 @@ public class CodeGenerationCommand(
 {
     protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(verb);
         tracer.Start(this);
         if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
         {

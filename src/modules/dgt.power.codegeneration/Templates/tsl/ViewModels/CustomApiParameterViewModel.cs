@@ -14,6 +14,7 @@ public class CustomApiParameterViewModel
 
     public CustomApiParameterViewModel(WfParameter parameter)
     {
+        ArgumentNullException.ThrowIfNull(parameter);
         ParameterName = parameter.UniqueName ?? string.Empty; // Unique name is a required param in custom api req/responses
         IsOptional = parameter.IsOptional;
         if (parameter.UniqueName == "Target")

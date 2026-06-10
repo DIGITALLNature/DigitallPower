@@ -8,9 +8,9 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Queue = dgt.power.dataverse.Queue;
 using RoutingRuleItem = dgt.power.dataverse.RoutingRuleItem;
-using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
@@ -28,7 +28,7 @@ public sealed class RoutingRuleConfigImport(
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<RoutingRuleConfigs>(args.FileDir, fileName, out var rules))
+        if (!ConfigResolver.TryGetConfigFile<List<RoutingRuleConfig>>(args.FileDir, fileName, out var rules))
         {
             return Tracer.NotConfigured(this);
         }
@@ -120,7 +120,7 @@ public sealed class RoutingRuleConfigImport(
     }
 
     private bool HandleRoutingRuleItem(DataContext context, RoutingRuleConfig rule,
-        IQueryable<RoutingRuleItem> ruleItemsInTarget, dto.RoutingRuleItem item, RoutingRule ruleInTarget,
+        IQueryable<RoutingRuleItem> ruleItemsInTarget, common.DTO.RoutingRuleItem item, RoutingRule ruleInTarget,
         ref bool isDeactivatedToUpdate)
     {
         var ruleItemInTarget =

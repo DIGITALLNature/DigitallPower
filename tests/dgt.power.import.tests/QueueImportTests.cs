@@ -94,8 +94,9 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         )).IsTrue();
 
         var updatedQueue = context.GetById<dataverse.Queue>(queueToBeUpdated.QueueId);
+        var expectedDescription = queueToBeUpdated.Description ?? string.Empty;
         await Assert.That(updatedQueue.Name).IsEqualTo(queueToBeUpdated.Name);
-        await Assert.That(updatedQueue.Description).StartsWith(queueToBeUpdated.Description);
+        await Assert.That(updatedQueue.Description).StartsWith(expectedDescription);
         await Assert.That(updatedQueue.QueueViewType.Value).IsEqualTo((int) queueToBeUpdated.ViewType);
         await Assert.That(updatedQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailDelivery);
         await Assert.That(updatedQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailFiltering);
@@ -134,8 +135,9 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         )).IsTrue();
 
         var updatedQueue = context.GetById<dataverse.Queue>(queueToBeUpdated.QueueId);
+        var expectedDescription = queueToBeUpdated.Description ?? string.Empty;
         await Assert.That(updatedQueue.Name).IsEqualTo(queueToBeUpdated.Name);
-        await Assert.That(updatedQueue.Description).StartsWith(queueToBeUpdated.Description);
+        await Assert.That(updatedQueue.Description).StartsWith(expectedDescription);
         await Assert.That(updatedQueue.QueueViewType.Value).IsEqualTo((int) queueToBeUpdated.ViewType);
         await Assert.That(updatedQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailDelivery);
         await Assert.That(updatedQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailFiltering);
@@ -205,8 +207,9 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         )).IsTrue();
 
         var createdQueue = context.GetById<dataverse.Queue>(queueToBeCreated.QueueId);
+        var expectedDescription = queueToBeCreated.Description ?? string.Empty;
         await Assert.That(createdQueue.Name).IsEqualTo(queueToBeCreated.Name);
-        await Assert.That(createdQueue.Description).StartsWith(queueToBeCreated.Description);
+        await Assert.That(createdQueue.Description).StartsWith(expectedDescription);
         await Assert.That(createdQueue.QueueViewType.Value).IsEqualTo((int) queueToBeCreated.ViewType);
         await Assert.That(createdQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeCreated.IncomingEmailDelivery);
         await Assert.That(createdQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeCreated.IncomingEmailFiltering);

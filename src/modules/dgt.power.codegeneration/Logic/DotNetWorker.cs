@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Generators;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.common;
 using Microsoft.Xrm.Sdk;
 

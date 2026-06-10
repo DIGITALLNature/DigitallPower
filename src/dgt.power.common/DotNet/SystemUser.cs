@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("systemuser")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class SystemUser : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("systemuserid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(Address1AddressId));
             }
@@ -155,7 +156,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(Address2AddressId));
             }
@@ -183,7 +184,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(SystemUserId));
             }
@@ -2761,8 +2762,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N contact_owning_user
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("contact_owning_user")]
-		public System.Collections.Generic.IEnumerable<Contact> ContactOwningUser
+		[RelationshipSchemaName("contact_owning_user")]
+		public IEnumerable<Contact> ContactOwningUser
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2781,8 +2782,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_pluginassembly
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_pluginassembly")]
-		public System.Collections.Generic.IEnumerable<PluginAssembly> CreatedbyPluginassembly
+		[RelationshipSchemaName("createdby_pluginassembly")]
+		public IEnumerable<PluginAssembly> CreatedbyPluginassembly
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2801,8 +2802,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_plugintype
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_plugintype")]
-		public System.Collections.Generic.IEnumerable<PluginType> CreatedbyPlugintype
+		[RelationshipSchemaName("createdby_plugintype")]
+		public IEnumerable<PluginType> CreatedbyPlugintype
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2821,8 +2822,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_sdkmessage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_sdkmessage")]
-		public System.Collections.Generic.IEnumerable<SdkMessage> CreatedbySdkmessage
+		[RelationshipSchemaName("createdby_sdkmessage")]
+		public IEnumerable<SdkMessage> CreatedbySdkmessage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2841,8 +2842,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_sdkmessagefilter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_sdkmessagefilter")]
-		public System.Collections.Generic.IEnumerable<SdkMessageFilter> CreatedbySdkmessagefilter
+		[RelationshipSchemaName("createdby_sdkmessagefilter")]
+		public IEnumerable<SdkMessageFilter> CreatedbySdkmessagefilter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2861,8 +2862,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_sdkmessageprocessingstep
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> CreatedbySdkmessageprocessingstep
+		[RelationshipSchemaName("createdby_sdkmessageprocessingstep")]
+		public IEnumerable<SdkMessageProcessingStep> CreatedbySdkmessageprocessingstep
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2881,8 +2882,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_sdkmessageprocessingstepimage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_sdkmessageprocessingstepimage")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepImage> CreatedbySdkmessageprocessingstepimage
+		[RelationshipSchemaName("createdby_sdkmessageprocessingstepimage")]
+		public IEnumerable<SdkMessageProcessingStepImage> CreatedbySdkmessageprocessingstepimage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2901,8 +2902,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N createdby_sdkmessageprocessingstepsecureconfig
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("createdby_sdkmessageprocessingstepsecureconfig")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepSecureConfig> CreatedbySdkmessageprocessingstepsecureconfig
+		[RelationshipSchemaName("createdby_sdkmessageprocessingstepsecureconfig")]
+		public IEnumerable<SdkMessageProcessingStepSecureConfig> CreatedbySdkmessageprocessingstepsecureconfig
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2921,8 +2922,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N impersonatinguserid_sdkmessageprocessingstep
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("impersonatinguserid_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> ImpersonatinguseridSdkmessageprocessingstep
+		[RelationshipSchemaName("impersonatinguserid_sdkmessageprocessingstep")]
+		public IEnumerable<SdkMessageProcessingStep> ImpersonatinguseridSdkmessageprocessingstep
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2941,8 +2942,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_accountbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_accountbase_createdby")]
-		public System.Collections.Generic.IEnumerable<Account> LkAccountbaseCreatedby
+		[RelationshipSchemaName("lk_accountbase_createdby")]
+		public IEnumerable<Account> LkAccountbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2961,8 +2962,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_accountbase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_accountbase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Account> LkAccountbaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_accountbase_createdonbehalfby")]
+		public IEnumerable<Account> LkAccountbaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -2981,8 +2982,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_accountbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_accountbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Account> LkAccountbaseModifiedby
+		[RelationshipSchemaName("lk_accountbase_modifiedby")]
+		public IEnumerable<Account> LkAccountbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3001,8 +3002,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_accountbase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_accountbase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Account> LkAccountbaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_accountbase_modifiedonbehalfby")]
+		public IEnumerable<Account> LkAccountbaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3021,8 +3022,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_asyncoperation_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_asyncoperation_createdby")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> LkAsyncoperationCreatedby
+		[RelationshipSchemaName("lk_asyncoperation_createdby")]
+		public IEnumerable<AsyncOperation> LkAsyncoperationCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3041,8 +3042,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_asyncoperation_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_asyncoperation_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> LkAsyncoperationCreatedonbehalfby
+		[RelationshipSchemaName("lk_asyncoperation_createdonbehalfby")]
+		public IEnumerable<AsyncOperation> LkAsyncoperationCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3061,8 +3062,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_asyncoperation_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_asyncoperation_modifiedby")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> LkAsyncoperationModifiedby
+		[RelationshipSchemaName("lk_asyncoperation_modifiedby")]
+		public IEnumerable<AsyncOperation> LkAsyncoperationModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3081,8 +3082,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_asyncoperation_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_asyncoperation_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> LkAsyncoperationModifiedonbehalfby
+		[RelationshipSchemaName("lk_asyncoperation_modifiedonbehalfby")]
+		public IEnumerable<AsyncOperation> LkAsyncoperationModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3101,8 +3102,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_businessunit_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_businessunit_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> LkBusinessunitCreatedonbehalfby
+		[RelationshipSchemaName("lk_businessunit_createdonbehalfby")]
+		public IEnumerable<BusinessUnit> LkBusinessunitCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3121,8 +3122,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_businessunit_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_businessunit_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> LkBusinessunitModifiedonbehalfby
+		[RelationshipSchemaName("lk_businessunit_modifiedonbehalfby")]
+		public IEnumerable<BusinessUnit> LkBusinessunitModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3141,8 +3142,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_businessunitbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_businessunitbase_createdby")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> LkBusinessunitbaseCreatedby
+		[RelationshipSchemaName("lk_businessunitbase_createdby")]
+		public IEnumerable<BusinessUnit> LkBusinessunitbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3161,8 +3162,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_businessunitbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_businessunitbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> LkBusinessunitbaseModifiedby
+		[RelationshipSchemaName("lk_businessunitbase_modifiedby")]
+		public IEnumerable<BusinessUnit> LkBusinessunitbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3181,8 +3182,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendar_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendar_createdby")]
-		public System.Collections.Generic.IEnumerable<Calendar> LkCalendarCreatedby
+		[RelationshipSchemaName("lk_calendar_createdby")]
+		public IEnumerable<Calendar> LkCalendarCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3201,8 +3202,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendar_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendar_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Calendar> LkCalendarCreatedonbehalfby
+		[RelationshipSchemaName("lk_calendar_createdonbehalfby")]
+		public IEnumerable<Calendar> LkCalendarCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3221,8 +3222,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendar_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendar_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Calendar> LkCalendarModifiedby
+		[RelationshipSchemaName("lk_calendar_modifiedby")]
+		public IEnumerable<Calendar> LkCalendarModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3241,8 +3242,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendar_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendar_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Calendar> LkCalendarModifiedonbehalfby
+		[RelationshipSchemaName("lk_calendar_modifiedonbehalfby")]
+		public IEnumerable<Calendar> LkCalendarModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3261,8 +3262,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendarrule_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendarrule_createdby")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> LkCalendarruleCreatedby
+		[RelationshipSchemaName("lk_calendarrule_createdby")]
+		public IEnumerable<CalendarRule> LkCalendarruleCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3281,8 +3282,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendarrule_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendarrule_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> LkCalendarruleCreatedonbehalfby
+		[RelationshipSchemaName("lk_calendarrule_createdonbehalfby")]
+		public IEnumerable<CalendarRule> LkCalendarruleCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3301,8 +3302,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendarrule_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendarrule_modifiedby")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> LkCalendarruleModifiedby
+		[RelationshipSchemaName("lk_calendarrule_modifiedby")]
+		public IEnumerable<CalendarRule> LkCalendarruleModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3321,8 +3322,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_calendarrule_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_calendarrule_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> LkCalendarruleModifiedonbehalfby
+		[RelationshipSchemaName("lk_calendarrule_modifiedonbehalfby")]
+		public IEnumerable<CalendarRule> LkCalendarruleModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3341,8 +3342,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_contact_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_contact_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Contact> LkContactCreatedonbehalfby
+		[RelationshipSchemaName("lk_contact_createdonbehalfby")]
+		public IEnumerable<Contact> LkContactCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3361,8 +3362,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_contact_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_contact_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Contact> LkContactModifiedonbehalfby
+		[RelationshipSchemaName("lk_contact_modifiedonbehalfby")]
+		public IEnumerable<Contact> LkContactModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3381,8 +3382,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_contactbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_contactbase_createdby")]
-		public System.Collections.Generic.IEnumerable<Contact> LkContactbaseCreatedby
+		[RelationshipSchemaName("lk_contactbase_createdby")]
+		public IEnumerable<Contact> LkContactbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3401,8 +3402,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_contactbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_contactbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Contact> LkContactbaseModifiedby
+		[RelationshipSchemaName("lk_contactbase_modifiedby")]
+		public IEnumerable<Contact> LkContactbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3421,8 +3422,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapi_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapi_createdby")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> LkCustomapiCreatedby
+		[RelationshipSchemaName("lk_customapi_createdby")]
+		public IEnumerable<CustomAPI> LkCustomapiCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3441,8 +3442,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapi_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapi_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> LkCustomapiCreatedonbehalfby
+		[RelationshipSchemaName("lk_customapi_createdonbehalfby")]
+		public IEnumerable<CustomAPI> LkCustomapiCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3461,8 +3462,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapi_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapi_modifiedby")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> LkCustomapiModifiedby
+		[RelationshipSchemaName("lk_customapi_modifiedby")]
+		public IEnumerable<CustomAPI> LkCustomapiModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3481,8 +3482,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapi_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapi_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> LkCustomapiModifiedonbehalfby
+		[RelationshipSchemaName("lk_customapi_modifiedonbehalfby")]
+		public IEnumerable<CustomAPI> LkCustomapiModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3501,8 +3502,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapirequestparameter_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapirequestparameter_createdby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedby
+		[RelationshipSchemaName("lk_customapirequestparameter_createdby")]
+		public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3521,8 +3522,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapirequestparameter_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapirequestparameter_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedonbehalfby
+		[RelationshipSchemaName("lk_customapirequestparameter_createdonbehalfby")]
+		public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3541,8 +3542,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapirequestparameter_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapirequestparameter_modifiedby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedby
+		[RelationshipSchemaName("lk_customapirequestparameter_modifiedby")]
+		public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3561,8 +3562,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapirequestparameter_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapirequestparameter_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedonbehalfby
+		[RelationshipSchemaName("lk_customapirequestparameter_modifiedonbehalfby")]
+		public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3581,8 +3582,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapiresponseproperty_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapiresponseproperty_createdby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedby
+		[RelationshipSchemaName("lk_customapiresponseproperty_createdby")]
+		public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3601,8 +3602,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapiresponseproperty_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapiresponseproperty_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedonbehalfby
+		[RelationshipSchemaName("lk_customapiresponseproperty_createdonbehalfby")]
+		public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3621,8 +3622,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapiresponseproperty_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapiresponseproperty_modifiedby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedby
+		[RelationshipSchemaName("lk_customapiresponseproperty_modifiedby")]
+		public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3641,8 +3642,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_customapiresponseproperty_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_customapiresponseproperty_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedonbehalfby
+		[RelationshipSchemaName("lk_customapiresponseproperty_modifiedonbehalfby")]
+		public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3661,8 +3662,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_documenttemplatebase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_createdby")]
-		public System.Collections.Generic.IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedby
+		[RelationshipSchemaName("lk_documenttemplatebase_createdby")]
+		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3681,8 +3682,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_documenttemplatebase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_documenttemplatebase_createdonbehalfby")]
+		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3701,8 +3702,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_documenttemplatebase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedby
+		[RelationshipSchemaName("lk_documenttemplatebase_modifiedby")]
+		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3721,8 +3722,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_documenttemplatebase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_documenttemplatebase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_documenttemplatebase_modifiedonbehalfby")]
+		public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3741,8 +3742,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterule_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterule_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> LkDuplicateruleCreatedonbehalfby
+		[RelationshipSchemaName("lk_duplicaterule_createdonbehalfby")]
+		public IEnumerable<DuplicateRule> LkDuplicateruleCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3761,8 +3762,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterule_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterule_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> LkDuplicateruleModifiedonbehalfby
+		[RelationshipSchemaName("lk_duplicaterule_modifiedonbehalfby")]
+		public IEnumerable<DuplicateRule> LkDuplicateruleModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3781,8 +3782,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterulebase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterulebase_createdby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> LkDuplicaterulebaseCreatedby
+		[RelationshipSchemaName("lk_duplicaterulebase_createdby")]
+		public IEnumerable<DuplicateRule> LkDuplicaterulebaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3801,8 +3802,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterulebase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterulebase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> LkDuplicaterulebaseModifiedby
+		[RelationshipSchemaName("lk_duplicaterulebase_modifiedby")]
+		public IEnumerable<DuplicateRule> LkDuplicaterulebaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3821,8 +3822,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterulecondition_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterulecondition_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionCreatedonbehalfby
+		[RelationshipSchemaName("lk_duplicaterulecondition_createdonbehalfby")]
+		public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3841,8 +3842,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicaterulecondition_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicaterulecondition_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionModifiedonbehalfby
+		[RelationshipSchemaName("lk_duplicaterulecondition_modifiedonbehalfby")]
+		public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3861,8 +3862,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicateruleconditionbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicateruleconditionbase_createdby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseCreatedby
+		[RelationshipSchemaName("lk_duplicateruleconditionbase_createdby")]
+		public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3881,8 +3882,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_duplicateruleconditionbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_duplicateruleconditionbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseModifiedby
+		[RelationshipSchemaName("lk_duplicateruleconditionbase_modifiedby")]
+		public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3901,8 +3902,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_ec4u_carrier_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
+		[RelationshipSchemaName("lk_ec4u_carrier_createdby")]
+		public IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3921,8 +3922,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_ec4u_carrier_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
+		[RelationshipSchemaName("lk_ec4u_carrier_createdonbehalfby")]
+		public IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3941,8 +3942,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_ec4u_carrier_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
+		[RelationshipSchemaName("lk_ec4u_carrier_modifiedby")]
+		public IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3961,8 +3962,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_ec4u_carrier_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_ec4u_carrier_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
+		[RelationshipSchemaName("lk_ec4u_carrier_modifiedonbehalfby")]
+		public IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -3981,8 +3982,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_importjobbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_createdby")]
-		public System.Collections.Generic.IEnumerable<ImportJob> LkImportjobbaseCreatedby
+		[RelationshipSchemaName("lk_importjobbase_createdby")]
+		public IEnumerable<ImportJob> LkImportjobbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4001,8 +4002,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_importjobbase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<ImportJob> LkImportjobbaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_importjobbase_createdonbehalfby")]
+		public IEnumerable<ImportJob> LkImportjobbaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4021,8 +4022,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_importjobbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<ImportJob> LkImportjobbaseModifiedby
+		[RelationshipSchemaName("lk_importjobbase_modifiedby")]
+		public IEnumerable<ImportJob> LkImportjobbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4041,8 +4042,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_importjobbase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_importjobbase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<ImportJob> LkImportjobbaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_importjobbase_modifiedonbehalfby")]
+		public IEnumerable<ImportJob> LkImportjobbaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4061,8 +4062,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_organization_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_organization_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Organization> LkOrganizationCreatedonbehalfby
+		[RelationshipSchemaName("lk_organization_createdonbehalfby")]
+		public IEnumerable<Organization> LkOrganizationCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4081,8 +4082,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_organization_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_organization_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Organization> LkOrganizationModifiedonbehalfby
+		[RelationshipSchemaName("lk_organization_modifiedonbehalfby")]
+		public IEnumerable<Organization> LkOrganizationModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4101,8 +4102,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_organizationbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_organizationbase_createdby")]
-		public System.Collections.Generic.IEnumerable<Organization> LkOrganizationbaseCreatedby
+		[RelationshipSchemaName("lk_organizationbase_createdby")]
+		public IEnumerable<Organization> LkOrganizationbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4121,8 +4122,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_organizationbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_organizationbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Organization> LkOrganizationbaseModifiedby
+		[RelationshipSchemaName("lk_organizationbase_modifiedby")]
+		public IEnumerable<Organization> LkOrganizationbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4141,8 +4142,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginassembly_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginassembly_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginAssembly> LkPluginassemblyCreatedonbehalfby
+		[RelationshipSchemaName("lk_pluginassembly_createdonbehalfby")]
+		public IEnumerable<PluginAssembly> LkPluginassemblyCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4161,8 +4162,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginassembly_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginassembly_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginAssembly> LkPluginassemblyModifiedonbehalfby
+		[RelationshipSchemaName("lk_pluginassembly_modifiedonbehalfby")]
+		public IEnumerable<PluginAssembly> LkPluginassemblyModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4181,8 +4182,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginpackage_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_createdby")]
-		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageCreatedby
+		[RelationshipSchemaName("lk_pluginpackage_createdby")]
+		public IEnumerable<PluginPackage> LkPluginpackageCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4201,8 +4202,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginpackage_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageCreatedonbehalfby
+		[RelationshipSchemaName("lk_pluginpackage_createdonbehalfby")]
+		public IEnumerable<PluginPackage> LkPluginpackageCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4221,8 +4222,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginpackage_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_modifiedby")]
-		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageModifiedby
+		[RelationshipSchemaName("lk_pluginpackage_modifiedby")]
+		public IEnumerable<PluginPackage> LkPluginpackageModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4241,8 +4242,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_pluginpackage_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_pluginpackage_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginPackage> LkPluginpackageModifiedonbehalfby
+		[RelationshipSchemaName("lk_pluginpackage_modifiedonbehalfby")]
+		public IEnumerable<PluginPackage> LkPluginpackageModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4261,8 +4262,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_plugintype_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_plugintype_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginType> LkPlugintypeCreatedonbehalfby
+		[RelationshipSchemaName("lk_plugintype_createdonbehalfby")]
+		public IEnumerable<PluginType> LkPlugintypeCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4281,8 +4282,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_plugintype_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_plugintype_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<PluginType> LkPlugintypeModifiedonbehalfby
+		[RelationshipSchemaName("lk_plugintype_modifiedonbehalfby")]
+		public IEnumerable<PluginType> LkPlugintypeModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4301,8 +4302,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_publisher_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_publisher_createdby")]
-		public System.Collections.Generic.IEnumerable<Publisher> LkPublisherCreatedby
+		[RelationshipSchemaName("lk_publisher_createdby")]
+		public IEnumerable<Publisher> LkPublisherCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4321,8 +4322,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_publisher_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_publisher_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Publisher> LkPublisherModifiedby
+		[RelationshipSchemaName("lk_publisher_modifiedby")]
+		public IEnumerable<Publisher> LkPublisherModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4341,8 +4342,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_publisherbase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_publisherbase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Publisher> LkPublisherbaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_publisherbase_createdonbehalfby")]
+		public IEnumerable<Publisher> LkPublisherbaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4361,8 +4362,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_publisherbase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_publisherbase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Publisher> LkPublisherbaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_publisherbase_modifiedonbehalfby")]
+		public IEnumerable<Publisher> LkPublisherbaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4381,8 +4382,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_queue_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_queue_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Queue> LkQueueCreatedonbehalfby
+		[RelationshipSchemaName("lk_queue_createdonbehalfby")]
+		public IEnumerable<Queue> LkQueueCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4401,8 +4402,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_queue_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_queue_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Queue> LkQueueModifiedonbehalfby
+		[RelationshipSchemaName("lk_queue_modifiedonbehalfby")]
+		public IEnumerable<Queue> LkQueueModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4421,8 +4422,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_queuebase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_queuebase_createdby")]
-		public System.Collections.Generic.IEnumerable<Queue> LkQueuebaseCreatedby
+		[RelationshipSchemaName("lk_queuebase_createdby")]
+		public IEnumerable<Queue> LkQueuebaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4441,8 +4442,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_queuebase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_queuebase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Queue> LkQueuebaseModifiedby
+		[RelationshipSchemaName("lk_queuebase_modifiedby")]
+		public IEnumerable<Queue> LkQueuebaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4461,8 +4462,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_role_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_role_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Role> LkRoleCreatedonbehalfby
+		[RelationshipSchemaName("lk_role_createdonbehalfby")]
+		public IEnumerable<Role> LkRoleCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4481,8 +4482,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_role_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_role_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Role> LkRoleModifiedonbehalfby
+		[RelationshipSchemaName("lk_role_modifiedonbehalfby")]
+		public IEnumerable<Role> LkRoleModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4501,8 +4502,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_rolebase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_rolebase_createdby")]
-		public System.Collections.Generic.IEnumerable<Role> LkRolebaseCreatedby
+		[RelationshipSchemaName("lk_rolebase_createdby")]
+		public IEnumerable<Role> LkRolebaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4521,8 +4522,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_rolebase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_rolebase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Role> LkRolebaseModifiedby
+		[RelationshipSchemaName("lk_rolebase_modifiedby")]
+		public IEnumerable<Role> LkRolebaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4541,8 +4542,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingrule_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingrule_createdby")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> LkRoutingruleCreatedby
+		[RelationshipSchemaName("lk_routingrule_createdby")]
+		public IEnumerable<RoutingRule> LkRoutingruleCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4561,8 +4562,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingrule_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingrule_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> LkRoutingruleCreatedonbehalfby
+		[RelationshipSchemaName("lk_routingrule_createdonbehalfby")]
+		public IEnumerable<RoutingRule> LkRoutingruleCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4581,8 +4582,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingrule_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingrule_modifiedby")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> LkRoutingruleModifiedby
+		[RelationshipSchemaName("lk_routingrule_modifiedby")]
+		public IEnumerable<RoutingRule> LkRoutingruleModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4601,8 +4602,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingrule_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingrule_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> LkRoutingruleModifiedonbehalfby
+		[RelationshipSchemaName("lk_routingrule_modifiedonbehalfby")]
+		public IEnumerable<RoutingRule> LkRoutingruleModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4621,8 +4622,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_RoutingRuleItem_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_RoutingRuleItem_createdby")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> LkRoutingRuleItemCreatedby
+		[RelationshipSchemaName("lk_RoutingRuleItem_createdby")]
+		public IEnumerable<RoutingRuleItem> LkRoutingRuleItemCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4641,8 +4642,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingruleitem_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingruleitem_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> LkRoutingruleitemCreatedonbehalfby
+		[RelationshipSchemaName("lk_routingruleitem_createdonbehalfby")]
+		public IEnumerable<RoutingRuleItem> LkRoutingruleitemCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4661,8 +4662,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingruleitem_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingruleitem_modifiedby")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedby
+		[RelationshipSchemaName("lk_routingruleitem_modifiedby")]
+		public IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4681,8 +4682,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_routingruleitem_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_routingruleitem_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedonbehalfby
+		[RelationshipSchemaName("lk_routingruleitem_modifiedonbehalfby")]
+		public IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4701,8 +4702,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_savedquery_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_savedquery_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SavedQuery> LkSavedqueryCreatedonbehalfby
+		[RelationshipSchemaName("lk_savedquery_createdonbehalfby")]
+		public IEnumerable<SavedQuery> LkSavedqueryCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4721,8 +4722,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_savedquery_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_savedquery_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SavedQuery> LkSavedqueryModifiedonbehalfby
+		[RelationshipSchemaName("lk_savedquery_modifiedonbehalfby")]
+		public IEnumerable<SavedQuery> LkSavedqueryModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4741,8 +4742,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_savedquerybase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_savedquerybase_createdby")]
-		public System.Collections.Generic.IEnumerable<SavedQuery> LkSavedquerybaseCreatedby
+		[RelationshipSchemaName("lk_savedquerybase_createdby")]
+		public IEnumerable<SavedQuery> LkSavedquerybaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4761,8 +4762,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_savedquerybase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_savedquerybase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<SavedQuery> LkSavedquerybaseModifiedby
+		[RelationshipSchemaName("lk_savedquerybase_modifiedby")]
+		public IEnumerable<SavedQuery> LkSavedquerybaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4781,8 +4782,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessage_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessage_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessage> LkSdkmessageCreatedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessage_createdonbehalfby")]
+		public IEnumerable<SdkMessage> LkSdkmessageCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4801,8 +4802,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessage_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessage_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessage> LkSdkmessageModifiedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessage_modifiedonbehalfby")]
+		public IEnumerable<SdkMessage> LkSdkmessageModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4821,8 +4822,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessagefilter_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessagefilter_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageFilter> LkSdkmessagefilterCreatedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessagefilter_createdonbehalfby")]
+		public IEnumerable<SdkMessageFilter> LkSdkmessagefilterCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4841,8 +4842,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessagefilter_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessagefilter_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageFilter> LkSdkmessagefilterModifiedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessagefilter_modifiedonbehalfby")]
+		public IEnumerable<SdkMessageFilter> LkSdkmessagefilterModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4861,8 +4862,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstep_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstep_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepCreatedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstep_createdonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4881,8 +4882,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstep_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstep_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepModifiedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstep_modifiedonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4901,8 +4902,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstepimage_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstepimage_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageCreatedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstepimage_createdonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4921,8 +4922,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstepimage_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstepimage_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageModifiedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstepimage_modifiedonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4941,8 +4942,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigCreatedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4961,8 +4962,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigModifiedonbehalfby
+		[RelationshipSchemaName("lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby")]
+		public IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -4981,8 +4982,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_slabase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_slabase_createdby")]
-		public System.Collections.Generic.IEnumerable<SLA> LkSlabaseCreatedby
+		[RelationshipSchemaName("lk_slabase_createdby")]
+		public IEnumerable<SLA> LkSlabaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5001,8 +5002,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_slabase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_slabase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SLA> LkSlabaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_slabase_createdonbehalfby")]
+		public IEnumerable<SLA> LkSlabaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5021,8 +5022,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_slabase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_slabase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<SLA> LkSlabaseModifiedby
+		[RelationshipSchemaName("lk_slabase_modifiedby")]
+		public IEnumerable<SLA> LkSlabaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5041,8 +5042,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_slabase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_slabase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SLA> LkSlabaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_slabase_modifiedonbehalfby")]
+		public IEnumerable<SLA> LkSlabaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5061,8 +5062,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solution_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solution_createdby")]
-		public System.Collections.Generic.IEnumerable<Solution> LkSolutionCreatedby
+		[RelationshipSchemaName("lk_solution_createdby")]
+		public IEnumerable<Solution> LkSolutionCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5081,8 +5082,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solution_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solution_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Solution> LkSolutionModifiedby
+		[RelationshipSchemaName("lk_solution_modifiedby")]
+		public IEnumerable<Solution> LkSolutionModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5101,8 +5102,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solutionbase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solutionbase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Solution> LkSolutionbaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_solutionbase_createdonbehalfby")]
+		public IEnumerable<Solution> LkSolutionbaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5121,8 +5122,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solutionbase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solutionbase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Solution> LkSolutionbaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_solutionbase_modifiedonbehalfby")]
+		public IEnumerable<Solution> LkSolutionbaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5141,8 +5142,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solutioncomponentbase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solutioncomponentbase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SolutionComponent> LkSolutioncomponentbaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_solutioncomponentbase_createdonbehalfby")]
+		public IEnumerable<SolutionComponent> LkSolutioncomponentbaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5161,8 +5162,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_solutioncomponentbase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_solutioncomponentbase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SolutionComponent> LkSolutioncomponentbaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_solutioncomponentbase_modifiedonbehalfby")]
+		public IEnumerable<SolutionComponent> LkSolutioncomponentbaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5181,8 +5182,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_systemuser_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_systemuser_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SystemUser> LkSystemuserCreatedonbehalfby
+		[RelationshipSchemaName("lk_systemuser_createdonbehalfby")]
+		public IEnumerable<SystemUser> LkSystemuserCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5201,8 +5202,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_systemuser_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_systemuser_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<SystemUser> LkSystemuserModifiedonbehalfby
+		[RelationshipSchemaName("lk_systemuser_modifiedonbehalfby")]
+		public IEnumerable<SystemUser> LkSystemuserModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5221,8 +5222,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_systemuserbase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_systemuserbase_createdby")]
-		public System.Collections.Generic.IEnumerable<SystemUser> LkSystemuserbaseCreatedby
+		[RelationshipSchemaName("lk_systemuserbase_createdby")]
+		public IEnumerable<SystemUser> LkSystemuserbaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5241,8 +5242,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_systemuserbase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_systemuserbase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<SystemUser> LkSystemuserbaseModifiedby
+		[RelationshipSchemaName("lk_systemuserbase_modifiedby")]
+		public IEnumerable<SystemUser> LkSystemuserbaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5261,8 +5262,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_team_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_team_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Team> LkTeamCreatedonbehalfby
+		[RelationshipSchemaName("lk_team_createdonbehalfby")]
+		public IEnumerable<Team> LkTeamCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5281,8 +5282,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_team_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_team_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Team> LkTeamModifiedonbehalfby
+		[RelationshipSchemaName("lk_team_modifiedonbehalfby")]
+		public IEnumerable<Team> LkTeamModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5301,8 +5302,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teambase_administratorid
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teambase_administratorid")]
-		public System.Collections.Generic.IEnumerable<Team> LkTeambaseAdministratorid
+		[RelationshipSchemaName("lk_teambase_administratorid")]
+		public IEnumerable<Team> LkTeambaseAdministratorid
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5321,8 +5322,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teambase_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teambase_createdby")]
-		public System.Collections.Generic.IEnumerable<Team> LkTeambaseCreatedby
+		[RelationshipSchemaName("lk_teambase_createdby")]
+		public IEnumerable<Team> LkTeambaseCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5341,8 +5342,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teambase_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teambase_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Team> LkTeambaseModifiedby
+		[RelationshipSchemaName("lk_teambase_modifiedby")]
+		public IEnumerable<Team> LkTeambaseModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5361,8 +5362,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teamtemplate_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teamtemplate_createdby")]
-		public System.Collections.Generic.IEnumerable<TeamTemplate> LkTeamtemplateCreatedby
+		[RelationshipSchemaName("lk_teamtemplate_createdby")]
+		public IEnumerable<TeamTemplate> LkTeamtemplateCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5381,8 +5382,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teamtemplate_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teamtemplate_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<TeamTemplate> LkTeamtemplateCreatedonbehalfby
+		[RelationshipSchemaName("lk_teamtemplate_createdonbehalfby")]
+		public IEnumerable<TeamTemplate> LkTeamtemplateCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5401,8 +5402,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teamtemplate_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teamtemplate_modifiedby")]
-		public System.Collections.Generic.IEnumerable<TeamTemplate> LkTeamtemplateModifiedby
+		[RelationshipSchemaName("lk_teamtemplate_modifiedby")]
+		public IEnumerable<TeamTemplate> LkTeamtemplateModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5421,8 +5422,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_teamtemplate_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_teamtemplate_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<TeamTemplate> LkTeamtemplateModifiedonbehalfby
+		[RelationshipSchemaName("lk_teamtemplate_modifiedonbehalfby")]
+		public IEnumerable<TeamTemplate> LkTeamtemplateModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5441,8 +5442,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_webresourcebase_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_webresourcebase_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<WebResource> LkWebresourcebaseCreatedonbehalfby
+		[RelationshipSchemaName("lk_webresourcebase_createdonbehalfby")]
+		public IEnumerable<WebResource> LkWebresourcebaseCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5461,8 +5462,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N lk_webresourcebase_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lk_webresourcebase_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<WebResource> LkWebresourcebaseModifiedonbehalfby
+		[RelationshipSchemaName("lk_webresourcebase_modifiedonbehalfby")]
+		public IEnumerable<WebResource> LkWebresourcebaseModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5481,8 +5482,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_pluginassembly
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_pluginassembly")]
-		public System.Collections.Generic.IEnumerable<PluginAssembly> ModifiedbyPluginassembly
+		[RelationshipSchemaName("modifiedby_pluginassembly")]
+		public IEnumerable<PluginAssembly> ModifiedbyPluginassembly
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5501,8 +5502,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_plugintype
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_plugintype")]
-		public System.Collections.Generic.IEnumerable<PluginType> ModifiedbyPlugintype
+		[RelationshipSchemaName("modifiedby_plugintype")]
+		public IEnumerable<PluginType> ModifiedbyPlugintype
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5521,8 +5522,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_sdkmessage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_sdkmessage")]
-		public System.Collections.Generic.IEnumerable<SdkMessage> ModifiedbySdkmessage
+		[RelationshipSchemaName("modifiedby_sdkmessage")]
+		public IEnumerable<SdkMessage> ModifiedbySdkmessage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5541,8 +5542,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_sdkmessagefilter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_sdkmessagefilter")]
-		public System.Collections.Generic.IEnumerable<SdkMessageFilter> ModifiedbySdkmessagefilter
+		[RelationshipSchemaName("modifiedby_sdkmessagefilter")]
+		public IEnumerable<SdkMessageFilter> ModifiedbySdkmessagefilter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5561,8 +5562,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_sdkmessageprocessingstep
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStep> ModifiedbySdkmessageprocessingstep
+		[RelationshipSchemaName("modifiedby_sdkmessageprocessingstep")]
+		public IEnumerable<SdkMessageProcessingStep> ModifiedbySdkmessageprocessingstep
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5581,8 +5582,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_sdkmessageprocessingstepimage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_sdkmessageprocessingstepimage")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepImage> ModifiedbySdkmessageprocessingstepimage
+		[RelationshipSchemaName("modifiedby_sdkmessageprocessingstepimage")]
+		public IEnumerable<SdkMessageProcessingStepImage> ModifiedbySdkmessageprocessingstepimage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5601,8 +5602,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N modifiedby_sdkmessageprocessingstepsecureconfig
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("modifiedby_sdkmessageprocessingstepsecureconfig")]
-		public System.Collections.Generic.IEnumerable<SdkMessageProcessingStepSecureConfig> ModifiedbySdkmessageprocessingstepsecureconfig
+		[RelationshipSchemaName("modifiedby_sdkmessageprocessingstepsecureconfig")]
+		public IEnumerable<SdkMessageProcessingStepSecureConfig> ModifiedbySdkmessageprocessingstepsecureconfig
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5621,8 +5622,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N queue_primary_user
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("queue_primary_user")]
-		public System.Collections.Generic.IEnumerable<Queue> QueuePrimaryUser
+		[RelationshipSchemaName("queue_primary_user")]
+		public IEnumerable<Queue> QueuePrimaryUser
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5641,8 +5642,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N system_user_accounts
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("system_user_accounts")]
-		public System.Collections.Generic.IEnumerable<Account> SystemUserAccounts
+		[RelationshipSchemaName("system_user_accounts")]
+		public IEnumerable<Account> SystemUserAccounts
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5661,8 +5662,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N system_user_asyncoperation
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("system_user_asyncoperation")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> SystemUserAsyncoperation
+		[RelationshipSchemaName("system_user_asyncoperation")]
+		public IEnumerable<AsyncOperation> SystemUserAsyncoperation
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5681,8 +5682,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N system_user_contacts
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("system_user_contacts")]
-		public System.Collections.Generic.IEnumerable<Contact> SystemUserContacts
+		[RelationshipSchemaName("system_user_contacts")]
+		public IEnumerable<Contact> SystemUserContacts
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5701,8 +5702,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N system_user_workflow
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("system_user_workflow")]
-		public System.Collections.Generic.IEnumerable<Workflow> SystemUserWorkflow
+		[RelationshipSchemaName("system_user_workflow")]
+		public IEnumerable<Workflow> SystemUserWorkflow
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5721,8 +5722,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N SystemUser_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("SystemUser_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> SystemUserAsyncOperations
+		[RelationshipSchemaName("SystemUser_AsyncOperations")]
+		public IEnumerable<AsyncOperation> SystemUserAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5741,8 +5742,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N SystemUser_DuplicateRules
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("SystemUser_DuplicateRules")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> SystemUserDuplicateRules
+		[RelationshipSchemaName("SystemUser_DuplicateRules")]
+		public IEnumerable<DuplicateRule> SystemUserDuplicateRules
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5761,8 +5762,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_accounts
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_accounts")]
-		public System.Collections.Generic.IEnumerable<Account> UserAccounts
+		[RelationshipSchemaName("user_accounts")]
+		public IEnumerable<Account> UserAccounts
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5781,8 +5782,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_customapi
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_customapi")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> UserCustomapi
+		[RelationshipSchemaName("user_customapi")]
+		public IEnumerable<CustomAPI> UserCustomapi
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5801,8 +5802,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_customapirequestparameter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_customapirequestparameter")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> UserCustomapirequestparameter
+		[RelationshipSchemaName("user_customapirequestparameter")]
+		public IEnumerable<CustomAPIRequestParameter> UserCustomapirequestparameter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5821,8 +5822,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_customapiresponseproperty
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_customapiresponseproperty")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> UserCustomapiresponseproperty
+		[RelationshipSchemaName("user_customapiresponseproperty")]
+		public IEnumerable<CustomAPIResponseProperty> UserCustomapiresponseproperty
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5841,8 +5842,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_ec4u_carrier
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> UserEc4uCarrier
+		[RelationshipSchemaName("user_ec4u_carrier")]
+		public IEnumerable<Ec4uCarrier> UserEc4uCarrier
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5861,8 +5862,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_parent_user
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_parent_user")]
-		public System.Collections.Generic.IEnumerable<SystemUser> UserParentUser
+		[RelationshipSchemaName("user_parent_user")]
+		public IEnumerable<SystemUser> UserParentUser
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5881,8 +5882,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_routingrule
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_routingrule")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> UserRoutingrule
+		[RelationshipSchemaName("user_routingrule")]
+		public IEnumerable<RoutingRule> UserRoutingrule
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5901,8 +5902,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_routingruleitem
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_routingruleitem")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> UserRoutingruleitem
+		[RelationshipSchemaName("user_routingruleitem")]
+		public IEnumerable<RoutingRuleItem> UserRoutingruleitem
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5921,8 +5922,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N user_slabase
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("user_slabase")]
-		public System.Collections.Generic.IEnumerable<SLA> UserSlabase
+		[RelationshipSchemaName("user_slabase")]
+		public IEnumerable<SLA> UserSlabase
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5941,8 +5942,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N webresource_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("webresource_createdby")]
-		public System.Collections.Generic.IEnumerable<WebResource> WebresourceCreatedby
+		[RelationshipSchemaName("webresource_createdby")]
+		public IEnumerable<WebResource> WebresourceCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5961,8 +5962,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N webresource_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("webresource_modifiedby")]
-		public System.Collections.Generic.IEnumerable<WebResource> WebresourceModifiedby
+		[RelationshipSchemaName("webresource_modifiedby")]
+		public IEnumerable<WebResource> WebresourceModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -5981,8 +5982,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_createdby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_createdby")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowCreatedby
+		[RelationshipSchemaName("workflow_createdby")]
+		public IEnumerable<Workflow> WorkflowCreatedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -6001,8 +6002,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_createdonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_createdonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowCreatedonbehalfby
+		[RelationshipSchemaName("workflow_createdonbehalfby")]
+		public IEnumerable<Workflow> WorkflowCreatedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -6021,8 +6022,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_modifiedby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_modifiedby")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowModifiedby
+		[RelationshipSchemaName("workflow_modifiedby")]
+		public IEnumerable<Workflow> WorkflowModifiedby
 		{
 			[DebuggerNonUserCode]
 			get
@@ -6041,8 +6042,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N workflow_modifiedonbehalfby
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("workflow_modifiedonbehalfby")]
-		public System.Collections.Generic.IEnumerable<Workflow> WorkflowModifiedonbehalfby
+		[RelationshipSchemaName("workflow_modifiedonbehalfby")]
+		public IEnumerable<Workflow> WorkflowModifiedonbehalfby
 		{
 			[DebuggerNonUserCode]
 			get

@@ -11,7 +11,7 @@ namespace dgt.power.push.Model;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 [DataContract]
-public class PluginStepImage : IEquatable<PluginStepImage>
+public sealed class PluginStepImage : IEquatable<PluginStepImage>
 {
     [DataMember(Name = "image_type", IsRequired = true)]
     [Required]
@@ -33,7 +33,7 @@ public class PluginStepImage : IEquatable<PluginStepImage>
     ///     Attributes which at least one needs contained in the image
     /// </summary>
     [DataMember(Name = "attributes", IsRequired = false)]
-    public string[]? Attributes { get; set; }
+    public IReadOnlyList<string>? Attributes { get; set; }
 
     [IgnoreDataMember] public Guid Id { get; set; }
 

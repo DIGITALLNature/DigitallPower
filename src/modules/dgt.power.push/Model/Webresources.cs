@@ -6,14 +6,14 @@ using Spectre.Console;
 
 namespace dgt.power.push.Model;
 
-internal record Webresources(
+internal sealed record Webresources(
     int Type,
     string Name,
     string DisplayName,
     string? Content,
     string? Hash,
-    WebresourceState? State = default,
-    Guid? XrmId = default)
+    WebresourceState? State = null,
+    Guid? XrmId = null)
 {
     // Should be matching to WebResource.Options.WebResourceType
     public WebresourceState? State { get; set; } = State;
@@ -21,7 +21,7 @@ internal record Webresources(
 
     public Webresources(int type, string name, WebresourceState webresourceState, Guid xrmId) : this(type, name, name, null, null, webresourceState, xrmId) { }
 
-    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string>? fileMapping = default, IAnsiConsole? console = null)
+    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string>? fileMapping = null, IAnsiConsole? console = null)
     {
         var content = File.ReadAllBytes(localFilePath);
         var hash = Convert.ToHexString(SHA256.HashData(content));
@@ -30,10 +30,10 @@ internal record Webresources(
         string name;
         string displayName;
 
-        if (fileMapping?.ContainsKey(relativePath) == true)
+        if (fileMapping is not null && fileMapping.TryGetValue(relativePath, out var mappedPath))
         {
-            name = fileMapping[relativePath];
-            displayName = Path.GetFileName(fileMapping[relativePath]);
+            name = mappedPath;
+            displayName = Path.GetFileName(mappedPath);
 
             (console ?? AnsiConsole.Console).MarkupLine($" - [yellow]Applying mapping[/]: [blue]{relativePath}[/] {Emoji.Known.RightArrow} [green]{name}[/]");
         }

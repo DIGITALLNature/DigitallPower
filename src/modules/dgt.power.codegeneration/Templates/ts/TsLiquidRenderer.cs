@@ -9,28 +9,29 @@ public static class TsLiquidRenderer
 {
     private const string ResourcePrefix = "dgt.power.codegeneration.Templates.ts";
 
-    private static readonly TemplateOptions Options;
+    private static readonly TemplateOptions s_options = InitializeOptions();
 
-    static TsLiquidRenderer()
+    private static TemplateOptions InitializeOptions()
     {
-        Options = new TemplateOptions();
-        LiquidTemplateEngine.RegisterCoreFilters(Options);
-        Options.MemberAccessStrategy.Register<TsSdkMessagesTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsSdkMessageModel>();
-        Options.MemberAccessStrategy.Register<TsOptionSetsTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsOptionSetModel>();
-        Options.MemberAccessStrategy.Register<TsOptionValueModel>();
-        Options.MemberAccessStrategy.Register<TsBusinessProcessFlowTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsBusinessProcessFlowStageModel>();
-        Options.MemberAccessStrategy.Register<TsNamedIdModel>();
-        Options.MemberAccessStrategy.Register<TsEntityRefTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsEntityTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsEntityFormTemplateModel>();
-        Options.MemberAccessStrategy.Register<TsAttributeConstantModel>();
-        Options.MemberAccessStrategy.Register<TsAttributeFieldModel>();
-        Options.MemberAccessStrategy.Register<TsNamedValueModel>();
-        Options.MemberAccessStrategy.Register<TsFormTabModel>();
-        Options.MemberAccessStrategy.Register<TsFormTabSectionClassModel>();
+        var options = new TemplateOptions();
+        LiquidTemplateEngine.RegisterCoreFilters(options);
+        options.MemberAccessStrategy.Register<TsSdkMessagesTemplateModel>();
+        options.MemberAccessStrategy.Register<TsSdkMessageModel>();
+        options.MemberAccessStrategy.Register<TsOptionSetsTemplateModel>();
+        options.MemberAccessStrategy.Register<TsOptionSetModel>();
+        options.MemberAccessStrategy.Register<TsOptionValueModel>();
+        options.MemberAccessStrategy.Register<TsBusinessProcessFlowTemplateModel>();
+        options.MemberAccessStrategy.Register<TsBusinessProcessFlowStageModel>();
+        options.MemberAccessStrategy.Register<TsNamedIdModel>();
+        options.MemberAccessStrategy.Register<TsEntityRefTemplateModel>();
+        options.MemberAccessStrategy.Register<TsEntityTemplateModel>();
+        options.MemberAccessStrategy.Register<TsEntityFormTemplateModel>();
+        options.MemberAccessStrategy.Register<TsAttributeConstantModel>();
+        options.MemberAccessStrategy.Register<TsAttributeFieldModel>();
+        options.MemberAccessStrategy.Register<TsNamedValueModel>();
+        options.MemberAccessStrategy.Register<TsFormTabModel>();
+        options.MemberAccessStrategy.Register<TsFormTabSectionClassModel>();
+        return options;
     }
 
     public static string Render(string templateName, TemplateContext context)
@@ -40,6 +41,6 @@ public static class TsLiquidRenderer
 
     public static TemplateContext CreateContext()
     {
-        return LiquidTemplateEngine.CreateContext(Options);
+        return LiquidTemplateEngine.CreateContext(s_options);
     }
 }

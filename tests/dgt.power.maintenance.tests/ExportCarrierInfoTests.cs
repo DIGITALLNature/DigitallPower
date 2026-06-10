@@ -111,7 +111,7 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
         };
         await context.Execute(settings).Succeed();
 
-        var carriers = GetConfigurationTestArtifact<Carriers>(settings.FileName);
+        var carriers = GetConfigurationTestArtifact<List<Carrier>>(settings.FileName);
 
         await Assert.That(carriers).Count().IsEqualTo(2);
         await Assert.That(carriers.SequenceEqual(carriers.OrderBy(x => x.Order))).IsTrue();

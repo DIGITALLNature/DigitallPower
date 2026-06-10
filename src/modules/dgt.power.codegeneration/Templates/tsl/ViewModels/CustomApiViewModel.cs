@@ -9,7 +9,7 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 public class CustomApiViewModel
 {
     public required string Name { get; set; }
-    public required List<WfParameter> InParameters { get; set; }
+    public required IReadOnlyList<WfParameter> InParameters { get; init; }
 
-    public required List<WfParameter> OutParameters { get; set; }
+    public required IReadOnlyList<WfParameter> OutParameters { get; init; }
 }

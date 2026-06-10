@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
@@ -50,7 +49,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         await Assert.That(GetContext()
         .Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates()).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate>()).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -61,7 +60,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         var context = GetBuilder()
             .WithData(missingTemplate)
             .Build();
-        var templateConfig = new TeamTemplates
+        var templateConfig = new List<TeamTemplate>
         {
             // we need some templates to not skip execution
             new()
@@ -101,7 +100,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -132,7 +131,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
 
@@ -160,7 +159,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 
@@ -185,7 +184,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
     }
@@ -208,7 +207,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsFalse();
     }
@@ -229,7 +228,7 @@ public class TeamTemplateImportTests : ImportTestBase<TeamTemplateImport>
         };
         await Assert.That(context.Execute(new ImportVerb
         {
-            FileName = WriteConfigurationArtifact(new TeamTemplates { teamTemplateConfig }).Name,
+            FileName = WriteConfigurationArtifact(new List<TeamTemplate> { teamTemplateConfig }).Name,
             FileDir = ArtifactDirectory
         })).IsTrue();
 

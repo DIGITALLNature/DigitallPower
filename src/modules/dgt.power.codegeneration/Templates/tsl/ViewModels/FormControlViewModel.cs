@@ -20,6 +20,7 @@ public class FormControlViewModel
     public bool IsDisabled { get; set; }
 
     public FormControlViewModel(FormXmlControlData formData) {
+        ArgumentNullException.ThrowIfNull(formData);
         AttributeName = formData.DataFieldName;
         ControlName = formData.ControlId;
         IsDisabled = formData.IsDisabled;

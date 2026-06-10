@@ -3,8 +3,10 @@
 
 using System.Runtime.CompilerServices;
 using dgt.power.common;
+using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
@@ -41,7 +43,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     {
         if (_console != null)
         {
-            _serviceCollection.AddSingleton<IAnsiConsole>(_console);
+            _serviceCollection.AddSingleton(_console);
         }
 
         var service = new FakeOrganizationServiceAsync();
@@ -49,7 +51,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
         // Merge project-specific fakes with custom fakes (custom fakes win on conflict)
         var allFakes = new Dictionary<Type, IOrganizationRequestFake>
         {
-            [typeof(Microsoft.Crm.Sdk.Messages.RetrieveCurrentOrganizationRequest)] = new FakeExecutor.RetrieveCurrentOrganizationExecutor()
+            [typeof(RetrieveCurrentOrganizationRequest)] = new RetrieveCurrentOrganizationExecutor()
         };
 
         foreach (var fake in _requestFakes)

@@ -86,12 +86,10 @@ public class DotNetEntityViewModelBuilder
                 Name = attrName,
                 LogicalName = attr.LogicalName,
                 CSharpType = ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value, useClassic),
-                IsValidForRead = attr.IsValidForRead.HasValue && attr.IsValidForRead.Value,
-                HasSetter = editableReadOnlyProperties ||
-                            (attr.IsValidForUpdate.HasValue && attr.IsValidForUpdate.Value) ||
-                            (attr.IsValidForCreate.HasValue && attr.IsValidForCreate.Value),
+                IsValidForRead = attr.IsValidForRead == true,
+                HasSetter = HasSetter(attr, editableReadOnlyProperties),
                 IsPartyList = attr.AttributeType == AttributeTypeCode.PartyList,
-                IsPrimaryId = attr.IsPrimaryId.HasValue && attr.IsPrimaryId.Value,
+                IsPrimaryId = attr.IsPrimaryId == true,
                 Summary = BuildSummary(GetLocalizedLabel(attr.Description), 2)
             };
         }).ToArray<object>();
@@ -99,10 +97,9 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildNavigationProperties()
     {
-        var configEntities = _config.Entities.ToArray();
         return _entity.OneToManyRelationships
+            .Where(attr => _config.Entities.Contains(attr.ReferencingEntity))
             .OrderBy(r => r.SchemaName)
-            .Where(attr => configEntities.Contains(attr.ReferencingEntity))
             .Select(attr =>
             {
                 var attrName = Unique(PreventBadToken(Formatter.CamelCase(attr.SchemaName)),
@@ -302,21 +299,51 @@ public class DotNetEntityViewModelBuilder
     private static IEnumerable<AttributeMetadata> Filter(AttributeMetadata[] attributes)
     {
         return attributes
+            .Where(IsReadableAttribute)
             .OrderByDescending(a => a.IsPrimaryId)
-            .ThenBy(a => a.LogicalName)
-            .Where(a => (a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true) &&
-                        (a.AttributeOf == default || a.IsValidODataAttribute));
+            .ThenBy(a => a.LogicalName);
     }
 
     private IEnumerable<OptionField> FilterOptions(AttributeMetadata[] attributes)
     {
-        return attributes.OrderBy(a => a.LogicalName).Where(a =>
-            (a.IsValidForCreate == true || a.IsValidForUpdate == true || a.IsValidForRead == true)
-            && (a.AttributeType == AttributeTypeCode.Picklist || a.AttributeType == AttributeTypeCode.State ||
-                a.AttributeType == AttributeTypeCode.Status || a.AttributeType == AttributeTypeCode.Boolean ||
-                (a.AttributeType == AttributeTypeCode.Virtual &&
-                 a.AttributeTypeName?.Value == "MultiSelectPicklistType")))
+        return attributes
+            .Where(IsReadableAttribute)
+            .Where(IsSupportedOptionField)
+            .OrderBy(a => a.LogicalName)
             .Select(o => new OptionField(o, _config.UseBaseLanguage, _systemLanguage));
+    }
+
+    private static bool HasSetter(AttributeMetadata attribute, bool editableReadOnlyProperties)
+    {
+        if (editableReadOnlyProperties)
+        {
+            return true;
+        }
+
+        return attribute.IsValidForUpdate == true || attribute.IsValidForCreate == true;
+    }
+
+    private static bool IsReadableAttribute(AttributeMetadata attribute)
+    {
+        var isReadable = attribute.IsValidForCreate == true
+                         || attribute.IsValidForUpdate == true
+                         || attribute.IsValidForRead == true;
+        if (!isReadable)
+        {
+            return false;
+        }
+
+        return attribute.AttributeOf == null || attribute.IsValidODataAttribute;
+    }
+
+    private static bool IsSupportedOptionField(AttributeMetadata attribute)
+    {
+        return attribute.AttributeType switch
+        {
+            AttributeTypeCode.Picklist or AttributeTypeCode.State or AttributeTypeCode.Status or AttributeTypeCode.Boolean => true,
+            AttributeTypeCode.Virtual => attribute.AttributeTypeName?.Value == "MultiSelectPicklistType",
+            _ => false
+        };
     }
 
     private string GetLocalizedLabel(Label? label)
@@ -326,7 +353,7 @@ public class DotNetEntityViewModelBuilder
 
     private static string PreventBadToken(string value)
     {
-        return value.Replace("Attributes", "AttributesField");
+        return value.Replace("Attributes", "AttributesField", StringComparison.Ordinal);
     }
 
     private static string MaskDoubleQuote(string value)
@@ -343,7 +370,7 @@ public class DotNetEntityViewModelBuilder
 
         return "/// <summary>" +
                $"{Environment.NewLine}" +
-               $"{new string('\t', indent)}/// {description.Replace("\n", $"\n{new string('\t', indent)}/// ").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Trim()}" +
+               $"{new string('\t', indent)}/// {description.Replace("\n", $"\n{new string('\t', indent)}/// ", StringComparison.Ordinal).Replace("&", "&amp;", StringComparison.Ordinal).Replace("<", "&lt;", StringComparison.Ordinal).Replace(">", "&gt;", StringComparison.Ordinal).Trim()}" +
                $"{Environment.NewLine}" +
                $"{new string('\t', indent)}/// </summary>";
     }
@@ -378,7 +405,7 @@ public class DotNetOptionFieldModel
 {
     public string Name { get; set; } = "";
     public string AttributeType { get; set; } = "";
-    public DotNetOptionModel[] Options { get; set; } = [];
+    public IReadOnlyList<DotNetOptionModel> Options { get; set; } = [];
     public string StructLabel { get; set; } = "";
     public string FalseLabel { get; set; } = "";
     public string TrueLabel { get; set; } = "";

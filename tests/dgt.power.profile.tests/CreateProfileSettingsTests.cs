@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.profile.Commands;
@@ -9,13 +9,14 @@ namespace dgt.power.profile.tests;
 public class CreateProfileSettingsTests
 {
     [Test]
-    public async Task ShouldBeInvalidWhenSettingInvalidSecurityProtocol()
+    public async Task ShouldBeValidWithMinimalSettings()
     {
         var settings = new CreateProfileSettings
         {
-            SecurityProtocol = "something"
+            Name = "dev",
+            ConnectionString = "AuthType=OAuth;Url=https://contoso.crm4.dynamics.com"
         };
 
-        await Assert.That(settings.Validate().Successful).IsFalse();
+        await Assert.That(settings.Validate().Successful).IsTrue();
     }
 }

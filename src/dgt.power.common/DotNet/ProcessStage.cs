@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("processstage")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class ProcessStage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("processstageid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(ProcessStageId));
             }
@@ -432,8 +433,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_account
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_account")]
-		public System.Collections.Generic.IEnumerable<Account> ProcessstageAccount
+		[RelationshipSchemaName("processstage_account")]
+		public IEnumerable<Account> ProcessstageAccount
 		{
 			[DebuggerNonUserCode]
 			get
@@ -452,8 +453,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_contact
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_contact")]
-		public System.Collections.Generic.IEnumerable<Contact> ProcessstageContact
+		[RelationshipSchemaName("processstage_contact")]
+		public IEnumerable<Contact> ProcessstageContact
 		{
 			[DebuggerNonUserCode]
 			get
@@ -472,8 +473,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_ec4u_carrier
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
+		[RelationshipSchemaName("processstage_ec4u_carrier")]
+		public IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
 		{
 			[DebuggerNonUserCode]
 			get
@@ -492,8 +493,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_parentprocessstage
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_parentprocessstage")]
-		public System.Collections.Generic.IEnumerable<ProcessStage> ProcessstageParentprocessstage
+		[RelationshipSchemaName("processstage_parentprocessstage")]
+		public IEnumerable<ProcessStage> ProcessstageParentprocessstage
 		{
 			[DebuggerNonUserCode]
 			get
@@ -512,8 +513,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_systemusers
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_systemusers")]
-		public System.Collections.Generic.IEnumerable<SystemUser> ProcessstageSystemusers
+		[RelationshipSchemaName("processstage_systemusers")]
+		public IEnumerable<SystemUser> ProcessstageSystemusers
 		{
 			[DebuggerNonUserCode]
 			get
@@ -532,8 +533,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N processstage_teams
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("processstage_teams")]
-		public System.Collections.Generic.IEnumerable<Team> ProcessstageTeams
+		[RelationshipSchemaName("processstage_teams")]
+		public IEnumerable<Team> ProcessstageTeams
 		{
 			[DebuggerNonUserCode]
 			get

@@ -54,7 +54,12 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         Console.WriteLine($"Fetch components for target {args.TargetSolution}");
         var targetComponents = GetSolutionComponents(context, args.TargetSolution);
 
-        foreach (var component in targetComponents.IntersectBy(sourceComponents,o => o.ObjectId).OrderByDescending(o => o.ComponentType.Value))
+        var componentsToProcess = targetComponents
+            .Where(component => component.ComponentType?.Value != null)
+            .IntersectBy(sourceComponents, component => component.ObjectId)
+            .OrderByDescending(component => component.ComponentType!.Value);
+
+        foreach (var component in componentsToProcess)
         {
             if (component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && !args.Entities)
             {
@@ -107,6 +112,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
 
     protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
+        ArgumentNullException.ThrowIfNull(context);
         var solution = GetSolution(context, uniqueName);
 
         var pagequery = new QueryExpression

@@ -40,7 +40,7 @@ public class WebresourcesProcessor(
     internal void Process(PushVerb settings, Action<string>? statusCallback) {
         statusCallback?.Invoke("Check settings");
 
-        Dictionary<string, string>? fileMappings = default;
+        Dictionary<string, string>? fileMappings = null;
         if (!string.IsNullOrEmpty(settings.Config))
         {
             console.MarkupLine(CultureInfo.InvariantCulture, "Loading config file [bold]{0}[/]", settings.Config);
@@ -56,7 +56,7 @@ public class WebresourcesProcessor(
         }
 
         var (prefix, solutionId) = GetSolutionDetails(settings.Solution);
-        if (settings.DeleteObsolete && solutionId == default)
+        if (settings.DeleteObsolete && solutionId == null)
         {
             throw new ArgumentException("Delete Obsolete without proper solution set - aborting");
         }
@@ -84,7 +84,7 @@ public class WebresourcesProcessor(
             return LoadSolution(solution);
         }
 
-        return ("new", default);
+        return ("new", null);
     }
 
     private (string prefix, Guid solutionId) LoadSolution(string solutionUniqueName)
@@ -94,7 +94,7 @@ public class WebresourcesProcessor(
             where s.UniqueName == solutionUniqueName
             select new { s.SolutionId, p.CustomizationPrefix }).SingleOrDefault();
 
-        if (solutionDetails == default)
+        if (solutionDetails == null)
         {
             throw new ArgumentException($"Solution {solutionUniqueName} not found");
         }
@@ -132,13 +132,13 @@ public class WebresourcesProcessor(
             .Select(wr => new { wr.Id, wr.Content })
             .SingleOrDefault();
 
-        if (existing == default)
+        if (existing == null)
         {
             resource.State = WebresourceState.Create;
             return;
         }
 
-        resource.State = existing.Content != resource.Content ? WebresourceState.Update : WebresourceState.Up2date;
+        resource.State = existing.Content != resource.Content ? WebresourceState.Update : WebresourceState.Up2Date;
         resource.XrmId = existing.Id;
     }
 
@@ -201,7 +201,7 @@ public class WebresourcesProcessor(
 
             console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [green]Added[/]");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OutOfMemoryException and not StackOverflowException)
         {
             console.MarkupLine(CultureInfo.InvariantCulture, $" {Emoji.Known.RightArrow} [red]Failed[/]");
             console.WriteException(ex);

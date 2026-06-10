@@ -9,6 +9,7 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.import.tests;

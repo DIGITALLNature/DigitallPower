@@ -45,8 +45,9 @@ public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker
     protected EntityMetadata GetEntityMetadataArtifact(string entityLogicalName)
     {
         var metadataArtifactPath = GetMetadataArtifactPath(entityLogicalName);
-        using var fileStream = new FileStream(metadataArtifactPath, FileMode.Open, FileAccess.Read, FileShare.Delete);
-        var metadata = (EntityMetadata?) _metadataSerializer.ReadObject(new XmlTextReader(fileStream));
+        using var fileStream = new FileStream(metadataArtifactPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var xmlReader1 = new XmlTextReader(fileStream);
+        var metadata = (EntityMetadata?) _metadataSerializer.ReadObject(xmlReader1);
         if (metadata == null)
         {
             throw new FileNotFoundException(
@@ -60,8 +61,9 @@ public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker
     {
         var metadataArtifactPath = GetMetadataResourcePath(entityLogicalName);
         using var fileStream =
-            new FileStream(metadataArtifactPath, FileMode.Open, FileAccess.Read, FileShare.Delete);
-        var metadata = (EntityMetadata?) _metadataSerializer.ReadObject(new XmlTextReader(fileStream));
+            new FileStream(metadataArtifactPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var xmlReader2 = new XmlTextReader(fileStream);
+        var metadata = (EntityMetadata?) _metadataSerializer.ReadObject(xmlReader2);
         if (metadata == null)
         {
             throw new FileNotFoundException(

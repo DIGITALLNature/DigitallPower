@@ -1,9 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using dgt.power.dataverse;
 using Microsoft.Crm.Sdk;
 using Microsoft.Xrm.Sdk;
+using Calendar = dgt.power.dataverse.Calendar;
 
 namespace dgt.power.tests;
 
@@ -571,7 +573,7 @@ public class SampleDataverse
     internal readonly CalendarRule CalendarRule1 = new CalendarRule(Guid.Parse("0f56b2f4-1b0f-43ab-9575-6309713820dd"))
     {
         Name = "New Year",
-        StartTime = DateTime.Parse("2020-01-01T00:00:00Z"),
+        StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
         Duration = 1440,
         Description = "Holiday Rule",
         Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -581,15 +583,15 @@ public class SampleDataverse
         TimeZoneCode = -1,
         ExtentCode = 2,
         IsSimple = false,
-        EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z"),
-        EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z")
+        EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
+        EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z", CultureInfo.InvariantCulture)
 
     };
 
     internal readonly CalendarRule CalendarRule2 = new CalendarRule(Guid.Parse("2a17af31-25c6-4c8d-adae-7ac26e3899e8"))
     {
         Name = "Easter Sunday",
-        StartTime = DateTime.Parse("2020-04-12T00:00:00Z"),
+        StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
         Duration = 1440,
         Description = "Holiday Rule",
         Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -599,8 +601,8 @@ public class SampleDataverse
         TimeZoneCode = -1,
         ExtentCode = 2,
         IsSimple = false,
-        EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z"),
-        EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z")
+        EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
+        EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
 
     };
 

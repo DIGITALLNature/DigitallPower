@@ -96,7 +96,7 @@ public sealed class BulkDeleteUtil(
 
     private bool GetQueryExpression(string fetchXml, out QueryExpression query)
     {
-        query = default!;
+        query = null!;
         try
         {
             var response = (FetchXmlToQueryExpressionResponse)Connection.Execute(new FetchXmlToQueryExpressionRequest
@@ -106,7 +106,7 @@ public sealed class BulkDeleteUtil(
             query = response.Query;
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             Tracer.Log($"Invalid fetch-xml: {e.RootMessage()}", TraceEventType.Error);
             return false;

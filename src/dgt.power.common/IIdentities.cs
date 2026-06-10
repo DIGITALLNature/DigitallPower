@@ -7,6 +7,8 @@ namespace dgt.power.common;
 
 public interface IIdentities
 {
+    string Current { get; }
+    string CurrentConnectionString { get; }
     IEnumerable<IdentityInfo> Infos { get; }
     void Upsert(string key, Identity identity);
     void Remove(string key);

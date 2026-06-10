@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.ComponentModel;
 using dgt.power.common;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -9,40 +8,27 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
-using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
-    : PowerLogic<EnsureSdkStepStatus.Settings>(tracer, connection, configResolver, console)
+    : PowerLogic<EnsureSdkStepStatusSettings>(tracer, connection, configResolver, console)
 {
-    public class Settings : BaseProgramSettings
+    protected override bool Invoke(EnsureSdkStepStatusSettings args) => throw new NotSupportedException("This command requires async execution. Use InvokeAsync.");
+
+    protected override Task<bool> InvokeAsync(EnsureSdkStepStatusSettings args, CancellationToken cancellationToken)
     {
-        [CommandOption("-s|--solution")]
-        [Description("unique name of the solution to work on")]
-        [DefaultValue("assemblies")]
-        public string? Solution { get; set; }
-
-        [CommandOption("-d|--disabled")]
-        [Description("true if steps should be disabled, false otherwise")]
-        [DefaultValue(false)]
-        public bool Disabled { get; set; }
-
-        [CommandOption("--dry-run")]
-        [Description("do not perform any updates")]
-        [DefaultValue(false)]
-        public bool DryRun { get; set; }
-    }
-
-    protected override bool Invoke(Settings args) => InvokeAsync(args).GetAwaiter().GetResult();
-
-    private async Task<bool> InvokeAsync(Settings args)
-    {
+        ArgumentNullException.ThrowIfNull(args);
         ArgumentException.ThrowIfNullOrWhiteSpace(args.Solution);
 
+        return InvokeCoreAsync(args, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(EnsureSdkStepStatusSettings args, CancellationToken cancellationToken)
+    {
         var sdkSteps = await Console.Status()
-            .StartAsync("Loading sdk steps", async _ => await RetrieveSdkSteps(args.Solution));
+            .StartAsync("Loading sdk steps", async _ => await RetrieveSdkStepsAsync(args.Solution!));
 
         var table = new Table()
             .AddColumn("Plugin Type")
@@ -59,7 +45,7 @@ public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection
                     .ToArray();
 
                 var rowCount = 0;
-                await Parallel.ForEachAsync(orderedSdkSteps, async (sdkStep, _) =>
+                await Parallel.ForEachAsync(orderedSdkSteps, cancellationToken, async (sdkStep, _) =>
                 {
                     var pluginType = sdkStep.PluginTypeId?.Id.ToString() ?? string.Empty;
                     var stepName = sdkStep.Name.EscapeMarkup();
@@ -106,7 +92,7 @@ public class EnsureSdkStepStatus(ITracer tracer, IOrganizationService connection
         return true;
     }
 
-    private async Task<SdkMessageProcessingStep[]> RetrieveSdkSteps(string solutionName)
+    private async Task<SdkMessageProcessingStep[]> RetrieveSdkStepsAsync(string solutionName)
     {
         var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
         {

@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("team")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class Team : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("teamid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(TeamId));
             }
@@ -685,8 +686,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_accounts
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_accounts")]
-		public System.Collections.Generic.IEnumerable<Account> TeamAccounts
+		[RelationshipSchemaName("team_accounts")]
+		public IEnumerable<Account> TeamAccounts
 		{
 			[DebuggerNonUserCode]
 			get
@@ -705,8 +706,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_asyncoperation
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_asyncoperation")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> TeamAsyncoperation
+		[RelationshipSchemaName("team_asyncoperation")]
+		public IEnumerable<AsyncOperation> TeamAsyncoperation
 		{
 			[DebuggerNonUserCode]
 			get
@@ -725,8 +726,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N Team_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Team_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> TeamAsyncOperations
+		[RelationshipSchemaName("Team_AsyncOperations")]
+		public IEnumerable<AsyncOperation> TeamAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
@@ -745,8 +746,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_contacts
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_contacts")]
-		public System.Collections.Generic.IEnumerable<Contact> TeamContacts
+		[RelationshipSchemaName("team_contacts")]
+		public IEnumerable<Contact> TeamContacts
 		{
 			[DebuggerNonUserCode]
 			get
@@ -765,8 +766,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_customapi
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_customapi")]
-		public System.Collections.Generic.IEnumerable<CustomAPI> TeamCustomapi
+		[RelationshipSchemaName("team_customapi")]
+		public IEnumerable<CustomAPI> TeamCustomapi
 		{
 			[DebuggerNonUserCode]
 			get
@@ -785,8 +786,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_customapirequestparameter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_customapirequestparameter")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> TeamCustomapirequestparameter
+		[RelationshipSchemaName("team_customapirequestparameter")]
+		public IEnumerable<CustomAPIRequestParameter> TeamCustomapirequestparameter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -805,8 +806,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_customapiresponseproperty
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_customapiresponseproperty")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> TeamCustomapiresponseproperty
+		[RelationshipSchemaName("team_customapiresponseproperty")]
+		public IEnumerable<CustomAPIResponseProperty> TeamCustomapiresponseproperty
 		{
 			[DebuggerNonUserCode]
 			get
@@ -825,8 +826,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_DuplicateRules
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_DuplicateRules")]
-		public System.Collections.Generic.IEnumerable<DuplicateRule> TeamDuplicateRules
+		[RelationshipSchemaName("team_DuplicateRules")]
+		public IEnumerable<DuplicateRule> TeamDuplicateRules
 		{
 			[DebuggerNonUserCode]
 			get
@@ -845,8 +846,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_ec4u_carrier
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> TeamEc4uCarrier
+		[RelationshipSchemaName("team_ec4u_carrier")]
+		public IEnumerable<Ec4uCarrier> TeamEc4uCarrier
 		{
 			[DebuggerNonUserCode]
 			get
@@ -865,8 +866,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_routingrule
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_routingrule")]
-		public System.Collections.Generic.IEnumerable<RoutingRule> TeamRoutingrule
+		[RelationshipSchemaName("team_routingrule")]
+		public IEnumerable<RoutingRule> TeamRoutingrule
 		{
 			[DebuggerNonUserCode]
 			get
@@ -885,8 +886,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_routingruleitem
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_routingruleitem")]
-		public System.Collections.Generic.IEnumerable<RoutingRuleItem> TeamRoutingruleitem
+		[RelationshipSchemaName("team_routingruleitem")]
+		public IEnumerable<RoutingRuleItem> TeamRoutingruleitem
 		{
 			[DebuggerNonUserCode]
 			get
@@ -905,8 +906,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_slaBase
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_slaBase")]
-		public System.Collections.Generic.IEnumerable<SLA> TeamSlaBase
+		[RelationshipSchemaName("team_slaBase")]
+		public IEnumerable<SLA> TeamSlaBase
 		{
 			[DebuggerNonUserCode]
 			get
@@ -925,8 +926,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N team_workflow
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("team_workflow")]
-		public System.Collections.Generic.IEnumerable<Workflow> TeamWorkflow
+		[RelationshipSchemaName("team_workflow")]
+		public IEnumerable<Workflow> TeamWorkflow
 		{
 			[DebuggerNonUserCode]
 			get

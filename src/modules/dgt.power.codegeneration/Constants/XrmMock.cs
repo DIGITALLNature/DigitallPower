@@ -5,7 +5,7 @@ namespace dgt.power.codegeneration.Constants;
 
 public static class XrmMock
 {
-    public static class Control
+    internal static class Control
     {
         public static string GridControl => "gridControl";
         public static string MultiSetControl => "multiSet";
@@ -22,7 +22,7 @@ public static class XrmMock
         public static string QuickViewControl => "quickView";
     }
 
-    public static class Attributes
+    internal static class Attributes
     {
         public static string MultiSetAttribute => "multiSet";
         public static string OptionSetAttribute => "optionSet";
@@ -36,7 +36,7 @@ public static class XrmMock
         public static string BooleanAttribute => "boolean";
     }
 
-    public static class RequiredLevel {
+    internal static class RequiredLevel {
         public static string None => "none";
         public static string Recommended => "recommended";
         public static string Required => "required";

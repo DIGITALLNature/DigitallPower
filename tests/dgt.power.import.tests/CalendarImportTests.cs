@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
@@ -39,7 +38,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
     public async Task ShouldFailOnEmptyConfiguration() =>
         await Assert.That(GetContext().Execute(new ImportVerb
             {
-                FileName = WriteConfigurationArtifact(new Calendars()).Name,
+                FileName = WriteConfigurationArtifact(new List<dto.Calendar>()).Name,
                 FileDir = ArtifactDirectory
             }
         )).IsFalse();
@@ -56,7 +55,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
     [Test]
     public async Task ShouldUpdateExistingCalendar()
     {
-        var calendarConfiguration = GetConfigurationResource<Calendars>("update-calendar.json");
+        var calendarConfiguration = GetConfigurationResource<List<dto.Calendar>>("update-calendar.json");
         var calendarToBeUpdated = calendarConfiguration.Single();
         var innerCalendarRule = calendarToBeUpdated.Rules.Single(x => x.InnerCalendar != null);
         var existingCalendar = new Calendar(calendarToBeUpdated.CalendarId)
@@ -99,7 +98,7 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
     [Test]
     public async Task ShouldCreateNewCalendar()
     {
-        var calendarImportConfig = GetConfigurationResource<Calendars>("create-calendar.json");
+        var calendarImportConfig = GetConfigurationResource<List<dto.Calendar>>("create-calendar.json");
         var calendarToBeCreated = calendarImportConfig.Single();
         var innerCalendarRule = calendarToBeCreated.Rules.Single(x => x.InnerCalendar != null);
         var context = GetBuilder().Build();

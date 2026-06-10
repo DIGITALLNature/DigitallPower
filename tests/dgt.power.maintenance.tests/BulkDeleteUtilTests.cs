@@ -7,6 +7,7 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.maintenance.tests;
@@ -37,9 +38,10 @@ public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
     {
         // Arrange
         var context = GetContext();
+        var inlineData = await File.ReadAllTextAsync(GetResourcePath("fetch.xml"));
         await Assert.That(context.Execute(new MaintenanceVerb
             {
-                InlineData = File.ReadAllText(GetResourcePath("fetch.xml"))
+                InlineData = inlineData
             }
         )).IsTrue();
 
@@ -67,9 +69,10 @@ public class BulkDeleteUtilTests : MaintenanceTestsBase<BulkDeleteUtil>
         // Arrange
         _bulkDeleteExecutor.ExpectedStatusCode = AsyncOperation.Options.StatusCode.Failed;
         var context = GetContext();
+        var inlineData = await File.ReadAllTextAsync(GetResourcePath("fetch.xml"));
         await Assert.That(context.Execute(new MaintenanceVerb
             {
-                InlineData = File.ReadAllText(GetResourcePath("fetch.xml"))
+                InlineData = inlineData
             }
         )).IsFalse();
         var asyncOperation = context.GetSingle<AsyncOperation>();

@@ -48,7 +48,7 @@ public class TracerTests
         var activities = new List<Activity>();
         using var listener = CreateListener(started: activities);
 
-        var tracer = new Tracer(telemetryEnabled: false);
+        var tracer = new Tracer();
         var action = new FakeAction();
 
         tracer.Start(action);
@@ -204,7 +204,7 @@ public class TracerTests
         var listener = new ActivityListener
         {
             ShouldListenTo = source => source.Name == DgtpActivitySource.Name,
-            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStarted = activity => started?.Add(activity),
             ActivityStopped = activity => stopped?.Add(activity)
         };

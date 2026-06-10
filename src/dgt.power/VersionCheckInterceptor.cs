@@ -1,9 +1,9 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO.IsolatedStorage;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.Telemetry;
@@ -46,17 +46,18 @@ public class VersionCheckInterceptor(
 
     private void CheckForNewVersion()
     {
-        var packageMetadata = packageMetadataClient.GetMetadataAsync(
+        using var sourceCache = new SourceCacheContext();
+        var packageMetadata = RunSynchronously(packageMetadataClient.GetMetadataAsync(
             "dgt.power",
             false,
             false,
-            new SourceCacheContext(),
+            sourceCache,
             NullLogger.Instance,
             CancellationToken.None
-        ).GetAwaiter().GetResult();
+        ));
         var lastPackage = packageMetadata.OrderByDescending(package => package.Published).First();
 
-        var localPackageVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        var localPackageVersion = typeof(VersionCheckInterceptor).Assembly.GetName().Version;
         var remoteVersion = lastPackage.Identity.Version.Version;
         if (remoteVersion > localPackageVersion)
         {
@@ -80,6 +81,12 @@ public class VersionCheckInterceptor(
         storageStream.CopyTo(memoryStream);
         return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
     }
+
+    [SuppressMessage(
+        "Usage",
+        "VSTHRD002:Avoid problematic synchronous waits",
+        Justification = "Spectre's ICommandInterceptor is synchronous. Version check runs once in CLI startup and has no async hook.")]
+    private static T RunSynchronously<T>(Task<T> task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
 
     private sealed class LastUpdateCheck
     {

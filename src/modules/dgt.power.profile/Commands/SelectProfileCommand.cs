@@ -17,13 +17,13 @@ public class SelectProfileCommand(IProfileManager profileManager, IAnsiConsole c
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
         var identities = profileManager.LoadIdentities();
-        if (!identities.Contains(settings.Name.ToUpperInvariant()))
+        if (!identities.Contains(settings.Name))
         {
             console.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
             return -1;
         }
 
-        identities.SetCurrent(settings.Name.ToUpperInvariant());
+        identities.SetCurrent(settings.Name);
         profileManager.Save();
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] set.");

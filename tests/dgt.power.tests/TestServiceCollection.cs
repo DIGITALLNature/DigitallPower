@@ -27,6 +27,6 @@ public class TestServiceCollection : ServiceCollection
         });
         this.AddScoped<IConfigResolver, ConfigResolver>();
         this.AddScoped<IFileService, FileService>();
-        this.AddSingleton<IAnsiConsole>(AnsiConsole.Console);
+        this.AddSingleton(AnsiConsole.Console);
     }
 }

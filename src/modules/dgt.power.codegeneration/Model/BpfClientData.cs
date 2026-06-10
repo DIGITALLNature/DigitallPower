@@ -1,7 +1,9 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json.Serialization;
+
+#pragma warning disable CA1002 // JSON-deserialized list properties require List<T> for population
 
 namespace dgt.power.codegeneration.Model;
 
@@ -32,7 +34,7 @@ public sealed class BpfClientData
     public required string NextStepIndex { get; init; }
 
     [JsonPropertyName("isCrmUIWorkflow")]
-    public required bool IsCrmUIWorkflow { get; init; }
+    public required bool IsCrmUiWorkflow { get; init; }
 
     [JsonPropertyName("category")]
     public required string Category { get; init; }

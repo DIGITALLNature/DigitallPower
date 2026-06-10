@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
@@ -52,7 +51,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
             }
         )).IsTrue();
 
-        var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>(GetTestFileName());
+        var teamTemplates = GetConfigurationTestArtifact<List<dto.TeamTemplate>>(GetTestFileName());
         await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 
@@ -67,7 +66,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
             }
         )).IsTrue();
 
-        var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>("teamtemplate.json");
+        var teamTemplates = GetConfigurationTestArtifact<List<dto.TeamTemplate>>("teamtemplate.json");
         await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 }

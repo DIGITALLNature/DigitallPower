@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("calendar")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class Calendar : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("calendarid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(CalendarId));
             }
@@ -382,8 +383,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N BusinessUnit_Calendar
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("BusinessUnit_Calendar")]
-		public System.Collections.Generic.IEnumerable<BusinessUnit> BusinessUnitCalendar
+		[RelationshipSchemaName("BusinessUnit_Calendar")]
+		public IEnumerable<BusinessUnit> BusinessUnitCalendar
 		{
 			[DebuggerNonUserCode]
 			get
@@ -402,8 +403,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N Calendar_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("Calendar_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> CalendarAsyncOperations
+		[RelationshipSchemaName("Calendar_AsyncOperations")]
+		public IEnumerable<AsyncOperation> CalendarAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
@@ -422,8 +423,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N calendar_calendar_rules
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("calendar_calendar_rules")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> CalendarCalendarRules
+		[RelationshipSchemaName("calendar_calendar_rules")]
+		public IEnumerable<CalendarRule> CalendarCalendarRules
 		{
 			[DebuggerNonUserCode]
 			get
@@ -442,8 +443,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N calendar_customercalendar_holidaycalendar
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("calendar_customercalendar_holidaycalendar")]
-		public System.Collections.Generic.IEnumerable<Calendar> CalendarCustomercalendarHolidaycalendar
+		[RelationshipSchemaName("calendar_customercalendar_holidaycalendar")]
+		public IEnumerable<Calendar> CalendarCustomercalendarHolidaycalendar
 		{
 			[DebuggerNonUserCode]
 			get
@@ -462,8 +463,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N calendar_organization
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("calendar_organization")]
-		public System.Collections.Generic.IEnumerable<Organization> CalendarOrganization
+		[RelationshipSchemaName("calendar_organization")]
+		public IEnumerable<Organization> CalendarOrganization
 		{
 			[DebuggerNonUserCode]
 			get
@@ -482,8 +483,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N calendar_system_users
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("calendar_system_users")]
-		public System.Collections.Generic.IEnumerable<SystemUser> CalendarSystemUsers
+		[RelationshipSchemaName("calendar_system_users")]
+		public IEnumerable<SystemUser> CalendarSystemUsers
 		{
 			[DebuggerNonUserCode]
 			get
@@ -502,8 +503,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N inner_calendar_calendar_rules
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("inner_calendar_calendar_rules")]
-		public System.Collections.Generic.IEnumerable<CalendarRule> InnerCalendarCalendarRules
+		[RelationshipSchemaName("inner_calendar_calendar_rules")]
+		public IEnumerable<CalendarRule> InnerCalendarCalendarRules
 		{
 			[DebuggerNonUserCode]
 			get
@@ -522,8 +523,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N slabase_businesshoursid
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("slabase_businesshoursid")]
-		public System.Collections.Generic.IEnumerable<SLA> SlabaseBusinesshoursid
+		[RelationshipSchemaName("slabase_businesshoursid")]
+		public IEnumerable<SLA> SlabaseBusinesshoursid
 		{
 			[DebuggerNonUserCode]
 			get

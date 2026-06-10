@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query; 
+using Microsoft.Xrm.Sdk.Query;
 using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
@@ -21,7 +22,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("customapi")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class CustomAPI : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -91,7 +92,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("customapiid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -127,7 +128,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(CustomAPIId));
             }
@@ -791,8 +792,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N customapi_AsyncOperations
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("customapi_AsyncOperations")]
-		public System.Collections.Generic.IEnumerable<AsyncOperation> CustomapiAsyncOperations
+		[RelationshipSchemaName("customapi_AsyncOperations")]
+		public IEnumerable<AsyncOperation> CustomapiAsyncOperations
 		{
 			[DebuggerNonUserCode]
 			get
@@ -811,8 +812,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N customapi_customapirequestparameter
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("customapi_customapirequestparameter")]
-		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> CustomapiCustomapirequestparameter
+		[RelationshipSchemaName("customapi_customapirequestparameter")]
+		public IEnumerable<CustomAPIRequestParameter> CustomapiCustomapirequestparameter
 		{
 			[DebuggerNonUserCode]
 			get
@@ -831,8 +832,8 @@ namespace dgt.power.dataverse
 		/// <summary>
 		/// 1:N customapi_customapiresponseproperty
 		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("customapi_customapiresponseproperty")]
-		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> CustomapiCustomapiresponseproperty
+		[RelationshipSchemaName("customapi_customapiresponseproperty")]
+		public IEnumerable<CustomAPIResponseProperty> CustomapiCustomapiresponseproperty
 		{
 			[DebuggerNonUserCode]
 			get

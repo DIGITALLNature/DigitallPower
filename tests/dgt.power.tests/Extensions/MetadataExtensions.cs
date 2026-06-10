@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -9,6 +10,7 @@ namespace dgt.power.tests.Extensions;
 /// <summary>
 /// Reflection-based helpers for setting sealed properties on Xrm SDK metadata objects in tests.
 /// </summary>
+[SuppressMessage("Minor Code Smell", "S4225:Extension methods should not extend \"object\"")]
 public static class MetadataExtensions
 {
     /// <summary>

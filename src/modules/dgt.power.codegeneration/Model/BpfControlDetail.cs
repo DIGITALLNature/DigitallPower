@@ -31,7 +31,7 @@ public class BpfControlDetail: IComparable<BpfControlDetail>
 
     public override int GetHashCode()
     {
-        return DataFieldName.GetHashCode();
+        return DataFieldName.GetHashCode(StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator ==(BpfControlDetail? left, BpfControlDetail? right)

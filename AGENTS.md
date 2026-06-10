@@ -175,24 +175,66 @@ rtk git add . && rtk git commit -m "msg" && rtk git push
 
 Agents **must** persist valuable findings, decisions, and context in the `.memory/` directory so that knowledge survives across sessions and is available to other agents and developers.
 
+> ⚠️ **This is not optional.** Skipping `.memory/` updates is a failure to complete the task.
+> Future agents and developers depend on this knowledge. Treat it with the same discipline as code.
+
+### Core Principle: Timeless, Not Transient
+
+**`.memory/` is a durable knowledge base — not a sprint log, not a branch diary.**
+
+It records **why** decisions were made, **what** patterns apply, and **which** caveats exist in the codebase. This knowledge remains correct regardless of which branch, PR, or release is currently active.
+
+**The merge test:** Before writing anything into `.memory/`, ask: _"Would this still be accurate and useful after the branch is merged?"_ If the answer is no, it does not belong in `.memory/`.
+
+### Explicitly Forbidden in .memory/
+
+❌ **Commit hashes** — stale the moment history is amended  
+❌ **Branch names as content** (e.g. "Implemented on branch `chore-analysis`") — irrelevant after merge  
+❌ **"Next Steps" for a PR or merge** — use the PR description for that  
+❌ **Sprint / task progress tracking** — use session tools or a task tracker  
+❌ **"Status: Implemented / In Progress"** headers tied to a branch — state facts about the *codebase*, not the *git graph*  
+
 ### Rules
 
-1. **Read first.** Always read `.memory/summary.md` at the start of a task to understand current status and avoid redundant work.
-2. **Store findings** in `.memory/` directory. All notes must be in markdown format.
-3. **Filename convention:** `.memory/<type>-<title>.md`
-   - `<type>` is one of: `research`, `phase`, `guide`, `decision`, `implementation`
+1. **Read first — always.** Read `.memory/summary.md` at the start of every task to understand current architecture, key decisions, and known caveats. Do not start work without it.
+
+2. **Write at the end — always.** After any non-trivial investigation, design decision, or fix:
+   - Create or update the relevant `.memory/<type>-<title>.md` file.
+   - Update `.memory/summary.md` to reflect the new architectural state.
+
+3. **Co-stage `.memory/` with code.** Changes to `.memory/` MUST be committed together with the code change that triggered them — either in the same commit or as an immediate follow-up in the same PR. Never let `.memory/` lag behind the code.
+
+4. **Filename convention:** `.memory/<type>-<title>.md`
+   - `<type>` is one of: `research`, `guide`, `decision`, `implementation`
    - `<title>` is a short kebab-case descriptor
-4. **Exception:** `.memory/summary.md` does not follow the naming convention — it is the index file.
-5. **Keep `.memory/summary.md` up to date** with current status, active tasks, and key findings. Prune incorrect or outdated information.
-6. **Committed to git.** The `.memory/` directory is shared knowledge — do not add it to `.gitignore`.
+
+5. **Exception:** `.memory/summary.md` does not follow the naming convention — it is the index file.
+
+6. **`summary.md` describes the codebase, not the branch.** It must always reflect:
+   - Architecture overview (modules, frameworks, key patterns)
+   - Key decisions (with links to decision files)
+   - Known caveats and technical debt (timeless observations)
+   - Memory files index
+
+7. **Prune stale information.** When caveats are resolved or decisions are superseded, update or remove them. `summary.md` must stay current and accurate — not grow into a historical archive.
+
+### Mandatory Write Triggers
+
+These situations **require** a `.memory/` update — no exceptions:
+
+| Situation | What to write |
+|-----------|--------------|
+| Architecture or design decision made | `decision-<title>.md` + update `summary.md` |
+| Non-obvious API behavior discovered | `research-<title>.md` + add caveat to `summary.md` |
+| Recurring anti-pattern found and fixed | `guide-<title>.md` + add to `summary.md` index |
+| Implementation spec agreed upon | `implementation-<title>.md` + update `summary.md` |
 
 ### Types
 
 | Type | Purpose |
 |------|---------|
 | `research` | Investigation results, API behavior findings, library evaluations |
-| `phase` | Progress tracking for multi-step work (e.g. migration phases) |
-| `guide` | How-to instructions, patterns, and reusable approaches |
+| `guide` | How-to instructions, reusable patterns, and recurring anti-pattern fixes |
 | `decision` | Architecture/design decisions with rationale and alternatives considered |
 | `implementation` | Implementation plans, technical specs, or post-implementation notes |
 
@@ -200,14 +242,14 @@ Agents **must** persist valuable findings, decisions, and context in the `.memor
 
 - After discovering non-obvious behavior or caveats
 - After making a design/architecture decision
-- When starting multi-step work that spans sessions
-- When findings would save future agents significant research time
+- When findings would save a future agent significant research time
 
 ### When NOT to Write
 
 - Trivial or self-evident facts already in the code
-- Temporary debugging notes (use comments or session memory instead)
-- Information already covered in README.md or code comments
+- Temporary debugging notes (use session memory instead)
+- Information already covered in `README.md` or code comments
+- Sprint/workflow state that belongs in a PR description or ticket
 
 ### Example Filenames
 
@@ -215,7 +257,6 @@ Agents **must** persist valuable findings, decisions, and context in the `.memor
 .memory/summary.md
 .memory/research-fetchxml-paging-behavior.md
 .memory/decision-tunit-over-xunit.md
-.memory/phase-net10-migration.md
 .memory/guide-bulk-operation-patterns.md
 .memory/implementation-audit-export-logic.md
 ```

@@ -46,7 +46,7 @@ public partial class TestEntity : Entity, INotifyPropertyChanging, INotifyProper
 
     #region Attributes
     [AttributeLogicalNameAttribute("testentityid")]
-    public new System.Guid Id
+    public new Guid Id
     {
         [DebuggerNonUserCode]
         get
@@ -79,7 +79,7 @@ public partial class TestEntity : Entity, INotifyPropertyChanging, INotifyProper
             }
             else
             {
-                base.Id = System.Guid.Empty;
+                base.Id = Guid.Empty;
             }
             OnPropertyChanged(nameof(TestEntityId));
         }
@@ -355,7 +355,7 @@ public partial class TestEntity : Entity, INotifyPropertyChanging, INotifyProper
     #endregion
 
     #region LogicalNames
-    public static class LogicalNames
+    internal static class LogicalNames
     {
         public const string TestEntityId = "testentityid";
         public const string CreatedBy = "createdby";

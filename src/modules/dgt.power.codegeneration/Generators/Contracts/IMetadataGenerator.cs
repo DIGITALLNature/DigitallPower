@@ -3,7 +3,7 @@
 
 using dgt.power.codegeneration.Base;
 
-namespace dgt.power.codegeneration.Generators;
+namespace dgt.power.codegeneration.Generators.Contracts;
 
 public interface IMetadataGenerator
 {

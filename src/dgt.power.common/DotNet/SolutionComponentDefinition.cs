@@ -1,8 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -18,7 +19,7 @@ namespace dgt.power.dataverse
 	/// </summary>
 	[DataContractAttribute()]
 	[EntityLogicalNameAttribute("solutioncomponentdefinition")]
-	[System.CodeDom.Compiler.GeneratedCode("dgtp", "2023")]
+	[GeneratedCode("dgtp", "2023")]
     [ExcludeFromCodeCoverage]
 	public partial class SolutionComponentDefinition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -88,7 +89,7 @@ namespace dgt.power.dataverse
 
 		#region Attributes
 		[AttributeLogicalNameAttribute("solutioncomponentdefinitionid")]
-		public new System.Guid Id
+		public new Guid Id
 		{
 		    [DebuggerNonUserCode]
 			get
@@ -124,7 +125,7 @@ namespace dgt.power.dataverse
 				}
 				else
 				{
-					base.Id = System.Guid.Empty;
+					base.Id = Guid.Empty;
 				}
                 OnPropertyChanged(nameof(SolutionComponentDefinitionId));
             }
@@ -1037,11 +1038,21 @@ namespace dgt.power.dataverse
             if (_trackChanges)
             {
                 var attr = new AttributeCollection();
-                foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof (AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
+                foreach (var changedProperty in _changedProperties.Value)
                 {
-                    attr.Add(attrName,this[attrName]);
+                    var propInfo = GetType().GetProperty(changedProperty);
+                    if (propInfo is null) continue;
+                    
+                    var attrAttr = (AttributeLogicalNameAttribute?)propInfo.GetCustomAttribute(typeof(AttributeLogicalNameAttribute));
+                    if (attrAttr?.LogicalName is null) continue;
+                    
+                    var attrName = attrAttr.LogicalName;
+                    if (Contains(attrName))
+                    {
+                        attr.Add(attrName, this[attrName]);
+                    }
                 }
-                return new  SolutionComponentDefinition(Id) {Attributes = attr };
+                return new SolutionComponentDefinition(Id) { Attributes = attr };
             }
             return this;
         }

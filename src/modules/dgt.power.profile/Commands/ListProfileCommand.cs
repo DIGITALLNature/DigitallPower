@@ -19,15 +19,14 @@ public class ListProfileCommand(IProfileManager profileManager, IAnsiConsole con
 
         var grid = new Grid();
         // Add columns
-        grid.AddColumn().AddColumn().AddColumn().AddColumn().AddColumn();
+        grid.AddColumn().AddColumn().AddColumn();
 
         // Add header row
-        grid.AddRow("Current", "Name", "Type", "Protocol", "Insecure");
+        grid.AddRow("Current", "Name", "Type");
 
         foreach (var identity in identities.Infos)
         {
-            grid.AddRow(identity.Name == profileManager.Current ? "*" : string.Empty, identity.Name , identity.Type , profileManager.CurrentIdentity?.SecurityProtocol ?? string.Empty,
-                profileManager.CurrentIdentity?.Insecure == true ? "yes" : "no");
+            grid.AddRow(identity.Name == profileManager.Current ? "*" : string.Empty, identity.Name, identity.Type);
         }
 
         console.Write(grid);

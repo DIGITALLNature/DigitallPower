@@ -7,6 +7,7 @@ public static class ExceptionExtensions
 {
     public static Exception RootException(this Exception exception)
     {
+        ArgumentNullException.ThrowIfNull(exception);
         var rootException = exception;
         while (rootException.InnerException != null)
         {
@@ -18,6 +19,7 @@ public static class ExceptionExtensions
 
     public static string RootMessage(this Exception exception)
     {
+        ArgumentNullException.ThrowIfNull(exception);
         var rootException = exception;
         while (rootException.InnerException != null)
         {
@@ -30,12 +32,14 @@ public static class ExceptionExtensions
     public static bool IsDerivedFrom<TException>(this Exception exception)
         where TException : Exception
     {
+        ArgumentNullException.ThrowIfNull(exception);
         return exception.GetType().IsAssignableTo(typeof(TException))
                || (exception.InnerException?.IsDerivedFrom<TException>() ?? false);
     }
 
     public static TException? GetInnerException<TException>(this Exception exception) where TException : Exception
     {
+        ArgumentNullException.ThrowIfNull(exception);
         return exception.GetType().IsAssignableTo(typeof(TException))
             ? (TException)exception
             : exception.InnerException?.GetInnerException<TException>() ?? null;

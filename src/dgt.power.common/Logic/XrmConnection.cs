@@ -1,11 +1,10 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Net;
 using dgt.power.common.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
@@ -13,7 +12,7 @@ namespace dgt.power.common.Logic;
 public class XrmConnection(IProfileManager profileManager, IConfiguration configuration, IAnsiConsole console)
     : IXrmConnection
 {
-    public IOrganizationService Connect()
+    public async Task<IOrganizationServiceAsync2> ConnectAsync()
     {
         var xrmConfiguration = configuration.GetSection("xrm").GetChildren().ToList();
 
@@ -21,50 +20,41 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
 
         if (xrmConfiguration.Count != 0)
         {
-            return ConnectWithConfiguration();
+            return await ConnectWithConfigurationAsync();
         }
 
         if (!string.IsNullOrEmpty(profile))
         {
-            return ConnectWithProfileName(profile);
+            return await ConnectWithProfileNameAsync(profile);
         }
 
         if (profileManager.CurrentIdentity != null)
         {
-            return ConnectWithProfile(profileManager.CurrentIdentity);
+            return await ConnectWithProfileAsync(profileManager.CurrentIdentity);
         }
 
         throw new MissingConnectionException();
     }
 
-    private  IOrganizationService ConnectWithConfiguration()
+    private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
     {
-        var protocol = configuration.GetValue<SecurityProtocolType>("xrm:securityprotocol");
-
-        ServicePointManager.SecurityProtocol = protocol;
-        if (configuration.GetValue<bool>("xrm:insecure"))
-        {
-#pragma warning disable CA5359
-#pragma warning disable S4830
-            ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-#pragma warning restore S4830
-#pragma warning restore CA5359
-        }
-
         console.MarkupLine("Connect to given configuration.");
-        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection"), console);
+        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection")!, console);
         try
         {
-            return connector.CreateOrganizationServiceProxy();
+            return await connector.CreateOrganizationServiceProxyAsync();
         }
+#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
         catch (Exception e)
         {
             throw new FailedConnectionException("xrm:connection", e);
         }
+#pragma warning restore CA1031
     }
 
-    public IOrganizationService ConnectWithProfileName(string profileName)
+    public async Task<IOrganizationServiceAsync2> ConnectWithProfileNameAsync(string profileName)
     {
+        ArgumentNullException.ThrowIfNull(profileName);
         var identities = profileManager.LoadIdentities();
         if (!identities.Contains(profileName.ToUpperInvariant()))
         {
@@ -72,22 +62,11 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         }
 
         identities.SetCurrent(profileName.ToUpperInvariant());
-        return ConnectWithProfile(profileManager.CurrentIdentity!);
+        return await ConnectWithProfileAsync(profileManager.CurrentIdentity!);
     }
 
-    private IOrganizationService ConnectWithProfile(Identity identity)
+    private async Task<IOrganizationServiceAsync2> ConnectWithProfileAsync(Identity identity)
     {
-        Enum.TryParse(identity.SecurityProtocol, true, out SecurityProtocolType value);
-        ServicePointManager.SecurityProtocol = value;
-        if (identity.Insecure)
-        {
-#pragma warning disable CA5359
-#pragma warning disable S4830
-            ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-#pragma warning restore S4830
-#pragma warning restore CA5359
-        }
-
         IConnector connector;
         if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
@@ -102,19 +81,21 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
 
         try
         {
-            var service = connector.CreateOrganizationServiceProxy();
-            CheckWhoAmI(service);
+            var service = await connector.CreateOrganizationServiceProxyAsync();
+            await CheckWhoAmIAsync(service);
             return service;
         }
+#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
         catch (Exception exception)
         {
             throw new FailedConnectionException(profileManager.Current, exception);
         }
+#pragma warning restore CA1031
     }
 
-    private void CheckWhoAmI(IOrganizationService service)
+    private async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
     {
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
+        var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest())).UserId;
         console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 }

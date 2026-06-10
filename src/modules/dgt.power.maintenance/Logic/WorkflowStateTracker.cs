@@ -5,7 +5,7 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public class WorkflowStateTracker
+public sealed class WorkflowStateTracker
 {
     private Dictionary<string, WorflowChange> _workflowChanges = [];
 
@@ -48,7 +48,7 @@ public class WorkflowStateTracker
         return workflowChange;
     }
 
-    internal void TrackDisabled(Workflow workflow, bool disabledTarget, bool? disabledPost = default)
+    internal void TrackDisabled(Workflow workflow, bool disabledTarget, bool? disabledPost = null)
     {
         var identifier = $"{workflow.PrimaryEntity}.{workflow.UniqueName}.{workflow.Name}";
 
@@ -61,7 +61,7 @@ public class WorkflowStateTracker
         workflowChange.DisabledPost = disabledPost ?? workflowChange.DisabledPre;
     }
 
-    internal void TrackOwner(Workflow workflow, SystemUser? desiredOwnerTarget, SystemUser? desiredOwnerPost = default)
+    internal void TrackOwner(Workflow workflow, SystemUser? desiredOwnerTarget, SystemUser? desiredOwnerPost = null)
     {
         var identifier = $"{workflow.PrimaryEntity}.{workflow.UniqueName}.{workflow.Name}";
 
@@ -97,7 +97,7 @@ public class WorkflowStateTracker
 
             var status = success ? $"[green]{Emoji.Known.CheckMark}[/]" : Emoji.Known.CrossMark;
 
-            var tableNameFormat = workflowChange.TableName != default && workflowChange.TableName != "none" ? "white" : "grey italic";
+            var tableNameFormat = workflowChange.TableName != null && workflowChange.TableName != "none" ? "white" : "grey italic";
 
             var disabledState = workflowChange.GetDisabledState();
 
@@ -119,7 +119,7 @@ public class WorkflowStateTracker
     }
 }
 
-internal class WorflowChange
+internal sealed class WorflowChange
 {
     internal string? Name { get; set; }
     internal string? UniqueName { get; set; }
@@ -150,9 +150,22 @@ internal class WorflowChange
 
     internal string GetOwnerText()
     {
+        // No change desired
         if (OwnerPre == OwnerTarget) return $"[grey]{OwnerPre}[/]";
-        if (!string.IsNullOrWhiteSpace(OwnerPost) && OwnerPost == OwnerTarget) return $"[blue]{OwnerPre}[/] {Emoji.Known.RightArrow} [green]{OwnerPost}[/]";
-        if (OwnerPost == OwnerTarget) return $"[blue]{OwnerPre}[/]";
-        return $"[red]{OwnerPre}[/] [strikethrough grey]{Emoji.Known.RightArrow} {OwnerPost}[/]";
+        
+        // Successful change: OwnerPost matches the target and is not empty
+        if (!string.IsNullOrWhiteSpace(OwnerPost) && OwnerPost == OwnerTarget)
+        {
+            return $"[blue]{OwnerPre}[/] {Emoji.Known.RightArrow} [green]{OwnerPost}[/]";
+        }
+        
+        // Failed change: OwnerPost doesn't match target
+        if (OwnerPost != OwnerTarget)
+        {
+            return $"[red]{OwnerPre}[/] [strikethrough grey]{Emoji.Known.RightArrow} {OwnerPost ?? "[grey italic]null[/]"}[/]";
+        }
+        
+        // Fallback (shouldn't reach here in normal cases)
+        return $"[blue]{OwnerPre}[/]";
     }
 }
