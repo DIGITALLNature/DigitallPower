@@ -44,7 +44,7 @@ jobs:
       run: pnpm install --frozen-lockfile
 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
 
     - name: Run Tests
-      run: dotnet test --no-build -- --output Detailed
+      run: dotnet test --no-build --configuration Release -- --output Detailed

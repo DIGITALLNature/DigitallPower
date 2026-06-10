@@ -41,7 +41,7 @@ public class CreateWorkflowStateConfig(
         var publishers = args.Publishers?.Split(',');
 
         // Do the actual work
-        await CollectWorkflowStatesAsync(solutions, publishers, args.Config, args.Detailed);
+        await CollectWorkflowStatesAsync(solutions, publishers, args.Config, args.Detailed, args.Overwrite);
 
         // Print table report if requested
         if (args.TableReport)
@@ -52,7 +52,7 @@ public class CreateWorkflowStateConfig(
         return Tracer.End(this, true);
     }
 
-    private async Task CollectWorkflowStatesAsync(string[]? solutions, string[]? publishers, string configFile, bool detailed)
+    private async Task CollectWorkflowStatesAsync(string[]? solutions, string[]? publishers, string configFile, bool detailed, bool overwrite)
     {
         await Console.Progress()
             .StartAsync(async ctx =>
@@ -161,7 +161,8 @@ public class CreateWorkflowStateConfig(
                 // Write config to file
                 Tracer.Log($"Writing config to {configFile}", TraceEventType.Verbose);
 
-                using var fileStream = new FileStream(configFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
+                using var fileStream = new FileStream(configFile, fileMode, FileAccess.Write, FileShare.None);
                 await JsonSerializer.SerializeAsync(fileStream, config, _jsonSerializerOptions);
 
                 prepareConfigTask.Value = prepareConfigTask.MaxValue;
