@@ -3900,86 +3900,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdby
-		/// </summary>	
-		[RelationshipSchemaName("lk_ec4u_carrier_createdby")]
-		public IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_createdonbehalfby
-		/// </summary>	
-		[RelationshipSchemaName("lk_ec4u_carrier_createdonbehalfby")]
-		public IEnumerable<Ec4uCarrier> LkEc4uCarrierCreatedonbehalfby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierCreatedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_createdonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierCreatedonbehalfby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedby
-		/// </summary>	
-		[RelationshipSchemaName("lk_ec4u_carrier_modifiedby")]
-		public IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedby");
-			}
-		}
-
-		/// <summary>
-		/// 1:N lk_ec4u_carrier_modifiedonbehalfby
-		/// </summary>	
-		[RelationshipSchemaName("lk_ec4u_carrier_modifiedonbehalfby")]
-		public IEnumerable<Ec4uCarrier> LkEc4uCarrierModifiedonbehalfby
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("LkEc4uCarrierModifiedonbehalfby");
-				this.SetRelatedEntities<Ec4uCarrier>("lk_ec4u_carrier_modifiedonbehalfby", null, value);
-				this.OnPropertyChanged("LkEc4uCarrierModifiedonbehalfby");
-			}
-		}
-
-		/// <summary>
 		/// 1:N lk_importjobbase_createdby
 		/// </summary>	
 		[RelationshipSchemaName("lk_importjobbase_createdby")]
@@ -5840,26 +5760,6 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N user_ec4u_carrier
-		/// </summary>	
-		[RelationshipSchemaName("user_ec4u_carrier")]
-		public IEnumerable<Ec4uCarrier> UserEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("UserEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("user_ec4u_carrier", null, value);
-				this.OnPropertyChanged("UserEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N user_parent_user
 		/// </summary>	
 		[RelationshipSchemaName("user_parent_user")]
@@ -6849,18 +6749,6 @@ namespace dgt.power.dataverse
 				public const string LkEc4uAcquirelegalbasisCreatedonbehalfby = "lk_ec4u_acquirelegalbasis_createdonbehalfby";
 				public const string LkEc4uAcquirelegalbasisModifiedby = "lk_ec4u_acquirelegalbasis_modifiedby";
 				public const string LkEc4uAcquirelegalbasisModifiedonbehalfby = "lk_ec4u_acquirelegalbasis_modifiedonbehalfby";
-				public const string LkEc4uCarrierCreatedby = "lk_ec4u_carrier_createdby";
-				public const string LkEc4uCarrierCreatedonbehalfby = "lk_ec4u_carrier_createdonbehalfby";
-				public const string LkEc4uCarrierDependencyCheckCreatedby = "lk_ec4u_carrier_dependency_check_createdby";
-				public const string LkEc4uCarrierDependencyCheckCreatedonbehalfby = "lk_ec4u_carrier_dependency_check_createdonbehalfby";
-				public const string LkEc4uCarrierDependencyCheckModifiedby = "lk_ec4u_carrier_dependency_check_modifiedby";
-				public const string LkEc4uCarrierDependencyCheckModifiedonbehalfby = "lk_ec4u_carrier_dependency_check_modifiedonbehalfby";
-				public const string LkEc4uCarrierMissingDependencyCreatedby = "lk_ec4u_carrier_missing_dependency_createdby";
-				public const string LkEc4uCarrierMissingDependencyCreatedonbehalfby = "lk_ec4u_carrier_missing_dependency_createdonbehalfby";
-				public const string LkEc4uCarrierMissingDependencyModifiedby = "lk_ec4u_carrier_missing_dependency_modifiedby";
-				public const string LkEc4uCarrierMissingDependencyModifiedonbehalfby = "lk_ec4u_carrier_missing_dependency_modifiedonbehalfby";
-				public const string LkEc4uCarrierModifiedby = "lk_ec4u_carrier_modifiedby";
-				public const string LkEc4uCarrierModifiedonbehalfby = "lk_ec4u_carrier_modifiedonbehalfby";
 				public const string LkEc4uGdprBpfCorrectionCreatedby = "lk_ec4u_gdpr_bpf_correction_createdby";
 				public const string LkEc4uGdprBpfCorrectionCreatedonbehalfby = "lk_ec4u_gdpr_bpf_correction_createdonbehalfby";
 				public const string LkEc4uGdprBpfCorrectionModifiedby = "lk_ec4u_gdpr_bpf_correction_modifiedby";
@@ -10432,9 +10320,6 @@ namespace dgt.power.dataverse
 				public const string UserDesktopflowbinary = "user_desktopflowbinary";
 				public const string UserDesktopflowmodule = "user_desktopflowmodule";
 				public const string UserEc4uAcquirelegalbasis = "user_ec4u_acquirelegalbasis";
-				public const string UserEc4uCarrier = "user_ec4u_carrier";
-				public const string UserEc4uCarrierDependencyCheck = "user_ec4u_carrier_dependency_check";
-				public const string UserEc4uCarrierMissingDependency = "user_ec4u_carrier_missing_dependency";
 				public const string UserEc4uGdprProtocol = "user_ec4u_gdpr_protocol";
 				public const string UserEc4uGdprProtocolDetail = "user_ec4u_gdpr_protocol_detail";
 				public const string UserEc4uGdprReport = "user_ec4u_gdpr_report";

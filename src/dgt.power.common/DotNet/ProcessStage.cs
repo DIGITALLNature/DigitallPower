@@ -432,7 +432,7 @@ namespace dgt.power.dataverse
 		#region NavigationProperties
 		/// <summary>
 		/// 1:N processstage_account
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("processstage_account")]
 		public IEnumerable<Account> ProcessstageAccount
 		{
@@ -452,7 +452,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N processstage_contact
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("processstage_contact")]
 		public IEnumerable<Contact> ProcessstageContact
 		{
@@ -471,28 +471,8 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N processstage_ec4u_carrier
-		/// </summary>	
-		[RelationshipSchemaName("processstage_ec4u_carrier")]
-		public IEnumerable<Ec4uCarrier> ProcessstageEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("ProcessstageEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("processstage_ec4u_carrier", null, value);
-				this.OnPropertyChanged("ProcessstageEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N processstage_parentprocessstage
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("processstage_parentprocessstage")]
 		public IEnumerable<ProcessStage> ProcessstageParentprocessstage
 		{
@@ -512,7 +492,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N processstage_systemusers
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("processstage_systemusers")]
 		public IEnumerable<SystemUser> ProcessstageSystemusers
 		{
@@ -532,7 +512,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N processstage_teams
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("processstage_teams")]
 		public IEnumerable<Team> ProcessstageTeams
 		{
@@ -708,7 +688,6 @@ namespace dgt.power.dataverse
 				public const string ProcessstageCampaigns = "processstage_campaigns";
 				public const string ProcessstageCompetitors = "processstage_competitors";
 				public const string ProcessstageContact = "processstage_contact";
-				public const string ProcessstageEc4uCarrier = "processstage_ec4u_carrier";
 				public const string ProcessstageEc4uGdprRequest = "processstage_ec4u_gdpr_request";
 				public const string ProcessstageEc4uWorkbench = "processstage_ec4u_workbench";
 				public const string ProcessstageEmails = "processstage_emails";

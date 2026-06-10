@@ -14,12 +14,14 @@ namespace dgt.power.maintenance.tests;
 
 public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, CarrierInfoSettings>
 {
+    private const string DgtCarrierEntityName = "dgt_carrier";
+
     protected override CommandTestContext<ExportCarrierInfo, CarrierInfoSettings> GetContext()
     {
         return GetBuilder()
             .WithMetaData(new EntityMetadata
             {
-                LogicalName = DgtCarrier.EntityLogicalName
+                LogicalName = DgtCarrierEntityName
             })
             .Build();
     }
@@ -72,14 +74,14 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             FriendlyName = "Solution A",
             Version = "1.0.0.1"
         };
-        var activeCarrier1 = new DgtCarrier(Guid.NewGuid())
+        var activeCarrier1 = new Entity(DgtCarrierEntityName, Guid.NewGuid())
         {
-            DgtSolutionuniquename = carrierSolution1.UniqueName,
-            DgtSolutionfriendlyname = carrierSolution1.FriendlyName,
-            DgtSolutionversion = carrierSolution1.Version,
-            DgtSolutionid = carrierSolution1.Id.ToString(),
-            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 1
+            ["dgt_solutionuniquename"] = carrierSolution1.UniqueName,
+            ["dgt_solutionfriendlyname"] = carrierSolution1.FriendlyName,
+            ["dgt_solutionversion"] = carrierSolution1.Version,
+            ["dgt_solutionid"] = carrierSolution1.Id.ToString(),
+            ["statecode"] = new OptionSetValue(0), // Active
+            ["dgt_transport_order_no"] = 1
         };
         var solutionId2 = Guid.NewGuid();
         var carrierSolution2 = new Solution(solutionId2)
@@ -89,16 +91,30 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             FriendlyName = "Solution B",
             Version = "1.0.1.1"
         };
-        var activeCarrier2 = new DgtCarrier(Guid.NewGuid())
+        var activeCarrier2 = new Entity(DgtCarrierEntityName, Guid.NewGuid())
         {
-            DgtSolutionuniquename = carrierSolution2.UniqueName,
-            DgtSolutionfriendlyname = carrierSolution2.FriendlyName,
-            DgtSolutionversion = carrierSolution2.Version,
-            DgtSolutionid = carrierSolution2.Id.ToString(),
-            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 2
+            ["dgt_solutionuniquename"] = carrierSolution2.UniqueName,
+            ["dgt_solutionfriendlyname"] = carrierSolution2.FriendlyName,
+            ["dgt_solutionversion"] = carrierSolution2.Version,
+            ["dgt_solutionid"] = carrierSolution2.Id.ToString(),
+            ["statecode"] = new OptionSetValue(0), // Active
+            ["dgt_transport_order_no"] = 2
         };
+
+        var carrierMeta = new EntityMetadata { LogicalName = DgtCarrierEntityName };
+        carrierMeta.SetAttributeCollection([
+            new UniqueIdentifierAttributeMetadata { LogicalName = "dgt_carrierid" },
+            new StringAttributeMetadata { LogicalName = "dgt_reference" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionversion" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionid" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionuniquename" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionfriendlyname" },
+            new IntegerAttributeMetadata { LogicalName = "dgt_transport_order_no" },
+            new StateAttributeMetadata { LogicalName = "statecode" }
+        ]);
+
         var context = GetBuilder()
+            .WithMetaData(carrierMeta)
             .WithData(activeCarrier1)
             .WithData(carrierSolution1)
             .WithData(activeCarrier2)

@@ -570,7 +570,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("owneridtype")]
         public string? OwnerIdType
         {
@@ -621,7 +621,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("owningextensionidname")]
         public string? OwningExtensionIdName
         {
@@ -639,7 +639,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("owningextensiontypecode")]
         public string? OwningExtensionTypeCode
         {
@@ -683,7 +683,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("parentpluginexecutionid")]
         public Guid? ParentPluginExecutionId
         {
@@ -801,7 +801,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("regardingobjectidname")]
         public string? RegardingObjectIdName
         {
@@ -819,7 +819,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("regardingobjectidyominame")]
         public string? RegardingObjectIdYomiName
         {
@@ -837,7 +837,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("regardingobjecttypecode")]
         public string? RegardingObjectTypeCode
         {
@@ -1424,9 +1424,6 @@ namespace dgt.power.dataverse
 				public const string DynamicpropertyinstanceAsyncOperations = "dynamicpropertyinstance_AsyncOperations";
 				public const string DynamicpropertyoptionsetitemAsyncOperations = "dynamicpropertyoptionsetitem_AsyncOperations";
 				public const string Ec4uAcquirelegalbasisAsyncOperations = "ec4u_acquirelegalbasis_AsyncOperations";
-				public const string Ec4uCarrierAsyncOperations = "ec4u_carrier_AsyncOperations";
-				public const string Ec4uCarrierDependencyCheckAsyncOperations = "ec4u_carrier_dependency_check_AsyncOperations";
-				public const string Ec4uCarrierMissingDependencyAsyncOperations = "ec4u_carrier_missing_dependency_AsyncOperations";
 				public const string Ec4uGdprBpfCorrectionAsyncOperations = "ec4u_gdpr_bpf_correction_AsyncOperations";
 				public const string Ec4uGdprBpfDeletionAsyncOperations = "ec4u_gdpr_bpf_deletion_AsyncOperations";
 				public const string Ec4uGdprBpfInformationAsyncOperations = "ec4u_gdpr_bpf_information_AsyncOperations";

@@ -1546,7 +1546,7 @@ namespace dgt.power.dataverse
 		#region NavigationProperties
 		/// <summary>
 		/// 1:N business_unit_accounts
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_accounts")]
 		public System.Collections.Generic.IEnumerable<Account> BusinessUnitAccounts
 		{
@@ -1566,7 +1566,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_asyncoperation
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_asyncoperation")]
 		public System.Collections.Generic.IEnumerable<AsyncOperation> BusinessUnitAsyncoperation
 		{
@@ -1586,7 +1586,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_calendars
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_calendars")]
 		public System.Collections.Generic.IEnumerable<Calendar> BusinessUnitCalendars
 		{
@@ -1606,7 +1606,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_contacts
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_contacts")]
 		public System.Collections.Generic.IEnumerable<Contact> BusinessUnitContacts
 		{
@@ -1626,7 +1626,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_customapi
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_customapi")]
 		public System.Collections.Generic.IEnumerable<CustomAPI> BusinessUnitCustomapi
 		{
@@ -1646,7 +1646,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_customapirequestparameter
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_customapirequestparameter")]
 		public System.Collections.Generic.IEnumerable<CustomAPIRequestParameter> BusinessUnitCustomapirequestparameter
 		{
@@ -1666,7 +1666,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_customapiresponseproperty
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_customapiresponseproperty")]
 		public System.Collections.Generic.IEnumerable<CustomAPIResponseProperty> BusinessUnitCustomapiresponseproperty
 		{
@@ -1685,28 +1685,8 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N business_unit_ec4u_carrier
-		/// </summary>	
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_ec4u_carrier")]
-		public System.Collections.Generic.IEnumerable<Ec4uCarrier> BusinessUnitEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("business_unit_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("BusinessUnitEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("business_unit_ec4u_carrier", null, value);
-				this.OnPropertyChanged("BusinessUnitEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N business_unit_parent_business_unit
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_parent_business_unit")]
 		public System.Collections.Generic.IEnumerable<BusinessUnit> BusinessUnitParentBusinessUnit
 		{
@@ -1726,7 +1706,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_queues
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_queues")]
 		public System.Collections.Generic.IEnumerable<Queue> BusinessUnitQueues
 		{
@@ -1746,7 +1726,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_queues2
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_queues2")]
 		public System.Collections.Generic.IEnumerable<Queue> BusinessUnitQueues2
 		{
@@ -1766,7 +1746,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_roles
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_roles")]
 		public System.Collections.Generic.IEnumerable<Role> BusinessUnitRoles
 		{
@@ -1786,7 +1766,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_routingrule
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_routingrule")]
 		public System.Collections.Generic.IEnumerable<RoutingRule> BusinessUnitRoutingrule
 		{
@@ -1806,7 +1786,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_slabase
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_slabase")]
 		public System.Collections.Generic.IEnumerable<SLA> BusinessUnitSlabase
 		{
@@ -1826,7 +1806,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_system_users
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_system_users")]
 		public System.Collections.Generic.IEnumerable<SystemUser> BusinessUnitSystemUsers
 		{
@@ -1846,7 +1826,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_teams
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_teams")]
 		public System.Collections.Generic.IEnumerable<Team> BusinessUnitTeams
 		{
@@ -1866,7 +1846,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N business_unit_workflow
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("business_unit_workflow")]
 		public System.Collections.Generic.IEnumerable<Workflow> BusinessUnitWorkflow
 		{
@@ -1886,7 +1866,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N BusinessUnit_AsyncOperations
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("BusinessUnit_AsyncOperations")]
 		public System.Collections.Generic.IEnumerable<AsyncOperation> BusinessUnitAsyncOperations
 		{
@@ -1906,7 +1886,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N BusinessUnit_DuplicateRules
-		/// </summary>	
+		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("BusinessUnit_DuplicateRules")]
 		public System.Collections.Generic.IEnumerable<DuplicateRule> BusinessUnitDuplicateRules
 		{
@@ -2097,9 +2077,6 @@ namespace dgt.power.dataverse
 				public const string BusinessUnitDesktopflowmodule = "business_unit_desktopflowmodule";
 				public const string BusinessUnitDynamicproperyinstance = "business_unit_dynamicproperyinstance";
 				public const string BusinessUnitEc4uAcquirelegalbasis = "business_unit_ec4u_acquirelegalbasis";
-				public const string BusinessUnitEc4uCarrier = "business_unit_ec4u_carrier";
-				public const string BusinessUnitEc4uCarrierDependencyCheck = "business_unit_ec4u_carrier_dependency_check";
-				public const string BusinessUnitEc4uCarrierMissingDependency = "business_unit_ec4u_carrier_missing_dependency";
 				public const string BusinessUnitEc4uGdprProtocol = "business_unit_ec4u_gdpr_protocol";
 				public const string BusinessUnitEc4uGdprProtocolDetail = "business_unit_ec4u_gdpr_protocol_detail";
 				public const string BusinessUnitEc4uGdprReport = "business_unit_ec4u_gdpr_report";

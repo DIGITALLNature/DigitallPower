@@ -319,7 +319,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("issastokenset")]
         public bool? IsSasTokenSet
         {
@@ -330,7 +330,7 @@ namespace dgt.power.dataverse
             }
         }
 
-		
+
 		[AttributeLogicalName("membershiptype")]
         public OptionSetValue? MembershipType
         {
@@ -685,7 +685,7 @@ namespace dgt.power.dataverse
 		#region NavigationProperties
 		/// <summary>
 		/// 1:N team_accounts
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_accounts")]
 		public IEnumerable<Account> TeamAccounts
 		{
@@ -705,7 +705,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_asyncoperation
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_asyncoperation")]
 		public IEnumerable<AsyncOperation> TeamAsyncoperation
 		{
@@ -725,7 +725,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N Team_AsyncOperations
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("Team_AsyncOperations")]
 		public IEnumerable<AsyncOperation> TeamAsyncOperations
 		{
@@ -745,7 +745,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_contacts
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_contacts")]
 		public IEnumerable<Contact> TeamContacts
 		{
@@ -765,7 +765,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_customapi
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_customapi")]
 		public IEnumerable<CustomAPI> TeamCustomapi
 		{
@@ -785,7 +785,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_customapirequestparameter
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_customapirequestparameter")]
 		public IEnumerable<CustomAPIRequestParameter> TeamCustomapirequestparameter
 		{
@@ -805,7 +805,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_customapiresponseproperty
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_customapiresponseproperty")]
 		public IEnumerable<CustomAPIResponseProperty> TeamCustomapiresponseproperty
 		{
@@ -825,7 +825,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_DuplicateRules
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_DuplicateRules")]
 		public IEnumerable<DuplicateRule> TeamDuplicateRules
 		{
@@ -844,28 +844,8 @@ namespace dgt.power.dataverse
 		}
 
 		/// <summary>
-		/// 1:N team_ec4u_carrier
-		/// </summary>	
-		[RelationshipSchemaName("team_ec4u_carrier")]
-		public IEnumerable<Ec4uCarrier> TeamEc4uCarrier
-		{
-			[DebuggerNonUserCode]
-			get
-			{
-				return this.GetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null);
-			}
-			[DebuggerNonUserCode]
-			set
-			{
-				this.OnPropertyChanging("TeamEc4uCarrier");
-				this.SetRelatedEntities<Ec4uCarrier>("team_ec4u_carrier", null, value);
-				this.OnPropertyChanged("TeamEc4uCarrier");
-			}
-		}
-
-		/// <summary>
 		/// 1:N team_routingrule
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_routingrule")]
 		public IEnumerable<RoutingRule> TeamRoutingrule
 		{
@@ -885,7 +865,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_routingruleitem
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_routingruleitem")]
 		public IEnumerable<RoutingRuleItem> TeamRoutingruleitem
 		{
@@ -905,7 +885,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_slaBase
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_slaBase")]
 		public IEnumerable<SLA> TeamSlaBase
 		{
@@ -925,7 +905,7 @@ namespace dgt.power.dataverse
 
 		/// <summary>
 		/// 1:N team_workflow
-		/// </summary>	
+		/// </summary>
 		[RelationshipSchemaName("team_workflow")]
 		public IEnumerable<Workflow> TeamWorkflow
 		{
@@ -1097,9 +1077,6 @@ namespace dgt.power.dataverse
 				public const string TeamDuplicateRules = "team_DuplicateRules";
 				public const string TeamDynamicPropertyInstance = "team_DynamicPropertyInstance";
 				public const string TeamEc4uAcquirelegalbasis = "team_ec4u_acquirelegalbasis";
-				public const string TeamEc4uCarrier = "team_ec4u_carrier";
-				public const string TeamEc4uCarrierDependencyCheck = "team_ec4u_carrier_dependency_check";
-				public const string TeamEc4uCarrierMissingDependency = "team_ec4u_carrier_missing_dependency";
 				public const string TeamEc4uGdprProtocol = "team_ec4u_gdpr_protocol";
 				public const string TeamEc4uGdprProtocolDetail = "team_ec4u_gdpr_protocol_detail";
 				public const string TeamEc4uGdprReport = "team_ec4u_gdpr_report";
