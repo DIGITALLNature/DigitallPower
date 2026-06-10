@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
@@ -19,11 +18,13 @@ public sealed class ProtectCalculatedFields(
     : BaseMaintenance(tracer, connection, configResolver, console)
 {
     protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
+        Task.FromResult(InvokeCore());
 
-    private bool InvokeCore(MaintenanceVerb args)
+    #pragma warning disable S1135 // Async migration tracked in todo.md
+    // TODO(async): migrate to IOrganizationServiceAsync2
+    #pragma warning restore S1135
+    private bool InvokeCore()
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var updated = 0;
 
