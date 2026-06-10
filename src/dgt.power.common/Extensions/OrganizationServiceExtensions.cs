@@ -4,7 +4,9 @@
 using System.Diagnostics;
 using dgt.power.dataverse;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -220,6 +222,71 @@ public static class OrganizationServiceExtensions
             return false;
         }
 
+        return true;
+    }
+
+    public static Task<bool> TryUpdateAsync(this IOrganizationServiceAsync2 service, Entity entity, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entity);
+        return TryUpdateCoreAsync(service, entity, cancellationToken);
+    }
+
+    private static async Task<bool> TryUpdateCoreAsync(IOrganizationServiceAsync2 service, Entity entity, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await service.ExecuteAsync(new UpdateRequest { Target = entity }, cancellationToken);
+            LogToConsole("updated", TraceEventType.Verbose);
+        }
+        catch (Exception e)
+        {
+            LogToConsole($"update failed {entity.Id:B}: {e.RootMessage()}", TraceEventType.Error);
+            return false;
+        }
+        return true;
+    }
+
+    public static Task<bool> TryDeleteAsync(this IOrganizationServiceAsync2 service, string name, Guid id, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        return TryDeleteCoreAsync(service, name, id, cancellationToken);
+    }
+
+    private static async Task<bool> TryDeleteCoreAsync(IOrganizationServiceAsync2 service, string name, Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await service.ExecuteAsync(new DeleteRequest { Target = new EntityReference(name, id) }, cancellationToken);
+            LogToConsole("deleted", TraceEventType.Verbose);
+        }
+        catch (Exception e)
+        {
+            LogToConsole($"delete failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
+            return false;
+        }
+        return true;
+    }
+
+    public static Task<bool> TryCreateAsync(this IOrganizationServiceAsync2 service, Entity entity, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entity);
+        return TryCreateCoreAsync(service, entity, cancellationToken);
+    }
+
+    private static async Task<bool> TryCreateCoreAsync(IOrganizationServiceAsync2 service, Entity entity, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await service.ExecuteAsync(new CreateRequest { Target = entity }, cancellationToken);
+            LogToConsole("created", TraceEventType.Verbose);
+        }
+        catch (Exception e)
+        {
+            LogToConsole($"create failed {entity.LogicalName}: {e.RootMessage()}", TraceEventType.Error);
+            return false;
+        }
         return true;
     }
 
