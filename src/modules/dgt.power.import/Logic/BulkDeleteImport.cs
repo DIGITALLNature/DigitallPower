@@ -22,7 +22,10 @@ public sealed class BulkDeleteImport(
     IAnsiConsole console)
     : BaseImport(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(ImportVerb args)
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

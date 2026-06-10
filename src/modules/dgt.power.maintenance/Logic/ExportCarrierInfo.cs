@@ -46,7 +46,10 @@ public class ExportCarrierInfo(
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
-    protected override bool Invoke(CarrierInfoSettings settings)
+    protected override Task<bool> InvokeAsync(CarrierInfoSettings settings, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(settings));
+
+    private bool InvokeCore(CarrierInfoSettings settings)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
         Tracer.Start(this);

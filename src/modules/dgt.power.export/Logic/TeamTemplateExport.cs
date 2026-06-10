@@ -21,7 +21,10 @@ public sealed class TeamTemplateExport(
     IAnsiConsole console)
     : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    protected override bool Invoke(ExportVerb args)
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -32,7 +32,10 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         }
     }
 
-    protected override bool Invoke(RemoveRedundantComponentsVerb args)
+    protected override Task<bool> InvokeAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(RemoveRedundantComponentsVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

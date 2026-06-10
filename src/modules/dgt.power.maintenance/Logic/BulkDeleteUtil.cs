@@ -24,7 +24,10 @@ public sealed class BulkDeleteUtil(
 {
     private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
-    protected override bool Invoke(MaintenanceVerb args)
+    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(MaintenanceVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

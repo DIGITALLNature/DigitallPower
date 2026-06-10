@@ -40,6 +40,8 @@ src/
 - All async methods carry `Async` suffix (S4261) — enforced by analyzers
 - Tests are exempt from `Async` suffix via `tests/.editorconfig`
 - Async methods with parameter validation use the split pattern: public method validates, calls private `*CoreAsync` implementation
+- `PowerLogic<T>` has a single abstract entry point `InvokeAsync` — sync `Invoke` was removed
+- Sync `PowerLogic<T>` commands bridge through `Task.FromResult(InvokeCore(args))` until module logic is fully async
 
 ### Naming
 - Static fields: `s_` prefix (e.g. `s_parser`, `s_options`, `s_separators`)
@@ -65,6 +67,7 @@ src/
 | Remove --insecure/--security-protocol | `decision-remove-insecure-protocol.md` | SYSLIB0014; ServicePointManager is no-op on .NET 8+ |
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
+| Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
 
 ## TSL Template Engine (codegeneration)
 

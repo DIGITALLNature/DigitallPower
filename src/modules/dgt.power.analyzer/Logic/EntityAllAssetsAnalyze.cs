@@ -24,7 +24,10 @@ public sealed class EntityAllAssetsAnalyze(
     IAnsiConsole console)
     : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(AnalyzeVerb args)
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(AnalyzeVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         var result = true;
