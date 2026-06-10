@@ -248,6 +248,17 @@ Pushes a plugin assembly or web resource into a target solution.
 dgtp push ./bin/Release/MyPlugin.dll --solution mysolution
 ```
 
+#### Supported Registration Attributes
+
+When pushing a plugin assembly, `push` evaluates the following attributes from the `dgt.registration` package:
+
+| Attribute | Purpose |
+|-----------|---------|
+| `PluginRegistrationAttribute` | Registers plugin steps (message, stage, mode, entity filters, images) |
+| `CustomApiRegistrationAttribute` | Links a plugin type to a Custom API by message name |
+| `CustomDataProviderRegistrationAttribute` | Generates data provider steps (Retrieve, RetrieveMultiple, Create, Update, Delete) for virtual entities |
+| `WorkflowRegistrationAttribute` | Marks workflow activities with group/name metadata |
+
 ## 🏗 Solution Architecture
 
 DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up dependency injection (`Microsoft.Extensions.DependencyInjection`), configuration (`Microsoft.Extensions.Configuration`) and the [Spectre.Console.Cli](https://spectreconsole.net/cli/) command framework, and then registers commands contributed by independent feature modules.

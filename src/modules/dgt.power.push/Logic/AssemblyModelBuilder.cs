@@ -349,6 +349,11 @@ internal sealed class AssemblyModelBuilder : IDisposable
                     {
                         type.CustomApi = GetValue<string>(customAttribute, "messageName")!;
                     }
+
+                    if (customAttribute.AttributeType.Name == nameof(CustomDataProviderRegistrationAttribute))
+                    {
+                        type.PluginSteps.AddRange(GetDataProviderPluginSteps(pluginType, customAttribute));
+                    }
                 }
 
                 type.PluginSteps.AddRange(GetRegistrationPluginSteps(pluginType));
@@ -589,6 +594,62 @@ internal sealed class AssemblyModelBuilder : IDisposable
     #endregion
 
     #region dgt.registration
+
+    /// <summary>
+    /// Generates plugin steps from a CustomDataProviderRegistrationAttribute.
+    /// Data providers run at Stage 30 (MainOperation), Synchronous mode, on the virtual entity.
+    /// </summary>
+    private List<PluginStep> GetDataProviderPluginSteps(Type pluginType, CustomAttributeData customAttribute)
+    {
+        var steps = new List<PluginStep>();
+
+        var entityName = GetValue<string>(customAttribute, "entityName")!;
+        var eventValue = GetValue<int>(customAttribute, "eventRegistration");
+        var messageName = MapDataProviderEventToMessage(eventValue);
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        var sdk = (from mf in _context.SdkMessageFilterSet
+            join m in _context.SdkMessageSet on mf.SdkMessageId.Id equals m.Id
+            where mf.PrimaryObjectTypeCode == entityName
+            where m.Name == messageName
+            select new { mf, m }).SingleOrDefault();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+        if (sdk?.m == null || sdk.mf == null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "[yellow]Warning: DataProvider message {0} for entity {1} not found - skipping step[/]",
+                messageName, entityName);
+            return steps;
+        }
+
+        var step = new PluginStep
+        {
+            Mode = SdkMessageProcessingStep.Options.Mode.Synchronous,
+            MessageName = messageName,
+            Stage = SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly,
+            PrimaryEntityName = entityName,
+            SecondaryEntityName = "none",
+            ExecutionOrder = 1,
+            ParentName = pluginType.FullName!,
+            MessageId = sdk.m.SdkMessageId!.Value,
+            MessageFilterId = sdk.mf.SdkMessageFilterId!.Value
+        };
+        step.Name = GetStepName(step);
+        steps.Add(step);
+
+        return steps;
+    }
+
+    internal static string MapDataProviderEventToMessage(int eventValue) => eventValue switch
+    {
+        0 => "Retrieve",
+        1 => "RetrieveMultiple",
+        2 => "Create",
+        3 => "Update",
+        4 => "Delete",
+        _ => throw new AssemblyException($"Unknown DataProviderEvent value: {eventValue}")
+    };
 
     private List<PluginStep> GetRegistrationPluginSteps(Type pluginType)
     {
