@@ -1,3 +1,15 @@
+# [2.1.0-beta.52](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.51...v2.1.0-beta.52) (2026-06-11)
+
+
+### Bug Fixes
+
+* **tests:** adapt to regenerated Workflow.Options.Category naming ([1baa966](https://github.com/DIGITALLNature/DigitallPower/commit/1baa9664ab1c481892f9658f5cf7244bc17d28a4))
+
+
+### Features
+
+* **common:** add RoutingRuleItem partial extension for msdyn_routeto and assignobjectidtype ([9779b32](https://github.com/DIGITALLNature/DigitallPower/commit/9779b326b43b99f6c9bf90799316d45a57f875cd))
+
 # [2.1.0-beta.51](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.50...v2.1.0-beta.51) (2026-06-10)
 
 
