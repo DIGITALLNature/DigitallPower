@@ -14,6 +14,9 @@ namespace dgt.power.push.tests.Logic;
 
 public class ManagedIdentityRegistrationTests
 {
+    private const string ClientId = "12345678-1234-1234-1234-123456789abc";
+    private const string TenantId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+
     private static FakeOrganizationServiceAsync CreateService()
     {
         var service = new FakeOrganizationServiceAsync();
@@ -51,22 +54,20 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var assemblyId = Guid.NewGuid();
         var assembly = new PluginAssembly(assemblyId) { Name = "TestAssembly", Content = "base64" };
         service.Create(assembly);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
-
         // Act
-        processor.LinkManagedIdentity(assemblyId, clientId, null);
+        processor.LinkManagedIdentity(assemblyId, ClientId, null);
 
         // Assert - verify a managedidentity was created
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(identities.Entities.Count).IsEqualTo(1);
-        await Assert.That(identities.Entities[0].GetAttributeValue<Guid?>(ManagedIdentity.LogicalNames.ApplicationId)).IsEqualTo(Guid.Parse(clientId));
+        await Assert.That(identities.Entities[0].GetAttributeValue<Guid?>(ManagedIdentity.LogicalNames.ApplicationId)).IsEqualTo(Guid.Parse(ClientId));
 
         // Assert - verify assembly was updated with the link
         var updatedAssembly = service.Retrieve("pluginassembly", assemblyId, new ColumnSet("managedidentityid"));
@@ -80,25 +81,24 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var assemblyId = Guid.NewGuid();
         var assembly = new PluginAssembly(assemblyId) { Name = "TestAssembly", Content = "base64" };
         service.Create(assembly);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
         var existingMiId = Guid.NewGuid();
         var existingMi = new ManagedIdentity(existingMiId)
         {
-            ApplicationId = Guid.Parse(clientId),
+            ApplicationId = Guid.Parse(ClientId),
             CredentialSource = new OptionSetValue(ManagedIdentity.Options.CredentialSource.IsManaged),
             SubjectScope = new OptionSetValue(ManagedIdentity.Options.SubjectScope.EnviornmentScope)
         };
         service.Create(existingMi);
 
         // Act
-        processor.LinkManagedIdentity(assemblyId, clientId, null);
+        processor.LinkManagedIdentity(assemblyId, ClientId, null);
 
         // Assert - no new identity created (still just 1)
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
@@ -116,23 +116,20 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var assemblyId = Guid.NewGuid();
         var assembly = new PluginAssembly(assemblyId) { Name = "TestAssembly", Content = "base64" };
         service.Create(assembly);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
-        var tenantId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
-
         // Act
-        processor.LinkManagedIdentity(assemblyId, clientId, tenantId);
+        processor.LinkManagedIdentity(assemblyId, ClientId, TenantId);
 
         // Assert - verify tenantid was set
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(identities.Entities.Count).IsEqualTo(1);
-        await Assert.That(identities.Entities[0].GetAttributeValue<Guid?>(ManagedIdentity.LogicalNames.TenantId)).IsEqualTo(Guid.Parse(tenantId));
+        await Assert.That(identities.Entities[0].GetAttributeValue<Guid?>(ManagedIdentity.LogicalNames.TenantId)).IsEqualTo(Guid.Parse(TenantId));
     }
 
     [Test]
@@ -140,22 +137,20 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var assemblyId = Guid.NewGuid();
         var assembly = new PluginAssembly(assemblyId) { Name = "TestAssembly", Content = "base64" };
         service.Create(assembly);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
-
         // Act
-        processor.LinkManagedIdentity(assemblyId, clientId, null);
+        processor.LinkManagedIdentity(assemblyId, ClientId, null);
 
         // Assert - console output
         var output = console.Output;
         await Assert.That(output).Contains("ManagedIdentity");
-        await Assert.That(output).Contains(clientId);
+        await Assert.That(output).Contains(ClientId);
         await Assert.That(output).Contains("Linked");
     }
 
@@ -164,17 +159,15 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var packageId = Guid.NewGuid();
         var package = new PluginPackage(packageId) { Name = "TestPackage", Version = "1.0.0.0" };
         service.Create(package);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
-
         // Act
-        processor.LinkManagedIdentityToPackage(packageId, clientId, null);
+        processor.LinkManagedIdentityToPackage(packageId, ClientId, null);
 
         // Assert - verify a managedidentity was created
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
@@ -192,25 +185,24 @@ public class ManagedIdentityRegistrationTests
     {
         // Arrange
         var service = CreateService();
-        var console = new TestConsole();
+        using var console = new TestConsole();
         using var processor = new AssemblyProcessor(service, console);
 
         var packageId = Guid.NewGuid();
         var package = new PluginPackage(packageId) { Name = "TestPackage", Version = "1.0.0.0" };
         service.Create(package);
 
-        var clientId = "12345678-1234-1234-1234-123456789abc";
         var existingMiId = Guid.NewGuid();
         var existingMi = new ManagedIdentity(existingMiId)
         {
-            ApplicationId = Guid.Parse(clientId),
+            ApplicationId = Guid.Parse(ClientId),
             CredentialSource = new OptionSetValue(ManagedIdentity.Options.CredentialSource.IsManaged),
             SubjectScope = new OptionSetValue(ManagedIdentity.Options.SubjectScope.EnviornmentScope)
         };
         service.Create(existingMi);
 
         // Act
-        processor.LinkManagedIdentityToPackage(packageId, clientId, null);
+        processor.LinkManagedIdentityToPackage(packageId, ClientId, null);
 
         // Assert - no new identity created (still just 1)
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
