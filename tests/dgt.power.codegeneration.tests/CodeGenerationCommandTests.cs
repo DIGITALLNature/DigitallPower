@@ -4,7 +4,6 @@
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common.Logic;
 using dgt.power.tests;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -21,7 +20,6 @@ public class CodeGenerationCommandTests
     public CodeGenerationCommandTests()
     {
         var tracer = new TestTracer();
-        var configResolver = new ConfigResolver(tracer);
 
         var dotNetGeneratorMock = Mock.Of<IDotNetGenerator>();
         dotNetGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<DotNetCodeGenerationConfig>()).Returns(true);
@@ -32,7 +30,7 @@ public class CodeGenerationCommandTests
 
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
-        _command = new CodeGenerationCommand(tracer, configResolver,
+        _command = new CodeGenerationCommand(tracer,
             dotNetGeneratorMock.Object, typeScriptGeneratorMock.Object,
             metadataServiceMock.Object, AnsiConsole.Console);
     }
@@ -50,10 +48,10 @@ public class CodeGenerationCommandTests
     [Test]
     public async Task ShouldFailOnMissingConfiguration() =>
         await Assert.That(
-            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+            () => _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb
                 {
                     Config = "missing.json"
                 }, CancellationToken.None
-            ).GetAwaiter().GetResult()).IsEqualTo(-1);
+            )).Throws<FileNotFoundException>();
 }

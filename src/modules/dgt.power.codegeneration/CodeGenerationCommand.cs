@@ -12,7 +12,6 @@ namespace dgt.power.codegeneration;
 
 public class CodeGenerationCommand(
     ITracer tracer,
-    IConfigResolver configResolver,
     IDotNetGenerator dotNetGenerator,
     ITypeScriptGenerator typeScriptGenerator,
     IMetadataService metadataService,
@@ -24,20 +23,7 @@ public class CodeGenerationCommand(
         ArgumentNullException.ThrowIfNull(verb);
         tracer.Start(this);
 
-        // Try V2 config first (has "type" discriminator)
-        var configPath = verb.Config;
-        CodeGenerationConfigBase? v2Config = null;
-        try
-        {
-            if (File.Exists(configPath))
-            {
-                v2Config = CodeGenerationConfigFactory.ResolveFromFile(configPath, console);
-            }
-        }
-        catch
-        {
-            // Fall through to legacy path
-        }
+        var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, console);
 
         var success = true;
 
@@ -46,9 +32,12 @@ public class CodeGenerationCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>
                 {
-                    success = v2Config != null
-                        ? ExecuteV2(verb, v2Config)
-                        : ExecuteV1(verb);
+                    success = result switch
+                    {
+                        CodeGenerationConfigResult.V2(var config) => ExecuteV2(verb, config),
+                        CodeGenerationConfigResult.V1(var config) => ExecuteV1(verb, config),
+                        _ => false
+                    };
                 }
             );
 
@@ -68,13 +57,8 @@ public class CodeGenerationCommand(
     }
 
 #pragma warning disable CS0618
-    private bool ExecuteV1(CodeGenerationVerb verb)
+    private bool ExecuteV1(CodeGenerationVerb verb, CodeGenerationConfig config)
     {
-        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
-        {
-            return false;
-        }
-
         metadataService.PopulateEntitiesAndSolutions(config);
 
         var success = true;

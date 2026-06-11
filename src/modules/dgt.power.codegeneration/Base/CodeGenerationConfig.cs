@@ -26,6 +26,12 @@ public class CodeGenerationConfig
     private HashSet<string> _sdkMessages = new();
     private HashSet<string> _solutions = new();
 
+    /// <summary>
+    ///     Config version. Defaults to 1 for backward compatibility.
+    ///     Can be set explicitly to <c>1</c> in JSON to be explicit about the format.
+    /// </summary>
+    public int Version { get; init; } = 1;
+
     public string NameSpace { get; init; } = "Digitall.APower.Model";
 
     public ICollection<string> Entities

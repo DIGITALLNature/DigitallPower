@@ -2,8 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "title": "CodeGenerationConfig",
-  "description": "Configuration for code generation",
+  "description": "V1 legacy configuration for code generation. Use V2 configs (with \"type\" discriminator) for new projects.",
   "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Config version. Omit or set to 1 for legacy configs.",
+      "default": 1
+    },
     "NameSpace": {
       "type": "string",
       "description": "Namespace for generated code",
