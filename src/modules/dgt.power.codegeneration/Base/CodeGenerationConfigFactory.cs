@@ -19,8 +19,7 @@ public static class CodeGenerationConfigFactory
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = true,
-        AllowOutOfOrderMetadataProperties = true
+        PropertyNameCaseInsensitive = true
     };
 
     /// <summary>
@@ -32,11 +31,21 @@ public static class CodeGenerationConfigFactory
 
         using var doc = JsonDocument.Parse(json);
 
-        // V2: has "type" discriminator
-        if (doc.RootElement.TryGetProperty("type", out _))
+        // V2: has "type" discriminator — route to concrete type manually.
+        // We cannot use STJ polymorphic deserialization (JsonPolymorphic attribute) because:
+        // - STJ requires the discriminator to appear before other properties, and
+        // - AllowOutOfOrderMetadataProperties conflicts with "$schema" in config files.
+        if (doc.RootElement.TryGetProperty("type", out var typeElement))
         {
-            return JsonSerializer.Deserialize<CodeGenerationConfigBase>(json, s_options)
-                   ?? throw new InvalidOperationException("Failed to deserialize V2 code generation config.");
+            var typeValue = typeElement.GetString();
+            return typeValue switch
+            {
+                "dotnet" => JsonSerializer.Deserialize<DotNetCodeGenerationConfig>(json, s_options)
+                            ?? throw new InvalidOperationException("Failed to deserialize V2 .NET config."),
+                "typescript" => JsonSerializer.Deserialize<TypeScriptCodeGenerationConfig>(json, s_options)
+                                ?? throw new InvalidOperationException("Failed to deserialize V2 TypeScript config."),
+                _ => throw new InvalidOperationException($"Unknown config type '{typeValue}'. Expected 'dotnet' or 'typescript'.")
+            };
         }
 
         // V1: legacy flat config — map to V2
