@@ -1,3 +1,16 @@
+# [2.1.0-beta.55](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.54...v2.1.0-beta.55) (2026-06-11)
+
+
+### Bug Fixes
+
+* **push:** address review feedback - migrate Custom APIs for PowerPlugins, use FirstOrDefault ([e4e55b7](https://github.com/DIGITALLNature/DigitallPower/commit/e4e55b7ee0a2e570e1b6c59034c99337997cdd3f))
+* **push:** resolve analyzer warnings in AssemblyProcessor and migration tests ([2d12095](https://github.com/DIGITALLNature/DigitallPower/commit/2d12095a1d6eb1a8b1b71b8c7708415807a0b96a))
+
+
+### Features
+
+* **push:** migrate plugin steps and Custom API references on assembly version upgrade ([93a717f](https://github.com/DIGITALLNature/DigitallPower/commit/93a717f2e5c943469ff0e1b1920ca3190ac4464a)), closes [#91](https://github.com/DIGITALLNature/DigitallPower/issues/91)
+
 # [2.1.0-beta.54](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.53...v2.1.0-beta.54) (2026-06-11)
 
 
