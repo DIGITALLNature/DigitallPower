@@ -1,3 +1,10 @@
+# [2.1.0-beta.53](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.52...v2.1.0-beta.53) (2026-06-11)
+
+
+### Features
+
+* **push:** evaluate CustomDataProviderRegistrationAttribute for step generation ([6c169b0](https://github.com/DIGITALLNature/DigitallPower/commit/6c169b0cc0c2e349734300fe50fd70d80fc2c561))
+
 # [2.1.0-beta.52](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.51...v2.1.0-beta.52) (2026-06-11)
 
 
