@@ -242,7 +242,7 @@ internal sealed class AssemblyProcessor : IDisposable
             foreach (var oldType in oldAssembly.PluginTypes)
             {
                 var newType = newAssembly.PluginTypes
-                    .FirstOrDefault(t => t.TypeName == oldType.TypeName);
+                    .Find(t => t.TypeName == oldType.TypeName);
 
                 if (newType == null)
                 {
@@ -278,7 +278,7 @@ internal sealed class AssemblyProcessor : IDisposable
             foreach (var oldType in oldAssembly.PluginTypes)
             {
                 var newType = newAssembly.PluginTypes
-                    .FirstOrDefault(t => t.TypeName == oldType.TypeName);
+                    .Find(t => t.TypeName == oldType.TypeName);
 
                 if (newType == null)
                 {
@@ -308,7 +308,7 @@ internal sealed class AssemblyProcessor : IDisposable
                 {
                     _console.MarkupLine(CultureInfo.InvariantCulture,
                         " Migrate Custom API [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
-                        api.UniqueName, oldType.TypeName, oldType.Id, newType.Id);
+                        api.UniqueName ?? string.Empty, oldType.TypeName, oldType.Id, newType.Id);
                     _service.Update(new CustomAPI(api.Id)
                     {
                         PluginTypeId = new EntityReference(
