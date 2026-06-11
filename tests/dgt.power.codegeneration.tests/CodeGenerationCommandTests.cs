@@ -10,7 +10,6 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.tests;
 
-#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig
 
 [NotInParallel("AnsiConsole")]
 public class CodeGenerationCommandTests

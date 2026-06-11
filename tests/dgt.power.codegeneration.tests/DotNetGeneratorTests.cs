@@ -13,7 +13,6 @@ using Attribute = dgt.power.dataverse.Attribute;
 
 namespace dgt.power.codegeneration.tests;
 
-#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig for backward compatibility testing
 
 [NotInParallel("AnsiConsole")]
 public class DotNetGeneratorTests : CodeGenerationTestsBase

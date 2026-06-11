@@ -15,6 +15,5 @@ public interface ITypeScriptGenerator
     /// <summary>
     ///     Runs the TypeScript code generation pipeline for a V1 legacy config (Full or Light mode).
     /// </summary>
-    [Obsolete("Use Generate(CodeGenerationVerb, TypeScriptCodeGenerationConfig) with V2 config. V1 support will be removed in a future major version.")]
     bool Generate(CodeGenerationVerb args, CodeGenerationConfig config);
 }

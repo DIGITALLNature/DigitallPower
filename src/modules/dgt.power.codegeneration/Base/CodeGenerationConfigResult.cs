@@ -19,8 +19,6 @@ public abstract record CodeGenerationConfigResult
     /// <summary>
     ///     A V1 legacy config that may target multiple outputs (dotnet + typescript).
     /// </summary>
-#pragma warning disable CS0618 // CodeGenerationConfig is obsolete — intentional V1 compat
     public sealed record V1(CodeGenerationConfig Config) : CodeGenerationConfigResult;
-#pragma warning restore CS0618
 }
 

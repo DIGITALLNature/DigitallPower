@@ -56,7 +56,6 @@ public class CodeGenerationCommand(
         };
     }
 
-#pragma warning disable CS0618
     private bool ExecuteV1(CodeGenerationVerb verb, CodeGenerationConfig config)
     {
         metadataService.PopulateEntitiesAndSolutions(config);
@@ -75,5 +74,4 @@ public class CodeGenerationCommand(
 
         return success;
     }
-#pragma warning restore CS0618
 }

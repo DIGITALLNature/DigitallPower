@@ -35,19 +35,12 @@ public interface IMetadataService
     void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
 
     #region Legacy V1 support
-    [Obsolete("Use RetrieveRequests instead. Will be removed in a future major version.")]
     IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
-    [Obsolete("Use RetrieveRequests instead. Will be removed in a future major version.")]
     IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config);
-    [Obsolete("Use RetrieveSdkMessageNames(IReadOnlyCollection<string>) instead.")]
     IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
-    [Obsolete("Use RetrieveOptionSets(IReadOnlyCollection<string>) instead.")]
     SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
-    [Obsolete("Use PopulateEntitiesAndSolutions(CodeGenerationConfigBase) instead.")]
     void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
-    [Obsolete("Use RetrieveBusinessProcessFlows(IReadOnlyCollection<string>) instead.")]
     IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
-    [Obsolete("Use RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string>, string) instead.")]
     IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
     #endregion
 }

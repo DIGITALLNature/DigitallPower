@@ -15,7 +15,6 @@ namespace dgt.power.codegeneration.Base;
 ///     or <see cref="TypeScriptCodeGenerationConfig"/> for new configs.
 /// </summary>
 #pragma warning disable CA2227 // Entities and Forms are assigned post-construction
-[Obsolete("Use DotNetCodeGenerationConfig or TypeScriptCodeGenerationConfig (V2 config with \"type\" discriminator). This class will be removed in a future major version.")]
 public class CodeGenerationConfig
 {
     private HashSet<string> _actions = new();
