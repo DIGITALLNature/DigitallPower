@@ -20,7 +20,6 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
     }
 
     /// <inheritdoc />
-#pragma warning disable CS0618
     public bool Generate(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         ITypescriptGenerationStrategy strategy = config.TypescriptGeneratorVersion switch
@@ -32,5 +31,4 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         return strategy.Generate(args, config);
     }
-#pragma warning restore CS0618
 }

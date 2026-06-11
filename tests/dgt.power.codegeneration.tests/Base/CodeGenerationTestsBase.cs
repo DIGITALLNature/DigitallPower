@@ -30,7 +30,6 @@ using Spectre.Console.Testing;
 
 namespace dgt.power.codegeneration.tests.Base;
 
-#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig
 
 /// <summary>
 ///     Base class for code generation tests. Provides fake service setup, DI resolution

@@ -9,7 +9,6 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.tests;
 
-#pragma warning disable CS0618
 
 public class MetadataGeneratorTests : CodeGenerationTestsBase
 {

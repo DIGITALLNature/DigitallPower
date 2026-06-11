@@ -85,7 +85,6 @@ public static class CodeGenerationConfigFactory
         return new CodeGenerationConfigResult.V2(config);
     }
 
-#pragma warning disable CS0618 // CodeGenerationConfig is obsolete — intentional V1 compat
     private static CodeGenerationConfigResult.V1 ResolveV1(string json, IAnsiConsole? console)
     {
         console?.MarkupLine(
@@ -97,5 +96,4 @@ public static class CodeGenerationConfigFactory
 
         return new CodeGenerationConfigResult.V1(config);
     }
-#pragma warning restore CS0618
 }

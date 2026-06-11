@@ -11,7 +11,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
 #pragma warning disable CS8602
-#pragma warning disable CS0618
 
 namespace dgt.power.codegeneration.tests;
 
