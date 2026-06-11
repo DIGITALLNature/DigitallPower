@@ -358,20 +358,21 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
     public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var result = new List<(string Name, string Message)>();
-
-        result.Add(("Assign", "Assign"));
-        result.Add(("Create", "Create"));
-        result.Add(("Delete", "Delete"));
-        result.Add(("GrantAccess", "GrantAccess"));
-        result.Add(("ModifyAccess", "ModifyAccess"));
-        result.Add(("Retrieve", "Retrieve"));
-        result.Add(("RetrieveMultiple", "RetrieveMultiple"));
-        result.Add(("RetrievePrincipalAccess", "RetrievePrincipalAccess"));
-        result.Add(("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"));
-        result.Add(("RevokeAccess", "RevokeAccess"));
-        result.Add(("SetState", "SetState"));
-        result.Add(("Update", "Update"));
+        var result = new List<(string Name, string Message)>
+        {
+            ("Assign", "Assign"),
+            ("Create", "Create"),
+            ("Delete", "Delete"),
+            ("GrantAccess", "GrantAccess"),
+            ("ModifyAccess", "ModifyAccess"),
+            ("Retrieve", "Retrieve"),
+            ("RetrieveMultiple", "RetrieveMultiple"),
+            ("RetrievePrincipalAccess", "RetrievePrincipalAccess"),
+            ("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"),
+            ("RevokeAccess", "RevokeAccess"),
+            ("SetState", "SetState"),
+            ("Update", "Update")
+        };
 
         var names = new List<string>();
         if (config.AdditionalSdkMessages.Count != 0)

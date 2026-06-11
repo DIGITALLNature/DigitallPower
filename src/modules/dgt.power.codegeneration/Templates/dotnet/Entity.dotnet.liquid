@@ -25,6 +25,8 @@ namespace {{ NameSpace }}
     [EntityLogicalName("{{ EntityLogicalName }}")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class {{ EntitySchemaName }} : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -338,11 +340,12 @@ namespace {{ NameSpace }}
             {
                 return this;
             }
-                var attr = new AttributeCollection();
+
+            var attr = new AttributeCollection();
 {%- if UseClassic %}
             foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof(AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
 {%- else %}
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
 {%- endif %}
             {
                 attr.Add(attrName, this[attrName]);

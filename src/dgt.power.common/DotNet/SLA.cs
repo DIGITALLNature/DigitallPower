@@ -20,6 +20,8 @@ namespace dgt.power.dataverse
     [EntityLogicalName("sla")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class SLA : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -1598,7 +1600,12 @@ namespace dgt.power.dataverse
                 public const int SignalRegistration = 10499;
                 public const int Trait = 10500;
                 public const int TraitRegistration = 10501;
+                public const int EventAggregatorScans = 10559;
+                public const int Cleanup = 10560;
+                public const int EventAggregator = 10561;
                 public const int OnlineShopperIntention = 10562;
+                public const int GaurdianFullscan = 10563;
+                public const int GaurdianHealthchecks = 10564;
                 public const int HealthcareFeedback = 10565;
                 public const int ObjectDetectionProduct = 10566;
             }
@@ -1751,8 +1758,9 @@ namespace dgt.power.dataverse
             {
                 return this;
             }
-                var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+
+            var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
             {
                 attr.Add(attrName, this[attrName]);
             }

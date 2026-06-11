@@ -20,6 +20,8 @@ namespace dgt.power.dataverse
     [EntityLogicalName("queue")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class Queue : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -1068,8 +1070,9 @@ namespace dgt.power.dataverse
             {
                 return this;
             }
-                var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+
+            var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
             {
                 attr.Add(attrName, this[attrName]);
             }

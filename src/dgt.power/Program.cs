@@ -18,10 +18,12 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using dgt.power.common.Commands;
 #pragma warning disable IDE0005 // Used in #if RELEASE block
+#pragma warning disable S1128
 // ReSharper disable RedundantUsingDirective
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
 // ReSharper restore RedundantUsingDirective
+#pragma warning restore S1128
 #pragma warning restore IDE0005
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;

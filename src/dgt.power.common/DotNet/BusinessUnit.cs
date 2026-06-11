@@ -20,6 +20,8 @@ namespace dgt.power.dataverse
     [EntityLogicalName("businessunit")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class BusinessUnit : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -2227,8 +2229,13 @@ namespace dgt.power.dataverse
                 public const string BusinessUnitMsdynSolutionhealthruleargument = "business_unit_msdyn_solutionhealthruleargument";
                 public const string BusinessUnitMsdynVirtualtablecolumncandidate = "business_unit_msdyn_virtualtablecolumncandidate";
                 public const string BusinessUnitMsdynceBotcontent = "business_unit_msdynce_botcontent";
+                public const string BusinessUnitMsecCleanup = "business_unit_msec_cleanup";
                 public const string BusinessUnitMspcatCatalogsubmissionfiles = "business_unit_mspcat_catalogsubmissionfiles";
                 public const string BusinessUnitMspcatPackagestore = "business_unit_mspcat_packagestore";
+                public const string BusinessUnitNewEventaggregator = "business_unit_new_eventaggregator";
+                public const string BusinessUnitNewEventaggregatorscans = "business_unit_new_eventaggregatorscans";
+                public const string BusinessUnitNewGaurdianfullscan = "business_unit_new_gaurdianfullscan";
+                public const string BusinessUnitNewGaurdianhealthchecks = "business_unit_new_gaurdianhealthchecks";
                 public const string BusinessUnitNlsqregistration = "business_unit_nlsqregistration";
                 public const string BusinessUnitOfficedocument = "business_unit_officedocument";
                 public const string BusinessUnitParentBusinessUnit = "business_unit_parent_business_unit";
@@ -2387,8 +2394,9 @@ namespace dgt.power.dataverse
             {
                 return this;
             }
-                var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+
+            var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
             {
                 attr.Add(attrName, this[attrName]);
             }
