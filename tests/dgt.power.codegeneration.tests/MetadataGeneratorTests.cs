@@ -1,24 +1,19 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
-using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.tests;
 
-public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
+#pragma warning disable CS0618
+
+public class MetadataGeneratorTests : CodeGenerationTestsBase
 {
-    [Test]
-    public async Task ShouldFailOnMissingConfiguration() =>
-        await Assert.That(GetContext()
-            .Execute(new CodeGenerationVerb
-            {
-                Config = "missing.json"
-            })).IsFalse();
+    protected override string ResourceDirectory => Path.Combine("Resources", "MetadataWorker");
 
     [Test]
     public async Task ShouldGenerateEntityMetadataForGivenEntities()
@@ -35,19 +30,13 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
 
         var config = new CodeGenerationConfig
         {
-            Entities = new[]
-            {
-                accountMetadata.LogicalName
-            }
+            Entities = new[] { accountMetadata.LogicalName }
         };
-        var args = new CodeGenerationVerb
-        {
-            Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory
-        };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
-        await Assert.That(context
-            .Execute(args)).IsTrue();
+        context.MetadataGenerator.PrepareDirectory(args);
+        context.MetadataGenerator.GenerateEntities(args,
+            config.ToDotNetConfig());
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";
@@ -63,15 +52,9 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
     {
         var context = GetContext();
 
-        var config = new CodeGenerationConfig();
-        var args = new CodeGenerationVerb
-        {
-            Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory
-        };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
-        await Assert.That(context
-            .Execute(args)).IsTrue();
+        context.MetadataGenerator.PrepareDirectory(args);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.Metadata}")).IsTrue();
@@ -81,12 +64,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
     public async Task ShouldDeleteExistingFilesInMetaDataFolder()
     {
         var context = GetContext();
-        var config = new CodeGenerationConfig();
-        var args = new CodeGenerationVerb
-        {
-            Config = WriteConfigurationArtifact(config).FullName,
-            TargetDirectory = ArtifactDirectory
-        };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         Directory.CreateDirectory(GetArtifactPath(args.Folder));
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";
         Directory.CreateDirectory(metadataDirectoryPath);
@@ -94,8 +72,7 @@ public class MetadataWorkerTests : CodeGenerationTestsBase<MetadataWorker>
         await File.WriteAllTextAsync(testEntityMetdataPath, "<entity/>");
         await Assert.That(File.Exists(testEntityMetdataPath)).IsTrue();
 
-        await Assert.That(context
-            .Execute(args)).IsTrue();
+        context.MetadataGenerator.PrepareDirectory(args);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists(metadataDirectoryPath)).IsTrue();

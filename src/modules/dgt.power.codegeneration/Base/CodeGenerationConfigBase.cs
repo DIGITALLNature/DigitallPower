@@ -41,9 +41,12 @@ public abstract class CodeGenerationConfigBase
     public string? EntityMask { get; init; }
 
     /// <summary>
-    ///     Language code for label localization. 0 = user language (default), or an explicit LCID (e.g. 1033).
+    ///     Language code for label localization. <c>null</c> = organization base language (default),
+    ///     or an explicit LCID (e.g. 1033).
+    ///     Defaults to the organization's base language to ensure deterministic output
+    ///     regardless of which user runs the generation.
     /// </summary>
-    public int Language { get; init; }
+    public int? Language { get; init; }
 
     /// <summary>
     ///     Global OptionSet logical names to generate as standalone constants.
@@ -57,4 +60,3 @@ public abstract class CodeGenerationConfigBase
     public IReadOnlyCollection<string> Requests { get; init; } = new HashSet<string>();
 }
 #pragma warning restore CA2227
-

@@ -2,7 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common.Logic;
 using dgt.power.tests;
@@ -23,16 +23,18 @@ public class CodeGenerationCommandTests
         var tracer = new TestTracer();
         var configResolver = new ConfigResolver(tracer);
 
-        var dotNetWorkerMock = Mock.Of<DotNetWorker>(null!, null!, null!, null!);
-        dotNetWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
+        var dotNetGeneratorMock = Mock.Of<IDotNetGenerator>();
+        dotNetGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<DotNetCodeGenerationConfig>()).Returns(true);
 
-        var typescriptWorkerMock = Mock.Of<TypescriptWorker>(null!, null!, null!, null!);
-        typescriptWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
+        var typeScriptGeneratorMock = Mock.Of<ITypeScriptGenerator>();
+        typeScriptGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<TypeScriptCodeGenerationConfig>()).Returns(true);
+        typeScriptGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<CodeGenerationConfig>()).Returns(true);
 
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
         _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataServiceMock.Object, AnsiConsole.Console);
+            dotNetGeneratorMock.Object, typeScriptGeneratorMock.Object,
+            metadataServiceMock.Object, AnsiConsole.Console);
     }
 
     [Test]
@@ -42,7 +44,7 @@ public class CodeGenerationCommandTests
                 new CodeGenerationVerb
                 {
                     Config = "Resources/CodeGenerationCommand/config.json"
-                },CancellationToken.None
+                }, CancellationToken.None
             ).GetAwaiter().GetResult()).IsEqualTo(0);
 
     [Test]
@@ -52,6 +54,6 @@ public class CodeGenerationCommandTests
                 new CodeGenerationVerb
                 {
                     Config = "missing.json"
-                },CancellationToken.None
+                }, CancellationToken.None
             ).GetAwaiter().GetResult()).IsEqualTo(-1);
 }

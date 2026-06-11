@@ -2,7 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using Spectre.Console;
@@ -13,8 +13,8 @@ namespace dgt.power.codegeneration;
 public class CodeGenerationCommand(
     ITracer tracer,
     IConfigResolver configResolver,
-    DotNetWorker dotNetWorker,
-    TypescriptWorker typescriptWorker,
+    IDotNetGenerator dotNetGenerator,
+    ITypeScriptGenerator typeScriptGenerator,
     IMetadataService metadataService,
     IAnsiConsole console)
     : Command<CodeGenerationVerb>, IPowerLogic
@@ -46,46 +46,50 @@ public class CodeGenerationCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>
                 {
-                    if (v2Config != null)
-                    {
-                        metadataService.PopulateEntitiesAndSolutions(v2Config);
-
-                        switch (v2Config)
-                        {
-                            case DotNetCodeGenerationConfig:
-                                success &= dotNetWorker.Invoke(verb);
-                                break;
-                            case TypeScriptCodeGenerationConfig:
-                                success &= typescriptWorker.Invoke(verb);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        // Legacy V1 path
-#pragma warning disable CS0618
-                        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(configPath, out var config))
-                        {
-                            success = false;
-                            return;
-                        }
-
-                        metadataService.PopulateEntitiesAndSolutions(config);
-
-                        if (!config.SuppressDotNet)
-                        {
-                            success &= dotNetWorker.Invoke(verb);
-                        }
-
-                        if (!config.SuppressTypeScript)
-                        {
-                            success &= typescriptWorker.Invoke(verb);
-                        }
-#pragma warning restore CS0618
-                    }
+                    success = v2Config != null
+                        ? ExecuteV2(verb, v2Config)
+                        : ExecuteV1(verb);
                 }
             );
 
         return tracer.End(this, success) ? 0 : -1;
     }
+
+    private bool ExecuteV2(CodeGenerationVerb verb, CodeGenerationConfigBase config)
+    {
+        metadataService.PopulateEntitiesAndSolutions(config);
+
+        return config switch
+        {
+            DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
+            TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
+            _ => false
+        };
+    }
+
+#pragma warning disable CS0618
+    private bool ExecuteV1(CodeGenerationVerb verb)
+    {
+        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
+        {
+            return false;
+        }
+
+        metadataService.PopulateEntitiesAndSolutions(config);
+
+        var success = true;
+
+        if (!config.SuppressDotNet)
+        {
+            success &= dotNetGenerator.Generate(verb, config.ToDotNetConfig());
+        }
+
+        if (!config.SuppressTypeScript)
+        {
+            success &= typeScriptGenerator.Generate(verb, config);
+        }
+
+        return success;
+    }
+#pragma warning restore CS0618
 }

@@ -63,7 +63,7 @@ src/
 
 | Decision | File | Summary |
 |----------|------|---------|
-| V2 code generation config | `decision-config-v2-redesign.md` | Typed config hierarchy replacing flat 30-property class; DotNet/TypeScript separation |
+| V2 code generation config | `decision-config-v2-redesign.md` | Typed config hierarchy; worker layer eliminated; strategy pattern for TS Full/Light; symmetrical IDotNetGenerator/ITypeScriptGenerator API |
 | Async suffix enforcement | `decision-async-suffix-s4261.md` | S4261 enforced in src, exempted in tests |
 | Remove --insecure/--security-protocol | `decision-remove-insecure-protocol.md` | SYSLIB0014; ServicePointManager is no-op on .NET 8+ |
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
@@ -79,6 +79,17 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Compile gates:** TSL templates validated at build-time via TypeScript 6 compiler
 - **CI mode:** `ExecutionEnvironment.IsCi` controls strict validation fallback
 - **Env controls:** `DGT_POWER_TSL_STRICT_MODE`, `DGT_POWER_TSL_MAX_STEPS`
+
+### Codegeneration Generator Architecture
+
+- **`CodeGenerationCommand`** injects `IDotNetGenerator` + `ITypeScriptGenerator` (two interfaces, symmetrical)
+- **`TypeScriptGenerator`** is a pure router using the strategy pattern:
+  - `ITypescriptGenerationStrategy` (internal) — single `Generate()` method
+  - `TypescriptFullGenerationStrategy` — V1 Full mode (deprecated)
+  - `TypescriptLightGenerationStrategy` — V1 Light + V2
+  - `TypescriptGenerationStrategyBase` — shared file I/O (CreateFile, PrepareDirectory)
+- All generation step methods are private; interfaces expose only `Generate()`
+- Strategy classes live in `Generators/Strategy/`; contracts in `Generators/Contracts/`
 
 ## Qodana Baseline (693 findings)
 
@@ -125,7 +136,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 | File | Type | Content |
 |------|------|---------|
-| `decision-config-v2-redesign.md` | decision | V2 CodeGenerationConfig: typed hierarchy, Requests unification, Include sections |
+| `decision-config-v2-redesign.md` | decision | V2 CodeGenerationConfig: typed hierarchy, Requests unification, strategy pattern, generator architecture |
 | `decision-async-suffix-s4261.md` | decision | Async suffix convention; test exemption rationale |
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
 | `decision-package-record-refactor.md` | decision | Package record class design; equality semantics |

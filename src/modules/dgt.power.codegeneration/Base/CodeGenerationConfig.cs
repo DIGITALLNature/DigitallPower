@@ -151,7 +151,7 @@ public class CodeGenerationConfig
     ///     Returns a <see cref="DotNetCodeGenerationConfig"/> when DotNet is not suppressed,
     ///     or a <see cref="TypeScriptCodeGenerationConfig"/> when TypeScript is not suppressed.
     /// </summary>
-    public CodeGenerationConfigBase ToDotNetConfig()
+    public DotNetCodeGenerationConfig ToDotNetConfig()
     {
         var requests = new HashSet<string>();
         foreach (var a in Actions) requests.Add(a);
@@ -163,7 +163,7 @@ public class CodeGenerationConfig
             Entities = new HashSet<string>(Entities),
             Solutions = Solutions,
             EntityMask = EntityMask,
-            Language = UseBaseLanguage ? -1 : 0,
+            Language = UseBaseLanguage ? null : 0,
             GlobalOptionSets = GlobalOptionSets,
             Requests = requests,
             Namespace = NameSpace,
@@ -184,7 +184,7 @@ public class CodeGenerationConfig
         };
     }
 
-    public CodeGenerationConfigBase ToTypeScriptConfig()
+    public TypeScriptCodeGenerationConfig ToTypeScriptConfig()
     {
         var requests = new HashSet<string>();
         foreach (var a in Actions) requests.Add(a);
@@ -196,11 +196,9 @@ public class CodeGenerationConfig
             Entities = new HashSet<string>(Entities),
             Solutions = Solutions,
             EntityMask = EntityMask,
-            Language = UseBaseLanguage ? -1 : 0,
+            Language = UseBaseLanguage ? null : 0,
             GlobalOptionSets = GlobalOptionSets,
             Requests = requests,
-            GeneratorVersion = TypescriptGeneratorVersion,
-            TypingPath = TypingPath,
             XrmMockFormHelpers = XrmMockFormHelpers,
             OnlyFormsFromSolutions = OnlyFormsFromSolutions,
             Include = new TypeScriptInclude
@@ -208,11 +206,7 @@ public class CodeGenerationConfig
                 Options = !SuppressOptions,
                 SdkMessages = !SuppressSdkMessages
             },
-            Forms = new HashSet<string>(Forms),
-            BusinessProcessFlows = BusinessProcessFlows,
-            EntityFilters = EntityFilters,
-            EntityRefFilters = EntityRefFilters,
-            EntityFormFilters = EntityFormFilters
+            Forms = new HashSet<string>(Forms)
         };
     }
 }
