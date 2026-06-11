@@ -1,3 +1,15 @@
+# [2.1.0-beta.54](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.53...v2.1.0-beta.54) (2026-06-11)
+
+
+### Bug Fixes
+
+* **push:** rename managed identity assembly linker method ([d774569](https://github.com/DIGITALLNature/DigitallPower/commit/d7745695fc89d36fc1e3edde9c5c63781791b86c))
+
+
+### Features
+
+* **push:** evaluate ManagedIdentityRegistrationAttribute for identity linking ([68de0b2](https://github.com/DIGITALLNature/DigitallPower/commit/68de0b2e9c17792a195d97b54f0a82f13dc22d1c))
+
 # [2.1.0-beta.53](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.52...v2.1.0-beta.53) (2026-06-11)
 
 
