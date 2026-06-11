@@ -157,7 +157,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             if (!string.IsNullOrWhiteSpace(localAssembly.ManagedIdentityClientId))
             {
                 ctx.Status("LinkManagedIdentity");
-                processor.LinkManagedIdentity(crmAssembly.Id, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
+                processor.LinkManagedIdentityToAssembly(crmAssembly.Id, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
 
                 // For package deployments, also link the managed identity to the package entity itself
                 if (currentPackageId.HasValue)

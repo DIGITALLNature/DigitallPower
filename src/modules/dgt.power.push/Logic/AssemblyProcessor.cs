@@ -272,7 +272,7 @@ internal sealed class AssemblyProcessor : IDisposable
     /// Links a plugin assembly to a managed identity in Dataverse.
     /// Creates the managed identity record if it doesn't exist, then sets PluginAssembly.ManagedIdentityId.
     /// </summary>
-    internal void LinkManagedIdentity(Guid assemblyId, string clientId, string? tenantId)
+    internal void LinkManagedIdentityToAssembly(Guid assemblyId, string clientId, string? tenantId)
     {
         _console.MarkupLine(CultureInfo.InvariantCulture,
             "Linking ManagedIdentity [blue]{0}[/] to Assembly [green]{1:D}[/]", clientId, assemblyId);
