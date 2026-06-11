@@ -80,9 +80,18 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **CI mode:** `ExecutionEnvironment.IsCi` controls strict validation fallback
 - **Env controls:** `DGT_POWER_TSL_STRICT_MODE`, `DGT_POWER_TSL_MAX_STEPS`
 
+### Codegeneration Config Resolution
+
+- **`CodeGenerationConfigFactory`** is the single entry point for config loading
+- Routes by `version`: missing/1 → V1 (deprecation warning), 2 → V2 (requires `type`), other → throw
+- Returns `CodeGenerationConfigResult` (discriminated union: `V1(CodeGenerationConfig)` | `V2(CodeGenerationConfigBase)`)
+- V1 configs preserved as-is (can generate both .NET + TypeScript in one run)
+- Manual discriminator routing via `JsonDocument` (STJ polymorphic attributes removed — incompatible with `$schema` in config files)
+
 ### Codegeneration Generator Architecture
 
 - **`CodeGenerationCommand`** injects `IDotNetGenerator` + `ITypeScriptGenerator` (two interfaces, symmetrical)
+- Pattern matches on `CodeGenerationConfigResult` — no silent catch, no dual code paths
 - **`TypeScriptGenerator`** is a pure router using the strategy pattern:
   - `ITypescriptGenerationStrategy` (internal) — single `Generate()` method
   - `TypescriptFullGenerationStrategy` — V1 Full mode (deprecated)

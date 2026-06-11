@@ -308,13 +308,14 @@ The JSON schema for the generation configuration is available at [`schemas/codeg
 
 #### V2 config (recommended)
 
-V2 configs use a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produce separate, focused config files per output target.
+V2 configs use `"version": 2` and a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produce separate, focused config files per output target.
 
 **.NET** — `genconfig.dotnet.json`:
 
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/dotnet.schema.json",
+  "version": 2,
   "type": "dotnet",
   "namespace": "Contoso.Dataverse.Model",
   "target": "Modern",
@@ -333,6 +334,7 @@ V2 configs use a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produc
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
+  "version": 2,
   "type": "typescript",
   "entities": ["account", "contact"],
   "solutions": ["ContosoCore"],
@@ -343,12 +345,13 @@ V2 configs use a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produc
 }
 ```
 
-#### V1 config (legacy)
+#### V1 config (legacy, deprecated)
 
-V1 configs use a single file for all output targets. They are auto-detected (no `"type"` field) and still supported but deprecated.
+V1 configs use a single file for all output targets. They are detected by `"version": 1` (or absence of a `version` property) and still supported but deprecated.
 
 ```json
 {
+  "version": 1,
   "Entities": ["account", "contact"],
   "Solutions": ["ContosoCore"],
   "Actions": ["contoso_ApproveOrder"],
