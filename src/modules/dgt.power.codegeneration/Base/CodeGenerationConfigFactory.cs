@@ -9,9 +9,8 @@ using Spectre.Console;
 namespace dgt.power.codegeneration.Base;
 
 /// <summary>
-///     Resolves a code generation config file to the appropriate V2 typed config.
-///     Supports V1 legacy configs by detecting absence of <c>"type"</c> discriminator
-///     and mapping to the new hierarchy.
+///     Single entry point for code generation config loading.
+///     Routes by <c>version</c> (missing or 1 → V1, 2 → V2) and validates strictly.
 /// </summary>
 public static class CodeGenerationConfigFactory
 {
@@ -23,62 +22,80 @@ public static class CodeGenerationConfigFactory
     };
 
     /// <summary>
-    ///     Reads a JSON config file and returns the appropriate <see cref="CodeGenerationConfigBase"/> subclass.
+    ///     Parses a JSON config string and returns a typed result.
     /// </summary>
-    public static CodeGenerationConfigBase Resolve(string json, IAnsiConsole? console = null)
+    public static CodeGenerationConfigResult Resolve(string json, IAnsiConsole? console = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
 
-        // V2: has "type" discriminator — route to concrete type manually.
-        // We cannot use STJ polymorphic deserialization (JsonPolymorphic attribute) because:
-        // - STJ requires the discriminator to appear before other properties, and
-        // - AllowOutOfOrderMetadataProperties conflicts with "$schema" in config files.
-        if (doc.RootElement.TryGetProperty("type", out var typeElement))
+        // Determine version (default: 1 for backward compat with existing configs)
+        var version = 1;
+        if (root.TryGetProperty("version", out var versionElement) && versionElement.ValueKind == JsonValueKind.Number)
         {
-            var typeValue = typeElement.GetString();
-            return typeValue switch
-            {
-                "dotnet" => JsonSerializer.Deserialize<DotNetCodeGenerationConfig>(json, s_options)
-                            ?? throw new InvalidOperationException("Failed to deserialize V2 .NET config."),
-                "typescript" => JsonSerializer.Deserialize<TypeScriptCodeGenerationConfig>(json, s_options)
-                                ?? throw new InvalidOperationException("Failed to deserialize V2 TypeScript config."),
-                _ => throw new InvalidOperationException($"Unknown config type '{typeValue}'. Expected 'dotnet' or 'typescript'.")
-            };
+            version = versionElement.GetInt32();
         }
 
-        // V1: legacy flat config — map to V2
-        console?.MarkupLine("[yellow]Warning:[/] V1 config format detected. Migrate to V2 typed config (add '\"type\": \"dotnet\"' or '\"type\": \"typescript\"'). V1 support will be removed in a future major version.");
-
-#pragma warning disable CS0618 // Type or member is obsolete — intentional V1 compat
-        var legacy = JsonSerializer.Deserialize<CodeGenerationConfig>(json, s_options)
-                     ?? throw new InvalidOperationException("Failed to deserialize V1 legacy config.");
-
-        // Determine which type to produce based on suppress flags
-        if (!legacy.SuppressDotNet)
+        return version switch
         {
-            return legacy.ToDotNetConfig();
-        }
-
-        if (!legacy.SuppressTypeScript)
-        {
-            return legacy.ToTypeScriptConfig();
-        }
-
-        // Neither suppressed or both suppressed — default to dotnet
-        return legacy.ToDotNetConfig();
-#pragma warning restore CS0618
+            1 => ResolveV1(json, console),
+            2 => ResolveV2(root, json),
+            _ => throw new InvalidOperationException(
+                $"Unsupported config version {version}. Supported versions: 1 (legacy), 2 (typed).")
+        };
     }
 
     /// <summary>
     ///     Reads a JSON config file from disk and resolves it.
     /// </summary>
-    public static CodeGenerationConfigBase ResolveFromFile(string filePath, IAnsiConsole? console = null)
+    public static CodeGenerationConfigResult ResolveFromFile(string filePath, IAnsiConsole? console = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException($"Config file not found: '{filePath}'.", filePath);
+        }
+
         var json = File.ReadAllText(filePath, Encoding.UTF8);
         return Resolve(json, console);
     }
-}
 
+    private static CodeGenerationConfigResult.V2 ResolveV2(JsonElement root, string json)
+    {
+        if (!root.TryGetProperty("type", out var typeElement) || typeElement.ValueKind != JsonValueKind.String)
+        {
+            throw new InvalidOperationException(
+                "V2 config requires a 'type' property. Set \"type\": \"dotnet\" or \"type\": \"typescript\".");
+        }
+
+        var typeValue = typeElement.GetString();
+        CodeGenerationConfigBase config = typeValue switch
+        {
+            "dotnet" => JsonSerializer.Deserialize<DotNetCodeGenerationConfig>(json, s_options)
+                        ?? throw new InvalidOperationException("Failed to deserialize V2 .NET config."),
+            "typescript" => JsonSerializer.Deserialize<TypeScriptCodeGenerationConfig>(json, s_options)
+                            ?? throw new InvalidOperationException("Failed to deserialize V2 TypeScript config."),
+            _ => throw new InvalidOperationException(
+                $"Unknown config type '{typeValue}'. Expected 'dotnet' or 'typescript'.")
+        };
+
+        return new CodeGenerationConfigResult.V2(config);
+    }
+
+#pragma warning disable CS0618 // CodeGenerationConfig is obsolete — intentional V1 compat
+    private static CodeGenerationConfigResult.V1 ResolveV1(string json, IAnsiConsole? console)
+    {
+        console?.MarkupLine(
+            "[yellow]Warning:[/] V1 config detected. Migrate to V2 (add '\"version\": 2' and '\"type\": \"dotnet\"' or '\"type\": \"typescript\"'). " +
+            "V1 support will be removed in a future major version.");
+
+        var config = JsonSerializer.Deserialize<CodeGenerationConfig>(json, s_options)
+                     ?? throw new InvalidOperationException("Failed to deserialize V1 config.");
+
+        return new CodeGenerationConfigResult.V1(config);
+    }
+#pragma warning restore CS0618
+}

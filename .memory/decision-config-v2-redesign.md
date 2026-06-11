@@ -55,6 +55,45 @@ After the initial V2 redesign (which focused on DotNet), the TypeScript config w
 1. **Full generator mode removed from V2** — `TypeScriptCodeGenerationConfig` only targets the Light generator. Full mode is V1-only and deprecated.
 2. **Language property made nullable (`int?`)** — `null` means "use organization base language" (deterministic across users). `0` means user language. Any other LCID selects that specific language.
 
+## Config resolution pipeline
+
+`CodeGenerationConfigFactory` is the **single entry point** for all config loading. It routes by `version`:
+
+```
+JSON file → CodeGenerationConfigFactory.ResolveFromFile()
+  ├── version missing or 1 → V1 (CodeGenerationConfig, deprecation warning)
+  ├── version 2             → V2 (route by "type": "dotnet" | "typescript")
+  └── unknown version       → throw InvalidOperationException
+```
+
+Returns `CodeGenerationConfigResult` — a discriminated union:
+- `V1(CodeGenerationConfig)` — V1 legacy config, may produce both .NET + TypeScript
+- `V2(CodeGenerationConfigBase)` — V2 typed config, single target
+
+### Why not STJ polymorphic deserialization?
+
+STJ's `[JsonPolymorphic]` attribute has two blockers for user-authored config files:
+1. The type discriminator must appear before other properties (fails when `$schema` is first)
+2. `AllowOutOfOrderMetadataProperties` rejects `$schema` as invalid metadata
+
+The factory reads the discriminator value via `JsonDocument.TryGetProperty` and deserializes directly to the concrete type, bypassing STJ polymorphism entirely.
+
+### Command integration
+
+`CodeGenerationCommand` pattern-matches on the result:
+
+```csharp
+var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, console);
+success = result switch
+{
+    V2(var config) => ExecuteV2(verb, config),
+    V1(var config) => ExecuteV1(verb, config),
+    _ => false
+};
+```
+
+No silent catch, no dual code paths, no `IConfigResolver` dependency.
+
 ## Generator architecture
 
 ### Symmetrical public API
