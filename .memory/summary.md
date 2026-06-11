@@ -63,6 +63,7 @@ src/
 
 | Decision | File | Summary |
 |----------|------|---------|
+| V2 code generation config | `decision-config-v2-redesign.md` | Typed config hierarchy replacing flat 30-property class; DotNet/TypeScript separation |
 | Async suffix enforcement | `decision-async-suffix-s4261.md` | S4261 enforced in src, exempted in tests |
 | Remove --insecure/--security-protocol | `decision-remove-insecure-protocol.md` | SYSLIB0014; ServicePointManager is no-op on .NET 8+ |
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
@@ -124,6 +125,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 | File | Type | Content |
 |------|------|---------|
+| `decision-config-v2-redesign.md` | decision | V2 CodeGenerationConfig: typed hierarchy, Requests unification, Include sections |
 | `decision-async-suffix-s4261.md` | decision | Async suffix convention; test exemption rationale |
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
 | `decision-package-record-refactor.md` | decision | Package record class design; equality semantics |

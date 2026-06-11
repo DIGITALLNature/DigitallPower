@@ -798,4 +798,398 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             12 => "Guid",
             _ => "object"
         };
+
+    #region V2 API
+
+    public void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        var entities = (RetrieveAllEntitiesResponse)connection.Execute(new RetrieveAllEntitiesRequest
+        {
+            EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
+        });
+
+        var entitySet = config.Entities.ToHashSet();
+        if (!string.IsNullOrWhiteSpace(config.EntityMask))
+        {
+            var regularPattern = WildCardToRegular(config.EntityMask);
+            foreach (var metadata in entities.EntityMetadata)
+            {
+                if (Regex.IsMatch(metadata.LogicalName, regularPattern))
+                {
+                    entitySet.Add(metadata.LogicalName);
+                }
+            }
+        }
+
+        if (config.Solutions.Count != 0)
+        {
+            var componentsQuery = new QueryExpression
+            {
+                EntityName = SolutionComponent.EntityLogicalName,
+                ColumnSet = new ColumnSet(SolutionComponent.LogicalNames.ObjectId),
+                Criteria = new FilterExpression()
+            };
+            var solutionLink = new LinkEntity(SolutionComponent.EntityLogicalName,
+                Solution.EntityLogicalName,
+                SolutionComponent.LogicalNames.SolutionId,
+                Solution.LogicalNames.SolutionId,
+                JoinOperator.Inner);
+            var solutionFilter = solutionLink.LinkCriteria = new FilterExpression();
+            componentsQuery.LinkEntities.Add(solutionLink);
+            componentsQuery.Criteria.AddCondition(new ConditionExpression(
+                SolutionComponent.LogicalNames.ComponentType,
+                ConditionOperator.Equal,
+                SolutionComponent.Options.ComponentType.Entity));
+
+            foreach (var solution in config.Solutions)
+            {
+                var solutionId = FetchSolution(solution)!.Id;
+                solutionFilter.Conditions.Clear();
+                solutionFilter.AddCondition(new ConditionExpression(
+                    SolutionComponent.LogicalNames.SolutionId,
+                    ConditionOperator.Equal,
+                    solutionId));
+
+                var entityComponents = connection.RetrieveMultiple(componentsQuery).Entities;
+                foreach (var entityComponent in entityComponents)
+                {
+                    entitySet.Add(
+                        entities.EntityMetadata.Single(e => e.MetadataId == (Guid)entityComponent["objectid"])
+                            .LogicalName);
+                }
+            }
+        }
+
+        config.Entities = entitySet;
+    }
+
+    public IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames)
+    {
+        if (requestNames.Count == 0) return [];
+
+        var remaining = requestNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var result = new List<WfAction>();
+
+        // 1. Custom APIs
+        var customApis = RetrieveCustomApisByNames(remaining);
+        result.AddRange(customApis);
+        foreach (var api in customApis) remaining.Remove(api.LogicalName);
+        if (remaining.Count == 0) return result;
+
+        // 2. Classic actions (Workflow category=Action)
+        var actions = RetrieveActionsByNames(remaining);
+        result.AddRange(actions);
+        foreach (var action in actions) remaining.Remove(action.LogicalName);
+        if (remaining.Count == 0) return result;
+
+        // 3. Built-in SDK messages — name constant only, no parameters
+        foreach (var name in remaining)
+        {
+            result.Add(new WfAction(name));
+        }
+
+        return result;
+    }
+
+    public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames)
+    {
+        var result = new List<(string Name, string Message)>
+        {
+            ("Assign", "Assign"), ("Create", "Create"), ("Delete", "Delete"),
+            ("GrantAccess", "GrantAccess"), ("ModifyAccess", "ModifyAccess"),
+            ("Retrieve", "Retrieve"), ("RetrieveMultiple", "RetrieveMultiple"),
+            ("RetrievePrincipalAccess", "RetrievePrincipalAccess"),
+            ("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"),
+            ("RevokeAccess", "RevokeAccess"), ("SetState", "SetState"), ("Update", "Update")
+        };
+
+        if (requestNames.Count == 0) return result;
+
+        var query = new QueryExpression(SdkMessage.EntityLogicalName)
+        {
+            NoLock = true,
+            Orders = { new OrderExpression(SdkMessage.LogicalNames.Name, OrderType.Ascending) },
+            ColumnSet = new ColumnSet(SdkMessage.LogicalNames.Name),
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, requestNames.ToArray()) }
+            }
+        };
+        var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
+                          Enumerable.Empty<SdkMessage>();
+        var hashSet = new HashSet<string>();
+        foreach (var sdkMessage in sdkMessages)
+        {
+            var message = sdkMessage.Name!;
+            var name = Formatter.CamelCase(message);
+            if (hashSet.Contains(name))
+            {
+                console.WriteLine($"Warning: multiple sdk messages for: [bold]{name}[/]({message})");
+                name += "_";
+            }
+
+            hashSet.Add(name);
+            result.Add((name, message));
+        }
+
+        return result;
+    }
+
+    public SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets)
+    {
+        var result = new SortedDictionary<string, List<Option>>();
+        foreach (var globalOptionSet in globalOptionSets)
+        {
+            var request = new RetrieveOptionSetRequest { Name = globalOptionSet };
+            var response = (RetrieveOptionSetResponse)connection.Execute(request);
+            var metadata = (OptionSetMetadata)response.OptionSetMetadata;
+            result.Add(globalOptionSet, new List<Option>());
+            foreach (var option in metadata.Options)
+            {
+                result[globalOptionSet].Add(new Option(option.Value,
+                    Formatter.GetLocalizedLabel(option.Label, false, RetrieveOrganizationLanguage())));
+            }
+
+            result[globalOptionSet]
+                .Sort((x, y) => x.Value.GetValueOrDefault(-1).CompareTo(y.Value.GetValueOrDefault(-1)));
+        }
+
+        return result;
+    }
+
+    public IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows)
+    {
+        var result = new List<Tuple<string, string, Guid, string>>();
+        var query = new QueryExpression(Workflow.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(Workflow.LogicalNames.WorkflowId, Workflow.LogicalNames.Name, Workflow.LogicalNames.UniqueName),
+            NoLock = true,
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessProcessFlow)
+                }
+            },
+            Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var bpfs = connection.RetrieveMultiple(query)?.Entities?.Select(x => x.ToEntity<Workflow>()) ?? Enumerable.Empty<Workflow>();
+
+        foreach (var bpf in bpfs)
+        {
+            var workflow = bpf.Name!;
+            var name = Formatter.CamelCase(workflow);
+            var workflowid = bpf.Id;
+            var uniquename = bpf.UniqueName!;
+            if (businessProcessFlows.Contains(uniquename))
+            {
+                result.Add(Tuple.Create(name, workflow, workflowid, uniquename));
+            }
+        }
+
+        return result;
+    }
+
+    public IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName)
+    {
+        var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                Workflow.LogicalNames.WorkflowId, Workflow.LogicalNames.Name,
+                Workflow.LogicalNames.UniqueName, Workflow.LogicalNames.ClientData,
+                Workflow.LogicalNames.Category, Workflow.LogicalNames.PrimaryEntity),
+            NoLock = true,
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessProcessFlow),
+                    new ConditionExpression(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.Equal, entityName),
+                    new ConditionExpression(Workflow.LogicalNames.ClientData, ConditionOperator.NotNull)
+                }
+            },
+            Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
+        };
+
+        List<Workflow> returnList = connection.RetrieveMultiple(queryWorkflow)?
+            .Entities.Select(x => x.ToEntity<Workflow>()).OrderBy(x => x.Name).ToList() ?? [];
+
+        if (returnList.Count == 0) return [];
+
+        return returnList
+            .Select(w => BpfControlParser.ParseBpfClientDetail(w, entityName))
+            .SelectMany(x => x)
+            .OrderBy(x => x.WorkflowName)
+            .ThenBy(x => x.DataFieldName)
+            .ToList();
+    }
+
+    #endregion
+
+    #region V2 internal helpers
+
+    private IReadOnlyList<WfAction> RetrieveCustomApisByNames(IReadOnlyCollection<string> names)
+    {
+        var query = new QueryExpression(CustomAPI.EntityLogicalName)
+        {
+            NoLock = true,
+            Orders = { new OrderExpression(CustomAPI.LogicalNames.UniqueName, OrderType.Ascending) },
+            ColumnSet = new ColumnSet(CustomAPI.LogicalNames.CustomAPIId, CustomAPI.LogicalNames.UniqueName, CustomAPI.LogicalNames.BoundEntityLogicalName)
+        };
+        var sdkmessageLink = query.AddLink(SdkMessage.EntityLogicalName, CustomAPI.LogicalNames.SdkMessageId, SdkMessage.LogicalNames.SdkMessageId);
+        sdkmessageLink.Columns.AddColumn(SdkMessage.LogicalNames.Name);
+        sdkmessageLink.EntityAlias = "msg";
+        sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
+        {
+            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray()) }
+        };
+
+        var customApis = connection.RetrieveMultiple(query);
+        var result = new List<WfAction>();
+
+        foreach (var customApi in customApis.Entities)
+        {
+            var ia = new WfAction((string)((AliasedValue)customApi[$"msg.{SdkMessage.LogicalNames.Name}"]).Value);
+
+            var target = customApi.GetAttributeValue<string>(CustomAPI.LogicalNames.BoundEntityLogicalName);
+            if (!string.IsNullOrWhiteSpace(target))
+            {
+                ia.InParameters.Add(new WfParameter
+                {
+                    Name = "Target", UniqueName = "Target", Description = "bound Target",
+                    Entityname = target, Type = nameof(EntityReference), IsOptional = false, IsOutput = false
+                });
+            }
+
+            // In parameters
+            var inquery = new QueryExpression(CustomAPIRequestParameter.EntityLogicalName)
+            {
+                NoLock = true,
+                Orders = { new OrderExpression(CustomAPIRequestParameter.LogicalNames.UniqueName, OrderType.Ascending) },
+                ColumnSet = new ColumnSet(
+                    CustomAPIRequestParameter.LogicalNames.UniqueName, CustomAPIRequestParameter.LogicalNames.Name,
+                    CustomAPIRequestParameter.LogicalNames.Description, CustomAPIRequestParameter.LogicalNames.Type,
+                    CustomAPIRequestParameter.LogicalNames.IsOptional),
+                Criteria = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions = { new ConditionExpression(CustomAPIRequestParameter.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
+                }
+            };
+            foreach (var inparam in connection.RetrieveMultiple(inquery).Entities)
+            {
+                ia.InParameters.Add(new WfParameter
+                {
+                    Name = (string)inparam[CustomAPIRequestParameter.LogicalNames.Name],
+                    UniqueName = (string)inparam[CustomAPIRequestParameter.LogicalNames.UniqueName],
+                    Description = inparam.GetAttributeValue<string>(CustomAPIRequestParameter.LogicalNames.Description),
+                    Entityname = "",
+                    Type = GetParamType(inparam.GetAttributeValue<OptionSetValue>(CustomAPIRequestParameter.LogicalNames.Type).Value),
+                    IsOptional = (bool?)inparam[CustomAPIRequestParameter.LogicalNames.IsOptional] ?? false,
+                    IsOutput = false
+                });
+            }
+
+            // Out parameters
+            var outquery = new QueryExpression(CustomAPIResponseProperty.EntityLogicalName)
+            {
+                NoLock = true,
+                Orders = { new OrderExpression(CustomAPIResponseProperty.LogicalNames.UniqueName, OrderType.Ascending) },
+                ColumnSet = new ColumnSet(
+                    CustomAPIResponseProperty.LogicalNames.UniqueName, CustomAPIResponseProperty.LogicalNames.Name,
+                    CustomAPIResponseProperty.LogicalNames.Description, CustomAPIResponseProperty.LogicalNames.Type),
+                Criteria = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions = { new ConditionExpression(CustomAPIResponseProperty.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
+                }
+            };
+            foreach (var outparam in connection.RetrieveMultiple(outquery).Entities)
+            {
+                ia.OutParameters.Add(new WfParameter
+                {
+                    Name = (string)outparam[CustomAPIResponseProperty.LogicalNames.Name],
+                    UniqueName = (string)outparam[CustomAPIResponseProperty.LogicalNames.UniqueName],
+                    Description = outparam.GetAttributeValue<string>(CustomAPIResponseProperty.LogicalNames.Description),
+                    Entityname = "",
+                    Type = GetParamType(outparam.GetAttributeValue<OptionSetValue>(CustomAPIResponseProperty.LogicalNames.Type).Value),
+                    IsOptional = true, IsOutput = true
+                });
+            }
+
+            result.Add(ia);
+        }
+
+        return result;
+    }
+
+    private IReadOnlyList<WfAction> RetrieveActionsByNames(IReadOnlyCollection<string> names)
+    {
+        var query = new QueryExpression(Workflow.EntityLogicalName)
+        {
+            NoLock = true,
+            Orders = { new OrderExpression(Workflow.LogicalNames.UniqueName, OrderType.Ascending) },
+            ColumnSet = new ColumnSet(Workflow.LogicalNames.UniqueName, Workflow.LogicalNames.Xaml),
+            Criteria = new FilterExpression(LogicalOperator.And)
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition),
+                    new ConditionExpression(Workflow.LogicalNames.RendererObjectTypeCode, ConditionOperator.Null),
+                    new ConditionExpression(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.Action)
+                }
+            }
+        };
+        var sdkmessageLink = query.AddLink(SdkMessage.EntityLogicalName, Workflow.LogicalNames.SdkMessageId, SdkMessage.LogicalNames.SdkMessageId);
+        sdkmessageLink.Columns.AddColumn(SdkMessage.LogicalNames.Name);
+        sdkmessageLink.EntityAlias = "msg";
+        sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
+        {
+            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray()) }
+        };
+
+        var actions = connection.RetrieveMultiple(query);
+        var result = new List<WfAction>();
+        XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
+
+        foreach (var action in actions.Entities)
+        {
+            using var stringReader = new StringReader((string)action["xaml"]);
+            using var xmlReader = XmlReader.Create(stringReader);
+            var doc = XDocument.Load(xmlReader);
+            var extract = doc.Descendants(x + "Property")
+                .Where(i => i.DescendantsAndSelf(x + "Property.Attributes").Any())
+                .Select(i => new
+                {
+                    Name = i.Attribute("Name")?.Value,
+                    Type = i.Attribute("Type")?.Value,
+                    Direction = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentDirectionAttribute")?.Attribute("Value")?.Value,
+                    Description = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentDescriptionAttribute")?.Attribute("Value")?.Value.Replace("\\r\\n", "///\r\n", StringComparison.Ordinal),
+                    EntityName = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentEntityAttribute")?.Attribute("Value")?.Value
+                });
+
+            var wfa = new WfAction((string)((AliasedValue)action["msg.name"]).Value);
+            foreach (var ext in extract)
+            {
+                var wfParameter = new WfParameter
+                {
+                    Name = ext.Name, UniqueName = ext.Name, Description = ext.Description,
+                    Entityname = ext.EntityName, Type = ext.Type!.Split(':')[1].TrimEnd(')'),
+                    IsOptional = false, IsOutput = ext.Direction == "Output"
+                };
+
+                switch (ext.Direction)
+                {
+                    case "Input": wfa.InParameters.Add(wfParameter); break;
+                    case "Output": wfa.OutParameters.Add(wfParameter); break;
+                    default: throw new ArgumentException("Parameter has no direction?!");
+                }
+            }
+
+            result.Add(wfa);
+        }
+
+        return result;
+    }
+
+    #endregion
 }

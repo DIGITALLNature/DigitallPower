@@ -1,0 +1,28 @@
+{
+    "type": "typescript",
+    "version": 2,
+    "entities": [
+        "account",
+        "contact"
+    ],
+    "solutions": [
+        "dgt_entities"
+    ],
+    "entityMask": "dgt_*",
+    "requests": [],
+    "globalOptionSets": [],
+    "generatorVersion": "Light",
+    "typingPath": "../../Typings/Xrm/index.d.ts",
+    "xrmMockFormHelpers": false,
+    "onlyFormsFromSolutions": false,
+    "include": {
+        "options": true,
+        "sdkMessages": true
+    },
+    "forms": [],
+    "businessProcessFlows": [],
+    "entityFilters": [],
+    "entityRefFilters": [],
+    "entityFormFilters": []
+}
+

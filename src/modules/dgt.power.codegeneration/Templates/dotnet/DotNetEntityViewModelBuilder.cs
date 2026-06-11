@@ -12,7 +12,7 @@ namespace dgt.power.codegeneration.Templates.dotnet;
 public class DotNetEntityViewModelBuilder
 {
     private readonly EntityMetadata _entity;
-    private readonly CodeGenerationConfig _config;
+    private readonly DotNetCodeGenerationConfig _config;
     private readonly int _systemLanguage;
     private readonly Func<string, EntityMetadata> _retrieveEntityMetadata;
     private readonly IAnsiConsole _console;
@@ -21,7 +21,7 @@ public class DotNetEntityViewModelBuilder
     public DotNetEntityViewModelBuilder(
         EntityMetadata entity,
         Func<string, EntityMetadata> retrieveEntityMetadata,
-        CodeGenerationConfig config,
+        DotNetCodeGenerationConfig config,
         int systemLanguage,
         IAnsiConsole? console = null)
     {
@@ -35,35 +35,33 @@ public class DotNetEntityViewModelBuilder
     public Dictionary<string, object?> Build()
     {
         var entitySchemaName = Formatter.CamelCase(_entity.SchemaName);
-        var useClassic = _config.SuppressNullableSupport;
-        var withDebuggerNonUserCode = !_config.NonDebuggerNonUserCode;
+        var isFramework = _config.Target == DotNetTarget.Framework;
         var editableReadOnlyProperties = _config.EditableReadOnlyProperties;
 
         var keyAttribute = _entity.Attributes.Single(a => a.LogicalName == _entity.PrimaryIdAttribute);
 
         var result = new Dictionary<string, object?>
         {
-            ["NameSpace"] = _config.NameSpace,
+            ["NameSpace"] = _config.Namespace,
             ["EntitySchemaName"] = entitySchemaName,
             ["EntityLogicalName"] = _entity.LogicalName,
             ["PrimaryIdAttribute"] = _entity.PrimaryIdAttribute,
             ["PrimaryNameAttribute"] = _entity.PrimaryNameAttribute,
             ["HasPrimaryNameAttribute"] = _entity.PrimaryNameAttribute != null,
             ["ObjectTypeCode"] = _entity.ObjectTypeCode,
-            ["UseClassic"] = useClassic,
-            ["WithDebuggerNonUserCode"] = withDebuggerNonUserCode,
-            ["Virtual"] = _config.Virtual ? "virtual " : "",
-            ["SuppressEntityTypeCode"] = _config.SuppressEntityTypeCode,
-            ["SuppressNavigationProperties"] = _config.SuppressNavigationProperties,
-            ["SuppressOptions"] = _config.SuppressOptions,
-            ["SuppressLogicalNames"] = _config.SuppressLogicalNames,
-            ["SuppressAlternateKeys"] = _config.SuppressAlternateKeys,
-            ["SuppressRelations"] = _config.SuppressRelations,
-            ["SuppressContext"] = _config.SuppressContext,
+            ["IsFramework"] = isFramework,
+            ["Virtual"] = _config.VirtualProperties ? "virtual " : "",
+            ["IncludeEntityTypeCode"] = _config.Include.EntityTypeCode,
+            ["IncludeNavigationProperties"] = _config.Include.NavigationProperties,
+            ["IncludeOptions"] = _config.Include.Options,
+            ["IncludeLogicalNames"] = _config.Include.LogicalNames,
+            ["IncludeAlternateKeys"] = _config.Include.AlternateKeys,
+            ["IncludeRelations"] = _config.Include.Relations,
+            ["IncludeContext"] = _config.Include.Context,
             ["Summary"] = BuildSummary(GetLocalizedLabel(_entity.Description), 1),
             ["KeyAttributeSchemaName"] = PreventBadToken(Formatter.CamelCase(keyAttribute.SchemaName)),
             ["KeyAttributeIsValidForCreate"] = keyAttribute.IsValidForCreate.GetValueOrDefault(),
-            ["Attributes"] = BuildAttributes(editableReadOnlyProperties, useClassic),
+            ["Attributes"] = BuildAttributes(editableReadOnlyProperties, isFramework),
             ["NavigationProperties"] = BuildNavigationProperties(),
             ["OptionFields"] = BuildOptionFields(),
             ["LogicalNameEntries"] = BuildLogicalNameEntries(),
@@ -76,7 +74,7 @@ public class DotNetEntityViewModelBuilder
         return result;
     }
 
-    private object[] BuildAttributes(bool editableReadOnlyProperties, bool useClassic)
+    private object[] BuildAttributes(bool editableReadOnlyProperties, bool isFramework)
     {
         return Filter(_entity.Attributes).Select(attr =>
         {
@@ -85,7 +83,7 @@ public class DotNetEntityViewModelBuilder
             {
                 Name = attrName,
                 LogicalName = attr.LogicalName,
-                CSharpType = ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value, useClassic),
+                CSharpType = ConvertType(attr.AttributeType, attr.AttributeTypeName?.Value, isFramework),
                 IsValidForRead = attr.IsValidForRead == true,
                 HasSetter = HasSetter(attr, editableReadOnlyProperties),
                 IsPartyList = attr.AttributeType == AttributeTypeCode.PartyList,
@@ -238,9 +236,9 @@ public class DotNetEntityViewModelBuilder
         return value;
     }
 
-    private static string ConvertType(AttributeTypeCode? code, string? attributeTypeName, bool useClassic)
+    private static string ConvertType(AttributeTypeCode? code, string? attributeTypeName, bool isFramework)
     {
-        if (useClassic) return NonNullableConvertType(code, attributeTypeName);
+        if (isFramework) return NonNullableConvertType(code, attributeTypeName);
 
         return code switch
         {
@@ -310,7 +308,7 @@ public class DotNetEntityViewModelBuilder
             .Where(IsReadableAttribute)
             .Where(IsSupportedOptionField)
             .OrderBy(a => a.LogicalName)
-            .Select(o => new OptionField(o, _config.UseBaseLanguage, _systemLanguage));
+            .Select(o => new OptionField(o, _config.Language == -1, _systemLanguage));
     }
 
     private static bool HasSetter(AttributeMetadata attribute, bool editableReadOnlyProperties)
@@ -348,7 +346,7 @@ public class DotNetEntityViewModelBuilder
 
     private string GetLocalizedLabel(Label? label)
     {
-        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, _config.UseBaseLanguage, _systemLanguage);
+        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, _config.Language == -1, _systemLanguage);
     }
 
     private static string PreventBadToken(string value)

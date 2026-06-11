@@ -1,0 +1,29 @@
+{
+    "type": "dotnet",
+    "version": 2,
+    "namespace": "Digitall.Dataverse.Model",
+    "target": "Modern",
+    "entities": [
+        "account",
+        "contact"
+    ],
+    "solutions": [
+        "dgt_entities"
+    ],
+    "entityMask": "dgt_*",
+    "requests": [],
+    "globalOptionSets": [],
+    "virtualProperties": false,
+    "editableReadOnlyProperties": false,
+    "include": {
+        "context": true,
+        "options": true,
+        "logicalNames": true,
+        "relations": true,
+        "navigationProperties": true,
+        "entityTypeCode": true,
+        "alternateKeys": true,
+        "metadata": false
+    }
+}
+

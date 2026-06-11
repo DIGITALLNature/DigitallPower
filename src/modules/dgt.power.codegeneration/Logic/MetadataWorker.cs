@@ -19,7 +19,7 @@ public class MetadataWorker(
     protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
-        if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))
+        if (!ConfigResolver.TryGetConfigFile<DotNetCodeGenerationConfig>(args.Config, out var config))
         {
             return Tracer.End(this, false);
         }

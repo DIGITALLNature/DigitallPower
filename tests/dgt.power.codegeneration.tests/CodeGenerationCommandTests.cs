@@ -11,6 +11,9 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration.tests;
 
+#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig
+
+[NotInParallel("AnsiConsole")]
 public class CodeGenerationCommandTests
 {
     private readonly ICommand<CodeGenerationVerb> _command;
@@ -26,13 +29,10 @@ public class CodeGenerationCommandTests
         var typescriptWorkerMock = Mock.Of<TypescriptWorker>(null!, null!, null!, null!);
         typescriptWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
 
-        var metadataWorkerMock = Mock.Of<MetadataWorker>(null!, null!, null!, null!);
-        metadataWorkerMock.Invoke(Any<CodeGenerationVerb>()).Returns(true);
-
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
         _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataWorkerMock.Object, metadataServiceMock.Object, AnsiConsole.Console);
+            dotNetWorkerMock.Object, typescriptWorkerMock.Object, metadataServiceMock.Object, AnsiConsole.Console);
     }
 
     [Test]

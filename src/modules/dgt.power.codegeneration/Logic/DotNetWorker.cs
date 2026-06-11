@@ -19,17 +19,33 @@ public class DotNetWorker(
     protected override bool InvokeCore(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
-        if (!ConfigResolver.TryGetConfigFile<CodeGenerationConfig>(args.Config, out var config))
+
+        DotNetCodeGenerationConfig config;
+        try
+        {
+            var resolved = CodeGenerationConfigFactory.ResolveFromFile(args.Config);
+            if (resolved is DotNetCodeGenerationConfig dotnetConfig)
+            {
+                config = dotnetConfig;
+            }
+            else
+            {
+                Tracer.Log("Config file is not a DotNet config.", System.Diagnostics.TraceEventType.Error);
+                return Tracer.End(this, false);
+            }
+        }
+        catch
         {
             return Tracer.End(this, false);
         }
 
         generator.PrepareDirectory(args);
-        generator.GenerateActions(args, config);
-        generator.GenerateSdkMessages(args, config);
+        generator.GenerateRequests(args, config);
+        generator.GenerateSdkMessageNames(args, config);
         generator.GenerateOptionSets(args, config);
         generator.GenerateContext(args, config);
         generator.GenerateEntities(args, config);
+        generator.GenerateMetadata(args, config);
         return true;
     }
 }

@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "TypeScriptCodeGenerationConfig",
+  "description": "V2 configuration for TypeScript code generation (entity definitions, form typings, OptionSet constants, SDK message names, Custom API wrappers)",
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "typescript",
+      "description": "Config type discriminator. Must be 'typescript' for TypeScript code generation."
+    },
+    "version": {
+      "type": "integer",
+      "const": 2,
+      "description": "Config version. V2 configs use the typed discriminator model.",
+      "default": 2
+    },
+    "entities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Entity logical names to include in generation. Expanded at runtime by 'entityMask' and 'solutions'."
+    },
+    "solutions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Solution unique names. Entities from these solutions are added to 'entities'."
+    },
+    "entityMask": {
+      "type": ["string", "null"],
+      "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities."
+    },
+    "language": {
+      "type": "integer",
+      "description": "Language code for label localization. 0 = user language (default), or an explicit LCID (e.g. 1033).",
+      "default": 0
+    },
+    "requests": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "SDK message names to generate (actions, custom APIs, built-in messages like WhoAmI). Used for SDK message name constants and Custom API typed wrappers."
+    },
+    "globalOptionSets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Global OptionSet logical names to generate as standalone constants."
+    },
+    "generatorVersion": {
+      "type": "string",
+      "enum": ["Light", "Full"],
+      "description": "TypeScript generator version.",
+      "default": "Light"
+    },
+    "typingPath": {
+      "type": "string",
+      "description": "Path to Xrm TypeScript typings.",
+      "default": "../../Typings/Xrm/index.d.ts"
+    },
+    "xrmMockFormHelpers": {
+      "type": "boolean",
+      "description": "Generate XrmMock form test helpers.",
+      "default": false
+    },
+    "onlyFormsFromSolutions": {
+      "type": "boolean",
+      "description": "Only generate forms that belong to the configured solutions.",
+      "default": false
+    },
+    "include": {
+      "type": "object",
+      "description": "Controls which optional sections are included in generated TypeScript code.",
+      "properties": {
+        "options": {
+          "type": "boolean",
+          "description": "Generate OptionSet value constants.",
+          "default": true
+        },
+        "sdkMessages": {
+          "type": "boolean",
+          "description": "Generate SDK message name constants.",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "forms": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Form names to include (format: 'entity|formtype|formname')."
+    },
+    "businessProcessFlows": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Business process flow unique names to generate."
+    },
+    "entityFilters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EntityFilter" },
+      "description": "Entity-level attribute filters for TypeScript generation."
+    },
+    "entityRefFilters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EntityRefFilter" },
+      "description": "Entity reference attribute filters for TypeScript generation."
+    },
+    "entityFormFilters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EntityFormFilter" },
+      "description": "Entity form filters for TypeScript generation."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "EntityFilter": {
+      "type": "object",
+      "title": "EntityFilter",
+      "description": "Filter configuration for entities (shrink imports, e.g. odata query or form open)",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "Logical name of the entity to filter."
+        },
+        "attributes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Attributes to include."
+        },
+        "optionsets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "OptionSets to include."
+        }
+      },
+      "required": ["entity"],
+      "additionalProperties": false
+    },
+    "EntityRefFilter": {
+      "type": "object",
+      "title": "EntityRefFilter",
+      "description": "Filter configuration for entity references",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "Logical name of the entity to filter references for."
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Reference attributes to include."
+        },
+        "include": {
+          "type": "boolean",
+          "description": "Whether this is an include or exclude filter.",
+          "default": true
+        }
+      },
+      "required": ["entity"],
+      "additionalProperties": false
+    },
+    "EntityFormFilter": {
+      "type": "object",
+      "title": "EntityFormFilter",
+      "description": "Filter configuration for entity forms",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "Logical name of the entity to filter forms for."
+        },
+        "forms": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Form names to include/exclude."
+        },
+        "include": {
+          "type": "boolean",
+          "description": "Whether this is an include or exclude filter.",
+          "default": true
+        }
+      },
+      "required": ["entity"],
+      "additionalProperties": false
+    }
+  }
+}
+
