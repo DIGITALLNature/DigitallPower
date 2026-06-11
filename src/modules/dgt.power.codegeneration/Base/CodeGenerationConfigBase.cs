@@ -1,8 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Text.Json.Serialization;
-
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable CollectionNeverUpdated.Global
@@ -12,10 +10,8 @@ namespace dgt.power.codegeneration.Base;
 /// <summary>
 ///     V2 base configuration for code generation. Discriminated by <c>"type"</c> in JSON.
 ///     Contains only properties shared between all output targets.
+///     Polymorphic routing is handled by <see cref="CodeGenerationConfigFactory"/>.
 /// </summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(DotNetCodeGenerationConfig), "dotnet")]
-[JsonDerivedType(typeof(TypeScriptCodeGenerationConfig), "typescript")]
 #pragma warning disable CA2227 // Entities is assigned post-construction by MetadataService.PopulateEntitiesAndSolutions
 public abstract class CodeGenerationConfigBase
 {
