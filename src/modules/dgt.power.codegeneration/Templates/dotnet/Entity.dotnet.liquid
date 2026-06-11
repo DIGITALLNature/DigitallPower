@@ -1,82 +1,32 @@
-{%- if UseClassic -%}
+{%- if IsFramework -%}
 using System;
 using System.Collections.Generic;
 using System.Linq;
 {% endif -%}
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-{%- if WithDebuggerNonUserCode %}
-using System.Diagnostics;
-{%- endif %}
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
 
 // ReSharper disable All
 namespace {{ NameSpace }}
 {
     /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
     {{ Summary }}
-    [DataContract]
     [EntityLogicalName("{{ EntityLogicalName }}")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class {{ EntitySchemaName }} : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class {{ EntitySchemaName }} : Entity
     {
         #region ctor
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        public {{ EntitySchemaName }}() : this(false)
-        {
-        }
+        public {{ EntitySchemaName }}() : base(EntityLogicalName) { }
 
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        public {{ EntitySchemaName }}(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
+        public {{ EntitySchemaName }}(Guid id) : base(EntityLogicalName, id) { }
 
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        public {{ EntitySchemaName }}(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
+        public {{ EntitySchemaName }}(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
 
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        public {{ EntitySchemaName }}(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        public {{ EntitySchemaName }}(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
-
-        #region fields
-        private readonly bool _trackChanges;
-{%- if UseClassic %}
-        private readonly Lazy<HashSet<string>> _changedProperties = new Lazy<HashSet<string>>();
-{%- else %}
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
-{%- endif %}
+        public {{ EntitySchemaName }}(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -84,61 +34,19 @@ namespace {{ NameSpace }}
 {%- if HasPrimaryNameAttribute %}
         public const string PrimaryNameAttribute = "{{ PrimaryNameAttribute }}";
 {%- endif %}
-{%- unless SuppressEntityTypeCode %}
+{%- if IncludeEntityTypeCode %}
         public const int EntityTypeCode = {{ ObjectTypeCode }};
-{%- endunless %}
-        #endregion
-
-        #region Events
-{%- if UseClassic %}
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangingEventHandler PropertyChanging;
-{%- else %}
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
 {%- endif %}
-
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-{%- if UseClassic %}
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
-{%- else %}
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-{%- endif %}
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-
-{%- if WithDebuggerNonUserCode %}
-        [DebuggerNonUserCode]
-{%- endif %}
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
         #endregion
 
         #region Attributes
         [AttributeLogicalName("{{ PrimaryIdAttribute }}")]
         public new {{ Virtual }}Guid Id
         {
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             get
             {
                 return base.Id;
             }
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             set
             {
 {%- if KeyAttributeIsValidForCreate %}
@@ -155,9 +63,6 @@ namespace {{ NameSpace }}
         public {{ Virtual }}{{ attr.CSharpType }} {{ attr.Name }}
         {
 {%- if attr.IsValidForRead %}
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             get
             {
 {%- if attr.IsPartyList %}
@@ -176,12 +81,8 @@ namespace {{ NameSpace }}
             }
 {%- endif %}
 {%- if attr.HasSetter %}
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             set
             {
-                OnPropertyChanging();
 {%- if attr.IsPartyList %}
                 if ((value == null))
                 {
@@ -197,13 +98,12 @@ namespace {{ NameSpace }}
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
 {%- endif %}
 {%- endif %}
-                OnPropertyChanged();
             }
 {%- endif %}
         }
 {%- endfor %}
         #endregion
-{%- unless SuppressNavigationProperties %}
+{%- if IncludeNavigationProperties %}
 
         #region NavigationProperties
 {%- for attr in NavigationProperties %}
@@ -214,27 +114,19 @@ namespace {{ NameSpace }}
         [RelationshipSchemaName("{{ attr.SchemaName }}")]
         public IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
         {
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             get
             {
                 return GetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null);
             }
-{%- if WithDebuggerNonUserCode %}
-            [DebuggerNonUserCode]
-{%- endif %}
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("{{ attr.SchemaName }}", null, value);
-                OnPropertyChanged();
             }
         }
 {%- endfor %}
         #endregion
-{%- endunless %}
-{%- unless SuppressOptions %}
+{%- endif %}
+{%- if IncludeOptions %}
 
         #region Options
         public static partial class Options
@@ -257,8 +149,8 @@ namespace {{ NameSpace }}
 {%- endfor %}
         }
         #endregion
-{%- endunless %}
-{%- unless SuppressLogicalNames %}
+{%- endif %}
+{%- if IncludeLogicalNames %}
 
         #region LogicalNames
         public static partial class LogicalNames
@@ -268,8 +160,8 @@ namespace {{ NameSpace }}
 {%- endfor %}
         }
         #endregion
-{%- endunless %}
-{%- if SuppressAlternateKeys == false and AlternateKeys.size > 0 %}
+{%- endif %}
+{%- if IncludeAlternateKeys and AlternateKeys.size > 0 %}
 
         #region AlternateKeys
         public static partial class AlternateKeys
@@ -280,7 +172,7 @@ namespace {{ NameSpace }}
         }
         #endregion
 {%- endif %}
-{%- unless SuppressRelations %}
+{%- if IncludeRelations %}
 
         #region Relations
         public static partial class Relations
@@ -307,7 +199,7 @@ namespace {{ NameSpace }}
             }
         }
         #endregion
-{%- endunless %}
+{%- endif %}
 
         #region Methods
 {%- if HasPrimaryNameAttribute %}
@@ -315,7 +207,7 @@ namespace {{ NameSpace }}
         public EntityReference ToNamedEntityReference()
         {
             var reference = ToEntityReference();
-{%- if UseClassic %}
+{%- if IsFramework %}
             reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
 {%- else %}
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
@@ -323,38 +215,9 @@ namespace {{ NameSpace }}
             return reference;
         }
 {%- endif %}
-
-        public static {{ EntitySchemaName }} Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static {{ EntitySchemaName }} Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("{{ EntityLogicalName }}", id, columnSet).ToEntity<{{ EntitySchemaName }}>();
-        }
-
-        public {{ EntitySchemaName }} GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-{%- if UseClassic %}
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty).GetCustomAttribute(typeof(AttributeLogicalNameAttribute))).LogicalName).Where(attrName => Contains(attrName)))
-{%- else %}
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-{%- endif %}
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new {{ EntitySchemaName }}(Id) { Attributes = attr };
-        }
         #endregion
     }
-{%- unless SuppressContext %}
+{%- if IncludeContext %}
 
     #region Context
     public partial class DataContext
@@ -368,5 +231,5 @@ namespace {{ NameSpace }}
         }
     }
     #endregion
-{%- endunless %}
+{%- endif %}
 }

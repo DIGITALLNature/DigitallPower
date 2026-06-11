@@ -14,6 +14,8 @@ using Attribute = dgt.power.dataverse.Attribute;
 
 namespace dgt.power.codegeneration.tests;
 
+#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig for backward compatibility testing
+
 [NotInParallel("AnsiConsole")]
 public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 {
@@ -101,14 +103,14 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(dotNetPath)).IsTrue();
-        await Assert.That(Directory.GetFileSystemEntries(dotNetPath)).Count().IsEqualTo(3); // SdkMessageNames.cs, Actions.cs, Context.cs
+        await Assert.That(Directory.GetFileSystemEntries(dotNetPath)).Count().IsEqualTo(2); // SdkMessageNames.cs, Context.cs
         await Assert.That(File.Exists(existingFilePath)).IsFalse();
     }
 
     [Test]
-    public async Task ShouldSuppressSdkMessagesGeneration()
+    public async Task ShouldAlwaysGenerateSdkMessageNames()
     {
-        var config = new CodeGenerationConfig {SuppressSdkMessages = true};
+        var config = new CodeGenerationConfig();
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
 
         var context = GetBuilder()
@@ -119,7 +121,8 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
-        await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsFalse();
+        // SDK message names file is always generated with hardcoded defaults
+        await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsTrue();
     }
 
     [Test]
@@ -145,10 +148,12 @@ public class DotNetWorkerTests : CodeGenerationTestsBase<DotNetWorker>
         var customApi = new SdkMessage(Guid.NewGuid()) {Name = "Custom API Message"};
         var action = new SdkMessage(Guid.NewGuid()) {Name = "Action"};
         var additionalMessage = new SdkMessage(Guid.NewGuid()) {Name = "AdditionalMessage"};
+#pragma warning disable CS0618
         var config = new CodeGenerationConfig
         {
             Actions = new[] {action.Name}, CustomAPIs = new[] {customApi.Name}, AdditionalSdkMessages = new[] {additionalMessage.Name}
         };
+#pragma warning restore CS0618
         var args = new CodeGenerationVerb {Config = WriteConfigurationArtifact(config).FullName, TargetDirectory = ArtifactDirectory};
 
         var context = GetBuilder()

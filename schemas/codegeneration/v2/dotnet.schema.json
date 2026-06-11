@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "DotNetCodeGenerationConfig",
+  "description": "V2 configuration for .NET code generation (early-bound entity classes, action request/response wrappers, SDK message constants, and optionally XML metadata)",
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "dotnet",
+      "description": "Config type discriminator. Must be 'dotnet' for .NET code generation."
+    },
+    "version": {
+      "type": "integer",
+      "const": 2,
+      "description": "Config version. V2 configs use the typed discriminator model.",
+      "default": 2
+    },
+    "namespace": {
+      "type": "string",
+      "description": "C# namespace for generated classes.",
+      "default": "Digitall.Dataverse.Model"
+    },
+    "target": {
+      "type": "string",
+      "enum": ["Modern", "Framework"],
+      "description": "Target framework. 'Modern' = net8.0+ (nullable annotations, implicit usings). 'Framework' = .NET Framework 4.6.2 (plugins, explicit usings, no nullable).",
+      "default": "Modern"
+    },
+    "entities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Entity logical names to include in generation. Expanded at runtime by 'entityMask' and 'solutions'."
+    },
+    "solutions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Solution unique names. Entities from these solutions are added to 'entities'."
+    },
+    "entityMask": {
+      "type": ["string", "null"],
+      "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities."
+    },
+    "language": {
+      "type": "integer",
+      "description": "Language code for label localization. 0 = user language (default), or an explicit LCID (e.g. 1033).",
+      "default": 0
+    },
+    "requests": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "SDK message names to generate (actions, custom APIs, built-in messages like WhoAmI). The generator auto-detects whether each entry is a custom action, custom API, or built-in message. Entries with parameters produce typed Request/Response classes. All entries produce SDK message name constants."
+    },
+    "globalOptionSets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Global OptionSet logical names to generate as standalone constants."
+    },
+    "virtualProperties": {
+      "type": "boolean",
+      "description": "Make generated entity properties virtual (for mocking/proxying).",
+      "default": false
+    },
+    "editableReadOnlyProperties": {
+      "type": "boolean",
+      "description": "Generate setters even for read-only attributes.",
+      "default": false
+    },
+    "include": {
+      "type": "object",
+      "description": "Controls which optional sections are included in generated entity classes. All default to true.",
+      "properties": {
+        "context": {
+          "type": "boolean",
+          "description": "Generate OrganizationServiceContext (DataContext) partial class with IQueryable sets.",
+          "default": true
+        },
+        "options": {
+          "type": "boolean",
+          "description": "Generate nested Options class with OptionSet value constants.",
+          "default": true
+        },
+        "logicalNames": {
+          "type": "boolean",
+          "description": "Generate nested LogicalNames class with attribute logical name constants.",
+          "default": true
+        },
+        "relations": {
+          "type": "boolean",
+          "description": "Generate nested Relations class with relationship schema name constants.",
+          "default": true
+        },
+        "navigationProperties": {
+          "type": "boolean",
+          "description": "Generate navigation properties for 1:N relationships.",
+          "default": true
+        },
+        "entityTypeCode": {
+          "type": "boolean",
+          "description": "Generate EntityTypeCode constant.",
+          "default": true
+        },
+        "alternateKeys": {
+          "type": "boolean",
+          "description": "Generate nested AlternateKeys class with alternate key logical name constants.",
+          "default": true
+        },
+        "metadata": {
+          "type": "boolean",
+          "description": "Generate XML metadata files (DataContractSerializer dumps of EntityMetadata). Off by default.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

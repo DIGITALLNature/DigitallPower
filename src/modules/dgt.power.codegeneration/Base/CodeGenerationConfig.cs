@@ -7,10 +7,15 @@ using dgt.power.codegeneration.Base.Config;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable CollectionNeverUpdated.Global
 
-
 namespace dgt.power.codegeneration.Base;
 
+/// <summary>
+///     V1 legacy configuration. Kept for backward compatibility with existing config files
+///     that don't have a <c>"type"</c> discriminator. Use <see cref="DotNetCodeGenerationConfig"/>
+///     or <see cref="TypeScriptCodeGenerationConfig"/> for new configs.
+/// </summary>
 #pragma warning disable CA2227 // Entities and Forms are assigned post-construction
+[Obsolete("Use DotNetCodeGenerationConfig or TypeScriptCodeGenerationConfig (V2 config with \"type\" discriminator). This class will be removed in a future major version.")]
 public class CodeGenerationConfig
 {
     private HashSet<string> _actions = new();
@@ -95,122 +100,120 @@ public class CodeGenerationConfig
 
     public TypescriptGeneratorVersion TypescriptGeneratorVersion { get; init; } = TypescriptGeneratorVersion.Light;
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public bool SuppressOptions { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressLogicalNames { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressContext { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressActions { get; init; }
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public bool SuppressSdkMessages { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressRelations { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressNavigationProperties { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressEntityTypeCode { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressAlternateKeys { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Make generated properties virtual
-    /// </summary>
     public bool Virtual { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool UseBaseLanguage { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Skip annotation of generated properties with 'DebuggerNonUserCode'
-    /// </summary>
     public bool NonDebuggerNonUserCode { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Make generated readonly properties editable
-    /// </summary>
     public bool EditableReadOnlyProperties { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public string TypingPath { get; init; } = "\"\"../../Typings/Xrm/index.d.ts\"\"";
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public bool OnlyFormsFromSolutions { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public bool XrmMockFormHelpers { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
-    public HashSet<EntityFilter> EntityFilters { get; init; } = new ();
+    public HashSet<EntityFilter> EntityFilters { get; init; } = new();
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public HashSet<EntityRefFilter> EntityRefFilters { get; init; } = new();
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public HashSet<EntityFormFilter> EntityFormFilters { get; init; } = new();
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public HashSet<string> SdkMessageFilters { get; init; } = new();
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public HashSet<string> GlobalOptionSets { get; init; } = new();
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public HashSet<string> BusinessProcessFlows { get; init; } = new();
 
+    public bool SuppressNullableSupport { get; init; }
 
     /// <summary>
-    ///     DotNet only; When true, generates classic .NET Framework 4.6.2 compatible code
-    ///     (explicit using directives, non-nullable reference types). When false (default),
-    ///     generates modern .NET code with nullable reference types.
+    ///     Maps this V1 config to the appropriate V2 config(s).
+    ///     Returns a <see cref="DotNetCodeGenerationConfig"/> when DotNet is not suppressed,
+    ///     or a <see cref="TypeScriptCodeGenerationConfig"/> when TypeScript is not suppressed.
     /// </summary>
-    public bool SuppressNullableSupport { get; init; }
+    public CodeGenerationConfigBase ToDotNetConfig()
+    {
+        var requests = new HashSet<string>();
+        foreach (var a in Actions) requests.Add(a);
+        foreach (var c in CustomAPIs) requests.Add(c);
+        foreach (var s in AdditionalSdkMessages) requests.Add(s);
+
+        return new DotNetCodeGenerationConfig
+        {
+            Entities = new HashSet<string>(Entities),
+            Solutions = Solutions,
+            EntityMask = EntityMask,
+            Language = UseBaseLanguage ? -1 : 0,
+            GlobalOptionSets = GlobalOptionSets,
+            Requests = requests,
+            Namespace = NameSpace,
+            Target = SuppressNullableSupport ? DotNetTarget.Framework : DotNetTarget.Modern,
+            VirtualProperties = Virtual,
+            EditableReadOnlyProperties = EditableReadOnlyProperties,
+            Include = new DotNetInclude
+            {
+                Context = !SuppressContext,
+                Options = !SuppressOptions,
+                LogicalNames = !SuppressLogicalNames,
+                Relations = !SuppressRelations,
+                NavigationProperties = !SuppressNavigationProperties,
+                EntityTypeCode = !SuppressEntityTypeCode,
+                AlternateKeys = !SuppressAlternateKeys,
+                Metadata = !SuppressMetaData
+            }
+        };
+    }
+
+    public CodeGenerationConfigBase ToTypeScriptConfig()
+    {
+        var requests = new HashSet<string>();
+        foreach (var a in Actions) requests.Add(a);
+        foreach (var c in CustomAPIs) requests.Add(c);
+        foreach (var s in AdditionalSdkMessages) requests.Add(s);
+
+        return new TypeScriptCodeGenerationConfig
+        {
+            Entities = new HashSet<string>(Entities),
+            Solutions = Solutions,
+            EntityMask = EntityMask,
+            Language = UseBaseLanguage ? -1 : 0,
+            GlobalOptionSets = GlobalOptionSets,
+            Requests = requests,
+            GeneratorVersion = TypescriptGeneratorVersion,
+            TypingPath = TypingPath,
+            XrmMockFormHelpers = XrmMockFormHelpers,
+            OnlyFormsFromSolutions = OnlyFormsFromSolutions,
+            Include = new TypeScriptInclude
+            {
+                Options = !SuppressOptions,
+                SdkMessages = !SuppressSdkMessages
+            },
+            Forms = new HashSet<string>(Forms),
+            BusinessProcessFlows = BusinessProcessFlows,
+            EntityFilters = EntityFilters,
+            EntityRefFilters = EntityRefFilters,
+            EntityFormFilters = EntityFormFilters
+        };
+    }
 }
 #pragma warning restore CA2227

@@ -38,7 +38,7 @@ public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole co
         }
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");

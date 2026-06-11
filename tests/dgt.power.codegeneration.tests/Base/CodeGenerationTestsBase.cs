@@ -18,6 +18,8 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.tests.Base;
 
+#pragma warning disable CS0618 // Tests use legacy V1 CodeGenerationConfig
+
 public abstract class CodeGenerationTestsBase<TWorker> : WorkerTestsBase<TWorker, CodeGenerationVerb>
     where TWorker : PowerWorker<CodeGenerationVerb>
 {

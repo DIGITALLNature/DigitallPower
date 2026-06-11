@@ -15,7 +15,6 @@ public class CodeGenerationCommand(
     IConfigResolver configResolver,
     DotNetWorker dotNetWorker,
     TypescriptWorker typescriptWorker,
-    MetadataWorker metadataWorker,
     IMetadataService metadataService,
     IAnsiConsole console)
     : Command<CodeGenerationVerb>, IPowerLogic
@@ -24,9 +23,20 @@ public class CodeGenerationCommand(
     {
         ArgumentNullException.ThrowIfNull(verb);
         tracer.Start(this);
-        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
+
+        // Try V2 config first (has "type" discriminator)
+        var configPath = verb.Config;
+        CodeGenerationConfigBase? v2Config = null;
+        try
         {
-            return tracer.End(this, false) ? 0 : -1;
+            if (File.Exists(configPath))
+            {
+                v2Config = CodeGenerationConfigFactory.ResolveFromFile(configPath, console);
+            }
+        }
+        catch
+        {
+            // Fall through to legacy path
         }
 
         var success = true;
@@ -36,21 +46,42 @@ public class CodeGenerationCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>
                 {
-                    metadataService.PopulateEntitiesAndSolutions(config);
-
-                    if (!config.SuppressDotNet)
+                    if (v2Config != null)
                     {
-                        success &= dotNetWorker.Invoke(verb);
+                        metadataService.PopulateEntitiesAndSolutions(v2Config);
+
+                        switch (v2Config)
+                        {
+                            case DotNetCodeGenerationConfig:
+                                success &= dotNetWorker.Invoke(verb);
+                                break;
+                            case TypeScriptCodeGenerationConfig:
+                                success &= typescriptWorker.Invoke(verb);
+                                break;
+                        }
                     }
-
-                    if (!config.SuppressTypeScript)
+                    else
                     {
-                        success &= typescriptWorker.Invoke(verb);
-                    }
+                        // Legacy V1 path
+#pragma warning disable CS0618
+                        if (!configResolver.TryGetConfigFile<CodeGenerationConfig>(configPath, out var config))
+                        {
+                            success = false;
+                            return;
+                        }
 
-                    if (!config.SuppressMetaData)
-                    {
-                        success &= metadataWorker.Invoke(verb);
+                        metadataService.PopulateEntitiesAndSolutions(config);
+
+                        if (!config.SuppressDotNet)
+                        {
+                            success &= dotNetWorker.Invoke(verb);
+                        }
+
+                        if (!config.SuppressTypeScript)
+                        {
+                            success &= typescriptWorker.Invoke(verb);
+                        }
+#pragma warning restore CS0618
                     }
                 }
             );

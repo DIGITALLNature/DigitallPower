@@ -8,5 +8,5 @@ namespace dgt.power.codegeneration.Generators.Contracts;
 public interface IMetadataGenerator
 {
     void PrepareDirectory(CodeGenerationVerb args);
-    void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config);
+    void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
 }

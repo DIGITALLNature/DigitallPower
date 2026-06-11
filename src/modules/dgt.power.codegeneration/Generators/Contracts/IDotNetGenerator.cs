@@ -8,9 +8,10 @@ namespace dgt.power.codegeneration.Generators.Contracts;
 public interface IDotNetGenerator
 {
     void PrepareDirectory(CodeGenerationVerb args);
-    void GenerateActions(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateContext(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config);
+    void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
 }

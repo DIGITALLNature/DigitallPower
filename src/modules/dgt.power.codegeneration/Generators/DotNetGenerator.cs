@@ -38,65 +38,57 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
     }
 
-    public void GenerateActions(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (config.SuppressActions)
+        if (config.Requests.Count == 0)
         {
             return;
         }
 
+        var requests = metadataService.RetrieveRequests(config.Requests);
 
-        var actions = metadataService.RetrieveActions(config);
-        var apis = metadataService.RetrieveCustomApis(config);
+        // Only generate request/response classes for entries that have parameters
+        var requestsWithParams = requests.Where(r => r.InParameters.Count > 0 || r.OutParameters.Count > 0).ToArray();
+        if (requestsWithParams.Length == 0)
+        {
+            return;
+        }
+
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
-
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         using var file = File.CreateText(fileName);
-
         var context = DotNetLiquidRenderer.CreateContext();
-        context.SetValue("NameSpace", config.NameSpace);
-        context.SetValue("Actions", actions.Concat(apis).ToArray());
+        context.SetValue("NameSpace", config.Namespace);
+        context.SetValue("Actions", requestsWithParams);
 
         var content = DotNetLiquidRenderer.Render("Action.dotnet.liquid", context);
         file.Write(content);
     }
 
-    public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (config.SuppressSdkMessages)
-        {
-            return;
-        }
-
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
-
-        // Apply filter
-        IEnumerable<(string Name, string Message)> filtered = sdkMessages;
-        if (config.SdkMessageFilters.Count > 0)
-        {
-            filtered = sdkMessages.Where(t => config.SdkMessageFilters.Contains(t.Message));
-        }
+        var sdkMessages = metadataService.RetrieveSdkMessageNames(config.Requests);
 
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
         using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         var context = DotNetLiquidRenderer.CreateContext();
-        context.SetValue("NameSpace", config.NameSpace);
-        context.SetValue("SdkMessages", filtered.Select(s => new SdkMessageViewModel(s)).ToArray());
+        context.SetValue("NameSpace", config.Namespace);
+        context.SetValue("SdkMessages", sdkMessages.Select(s => new SdkMessageViewModel(s)).ToArray());
 
         var content = DotNetLiquidRenderer.Render("SdkMessages.dotnet.liquid", context);
         file.Write(content);
     }
 
-    public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -106,24 +98,29 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             return;
         }
 
-        var optionSets = metadataService.RetrieveOptionSets(config);
+        var optionSets = metadataService.RetrieveOptionSets(config.GlobalOptionSets);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
 
         using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         var context = DotNetLiquidRenderer.CreateContext();
-        context.SetValue("NameSpace", config.NameSpace);
+        context.SetValue("NameSpace", config.Namespace);
         context.SetValue("OptionSets", optionSets.Select(kvp => new OptionViewModel(kvp)).ToArray());
 
         var content = DotNetLiquidRenderer.Render("OptionSets.dotnet.liquid", context);
         file.Write(content);
     }
 
-    public void GenerateContext(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (!config.Include.Context)
+        {
+            return;
+        }
 
         var contextFile = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Context}.cs");
 
@@ -131,13 +128,13 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         console.MarkupLine($"Creating File: [bold green]{contextFile}[/]");
 
         var context = DotNetLiquidRenderer.CreateContext();
-        context.SetValue("NameSpace", config.NameSpace);
+        context.SetValue("NameSpace", config.Namespace);
 
         var content = DotNetLiquidRenderer.Render("Context.dotnet.liquid", context);
         file.Write(content);
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -167,6 +164,41 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             }
 
             file.Write(DotNetLiquidRenderer.Render("Entity.dotnet.liquid", context));
+        }
+    }
+
+    public void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (!config.Include.Metadata)
+        {
+            return;
+        }
+
+        if (!Directory.Exists(Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata)))
+        {
+            Directory.CreateDirectory(Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata));
+        }
+        else
+        {
+            Directory.GetFiles(Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata), "*.xml")
+                .ToList()
+                .ForEach(File.Delete);
+        }
+
+        foreach (var entity in config.Entities)
+        {
+            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata,
+                $"{metadata.LogicalName.ToLowerInvariant()}.xml");
+            var serializer = new System.Runtime.Serialization.DataContractSerializer(typeof(EntityMetadata));
+            var settings = new System.Xml.XmlWriterSettings { Indent = true, IndentChars = "\t", Encoding = System.Text.Encoding.UTF8 };
+
+            using var file = System.Xml.XmlWriter.Create(fileName, settings);
+            console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+            serializer.WriteObject(file, metadata);
         }
     }
 }
