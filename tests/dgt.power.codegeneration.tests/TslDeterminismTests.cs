@@ -4,10 +4,8 @@
 using System.Security.Cryptography;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
-using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
-using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -15,16 +13,18 @@ using Microsoft.Xrm.Sdk.Metadata;
 namespace dgt.power.codegeneration.tests;
 
 [NotInParallel("Win_Shared_File_Issue")]
-public class TslDeterminismTests : CodeGenerationTestsBase<TypescriptWorker>
+public class TslDeterminismTests : CodeGenerationTestsBase
 {
     private readonly EntityMetadata _testTableMetadata;
+
+    protected override string ResourceDirectory => Path.Combine("Resources", "TypescriptWorker");
 
     public TslDeterminismTests()
     {
         _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
     }
 
-    protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
+    protected override CodeGenerationContextBuilder GetBuilder()
     {
         var organization = new Organization(Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")) { LanguageCode = 1031 };
         return base.GetBuilder()
@@ -77,7 +77,7 @@ public class TslDeterminismTests : CodeGenerationTestsBase<TypescriptWorker>
             .WithData(CreateDeterministicMainForm())
             .Build();
 
-        await Assert.That(context.Execute(args)).IsTrue();
+        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
 
         var typescriptPath = Path.GetFullPath(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript));
         return await CaptureFileHashes(typescriptPath);

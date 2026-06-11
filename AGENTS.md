@@ -49,6 +49,7 @@ When making changes to this codebase, **you MUST keep the documentation up to da
 - **Language:** C# with latest LangVersion, nullable enabled, implicit usings
 - **Target Framework:** net10.0
 - **Naming:** Follow standard .NET naming conventions (PascalCase for public members)
+- **File naming:** Each `.cs` file must contain exactly one top-level type, and the file name must match the type name (e.g. `MyService.cs` → `class MyService`). When renaming a type, rename the file too.
 - **Licensing header:** All source files start with `// Copyright (c) DIGITALL Nature. All rights reserved`
 - **Tests:** Use TUnit framework with TUnit.Assertions and TUnit.Mocks
 
@@ -73,26 +74,31 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 
 See `todo.md` for full migration backlog and module-by-module scope.
 
-### Async Migration Checklist (MANDATORY for Logic changes)
+### JSON Schema Maintenance (MANDATORY for Config changes)
 
-When **modifying or adding** any `PowerLogic<T>` subclass, **always check**:
+When **modifying any configuration model class** that has a corresponding JSON schema in `schemas/`, **you MUST update the matching JSON schema file** in the same PR.
 
-> ❓ Can this class be migrated from `Task.FromResult(InvokeCore(...))` to a true `async/await` implementation using `IOrganizationServiceAsync2`?
+#### Rules
 
-- If **yes**: migrate in the same PR. Replace `((IOrganizationService)Connection).Execute(...)` with `await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(...)`, replace LINQ `DataContext` queries with `QueryExpression` + `RetrieveMultipleAsync`.
-- If **no** (e.g., touching unrelated logic, or migration is too large for the current scope): leave a `// TODO(async): migrate to IOrganizationServiceAsync2` comment and add an entry to `todo.md`.
+1. **Schema files live in `schemas/`** and are organized by module and version, e.g.:
+   - `schemas/codegeneration/v1/schema.json` — V1 legacy config
+   - `schemas/codegeneration/v2/dotnet.schema.json` — V2 .NET config
+   - `schemas/codegeneration/v2/typescript.schema.json` — V2 TypeScript config
+   - `schemas/analyzer/schema.json`, `schemas/push/schema.json`, `schemas/maintenance/…`
 
-**Pattern for truly async logic:**
-```csharp
-protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken)
-{
-    var orgAsync = (IOrganizationServiceAsync2)Connection;
-    var response = await orgAsync.ExecuteAsync(new RetrieveMultipleRequest { Query = query }, cancellationToken);
-    // ...
-}
-```
+2. **What requires a schema update:**
+   - Adding, removing, or renaming a config property
+   - Changing a property type (e.g. `int` → `int?`, `bool` → `string`)
+   - Changing a default value
+   - Adding or removing enum values
+   - Adding or modifying nested objects / `$defs`
+   - Changing validation constraints (required fields, allowed values, patterns)
 
-See `todo.md` for full migration backlog and module-by-module scope.
+3. **Keep schema and C# model in sync.** Property names in the schema use camelCase (JSON convention) matching the serialized output of the C# model.
+
+4. **Versioning:** Breaking schema changes (removing properties, changing types in incompatible ways, renaming properties) require a new schema version folder (e.g. `v3/`). Additive changes (new optional properties, relaxing constraints) can be made in-place within the current version.
+
+5. **Validate after changes.** Ensure existing sample/test config files still validate against the updated schema.
 
 ---
 

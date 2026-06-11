@@ -7,11 +7,8 @@ namespace dgt.power.codegeneration.Generators.Contracts;
 
 public interface IDotNetGenerator
 {
-    void PrepareDirectory(CodeGenerationVerb args);
-    void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
-    void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
-    void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
-    void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
-    void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
-    void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
+    /// <summary>
+    ///     Runs the full .NET code generation pipeline for the given config.
+    /// </summary>
+    bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
 }

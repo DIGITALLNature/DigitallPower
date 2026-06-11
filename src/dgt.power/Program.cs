@@ -13,7 +13,6 @@ using dgt.power.analyzer.Logic;
 using dgt.power.codegeneration;
 using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
-using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
@@ -109,8 +108,6 @@ if (telemetryEnabled)
 registrations.AddSingleton<ITracer>(_ => new Tracer(telemetryEnabled, installId, appConsole));
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
-registrations.AddSingleton<TypescriptWorker, TypescriptWorker>();
-registrations.AddSingleton<MetadataWorker, MetadataWorker>();
 registrations.AddSingleton<IProfileManager, ProfileManager>();
 registrations.AddSingleton<ObjectCache, MemoryCache>(_ => MemoryCache.Default);
 registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
@@ -124,9 +121,8 @@ registrations.AddSingleton<IsolatedStorageFile>(_ => isolatedStorage);
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
-registrations.AddScoped<ITypescriptGeneratorFascade, TypescriptGeneratorFascade>();
+registrations.AddScoped<ITypeScriptGenerator, TypeScriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
-registrations.AddScoped<DotNetWorker, DotNetWorker>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();

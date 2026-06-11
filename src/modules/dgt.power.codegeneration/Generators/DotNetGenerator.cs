@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -18,7 +18,20 @@ namespace dgt.power.codegeneration.Generators;
 
 public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole console) : IDotNetGenerator
 {
-    public void PrepareDirectory(CodeGenerationVerb args)
+    /// <inheritdoc />
+    public bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    {
+        PrepareDirectory(args);
+        GenerateRequests(args, config);
+        GenerateSdkMessageNames(args, config);
+        GenerateOptionSets(args, config);
+        GenerateContext(args, config);
+        GenerateEntities(args, config);
+        GenerateMetadata(args, config);
+        return true;
+    }
+
+    private void PrepareDirectory(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
 
@@ -38,7 +51,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
     }
 
-    public void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -69,7 +82,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    public void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -88,7 +101,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    public void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -112,7 +125,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    public void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -134,7 +147,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -167,7 +180,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
     }
 
-    public void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");

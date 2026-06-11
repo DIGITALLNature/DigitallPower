@@ -13,14 +13,28 @@ using Fluid;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
-namespace dgt.power.codegeneration.Generators.Worker;
+namespace dgt.power.codegeneration.Generators.Strategy;
 
-public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAnsiConsole console)
-    : TypescriptGeneratorWorker(console), ITypescriptGenerator
+public class TypescriptFullGenerationStrategy(IMetadataService metadataService, IAnsiConsole console)
+    : TypescriptGenerationStrategyBase(console), ITypescriptGenerationStrategy
 {
-    #region ITypescriptGenerator Members
+    /// <inheritdoc />
+    public bool Generate(CodeGenerationVerb args, CodeGenerationConfig config)
+    {
+        PrepareDirectory(args);
+        GenerateEntities(args, config);
+        GenerateEntityForms(args, config);
+        GenerateOptionSets(args, config);
+        GenerateSdkMessages(args, config);
+        GenerateBoilerPlateFull(args, config);
+        GenerateEntityRefsFull(args, config);
+        GenerateBusinessProcessFlowsFull(args, config);
+        return true;
+    }
 
-    public void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    #region Private Members
+
+    private void GenerateBoilerPlateFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -50,12 +64,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         CreateLiquidTemplateFile(templateName, context, name, args);
     }
 
-    /// <summary>
-    ///     Generates TypeScript entities based on the provided code generation arguments and configuration.
-    /// </summary>
-    /// <param name="args">The code generation arguments.</param>
-    /// <param name="config">The code generation configuration.</param>
-    public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -75,7 +84,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         }
     }
 
-    public void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -92,7 +101,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         }
     }
 
-    public void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -103,12 +112,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         }
     }
 
-    /// <summary>
-    ///     Generates SDK messages for code generation.
-    /// </summary>
-    /// <param name="args">The code generation verb arguments.</param>
-    /// <param name="config">The code generation configuration.</param>
-    public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         // Check if the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -127,12 +131,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         CreateLiquidTemplateFile("D365SdkMessages.liquid", model, $"{FileNames.Typescript.FileNames.SdkMessageNames}", args);
     }
 
-    /// <summary>
-    ///     Generates option sets based on the provided arguments and configuration
-    /// </summary>
-    /// <param name="args">The code generation verb</param>
-    /// <param name="config">The code generation configuration</param>
-    public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -151,7 +150,7 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         CreateLiquidTemplateFile("D365OptionSets.liquid", model, $"{FileNames.Typescript.FileNames.OptionSetValues}", args);
     }
 
-    public void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -169,6 +168,9 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
             CreateLiquidTemplateFile("D365BusinessProcessFlow.liquid", model, $"{bpf.Item4}.bpf", args);
         }
     }
+
+    private void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) =>
+        throw new NotSupportedException("Custom API generation is not supported by the full TypeScript generator.");
 
     #endregion
 
@@ -231,11 +233,4 @@ public class TypescriptGeneratorWorkerFull(IMetadataService metadataService, IAn
         var model = TsLiquidTemplateModelFactory.CreateEntityFormModel(config.TypingPath, form, formname, formDetail.Value, entityMetadata, config, metadataService.RetrieveOrganizationLanguage());
         CreateLiquidTemplateFile("D365EntityForm.liquid", model, form, args);
     }
-
-    #region Not Supported
-
-    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) =>
-        throw new NotSupportedException("Custom API generation is not supported by the full TypeScript generator.");
-
-    #endregion
 }

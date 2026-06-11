@@ -6,9 +6,9 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using Spectre.Console;
 
-namespace dgt.power.codegeneration.Generators.Worker;
+namespace dgt.power.codegeneration.Generators.Strategy;
 
-public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
+public abstract class TypescriptGenerationStrategyBase(IAnsiConsole console)
 {
     protected IAnsiConsole Console { get; } = console;
 
@@ -21,7 +21,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     /// <param name="args">The code generation arguments, including target directory and folder configuration.</param>
     /// <param name="extension">Extension of the file</param>
     /// <param name="outputPath">Additional path in the output ts script folder</param>
-    public void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
+    protected void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
     {
         // Ensure that the template and args are not null
         Debug.Assert(content != null, $"{nameof(content)} {NotNull}");
@@ -46,7 +46,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
         file.Write(content);
     }
 
-    public void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
+    protected void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
     {
         // Ensure that the template and args are not null
         Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} {NotNull}");
@@ -55,7 +55,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 
         Console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
-        using var reader = new StreamReader(typeof(TypescriptGeneratorWorker).Assembly
+        using var reader = new StreamReader(typeof(TypescriptGenerationStrategyBase).Assembly
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
 
         var content = reader.ReadToEnd();
@@ -68,7 +68,7 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
 #pragma warning disable CA1822 - part of API
-    public void PrepareDirectory(CodeGenerationVerb args)
+    protected static void PrepareDirectory(CodeGenerationVerb args)
 #pragma warning restore CA1822
     {
         // Ensure that the arguments are not null
@@ -80,19 +80,22 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
 
         // Create the Typescript folder if it doesn't exist
         var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
-        if (!CreateDirectoryWhenNeeded(typescriptFolderPath)) {
-            // Delete all files and folders in the directory file
-            var directory = new DirectoryInfo(typescriptFolderPath);
-            // Delete files in ts folder
-            foreach (var file in directory.GetFiles())
-            {
-                file.Delete();
-            }
-            // Delete all subfolders
-            foreach (var dir in directory.GetDirectories())
-            {
-                dir.Delete(true);
-            }
+        if (CreateDirectoryWhenNeeded(typescriptFolderPath))
+        {
+            return;
+        }
+
+        // Delete all files and folders in the directory file
+        var directory = new DirectoryInfo(typescriptFolderPath);
+        // Delete files in ts folder
+        foreach (var file in directory.GetFiles())
+        {
+            file.Delete();
+        }
+        // Delete all subfolders
+        foreach (var dir in directory.GetDirectories())
+        {
+            dir.Delete(true);
         }
     }
 
@@ -104,11 +107,12 @@ public abstract class TypescriptGeneratorWorker(IAnsiConsole console)
     private static bool CreateDirectoryWhenNeeded(string? directoryPath)
     {
         Debug.Assert(directoryPath != null, $"{nameof(directoryPath)} {NotNull}");
-        if (!Directory.Exists(directoryPath))
+        if (Directory.Exists(directoryPath))
         {
-            Directory.CreateDirectory(directoryPath);
-            return true;
+            return false;
         }
-        return false;
+
+        Directory.CreateDirectory(directoryPath);
+        return true;
     }
 }

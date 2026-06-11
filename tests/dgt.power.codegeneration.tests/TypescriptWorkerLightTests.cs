@@ -3,10 +3,8 @@
 
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
-using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
-using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -14,16 +12,18 @@ using Microsoft.Xrm.Sdk.Metadata;
 namespace dgt.power.codegeneration.tests;
 
 [NotInParallel("Win_Shared_File_Issue")]
-public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWorker>
+public class TypescriptWorkerLightTests : CodeGenerationTestsBase
 {
     private readonly EntityMetadata _testTableMetadata;
+
+    protected override string ResourceDirectory => Path.Combine("Resources", "TypescriptWorker");
 
     public TypescriptWorkerLightTests()
     {
         _testTableMetadata = GetEntityMetadataResource("dgt_test_table");
     }
 
-    protected override WorkerTestContextBuilder<TypescriptWorker, CodeGenerationVerb> GetBuilder()
+    protected override CodeGenerationContextBuilder GetBuilder()
     {
         var organization = new Organization(Guid.NewGuid()) { LanguageCode = 1031 };
         return base.GetBuilder()
@@ -45,7 +45,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWork
             .WithData(GetTestTableMainForm())
             .Build();
 
-        await Assert.That(context.Execute(args)).IsTrue();
+        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -82,7 +82,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWork
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.Execute(args)).IsTrue();
+        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -111,7 +111,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase<TypescriptWork
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.Execute(args)).IsTrue();
+        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)

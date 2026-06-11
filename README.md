@@ -306,6 +306,61 @@ dgtp cg ./generated -c ./genconfig.json
 
 The JSON schema for the generation configuration is available at [`schemas/codegeneration`](schemas/codegeneration). The codegeneration runtime normalizes list-based selectors and filters (entities, forms, solutions, actions, custom APIs, SDK messages) into de-duplicated collection sets for reuse during generation.
 
+#### V2 config (recommended)
+
+V2 configs use a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produce separate, focused config files per output target.
+
+**.NET** — `genconfig.dotnet.json`:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/dotnet.schema.json",
+  "type": "dotnet",
+  "namespace": "Contoso.Dataverse.Model",
+  "target": "Modern",
+  "entities": ["account", "contact"],
+  "solutions": ["ContosoCore"],
+  "requests": ["WhoAmI", "contoso_ApproveOrder"],
+  "globalOptionSets": ["contoso_status"],
+  "include": {
+    "metadata": false
+  }
+}
+```
+
+**TypeScript** — `genconfig.typescript.json`:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
+  "type": "typescript",
+  "entities": ["account", "contact"],
+  "solutions": ["ContosoCore"],
+  "requests": ["WhoAmI", "contoso_ApproveOrder"],
+  "globalOptionSets": ["contoso_status"],
+  "xrmMockFormHelpers": true,
+  "onlyFormsFromSolutions": true
+}
+```
+
+#### V1 config (legacy)
+
+V1 configs use a single file for all output targets. They are auto-detected (no `"type"` field) and still supported but deprecated.
+
+```json
+{
+  "Entities": ["account", "contact"],
+  "Solutions": ["ContosoCore"],
+  "Actions": ["contoso_ApproveOrder"],
+  "GlobalOptionSets": ["contoso_status"],
+  "NameSpace": "Contoso.Dataverse.Model",
+  "TypescriptGeneratorVersion": "Light",
+  "SuppressMetaData": true
+}
+```
+
+> **Tip:** Run separate commands for each config file: `dgtp cg ./generated -c ./genconfig.dotnet.json` and `dgtp cg ./generated -c ./genconfig.typescript.json`.
+
 For TypeScript Light (TSL) generation validation in CI/test environments:
 
 | Environment variable | Purpose | Default |

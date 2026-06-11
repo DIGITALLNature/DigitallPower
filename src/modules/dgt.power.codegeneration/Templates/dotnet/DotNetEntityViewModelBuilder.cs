@@ -308,7 +308,7 @@ public class DotNetEntityViewModelBuilder
             .Where(IsReadableAttribute)
             .Where(IsSupportedOptionField)
             .OrderBy(a => a.LogicalName)
-            .Select(o => new OptionField(o, _config.Language == -1, _systemLanguage));
+            .Select(o => new OptionField(o, _config.Language == null, _systemLanguage));
     }
 
     private static bool HasSetter(AttributeMetadata attribute, bool editableReadOnlyProperties)
@@ -346,7 +346,7 @@ public class DotNetEntityViewModelBuilder
 
     private string GetLocalizedLabel(Label? label)
     {
-        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, _config.Language == -1, _systemLanguage);
+        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, _config.Language == null, _systemLanguage);
     }
 
     private static string PreventBadToken(string value)

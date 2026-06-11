@@ -48,9 +48,89 @@ CodeGenerationConfigBase (abstract, shared properties)
 - **Single config with `output` discriminated object** — rejected for same reason.
 - **Keep flat config, just rename** — rejected because it doesn't solve the irrelevant-properties problem.
 
+### TypeScript V2 config refinements
+
+After the initial V2 redesign (which focused on DotNet), the TypeScript config was refined:
+
+1. **Full generator mode removed from V2** — `TypeScriptCodeGenerationConfig` only targets the Light generator. Full mode is V1-only and deprecated.
+2. **Language property made nullable (`int?`)** — `null` means "use organization base language" (deterministic across users). `0` means user language. Any other LCID selects that specific language.
+
+## Generator architecture
+
+### Symmetrical public API
+
+The command layer injects two generator interfaces:
+
+```
+CodeGenerationCommand
+├── IDotNetGenerator       → Generate(verb, DotNetCodeGenerationConfig)
+└── ITypeScriptGenerator   → Generate(verb, TypeScriptCodeGenerationConfig)   [V2]
+                           → Generate(verb, CodeGenerationConfig)             [V1, obsolete]
+```
+
+Both interfaces expose only `Generate()` — all generation steps are private implementation details.
+
+### TypeScript strategy pattern
+
+`TypeScriptGenerator` (implements `ITypeScriptGenerator`) is a pure router that delegates to an `ITypescriptGenerationStrategy`:
+
+```
+ITypeScriptGenerator (public)
+└── TypeScriptGenerator (router)
+    ├── V2: always creates TypescriptLightGenerationStrategy
+    └── V1: switch on TypescriptGeneratorVersion
+        ├── Full → TypescriptFullGenerationStrategy
+        └── Light → TypescriptLightGenerationStrategy
+
+ITypescriptGenerationStrategy (internal)
+├── TypescriptFullGenerationStrategy   — V1 Full mode (deprecated)
+└── TypescriptLightGenerationStrategy  — V1 Light + V2 (has both Generate overloads)
+    └── extends TypescriptGenerationStrategyBase (shared: PrepareDirectory, CreateFile, CopyTemplateFileContent)
+```
+
+### Folder structure
+
+```
+Generators/
+├── Contracts/
+│   ├── IDotNetGenerator.cs               — public, single Generate()
+│   ├── IMetadataGenerator.cs             — public
+│   ├── ITypeScriptGenerator.cs           — public, V2 + V1 (obsolete) Generate()
+│   └── ITypescriptGenerationStrategy.cs  — internal, V1 Generate() only
+├── DotNetGenerator.cs
+├── MetadataGenerator.cs
+├── TypeScriptGenerator.cs                — pure router, no generation logic
+└── Strategy/
+    ├── TypescriptGenerationStrategyBase.cs  — abstract (CreateFile, PrepareDirectory)
+    ├── TypescriptFullGenerationStrategy.cs  — V1 Full mode
+    └── TypescriptLightGenerationStrategy.cs — V1 Light + V2
+```
+
+## Worker layer elimination
+
+The `Logic/` worker classes (`DotNetWorker`, `TypescriptWorker`, `MetadataWorker`) were removed entirely. They served as unnecessary intermediaries that re-read config from disk even though the `CodeGenerationCommand` had already parsed it.
+
+### Before
+```
+CodeGenerationCommand → reads config → Worker → re-reads config → Generator
+```
+
+### After
+```
+CodeGenerationCommand → reads config once → Generator.Generate(verb, config)
+```
+
+### Changes
+1. **Generator interfaces gained `Generate()` orchestration methods** — single entry points that call PrepareDirectory + all generation steps internally.
+2. **`CodeGenerationCommand`** injects generators directly (`IDotNetGenerator`, `ITypeScriptGenerator`) — only two dependencies.
+3. **Strategy pattern for TypeScript** — `TypeScriptGenerator` creates the appropriate `ITypescriptGenerationStrategy` (Full or Light) based on config, then delegates. No branching logic leaks outside.
+4. **Deleted**: `DotNetWorker.cs`, `TypescriptWorker.cs`, `MetadataWorker.cs` from `Logic/`.
+5. **Tests migrated** from `WorkerTestsBase<TWorker>` to a new `CodeGenerationTestsBase` with `CodeGenerationContextBuilder`/`CodeGenerationContext` that resolves generators from DI.
+
 ## Consequences
 
 - Legacy V1 configs still work via automatic mapping (with deprecation warning).
-- TypeScript workers still use legacy `CodeGenerationConfig` internally (deferred to TS refinement phase).
-- `MetadataWorker` is kept but uses `DotNetCodeGenerationConfig` — will be removed once fully absorbed.
-
+- TypeScript Light generator fully supports V2 `TypeScriptCodeGenerationConfig` via `ITypeScriptGenerator.Generate(verb, tsConfig)`.
+- TypeScript Full generator is V1-only; no V2 config path exists for it (intentional — Full mode is deprecated).
+- All generation step methods are private — interfaces expose only `Generate()`.
+- File names match type names (enforced convention in AGENTS.md).

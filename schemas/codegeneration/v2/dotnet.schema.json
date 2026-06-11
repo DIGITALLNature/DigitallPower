@@ -42,9 +42,9 @@
       "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities."
     },
     "language": {
-      "type": "integer",
-      "description": "Language code for label localization. 0 = user language (default), or an explicit LCID (e.g. 1033).",
-      "default": 0
+      "type": ["integer", "null"],
+      "description": "Language code for label localization. null = organization base language (default), or an explicit LCID (e.g. 1033). Defaults to the organization's base language to ensure deterministic output regardless of which user runs the generation.",
+      "default": null
     },
     "requests": {
       "type": "array",
@@ -116,4 +116,3 @@
   },
   "additionalProperties": false
 }
-
