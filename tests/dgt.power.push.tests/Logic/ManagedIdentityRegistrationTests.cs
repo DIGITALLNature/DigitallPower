@@ -62,7 +62,7 @@ public class ManagedIdentityRegistrationTests
         service.Create(assembly);
 
         // Act
-        processor.LinkManagedIdentity(assemblyId, ClientId, null);
+        processor.LinkManagedIdentityToAssembly(assemblyId, ClientId, null);
 
         // Assert - verify a managedidentity was created
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
@@ -98,7 +98,7 @@ public class ManagedIdentityRegistrationTests
         service.Create(existingMi);
 
         // Act
-        processor.LinkManagedIdentity(assemblyId, ClientId, null);
+        processor.LinkManagedIdentityToAssembly(assemblyId, ClientId, null);
 
         // Assert - no new identity created (still just 1)
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
@@ -124,7 +124,7 @@ public class ManagedIdentityRegistrationTests
         service.Create(assembly);
 
         // Act
-        processor.LinkManagedIdentity(assemblyId, ClientId, TenantId);
+        processor.LinkManagedIdentityToAssembly(assemblyId, ClientId, TenantId);
 
         // Assert - verify tenantid was set
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
@@ -145,7 +145,7 @@ public class ManagedIdentityRegistrationTests
         service.Create(assembly);
 
         // Act
-        processor.LinkManagedIdentity(assemblyId, ClientId, null);
+        processor.LinkManagedIdentityToAssembly(assemblyId, ClientId, null);
 
         // Assert - console output
         var output = console.Output;
