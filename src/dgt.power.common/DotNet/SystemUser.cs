@@ -20,6 +20,8 @@ namespace dgt.power.dataverse
     [EntityLogicalName("systemuser")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class SystemUser : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -7669,6 +7671,10 @@ namespace dgt.power.dataverse
                 public const string LkMsdynceBotcontentCreatedonbehalfby = "lk_msdynce_botcontent_createdonbehalfby";
                 public const string LkMsdynceBotcontentModifiedby = "lk_msdynce_botcontent_modifiedby";
                 public const string LkMsdynceBotcontentModifiedonbehalfby = "lk_msdynce_botcontent_modifiedonbehalfby";
+                public const string LkMsecCleanupCreatedby = "lk_msec_cleanup_createdby";
+                public const string LkMsecCleanupCreatedonbehalfby = "lk_msec_cleanup_createdonbehalfby";
+                public const string LkMsecCleanupModifiedby = "lk_msec_cleanup_modifiedby";
+                public const string LkMsecCleanupModifiedonbehalfby = "lk_msec_cleanup_modifiedonbehalfby";
                 public const string LkMspcatCatalogsubmissionfilesCreatedby = "lk_mspcat_catalogsubmissionfiles_createdby";
                 public const string LkMspcatCatalogsubmissionfilesCreatedonbehalfby = "lk_mspcat_catalogsubmissionfiles_createdonbehalfby";
                 public const string LkMspcatCatalogsubmissionfilesModifiedby = "lk_mspcat_catalogsubmissionfiles_modifiedby";
@@ -7681,6 +7687,22 @@ namespace dgt.power.dataverse
                 public const string LkNavigationsettingCreatedonbehalfby = "lk_navigationsetting_createdonbehalfby";
                 public const string LkNavigationsettingModifiedby = "lk_navigationsetting_modifiedby";
                 public const string LkNavigationsettingModifiedonbehalfby = "lk_navigationsetting_modifiedonbehalfby";
+                public const string LkNewEventaggregatorCreatedby = "lk_new_eventaggregator_createdby";
+                public const string LkNewEventaggregatorCreatedonbehalfby = "lk_new_eventaggregator_createdonbehalfby";
+                public const string LkNewEventaggregatorModifiedby = "lk_new_eventaggregator_modifiedby";
+                public const string LkNewEventaggregatorModifiedonbehalfby = "lk_new_eventaggregator_modifiedonbehalfby";
+                public const string LkNewEventaggregatorscansCreatedby = "lk_new_eventaggregatorscans_createdby";
+                public const string LkNewEventaggregatorscansCreatedonbehalfby = "lk_new_eventaggregatorscans_createdonbehalfby";
+                public const string LkNewEventaggregatorscansModifiedby = "lk_new_eventaggregatorscans_modifiedby";
+                public const string LkNewEventaggregatorscansModifiedonbehalfby = "lk_new_eventaggregatorscans_modifiedonbehalfby";
+                public const string LkNewGaurdianfullscanCreatedby = "lk_new_gaurdianfullscan_createdby";
+                public const string LkNewGaurdianfullscanCreatedonbehalfby = "lk_new_gaurdianfullscan_createdonbehalfby";
+                public const string LkNewGaurdianfullscanModifiedby = "lk_new_gaurdianfullscan_modifiedby";
+                public const string LkNewGaurdianfullscanModifiedonbehalfby = "lk_new_gaurdianfullscan_modifiedonbehalfby";
+                public const string LkNewGaurdianhealthchecksCreatedby = "lk_new_gaurdianhealthchecks_createdby";
+                public const string LkNewGaurdianhealthchecksCreatedonbehalfby = "lk_new_gaurdianhealthchecks_createdonbehalfby";
+                public const string LkNewGaurdianhealthchecksModifiedby = "lk_new_gaurdianhealthchecks_modifiedby";
+                public const string LkNewGaurdianhealthchecksModifiedonbehalfby = "lk_new_gaurdianhealthchecks_modifiedonbehalfby";
                 public const string LkNewprocessCreatedby = "lk_newprocess_createdby";
                 public const string LkNewprocessCreatedonbehalfby = "lk_newprocess_createdonbehalfby";
                 public const string LkNewprocessModifiedby = "lk_newprocess_modifiedby";
@@ -8932,8 +8954,13 @@ namespace dgt.power.dataverse
                 public const string UserMsdynSolutionhealthruleargument = "user_msdyn_solutionhealthruleargument";
                 public const string UserMsdynVirtualtablecolumncandidate = "user_msdyn_virtualtablecolumncandidate";
                 public const string UserMsdynceBotcontent = "user_msdynce_botcontent";
+                public const string UserMsecCleanup = "user_msec_cleanup";
                 public const string UserMspcatCatalogsubmissionfiles = "user_mspcat_catalogsubmissionfiles";
                 public const string UserMspcatPackagestore = "user_mspcat_packagestore";
+                public const string UserNewEventaggregator = "user_new_eventaggregator";
+                public const string UserNewEventaggregatorscans = "user_new_eventaggregatorscans";
+                public const string UserNewGaurdianfullscan = "user_new_gaurdianfullscan";
+                public const string UserNewGaurdianhealthchecks = "user_new_gaurdianhealthchecks";
                 public const string UserNlsqregistration = "user_nlsqregistration";
                 public const string UserOfficedocument = "user_officedocument";
                 public const string UserOwnerPostfollows = "user_owner_postfollows";
@@ -9087,8 +9114,9 @@ namespace dgt.power.dataverse
             {
                 return this;
             }
-                var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+
+            var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
             {
                 attr.Add(attrName, this[attrName]);
             }

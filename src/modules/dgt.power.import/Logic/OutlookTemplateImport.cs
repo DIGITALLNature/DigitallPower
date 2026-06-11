@@ -2,10 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using dgt.power.common;
 using dgt.power.common.Extensions;
-using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
@@ -20,6 +20,7 @@ using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.import.Logic;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class OutlookTemplateImport(
     ITracer tracer,
     IOrganizationService connection,

@@ -117,8 +117,10 @@ public class ExportCarrierInfo(
         return Tracer.End(this, true);
     }
 
+#pragma warning disable S107
     private List<CarrierRecord> RetrieveCarriers(string entityName, string idField, string referenceField,
         string versionField, string solutionIdField, string uniqueNameField, string friendlyNameField, string orderField)
+#pragma warning restore S107
     {
         var query = new QueryExpression(entityName)
         {

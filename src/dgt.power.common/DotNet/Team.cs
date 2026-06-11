@@ -20,6 +20,8 @@ namespace dgt.power.dataverse
     [EntityLogicalName("team")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
     public partial class Team : Entity, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region ctor
@@ -1239,8 +1241,13 @@ namespace dgt.power.dataverse
                 public const string TeamMsdynSolutionhealthruleargument = "team_msdyn_solutionhealthruleargument";
                 public const string TeamMsdynVirtualtablecolumncandidate = "team_msdyn_virtualtablecolumncandidate";
                 public const string TeamMsdynceBotcontent = "team_msdynce_botcontent";
+                public const string TeamMsecCleanup = "team_msec_cleanup";
                 public const string TeamMspcatCatalogsubmissionfiles = "team_mspcat_catalogsubmissionfiles";
                 public const string TeamMspcatPackagestore = "team_mspcat_packagestore";
+                public const string TeamNewEventaggregator = "team_new_eventaggregator";
+                public const string TeamNewEventaggregatorscans = "team_new_eventaggregatorscans";
+                public const string TeamNewGaurdianfullscan = "team_new_gaurdianfullscan";
+                public const string TeamNewGaurdianhealthchecks = "team_new_gaurdianhealthchecks";
                 public const string TeamNlsqregistration = "team_nlsqregistration";
                 public const string TeamOfficedocument = "team_officedocument";
                 public const string TeamPdfsetting = "team_pdfsetting";
@@ -1383,8 +1390,9 @@ namespace dgt.power.dataverse
             {
                 return this;
             }
-                var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => ((AttributeLogicalNameAttribute) GetType().GetProperty(changedProperty)!.GetCustomAttribute(typeof(AttributeLogicalNameAttribute))!).LogicalName).Where(attrName => Contains(attrName)))
+
+            var attr = new AttributeCollection();
+            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
             {
                 attr.Add(attrName, this[attrName]);
             }
