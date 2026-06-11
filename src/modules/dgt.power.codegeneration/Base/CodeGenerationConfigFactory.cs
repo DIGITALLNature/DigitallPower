@@ -19,7 +19,8 @@ public static class CodeGenerationConfigFactory
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        AllowOutOfOrderMetadataProperties = true
     };
 
     /// <summary>
