@@ -22,7 +22,7 @@ public class AssemblyProcessorMigrationTests
     public void Setup()
     {
         _service = new FakeOrganizationServiceAsync();
-        _service.AddRequests([new AddSolutionComponentExecutor()]);
+        _service.AddRequests(new AddSolutionComponentExecutor());
         _service.AddDefaultRequests();
         _console = new TestConsole();
         _processor = new AssemblyProcessor(_service, _console);
@@ -32,6 +32,7 @@ public class AssemblyProcessorMigrationTests
     public void Teardown()
     {
         _processor.Dispose();
+        _console.Dispose();
     }
 
     #region MigratePluginSteps
@@ -353,9 +354,8 @@ public class AssemblyProcessorMigrationTests
             PluginTypes = { new PluginType { Name = "NoApi", TypeName = "MyNamespace.NoApi", FriendlyName = "NoApi", Id = newTypeId } }
         };
 
-        // Act & Assert - should not throw
+        // Act - should not throw
         _processor.MigrateCustomApis(outdatedAssemblies, newAssembly);
-        await Assert.That(true).IsTrue();
     }
 
     #endregion
