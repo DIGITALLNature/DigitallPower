@@ -208,7 +208,6 @@ public class CodeGenerationConfig
             OnlyFormsFromSolutions = OnlyFormsFromSolutions,
             Include = new TypeScriptInclude
             {
-                Options = !SuppressOptions,
                 SdkMessages = !SuppressSdkMessages
             },
             Forms = new HashSet<string>(Forms)
