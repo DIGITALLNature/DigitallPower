@@ -45,7 +45,7 @@ public class ExportCarrierInfo(
             LogicalName = Ec4UCarrierEntityName
         }, out _);
 
-        return (isSuccessfulDgt || isSuccessfulEc4U)
+        return isSuccessfulDgt || isSuccessfulEc4U
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }

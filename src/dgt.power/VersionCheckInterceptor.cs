@@ -22,13 +22,12 @@ public class VersionCheckInterceptor(
 {
     private const string FileName = "last-updated.json";
     private const int CheckBarrierInDays = 3;
-    private readonly IAnsiConsole _console = console;
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
         if (TelemetryConfig.IsCi)
         {
-            _console.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
+            console.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
             return;
         }
 
@@ -61,9 +60,9 @@ public class VersionCheckInterceptor(
         var remoteVersion = lastPackage.Identity.Version.Version;
         if (remoteVersion > localPackageVersion)
         {
-            _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
-            _console.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
-            _console.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
+            console.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
+            console.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
         }
     }
 

@@ -15,8 +15,7 @@ public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
 {
     protected override CommandTestContext<BulkDeleteExport, ExportVerb> GetContext() =>
         GetBuilder()
-            .WithData(new Entity[]
-            {
+            .WithData([
                 new AsyncOperation(Guid.NewGuid())
                 {
                     Name = "Analysis Results Cleanup Job",
@@ -35,7 +34,7 @@ public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
                     Data =
                         "<string>&lt;fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" &gt;&lt;entity name=\"testentity\" &gt;&lt;attribute name=\"name\" /&gt;&lt;/entity&gt;&lt;/fetch&gt;</string>"
                 }
-            }).Build();
+            ]).Build();
 
     [Test]
     public async Task ShouldGetPlainBulkDeleteExport()

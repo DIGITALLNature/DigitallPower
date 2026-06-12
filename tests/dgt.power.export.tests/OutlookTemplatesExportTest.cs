@@ -14,8 +14,7 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
 {
     protected override CommandTestContext<OutlookTemplateExport, ExportVerb> GetContext() =>
         GetBuilder()
-            .WithData(new[]
-                {
+            .WithData([
                     new SavedQuery(Guid.NewGuid())
                     {
                         Name = "Disabled Outlook Template",
@@ -32,7 +31,7 @@ public class OutlookTemplatesExportTest : ExportTestBase<OutlookTemplateExport>
                             "<fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" ><entity name=\"testentity\" ><attribute name=\"name\" /><order attribute=\"name\" descending=\"false\" /></entity></fetch>",
                         IsDefault = false
                     }
-                }
+                ]
             )
             .Build();
 

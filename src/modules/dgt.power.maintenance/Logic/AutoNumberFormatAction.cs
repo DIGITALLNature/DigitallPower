@@ -33,7 +33,7 @@ public sealed class AutoNumberFormatAction(
         }
 
         //anything to do?
-        if (!autoNumberFormats.Any())
+        if (autoNumberFormats.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

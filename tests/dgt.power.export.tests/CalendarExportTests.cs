@@ -42,8 +42,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 ReferencedEntity = CalendarRule.EntityLogicalName,
                 ReferencedAttribute = CalendarRule.LogicalNames.CalendarId
             })
-            .WithData(new Entity[]
-            {
+            .WithData([
                 calendar1,
                 calendar2,
                 innerCalendar,
@@ -116,7 +115,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
                     EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
                 }
-            }).Build();
+            ]).Build();
     }
 
     [Test]

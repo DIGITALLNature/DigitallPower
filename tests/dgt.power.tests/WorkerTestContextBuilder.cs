@@ -25,11 +25,11 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
     private IServiceCollection _serviceCollection = new TestServiceCollection();
-    private List<Entity> _data = new();
-    private List<EntityMetadata> _metadata = new();
-    private readonly List<RelationshipMetadataBase> _relationships = new();
-    private readonly List<IOrganizationRequestFake> _requestFakes = new();
-    private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
+    private List<Entity> _data = [];
+    private List<EntityMetadata> _metadata = [];
+    private readonly List<RelationshipMetadataBase> _relationships = [];
+    private readonly List<IOrganizationRequestFake> _requestFakes = [];
+    private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
     private IAnsiConsole? _console;
 
@@ -140,7 +140,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
         return this;
     }
 
-    public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithData(Entity data) => WithData(new[] {data});
+    public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithData(Entity data) => WithData([data]);
 
     public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithData(
         Func<FakeOrganizationServiceAsync, IEnumerable<Entity>> dataPreparer)
@@ -160,7 +160,7 @@ public class WorkerTestContextBuilder<TWorker, TWorkerSettings>
     }
 
     public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithMetaData(EntityMetadata metadata) =>
-        WithMetaData(new[] {metadata});
+        WithMetaData([metadata]);
 
     public WorkerTestContextBuilder<TWorker, TWorkerSettings> WithMetaData(IEnumerable<EntityMetadata> metadata)
     {

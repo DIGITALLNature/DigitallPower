@@ -162,7 +162,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         query.Criteria.AddFilter(filter);
         filter.AddCondition(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition);
         filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessRule);
-        filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tableNames.Select(t => (object)t).ToArray());
+        filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tableNames.Select(object (t) => t).ToArray());
 
         tracer?.Log($"Loading business rules ({tablesString}): executing query", TraceEventType.Verbose);
 

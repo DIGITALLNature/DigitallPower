@@ -34,7 +34,7 @@ public sealed class UserRoleImport(
             return Tracer.NotConfigured(this);
         }
 
-        if (!userRoles.Any())
+        if (userRoles.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

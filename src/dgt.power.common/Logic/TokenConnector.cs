@@ -34,7 +34,7 @@ internal sealed class TokenConnector : IConnector
         _application.UserTokenCache.SetAfterAccess(AfterAccessNotification);
 
         _uri = new Uri(identity.ConnectionString);
-        _scopes = new [] { $"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default" };
+        _scopes = [$"{_uri.Scheme}{Uri.SchemeDelimiter}{_uri.Authority}/.default"];
     }
 
     public async Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()

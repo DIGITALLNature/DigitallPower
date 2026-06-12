@@ -19,8 +19,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
     {
         var (draftRule, activeRule, draftItem1, draftItem2, activeItem1, team, user, queue) = GetData();
         await Assert.That(GetBuilder()
-            .WithData(new Entity[]
-                {
+            .WithData([
                     draftRule,
                     draftItem1,
                     draftItem2,
@@ -29,7 +28,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
                     team,
                     queue,
                     user
-                }
+                ]
             ).Build()
             .Execute(new ExportVerb
                 {
@@ -132,8 +131,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
     {
         var (draftRule, activeRule, draftItem1, draftItem2, activeItem1, team, user, queue) = GetData();
         await Assert.That(GetBuilder()
-            .WithData(new Entity[]
-                {
+            .WithData([
                     draftRule,
                     draftItem1,
                     draftItem2,
@@ -142,7 +140,7 @@ public class RoutingRuleConfigExportTest : ExportTestBase<RoutingRuleConfigExpor
                     team,
                     queue,
                     user
-                }
+                ]
             ).Build().Execute(new ExportVerb
             {
                 FileName = string.Empty,

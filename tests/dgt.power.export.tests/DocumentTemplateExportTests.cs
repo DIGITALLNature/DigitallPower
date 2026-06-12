@@ -17,8 +17,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
     protected override CommandTestContext<DocumentTemplateExport, ExportVerb> GetContext()
     {
         return GetBuilder()
-            .WithData(new[]
-            {
+            .WithData([
                 new DocumentTemplate(Guid.NewGuid())
                 {
                     Name = "AccountExcel",
@@ -59,7 +58,7 @@ public class DocumentTemplateExportTests : ExportTestBase<DocumentTemplateExport
                     Status = false, //inverted logic, don't ask why
                     AssociatedEntityTypeCode = Contact.EntityLogicalName
                 }
-            })
+            ])
             .Build();
     }
 

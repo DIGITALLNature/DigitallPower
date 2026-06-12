@@ -36,7 +36,7 @@ public sealed class CalendarImport(
         }
 
         //anything to do?
-        if (!calendars.Any())
+        if (calendars.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

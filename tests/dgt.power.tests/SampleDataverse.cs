@@ -11,14 +11,14 @@ namespace dgt.power.tests;
 
 public class SampleDataverse
 {
-    internal readonly BusinessUnit Devlab = new BusinessUnit(Guid.NewGuid())
+    internal readonly BusinessUnit Devlab = new(Guid.NewGuid())
     {
         Name = "devlab",
         IsDisabled = false,
         ParentBusinessUnitId = null
     };
 
-    internal readonly SystemUser User1 = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser User1 = new(Guid.NewGuid())
     {
         DomainName = "user.one@devlab.onmicrosoft.com",
         FirstName = "User",
@@ -30,7 +30,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser User2 = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser User2 = new(Guid.NewGuid())
     {
         DomainName = "user.two@devlab.onmicrosoft.com",
         FirstName = "User",
@@ -42,7 +42,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser User3 = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser User3 = new(Guid.NewGuid())
     {
         DomainName = "user.three@devlab.onmicrosoft.com",
         FirstName = "User",
@@ -54,7 +54,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser User4 = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser User4 = new(Guid.NewGuid())
     {
         DomainName = "user.four@devlab.onmicrosoft.com",
         FirstName = "User",
@@ -66,7 +66,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser User5 = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser User5 = new(Guid.NewGuid())
     {
         DomainName = "user.five@devlab.onmicrosoft.com",
         FirstName = "User",
@@ -78,7 +78,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser ProcessOwner = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser ProcessOwner = new(Guid.NewGuid())
     {
         DomainName = "process.owner@devlab.onmicrosoft.com",
         FirstName = "Process",
@@ -90,7 +90,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser TechOwner = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser TechOwner = new(Guid.NewGuid())
     {
         DomainName = "tech.owner@devlab.onmicrosoft.com",
         FirstName = "Tech.",
@@ -102,7 +102,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser AssigneeOwner = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser AssigneeOwner = new(Guid.NewGuid())
     {
         DomainName = "assignee.owner@devlab.onmicrosoft.com",
         FirstName = "Assignee",
@@ -114,7 +114,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser PipelineUser = new SystemUser(Guid.Parse("f4e8821a-97d2-4938-8b73-8744431e59c8"))
+    internal readonly SystemUser PipelineUser = new(Guid.Parse("f4e8821a-97d2-4938-8b73-8744431e59c8"))
     {
         DomainName = "pipeline.user@devlab.onmicrosoft.com",
         FirstName = "Pipeline",
@@ -126,7 +126,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser System = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser System = new(Guid.NewGuid())
     {
         DomainName = null,
         FirstName = null,
@@ -138,7 +138,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SystemUser TechUser = new SystemUser(Guid.NewGuid())
+    internal readonly SystemUser TechUser = new(Guid.NewGuid())
     {
         DomainName = "tech.user@domain.suffix",
         FirstName = "Tech.",
@@ -150,17 +150,17 @@ public class SampleDataverse
         }
     };
 
-    internal readonly Role SystemAdministrator = new Role(Guid.Parse("7f65483f-0800-4ebc-9c63-d8b27cd75328"))
+    internal readonly Role SystemAdministrator = new(Guid.Parse("7f65483f-0800-4ebc-9c63-d8b27cd75328"))
     {
         Name = "System Administrator"
     };
 
-    internal readonly Role SalesEnterpriseAppAccess = new Role(Guid.Parse("82d6a737-2fc8-47e9-9cff-c079ecb524c8"))
+    internal readonly Role SalesEnterpriseAppAccess = new(Guid.Parse("82d6a737-2fc8-47e9-9cff-c079ecb524c8"))
     {
         Name = "Sales, Enterprise app access"
     };
 
-    internal readonly Workflow DisabledWorkflow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow DisabledWorkflow = new(Guid.NewGuid())
     {
         Name = "Disabled Workflow",
         UniqueName = "disabled_workflow",
@@ -171,7 +171,7 @@ public class SampleDataverse
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
     };
 
-    internal readonly Workflow ActiveWorkflow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow ActiveWorkflow = new(Guid.NewGuid())
     {
         Name = "Active Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -181,7 +181,7 @@ public class SampleDataverse
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
     };
 
-    internal readonly Workflow OwnerWorkflow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow OwnerWorkflow = new(Guid.NewGuid())
     {
         Name = "Owner Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -190,7 +190,7 @@ public class SampleDataverse
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
     };
 
-    internal readonly Workflow SystemOwnedWorkflow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow SystemOwnedWorkflow = new(Guid.NewGuid())
     {
         Name = "System Owned Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -199,7 +199,7 @@ public class SampleDataverse
         StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated)
     };
 
-    internal readonly Workflow WhitelistedOwnedWorkflow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow WhitelistedOwnedWorkflow = new(Guid.NewGuid())
     {
         Name = "Whitelisted Owned Workflow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -212,7 +212,7 @@ public class SampleDataverse
         }.ToEntityReference()
     };
 
-    internal readonly Workflow AccountBusinessRule = new Workflow(Guid.NewGuid())
+    internal readonly Workflow AccountBusinessRule = new(Guid.NewGuid())
     {
         Name = "Account Business Rule",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -223,7 +223,7 @@ public class SampleDataverse
         PrimaryEntity = "account"
     };
 
-    internal readonly Workflow ContactBusinessRule = new Workflow(Guid.NewGuid())
+    internal readonly Workflow ContactBusinessRule = new(Guid.NewGuid())
     {
         Name = "Contact Business Rule",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -234,7 +234,7 @@ public class SampleDataverse
         PrimaryEntity = "contact"
     };
 
-    internal readonly Workflow SolutionModernFlow = new Workflow(Guid.NewGuid())
+    internal readonly Workflow SolutionModernFlow = new(Guid.NewGuid())
     {
         Name = "Solution Modern Flow",
         Type = new OptionSetValue(Workflow.Options.Type.Definition),
@@ -244,14 +244,14 @@ public class SampleDataverse
         OwnerId = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid())
     };
 
-    internal readonly AsyncOperation EntityKeyIndexCreation = new AsyncOperation(Guid.NewGuid())
+    internal readonly AsyncOperation EntityKeyIndexCreation = new(Guid.NewGuid())
     {
         Name = "Entity Key Index Creation",
         OperationType = new OptionSetValue(AsyncOperation.Options.OperationType.EntityKeyIndexCreation),
         StatusCode = new OptionSetValue(AsyncOperation.Options.StatusCode.InProgress)
     };
 
-    internal readonly AsyncOperation BulkDelete = new AsyncOperation(Guid.NewGuid())
+    internal readonly AsyncOperation BulkDelete = new(Guid.NewGuid())
     {
         Name = "Analysis Results Cleanup Job",
         OperationType = new OptionSetValue(AsyncOperation.Options.OperationType.BulkDelete),
@@ -260,7 +260,7 @@ public class SampleDataverse
         Data = "<string>&lt;fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" &gt;&lt;entity name=\"testentity\" &gt;&lt;attribute name=\"name\" /&gt;&lt;/entity&gt;&lt;/fetch&gt;</string>"
     };
 
-    internal readonly AsyncOperation OldBulkDelete = new AsyncOperation(Guid.NewGuid())
+    internal readonly AsyncOperation OldBulkDelete = new(Guid.NewGuid())
     {
         Name = "Old Bulk Delete",
         OperationType = new OptionSetValue(AsyncOperation.Options.OperationType.BulkDelete),
@@ -269,7 +269,7 @@ public class SampleDataverse
         Data = "<string>&lt;fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" &gt;&lt;entity name=\"testentity\" &gt;&lt;attribute name=\"name\" /&gt;&lt;/entity&gt;&lt;/fetch&gt;</string>"
     };
 
-    internal readonly TestEntity Entity1 = new TestEntity(Guid.NewGuid())
+    internal readonly TestEntity Entity1 = new(Guid.NewGuid())
     {
         Name = "Entity 1",
         Email = "mail@entity1.com",
@@ -277,7 +277,7 @@ public class SampleDataverse
         Webpage = "https://www.entity1.com"
     };
 
-    internal readonly TestEntity Entity2 = new TestEntity(Guid.NewGuid())
+    internal readonly TestEntity Entity2 = new(Guid.NewGuid())
     {
         Name = "Entity 2",
         Email = "mail@entity2.com",
@@ -285,7 +285,7 @@ public class SampleDataverse
         Webpage = "https://www.entity2.com"
     };
 
-    internal readonly TestEntity Entity3 = new TestEntity(Guid.NewGuid())
+    internal readonly TestEntity Entity3 = new(Guid.NewGuid())
     {
         Name = "Entity 3",
         Email = "mail@entity3.com",
@@ -293,7 +293,7 @@ public class SampleDataverse
         Webpage = "https://www.entity3.com"
     };
 
-    internal readonly TestEntity Entity4 = new TestEntity(Guid.NewGuid())
+    internal readonly TestEntity Entity4 = new(Guid.NewGuid())
     {
         Name = "Entity 4",
         Email = "mail@entity4.com",
@@ -301,7 +301,7 @@ public class SampleDataverse
         Webpage = "https://www.entity4.com"
     };
 
-    internal readonly DuplicateRule WrongPhoneRule = new DuplicateRule(Guid.Parse("e4e8866a-97c2-4938-8b71-8743731e59c8"))
+    internal readonly DuplicateRule WrongPhoneRule = new(Guid.Parse("e4e8866a-97c2-4938-8b71-8743731e59c8"))
     {
         Name = "TestEntities with the same phone number",
         BaseEntityName = "testentity",
@@ -315,7 +315,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly DuplicateRuleCondition WrongPhoneRuleCondition = new DuplicateRuleCondition(Guid.Parse("2e9af82e-2200-e911-a96e-000d3a3a75a1"))
+    internal readonly DuplicateRuleCondition WrongPhoneRuleCondition = new(Guid.Parse("2e9af82e-2200-e911-a96e-000d3a3a75a1"))
     {
         BaseAttributeName = "phone",
         MatchingAttributeName = "email",
@@ -323,7 +323,7 @@ public class SampleDataverse
         OperatorCode = new OptionSetValue(DuplicateRuleCondition.Options.OperatorCode.ExactMatch)
     };
 
-    internal readonly DuplicateRule DisabledEmailRule = new DuplicateRule(Guid.Parse("4e396448-6fb4-4dab-9ace-af6aef4f0977"))
+    internal readonly DuplicateRule DisabledEmailRule = new(Guid.Parse("4e396448-6fb4-4dab-9ace-af6aef4f0977"))
     {
         Name = "TestEntities is disable",
         BaseEntityName = "testentity",
@@ -332,7 +332,7 @@ public class SampleDataverse
         ExcludeInactiveRecords = false
     };
 
-    internal readonly DuplicateRuleCondition DisabledEmailRuleCondition = new DuplicateRuleCondition(Guid.Parse("359af82e-2200-e911-a96e-000d3a3a75a1"))
+    internal readonly DuplicateRuleCondition DisabledEmailRuleCondition = new(Guid.Parse("359af82e-2200-e911-a96e-000d3a3a75a1"))
     {
         BaseAttributeName = "email",
         MatchingAttributeName = "email",
@@ -340,7 +340,7 @@ public class SampleDataverse
         OperatorCode = new OptionSetValue(DuplicateRuleCondition.Options.OperatorCode.ExactMatch)
     };
 
-    internal readonly DuplicateRule OldDescriptionRule = new DuplicateRule(Guid.NewGuid())
+    internal readonly DuplicateRule OldDescriptionRule = new(Guid.NewGuid())
     {
         Name = "TestEntities to delete",
         BaseEntityName = "testentity",
@@ -354,7 +354,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SavedQuery DisabledOutlookTemplate = new SavedQuery(Guid.NewGuid())
+    internal readonly SavedQuery DisabledOutlookTemplate = new(Guid.NewGuid())
     {
         Name = "Disabled Outlook Template",
         QueryType = SavedQueryQueryType.OutlookTemplate,
@@ -362,7 +362,7 @@ public class SampleDataverse
         IsDefault = true
     };
 
-    internal readonly SavedQuery OutdatedOutlookTemplate = new SavedQuery(Guid.NewGuid())
+    internal readonly SavedQuery OutdatedOutlookTemplate = new(Guid.NewGuid())
     {
         Name = "Outdated Outlook Template",
         QueryType = SavedQueryQueryType.OutlookTemplate,
@@ -370,7 +370,7 @@ public class SampleDataverse
         IsDefault = false
     };
 
-    internal readonly SdkMessageProcessingStep Step1 = new SdkMessageProcessingStep(Guid.NewGuid())
+    internal readonly SdkMessageProcessingStep Step1 = new(Guid.NewGuid())
     {
         Name = "ec4u.Plugin.Step1",
         Attributes =
@@ -380,12 +380,12 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SdkMessageProcessingStepSecureConfig SecureConfig = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid())
+    internal readonly SdkMessageProcessingStepSecureConfig SecureConfig = new(Guid.NewGuid())
     {
         SecureConfig = "secure-config"
     };
 
-    internal readonly SdkMessageProcessingStep Step2 = new SdkMessageProcessingStep(Guid.NewGuid())
+    internal readonly SdkMessageProcessingStep Step2 = new(Guid.NewGuid())
     {
         Name = "Digitall.APower.Plugin.Step2",
         Attributes =
@@ -395,7 +395,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SdkMessageProcessingStep Step3 = new SdkMessageProcessingStep(Guid.NewGuid())
+    internal readonly SdkMessageProcessingStep Step3 = new(Guid.NewGuid())
     {
         Name = "Digitall.APower.Plugin.Step3",
         Attributes =
@@ -405,7 +405,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly SdkMessageProcessingStep Step4 = new SdkMessageProcessingStep(Guid.NewGuid())
+    internal readonly SdkMessageProcessingStep Step4 = new(Guid.NewGuid())
     {
         Name = "Digitall.APower.Plugin.Step4",
         Attributes =
@@ -415,7 +415,7 @@ public class SampleDataverse
         }
     };
 
-    internal readonly TeamTemplate AccessTeam1 = new TeamTemplate(Guid.NewGuid())
+    internal readonly TeamTemplate AccessTeam1 = new(Guid.NewGuid())
     {
         TeamTemplateName = "Access Team 1",
         Description = "Access Team 1",
@@ -423,7 +423,7 @@ public class SampleDataverse
         ObjectTypeCode = 10000
     };
 
-    internal readonly TeamTemplate AccessTeam2 = new TeamTemplate(Guid.NewGuid())
+    internal readonly TeamTemplate AccessTeam2 = new(Guid.NewGuid())
     {
         TeamTemplateName = "Access Team 2",
         Description = "Access Team 2",
@@ -431,7 +431,7 @@ public class SampleDataverse
         ObjectTypeCode = 10000
     };
 
-    internal readonly Queue Queue1 = new Queue(Guid.Parse("469005c9-ca23-4d53-a1ae-f909c7863f6b"))
+    internal readonly Queue Queue1 = new(Guid.Parse("469005c9-ca23-4d53-a1ae-f909c7863f6b"))
     {
         Name = "Queue 1",
         Description = "Queue 1",
@@ -441,7 +441,7 @@ public class SampleDataverse
         QueueViewType = new OptionSetValue(Queue.Options.QueueViewType.Public)
     };
 
-    internal readonly Queue Queue2 = new Queue(Guid.NewGuid())
+    internal readonly Queue Queue2 = new(Guid.NewGuid())
     {
         Name = "Queue 2",
         Description = "Queue 2",
@@ -451,7 +451,7 @@ public class SampleDataverse
         QueueViewType = new OptionSetValue(Queue.Options.QueueViewType.Public)
     };
 
-    internal readonly Queue Queue3 = new Queue(Guid.NewGuid())
+    internal readonly Queue Queue3 = new(Guid.NewGuid())
     {
         Name = "Queue 3",
         Description = "Queue 3",
@@ -461,7 +461,7 @@ public class SampleDataverse
         QueueViewType = new OptionSetValue(Queue.Options.QueueViewType.Private)
     };
 
-    internal readonly Queue QueueSystem = new Queue(Guid.NewGuid())
+    internal readonly Queue QueueSystem = new(Guid.NewGuid())
     {
         Name = "<Queue System>",
         Description = "Queue System",
@@ -471,7 +471,7 @@ public class SampleDataverse
         QueueViewType = new OptionSetValue(Queue.Options.QueueViewType.Private)
     };
 
-    internal readonly ImportJob ImportJob = new ImportJob(Guid.Parse("e5ef2e83-12a9-4b2b-af19-0bf0e56d5da7"))
+    internal readonly ImportJob ImportJob = new(Guid.Parse("e5ef2e83-12a9-4b2b-af19-0bf0e56d5da7"))
     {
         Name = "ImportJob",
         SolutionName = "xunit_solution",
@@ -479,7 +479,7 @@ public class SampleDataverse
         OperationContext = "Upgrade"
     };
 
-    internal readonly DocumentTemplate AccountExcel = new DocumentTemplate(Guid.NewGuid())
+    internal readonly DocumentTemplate AccountExcel = new(Guid.NewGuid())
     {
         Name = "AccountExcel",
         DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
@@ -490,7 +490,7 @@ public class SampleDataverse
         AssociatedEntityTypeCode = "account"
     };
 
-    internal readonly DocumentTemplate ContactExcel = new DocumentTemplate(Guid.NewGuid())
+    internal readonly DocumentTemplate ContactExcel = new(Guid.NewGuid())
     {
         Name = "ContactExcel",
         DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
@@ -501,7 +501,7 @@ public class SampleDataverse
         AssociatedEntityTypeCode = "contact"
     };
 
-    internal readonly DocumentTemplate AccountWord = new DocumentTemplate(Guid.Parse("ecf388de-1033-4c7c-93f3-0803b16c09c7"))
+    internal readonly DocumentTemplate AccountWord = new(Guid.Parse("ecf388de-1033-4c7c-93f3-0803b16c09c7"))
     {
         Name = "AccountWord",
         DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
@@ -512,7 +512,7 @@ public class SampleDataverse
         AssociatedEntityTypeCode = "account"
     };
 
-    internal readonly DocumentTemplate ContactWord = new DocumentTemplate(Guid.Parse("d1004e38-1033-461c-aa0e-7043f80c49cb"))
+    internal readonly DocumentTemplate ContactWord = new(Guid.Parse("d1004e38-1033-461c-aa0e-7043f80c49cb"))
     {
         Name = "ContactWord",
         DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
@@ -528,7 +528,7 @@ public class SampleDataverse
     //    Name = "Demo AppModule"
     //};
 
-    internal readonly MsdynComponentlayer Componentlayer1 = new MsdynComponentlayer(Guid.NewGuid())
+    internal readonly MsdynComponentlayer Componentlayer1 = new(Guid.NewGuid())
     {
         MsdynName = "System Administrator",
         MsdynSolutioncomponentname = "Role",
@@ -537,7 +537,7 @@ public class SampleDataverse
         MsdynOrder = 1
     };
 
-    internal readonly MsdynComponentlayer Componentlayer2 = new MsdynComponentlayer(Guid.NewGuid())
+    internal readonly MsdynComponentlayer Componentlayer2 = new(Guid.NewGuid())
     {
         MsdynName = "Sales, Enterprise app access",
         MsdynSolutioncomponentname = "Role",
@@ -546,7 +546,7 @@ public class SampleDataverse
         MsdynOrder = 1
     };
 
-    internal readonly MsdynComponentlayer Componentlayer3 = new MsdynComponentlayer(Guid.NewGuid())
+    internal readonly MsdynComponentlayer Componentlayer3 = new(Guid.NewGuid())
     {
         MsdynName = "Sales, Enterprise app access",
         MsdynSolutioncomponentname = "Role",
@@ -555,7 +555,7 @@ public class SampleDataverse
         MsdynOrder = 2
     };
 
-    internal readonly MsdynComponentlayer Componentlayer4 = new MsdynComponentlayer(Guid.NewGuid())
+    internal readonly MsdynComponentlayer Componentlayer4 = new(Guid.NewGuid())
     {
         MsdynName = "Demo AppModule",
         MsdynSolutioncomponentname = "AppModule",
@@ -564,13 +564,13 @@ public class SampleDataverse
         MsdynOrder = 1
     };
 
-    internal readonly Calendar Calendar1 = new Calendar(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
+    internal readonly Calendar Calendar1 = new(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
     {
         Name = "Test Calendar",
         Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
     };
 
-    internal readonly CalendarRule CalendarRule1 = new CalendarRule(Guid.Parse("0f56b2f4-1b0f-43ab-9575-6309713820dd"))
+    internal readonly CalendarRule CalendarRule1 = new(Guid.Parse("0f56b2f4-1b0f-43ab-9575-6309713820dd"))
     {
         Name = "New Year",
         StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
@@ -588,7 +588,7 @@ public class SampleDataverse
 
     };
 
-    internal readonly CalendarRule CalendarRule2 = new CalendarRule(Guid.Parse("2a17af31-25c6-4c8d-adae-7ac26e3899e8"))
+    internal readonly CalendarRule CalendarRule2 = new(Guid.Parse("2a17af31-25c6-4c8d-adae-7ac26e3899e8"))
     {
         Name = "Easter Sunday",
         StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
@@ -606,7 +606,7 @@ public class SampleDataverse
 
     };
 
-    internal readonly SLA Sla1 = new SLA(Guid.Parse("dd9dbcef-ca66-4edd-ba42-740f0c14f554"))
+    internal readonly SLA Sla1 = new(Guid.Parse("dd9dbcef-ca66-4edd-ba42-740f0c14f554"))
     {
         Name = "Sla1 Draft",
         StatusCode = new OptionSetValue(SLA.Options.StatusCode.Draft),
@@ -614,7 +614,7 @@ public class SampleDataverse
         BusinessHoursId = new EntityReference(Calendar.EntityLogicalName, Guid.Parse("d425590e-7e62-4d82-8186-7f7d500d2fd3"))
     };
 
-    internal readonly SLA Sla2 = new SLA(Guid.Parse("6555bb4d-6c3a-454a-9bda-36ee77e7e0ed"))
+    internal readonly SLA Sla2 = new(Guid.Parse("6555bb4d-6c3a-454a-9bda-36ee77e7e0ed"))
     {
         Name = "Sla1 Draft",
         StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active),
@@ -622,57 +622,57 @@ public class SampleDataverse
         BusinessHoursId = null
     };
 
-    internal readonly RoutingRule Rule1 = new RoutingRule(Guid.Parse("8a75523b-27eb-4385-9bf9-d6add312383b"))
+    internal readonly RoutingRule Rule1 = new(Guid.Parse("8a75523b-27eb-4385-9bf9-d6add312383b"))
     {
         Name = "Rule1 Draft",
         StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Draft),
         StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Draft)
     };
 
-    internal readonly RoutingRuleItem Item1Rule1 = new RoutingRuleItem(Guid.Parse("da6d62aa-b358-49af-b07a-2269919a0a97"))
+    internal readonly RoutingRuleItem Item1Rule1 = new(Guid.Parse("da6d62aa-b358-49af-b07a-2269919a0a97"))
     {
         MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.Queue)
     };
 
-    internal readonly RoutingRuleItem Item2Rule1 = new RoutingRuleItem(Guid.Parse("8790f297-dc24-4bbf-bc8f-6727ad8bf23f"))
+    internal readonly RoutingRuleItem Item2Rule1 = new(Guid.Parse("8790f297-dc24-4bbf-bc8f-6727ad8bf23f"))
     {
         MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team)
     };
 
-    internal readonly RoutingRule Rule2 = new RoutingRule(Guid.Parse("3a174e77-7c80-4b78-9ba0-bc1fd8464b62"))
+    internal readonly RoutingRule Rule2 = new(Guid.Parse("3a174e77-7c80-4b78-9ba0-bc1fd8464b62"))
     {
         Name = "Rule2 Active",
         StatusCode = new OptionSetValue(RoutingRule.Options.StatusCode.Active),
         StateCode = new OptionSetValue(RoutingRule.Options.StateCode.Active)
     };
 
-    internal readonly RoutingRuleItem Item1Rule2 = new RoutingRuleItem(Guid.Parse("52afc222-fb8b-46e6-856f-9e07618b91c7"))
+    internal readonly RoutingRuleItem Item1Rule2 = new(Guid.Parse("52afc222-fb8b-46e6-856f-9e07618b91c7"))
     {
         MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team)
     };
 
-    internal readonly Team Team1 = new Team(Guid.NewGuid())
+    internal readonly Team Team1 = new(Guid.NewGuid())
     {
         Name = "Team1"
     };
 
-    internal readonly Solution Solution = new Solution(Guid.NewGuid())
+    internal readonly Solution Solution = new(Guid.NewGuid())
     {
         UniqueName = "xunit-solution"
     };
 
-    internal readonly SolutionComponent SolutionComponent1 = new SolutionComponent(Guid.NewGuid());
+    internal readonly SolutionComponent SolutionComponent1 = new(Guid.NewGuid());
 
-    internal readonly SolutionComponent SolutionComponent2 = new SolutionComponent(Guid.NewGuid());
+    internal readonly SolutionComponent SolutionComponent2 = new(Guid.NewGuid());
 
-    internal readonly SolutionComponent SolutionComponentModernFlow = new SolutionComponent(Guid.NewGuid());
+    internal readonly SolutionComponent SolutionComponentModernFlow = new(Guid.NewGuid());
 
-    internal readonly Solution SolutionWorkflow = new Solution(Guid.NewGuid())
+    internal readonly Solution SolutionWorkflow = new(Guid.NewGuid())
     {
         UniqueName = "Workflows"
     };
 
-    internal readonly Publisher Publisher1 = new Publisher(Guid.NewGuid())
+    internal readonly Publisher Publisher1 = new(Guid.NewGuid())
     {
         Attributes = { { "uniquename", "Publisher1" } }
     };

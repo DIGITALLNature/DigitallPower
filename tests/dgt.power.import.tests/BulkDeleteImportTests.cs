@@ -30,11 +30,10 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
 
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -58,12 +57,11 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         };
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob,
                 missingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -79,7 +77,7 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             {
                 FileName = WriteConfigurationArtifact(new BulkDeletes
                 {
-                    Deletes = new List<BulkDelete>()
+                    Deletes = []
                 }).Name,
                 FileDir = ArtifactDirectory
             }
@@ -101,11 +99,10 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         existingBulkDeleteJob.RecurrencePattern = string.Empty;
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -134,11 +131,10 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         disabledBulkDeleteJob.RecurrencePattern = string.Empty;
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -167,11 +163,10 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -204,11 +199,10 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
         await Assert.That(context.Execute(new ImportVerb
             {
@@ -297,6 +291,6 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         };
 
 
-        return (disabledBulkDelete, existingBulkDelete, new[] {system, techUser, pipelineUser});
+        return (disabledBulkDelete, existingBulkDelete, [system, techUser, pipelineUser]);
     }
 }

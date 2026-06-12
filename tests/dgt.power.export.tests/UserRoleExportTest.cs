@@ -108,8 +108,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
                     Entity2IntersectAttribute = Role.LogicalNames.RoleId
                 }
             )
-            .WithData(new Entity[]
-                {
+            .WithData([
                     businessUnit,
                     user1,
                     user2,
@@ -121,7 +120,7 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
                     salesAppAccess,
                     roleassociation1,
                     roleassociation2
-                }
+                ]
             )
             .Build();
     }

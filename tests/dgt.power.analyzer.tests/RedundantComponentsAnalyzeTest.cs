@@ -34,9 +34,9 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
 
         var solutionPatch = new Solution(Guid.NewGuid())
         {
-            UniqueName = SolutionPatchUniqueName
+            UniqueName = SolutionPatchUniqueName,
+            [Solution.LogicalNames.ParentSolutionId] = solution.ToEntityReference()
         };
-        solutionPatch[Solution.LogicalNames.ParentSolutionId] = solution.ToEntityReference();
 
         var parallelSolution = new Solution(Guid.NewGuid())
         {
@@ -95,8 +95,8 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
         //    MsdynOrder = 2,
         //    MsdynComponentid = $"{entityComponent.ObjectId:B}"
         //};
-        return new Entity[]
-        {
+        return
+        [
             solution,
             solutionPatch,
             parallelSolution
@@ -117,7 +117,7 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
             //        {SolutionComponent.LogicalNames.ComponentType, "Email Template"}
             //    }
             //}
-        };
+        ];
     }
 
 

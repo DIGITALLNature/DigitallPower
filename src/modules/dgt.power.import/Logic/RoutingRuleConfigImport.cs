@@ -37,7 +37,7 @@ public sealed class RoutingRuleConfigImport(
         }
 
         //anything to do?
-        if (!rules.Any())
+        if (rules.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

@@ -36,7 +36,7 @@ public sealed class TeamTemplateImport(
         }
 
         //anything to do?
-        if (!templates.Any())
+        if (templates.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

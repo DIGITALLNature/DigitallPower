@@ -20,8 +20,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
 
         return GetBuilder()
             .WithMetaData(entityMeta)
-            .WithData(new[]
-                {
+            .WithData([
                     new TeamTemplate(Guid.NewGuid())
                     {
                         TeamTemplateName = "Access Team 1",
@@ -36,7 +35,7 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
                         DefaultAccessRightsMask = 4,
                         ObjectTypeCode = 10000
                     }
-                }
+                ]
             )
             .Build();
     }

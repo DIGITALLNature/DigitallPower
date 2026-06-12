@@ -137,12 +137,12 @@ public sealed class BulkDeleteImport(
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = create.Name,
-            QuerySet = new[] { response.Query },
+            QuerySet = [response.Query],
             StartDateTime = startTime,
             RecurrencePattern = create.RecurrencePattern,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
+            ToRecipients = [],
+            CCRecipients = []
         };
         Tracer.Log(
             $"create bulk delete '{create.Name}'; StartTime:{create.RecurrenceStartTime}; Pattern:{create.RecurrencePattern}",
@@ -250,12 +250,12 @@ public sealed class BulkDeleteImport(
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = bulkDeleteJob.Name,
-            QuerySet = new[] { fetchXmlToQueryExpressionResponse.Query },
+            QuerySet = [fetchXmlToQueryExpressionResponse.Query],
             StartDateTime = startTime,
             RecurrencePattern = recurrencePattern,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
+            ToRecipients = [],
+            CCRecipients = []
         };
         if (Connection.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
                 out _))

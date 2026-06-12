@@ -171,7 +171,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             if (localAssembly.Type.HasFlag(AssemblyType.Plugin))
             {
                 ctx.Status("UpsertAndPurgePluginTypes");
-                crmAssembly = processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly, settings.Solution);
+                crmAssembly = processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly);
 
                 if (localAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
                 {

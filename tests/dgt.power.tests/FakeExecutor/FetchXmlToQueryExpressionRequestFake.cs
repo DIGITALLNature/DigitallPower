@@ -104,7 +104,7 @@ public class FetchXmlToQueryExpressionRequestFake : IOrganizationRequestFake
                 conditionOperator == ConditionOperator.NotIn)
             {
                 var values = condition.Elements("value")
-                    .Select(v => (object)v.Value)
+                    .Select(object (v) => v.Value)
                     .ToArray();
                 filter.AddCondition(new ConditionExpression(attribute, conditionOperator, values));
             }
