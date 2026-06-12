@@ -4,10 +4,8 @@
 using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
@@ -15,7 +13,6 @@ using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
@@ -27,6 +24,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using Spectre.Console.Testing;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace dgt.power.codegeneration.tests.Base;
 
@@ -39,7 +37,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
 {
     protected TestConsole TestConsole { get; } = new();
     protected CodeGenerationVerb DefaultVerb { get; } = new();
-    protected CodeGenerationConfig DefaultConfig { get; } = new();
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -66,24 +63,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
 
     protected string GetResourceAsString(string fileName) => File.ReadAllText(GetResourcePath(fileName));
 
-    protected FileInfo WriteConfigurationArtifact<TArtifact>(TArtifact artifact)
-    {
-        var json = Regex.Unescape(
-            JsonSerializer.Serialize(JsonSerializer.Serialize(artifact, _jsonSerializerOptions))).Trim('"');
-
-        var fileName = $"{Guid.NewGuid():N}.json";
-        var artifactFqn = Path.Combine(Directory.GetCurrentDirectory(), ArtifactDirectory);
-
-        if (!Directory.Exists(artifactFqn))
-        {
-            Directory.CreateDirectory(artifactFqn);
-        }
-
-        var path = Path.Combine(artifactFqn, fileName);
-        File.WriteAllText(path, json, Encoding.UTF8);
-        return new FileInfo(path);
-    }
-
     protected EntityMetadata GetEntityMetadataArtifact(string entityLogicalName)
     {
         var metadataArtifactPath = GetMetadataArtifactPath(entityLogicalName);
@@ -106,11 +85,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
         return metadata ??
                throw new FileNotFoundException(
                    $"Metadata for entity '{entityLogicalName}' doesn't exist under path '{metadataArtifactPath}'");
-    }
-
-    protected string GetTestFileName([CallerMemberName] string methodName = "")
-    {
-        return $"{GetType().Name}-{methodName}.json";
     }
 
     protected virtual CodeGenerationContextBuilder GetBuilder() => new(TestConsole);
@@ -144,24 +118,15 @@ public class CodeGenerationContext
     public IDotNetGenerator DotNetGenerator { get; }
     public ITypeScriptGenerator TypeScriptGenerator { get; }
     public IMetadataGenerator MetadataGenerator { get; }
-    public IMetadataService MetadataService { get; }
-    public IConfigResolver ConfigResolver { get; }
-    public FakeOrganizationServiceAsync FakedService { get; }
 
     internal CodeGenerationContext(
         IDotNetGenerator dotNetGenerator,
         ITypeScriptGenerator typeScriptGenerator,
-        IMetadataGenerator metadataGenerator,
-        IMetadataService metadataService,
-        IConfigResolver configResolver,
-        FakeOrganizationServiceAsync fakedService)
+        IMetadataGenerator metadataGenerator)
     {
         DotNetGenerator = dotNetGenerator;
         TypeScriptGenerator = typeScriptGenerator;
         MetadataGenerator = metadataGenerator;
-        MetadataService = metadataService;
-        ConfigResolver = configResolver;
-        FakedService = fakedService;
     }
 
     /// <summary>
@@ -187,7 +152,6 @@ public class CodeGenerationContextBuilder
     private readonly List<RelationshipMetadataBase> _relationships = [];
     private readonly List<IOrganizationRequestFake> _requestFakes = [];
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
-    private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
     private readonly IAnsiConsole _console;
 
     public CodeGenerationContextBuilder(IAnsiConsole console)
@@ -230,14 +194,8 @@ public class CodeGenerationContextBuilder
             config(service);
         }
 
-        if (_data.Count != 0 || _dataPreparer != null)
-        {
-            if (_dataPreparer != null)
-            {
-                _data.AddRange(_dataPreparer(service));
-            }
-
-            var registeredTypes = service.State.EntityMetadata.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (_data.Count != 0)
+        {            var registeredTypes = service.State.EntityMetadata.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
             var missingTypes = _data
                 .Select(e => e.LogicalName)
                 .Where(name => !string.IsNullOrEmpty(name) && !registeredTypes.Contains(name))
@@ -272,10 +230,7 @@ public class CodeGenerationContextBuilder
         return new CodeGenerationContext(
             services.GetRequiredService<IDotNetGenerator>(),
             services.GetRequiredService<ITypeScriptGenerator>(),
-            services.GetRequiredService<IMetadataGenerator>(),
-            services.GetRequiredService<IMetadataService>(),
-            services.GetRequiredService<IConfigResolver>(),
-            service);
+            services.GetRequiredService<IMetadataGenerator>());
     }
 
     public CodeGenerationContextBuilder WithData(IEnumerable<Entity> data)
@@ -314,13 +269,6 @@ public class CodeGenerationContextBuilder
     public CodeGenerationContextBuilder WithFakeMessageExecutor(IOrganizationRequestFake requestFake)
     {
         _requestFakes.Add(requestFake);
-        return this;
-    }
-
-    public CodeGenerationContextBuilder WithCustomConfiguration(
-        Action<FakeOrganizationServiceAsync> contextHandler)
-    {
-        _customConfigurations.Add(contextHandler);
         return this;
     }
 }
