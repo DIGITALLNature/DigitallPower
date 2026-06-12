@@ -38,11 +38,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
     protected TestConsole TestConsole { get; } = new();
     protected CodeGenerationVerb DefaultVerb { get; } = new();
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-    {
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-    };
-
     private readonly DataContractSerializer _metadataSerializer = new(typeof(EntityMetadata));
 
     /// <summary>
@@ -50,7 +45,7 @@ public abstract class CodeGenerationTestsBase : IDisposable
     /// </summary>
     protected virtual string ResourceDirectory => "Resources";
 
-    protected virtual string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";
+    protected string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";
 
     protected string GetResourcePath(string fileName) => Path.Combine(ResourceDirectory, fileName);
     protected string GetArtifactPath(string fileName) => Path.Combine(ArtifactDirectory, fileName);
