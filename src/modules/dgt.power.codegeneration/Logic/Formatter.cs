@@ -13,28 +13,17 @@ public static partial class Formatter
     private static readonly Regex s_newlineRegex = NewLineRegex();
 
     // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
-    public static string CamelCase(string? phrase) => ConvertCaseString(phrase, NameCase.CamelCase);
-
-    // TODO: This method is not really pascal casing. It is actually camel casing.
-    public static string PascalCase(string? phrase) => ConvertCaseString(phrase, NameCase.PascalCase);
-
-    private static string ConvertCaseString(string? phrase, NameCase cases)
+    public static string CamelCase(string? phrase)
     {
         if (string.IsNullOrWhiteSpace(phrase))
         {
             return CamelCase(Sanitize(phrase));
         }
 
-        var leadingUnderscore = phrase.StartsWith('_');//"_AddMemberBatch" and "AddMemberBatch"
+        var leadingUnderscore = phrase.StartsWith('_'); //"_AddMemberBatch" and "AddMemberBatch"
 
         var splittedPhrase = phrase.Split(' ', '-', '_');
         var sb = new StringBuilder();
-
-        if (cases == NameCase.PascalCase)
-        {
-            sb.Append(splittedPhrase[0].ToLower(CultureInfo.InvariantCulture));
-            splittedPhrase[0] = string.Empty;
-        }
 
         foreach (var item in splittedPhrase.Where(item => item.Length > 0))
         {
@@ -116,12 +105,6 @@ public static partial class Formatter
     }
 
     #region Nested type: NameCase
-
-    private enum NameCase
-    {
-        PascalCase,
-        CamelCase
-    }
 
     [GeneratedRegex(@"\r\n|\r|\n", RegexOptions.Compiled)]
     private static partial Regex NewLineRegex();
