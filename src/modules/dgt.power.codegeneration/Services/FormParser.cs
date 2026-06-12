@@ -282,7 +282,7 @@ public static class FormParser
     private static void MapFormXmlQuickViewControlsIntoFormDetailQuickViews(FormDetail formDetail, XmlNode control, string controlId)
     {
         var quickFormParameters = control.SelectNodes(".//parameters/QuickForms");
-        if (quickFormParameters != null && quickFormParameters.Count > 0 && quickFormParameters[0]?.InnerText != null)
+        if (quickFormParameters is { Count: > 0 } && quickFormParameters[0]?.InnerText != null)
         {
             var quickViewFormId = RetrieveQuickViewFormId(quickFormParameters[0]?.InnerText);
             var quickControl = new QuickViewFormControl
@@ -386,10 +386,9 @@ public static class FormParser
         {
             var customControl = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl[@id[not(.='')]]");
             var customControlQuickView = doc.SelectNodes($"/form/controlDescriptions/controlDescription[@forControl='{uniqueId}']/customControl/parameters/QuickForms");
-            if (customControl != null && customControl.Count == 1)
+            if (customControl is { Count: 1 })
             {
-                if(customControlQuickView != null &&
-                   customControlQuickView.Count > 1 &&
+                if(customControlQuickView is { Count: > 1 } &&
                    customControlQuickView[0]?.InnerText != null) {
                     return ControlClassNames.XrmClassId.QuickView;
                 }
@@ -406,11 +405,7 @@ public static class FormParser
     /// <returns></returns>
     private static string MapClassId(string? classId)
     {
-        if (string.IsNullOrWhiteSpace(classId))
-        {
-            return string.Empty;
-        }
-        return Regex.Replace(classId.ToUpperInvariant(), "[{}]", "", RegexOptions.NonBacktracking);
+        return string.IsNullOrWhiteSpace(classId) ? string.Empty : Regex.Replace(classId.ToUpperInvariant(), "[{}]", "", RegexOptions.NonBacktracking);
     }
 
     /// <summary>
@@ -422,11 +417,7 @@ public static class FormParser
     private static string GetQuickViewFormClass(string quickViewFormId, IReadOnlyList<FormDetail> allForms)
     {
         var quickViewForm = allForms.FirstOrDefault(x => x.FormId != null && x.FormId == quickViewFormId);
-        if (quickViewForm != null)
-        {
-            return MapFormClass(quickViewForm);
-        }
-        return "Xrm.Controls.QuickFormControl";
+        return quickViewForm != null ? MapFormClass(quickViewForm) : "Xrm.Controls.QuickFormControl";
     }
 
     /// <summary>
@@ -437,7 +428,7 @@ public static class FormParser
     private static string MapFormClass(FormDetail form)
     {
         var schemaName = Formatter.CamelCase(form.FormEntityName);
-        var formType = Formatter.CamelCase(Formatter.Sanitize((form.FormTypeName)));
+        var formType = Formatter.CamelCase(Formatter.Sanitize(form.FormTypeName));
         var formName = Formatter.CamelCase(Formatter.Sanitize(form.FormUniqueName));
         return $"XrmForm.{schemaName}.{formType}.{formName}.QuickFormControl";
     }

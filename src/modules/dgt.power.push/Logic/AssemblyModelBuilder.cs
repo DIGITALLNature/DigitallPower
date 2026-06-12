@@ -23,13 +23,13 @@ internal sealed class AssemblyModelBuilder : IDisposable
 {
     private readonly DataContext _context;
 
-    private readonly string[] _knownNamespaces = { "D365.Extension.Registration", "DGT.Registrations", "dgt.registration", "Digitall.APower.Registration", "Digitall.Plugins.Registration" };
+    private readonly string[] _knownNamespaces = ["D365.Extension.Registration", "DGT.Registrations", "dgt.registration", "Digitall.APower.Registration", "Digitall.Plugins.Registration"];
 
     private readonly string[] _knownPluginAttributes =
-    {
+    [
         nameof(PluginRegistrationAttribute), nameof(CustomApiRegistrationAttribute),
         nameof(CustomDataProviderRegistrationAttribute)
-    };
+    ];
 
     private readonly IOrganizationService _service;
     private readonly IAnsiConsole _console;
@@ -229,8 +229,10 @@ internal sealed class AssemblyModelBuilder : IDisposable
         foreach (var pluginAssembly in assemblies.Skip(1))
         {
             // Create a new assembly content model
-            var result = new AssemblyContent();
-            result.Id = pluginAssembly.Id;
+            var result = new AssemblyContent
+            {
+                Id = pluginAssembly.Id
+            };
 
             // Get the list of plugin types from CRM
             var pluginTypes = GetPluginTypes(pluginAssembly.ToEntityReference());

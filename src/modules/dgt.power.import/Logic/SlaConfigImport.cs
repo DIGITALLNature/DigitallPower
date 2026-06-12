@@ -36,7 +36,7 @@ public class SlaConfigImport(
         }
 
         //anything to do?
-        if (!slaConfigs.Any())
+        if (slaConfigs.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

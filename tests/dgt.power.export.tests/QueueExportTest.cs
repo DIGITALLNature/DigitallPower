@@ -16,9 +16,8 @@ public class QueueExportTest : ExportTestBase<QueueExport>
     protected override CommandTestContext<QueueExport, ExportVerb> GetContext() =>
         GetBuilder()
             .WithData(
-                new[]
-                {
-                    new Queue(Guid.Parse("469005c9-ca23-4d53-a1ae-f909c7863f6b"))
+            [
+                new Queue(Guid.Parse("469005c9-ca23-4d53-a1ae-f909c7863f6b"))
                     {
                         Name = "Queue 1",
                         Description = "Queue 1",
@@ -66,7 +65,7 @@ public class QueueExportTest : ExportTestBase<QueueExport>
                             new OptionSetValue(Queue.Options.OutgoingEmailDeliveryMethod.None),
                         QueueViewType = new OptionSetValue(Queue.Options.QueueViewType.Private)
                     }
-                })
+            ])
             .Build();
 
     [Test]

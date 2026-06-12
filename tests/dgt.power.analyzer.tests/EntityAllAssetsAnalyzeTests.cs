@@ -19,8 +19,7 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
     protected override CommandTestContext<EntityAllAssetsAnalyze, AnalyzeVerb> GetContext()
     {
         return GetBuilder()
-            .WithMetaData(new[]
-            {
+            .WithMetaData([
                 new EntityMetadata
                 {
                     LogicalName = SystemUser.EntityLogicalName,
@@ -66,7 +65,7 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
                         UserLocalizedLabel = new LocalizedLabel("Contact", 1031)
                     }
                 }
-            })
+            ])
             .WithData(PrepareData)
             .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .Build();
@@ -135,15 +134,15 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference()
         };
 
-        return new Entity[]
-        {
+        return
+        [
             solution,
             accountComponent,
             testEntityComponent,
             teamComponent,
             queueComponent,
             contactComponent
-        };
+        ];
     }
 
     [Test]

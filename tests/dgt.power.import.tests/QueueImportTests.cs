@@ -49,10 +49,10 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeCreated
-            }
+            ]
         };
 
         await Assert.That(context.Execute(new ImportVerb
@@ -80,10 +80,10 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
         await Assert.That(context.Execute(new ImportVerb
@@ -121,10 +121,10 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
         await Assert.That(context.Execute(new ImportVerb
@@ -165,10 +165,10 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
         await Assert.That(context.Execute(new ImportVerb
@@ -193,10 +193,10 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeCreated
-            }
+            ]
         };
 
         await Assert.That(context.Execute(new ImportVerb

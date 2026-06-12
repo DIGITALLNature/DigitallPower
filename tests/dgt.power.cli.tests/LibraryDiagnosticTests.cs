@@ -111,7 +111,7 @@ public class LibraryDiagnosticTests
         var calendarRule = new Entity("calendarrule") { ["name"] = "Rule 1" };
         calendar.RelatedEntities.Add(
             new Relationship("calendar_calendar_rules"),
-            new EntityCollection(new[] { calendarRule }));
+            new EntityCollection([calendarRule]));
 
         // This should not throw
         var createdId = service.Create(calendar);

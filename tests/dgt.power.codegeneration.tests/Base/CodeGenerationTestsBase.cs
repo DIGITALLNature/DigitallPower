@@ -113,8 +113,7 @@ public abstract class CodeGenerationTestsBase : IDisposable
         return $"{GetType().Name}-{methodName}.json";
     }
 
-    protected virtual CodeGenerationContextBuilder GetBuilder() =>
-        new CodeGenerationContextBuilder(TestConsole);
+    protected virtual CodeGenerationContextBuilder GetBuilder() => new(TestConsole);
 
     protected CodeGenerationContext GetContext() => GetBuilder().Build();
 
@@ -183,11 +182,11 @@ public class CodeGenerationContext
 /// </summary>
 public class CodeGenerationContextBuilder
 {
-    private readonly List<Entity> _data = new();
-    private readonly List<EntityMetadata> _metadata = new();
-    private readonly List<RelationshipMetadataBase> _relationships = new();
-    private readonly List<IOrganizationRequestFake> _requestFakes = new();
-    private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = new();
+    private readonly List<Entity> _data = [];
+    private readonly List<EntityMetadata> _metadata = [];
+    private readonly List<RelationshipMetadataBase> _relationships = [];
+    private readonly List<IOrganizationRequestFake> _requestFakes = [];
+    private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
     private readonly IAnsiConsole _console;
 
@@ -285,7 +284,7 @@ public class CodeGenerationContextBuilder
         return this;
     }
 
-    public CodeGenerationContextBuilder WithData(Entity data) => WithData(new[] { data });
+    public CodeGenerationContextBuilder WithData(Entity data) => WithData([data]);
 
     public CodeGenerationContextBuilder WithData(ITuple tuple)
     {
@@ -298,7 +297,7 @@ public class CodeGenerationContextBuilder
     }
 
     public CodeGenerationContextBuilder WithMetaData(EntityMetadata metadata) =>
-        WithMetaData(new[] { metadata });
+        WithMetaData([metadata]);
 
     public CodeGenerationContextBuilder WithMetaData(IEnumerable<EntityMetadata> metadata)
     {

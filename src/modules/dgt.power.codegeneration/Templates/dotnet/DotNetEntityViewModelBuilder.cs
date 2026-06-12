@@ -166,10 +166,10 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildLogicalNameEntries()
     {
-        return Filter(_entity.Attributes).Select(attr =>
+        return Filter(_entity.Attributes).Select(object (attr) =>
         {
             var name = Unique(Formatter.CamelCase(attr.SchemaName), "L" + _entity.LogicalName);
-            return (object)new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = attr.LogicalName };
+            return new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = attr.LogicalName };
         }).ToArray();
     }
 
@@ -180,12 +180,12 @@ public class DotNetEntityViewModelBuilder
 
         return _entity.Keys
             .OrderBy(key => key.LogicalName)
-            .Select(key =>
+            .Select(object (key) =>
             {
                 var name = Unique(
                     Formatter.Sanitize(Formatter.CamelCase(GetLocalizedLabel(key.DisplayName))),
                     "K" + key.LogicalName);
-                return (object)new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = MaskDoubleQuote(key.LogicalName) };
+                return new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = MaskDoubleQuote(key.LogicalName) };
             }).ToArray();
     }
 
@@ -193,10 +193,10 @@ public class DotNetEntityViewModelBuilder
     {
         return _entity.OneToManyRelationships
             .OrderBy(r => r.SchemaName)
-            .Select(attr =>
+            .Select(object (attr) =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "ROTM" + _entity.LogicalName);
-                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+                return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
 
@@ -204,10 +204,10 @@ public class DotNetEntityViewModelBuilder
     {
         return _entity.ManyToOneRelationships
             .OrderBy(r => r.SchemaName)
-            .Select(attr =>
+            .Select(object (attr) =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTO" + _entity.LogicalName);
-                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+                return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
 
@@ -215,10 +215,10 @@ public class DotNetEntityViewModelBuilder
     {
         return _entity.ManyToManyRelationships
             .OrderBy(r => r.SchemaName)
-            .Select(attr =>
+            .Select(object (attr) =>
             {
                 var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTM" + _entity.LogicalName);
-                return (object)new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
+                return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
 

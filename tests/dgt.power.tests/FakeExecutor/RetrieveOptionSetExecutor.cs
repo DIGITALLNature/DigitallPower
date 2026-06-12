@@ -24,7 +24,7 @@ public class RetrieveOptionSetExecutor : IOrganizationRequestFake
             if (entityMetadata.Attributes == null) continue;
             foreach (var attribute in entityMetadata.Attributes)
             {
-                if (attribute is PicklistAttributeMetadata picklist && picklist.OptionSet is { IsGlobal: true, Name: not null } optionSet)
+                if (attribute is PicklistAttributeMetadata { OptionSet: { IsGlobal: true, Name: not null } optionSet })
                 {
                     if (optionSet.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {

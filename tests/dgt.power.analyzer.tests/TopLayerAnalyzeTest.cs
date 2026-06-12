@@ -28,8 +28,7 @@ public class TopLayerAnalyzeTest : AnalyzeTestsBase<TopLayerAnalyze>
         return GetBuilder()
             .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithData(PrepareData)
-            .WithMetaData(new[]
-            {
+            .WithMetaData([
                 new EntityMetadata
                 {
                     LogicalName = TestEntity.EntityLogicalName,
@@ -39,7 +38,7 @@ public class TopLayerAnalyzeTest : AnalyzeTestsBase<TopLayerAnalyze>
                         UserLocalizedLabel = new LocalizedLabel("Test Entity", 1031)
                     }
                 }
-            })
+            ])
             .Build();
     }
 
@@ -125,8 +124,8 @@ public class TopLayerAnalyzeTest : AnalyzeTestsBase<TopLayerAnalyze>
             MsdynOrder = 3,
             MsdynComponentid = $"{entityComponent.ObjectId:B}"
         };
-        return new Entity[]
-        {
+        return
+        [
             solution,
             entityComponent,
             entityLayer,
@@ -148,7 +147,7 @@ public class TopLayerAnalyzeTest : AnalyzeTestsBase<TopLayerAnalyze>
                     {SolutionComponent.LogicalNames.ComponentType, "Email Template"}
                 }
             }
-        };
+        ];
     }
 
     [Test]

@@ -55,10 +55,10 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
 
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            DisabledOutlookTemplates = new[]
-            {
+            DisabledOutlookTemplates =
+            [
                 toBeDisabledOutlookTemplate.Name
-            }
+            ]
         });
 
         await Assert.That(context.Execute(new ImportVerb
@@ -101,10 +101,10 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
+            OutlookTemplates =
+            [
                 existingConfig
-            }
+            ]
         });
 
         await Assert.That(context.Execute(new ImportVerb
@@ -144,10 +144,10 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
+            OutlookTemplates =
+            [
                 template
-            }
+            ]
         });
 
         await Assert.That(context.Execute(new ImportVerb
@@ -194,10 +194,10 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
+            OutlookTemplates =
+            [
                 existingConfig
-            }
+            ]
         });
 
         await Assert.That(context.Execute(new ImportVerb

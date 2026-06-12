@@ -19,7 +19,7 @@ public abstract class WorkerTestsBase<TWorker, TWorkerSettings> : IDisposable
     where TWorker : PowerWorker<TWorkerSettings>
     where TWorkerSettings : BaseProgramSettings
 {
-    protected TestConsole TestConsole { get; } = new TestConsole();
+    protected TestConsole TestConsole { get; } = new();
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new() {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}};
 

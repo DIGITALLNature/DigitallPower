@@ -148,7 +148,7 @@ public class ProfileManager(IsolatedStorageFile storage, string identityFileName
     private static class ProfileEnv
     {
         #pragma warning disable S109
-        public static byte[] Seed { get; } = { 22, 4, 19, 8, 6 };
+        public static byte[] Seed { get; } = [22, 4, 19, 8, 6];
         #pragma warning restore S109
     }
 }

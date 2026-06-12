@@ -16,8 +16,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
 {
     protected override CommandTestContext<SlaConfigExport, ExportVerb> GetContext() =>
         GetBuilder()
-            .WithData(new[]
-            {
+            .WithData([
                 new SLA(Guid.Parse("dd9dbcef-ca66-4edd-ba42-740f0c14f554"))
                 {
                     Name = "Sla1 Draft",
@@ -31,7 +30,7 @@ public class SlaConfigExportTest : ExportTestBase<SlaConfigExport>
                     StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active),
                     StateCode = new OptionSetValue(SLA.Options.StateCode.Active)
                 }
-            })
+            ])
             .Build();
 
     [Test]

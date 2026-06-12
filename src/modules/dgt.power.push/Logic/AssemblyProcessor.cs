@@ -449,7 +449,7 @@ internal sealed class AssemblyProcessor : IDisposable
 
     #region PluginType
 
-    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm, string solution)
+    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm)
     {
         // Update
         foreach (var updateType in dll.PluginTypes.Where(t => crm.PluginTypes.Contains(t)))

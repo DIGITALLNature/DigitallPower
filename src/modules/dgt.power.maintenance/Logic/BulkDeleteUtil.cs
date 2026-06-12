@@ -95,13 +95,13 @@ public sealed class BulkDeleteUtil(
         var response = (BulkDeleteResponse)await orgAsync.ExecuteAsync(new BulkDeleteRequest
         {
             JobName = "Maintenance BulkDelete job",
-            QuerySet = new[] { query },
+            QuerySet = [query],
             //RunNow = true, forces a sync call, but this may run to long and you'll get a timeout!
             StartDateTime = DateTime.UtcNow,
             RecurrencePattern = string.Empty,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
+            ToRecipients = [],
+            CCRecipients = []
         }, cancellationToken);
         return response.JobId;
     }

@@ -120,7 +120,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Entities = new[] { _accountMetadata.LogicalName }
+            Entities = [_accountMetadata.LogicalName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -151,8 +151,8 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Entities = new[] { _accountMetadata.LogicalName },
-            Forms = new[] { mainFormFileName }
+            Entities = [_accountMetadata.LogicalName],
+            Forms = [mainFormFileName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var context = GetBuilder()
@@ -178,8 +178,8 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Entities = new[] { _accountMetadata.LogicalName },
-            Forms = new[] { mainFormFileName }
+            Entities = [_accountMetadata.LogicalName],
+            Forms = [mainFormFileName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -206,7 +206,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Entities = new[] { _accountMetadata.LogicalName }
+            Entities = [_accountMetadata.LogicalName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -246,9 +246,9 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Entities = new[] { _accountMetadata.LogicalName },
+            Entities = [_accountMetadata.LogicalName],
             OnlyFormsFromSolutions = true,
-            Solutions = new[] { solution.UniqueName }
+            Solutions = [solution.UniqueName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -311,9 +311,9 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            Actions = new[] { action.Name },
-            CustomAPIs = new[] { customApi.Name },
-            AdditionalSdkMessages = new[] { additionalMessage.Name }
+            Actions = [action.Name],
+            CustomAPIs = [customApi.Name],
+            AdditionalSdkMessages = [additionalMessage.Name]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -363,7 +363,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            GlobalOptionSets = new HashSet<string> { globalOptionSet.Name }
+            GlobalOptionSets = [globalOptionSet.Name]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -397,7 +397,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         {
             TypingPath = "../node_modules/@types/xrm/index.d.ts",
             TypescriptGeneratorVersion = TypescriptGeneratorVersion.Full,
-            BusinessProcessFlows = new HashSet<string> { businessProcessFlow.UniqueName }
+            BusinessProcessFlows = [businessProcessFlow.UniqueName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 

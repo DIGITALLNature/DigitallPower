@@ -33,8 +33,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var config = new CodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var context = GetContext();
-        context.DotNetGenerator.Generate(args, config.ToDotNetConfig() as DotNetCodeGenerationConfig
-            ?? throw new InvalidOperationException());
+        context.DotNetGenerator.Generate(args, config.ToDotNetConfig() ?? throw new InvalidOperationException());
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.DotNet}")).IsTrue();
@@ -98,9 +97,9 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var additionalMessage = new SdkMessage(Guid.NewGuid()) { Name = "AdditionalMessage" };
         var config = new CodeGenerationConfig
         {
-            Actions = new[] { action.Name },
-            CustomAPIs = new[] { customApi.Name },
-            AdditionalSdkMessages = new[] { additionalMessage.Name }
+            Actions = [action.Name],
+            CustomAPIs = [customApi.Name],
+            AdditionalSdkMessages = [additionalMessage.Name]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -154,7 +153,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             Type = new OptionSetValue(CustomAPIResponseProperty.Options.Type.String),
             CustomAPIId = customApi.ToEntityReference()
         };
-        var config = new CodeGenerationConfig { Actions = new[] { actionMessage.Name }, CustomAPIs = new[] { customApi.UniqueName } };
+        var config = new CodeGenerationConfig { Actions = [actionMessage.Name], CustomAPIs = [customApi.UniqueName] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
@@ -200,7 +199,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var globalOptionSet = activityPointerMetadata.Attributes.OfType<PicklistAttributeMetadata>()
             .Select(x => x.OptionSet)
             .First(x => x.IsGlobal == true);
-        var config = new CodeGenerationConfig { GlobalOptionSets = new HashSet<string> { globalOptionSet.Name } };
+        var config = new CodeGenerationConfig { GlobalOptionSets = [globalOptionSet.Name] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
@@ -219,7 +218,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     public async Task ShouldGenerateSpecificEntity()
     {
         var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
-        var config = new CodeGenerationConfig { Entities = new[] { accountMetadata.LogicalName } };
+        var config = new CodeGenerationConfig { Entities = [accountMetadata.LogicalName] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
@@ -254,7 +253,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
 
         var config = new CodeGenerationConfig
         {
-            Entities = new[] { attributeMetadata.LogicalName }, UseBaseLanguage = true
+            Entities = [attributeMetadata.LogicalName], UseBaseLanguage = true
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         context.DotNetGenerator.Generate(args,

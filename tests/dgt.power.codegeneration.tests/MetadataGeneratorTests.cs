@@ -29,7 +29,7 @@ public class MetadataGeneratorTests : CodeGenerationTestsBase
 
         var config = new CodeGenerationConfig
         {
-            Entities = new[] { accountMetadata.LogicalName }
+            Entities = [accountMetadata.LogicalName]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
