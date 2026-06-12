@@ -8,9 +8,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public static class Formatter
+public static partial class Formatter
 {
-    public static readonly Regex NewlineRegex = new (@"\r\n|\r|\n", RegexOptions.Compiled);
+    private static readonly Regex s_newlineRegex = NewLineRegex();
 
     // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
     public static string CamelCase(string? phrase) => ConvertCaseString(phrase, NameCase.CamelCase);
@@ -55,7 +55,7 @@ public static class Formatter
 
     public static string Sanitize(string? value, bool allowWhiteSpace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false)
     {
-        // Empty Value (occures on Organization-entity Optionsets)
+        // Empty Value (occurs on Organization-entity OptionSets)
         if (string.IsNullOrWhiteSpace(value))
         {
             value = "_empty_";
@@ -79,7 +79,7 @@ public static class Formatter
             : label.UserLocalizedLabel?.Label;
         if (!string.IsNullOrEmpty(txt))
         {
-            txt = NewlineRegex.Replace(txt, "\r\n");
+            txt = s_newlineRegex.Replace(txt, "\r\n");
         }
         return txt!;
     }
@@ -123,14 +123,8 @@ public static class Formatter
         CamelCase
     }
 
-    #endregion
-}
+    [GeneratedRegex(@"\r\n|\r|\n", RegexOptions.Compiled)]
+    private static partial Regex NewLineRegex();
 
-public static class FormatterExtensions
-{
-    public static string ToCamelCase(this string? phrase) => Formatter.CamelCase(phrase);
-    public static string ToPascalCase(this string? phrase) => Formatter.PascalCase(phrase);
-    public static string Sanitize(this string? value, bool allowWhitespace = false, bool allowSafeStringChars = false,
-        bool allowFirstNumber = false)
-        => Formatter.Sanitize(value, allowWhitespace, allowSafeStringChars, allowFirstNumber);
+    #endregion
 }

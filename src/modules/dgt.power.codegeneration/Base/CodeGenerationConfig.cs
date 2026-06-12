@@ -17,13 +17,13 @@ namespace dgt.power.codegeneration.Base;
 #pragma warning disable CA2227 // Entities and Forms are assigned post-construction
 public class CodeGenerationConfig
 {
-    private HashSet<string> _actions = new();
-    private HashSet<string> _customApis = new();
+    private HashSet<string> _actions = [];
+    private HashSet<string> _customApis = [];
 
-    private HashSet<string> _entities = new();
-    private HashSet<string> _forms = new();
-    private HashSet<string> _sdkMessages = new();
-    private HashSet<string> _solutions = new();
+    private HashSet<string> _entities = [];
+    private HashSet<string> _forms = [];
+    private HashSet<string> _sdkMessages = [];
+    private HashSet<string> _solutions = [];
 
     /// <summary>
     ///     Config version. Defaults to 1 for backward compatibility.
@@ -38,7 +38,7 @@ public class CodeGenerationConfig
         get => _entities;
         set
         {
-            _entities = new HashSet<string>(value);
+            _entities = [..value];
             _entities.TrimExcess();
         }
     }
@@ -48,7 +48,7 @@ public class CodeGenerationConfig
         get => _actions;
         init
         {
-            _actions = new HashSet<string>(value);
+            _actions = [..value];
             _actions.TrimExcess();
         }
     }
@@ -59,7 +59,7 @@ public class CodeGenerationConfig
         get => _customApis;
         init
         {
-            _customApis = new HashSet<string>(value);
+            _customApis = [..value];
             _customApis.TrimExcess();
         }
     }
@@ -70,7 +70,7 @@ public class CodeGenerationConfig
         get => _sdkMessages;
         init
         {
-            _sdkMessages = new HashSet<string>(value);
+            _sdkMessages = [..value];
             _sdkMessages.TrimExcess();
         }
     }
@@ -80,7 +80,7 @@ public class CodeGenerationConfig
         get => _solutions;
         init
         {
-            _solutions = new HashSet<string>(value);
+            _solutions = [..value];
             _solutions.TrimExcess();
         }
     }
@@ -90,7 +90,7 @@ public class CodeGenerationConfig
         get => _forms;
         set
         {
-            _forms = new HashSet<string>(value);
+            _forms = [..value];
             _forms.TrimExcess();
         }
     }
@@ -137,17 +137,17 @@ public class CodeGenerationConfig
 
     public bool XrmMockFormHelpers { get; init; }
 
-    public HashSet<EntityFilter> EntityFilters { get; init; } = new();
+    public HashSet<EntityFilter> EntityFilters { get; init; } = [];
 
-    public HashSet<EntityRefFilter> EntityRefFilters { get; init; } = new();
+    public HashSet<EntityRefFilter> EntityRefFilters { get; init; } = [];
 
-    public HashSet<EntityFormFilter> EntityFormFilters { get; init; } = new();
+    public HashSet<EntityFormFilter> EntityFormFilters { get; init; } = [];
 
-    public HashSet<string> SdkMessageFilters { get; init; } = new();
+    public HashSet<string> SdkMessageFilters { get; init; } = [];
 
-    public HashSet<string> GlobalOptionSets { get; init; } = new();
+    public HashSet<string> GlobalOptionSets { get; init; } = [];
 
-    public HashSet<string> BusinessProcessFlows { get; init; } = new();
+    public HashSet<string> BusinessProcessFlows { get; init; } = [];
 
     public bool SuppressNullableSupport { get; init; }
 

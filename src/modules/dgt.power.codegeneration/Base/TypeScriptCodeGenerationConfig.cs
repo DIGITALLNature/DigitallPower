@@ -30,5 +30,5 @@ public class TypeScriptCodeGenerationConfig : CodeGenerationConfigBase
     ///     Form names to include (format: "entity.formname.form").
     ///     When empty, all forms are generated.
     /// </summary>
-    public IReadOnlyCollection<string> Forms { get; set; } = new HashSet<string>();
+    public IReadOnlyCollection<string> Forms { get; init; } = new HashSet<string>();
 }

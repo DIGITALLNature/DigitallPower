@@ -24,7 +24,7 @@ public static class CodeGenerationConfigFactory
     /// <summary>
     ///     Parses a JSON config string and returns a typed result.
     /// </summary>
-    public static CodeGenerationConfigResult Resolve(string json, IAnsiConsole? console = null)
+    private static CodeGenerationConfigResult Resolve(string json, IAnsiConsole? console = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
