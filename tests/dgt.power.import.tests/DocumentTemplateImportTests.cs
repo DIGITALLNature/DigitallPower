@@ -31,10 +31,8 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .WithMetaData(accountMeta)
             .WithMetaData(contactMeta);
     }
-    private (DocumentTemplate accountExcel, DocumentTemplate contactExcel, DocumentTemplate accountWord,
-        DocumentTemplate contactWord) GetData() =>
-    (
-        new DocumentTemplate(Guid.NewGuid())
+    private DocumentTemplate GetAccountExcelTemplate() =>
+        new(Guid.NewGuid())
         {
             Name = "AccountExcel",
             DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
@@ -43,18 +41,10 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             LanguageCode = 1033,
             Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
             AssociatedEntityTypeCode = "account"
-        },
-        new DocumentTemplate(Guid.NewGuid())
-        {
-            Name = "ContactExcel",
-            DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
-            Content = Convert.ToBase64String(File.ReadAllBytes(GetResourcePath("Contacts.xlsx"))),
-            Description = "Internal",
-            LanguageCode = 1033,
-            Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
-            AssociatedEntityTypeCode = Contact.EntityLogicalName
-        },
-        new DocumentTemplate(Guid.NewGuid())
+        };
+
+    private DocumentTemplate GetAccountWordTemplate() =>
+        new(Guid.NewGuid())
         {
             Name = "AccountWord",
             DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
@@ -63,18 +53,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             LanguageCode = 1033,
             Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
             AssociatedEntityTypeCode = "account"
-        },
-        new DocumentTemplate(Guid.Parse("d1004e38-1033-461c-aa0e-7043f80c49cb"))
-        {
-            Name = "ContactWord",
-            DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
-            Content = Convert.ToBase64String(File.ReadAllBytes(GetResourcePath("Contact.docx"))),
-            Description = "Internal",
-            LanguageCode = 1033,
-            Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
-            AssociatedEntityTypeCode = Contact.EntityLogicalName
-        }
-    );
+        };
 
     [Test]
     public async Task ShouldFailOnWrongConfiguration() =>
@@ -101,7 +80,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     [Test]
     public async Task ShouldForceTemplateUpdate()
     {
-        var (existingTemplate, _, _, _) = GetData();
+        var existingTemplate = GetAccountExcelTemplate();
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("force-update-templates.json");
         var forceUpdateTemplate = templateConfiguration.Templates.Single();
 
@@ -131,7 +110,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     [Test]
     public async Task ShouldDisableExistingTemplate()
     {
-        var (_, _, existingTemplate, _) = GetData();
+        var existingTemplate = GetAccountWordTemplate();
         var templateConfiguration = new DocumentTemplates
         {
             IgnoreMissing = false,
@@ -179,7 +158,7 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
     {
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("update-templates.json");
         var updateTemplate = templateConfiguration.Templates.Single();
-        var (_, _, existingTemplate, _) = GetData();
+        var existingTemplate = GetAccountWordTemplate();
         existingTemplate.Status = true;
         var context = GetBuilder()
             .WithData(existingTemplate)
