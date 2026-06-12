@@ -368,12 +368,27 @@ internal static partial class TsLiquidTemplateModelFactory
 
     private static bool IsEntityReadableAttribute(AttributeMetadata attribute)
     {
-        return IsVisibleInEntity(attribute) && IsReadableForForm(attribute);
+        if (!IsVisibleInEntity(attribute))
+        {
+            return false;
+        }
+
+        return IsReadableForForm(attribute);
     }
 
     private static bool IsEntityOptionField(AttributeMetadata attribute)
     {
-        return IsVisibleInEntity(attribute) && IsReadableForForm(attribute) && IsOptionAttribute(attribute);
+        if (!IsVisibleInEntity(attribute))
+        {
+            return false;
+        }
+
+        if (!IsReadableForForm(attribute))
+        {
+            return false;
+        }
+
+        return IsOptionAttribute(attribute);
     }
 
     private static bool IsVisibleInEntity(AttributeMetadata attribute)
@@ -474,7 +489,12 @@ internal static partial class TsLiquidTemplateModelFactory
 
     private static string GetLocalizedLabel(Label? label, CodeGenerationConfig config, int systemLanguage)
     {
-        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, config.UseBaseLanguage, systemLanguage);
+        if (label == null)
+        {
+            return string.Empty;
+        }
+
+        return Formatter.GetLocalizedLabel(label, config.UseBaseLanguage, systemLanguage);
     }
 
     private static string Summary(string description, int indent)

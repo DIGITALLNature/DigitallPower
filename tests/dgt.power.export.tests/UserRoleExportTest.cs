@@ -7,7 +7,6 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.export.tests;
