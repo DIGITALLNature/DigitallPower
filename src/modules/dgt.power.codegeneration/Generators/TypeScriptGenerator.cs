@@ -22,6 +22,9 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
     /// <inheritdoc />
     public bool Generate(CodeGenerationVerb args, CodeGenerationConfig config)
     {
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(config);
+
         ITypescriptGenerationStrategy strategy = config.TypescriptGeneratorVersion switch
         {
             TypescriptGeneratorVersion.Full => new TypescriptFullGenerationStrategy(metadataService, console),

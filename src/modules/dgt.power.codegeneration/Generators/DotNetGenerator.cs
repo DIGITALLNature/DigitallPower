@@ -31,7 +31,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         return true;
     }
 
-    private void PrepareDirectory(CodeGenerationVerb args)
+    private static void PrepareDirectory(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
 

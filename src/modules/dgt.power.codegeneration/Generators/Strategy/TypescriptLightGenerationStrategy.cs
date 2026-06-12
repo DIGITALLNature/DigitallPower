@@ -58,7 +58,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var liquidTemplate = InitializeLiquidTemplate("Entity.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.Entity);
 
         int? languageCode = 1031;
         if (config.UseBaseLanguage)
@@ -87,7 +87,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var artifactName = $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}.{FileNames.Typescript.FileExtension.TypeExtension}";
             var content = RenderTemplateWithDiagnostics(
                 liquidTemplate,
-                "Entity.liquid",
+                LiquidTemplates.Entity,
                 viewModel,
                 entityKey: metadata.LogicalName,
                 artifact: artifactName);
@@ -105,8 +105,8 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var liquidTemplateForm = InitializeLiquidTemplate("EntityForm.liquid");
-        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate("EntityFormTestHelper.liquid");
+        var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
+        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
         var bpfControls = GetCompleteEntityBpfControlList(config);
         var entityWithParsedFormList = GenerateEntityWithMetadata(config, bpfControls);
@@ -125,22 +125,24 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
-                CreateFormFile(parsedForm, entityMetadata, liquidTemplateForm, "EntityForm.liquid", args, formName, bpfControlsForEntity);
+                CreateFormFile(parsedForm, entityMetadata, liquidTemplateForm, LiquidTemplates.EntityForm, args, formName, bpfControlsForEntity);
                 if (config.XrmMockFormHelpers)
                 {
-                    CreateFormTestHelperFile(parsedForm, entityMetadata, liquidTemplateFormTestHelpers, "EntityFormTestHelper.liquid", args,
+                    CreateFormTestHelperFile(parsedForm, entityMetadata, liquidTemplateFormTestHelpers, LiquidTemplates.EntityFormTestHelper, args,
                         $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}", bpfControlsForEntity);
                 }
             }
         }
 
-        if (config.XrmMockFormHelpers)
+        if (!config.XrmMockFormHelpers)
         {
-            CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormODataFilter, FileNames.Typescript.FileExtension.TsExtension);
-            CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextBuilder, FileNames.Typescript.FileExtension.TsExtension);
-            CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextTypes, FileNames.Typescript.FileExtension.TsExtension);
-            CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
+            return;
         }
+
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormODataFilter, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextBuilder, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextTypes, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
     /// <summary>
@@ -177,7 +179,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     ///     Generates SDK messages for code generation.
     /// </summary>
-    public void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -187,7 +189,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             return;
         }
 
-        var liquidTemplate = InitializeLiquidTemplate("SdkMessages.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
         var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
 
         var viewModel = new SdkMessagesViewModel
@@ -197,7 +199,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         var content = RenderTemplateWithDiagnostics(
             liquidTemplate,
-            "SdkMessages.liquid",
+            LiquidTemplates.SdkMessages,
             viewModel,
             artifact: $"{FileNames.Typescript.FileNames.SdkMessageNames}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
@@ -207,7 +209,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     /// Generates Custom Apis type for code generation
     /// </summary>
-    public void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -219,7 +221,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         var customApis = metadataService.RetrieveCustomApis(config);
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
-        var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.CustomApi);
 
         foreach (var customApi in customApis)
         {
@@ -233,7 +235,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.CustomApi}";
             var content = RenderTemplateWithDiagnostics(
                 liquidTemplate,
-                "CustomApi.liquid",
+                LiquidTemplates.CustomApi,
                 viewModel,
                 entityKey: customApi.LogicalName,
                 artifact: $"{customApiName}.{FileNames.Typescript.FileExtension.TypeExtension}");
@@ -245,7 +247,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     ///     Generates option sets based on the provided arguments and configuration
     /// </summary>
-    public void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
+    private void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -255,17 +257,17 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             return;
         }
 
-        var liquidTemplate = InitializeLiquidTemplate("OptionSets.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
         var optionSets = metadataService.RetrieveOptionSets(config);
 
         var viewModel = new OptionSetViewModel
         {
-            OptionSets = optionSets.ToList()
+            OptionSets = [..optionSets]
         };
 
         var content = RenderTemplateWithDiagnostics(
             liquidTemplate,
-            "OptionSets.liquid",
+            LiquidTemplates.OptionSets,
             viewModel,
             artifact: $"{FileNames.Typescript.FileNames.OptionSetValues}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
@@ -297,7 +299,6 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
     #region V2 Generate (TypeScriptCodeGenerationConfig)
 
-    /// <inheritdoc />
     public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         PrepareDirectory(args);
@@ -314,7 +315,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var liquidTemplate = InitializeLiquidTemplate("Entity.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.Entity);
 
         var languageCode = config.Language;
         if (config.Language == null)
@@ -341,7 +342,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var artifactName = $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}.{FileNames.Typescript.FileExtension.TypeExtension}";
             var content = RenderTemplateWithDiagnostics(
                 liquidTemplate,
-                "Entity.liquid",
+                LiquidTemplates.Entity,
                 viewModel,
                 entityKey: metadata.LogicalName,
                 artifact: artifactName);
@@ -359,8 +360,8 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var liquidTemplateForm = InitializeLiquidTemplate("EntityForm.liquid");
-        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate("EntityFormTestHelper.liquid");
+        var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
+        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
         var bpfControls = GetCompleteEntityBpfControlListV2(config);
         var entityWithParsedFormList = GenerateEntityWithMetadataV2(config, bpfControls);
@@ -383,7 +384,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                     parsedForm,
                     entityMetada,
                     liquidTemplateForm,
-                    "EntityForm.liquid",
+                    LiquidTemplates.EntityForm,
                     args,
                     formName,
                     bpfControlsForEntity);
@@ -393,7 +394,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                         parsedForm,
                         entityMetada,
                         liquidTemplateFormTestHelpers,
-                        "EntityFormTestHelper.liquid",
+                        LiquidTemplates.EntityFormTestHelper,
                         args,
                         $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
                         bpfControlsForEntity);
@@ -422,7 +423,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             return;
         }
 
-        var liquidTemplate = InitializeLiquidTemplate("SdkMessages.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
         var sdkMessages = metadataService.RetrieveSdkMessageNames(config.Requests);
 
         var viewModel = new SdkMessagesViewModel
@@ -432,7 +433,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         var content = RenderTemplateWithDiagnostics(
             liquidTemplate,
-            "SdkMessages.liquid",
+            LiquidTemplates.SdkMessages,
             viewModel,
             artifact: $"{FileNames.Typescript.FileNames.SdkMessageNames}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
@@ -449,17 +450,17 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             return;
         }
 
-        var liquidTemplate = InitializeLiquidTemplate("OptionSets.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
         var optionSets = metadataService.RetrieveOptionSets(config.GlobalOptionSets);
 
         var viewModel = new OptionSetViewModel
         {
-            OptionSets = optionSets.ToList()
+            OptionSets = [..optionSets]
         };
 
         var content = RenderTemplateWithDiagnostics(
             liquidTemplate,
-            "OptionSets.liquid",
+            LiquidTemplates.OptionSets,
             viewModel,
             artifact: $"{FileNames.Typescript.FileNames.OptionSetValues}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
@@ -487,7 +488,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
-        var liquidTemplate = InitializeLiquidTemplate("CustomApi.liquid");
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.CustomApi);
 
         foreach (var customApi in customApis)
         {
@@ -501,7 +502,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.CustomApi}";
             var content = RenderTemplateWithDiagnostics(
                 liquidTemplate,
-                "CustomApi.liquid",
+                LiquidTemplates.CustomApi,
                 viewModel,
                 entityKey: customApi.LogicalName,
                 artifact: $"{customApiName}.{FileNames.Typescript.FileExtension.TypeExtension}");
@@ -695,5 +696,15 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
 
     #endregion
+
+    private static class LiquidTemplates
+    {
+        public const string Entity = "Entity.liquid";
+        public const string EntityForm = "EntityForm.liquid";
+        public const string EntityFormTestHelper = "EntityFormTestHelper.liquid";
+        public const string SdkMessages = "SdkMessages.liquid";
+        public const string OptionSets = "OptionSets.liquid";
+        public const string CustomApi = "CustomApi.liquid";
+    }
 }
 

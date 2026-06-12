@@ -25,7 +25,7 @@ public class CodeGenerationVerb : BaseProgramSettings
     public string Folder { get; init; } = Folders.Model ;
 
     [CommandOption("-c|--config")]
-    [Description("Full path to the config file, e.g. C:\\temp\\config.json")]
+    [Description(@"Full path to the config file, e.g. C:\temp\config.json")]
     [DefaultValue("config.json")]
     public string Config { get; init; }
 }

@@ -32,7 +32,7 @@ public abstract class TypescriptGenerationStrategyBase(IAnsiConsole console)
             args.TargetDirectory,
             args.Folder,
             Folders.Typescript,
-            ..(outputPath ?? ([])),
+            ..outputPath ?? [],
             $"{name}.{extension}"
         ]);
 
@@ -67,9 +67,7 @@ public abstract class TypescriptGenerationStrategyBase(IAnsiConsole console)
     /// Prepares the directory for code generation.
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
-#pragma warning disable CA1822 - part of API
     protected static void PrepareDirectory(CodeGenerationVerb args)
-#pragma warning restore CA1822
     {
         // Ensure that the arguments are not null
         Debug.Assert(args != null, $"{nameof(args)} {NotNull}");
@@ -78,7 +76,7 @@ public abstract class TypescriptGenerationStrategyBase(IAnsiConsole console)
         var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
         CreateDirectoryWhenNeeded(mainFolderPath);
 
-        // Create the Typescript folder if it doesn't exist
+        // Create the TypeScript folder if it doesn't exist
         var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
         if (CreateDirectoryWhenNeeded(typescriptFolderPath))
         {

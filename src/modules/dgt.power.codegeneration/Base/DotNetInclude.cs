@@ -15,17 +15,17 @@ public class DotNetInclude
     public bool Context { get; init; } = true;
 
     /// <summary>
-    ///     Generate nested Options class with OptionSet value constants.
+    ///     Generate a nested Options class with OptionSet value constants.
     /// </summary>
     public bool Options { get; init; } = true;
 
     /// <summary>
-    ///     Generate nested LogicalNames class with attribute logical name constants.
+    ///     Generate a nested LogicalNames class with attribute logical name constants.
     /// </summary>
     public bool LogicalNames { get; init; } = true;
 
     /// <summary>
-    ///     Generate nested Relations class with relationship schema name constants.
+    ///     Generate a nested Relations class with relationship schema name constants.
     /// </summary>
     public bool Relations { get; init; } = true;
 
@@ -40,7 +40,7 @@ public class DotNetInclude
     public bool EntityTypeCode { get; init; } = true;
 
     /// <summary>
-    ///     Generate nested AlternateKeys class with alternate key logical name constants.
+    ///     Generate a nested AlternateKeys class with alternate key logical name constants.
     /// </summary>
     public bool AlternateKeys { get; init; } = true;
 

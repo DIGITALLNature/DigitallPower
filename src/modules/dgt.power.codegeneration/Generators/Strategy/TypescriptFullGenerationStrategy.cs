@@ -169,13 +169,10 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         }
     }
 
-    private void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config) =>
-        throw new NotSupportedException("Custom API generation is not supported by the full TypeScript generator.");
-
     #endregion
 
     /// <summary>
-    /// Inner logic of generate entity forms
+    /// Inner logic of generating entity forms
     /// </summary>
     /// <param name="args"></param>
     /// <param name="config"></param>
