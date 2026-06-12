@@ -9,11 +9,6 @@ namespace dgt.power.codegeneration.Base;
 public class TypeScriptInclude
 {
     /// <summary>
-    ///     Generate OptionSet value constants.
-    /// </summary>
-    public bool Options { get; init; } = true;
-
-    /// <summary>
     ///     Generate SDK message name constants.
     /// </summary>
     public bool SdkMessages { get; init; } = true;
