@@ -31,12 +31,8 @@ internal static class TslRenderDiagnostics
                 ? currentFilter
                 : NotAvailable;
 
-#pragma warning disable S2302
-            var templateKey = templateName;
-#pragma warning restore S2302
-
             throw new InvalidOperationException(
-                $"TSL template render failed. template='{templateKey}', " +
+                $"TSL template render failed. template='{templateName}', " +
                 $"entity='{entityKey ?? NotAvailable}', " +
                 $"form='{formKey ?? NotAvailable}', " +
                 $"artifact='{artifact ?? NotAvailable}', " +
