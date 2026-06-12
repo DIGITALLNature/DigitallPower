@@ -145,8 +145,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
         sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
         {
-            // ReSharper disable once CoVariantArrayConversion
-            Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray())}
+            Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
         var actions = connection.RetrieveMultiple(query);
 
@@ -246,8 +245,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
         sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
         {
-            // ReSharper disable once CoVariantArrayConversion
-            Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray())}
+            Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
         var customApis = connection.RetrieveMultiple(query);
 
@@ -399,8 +397,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             ColumnSet = new ColumnSet(SdkMessage.LogicalNames.Name),
             Criteria = new FilterExpression(LogicalOperator.And)
             {
-                // ReSharper disable once CoVariantArrayConversion
-                Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray())}
+                Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
             }
         };
         var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
@@ -545,7 +542,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
-        if (config.OnlyFormsFromSolutions && config.Solutions.Count > 0)
+        if (config is { OnlyFormsFromSolutions: true, Solutions.Count: > 0 })
         {
             var queryAnd = new FilterExpression(LogicalOperator.And);
             var querySolutionComponent = new LinkEntity(
@@ -558,7 +555,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             querySolutionComponent.LinkCriteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.Workflow);
 
             var querySolutionAndSolutionComponent = querySolutionComponent.AddLink(Solution.EntityLogicalName, Solution.LogicalNames.SolutionId, SolutionComponent.LogicalNames.SolutionId);
-            querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions.Select(static s => (object)s).ToArray());
+            querySolutionAndSolutionComponent.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.In, config.Solutions.Select(static object (s) => s).ToArray());
 
             queryWorkflow.Criteria.AddFilter(queryAnd);
         }
@@ -913,7 +910,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             ColumnSet = new ColumnSet(SdkMessage.LogicalNames.Name),
             Criteria = new FilterExpression(LogicalOperator.And)
             {
-                Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, requestNames.ToArray()) }
+                Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, requestNames.Cast<object>().ToArray()) }
             }
         };
         var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
@@ -1042,7 +1039,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         sdkmessageLink.EntityAlias = "msg";
         sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
         {
-            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray()) }
+            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
         var customApis = connection.RetrieveMultiple(query);
@@ -1144,7 +1141,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         sdkmessageLink.EntityAlias = "msg";
         sdkmessageLink.LinkCriteria = new FilterExpression(LogicalOperator.And)
         {
-            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.ToArray()) }
+            Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
         var actions = connection.RetrieveMultiple(query);
