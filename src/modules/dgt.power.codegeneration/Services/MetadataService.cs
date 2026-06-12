@@ -863,6 +863,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames)
     {
+        ArgumentNullException.ThrowIfNull(requestNames);
         if (requestNames.Count == 0) return [];
 
         var remaining = requestNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -891,6 +892,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames)
     {
+        ArgumentNullException.ThrowIfNull(requestNames);
         var result = new List<(string Name, string Message)>
         {
             ("Assign", "Assign"), ("Create", "Create"), ("Delete", "Delete"),
@@ -935,6 +937,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     public SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets)
     {
+        ArgumentNullException.ThrowIfNull(globalOptionSets);
         var result = new SortedDictionary<string, List<Option>>();
         foreach (var globalOptionSet in globalOptionSets)
         {
@@ -1026,7 +1029,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
 
     #region V2 internal helpers
 
-    private IReadOnlyList<WfAction> RetrieveCustomApisByNames(IReadOnlyCollection<string> names)
+    private List<WfAction> RetrieveCustomApisByNames(IReadOnlyCollection<string> names)
     {
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
         {
@@ -1119,7 +1122,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
         return result;
     }
 
-    private IReadOnlyList<WfAction> RetrieveActionsByNames(IReadOnlyCollection<string> names)
+    private List<WfAction> RetrieveActionsByNames(IReadOnlyCollection<string> names)
     {
         var query = new QueryExpression(Workflow.EntityLogicalName)
         {
@@ -1160,7 +1163,8 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                     Name = i.Attribute("Name")?.Value,
                     Type = i.Attribute("Type")?.Value,
                     Direction = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentDirectionAttribute")?.Attribute("Value")?.Value,
-                    Description = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentDescriptionAttribute")?.Attribute("Value")?.Value.Replace("\\r\\n", "///\r\n", StringComparison.Ordinal),
+                    Description = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentDescriptionAttribute")?.Attribute("Value")?.Value
+                        .Replace("\\r\\n", "///\r\n", StringComparison.Ordinal),
                     EntityName = i.DescendantsAndSelf().SingleOrDefault(d => d.Name.LocalName == "ArgumentEntityAttribute")?.Attribute("Value")?.Value
                 });
 
