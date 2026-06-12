@@ -13,7 +13,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.codegeneration.Templates.ts;
 
-internal static class TsLiquidTemplateModelFactory
+internal static partial class TsLiquidTemplateModelFactory
 {
     public static TsSdkMessagesTemplateModel CreateSdkMessagesModel(IEnumerable<(string Name, string Message)> sdkMessages, CodeGenerationConfig config)
     {
@@ -246,7 +246,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFilters.Count > 0)
         {
             var match = config.EntityFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Attributes != null && match.Attributes.Count > 0)
+            if (match?.Attributes is { Count: > 0 })
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -264,7 +264,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFilters.Count > 0)
         {
             var match = config.EntityFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Optionsets != null && match.Optionsets.Count > 0)
+            if (match?.Optionsets is { Count: > 0 })
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -283,7 +283,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityRefFilters.Count > 0)
         {
             var match = config.EntityRefFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Attributes != null && match.Attributes.Count > 0)
+            if (match?.Attributes is { Count: > 0 })
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -301,7 +301,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityRefFilters.Count > 0)
         {
             var match = config.EntityRefFilters.FirstOrDefault(entityFilter => entityFilter.Entity == entityMetadata.LogicalName);
-            if (match?.Optionsets != null && match.Optionsets.Count > 0)
+            if (match?.Optionsets is { Count: > 0 })
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -321,7 +321,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Attributes != null && match.Attributes.Count > 0)
+            if (match?.Attributes is { Count: > 0 })
             {
                 filteredAttributes = filteredAttributes.Where(attribute => match.Attributes.Contains(attribute.LogicalName));
             }
@@ -341,7 +341,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Optionsets != null && match.Optionsets.Count > 0)
+            if (match?.Optionsets is { Count: > 0 })
             {
                 filteredOptionFields = filteredOptionFields.Where(optionField => match.Optionsets.Contains(optionField.LogicalName));
             }
@@ -357,7 +357,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Tabs != null && match.Tabs.Count > 0)
+            if (match?.Tabs is { Count: > 0 })
             {
                 filteredTabs = filteredTabs.Where(tab => match.Tabs.Contains(tab.Key));
             }
@@ -368,27 +368,12 @@ internal static class TsLiquidTemplateModelFactory
 
     private static bool IsEntityReadableAttribute(AttributeMetadata attribute)
     {
-        if (!IsVisibleInEntity(attribute))
-        {
-            return false;
-        }
-
-        return IsReadableForForm(attribute);
+        return IsVisibleInEntity(attribute) && IsReadableForForm(attribute);
     }
 
     private static bool IsEntityOptionField(AttributeMetadata attribute)
     {
-        if (!IsVisibleInEntity(attribute))
-        {
-            return false;
-        }
-
-        if (!IsReadableForForm(attribute))
-        {
-            return false;
-        }
-
-        return IsOptionAttribute(attribute);
+        return IsVisibleInEntity(attribute) && IsReadableForForm(attribute) && IsOptionAttribute(attribute);
     }
 
     private static bool IsVisibleInEntity(AttributeMetadata attribute)
@@ -433,7 +418,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Grids != null && match.Grids.Count > 0)
+            if (match?.Grids is { Count: > 0 })
             {
                 filteredGrids = filteredGrids.Where(grid => match.Grids.Contains(grid));
             }
@@ -460,7 +445,7 @@ internal static class TsLiquidTemplateModelFactory
         if (config.EntityFormFilters.Count > 0)
         {
             var match = config.EntityFormFilters.FirstOrDefault(entityFilter => entityFilter.EntityForm == form);
-            if (match?.Sections != null && match.Sections.Count > 0)
+            if (match?.Sections is { Count: > 0 })
             {
                 filteredSections = filteredSections.Where(section => match.Sections.Contains(section));
             }
@@ -489,12 +474,7 @@ internal static class TsLiquidTemplateModelFactory
 
     private static string GetLocalizedLabel(Label? label, CodeGenerationConfig config, int systemLanguage)
     {
-        if (label == null)
-        {
-            return string.Empty;
-        }
-
-        return Formatter.GetLocalizedLabel(label, config.UseBaseLanguage, systemLanguage);
+        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, config.UseBaseLanguage, systemLanguage);
     }
 
     private static string Summary(string description, int indent)
@@ -519,13 +499,12 @@ internal static class TsLiquidTemplateModelFactory
     private static string SanitizeStageName(string value)
     {
         var result = Formatter.PreventFirstNumber(value);
-        return Regex.Replace(result, "[^0-9a-zA-Z_]+", "_");
+        return NonIdentifierCharsRegex().Replace(result, "_");
     }
 
     private sealed class UniqueNameGenerator(string reservedName)
     {
         private readonly Dictionary<string, HashSet<string>> _usedTokens = new();
-        private readonly string _reservedName = reservedName;
 
         public string GetName(string value, string scope)
         {
@@ -536,7 +515,7 @@ internal static class TsLiquidTemplateModelFactory
             }
 
             var currentValue = value;
-            while (usedValues.Contains(currentValue) || currentValue == _reservedName)
+            while (usedValues.Contains(currentValue) || currentValue == reservedName)
             {
                 currentValue += "_";
             }
@@ -545,6 +524,9 @@ internal static class TsLiquidTemplateModelFactory
             return currentValue;
         }
     }
+
+    [GeneratedRegex("[^0-9a-zA-Z_]+")]
+    private static partial Regex NonIdentifierCharsRegex();
 }
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
