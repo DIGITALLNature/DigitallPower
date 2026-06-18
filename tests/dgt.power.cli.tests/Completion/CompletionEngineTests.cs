@@ -179,6 +179,83 @@ public class CompletionEngineTests
         await Assert.That(result).DoesNotContain("import");
     }
 
+    // ── Dynamic provider completions ─────────────────────────────────────────
+
+    [Test]
+    public async Task GetCompletions_LeafCommandWithPositionalArg_CallsDynamicProvider()
+    {
+        var model = BuildModel(
+            Branch("profile",
+                CommandWithArg("select"),
+                CommandWithArg("delete"),
+                Command("list")));
+
+        var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
+
+        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20, provider);
+
+        await Assert.That(result).Contains("dev");
+        await Assert.That(result).Contains("prod");
+        await Assert.That(result).Contains("staging");
+    }
+
+    [Test]
+    public async Task GetCompletions_LeafCommandWithPositionalArg_FiltersByPrefix()
+    {
+        var model = BuildModel(
+            Branch("profile", CommandWithArg("select")));
+
+        var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
+
+        var result = CompletionEngine.GetCompletions(model, "dgtp profile select pr", 22, provider);
+
+        await Assert.That(result).Contains("prod");
+        await Assert.That(result).DoesNotContain("dev");
+        await Assert.That(result).DoesNotContain("staging");
+    }
+
+    [Test]
+    public async Task GetCompletions_BranchCommand_DoesNotCallDynamicProvider()
+    {
+        var model = BuildModel(
+            Branch("profile",
+                CommandWithArg("select"),
+                CommandWithArg("delete")));
+
+        var provider = new FakeDynamicProvider(["dev", "prod"]);
+
+        // "profile " — still a branch, not a leaf
+        var result = CompletionEngine.GetCompletions(model, "dgtp profile ", 13, provider);
+
+        await Assert.That(provider.WasCalled).IsFalse();
+        await Assert.That(result).Contains("select");
+        await Assert.That(result).Contains("delete");
+    }
+
+    [Test]
+    public async Task GetCompletions_WhenNoDynamicProvider_ReturnsEmptyForPositionalArg()
+    {
+        var model = BuildModel(
+            Branch("profile", CommandWithArg("select")));
+
+        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20);
+
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task GetCompletions_WhenProviderReturnsNull_ReturnsEmpty()
+    {
+        var model = BuildModel(
+            Branch("profile", CommandWithArg("select")));
+
+        var provider = new FakeDynamicProvider(null); // null = doesn't handle this path
+
+        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20, provider);
+
+        await Assert.That(result).IsEmpty();
+    }
+
     // ── Model builder helpers ─────────────────────────────────────────────────
 
     private static ICommandModel BuildModel(params ICommandInfo[] commands) =>
@@ -192,6 +269,12 @@ public class CompletionEngineTests
 
     private static ICommandInfo CommandWithOptions(string name, params ICommandOption[] options) =>
         new FakeCommandInfo(name, options: options);
+
+    private static ICommandInfo CommandWithArg(string name, string argValue = "Name") =>
+        new FakeCommandInfo(name, positionalArgs: [new FakeCommandArgument(argValue)]);
+
+    private static ICommandInfo BranchWith(string name, params ICommandInfo[] children) =>
+        new FakeCommandInfo(name, children: children);
 
     private static ICommandOption Option(string longName, bool isHidden = false) =>
         new FakeCommandOption(longName, isHidden);
@@ -211,7 +294,8 @@ public class CompletionEngineTests
         string name,
         bool isHidden = false,
         ICommandInfo[]? children = null,
-        ICommandOption[]? options = null) : ICommandInfo
+        ICommandOption[]? options = null,
+        ICommandArgument[]? positionalArgs = null) : ICommandInfo
     {
         public string Name => name;
         public string? Description => null;
@@ -219,7 +303,9 @@ public class CompletionEngineTests
         public bool IsDefaultCommand => false;
         public bool IsHidden => isHidden;
         public IReadOnlyList<ICommandParameter> Parameters { get; } =
-            (options ?? []).Cast<ICommandParameter>().ToList();
+            ((ICommandParameter[])(options ?? []))
+            .Concat(positionalArgs ?? [])
+            .ToList();
         public ICommandInfo? Parent => null;
         public IReadOnlyList<string[]> Examples => [];
         public IReadOnlyList<ICommandInfo> Commands { get; } = children ?? [];
@@ -237,5 +323,31 @@ public class CompletionEngineTests
         public string? Description => null;
         public System.ComponentModel.DefaultValueAttribute? DefaultValue => null;
         public bool IsHidden => isHidden;
+    }
+
+    private sealed class FakeCommandArgument(string value) : ICommandArgument
+    {
+        public string Value => value;
+        public int Position => 0;
+        public bool IsFlag => false;
+        public bool IsRequired => true;
+        public string? Description => null;
+        public System.ComponentModel.DefaultValueAttribute? DefaultValue => null;
+        public bool IsHidden => false;
+    }
+
+    private sealed class FakeDynamicProvider(IReadOnlyList<string>? names) : IDynamicCompletionProvider
+    {
+        public bool WasCalled { get; private set; }
+
+        public IReadOnlyList<string>? GetCompletions(IReadOnlyList<string> commandPath, string prefix)
+        {
+            WasCalled = true;
+            if (names is null)
+                return null;
+            return string.IsNullOrEmpty(prefix)
+                ? names
+                : names.Where(n => n.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
     }
 }

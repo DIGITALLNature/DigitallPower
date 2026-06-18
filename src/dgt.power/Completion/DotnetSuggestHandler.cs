@@ -43,7 +43,8 @@ internal static class DotnetSuggestHandler
             return 0; // graceful: no completions rather than an error
 
         var commandLine = args.Length > 1 ? args[1].Trim('"') : string.Empty;
-        var completions = CompletionEngine.GetCompletions(model, commandLine, directive.Position);
+        var completions = CompletionEngine.GetCompletions(model, commandLine, directive.Position,
+            new ProfileNamesProvider());
 
         foreach (var completion in completions)
             Console.WriteLine(completion);
