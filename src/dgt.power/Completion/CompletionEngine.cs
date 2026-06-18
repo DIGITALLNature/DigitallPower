@@ -24,7 +24,11 @@ namespace dgt.power.Completion;
 /// </remarks>
 internal static class CompletionEngine
 {
-    public static IReadOnlyList<string> GetCompletions(ICommandModel model, string commandLine, int position)
+    public static IReadOnlyList<string> GetCompletions(
+        ICommandModel model,
+        string commandLine,
+        int position,
+        IDynamicCompletionProvider? dynamicProvider = null)
     {
         // Trim the line to the cursor position so we never look beyond where the user is typing.
         var line = position < commandLine.Length ? commandLine[..position] : commandLine;
@@ -36,6 +40,7 @@ internal static class CompletionEngine
         ICommandContainer container = model;
         var consumeCount = endsWithSpace ? tokens.Count : Math.Max(0, tokens.Count - 1);
         var encounteredUnknownToken = false;
+        var commandPath = new List<string>();
 
         // Skip app-name token (index 0)
         for (var i = 1; i < consumeCount; i++)
@@ -54,6 +59,7 @@ internal static class CompletionEngine
             }
 
             container = child;
+            commandPath.Add(child.Name);
         }
 
         // An unrecognised command token means we are in an unknown context: return nothing.
@@ -80,6 +86,17 @@ internal static class CompletionEngine
                     .Where(c => !c.IsHidden && !c.IsDefaultCommand
                                 && c.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
                     .Select(c => c.Name));
+
+            // For leaf commands with positional arguments, delegate to the dynamic provider.
+            if (results.Count == 0
+                && container is ICommandInfo leafCmd
+                && leafCmd.Parameters.OfType<ICommandArgument>().Any()
+                && dynamicProvider != null)
+            {
+                var dynamic = dynamicProvider.GetCompletions(commandPath, prefix);
+                if (dynamic != null)
+                    results.AddRange(dynamic);
+            }
         }
 
         return results;
