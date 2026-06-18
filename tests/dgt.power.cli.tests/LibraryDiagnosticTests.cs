@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 /// <summary>
 /// Diagnostic tests to verify Digitall.Dataverse.Testing library behavior.

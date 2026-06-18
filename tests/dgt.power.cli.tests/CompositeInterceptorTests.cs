@@ -4,7 +4,7 @@
 using dgt.power.Telemetry;
 using Spectre.Console.Cli;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 public class CompositeInterceptorTests
 {

@@ -5,7 +5,7 @@ using System.IO.IsolatedStorage;
 using dgt.power.common;
 using dgt.power.Telemetry;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 [NotInParallel(nameof(TelemetryConfigTests))]
 public class TelemetryConfigTests

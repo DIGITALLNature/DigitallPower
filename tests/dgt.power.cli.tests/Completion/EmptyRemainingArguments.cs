@@ -3,7 +3,7 @@
 
 using Spectre.Console.Cli;
 
-namespace dgt.power.telemetry.tests.Completion;
+namespace dgt.power.cli.tests.Completion;
 
 internal sealed class EmptyRemainingArguments : IRemainingArguments
 {

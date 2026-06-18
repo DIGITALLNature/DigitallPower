@@ -6,7 +6,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using TUnit.Assertions.Extensions;
 
-namespace dgt.power.telemetry.tests.Completion;
+namespace dgt.power.cli.tests.Completion;
 
 public class CompleteSetupCommandTests
 {
