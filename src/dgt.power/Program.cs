@@ -16,6 +16,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
+using dgt.power.Commands.Complete;
 using dgt.power.common.Commands;
 #pragma warning disable IDE0005 // Used in #if RELEASE block
 #pragma warning disable S1128
@@ -127,6 +128,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<DotNetWorker, DotNetWorker>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
+registrations.AddSingleton<ShellShimInstaller>();
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().ConnectAsync().GetAwaiter().GetResult());
 registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
@@ -297,4 +299,19 @@ void RegisterCommands(IConfigurator config)
     config.AddCommand<PushCommand>("push")
         .WithDescription("Import specific Dataverse Artefacts")
         .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
+
+    config.AddBranch<CompleteSettings>("complete", complete =>
+    {
+        complete.SetDescription("Manages shell tab completion for dgtp");
+        complete.AddCommand<CompleteSetupCommand>("setup")
+            .WithDescription("Registers dgtp with dotnet-suggest and optionally installs the shell shim")
+            .WithExample("complete", "setup")
+            .WithExample("complete", "setup", "--all")
+            .WithExample("complete", "setup", "--all", "--shell", "bash");
+        complete.AddCommand<CompleteInstallShellCommand>("install-shell")
+            .WithDescription("Installs the dotnet-suggest shell shim into your shell's rc file")
+            .WithExample("complete", "install-shell")
+            .WithExample("complete", "install-shell", "--shell", "zsh")
+            .WithExample("complete", "install-shell", "--dry-run");
+    });
 }
