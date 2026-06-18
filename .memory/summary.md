@@ -89,7 +89,29 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | Other (S103 line length, S1135 TODOs, CA1716 keyword) | ~40 | Accepted trade-offs |
 | Test code | ~330 | Test infrastructure, not production risk |
 
-## Known Caveats
+## Completion Subsystem (`src/dgt.power/Completion/` + `Commands/Complete/`)
+
+`dgtp` supports dotnet-suggest shell tab completion. Two separate subsystems:
+
+### 1. Suggest gate (`Completion/`)
+- `SuggestDirective` — parses `[suggest:N]` CLI directive
+- `DotnetSuggestHandler` — early exit in `Program.cs` before telemetry/NuGet/Dataverse; captures model and streams candidates to stdout
+- `ModelCaptureHelpProvider` — `IHelpProvider` that captures `ICommandModel` from Spectre via `--help` invocation on a minimal `CommandApp`
+- `CompletionEngine` — token-walking algorithm; returns command names / `--option` flags
+
+### 2. Setup commands (`Commands/Complete/`)
+- `CompleteSetupCommand` — registers dgtp with `dotnet-suggest register`; `--all` flag also runs shim install
+- `CompleteInstallShellCommand` — writes dotnet-suggest shim into shell RC file with idempotency markers
+- `ShellDetector` — auto-detects from `$SHELL` env var; maps to bash/zsh/fish/pwsh
+- `ShellShimInstaller` — virtual methods for testability; idempotency via `# >>> dgtp tab completion start >>>` markers; creates parent dirs
+
+### Key caveats
+- `DotnetSuggestHandler` must run as the FIRST statement in `Program.cs`, before any I/O, telemetry or network calls
+- `AnsiConsoleOutput(TextWriter)` constructor — no static `.Create()` method
+- `IHelpProvider.Write(model, null)` receives `ICommandModel` (not `ICommandInfo`)
+- `ICommand<T>.ExecuteAsync(context, settings, ct)` is an explicit interface impl — tests must cast via `(ICommand<T>)command`
+
+
 
 - **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
