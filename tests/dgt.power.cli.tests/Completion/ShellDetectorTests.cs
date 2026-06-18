@@ -4,7 +4,7 @@
 using dgt.power.Commands.Complete;
 using TUnit.Assertions.Extensions;
 
-namespace dgt.power.telemetry.tests.Completion;
+namespace dgt.power.cli.tests.Completion;
 
 public class ShellDetectorTests
 {

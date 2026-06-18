@@ -3,7 +3,7 @@
 
 using dgt.power.common;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 [NotInParallel(nameof(ExecutionEnvironmentTests))]
 public class ExecutionEnvironmentTests

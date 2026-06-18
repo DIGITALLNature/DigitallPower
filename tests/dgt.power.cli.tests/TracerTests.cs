@@ -5,7 +5,7 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.Telemetry;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 [NotInParallel(nameof(TracerTests))]
 public class TracerTests

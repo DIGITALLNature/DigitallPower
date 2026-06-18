@@ -5,7 +5,7 @@ using dgt.power.common;
 using dgt.power.Telemetry;
 using Spectre.Console.Cli;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 [NotInParallel(nameof(TracerTests))]
 public class TelemetryInterceptorTests

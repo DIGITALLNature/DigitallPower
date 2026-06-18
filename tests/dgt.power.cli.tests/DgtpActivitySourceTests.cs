@@ -4,7 +4,7 @@
 using System.Reflection;
 using dgt.power.Telemetry;
 
-namespace dgt.power.telemetry.tests;
+namespace dgt.power.cli.tests;
 
 public class DgtpActivitySourceTests
 {

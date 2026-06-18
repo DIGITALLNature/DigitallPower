@@ -5,7 +5,7 @@ using dgt.power.Completion;
 using Spectre.Console.Cli.Help;
 using TUnit.Assertions.Extensions;
 
-namespace dgt.power.telemetry.tests.Completion;
+namespace dgt.power.cli.tests.Completion;
 
 /// <summary>
 /// Unit tests for <see cref="CompletionEngine"/> using minimal in-memory ICommandModel mocks.
