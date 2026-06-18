@@ -53,7 +53,9 @@ public class CompleteInstallShellCommandTests : IDisposable
         var result = await command.ExecuteAsync(GetContext(), new CompleteInstallShellSettings { Shell = "bash" }, CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        await Assert.That(_output.ToString().Replace(Environment.NewLine, " ").Replace("\n", " ")).Contains("nothing to do");
+        var normalized = System.Text.RegularExpressions.Regex.Replace(
+            _output.ToString().Replace(Environment.NewLine, " ").Replace("\n", " "), @"\s{2,}", " ");
+        await Assert.That(normalized).Contains("nothing to do");
     }
 
     [Test]
