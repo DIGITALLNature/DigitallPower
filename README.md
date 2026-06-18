@@ -31,6 +31,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Features at a Glance](#-features-at-a-glance)
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
+- [Tab Completion](#-tab-completion)
 - [Configuration](#%EF%B8%8F-configuration)
 - [Command Reference](#-command-reference)
   - [profile](#profile--authentication--environments)
@@ -93,6 +94,52 @@ dgtp codegeneration ./generated -c ./genconfig.json
 ```
 
 Run `dgtp --help` or `dgtp <command> --help` to discover all options.
+
+## 🔁 Tab Completion
+
+`dgtp` supports shell tab completion via [dotnet-suggest](https://github.com/dotnet/command-line-api/blob/main/docs/dotnet-suggest.md).
+
+### One-time setup
+
+**1. Install the `dotnet-suggest` global tool:**
+
+```bash
+dotnet tool install -g dotnet-suggest
+```
+
+**2. Install the shell shim (once per machine):**
+
+```bash
+# bash
+dotnet-suggest script bash >> ~/.bashrc
+
+# zsh
+dotnet-suggest script zsh >> ~/.zshrc
+
+# PowerShell — add to your $PROFILE:
+dotnet-suggest script powershell >> $PROFILE
+```
+
+Then reload your shell (`source ~/.bashrc` / open a new terminal).
+
+**3. Register `dgtp` with dotnet-suggest:**
+
+```bash
+dotnet-suggest register --command-path "$(which dgtp)"
+```
+
+> If `dgtp` is installed as a .NET global tool the path is typically `~/.dotnet/tools/dgtp`.
+
+### What gets completed
+
+| Input | Completions |
+|-------|-------------|
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` |
+| `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
+| `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
+| `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` |
+
+> **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
 ## ⚙️ Configuration
 

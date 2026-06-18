@@ -27,6 +27,7 @@ using dgt.power.common.Extensions;
 #pragma warning restore IDE0005
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
+using dgt.power.Completion;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
@@ -53,6 +54,15 @@ var defaultConfiguration = new Dictionary<string, string?>
 {
     {"pollrate", "5000"}
 };
+
+// ── SUGGEST MODE: early exit before any I/O, telemetry or network calls ──────
+// dotnet-suggest invokes the app as: dgtp [suggest:<position>] "<command-line>"
+// Nothing must be written to stdout here except the completion candidates.
+if (DotnetSuggestHandler.IsSuggestMode(args))
+{
+    return await DotnetSuggestHandler.HandleAsync(args, RegisterCommands);
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -127,6 +137,46 @@ app.Configure(config =>
 {
     var versionCheckInterceptor = registrations.BuildServiceProvider().GetRequiredService<VersionCheckInterceptor>();
     config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor));
+    RegisterCommands(config);
+
+    config.SetExceptionHandler((exception, _) =>
+    {
+#if RELEASE
+        AnsiConsole.MarkupLineInterpolated(
+            $"[red]{(exception.IsDerivedFrom<AbstractPowerException>() ? exception.GetInnerException<AbstractPowerException>()?.Message ?? exception.Message : exception.Message)}[/]");
+#elif DEBUG
+        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
+#endif
+
+        return (int)ExitCode.Error;
+    });
+
+#if DEBUG
+    config.ValidateExamples();
+#endif
+});
+
+if (args.Length == 0)
+{
+    AnsiConsole.Write(new FigletText("DIGITALL Power").Centered().Color(Color.Blue3));
+}
+
+
+var exitCode = await app.RunAsync(args);
+
+tracerProvider?.ForceFlush(5000);
+tracerProvider?.Dispose();
+
+return exitCode;
+
+// ── Command registration ──────────────────────────────────────────────────────
+// Shared by the normal app path and the dotnet-suggest capture path.
+// Keep in sync with any changes to the command tree.
+// ─────────────────────────────────────────────────────────────────────────────
+void RegisterCommands(IConfigurator config)
+{
+    config.Settings.ApplicationName = "dgtp";
+
     config.AddBranch<ProfileSettings>("profile", profile =>
     {
         profile.SetDescription("Handles Authentication");
@@ -247,35 +297,4 @@ app.Configure(config =>
     config.AddCommand<PushCommand>("push")
         .WithDescription("Import specific Dataverse Artefacts")
         .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
-
-    config.Settings.ApplicationName = "dgtp";
-
-    config.SetExceptionHandler((exception, _) =>
-    {
-#if RELEASE
-        AnsiConsole.MarkupLineInterpolated(
-            $"[red]{(exception.IsDerivedFrom<AbstractPowerException>() ? exception.GetInnerException<AbstractPowerException>()?.Message ?? exception.Message : exception.Message)}[/]");
-#elif DEBUG
-        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
-#endif
-
-        return (int)ExitCode.Error;
-    });
-
-#if DEBUG
-    config.ValidateExamples();
-#endif
-});
-
-if (args.Length == 0)
-{
-    AnsiConsole.Write(new FigletText("DIGITALL Power").Centered().Color(Color.Blue3));
 }
-
-
-var exitCode = await app.RunAsync(args);
-
-tracerProvider?.ForceFlush(5000);
-tracerProvider?.Dispose();
-
-return exitCode;
