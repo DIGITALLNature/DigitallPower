@@ -99,7 +99,21 @@ Run `dgtp --help` or `dgtp <command> --help` to discover all options.
 
 `dgtp` supports shell tab completion via [dotnet-suggest](https://github.com/dotnet/command-line-api/blob/main/docs/dotnet-suggest.md).
 
-### One-time setup
+### Quick setup (recommended)
+
+Run both steps in one command:
+
+```bash
+# Install dotnet-suggest first if you haven't already
+dotnet tool install -g dotnet-suggest
+
+# Register dgtp AND install the shell shim
+dgtp complete setup --all
+```
+
+Then reload your shell (`source ~/.zshrc` or open a new terminal).
+
+### Manual setup
 
 **1. Install the `dotnet-suggest` global tool:**
 
@@ -107,34 +121,46 @@ Run `dgtp --help` or `dgtp <command> --help` to discover all options.
 dotnet tool install -g dotnet-suggest
 ```
 
-**2. Install the shell shim (once per machine):**
+**2. Register `dgtp` with dotnet-suggest:**
 
 ```bash
-# bash
-dotnet-suggest script bash >> ~/.bashrc
-
-# zsh
-dotnet-suggest script zsh >> ~/.zshrc
-
-# PowerShell — add to your $PROFILE:
-dotnet-suggest script powershell >> $PROFILE
+dgtp complete setup
 ```
 
-Then reload your shell (`source ~/.bashrc` / open a new terminal).
-
-**3. Register `dgtp` with dotnet-suggest:**
+**3. Install the shell shim:**
 
 ```bash
-dotnet-suggest register --command-path "$(which dgtp)"
+dgtp complete install-shell
 ```
 
-> If `dgtp` is installed as a .NET global tool the path is typically `~/.dotnet/tools/dgtp`.
+This auto-detects your current shell and writes the shim to your RC file.  
+Use `--shell bash|zsh|pwsh|fish` to override the detected shell.  
+Use `--dry-run` to preview what would be written without making changes.
+
+The shim is written with idempotency markers — running the command again does nothing if already installed:
+
+```
+# >>> dgtp tab completion start >>>
+...dotnet-suggest shim script...
+# <<< dgtp tab completion end <<<
+```
+
+### `complete` command reference
+
+| Command | Description |
+|---------|-------------|
+| `dgtp complete setup` | Registers dgtp with dotnet-suggest |
+| `dgtp complete setup --all` | Registers AND installs shell shim |
+| `dgtp complete setup --all --shell bash` | Same, with explicit shell override |
+| `dgtp complete install-shell` | Installs shell shim (auto-detects shell) |
+| `dgtp complete install-shell --shell zsh` | Installs shim for zsh explicitly |
+| `dgtp complete install-shell --dry-run` | Preview without writing |
 
 ### What gets completed
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` |
