@@ -173,6 +173,11 @@ public class WebresourcesProcessor(
                 Description = $"Upserted with DGTP: {resource.Hash}"
             });
 
+            if (solutionId.HasValue)
+            {
+                AddResourceToSolution(resource.XrmId!.Value, resource.Name, solutionName!);
+            }
+
             if (publish)
             {
                 console.MarkupLine(CultureInfo.InvariantCulture, "Publish WebResource: [green]{0}[/] for [bold]{1}[/]", resource.Name, resource.Type);
@@ -180,6 +185,14 @@ public class WebresourcesProcessor(
                 {
                     ParameterXml = $"<importexportxml><webresources><webresource>{resource.XrmId}</webresource></webresources></importexportxml>"
                 });
+            }
+        }
+
+        if (solutionId.HasValue)
+        {
+            foreach (var resource in webresources.Where(f => f.State == WebresourceState.Up2Date))
+            {
+                AddResourceToSolution(resource.XrmId!.Value, resource.Name, solutionName!);
             }
         }
     }
