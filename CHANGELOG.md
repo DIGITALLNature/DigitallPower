@@ -1,3 +1,10 @@
+# [2.1.0-beta.57](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.56...v2.1.0-beta.57) (2026-06-26)
+
+
+### Features
+
+* **profile:** add non-interactive auth mode for coding agents ([#157](https://github.com/DIGITALLNature/DigitallPower/issues/157)) ([f92e336](https://github.com/DIGITALLNature/DigitallPower/commit/f92e336b87a1400630eabd52094b9d4ddcfab684))
+
 # [2.1.0-beta.56](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.55...v2.1.0-beta.56) (2026-06-26)
 
 
