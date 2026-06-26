@@ -1,3 +1,17 @@
+# [2.1.0-beta.56](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.55...v2.1.0-beta.56) (2026-06-26)
+
+
+### Bug Fixes
+
+* **push:** add existing webresources to solution on update and up2date ([829b9be](https://github.com/DIGITALLNature/DigitallPower/commit/829b9be0a1bbcccd010deed5e13a378bff862abe))
+
+
+### Features
+
+* add dotnet-suggest tab completion support ([0ebcf44](https://github.com/DIGITALLNature/DigitallPower/commit/0ebcf4434fe78c6d6f688d797074502ec0849cca))
+* **complete:** add dgtp complete setup and install-shell commands ([0b58e2b](https://github.com/DIGITALLNature/DigitallPower/commit/0b58e2b0c9079dc3263c7dfa840df23290a8fe5e))
+* **completion:** add dynamic profile name completions ([7841d58](https://github.com/DIGITALLNature/DigitallPower/commit/7841d586524d4641a44ccac2f94adb4f8cea2cf9))
+
 # [2.1.0-beta.55](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.54...v2.1.0-beta.55) (2026-06-11)
 
 
