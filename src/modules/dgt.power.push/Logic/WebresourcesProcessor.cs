@@ -61,16 +61,23 @@ public class WebresourcesProcessor(
             throw new ArgumentException("Delete Obsolete without proper solution set - aborting");
         }
 
+        SolutionWebresourceInfo[]? solutionContents = null;
+        if (solutionId.HasValue)
+        {
+            statusCallback?.Invoke("Load solution contents");
+            solutionContents = LoadSolutionContents(solutionId.Value);
+        }
+
         statusCallback?.Invoke("Discover webresources");
         var localWebresources = DiscoverWebresources(settings.Target, prefix, fileMappings);
 
         statusCallback?.Invoke("Upsert webresources");
-        UpsertResources(localWebresources, solutionId, settings.Solution, settings.Publish);
+        UpsertResources(localWebresources, solutionId, settings.Solution, settings.Publish, solutionContents);
 
         if (settings.DeleteObsolete)
         {
             statusCallback?.Invoke("Discover obsolete webresources");
-            var obsoleteWebresources = DiscoverObsoleteWebresources(solutionId!.Value, localWebresources);
+            var obsoleteWebresources = DiscoverObsoleteWebresources(localWebresources, solutionContents!);
 
             statusCallback?.Invoke("Delete webresources");
             DeleteResources(obsoleteWebresources);
@@ -85,6 +92,16 @@ public class WebresourcesProcessor(
         }
 
         return ("new", null);
+    }
+
+    private SolutionWebresourceInfo[] LoadSolutionContents(Guid solutionId)
+    {
+        return (from wr in _context.WebResourceSet
+            join sc in _context.SolutionComponentSet on wr.WebResourceId equals sc.ObjectId
+            where sc.SolutionId!.Id == solutionId
+            where wr.IsManaged == false
+            select new SolutionWebresourceInfo(wr.WebResourceId!.Value, wr.WebResourceType!.Value, wr.Name!))
+            .ToArray();
     }
 
     private (string prefix, Guid solutionId) LoadSolution(string solutionUniqueName)
@@ -142,7 +159,7 @@ public class WebresourcesProcessor(
         resource.XrmId = existing.Id;
     }
 
-    private void UpsertResources(Webresources[] webresources, Guid? solutionId, string? solutionName, bool publish)
+    private void UpsertResources(Webresources[] webresources, Guid? solutionId, string? solutionName, bool publish, IReadOnlyCollection<SolutionWebresourceInfo>? solutionContents)
     {
         foreach (var resource in webresources.Where(f => f.State == WebresourceState.Create))
         {
@@ -173,7 +190,7 @@ public class WebresourcesProcessor(
                 Description = $"Upserted with DGTP: {resource.Hash}"
             });
 
-            if (solutionId.HasValue)
+            if (solutionId.HasValue && !IsAlreadyInSolution(resource.XrmId!.Value, solutionContents))
             {
                 AddResourceToSolution(resource.XrmId!.Value, resource.Name, solutionName!);
             }
@@ -192,10 +209,16 @@ public class WebresourcesProcessor(
         {
             foreach (var resource in webresources.Where(f => f.State == WebresourceState.Up2Date))
             {
-                AddResourceToSolution(resource.XrmId!.Value, resource.Name, solutionName!);
+                if (!IsAlreadyInSolution(resource.XrmId!.Value, solutionContents))
+                {
+                    AddResourceToSolution(resource.XrmId!.Value, resource.Name, solutionName!);
+                }
             }
         }
     }
+
+    private static bool IsAlreadyInSolution(Guid resourceId, IReadOnlyCollection<SolutionWebresourceInfo>? solutionContents)
+        => solutionContents?.Any(s => s.WebResourceId == resourceId) ?? false;
 
     private void AddResourceToSolution(Guid resourceId, string resourceName, string solutionName)
     {
@@ -221,20 +244,14 @@ public class WebresourcesProcessor(
         }
     }
 
-    private IEnumerable<Webresources> DiscoverObsoleteWebresources(Guid solutionId, Webresources[] webresources)
+    private IEnumerable<Webresources> DiscoverObsoleteWebresources(Webresources[] webresources, IReadOnlyCollection<SolutionWebresourceInfo> solutionContents)
     {
-        var webresourcesInSolution = from wr in _context.WebResourceSet
-            join sc in _context.SolutionComponentSet on wr.WebResourceId equals sc.ObjectId
-            where sc.SolutionId!.Id == solutionId
-            where wr.IsManaged == false
-            select new { wr.WebResourceId, wr.WebResourceType, wr.Name };
-
-        foreach (var webresource in webresourcesInSolution)
+        foreach (var webresource in solutionContents)
         {
-            if (webresources.SingleOrDefault(f => f.Type == webresource.WebResourceType.Value && f.Name == webresource.Name) == null)
+            if (webresources.SingleOrDefault(f => f.Type == webresource.WebResourceType && f.Name == webresource.Name) == null)
             {
                 console.MarkupLine(CultureInfo.InvariantCulture, "Found obsolete: [Green]{0}[/] <{1}>", webresource.Name, webresource.WebResourceType);
-                yield return new Webresources(webresource.WebResourceType.Value, webresource.Name, WebresourceState.Delete, webresource.WebResourceId!.Value);
+                yield return new Webresources(webresource.WebResourceType, webresource.Name, WebresourceState.Delete, webresource.WebResourceId);
             }
         }
     }

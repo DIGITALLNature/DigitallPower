@@ -183,4 +183,94 @@ public class WebresourcesProcessorTests : PushTestsBase<PushCommand>
         await Assert.That(result).IsTrue();
         await Assert.That(addedComponents).IsEmpty();
     }
+
+    [Test]
+    public async Task ShouldNotAddWebresourceToSolution_WhenAlreadyInSolutionAndUnchanged()
+    {
+        // Arrange — resource is Up2Date in CRM and already in solution
+        var addedComponents = new List<AddSolutionComponentRequest>();
+        var (publisher, solution) = CreateSolutionData();
+        var existingWebResourceId = Guid.NewGuid();
+        var existingWebResource = new WebResource(existingWebResourceId)
+        {
+            Name = WebresourceLogicalName,
+            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
+            Content = KnownJsBase64
+        };
+        existingWebResource.Attributes[WebResource.LogicalNames.IsManaged] = false;
+
+        var solutionComponent = new SolutionComponent(Guid.NewGuid());
+        solutionComponent.Attributes[SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId;
+        solutionComponent.Attributes[SolutionComponent.LogicalNames.SolutionId] =
+            new EntityReference(Solution.EntityLogicalName, solution.Id);
+
+        var ctx = GetBuilder()
+            .WithServiceCollection(new TestServiceCollection().AddScoped<WebresourcesProcessor>())
+            .WithExecutionMock<AddSolutionComponentRequest>(req =>
+            {
+                addedComponents.Add((AddSolutionComponentRequest)req);
+                return new AddSolutionComponentResponse();
+            })
+            .WithData(publisher)
+            .WithData(solution)
+            .WithData(existingWebResource)
+            .WithData(solutionComponent)
+            .Build();
+
+        // Act
+        var result = ctx.Execute(new PushVerb
+        {
+            Target = WebresourcesFolder,
+            Solution = SolutionUniqueName
+        });
+
+        // Assert
+        await Assert.That(result).IsTrue();
+        await Assert.That(addedComponents).IsEmpty();
+    }
+
+    [Test]
+    public async Task ShouldNotAddWebresourceToSolution_WhenAlreadyInSolutionAndUpdated()
+    {
+        // Arrange — resource has stale content in CRM (needs update) but is already in solution
+        var addedComponents = new List<AddSolutionComponentRequest>();
+        var (publisher, solution) = CreateSolutionData();
+        var existingWebResourceId = Guid.NewGuid();
+        var existingWebResource = new WebResource(existingWebResourceId)
+        {
+            Name = WebresourceLogicalName,
+            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
+            Content = Convert.ToBase64String("old content"u8.ToArray())
+        };
+        existingWebResource.Attributes[WebResource.LogicalNames.IsManaged] = false;
+
+        var solutionComponent = new SolutionComponent(Guid.NewGuid());
+        solutionComponent.Attributes[SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId;
+        solutionComponent.Attributes[SolutionComponent.LogicalNames.SolutionId] =
+            new EntityReference(Solution.EntityLogicalName, solution.Id);
+
+        var ctx = GetBuilder()
+            .WithServiceCollection(new TestServiceCollection().AddScoped<WebresourcesProcessor>())
+            .WithExecutionMock<AddSolutionComponentRequest>(req =>
+            {
+                addedComponents.Add((AddSolutionComponentRequest)req);
+                return new AddSolutionComponentResponse();
+            })
+            .WithData(publisher)
+            .WithData(solution)
+            .WithData(existingWebResource)
+            .WithData(solutionComponent)
+            .Build();
+
+        // Act
+        var result = ctx.Execute(new PushVerb
+        {
+            Target = WebresourcesFolder,
+            Solution = SolutionUniqueName
+        });
+
+        // Assert
+        await Assert.That(result).IsTrue();
+        await Assert.That(addedComponents).IsEmpty();
+    }
 }
