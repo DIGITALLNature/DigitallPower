@@ -30,7 +30,9 @@ When making changes to this codebase, **you MUST keep the documentation up to da
 
 4. **CHANGELOG.md is auto-generated** by semantic-release. Do NOT edit it manually.
 
-5. **Keep documentation in English.** All documentation in this repository is written in English.
+5. **`baseline.sarif.json` is maintained by Qodana.** Do NOT edit it manually. If Qodana reports new findings, fix the code — never suppress findings by modifying the baseline file.
+
+6. **Keep documentation in English.** All documentation in this repository is written in English.
 
 ### Documentation Style
 
@@ -230,11 +232,11 @@ It records **why** decisions were made, **what** patterns apply, and **which** c
 
 ### Explicitly Forbidden in .memory/
 
-❌ **Commit hashes** — stale the moment history is amended  
-❌ **Branch names as content** (e.g. "Implemented on branch `chore-analysis`") — irrelevant after merge  
-❌ **"Next Steps" for a PR or merge** — use the PR description for that  
-❌ **Sprint / task progress tracking** — use session tools or a task tracker  
-❌ **"Status: Implemented / In Progress"** headers tied to a branch — state facts about the *codebase*, not the *git graph*  
+❌ **Commit hashes** — stale the moment history is amended
+❌ **Branch names as content** (e.g. "Implemented on branch `chore-analysis`") — irrelevant after merge
+❌ **"Next Steps" for a PR or merge** — use the PR description for that
+❌ **Sprint / task progress tracking** — use session tools or a task tracker
+❌ **"Status: Implemented / In Progress"** headers tied to a branch — state facts about the *codebase*, not the *git graph*
 
 ### Rules
 

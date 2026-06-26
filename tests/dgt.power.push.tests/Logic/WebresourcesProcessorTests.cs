@@ -87,7 +87,7 @@ public class WebresourcesProcessorTests : PushTestsBase<PushCommand>
         var existingWebResource = new WebResource(existingWebResourceId)
         {
             Name = WebresourceLogicalName,
-            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
+            WebResourceType = new OptionSetValue(WebResource.Options.WebResourceType.ScriptJScript),
             Content = Convert.ToBase64String("old content"u8.ToArray())
         };
 
@@ -128,7 +128,7 @@ public class WebresourcesProcessorTests : PushTestsBase<PushCommand>
         var existingWebResource = new WebResource(existingWebResourceId)
         {
             Name = WebresourceLogicalName,
-            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
+            WebResourceType = new OptionSetValue(WebResource.Options.WebResourceType.ScriptJScript),
             Content = KnownJsBase64
         };
 

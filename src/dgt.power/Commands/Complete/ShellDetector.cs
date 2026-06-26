@@ -5,7 +5,6 @@ namespace dgt.power.Commands.Complete;
 
 internal static class ShellDetector
 {
-    internal static readonly string[] SupportedShells = ["bash", "zsh", "fish", "pwsh"];
 
     /// <summary>
     /// Detects the current shell from environment variables.

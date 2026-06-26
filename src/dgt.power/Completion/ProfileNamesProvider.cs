@@ -13,20 +13,20 @@ namespace dgt.power.Completion;
 internal sealed class ProfileNamesProvider : IDynamicCompletionProvider
 {
     // Commands under "profile" that accept an existing profile name as their first positional arg.
-    private static readonly HashSet<string> ProfileNameCommands =
+    private static readonly HashSet<string> s_profileNameCommands =
         new(StringComparer.OrdinalIgnoreCase) { "select", "delete" };
 
     public IReadOnlyList<string>? GetCompletions(IReadOnlyList<string> commandPath, string prefix)
     {
         if (commandPath.Count != 2
             || !string.Equals(commandPath[0], "profile", StringComparison.OrdinalIgnoreCase)
-            || !ProfileNameCommands.Contains(commandPath[1]))
+            || !s_profileNameCommands.Contains(commandPath[1]))
             return null;
 
         return LoadProfileNames(prefix);
     }
 
-    private static IReadOnlyList<string> LoadProfileNames(string prefix)
+    private static List<string> LoadProfileNames(string prefix)
     {
         try
         {

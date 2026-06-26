@@ -36,6 +36,19 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         throw new MissingConnectionException();
     }
 
+    /// <inheritdoc/>
+    public async Task<bool> CheckAuthAsync()
+    {
+        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
+        {
+            // Classic connection string profiles do not use MSAL — no interactive login required.
+            return true;
+        }
+
+        var connector = new TokenConnector(tokenIdentity, profileManager, console);
+        return await connector.TryAcquireTokenSilentAsync();
+    }
+
     private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
     {
         console.MarkupLine("Connect to given configuration.");
@@ -71,7 +84,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
             console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
-            connector = new TokenConnector(tokenIdentity, profileManager);
+            connector = new TokenConnector(tokenIdentity, profileManager, console, nonInteractive: IsNonInteractive());
         }
         else
         {
@@ -97,5 +110,24 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     {
         var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest())).UserId;
         console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> when the caller has requested non-interactive mode via either:
+    /// <list type="bullet">
+    ///   <item><description><c>--non-interactive true</c> CLI flag (passed through IConfiguration)</description></item>
+    ///   <item><description><c>DGTP_NON_INTERACTIVE=true</c> environment variable</description></item>
+    /// </list>
+    /// </summary>
+    private bool IsNonInteractive()
+    {
+        if (configuration.GetValue<bool>("non-interactive"))
+        {
+            return true;
+        }
+
+        var envVar = Environment.GetEnvironmentVariable("DGTP_NON_INTERACTIVE");
+        return string.Equals(envVar, "true", StringComparison.OrdinalIgnoreCase)
+               || envVar == "1";
     }
 }

@@ -45,13 +45,14 @@ public class ShellShimInstaller
     }
 
     /// <summary>Runs <c>dotnet-suggest script &lt;shell&gt;</c> and returns the script content.</summary>
-    public virtual async Task<string?> GetDotnetSuggestScriptAsync(string shell, CancellationToken cancellationToken = default)
+    protected virtual async Task<string?> GetDotnetSuggestScriptAsync(string shell, CancellationToken cancellationToken = default)
     {
         var dotnetSuggest = FindDotnetSuggest();
         if (dotnetSuggest is null)
             return null;
 
         var suggestShellName = ShellDetector.ToDotnetSuggestName(shell);
+        // ReSharper disable once UsingStatementResourceInitialization
         using var process = new Process
         {
             StartInfo = new ProcessStartInfo

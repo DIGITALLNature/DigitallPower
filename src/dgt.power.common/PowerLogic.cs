@@ -24,8 +24,17 @@ public abstract class PowerLogic<TConfig>(
     protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken) =>
-        await ExecuteAsync(settings, cancellationToken) ? 0 : 1;
+    protected override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken)
+    {
+        // Propagate --non-interactive flag so any MSAL token refresh that occurs
+        // during this command's lifetime respects the non-interactive constraint.
+        if (settings.NonInteractive)
+        {
+            Environment.SetEnvironmentVariable("DGTP_NON_INTERACTIVE", "true");
+        }
+
+        return await ExecuteAsync(settings, cancellationToken) ? 0 : 1;
+    }
 
     private async Task<bool> ExecuteAsync(TConfig args, CancellationToken cancellationToken)
     {

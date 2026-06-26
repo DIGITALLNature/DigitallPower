@@ -10,7 +10,7 @@ namespace dgt.power.Commands.Complete;
 public class CompleteSetupCommand(IAnsiConsole console, ShellShimInstaller installer)
     : AsyncCommand<CompleteSetupSettings>
 {
-    private static readonly string RegistrationFilePath = Path.Combine(
+    private static readonly string s_registrationFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
         ".dotnet-suggest-registration.json");
 
@@ -79,15 +79,15 @@ public class CompleteSetupCommand(IAnsiConsole console, ShellShimInstaller insta
 
     private static bool IsAlreadyRegistered(string processPath)
     {
-        if (!File.Exists(RegistrationFilePath))
+        if (!File.Exists(s_registrationFilePath))
             return false;
 
         try
         {
-            var json = File.ReadAllText(RegistrationFilePath);
+            var json = File.ReadAllText(s_registrationFilePath);
             return json.Contains(processPath, StringComparison.OrdinalIgnoreCase);
         }
-        catch
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             return false;
         }
@@ -97,6 +97,7 @@ public class CompleteSetupCommand(IAnsiConsole console, ShellShimInstaller insta
     {
         try
         {
+            // ReSharper disable once UsingStatementResourceInitialization
             using var process = new Process
             {
                 StartInfo = new ProcessStartInfo

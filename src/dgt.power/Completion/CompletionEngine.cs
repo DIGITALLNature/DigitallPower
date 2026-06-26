@@ -67,7 +67,11 @@ internal static class CompletionEngine
             return [];
 
         // Determine the prefix: what the user has typed for the current (incomplete) token.
-        var prefix = endsWithSpace ? string.Empty : (tokens.Count > 0 ? tokens[^1] : string.Empty);
+        string prefix;
+        if (endsWithSpace || tokens.Count == 0)
+            prefix = string.Empty;
+        else
+            prefix = tokens[^1];
 
         var results = new List<string>();
 
@@ -91,11 +95,9 @@ internal static class CompletionEngine
             if (results.Count == 0
                 && container is ICommandInfo leafCmd
                 && leafCmd.Parameters.OfType<ICommandArgument>().Any()
-                && dynamicProvider != null)
+                && dynamicProvider?.GetCompletions(commandPath, prefix) is { } dynamic)
             {
-                var dynamic = dynamicProvider.GetCompletions(commandPath, prefix);
-                if (dynamic != null)
-                    results.AddRange(dynamic);
+                results.AddRange(dynamic);
             }
         }
 

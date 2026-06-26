@@ -4,7 +4,6 @@
 using dgt.power.Commands.Complete;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using TUnit.Assertions.Extensions;
 
 namespace dgt.power.cli.tests.Completion;
 
@@ -12,7 +11,7 @@ public class CompleteInstallShellCommandTests : IDisposable
 {
     private readonly StringWriter _output = new();
     private readonly IAnsiConsole _console;
-    private readonly string _tempFile = Path.GetTempFileName();
+    private readonly string _tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
     public CompleteInstallShellCommandTests()
     {
@@ -103,7 +102,7 @@ public class CompleteInstallShellCommandTests : IDisposable
     {
         public bool InstallCalled { get; private set; }
 
-        public override string? FindDotnetSuggest() => "/fake/dotnet-suggest";
+        public override string FindDotnetSuggest() => "/fake/dotnet-suggest";
 
         public override Task<ShimInstallResult> InstallAsync(string shell, string rcFilePath, CancellationToken cancellationToken = default)
         {

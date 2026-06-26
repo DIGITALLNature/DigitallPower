@@ -116651,6 +116651,1543 @@
               ".NET 10.0"
             ]
           }
+        },
+        {
+          "ruleId": "AsyncMethodWithoutAwait",
+          "ruleIndex": 64,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "This async method lacks 'await' operators and will run synchronously. Consider using 'await' for non-blocking API calls, or remove the 'async' modifier to avoid generating a state machine for this method."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.push.tests/Logic/AssemblyProcessorMigrationTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 336,
+                  "startColumn": 12,
+                  "endLine": 336,
+                  "endColumn": 17,
+                  "charOffset": 12304,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "async"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 335,
+                  "startColumn": 1,
+                  "endLine": 337,
+                  "endColumn": 6,
+                  "charOffset": 12282,
+                  "charLength": 86,
+                  "snippet": {
+                    "text": "    [Test]\n    public async Task MigrateCustomApis_NoApisLinked_ShouldNotThrow()\n    {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "99086CCAFDBD8A0B4BA407AD3EB4C137D8929E590556EEF3BDD34E3568C571CF"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "CA1031",
+          "ruleIndex": 113,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Modify 'IsAlreadyRegistered' to catch a more specific allowed exception type, or rethrow the exception"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/CompleteSetupCommand.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 19
+                },
+                "region": {
+                  "startLine": 90,
+                  "startColumn": 9,
+                  "endLine": 90,
+                  "endColumn": 14,
+                  "charOffset": 3270,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "catch"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 89,
+                  "startColumn": 1,
+                  "endLine": 91,
+                  "endColumn": 10,
+                  "charOffset": 3252,
+                  "charLength": 33,
+                  "snippet": {
+                    "text": "        }\n        catch\n        {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "F94E405FFCBEB65E9659080FEE8C367166622A5915920DFCCE9DBCCC31C0D5F9"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "CA1859",
+          "ruleIndex": 119,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Change return type of method 'LoadProfileNames' from 'System.Collections.Generic.IReadOnlyList<string>' to 'System.Collections.Generic.List<string>' for improved performance"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Completion/ProfileNamesProvider.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 27
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 42,
+                  "endLine": 29,
+                  "endColumn": 58,
+                  "charOffset": 1152,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "LoadProfileNames"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 28,
+                  "startColumn": 1,
+                  "endLine": 30,
+                  "endColumn": 6,
+                  "charOffset": 1110,
+                  "charLength": 79,
+                  "snippet": {
+                    "text": "\n    private static IReadOnlyList<string> LoadProfileNames(string prefix)\n    {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "8DEE481424FFA23D54C76D11F2F43FAA6AD87AF06BEA2DB54791D8205B8905BF"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "ClassNeverInstantiated.Global",
+          "ruleIndex": 351,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Class 'AuthCheckCommand' is never instantiated"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/modules/dgt.power.profile/Commands/AuthCheckCommand.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 50
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 14,
+                  "endLine": 19,
+                  "endColumn": 30,
+                  "charOffset": 683,
+                  "charLength": 16,
+                  "snippet": {
+                    "text": "AuthCheckCommand"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 18,
+                  "startColumn": 1,
+                  "endLine": 20,
+                  "endColumn": 36,
+                  "charOffset": 655,
+                  "charLength": 132,
+                  "snippet": {
+                    "text": "/// </summary>\npublic class AuthCheckCommand(IXrmConnection xrmConnection, IAnsiConsole console)\n    : AsyncCommand<ProfileSettings>"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "AD70FBDBD78D2EA51C439D2A8BD47D913E6DCAC3D6A7900786ED6CFBCEAD6AF0"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "CoVariantArrayConversion",
+          "ruleIndex": 357,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Co-variant array conversion from ICommandOption[]? to ICommandParameter[] can cause run-time exception on write operation"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompletionEngineTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 93
+                },
+                "region": {
+                  "startLine": 306,
+                  "startColumn": 36,
+                  "endLine": 306,
+                  "endColumn": 43,
+                  "charOffset": 11046,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "options"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 305,
+                  "startColumn": 1,
+                  "endLine": 307,
+                  "endColumn": 42,
+                  "charOffset": 10941,
+                  "charLength": 162,
+                  "snippet": {
+                    "text": "        public IReadOnlyList<ICommandParameter> Parameters { get; } =\n            ((ICommandParameter[])(options ?? []))\n            .Concat(positionalArgs ?? [])"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "2C4596394620DE06C8CB9BD2D53E3A7B35E84EFC5E84660CD73621CF9273BBA9"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "InconsistentNaming",
+          "ruleIndex": 2351,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Name 'ProfileNameCommands' does not match rule 'static_fields_should_have_prefix'. Suggested name is 's_profileNameCommands'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Completion/ProfileNamesProvider.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 27
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 45,
+                  "endLine": 16,
+                  "endColumn": 64,
+                  "charOffset": 649,
+                  "charLength": 19,
+                  "snippet": {
+                    "text": "ProfileNameCommands"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 15,
+                  "startColumn": 1,
+                  "endLine": 17,
+                  "endColumn": 70,
+                  "charOffset": 505,
+                  "charLength": 235,
+                  "snippet": {
+                    "text": "    // Commands under \"profile\" that accept an existing profile name as their first positional arg.\n    private static readonly HashSet<string> ProfileNameCommands =\n        new(StringComparer.OrdinalIgnoreCase) { \"select\", \"delete\" };"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "C41C7CA641A62A0FDFA4E8C0577D7FFB80223F4280E376C79C668EA2D5448C86"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "InconsistentNaming",
+          "ruleIndex": 2351,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Name 'RegistrationFilePath' does not match rule 'static_fields_should_have_prefix'. Suggested name is 's_registrationFilePath'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/CompleteSetupCommand.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 19
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 36,
+                  "endLine": 13,
+                  "endColumn": 56,
+                  "charOffset": 418,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "RegistrationFilePath"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 12,
+                  "startColumn": 1,
+                  "endLine": 14,
+                  "endColumn": 74,
+                  "charOffset": 381,
+                  "charLength": 147,
+                  "snippet": {
+                    "text": "{\n    private static readonly string RegistrationFilePath = Path.Combine(\n        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "DA80B16A279C6A07B6AEC44A58BD457802B62CFD2CB238D89072C4EF50186086"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "InconsistentNaming",
+          "ruleIndex": 2351,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Name 'SupportedShells' does not match rule 'static_fields_should_have_prefix'. Suggested name is 's_supportedShells'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/ShellDetector.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 104
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 39,
+                  "endLine": 8,
+                  "endColumn": 54,
+                  "charOffset": 252,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "SupportedShells"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "endLine": 9,
+                  "endColumn": 1,
+                  "charOffset": 212,
+                  "charLength": 91,
+                  "snippet": {
+                    "text": "{\n    internal static readonly string[] SupportedShells = [\"bash\", \"zsh\", \"fish\", \"pwsh\"];\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "8BE66001066E42BCE0E3B0A3496096BFB896C6C35D224441E7814CF632B409CF"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "MemberCanBeProtected.Global",
+          "ruleIndex": 2404,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'GetDotnetSuggestScriptAsync' can be made protected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/ShellShimInstaller.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 118
+                },
+                "region": {
+                  "startLine": 48,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 11,
+                  "charOffset": 1632,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "public"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 47,
+                  "startColumn": 1,
+                  "endLine": 49,
+                  "endColumn": 6,
+                  "charOffset": 1521,
+                  "charLength": 240,
+                  "snippet": {
+                    "text": "    /// <summary>Runs <c>dotnet-suggest script &lt;shell&gt;</c> and returns the script content.</summary>\n    public virtual async Task<string?> GetDotnetSuggestScriptAsync(string shell, CancellationToken cancellationToken = default)\n    {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "E7E06777143710F6654D450502B8A6551A2603DFD685A4A2BB99C4B8EF3DCD23"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "MergeIntoPattern",
+          "ruleIndex": 2414,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Merge into pattern"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Completion/CompletionEngine.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 119
+                },
+                "region": {
+                  "startLine": 86,
+                  "startColumn": 45,
+                  "endLine": 86,
+                  "endColumn": 47,
+                  "charOffset": 3559,
+                  "charLength": 2,
+                  "snippet": {
+                    "text": "&&"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 85,
+                  "startColumn": 1,
+                  "endLine": 87,
+                  "endColumn": 98,
+                  "charOffset": 3480,
+                  "charLength": 199,
+                  "snippet": {
+                    "text": "                container.Commands\n                    .Where(c => !c.IsHidden && !c.IsDefaultCommand\n                                && c.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "086D15D87B7E6FD469CE8F82B549DD80CE8CB86EDD4F3FC2FC882C0A99DCCAA4"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantCast",
+          "ruleIndex": 2581,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Type cast is redundant"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.push.tests/Logic/WebresourcesProcessorTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 135
+                },
+                "region": {
+                  "startLine": 90,
+                  "startColumn": 50,
+                  "endLine": 90,
+                  "endColumn": 55,
+                  "charOffset": 3597,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "(int)"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 89,
+                  "startColumn": 1,
+                  "endLine": 91,
+                  "endColumn": 72,
+                  "charOffset": 3505,
+                  "charLength": 220,
+                  "snippet": {
+                    "text": "            Name = WebresourceLogicalName,\n            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),\n            Content = Convert.ToBase64String(\"old content\"u8.ToArray())"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "4F296BA06024C91E001C0D08264F01FE0BC0E05DD31B37869CC508F155F1FE8B"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantCast",
+          "ruleIndex": 2581,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Type cast is redundant"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.push.tests/Logic/WebresourcesProcessorTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 135
+                },
+                "region": {
+                  "startLine": 131,
+                  "startColumn": 50,
+                  "endLine": 131,
+                  "endColumn": 55,
+                  "charOffset": 5388,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "(int)"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 130,
+                  "startColumn": 1,
+                  "endLine": 132,
+                  "endColumn": 36,
+                  "charOffset": 5296,
+                  "charLength": 184,
+                  "snippet": {
+                    "text": "            Name = WebresourceLogicalName,\n            WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),\n            Content = KnownJsBase64"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "BE5329F89D62594738D2FD6728C9858D715B6AA4AB71251CEAF7FCA5A58499B3"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompleteInstallShellCommandTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 136
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 35,
+                  "charOffset": 221,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 194,
+                  "charLength": 62,
+                  "snippet": {
+                    "text": "using Spectre.Console.Cli;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "048E206CAF0E0977D4D127D9EAFC7FDEA599DD3BCAA7470B46032E7651FE474B"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompleteSetupCommandTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 137
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 35,
+                  "charOffset": 221,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 8,
+                  "endColumn": 1,
+                  "charOffset": 194,
+                  "charLength": 62,
+                  "snippet": {
+                    "text": "using Spectre.Console.Cli;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "048E206CAF0E0977D4D127D9EAFC7FDEA599DD3BCAA7470B46032E7651FE474B"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompletionEngineTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 93
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 6,
+                  "endColumn": 35,
+                  "charOffset": 196,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 7,
+                  "endColumn": 1,
+                  "charOffset": 164,
+                  "charLength": 67,
+                  "snippet": {
+                    "text": "using Spectre.Console.Cli.Help;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "BE3EC0594A38DACA89A9123C63891A7031759FA3BE27D74E27C5A68E66620A9C"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/ShellDetectorTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 138
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 35,
+                  "charOffset": 171,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 6,
+                  "endColumn": 1,
+                  "charOffset": 136,
+                  "charLength": 70,
+                  "snippet": {
+                    "text": "using dgt.power.Commands.Complete;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "75DDA05F397ADD065B4E708C7610DF7C9861DA1AC67639F9AA183293E94B6BDD"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/ShellShimInstallerTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 139
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 35,
+                  "charOffset": 171,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 6,
+                  "endColumn": 1,
+                  "charOffset": 136,
+                  "charLength": 70,
+                  "snippet": {
+                    "text": "using dgt.power.Commands.Complete;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "75DDA05F397ADD065B4E708C7610DF7C9861DA1AC67639F9AA183293E94B6BDD"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "RedundantUsingDirective",
+          "ruleIndex": 2665,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Using directive is not required by the code and can be safely removed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/SuggestDirectiveTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 140
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 35,
+                  "charOffset": 164,
+                  "charLength": 34,
+                  "snippet": {
+                    "text": "using TUnit.Assertions.Extensions;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 6,
+                  "endColumn": 1,
+                  "charOffset": 136,
+                  "charLength": 63,
+                  "snippet": {
+                    "text": "using dgt.power.Completion;\nusing TUnit.Assertions.Extensions;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "2C2D0958C86224D850A026E485D2BCA583CA712325C54EE9522D58848A0B36CD"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "ReturnTypeCanBeNotNullable",
+          "ruleIndex": 2743,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Return type of 'FindDotnetSuggest' can be made non-nullable"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompleteInstallShellCommandTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 136
+                },
+                "region": {
+                  "startLine": 106,
+                  "startColumn": 31,
+                  "endLine": 106,
+                  "endColumn": 32,
+                  "charOffset": 4370,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "?"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 105,
+                  "startColumn": 1,
+                  "endLine": 107,
+                  "endColumn": 1,
+                  "charOffset": 4339,
+                  "charLength": 80,
+                  "snippet": {
+                    "text": "\n        public override string? FindDotnetSuggest() => \"/fake/dotnet-suggest\";\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "CEA8A28513C3A1ADF19C53B6CE1CC287B7026F037EB5EB4E51E6638F0C102703"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "S1144",
+          "ruleIndex": 2766,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Remove the unused private method 'BranchWith'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompletionEngineTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 93
+                },
+                "region": {
+                  "startLine": 276,
+                  "startColumn": 33,
+                  "endLine": 276,
+                  "endColumn": 43,
+                  "charOffset": 9758,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "BranchWith"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 275,
+                  "startColumn": 1,
+                  "endLine": 277,
+                  "endColumn": 55,
+                  "charOffset": 9725,
+                  "charLength": 146,
+                  "snippet": {
+                    "text": "\n    private static ICommandInfo BranchWith(string name, params ICommandInfo[] children) =>\n        new FakeCommandInfo(name, children: children);"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "34F7F5668446A8295AA6A300D4EBAB702CEF71430DCB108088FEA22336E768F4"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "S3358",
+          "ruleIndex": 2772,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Extract this nested ternary operation into an independent statement."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Completion/CompletionEngine.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 119
+                },
+                "region": {
+                  "startLine": 70,
+                  "startColumn": 54,
+                  "endLine": 70,
+                  "endColumn": 98,
+                  "charOffset": 3006,
+                  "charLength": 44,
+                  "snippet": {
+                    "text": "tokens.Count > 0 ? tokens[^1] : string.Empty"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 69,
+                  "startColumn": 1,
+                  "endLine": 71,
+                  "endColumn": 1,
+                  "charOffset": 2860,
+                  "charLength": 193,
+                  "snippet": {
+                    "text": "        // Determine the prefix: what the user has typed for the current (incomplete) token.\n        var prefix = endsWithSpace ? string.Empty : (tokens.Count > 0 ? tokens[^1] : string.Empty);\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "883826CFA31CCDF6124F0647C83EB5540C8B8395D2F2FB4FFF3863D9941D0B0B"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "S5445",
+          "ruleIndex": 2776,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'Path.GetTempFileName()' is insecure. Use 'Path.GetRandomFileName()' instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompleteInstallShellCommandTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 136
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 41,
+                  "endLine": 15,
+                  "endColumn": 61,
+                  "charOffset": 497,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "Path.GetTempFileName"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 14,
+                  "startColumn": 1,
+                  "endLine": 16,
+                  "endColumn": 1,
+                  "charOffset": 413,
+                  "charLength": 108,
+                  "snippet": {
+                    "text": "    private readonly IAnsiConsole _console;\n    private readonly string _tempFile = Path.GetTempFileName();\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "5D193A828FC382A60C85CC961BAA27AA7F274238031CA024CB3990F18CE13186"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "S5445",
+          "ruleIndex": 2776,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "'Path.GetTempFileName()' is insecure. Use 'Path.GetRandomFileName()' instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/ShellShimInstallerTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 139
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 41,
+                  "endLine": 11,
+                  "endColumn": 61,
+                  "charOffset": 343,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "Path.GetTempFileName"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 10,
+                  "startColumn": 1,
+                  "endLine": 12,
+                  "endColumn": 1,
+                  "charOffset": 301,
+                  "charLength": 66,
+                  "snippet": {
+                    "text": "{\n    private readonly string _tempFile = Path.GetTempFileName();\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "97DD33F1834109B6F03293EEEA68FE5324542E0FBEE96BFDC06AE3D40201A58B"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UnusedAutoPropertyAccessor.Local",
+          "ruleIndex": 2937,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Auto-property accessor 'InstallCalled.get' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompleteSetupCommandTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 137
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 37,
+                  "endLine": 59,
+                  "endColumn": 41,
+                  "charOffset": 2268,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "get;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 58,
+                  "startColumn": 1,
+                  "endLine": 60,
+                  "endColumn": 1,
+                  "charOffset": 2226,
+                  "charLength": 62,
+                  "snippet": {
+                    "text": "    {\n        public bool InstallCalled { get; private set; }\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "5561F5ECF0F43CA592C1B50097BF3C71168C354C123CDBCD2870A4E570E27FD7"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2945,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Field 'SupportedShells' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/ShellDetector.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 104
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 39,
+                  "endLine": 8,
+                  "endColumn": 54,
+                  "charOffset": 252,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "SupportedShells"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 7,
+                  "startColumn": 1,
+                  "endLine": 9,
+                  "endColumn": 1,
+                  "charOffset": 212,
+                  "charLength": 91,
+                  "snippet": {
+                    "text": "{\n    internal static readonly string[] SupportedShells = [\"bash\", \"zsh\", \"fish\", \"pwsh\"];\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "8BE66001066E42BCE0E3B0A3496096BFB896C6C35D224441E7814CF632B409CF"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2945,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Property 'NonInteractive' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power.common/BaseProgramSettings.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 162
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 17,
+                  "endLine": 22,
+                  "endColumn": 31,
+                  "charOffset": 863,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "NonInteractive"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "endLine": 23,
+                  "endColumn": 2,
+                  "charOffset": 787,
+                  "charLength": 107,
+                  "snippet": {
+                    "text": "        \"Recommended for coding agents and CI pipelines.\")]\n    public bool NonInteractive { get; init; }\n}"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "537E9F685E35087B994C146F6C00CE3AEB8187B445D25E4C419066E68E0492DB"
+          },
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UnusedMember.Local",
+          "ruleIndex": 2946,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Method 'BranchWith' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/dgt.power.cli.tests/Completion/CompletionEngineTests.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 93
+                },
+                "region": {
+                  "startLine": 276,
+                  "startColumn": 33,
+                  "endLine": 276,
+                  "endColumn": 43,
+                  "charOffset": 9758,
+                  "charLength": 10,
+                  "snippet": {
+                    "text": "BranchWith"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 275,
+                  "startColumn": 1,
+                  "endLine": 277,
+                  "endColumn": 55,
+                  "charOffset": 9725,
+                  "charLength": 146,
+                  "snippet": {
+                    "text": "\n    private static ICommandInfo BranchWith(string name, params ICommandInfo[] children) =>\n        new FakeCommandInfo(name, children: children);"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "34F7F5668446A8295AA6A300D4EBAB702CEF71430DCB108088FEA22336E768F4"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UsingStatementResourceInitialization",
+          "ruleIndex": 3019,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Initialize object properties inside the 'using' statement to ensure that the object is disposed if an exception is thrown during initialization"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/CompleteSetupCommand.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 19
+                },
+                "region": {
+                  "startLine": 100,
+                  "startColumn": 33,
+                  "endLine": 100,
+                  "endColumn": 36,
+                  "charOffset": 3533,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "new"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 99,
+                  "startColumn": 1,
+                  "endLine": 101,
+                  "endColumn": 14,
+                  "charOffset": 3491,
+                  "charLength": 67,
+                  "snippet": {
+                    "text": "        {\n            using var process = new Process\n            {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "F3E0FA11F20FB69030342CCAEE60875A2F4C0A402AA4DDD7C9B10AAF2D2CCC31"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
+        },
+        {
+          "ruleId": "UsingStatementResourceInitialization",
+          "ruleIndex": 3019,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Initialize object properties inside the 'using' statement to ensure that the object is disposed if an exception is thrown during initialization"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/dgt.power/Commands/Complete/ShellShimInstaller.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 118
+                },
+                "region": {
+                  "startLine": 55,
+                  "startColumn": 29,
+                  "endLine": 55,
+                  "endColumn": 32,
+                  "charOffset": 1973,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "new"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 54,
+                  "startColumn": 1,
+                  "endLine": 56,
+                  "endColumn": 10,
+                  "charOffset": 1872,
+                  "charLength": 122,
+                  "snippet": {
+                    "text": "        var suggestShellName = ShellDetector.ToDotnetSuggestName(shell);\n        using var process = new Process\n        {"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "E335ABB8DA569B8BE9616D9BBC73DEB0FB07F936E02CF8283EB81701867E793E"
+          },
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          },
+          "baselineState": "unchanged"
         }
       ],
       "automationDetails": {

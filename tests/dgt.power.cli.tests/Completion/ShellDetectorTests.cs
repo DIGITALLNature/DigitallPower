@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.Commands.Complete;
-using TUnit.Assertions.Extensions;
 
 namespace dgt.power.cli.tests.Completion;
 

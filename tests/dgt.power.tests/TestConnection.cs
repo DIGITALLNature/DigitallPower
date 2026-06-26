@@ -15,4 +15,6 @@ public class TestConnection(IOrganizationServiceAsync2 service) : IXrmConnection
         Console.WriteLine($"WhoAmI: [bold]{userId:D}[/]");
         return Task.FromResult(service);
     }
+
+    public Task<bool> CheckAuthAsync() => Task.FromResult(true);
 }

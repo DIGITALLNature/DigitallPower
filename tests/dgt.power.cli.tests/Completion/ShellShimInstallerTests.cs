@@ -2,13 +2,12 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.Commands.Complete;
-using TUnit.Assertions.Extensions;
 
 namespace dgt.power.cli.tests.Completion;
 
 public class ShellShimInstallerTests : IDisposable
 {
-    private readonly string _tempFile = Path.GetTempFileName();
+    private readonly string _tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
     public void Dispose()
     {
@@ -94,7 +93,7 @@ public class ShellShimInstallerTests : IDisposable
     {
         public override string? FindDotnetSuggest() => scriptContent is not null ? "/fake/dotnet-suggest" : null;
 
-        public override Task<string?> GetDotnetSuggestScriptAsync(string shell, CancellationToken cancellationToken = default)
+        protected override Task<string?> GetDotnetSuggestScriptAsync(string shell, CancellationToken cancellationToken = default)
             => Task.FromResult(scriptContent);
     }
 }
