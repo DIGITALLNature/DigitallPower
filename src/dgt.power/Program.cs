@@ -143,9 +143,19 @@ app.Configure(config =>
 
     config.SetExceptionHandler((exception, _) =>
     {
+        var inner = exception.IsDerivedFrom<AbstractPowerException>()
+            ? exception.GetInnerException<AbstractPowerException>()
+            : null;
+
+        if ((inner ?? exception) is InteractiveLoginRequiredException interactiveEx)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{interactiveEx.Message}[/]");
+            return (int)ExitCode.AuthRequired;
+        }
+
 #if RELEASE
         AnsiConsole.MarkupLineInterpolated(
-            $"[red]{(exception.IsDerivedFrom<AbstractPowerException>() ? exception.GetInnerException<AbstractPowerException>()?.Message ?? exception.Message : exception.Message)}[/]");
+            $"[red]{(inner?.Message ?? exception.Message)}[/]");
 #elif DEBUG
         AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
 #endif
@@ -188,6 +198,11 @@ void RegisterCommands(IConfigurator config)
         profile.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
         profile.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
         profile.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
+        profile.AddCommand<AuthCheckCommand>("auth-check")
+            .WithDescription(
+                "Checks whether the current MSAL token is still valid without opening a browser. " +
+                "Exit code 0 = token valid, 2 = interactive login required. " +
+                "Intended as a pre-flight check for coding agents.");
     });
 
     config.AddBranch<ExportVerb>("export", export =>

@@ -68,6 +68,7 @@ src/
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
+| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp profile auth-check` command |
 
 ## TSL Template Engine (codegeneration)
 
@@ -127,6 +128,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
 | `decision-package-record-refactor.md` | decision | Package record class design; equality semantics |
 | `decision-post-tsl-architecture-wave.md` | decision | Priority order for remaining quality findings |
+| `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp profile auth-check` |
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |
 | `guide-sonar-rules-applied.md` | guide | Fix patterns for S3902, S3971, S2930, S3900, S4261 |
 | `guide-code-quality-patterns.md` | guide | Anti-patterns with canonical fixes (DI downcasts, GetHashCode, covariant arrays) |
