@@ -4,7 +4,6 @@
 using dgt.power.Commands.Complete;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using TUnit.Assertions.Extensions;
 
 namespace dgt.power.cli.tests.Completion;
 
@@ -56,16 +55,12 @@ public class CompleteSetupCommandTests
 
     private sealed class FakeShellShimInstaller(bool dotnetSuggestFound, ShimInstallResult installResult) : ShellShimInstaller
     {
-        public bool InstallCalled { get; private set; }
 
         public override string? FindDotnetSuggest() =>
             dotnetSuggestFound ? "/fake/dotnet-suggest" : null;
 
         public override Task<ShimInstallResult> InstallAsync(string shell, string rcFilePath, CancellationToken cancellationToken = default)
-        {
-            InstallCalled = true;
-            return Task.FromResult(installResult);
-        }
+            => Task.FromResult(installResult);
     }
 }
 

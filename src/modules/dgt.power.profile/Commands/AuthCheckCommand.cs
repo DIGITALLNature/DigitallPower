@@ -16,6 +16,7 @@ namespace dgt.power.profile.Commands;
 ///   2 — interactive login is required; ask the user to re-authenticate
 /// Intended for coding agents to use as a pre-flight check before any Dataverse command.
 /// </summary>
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public class AuthCheckCommand(IXrmConnection xrmConnection, IAnsiConsole console)
     : AsyncCommand<ProfileSettings>
 {

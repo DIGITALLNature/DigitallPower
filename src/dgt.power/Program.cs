@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
 using System.Text.Json;
@@ -149,7 +150,7 @@ app.Configure(config =>
 
         if ((inner ?? exception) is InteractiveLoginRequiredException interactiveEx)
         {
-            AnsiConsole.MarkupLineInterpolated($"[red]{interactiveEx.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{interactiveEx.Message}[/]");
             return (int)ExitCode.AuthRequired;
         }
 

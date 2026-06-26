@@ -333,7 +333,7 @@ public class AssemblyProcessorMigrationTests
     }
 
     [Test]
-    public async Task MigrateCustomApis_NoApisLinked_ShouldNotThrow()
+    public void MigrateCustomApis_NoApisLinked_ShouldNotThrow()
     {
         // Arrange
         var oldTypeId = Guid.NewGuid();

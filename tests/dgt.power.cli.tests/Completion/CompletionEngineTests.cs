@@ -3,7 +3,6 @@
 
 using dgt.power.Completion;
 using Spectre.Console.Cli.Help;
-using TUnit.Assertions.Extensions;
 
 namespace dgt.power.cli.tests.Completion;
 
@@ -273,8 +272,6 @@ public class CompletionEngineTests
     private static ICommandInfo CommandWithArg(string name, string argValue = "Name") =>
         new FakeCommandInfo(name, positionalArgs: [new FakeCommandArgument(argValue)]);
 
-    private static ICommandInfo BranchWith(string name, params ICommandInfo[] children) =>
-        new FakeCommandInfo(name, children: children);
 
     private static ICommandOption Option(string longName, bool isHidden = false) =>
         new FakeCommandOption(longName, isHidden);
@@ -303,7 +300,7 @@ public class CompletionEngineTests
         public bool IsDefaultCommand => false;
         public bool IsHidden => isHidden;
         public IReadOnlyList<ICommandParameter> Parameters { get; } =
-            ((ICommandParameter[])(options ?? []))
+            (options ?? []).Cast<ICommandParameter>()
             .Concat(positionalArgs ?? [])
             .ToList();
         public ICommandInfo? Parent => null;
