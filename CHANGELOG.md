@@ -1,3 +1,10 @@
+# [2.1.0-beta.59](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.58...v2.1.0-beta.59) (2026-06-29)
+
+
+### Features
+
+* **tsl:** small improve in test mock tab handler ([#159](https://github.com/DIGITALLNature/DigitallPower/issues/159)) ([4de78e8](https://github.com/DIGITALLNature/DigitallPower/commit/4de78e836f8dd073a40d866f1542943453ebbe4f))
+
 # [2.1.0-beta.58](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.57...v2.1.0-beta.58) (2026-06-29)
 
 
