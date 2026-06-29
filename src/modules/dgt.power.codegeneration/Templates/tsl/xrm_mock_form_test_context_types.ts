@@ -171,14 +171,15 @@ export interface IXrmMockFormTestContextBuilder<
     withPreSaveEventMock(isPreSaveEventMock: boolean): this;
     withRefreshErrorMessage(errorMsg: string | null): this;
     withRegisterTabEventsMocks(isMockTabEvents: boolean): this;
+    withRetrieveServerDataError(erroMsg: string): this;
     withSaveErrorMessage(errorMsg: string | null): this;
     withServerData(data: XrmFormMockServerData): this;
-    withServerDataError(erroMsg: string): this;
     withSubGridMethodsMock(isSubGridLoad: boolean): this;
     withSubGridMockRows<TGridAttributeNames extends string>(
         name: TControlName,
         updateGridRows: XrmFormGridMockRowConfig<TGridAttributeNames>
     ): this;
+    withUpdateServerDateErrorMessage(erroMsg: string): this;
     withUserConfirmDialogSeq(confirmDialogConfirmed: boolean[]): this;
     withUserRoles(roles: Xrm.LookupValue[]): this;
 }
