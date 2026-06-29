@@ -1,3 +1,10 @@
+# [2.1.0-beta.58](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.57...v2.1.0-beta.58) (2026-06-29)
+
+
+### Performance Improvements
+
+* **push:** load solution webresources once and skip redundant AddSolutionComponent calls ([0cb8373](https://github.com/DIGITALLNature/DigitallPower/commit/0cb8373c251a618b87709769363fb9c6ce3500a8))
+
 # [2.1.0-beta.57](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.56...v2.1.0-beta.57) (2026-06-26)
 
 
