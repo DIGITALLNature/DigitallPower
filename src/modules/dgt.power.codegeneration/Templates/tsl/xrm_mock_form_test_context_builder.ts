@@ -67,8 +67,7 @@ export class XrmMockFormTestContextBuilder<
     TSectionNames extends string,
     TControlName extends string,
     TAttributeNames extends string,
-> implements IXrmMockFormTestContextBuilder<TTabNames, TSectionNames, TControlName, TAttributeNames>
-{
+> implements IXrmMockFormTestContextBuilder<TTabNames, TSectionNames, TControlName, TAttributeNames> {
     public static readonly ERROR_NO_CUSTOM_API = "Bad Request";
     public xrmWebApiMockStubs: XrmWebApiMockStubs = {};
     public xrmWebApiOnlineMockStubs: XrmWebApiOnlineMockStubs = {};
@@ -112,7 +111,8 @@ export class XrmMockFormTestContextBuilder<
     private languageId: number = 1033;
     private clientUrl: string | null = null;
     private formSelectorItems: XrmFormMockFormItem[] = [];
-    private serverMockDateError: string | null = null;
+    private retrieveServerMockDateError: string | null = null;
+    private updateServerMockDateError: string | null = null;
     private readonly mockAttributes: Map<TAttributeNames, XrmMockAttributeType>;
     private readonly mockControls: Map<TControlName, XrmMockControlType>;
     private readonly controlConfig: XrmForm.Tester.XrmFormMockControl<TControlName, TAttributeNames>[];
@@ -323,8 +323,18 @@ export class XrmMockFormTestContextBuilder<
      * @param erroMsg
      * @returns
      */
-    public withServerDataError(erroMsg: string): this {
-        this.serverMockDateError = erroMsg;
+    public withRetrieveServerDataError(erroMsg: string): this {
+        this.retrieveServerMockDateError = erroMsg;
+        return this;
+    }
+
+    /**
+     * With error message when calling server update
+     * @param erroMsg
+     * @returns
+     */
+    public withUpdateServerDateErrorMessage(erroMsg: string): this {
+        this.updateServerMockDateError = erroMsg;
         return this;
     }
 
@@ -639,11 +649,8 @@ export class XrmMockFormTestContextBuilder<
             retrieveMultipleRecords: jest.fn((entityLogicalName: string, options?: string, maxPageSize?: number) =>
                 this.RetrieveMultipleRecords(entityLogicalName, options, maxPageSize)
             ),
-            updateRecord: jest.fn((entityLogicalName: string, id: string, _data: any): Xrm.Async.PromiseLike<Xrm.UpdateResponse> => {
-                return Promise.resolve(
-                    { entityType: entityLogicalName, id },
-                ) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
-            }),
+            updateRecord: jest.fn((entityLogicalName: string, id: string, _data: any) => this.UpdateRecord(entityLogicalName, id)
+            ),
         };
         jest.spyOn(Xrm.WebApi, "createRecord").mockImplementation(this.xrmWebApiMockStubs.createRecord);
         jest.spyOn(Xrm.WebApi, "deleteRecord").mockImplementation(this.xrmWebApiMockStubs.deleteRecord);
@@ -846,8 +853,8 @@ export class XrmMockFormTestContextBuilder<
         options?: string,
         _maxPageSize?: number
     ): Xrm.Async.PromiseLike<Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>> {
-        if (this.serverMockDateError) {
-            return Promise.reject(new Error(this.serverMockDateError)) as unknown as Xrm.Async.PromiseLike<
+        if (this.retrieveServerMockDateError) {
+            return Promise.reject(new Error(this.retrieveServerMockDateError)) as unknown as Xrm.Async.PromiseLike<
                 Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
             >;
         }
@@ -870,6 +877,16 @@ export class XrmMockFormTestContextBuilder<
             entities: [...mockFilterResults],
             nextLink: "",
         }) as unknown as Xrm.Async.PromiseLike<Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>>;
+    }
+
+    private UpdateRecord(entityLogicalName: string, id: string): Xrm.Async.PromiseLike<Xrm.UpdateResponse> {
+        if (this.updateServerMockDateError) {
+            return Promise.reject(new Error(this.updateServerMockDateError)) as unknown as Xrm.Async.PromiseLike<
+                Xrm.CreateResponse>;
+        }
+        return Promise.resolve(
+            { entityType: entityLogicalName, id },
+        ) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
     }
 
     private RetrieveSingleStubRecord(
@@ -1116,11 +1133,13 @@ export class XrmMockFormTestContextBuilder<
                 const lookupControlMock = {
                     removePreSearch: jest.fn(),
                     addPreSearch: jest.fn(),
-                    setEntityTypes: jest.fn((entityType: string[]) => { controlMock.entityTypes = entityType; })
+                    setEntityTypes: jest.fn((entityType: string[]) => { controlMock.entityTypes = entityType; }),
+                    addCustomFilter: jest.fn(),
                 };
                 controlMock.removePreSearch = lookupControlMock.removePreSearch;
                 controlMock.addPreSearch = lookupControlMock.addPreSearch;
-                controlMock.setEntityTypes = lookupControlMock.setEntityTypes
+                controlMock.setEntityTypes = lookupControlMock.setEntityTypes;
+                controlMock.addCustomFilter = lookupControlMock.addCustomFilter;
                 this.xrmLookupControlMockStubs[control.name] = lookupControlMock;
             }
             if (this.isControlMethodMock && !this.isGridControl(controlMock)) {
@@ -1162,7 +1181,7 @@ export class XrmMockFormTestContextBuilder<
     }
 
     private InitTab(tab: XrmForm.Tester.XrmFormMockTab<TTabNames, TSectionNames, TControlName>): this {
-        const mockTab = XrmMockGenerator.Tab.createTab(tab.name, tab.label, tab.isVisible, tab.displayState, tab.parent);
+        const mockTab = XrmMockGenerator.Tab.createTab(tab.name, tab.label, tab.isVisible, tab.displayState ?? "collapsed", tab.parent);
         if (this.isMockTabEvents) {
             const tabEvent = {
                 addTabStateChange: jest.fn(),
