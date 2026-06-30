@@ -353,7 +353,7 @@ The three entity inputs are combined as an **additive union** — an entity matc
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `output.target` | `"Modern"` \| `"Framework"` | `"Modern"` | `Modern` = net8.0+ (nullable, implicit usings); `Framework` = .NET Framework 4.6.2 (Dataverse plugins, no nullable) |
-| `output.virtual` | boolean | `false` | Include virtual attributes |
+| `output.virtual` | boolean | `false` | Add the `virtual` keyword to generated entity properties, enabling mocking and subclass overrides |
 | `output.editableReadOnly` | boolean | `false` | Treat read-only attributes as editable |
 | `output.include.context` | boolean | `true` | Generate `DataContext` class |
 | `output.include.options` | boolean | `true` | Generate `OptionSetValues` enum classes |
