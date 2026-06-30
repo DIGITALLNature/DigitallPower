@@ -806,10 +806,10 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
         });
 
-        var entitySet = config.Entities.ToHashSet();
-        if (!string.IsNullOrWhiteSpace(config.EntityMask))
+        var entitySet = config.Entities.Names.ToHashSet();
+        if (!string.IsNullOrWhiteSpace(config.Entities.Mask))
         {
-            var regularPattern = WildCardToRegular(config.EntityMask);
+            var regularPattern = WildCardToRegular(config.Entities.Mask);
             foreach (var metadata in entities.EntityMetadata)
             {
                 if (Regex.IsMatch(metadata.LogicalName, regularPattern))
@@ -819,7 +819,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             }
         }
 
-        if (config.Solutions.Count != 0)
+        if (config.Entities.FromSolutions.Count != 0)
         {
             var componentsQuery = new QueryExpression
             {
@@ -839,7 +839,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
                 ConditionOperator.Equal,
                 SolutionComponent.Options.ComponentType.Entity));
 
-            foreach (var solution in config.Solutions)
+            foreach (var solution in config.Entities.FromSolutions)
             {
                 var solutionId = FetchSolution(solution)!.Id;
                 solutionFilter.Conditions.Clear();
@@ -858,7 +858,7 @@ public class MetadataService(IOrganizationService connection, ObjectCache metada
             }
         }
 
-        config.Entities = entitySet;
+        config.Entities.Names = entitySet;
     }
 
     public IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames)

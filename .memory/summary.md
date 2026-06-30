@@ -85,6 +85,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **`CodeGenerationConfigFactory`** is the single entry point for config loading
 - Routes by `version`: missing/1 → V1 (deprecation warning), 2 → V2 (requires `type`), other → throw
 - Returns `CodeGenerationConfigResult` (discriminated union: `V1(CodeGenerationConfig)` | `V2(CodeGenerationConfigBase)`)
+- V2 shared root now uses `namespace`, `language`, `entities { names, fromSolutions, mask }`, `requests`, `optionSets`
+- TypeScript-specific settings live under `output.forms` / `output.customApis`; .NET-specific settings live under `output.target` / `output.virtual` / `output.editableReadOnly` / `output.include`
 - V1 configs preserved as-is (can generate both .NET + TypeScript in one run)
 - Manual discriminator routing via `JsonDocument` (STJ polymorphic attributes removed — incompatible with `$schema` in config files)
 
@@ -161,3 +163,5 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
+| `research-v2-typescript-config-design-gaps.md` | research | Current V2 TS caveats after redesign: no `TypingPath`, no per-entity filters, string-based `forms.filter` |
+| `implementation-v2-codegeneration-config-shape.md` | implementation | Final nested V2 config shape: shared `entities` scope, `optionSets`, and target-specific `output` blocks |

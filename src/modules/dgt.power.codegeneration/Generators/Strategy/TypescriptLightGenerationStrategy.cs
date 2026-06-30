@@ -326,7 +326,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.TsAuxiliaryExtTypes, FileNames.Typescript.FileExtension.TypeExtension);
 
-        foreach (var entity in config.Entities.OrderBy(entityName => entityName))
+        foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
             var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
 
@@ -374,7 +374,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             foreach (var parsedForm in entityParsedForm.ParsedFormDetail)
             {
                 var formName = $"{entityMetada.LogicalName.Trim()}.{Formatter.Sanitize(parsedForm.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
-                if (ShouldSkipFormForConfig(config.Forms, formName))
+                if (ShouldSkipFormForConfig(config.Output.Forms?.Filter ?? [], formName))
                 {
                     Console.MarkupLine($"Skip: {formName}");
                     continue;
@@ -388,7 +388,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                     args,
                     formName,
                     bpfControlsForEntity);
-                if (config.XrmMockFormHelpers)
+                if (config.Output.Forms?.TestHelpers ?? false)
                 {
                     CreateFormTestHelperFile(
                         parsedForm,
@@ -402,7 +402,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             }
         }
 
-        if (!config.XrmMockFormHelpers)
+        if (!(config.Output.Forms?.TestHelpers ?? false))
         {
             return;
         }
@@ -418,7 +418,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.Include.SdkMessages)
+        if (config.Requests.Count == 0)
         {
             return;
         }
@@ -445,13 +445,13 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (config.GlobalOptionSets.Count == 0)
+        if (config.OptionSets.Count == 0)
         {
             return;
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
-        var optionSets = metadataService.RetrieveOptionSets(config.GlobalOptionSets);
+        var optionSets = metadataService.RetrieveOptionSets(config.OptionSets);
 
         var viewModel = new OptionSetViewModel
         {
@@ -472,7 +472,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (config.Requests.Count == 0)
+        if (config.Requests.Count == 0 || !config.Output.CustomApis)
         {
             return;
         }
@@ -515,7 +515,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     {
         var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 
-        foreach (var entity in config.Entities.OrderBy(entityName => entityName))
+        foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
             var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
             if (entityMetadata.IsBPFEntity == true)
@@ -526,8 +526,8 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
             var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
-            var forms = config.OnlyFormsFromSolutions
-                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], bpfControlsForEntity)
+            var forms = config.Output.Forms?.FromSolutions ?? false
+                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity)
                 : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
 
             entityWithMetadataForms.Add(new EntityWithMetadataFormData
@@ -542,7 +542,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlListV2(TypeScriptCodeGenerationConfig config)
     {
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
-        foreach (var entityName in config.Entities.OrderBy(entityName => entityName))
+        foreach (var entityName in config.Entities.Names.OrderBy(entityName => entityName))
         {
             var bpfControlsForEntityMain = metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config.Requests, entityName);
             foreach (var bpfControlForEntityMain in bpfControlsForEntityMain)
@@ -707,4 +707,3 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         public const string CustomApi = "CustomApi.liquid";
     }
 }
-

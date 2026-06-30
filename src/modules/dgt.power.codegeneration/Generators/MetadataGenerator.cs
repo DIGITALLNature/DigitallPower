@@ -43,7 +43,7 @@ public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole co
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        foreach (var entity in config.Entities)
+        foreach (var entity in config.Entities.Names)
         {
             var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",

@@ -2,80 +2,42 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "title": "TypeScriptCodeGenerationConfig",
-  "description": "V2 configuration for TypeScript code generation (Light mode only). Produces entity definitions, form typings, OptionSet constants, SDK message names, and Custom API wrappers. The legacy Full generator mode is only available via V1 configs.",
+  "description": "V2 configuration for TypeScript code generation (Light mode only). Produces entity definitions, form typings, OptionSet constants, SDK message name constants, and Custom API wrappers.",
   "required": ["type"],
   "properties": {
-    "type": {
-      "type": "string",
-      "const": "typescript",
-      "description": "Config type discriminator. Must be 'typescript' for TypeScript code generation."
-    },
-    "version": {
-      "type": "integer",
-      "const": 2,
-      "description": "Config version. V2 configs use the typed discriminator model.",
-      "default": 2
-    },
+    "type":      { "type": "string", "const": "typescript" },
+    "version":   { "type": "integer", "const": 2, "default": 2 },
+    "namespace": { "type": ["string", "null"], "description": "Reserved for future TypeScript module prefix. Not currently used by the generator.", "default": null },
+    "language":  { "type": ["integer", "null"], "description": "LCID for label localization. null = org base language.", "default": null },
     "entities": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Entity logical names to include in generation. Expanded at runtime by 'entityMask' and 'solutions'."
-    },
-    "solutions": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Solution unique names. Entities from these solutions are added to 'entities'."
-    },
-    "entityMask": {
-      "type": ["string", "null"],
-      "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities."
-    },
-    "language": {
-      "type": ["integer", "null"],
-      "description": "Language code for label localization. null = organization base language (default), or an explicit LCID (e.g. 1033). Defaults to the organization's base language to ensure deterministic output regardless of which user runs the generation.",
-      "default": null
-    },
-    "requests": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "SDK message names to generate (actions, custom APIs, built-in messages like WhoAmI). Used for SDK message name constants and Custom API typed wrappers."
-    },
-    "globalOptionSets": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Global OptionSet logical names to generate as standalone constants."
-    },
-    "xrmMockFormHelpers": {
-      "type": "boolean",
-      "description": "Generate XrmMock form test helpers.",
-      "default": false
-    },
-    "onlyFormsFromSolutions": {
-      "type": "boolean",
-      "description": "Only generate forms that belong to the configured solutions.",
-      "default": false
-    },
-    "include": {
       "type": "object",
-      "description": "Controls which optional sections are included in generated TypeScript code.",
+      "description": "Entity scope — defines which entities to include via additive mechanisms.",
       "properties": {
-        "options": {
-          "type": "boolean",
-          "description": "Generate OptionSet value constants.",
-          "default": true
-        },
-        "sdkMessages": {
-          "type": "boolean",
-          "description": "Generate SDK message name constants.",
-          "default": true
-        }
+        "names":         { "type": "array", "items": { "type": "string" }, "description": "Explicit entity logical names." },
+        "fromSolutions": { "type": "array", "items": { "type": "string" }, "description": "Solution unique names. All entities in these solutions are added to the scope." },
+        "mask":          { "type": ["string", "null"], "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities.", "default": null }
       },
       "additionalProperties": false
     },
-    "forms": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Form names to include (format: 'entity.formname.form'). When empty, all forms are generated."
+    "requests":   { "type": "array", "items": { "type": "string" }, "description": "SDK message names (actions, custom APIs, built-in messages). Presence generates SDK message name constants. Entries with parameters also produce Custom API typed wrappers when output.customApis is true." },
+    "optionSets": { "type": "array", "items": { "type": "string" }, "description": "Global OptionSet logical names to generate as standalone constants." },
+    "output": {
+      "type": "object",
+      "description": "Controls which artifacts are generated.",
+      "properties": {
+        "forms": {
+          "type": "object",
+          "description": "Form generation configuration. Omit to generate all forms for all scoped entities.",
+          "properties": {
+            "filter":        { "type": "array", "items": { "type": "string" }, "description": "Explicit form allowlist (format: 'entity.formname.form'). Empty = all forms." },
+            "fromSolutions": { "type": "boolean", "description": "Only generate forms belonging to the solutions in the entity scope.", "default": false },
+            "testHelpers":   { "type": "boolean", "description": "Generate XrmMock test helper files alongside form files. Opt-in.", "default": false }
+          },
+          "additionalProperties": false
+        },
+        "customApis": { "type": "boolean", "description": "Generate typed Custom API wrappers for requests that have parameters.", "default": true }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

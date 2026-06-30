@@ -30,9 +30,9 @@ public class DotNetInclude
     public bool Relations { get; init; } = true;
 
     /// <summary>
-    ///     Generate navigation properties for 1:N relationships.
+    ///     Generate navigation props for 1:N relationships.
     /// </summary>
-    public bool NavigationProperties { get; init; } = true;
+    public bool NavigationProps { get; init; } = true;
 
     /// <summary>
     ///     Generate EntityTypeCode constant.
@@ -50,4 +50,3 @@ public class DotNetInclude
     /// </summary>
     public bool Metadata { get; init; }
 }
-

@@ -35,8 +35,8 @@ public class DotNetEntityViewModelBuilder
     public Dictionary<string, object?> Build()
     {
         var entitySchemaName = Formatter.CamelCase(_entity.SchemaName);
-        var isFramework = _config.Target == DotNetTarget.Framework;
-        var editableReadOnlyProperties = _config.EditableReadOnlyProperties;
+        var isFramework = _config.Output.Target == DotNetTarget.Framework;
+        var editableReadOnlyProperties = _config.Output.EditableReadOnly;
 
         var keyAttribute = _entity.Attributes.Single(a => a.LogicalName == _entity.PrimaryIdAttribute);
 
@@ -50,14 +50,14 @@ public class DotNetEntityViewModelBuilder
             ["HasPrimaryNameAttribute"] = _entity.PrimaryNameAttribute != null,
             ["ObjectTypeCode"] = _entity.ObjectTypeCode,
             ["IsFramework"] = isFramework,
-            ["Virtual"] = _config.VirtualProperties ? "virtual " : "",
-            ["IncludeEntityTypeCode"] = _config.Include.EntityTypeCode,
-            ["IncludeNavigationProperties"] = _config.Include.NavigationProperties,
-            ["IncludeOptions"] = _config.Include.Options,
-            ["IncludeLogicalNames"] = _config.Include.LogicalNames,
-            ["IncludeAlternateKeys"] = _config.Include.AlternateKeys,
-            ["IncludeRelations"] = _config.Include.Relations,
-            ["IncludeContext"] = _config.Include.Context,
+            ["Virtual"] = _config.Output.Virtual ? "virtual " : "",
+            ["IncludeEntityTypeCode"] = _config.Output.Include.EntityTypeCode,
+            ["IncludeNavigationProperties"] = _config.Output.Include.NavigationProps,
+            ["IncludeOptions"] = _config.Output.Include.Options,
+            ["IncludeLogicalNames"] = _config.Output.Include.LogicalNames,
+            ["IncludeAlternateKeys"] = _config.Output.Include.AlternateKeys,
+            ["IncludeRelations"] = _config.Output.Include.Relations,
+            ["IncludeContext"] = _config.Output.Include.Context,
             ["Summary"] = BuildSummary(GetLocalizedLabel(_entity.Description), 1),
             ["KeyAttributeSchemaName"] = PreventBadToken(Formatter.CamelCase(keyAttribute.SchemaName)),
             ["KeyAttributeIsValidForCreate"] = keyAttribute.IsValidForCreate.GetValueOrDefault(),
@@ -96,7 +96,7 @@ public class DotNetEntityViewModelBuilder
     private object[] BuildNavigationProperties()
     {
         return _entity.OneToManyRelationships
-            .Where(attr => _config.Entities.Contains(attr.ReferencingEntity))
+            .Where(attr => _config.Entities.Names.Contains(attr.ReferencingEntity))
             .OrderBy(r => r.SchemaName)
             .Select(attr =>
             {
