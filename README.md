@@ -304,11 +304,91 @@ dgtp codegeneration ./generated -c ./genconfig.json
 dgtp cg ./generated -c ./genconfig.json
 ```
 
-The JSON schema for the generation configuration is available at [`schemas/codegeneration`](schemas/codegeneration). The codegeneration runtime normalizes list-based selectors and filters (entities, forms, solutions, actions, custom APIs, SDK messages) into de-duplicated collection sets for reuse during generation.
+JSON schemas for all config versions are available under [`schemas/codegeneration/`](schemas/codegeneration).
 
 #### V2 config (recommended)
 
-V2 configs use `"version": 2` and a `"type"` discriminator (`"dotnet"` or `"typescript"`) to produce separate, focused config files per output target.
+V2 configs use `"version": 2` and a `"type"` discriminator to produce one focused file per output target. The design separates two concerns:
+
+- **Scope** — what to load from Dataverse (`entities`, `requests`, `optionSets`)
+- **Output** — what artefacts to write (type-specific `output` object)
+
+Only `"type"` is required; every other property has a sensible default and may be omitted.
+
+> **Tip:** Run one command per config file — `dgtp cg ./generated -c ./genconfig.dotnet.json` and `dgtp cg ./generated -c ./genconfig.typescript.json`.
+
+##### Shared root properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `version` | integer | `1` | Must be `2` to use the V2 engine |
+| `type` | `"dotnet"` \| `"typescript"` | — | **Required.** Selects generator and schema |
+| `namespace` | string \| null | `null` (TS) / `"Digitall.Dataverse.Model"` (.NET) | Root namespace for generated classes |
+| `language` | string \| null | `null` | Reserved for future locale-specific generation |
+
+##### Scope properties (shared by both types)
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `entities.names` | string[] | `[]` | Explicit list of entity logical names |
+| `entities.fromSolutions` | string[] | `[]` | Include all entities from these solutions |
+| `entities.mask` | string \| null | `null` | Publisher-prefix wildcard (e.g. `"contoso_*"`) |
+| `requests` | string[] | `[]` | SDK message / custom action names; generates message constants |
+| `optionSets` | string[] | `[]` | Global option set logical names |
+
+The three entity inputs are combined as an **additive union** — an entity matches if it appears in `names`, belongs to any listed solution, or matches the `mask` pattern.
+
+##### TypeScript output properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `output.forms` | object \| absent | *(all forms)* | Omit entirely to generate all forms for all scoped entities |
+| `output.forms.filter` | string[] | `[]` | Restrict to specific forms by `"entityLogicalName.formName"`; empty = all forms |
+| `output.forms.fromSolutions` | boolean | `false` | Only include forms that belong to the solutions listed in `entities.fromSolutions` |
+| `output.forms.testHelpers` | boolean | `false` | Generate XrmMock test helper files alongside form helpers |
+| `output.customApis` | boolean | `true` | Generate typed Custom API request/response wrappers for parameterised messages |
+
+##### .NET output properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `output.target` | `"Modern"` \| `"Legacy"` | `"Modern"` | CRM SDK generation target |
+| `output.virtual` | boolean | `false` | Include virtual attributes |
+| `output.editableReadOnly` | boolean | `false` | Treat read-only attributes as editable |
+| `output.include.context` | boolean | `true` | Generate `DataContext` class |
+| `output.include.options` | boolean | `true` | Generate `OptionSetValues` enum classes |
+| `output.include.logicalNames` | boolean | `true` | Generate logical-name string constants |
+| `output.include.relations` | boolean | `true` | Generate relationship metadata |
+| `output.include.navigationProps` | boolean | `true` | Generate navigation properties |
+| `output.include.entityTypeCode` | boolean | `true` | Generate entity type code constants |
+| `output.include.alternateKeys` | boolean | `true` | Generate alternate-key members |
+| `output.include.metadata` | boolean | `false` | Write `metadata.xml` sidecar files |
+
+##### Minimal examples
+
+Minimal .NET config (entities from a solution, all defaults):
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/dotnet.schema.json",
+  "version": 2,
+  "type": "dotnet",
+  "entities": { "fromSolutions": ["ContosoCore"] }
+}
+```
+
+Minimal TypeScript config (entities from a solution, all forms, no test helpers):
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
+  "version": 2,
+  "type": "typescript",
+  "entities": { "fromSolutions": ["ContosoCore"] }
+}
+```
+
+##### Full examples
 
 **.NET** — `genconfig.dotnet.json`:
 
@@ -318,13 +398,27 @@ V2 configs use `"version": 2` and a `"type"` discriminator (`"dotnet"` or `"type
   "version": 2,
   "type": "dotnet",
   "namespace": "Contoso.Dataverse.Model",
-  "target": "Modern",
-  "entities": ["account", "contact"],
-  "solutions": ["ContosoCore"],
-  "requests": ["WhoAmI", "contoso_ApproveOrder"],
-  "globalOptionSets": ["contoso_status"],
-  "include": {
-    "metadata": false
+  "entities": {
+    "names": ["account", "contact"],
+    "fromSolutions": ["ContosoCore"],
+    "mask": "contoso_*"
+  },
+  "requests": ["contoso_ApproveOrder"],
+  "optionSets": ["contoso_status"],
+  "output": {
+    "target": "Modern",
+    "virtual": false,
+    "editableReadOnly": false,
+    "include": {
+      "context": true,
+      "options": true,
+      "logicalNames": true,
+      "relations": true,
+      "navigationProps": true,
+      "entityTypeCode": true,
+      "alternateKeys": true,
+      "metadata": false
+    }
   }
 }
 ```
@@ -336,18 +430,27 @@ V2 configs use `"version": 2` and a `"type"` discriminator (`"dotnet"` or `"type
   "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
   "version": 2,
   "type": "typescript",
-  "entities": ["account", "contact"],
-  "solutions": ["ContosoCore"],
-  "requests": ["WhoAmI", "contoso_ApproveOrder"],
-  "globalOptionSets": ["contoso_status"],
-  "xrmMockFormHelpers": true,
-  "onlyFormsFromSolutions": true
+  "entities": {
+    "names": ["account", "contact"],
+    "fromSolutions": ["ContosoCore"],
+    "mask": "contoso_*"
+  },
+  "requests": ["contoso_ApproveOrder"],
+  "optionSets": ["contoso_status"],
+  "output": {
+    "forms": {
+      "filter": ["account.Account Main Form"],
+      "fromSolutions": false,
+      "testHelpers": true
+    },
+    "customApis": true
+  }
 }
 ```
 
 #### V1 config (legacy, deprecated)
 
-V1 configs use a single file for all output targets. They are detected by `"version": 1` (or absence of a `version` property) and still supported but deprecated.
+V1 configs use a single file for both .NET and TypeScript output and are detected by `"version": 1` (or the absence of a `version` field). They continue to work unchanged — they are mapped internally to the V2 runtime shape before execution.
 
 ```json
 {
@@ -362,9 +465,24 @@ V1 configs use a single file for all output targets. They are detected by `"vers
 }
 ```
 
-> **Tip:** Run separate commands for each config file: `dgtp cg ./generated -c ./genconfig.dotnet.json` and `dgtp cg ./generated -c ./genconfig.typescript.json`.
+##### V1 → V2 migration
 
-For TypeScript Light (TSL) generation validation in CI/test environments:
+| V1 property | V2 equivalent |
+|-------------|--------------|
+| `Entities` | `entities.names` |
+| `Solutions` | `entities.fromSolutions` |
+| `EntityMask` | `entities.mask` |
+| `Actions` / `SdkMessages` | `requests` |
+| `GlobalOptionSets` | `optionSets` |
+| `NameSpace` | `namespace` |
+| `XrmMockFormHelpers` | `output.forms.testHelpers` |
+| `OnlyFormsFromSolutions` | `output.forms.fromSolutions` |
+| `SuppressMetaData` | `output.include.metadata: false` |
+| `Target` | `output.target` |
+
+> **Note:** V1 attribute-level filters (`EntityFilters`, `EntityRefFilters`, `EntityFormFilters`) have no V2 equivalent — they were removed by design to keep the V2 schema focused.
+
+#### TypeScript environment variables
 
 | Environment variable | Purpose | Default |
 |---|---|---|
