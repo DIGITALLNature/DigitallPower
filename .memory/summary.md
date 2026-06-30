@@ -140,7 +140,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
 - **`Assembly` model** (push module) has mutable-GetHashCode pattern. Not yet refactored.
-- **Schema URLs in README point to `refactor/codegeneration` branch** — must be updated to `main` before merging. Search README for `raw.githubusercontent.com/.*/refactor/codegeneration/` and replace with `.*/main/`.
+- **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
 
