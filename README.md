@@ -370,7 +370,7 @@ Minimal .NET config (entities from a solution, all defaults):
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/refactor/codegeneration/schemas/codegeneration/v2/dotnet.schema.json",
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/beta/schemas/codegeneration/v2/dotnet.schema.json",
   "version": 2,
   "type": "dotnet",
   "entities": { "fromSolutions": ["ContosoCore"] }
@@ -381,7 +381,7 @@ Minimal TypeScript config (entities from a solution, all forms, no test helpers)
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/refactor/codegeneration/schemas/codegeneration/v2/typescript.schema.json",
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/beta/schemas/codegeneration/v2/typescript.schema.json",
   "version": 2,
   "type": "typescript",
   "entities": { "fromSolutions": ["ContosoCore"] }
@@ -394,7 +394,7 @@ Minimal TypeScript config (entities from a solution, all forms, no test helpers)
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/refactor/codegeneration/schemas/codegeneration/v2/dotnet.schema.json",
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/beta/schemas/codegeneration/v2/dotnet.schema.json",
   "version": 2,
   "type": "dotnet",
   "namespace": "Contoso.Dataverse.Model",
@@ -427,7 +427,7 @@ Minimal TypeScript config (entities from a solution, all forms, no test helpers)
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/refactor/codegeneration/schemas/codegeneration/v2/typescript.schema.json",
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/beta/schemas/codegeneration/v2/typescript.schema.json",
   "version": 2,
   "type": "typescript",
   "entities": {
