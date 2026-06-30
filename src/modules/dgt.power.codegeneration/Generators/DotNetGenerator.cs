@@ -106,12 +106,12 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (config.GlobalOptionSets.Count == 0)
+        if (config.OptionSets.Count == 0)
         {
             return;
         }
 
-        var optionSets = metadataService.RetrieveOptionSets(config.GlobalOptionSets);
+        var optionSets = metadataService.RetrieveOptionSets(config.OptionSets);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
 
         using var file = File.CreateText(fileName);
@@ -130,7 +130,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.Include.Context)
+        if (!config.Output.Include.Context)
         {
             return;
         }
@@ -152,7 +152,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        foreach (var entity in config.Entities)
+        foreach (var entity in config.Entities.Names)
         {
             var metadata = metadataService.RetrieveEntityMetadata(entity,
                 EntityFilters.Attributes | EntityFilters.Relationships | EntityFilters.Entity);
@@ -185,7 +185,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        if (!config.Include.Metadata)
+        if (!config.Output.Include.Metadata)
         {
             return;
         }
@@ -201,7 +201,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
                 .ForEach(File.Delete);
         }
 
-        foreach (var entity in config.Entities)
+        foreach (var entity in config.Entities.Names)
         {
             var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata,

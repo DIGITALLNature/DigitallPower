@@ -165,26 +165,32 @@ public class CodeGenerationConfig
 
         return new DotNetCodeGenerationConfig
         {
-            Entities = new HashSet<string>(Entities),
-            Solutions = Solutions,
-            EntityMask = EntityMask,
-            Language = UseBaseLanguage ? null : 0,
-            GlobalOptionSets = GlobalOptionSets,
-            Requests = requests,
             Namespace = NameSpace,
-            Target = SuppressNullableSupport ? DotNetTarget.Framework : DotNetTarget.Modern,
-            VirtualProperties = Virtual,
-            EditableReadOnlyProperties = EditableReadOnlyProperties,
-            Include = new DotNetInclude
+            Entities = new EntityScopeConfig
             {
-                Context = !SuppressContext,
-                Options = !SuppressOptions,
-                LogicalNames = !SuppressLogicalNames,
-                Relations = !SuppressRelations,
-                NavigationProperties = !SuppressNavigationProperties,
-                EntityTypeCode = !SuppressEntityTypeCode,
-                AlternateKeys = !SuppressAlternateKeys,
-                Metadata = !SuppressMetaData
+                Names = new HashSet<string>(Entities),
+                FromSolutions = Solutions,
+                Mask = EntityMask
+            },
+            Language = UseBaseLanguage ? null : 0,
+            OptionSets = GlobalOptionSets,
+            Requests = requests,
+            Output = new DotNetOutput
+            {
+                Target = SuppressNullableSupport ? DotNetTarget.Framework : DotNetTarget.Modern,
+                Virtual = Virtual,
+                EditableReadOnly = EditableReadOnlyProperties,
+                Include = new DotNetInclude
+                {
+                    Context = !SuppressContext,
+                    Options = !SuppressOptions,
+                    LogicalNames = !SuppressLogicalNames,
+                    Relations = !SuppressRelations,
+                    NavigationProps = !SuppressNavigationProperties,
+                    EntityTypeCode = !SuppressEntityTypeCode,
+                    AlternateKeys = !SuppressAlternateKeys,
+                    Metadata = !SuppressMetaData
+                }
             }
         };
     }
@@ -198,19 +204,25 @@ public class CodeGenerationConfig
 
         return new TypeScriptCodeGenerationConfig
         {
-            Entities = new HashSet<string>(Entities),
-            Solutions = Solutions,
-            EntityMask = EntityMask,
-            Language = UseBaseLanguage ? null : 0,
-            GlobalOptionSets = GlobalOptionSets,
-            Requests = requests,
-            XrmMockFormHelpers = XrmMockFormHelpers,
-            OnlyFormsFromSolutions = OnlyFormsFromSolutions,
-            Include = new TypeScriptInclude
+            Entities = new EntityScopeConfig
             {
-                SdkMessages = !SuppressSdkMessages
+                Names = new HashSet<string>(Entities),
+                FromSolutions = Solutions,
+                Mask = EntityMask
             },
-            Forms = new HashSet<string>(Forms)
+            Language = UseBaseLanguage ? null : 0,
+            OptionSets = GlobalOptionSets,
+            Requests = requests,
+            Output = new TypeScriptOutput
+            {
+                Forms = new TypeScriptFormsOutput
+                {
+                    Filter = new HashSet<string>(Forms),
+                    FromSolutions = OnlyFormsFromSolutions,
+                    TestHelpers = XrmMockFormHelpers
+                },
+                CustomApis = true
+            }
         };
     }
 }

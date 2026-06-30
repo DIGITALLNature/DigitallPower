@@ -8,51 +8,37 @@
 namespace dgt.power.codegeneration.Base;
 
 /// <summary>
-///     V2 base configuration for code generation. Discriminated by <c>"type"</c> in JSON.
-///     Contains only properties shared between all output targets.
-///     Polymorphic routing is handled by <see cref="CodeGenerationConfigFactory"/>.
+///     V2 base configuration shared between all output types.
+///     Discriminated by <c>"type"</c> in JSON. Polymorphic routing handled by
+///     <see cref="CodeGenerationConfigFactory"/>.
 /// </summary>
-#pragma warning disable CA2227 // Entities is assigned post-construction by MetadataService.PopulateEntitiesAndSolutions
 public abstract class CodeGenerationConfigBase
 {
-    /// <summary>
-    ///     Config version. V2 configs use the typed discriminator model.
-    /// </summary>
+    /// <summary>Config version. V2 configs use the typed discriminator model.</summary>
     public int Version { get; init; } = 2;
 
     /// <summary>
-    ///     Entity logical names to include in generation.
-    ///     Expanded at runtime by <see cref="EntityMask"/> and <see cref="Solutions"/>.
+    ///     Namespace for generated code. For .NET: C# namespace. For TypeScript: reserved for future module prefix.
+    ///     Defaults to null; concrete types supply type-specific defaults.
     /// </summary>
-    public ICollection<string> Entities { get; set; } = new HashSet<string>();
+    public string? Namespace { get; init; }
 
     /// <summary>
-    ///     Solution unique names. Entities from these solutions are added to <see cref="Entities"/>.
-    /// </summary>
-    public IReadOnlyCollection<string> Solutions { get; init; } = new HashSet<string>();
-
-    /// <summary>
-    ///     Wildcard pattern (e.g. "contoso_*") to auto-include matching entities.
-    /// </summary>
-    public string? EntityMask { get; init; }
-
-    /// <summary>
-    ///     Language code for label localization. <c>null</c> = organization base language (default),
-    ///     or an explicit LCID (e.g. 1033).
-    ///     Defaults to the organization's base language to ensure deterministic output
-    ///     regardless of which user runs the generation.
+    ///     Language code for label localization. null = organization base language (default).
+    ///     Explicit LCID (e.g. 1033) overrides org language.
     /// </summary>
     public int? Language { get; init; }
 
-    /// <summary>
-    ///     Global OptionSet logical names to generate as standalone constants.
-    /// </summary>
-    public IReadOnlyCollection<string> GlobalOptionSets { get; init; } = new HashSet<string>();
+    /// <summary>Defines which entities to include via additive mechanisms (names, solutions, mask).</summary>
+    public EntityScopeConfig Entities { get; init; } = new();
 
     /// <summary>
     ///     SDK message names to generate (actions, custom APIs, built-in messages like WhoAmI).
+    ///     Presence drives generation of SDK message name constants.
     ///     The generator auto-detects whether each entry is a custom action, custom API, or built-in message.
     /// </summary>
     public IReadOnlyCollection<string> Requests { get; init; } = new HashSet<string>();
+
+    /// <summary>Global OptionSet logical names to generate as standalone constants.</summary>
+    public IReadOnlyCollection<string> OptionSets { get; init; } = new HashSet<string>();
 }
-#pragma warning restore CA2227

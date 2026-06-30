@@ -21,13 +21,14 @@ CodeGenerationConfigBase (abstract, shared properties)
 ### Key design choices
 
 1. **`"type"` discriminator** in JSON (`"dotnet"` / `"typescript"`) drives deserialization via `System.Text.Json` polymorphism.
-2. **Opt-in `Include` sections** replace 11 `Suppress*` booleans. Defaults are `true` — users only set `false` for things they don't want.
+2. **Nested `output` sections** hold target-specific generation settings. .NET keeps an opt-in `include` block under `output`; TypeScript uses `output.forms` and `output.customApis`.
 3. **`DotNetTarget` enum** (`Modern` / `Framework`) replaces `SuppressNullableSupport`. Controls nullable annotations and using directives.
 4. **`Requests` array** unifies `Actions`, `CustomAPIs`, and `AdditionalSdkMessages`. The generator auto-detects each entry's type (custom API, classic action, built-in SDK message).
 5. **`DebuggerNonUserCode`** removed entirely — no value for slim generated classes.
 6. **Metadata generation** folded into `DotNetInclude.Metadata` (was a separate `MetadataWorker`).
-7. **`Namespace`** moved to `DotNetCodeGenerationConfig` only — TypeScript doesn't use it.
-8. **V1 backward compatibility** via `CodeGenerationConfigFactory` — detects absence of `"type"` field, deserializes as legacy `CodeGenerationConfig`, maps to V2 with deprecation warning.
+7. **Shared root `namespace`** exists on `CodeGenerationConfigBase`; .NET shadows it with the default `"Digitall.Dataverse.Model"`, while TypeScript keeps `null` as a reserved future field.
+8. **Entity scope** is modeled as `{ names, fromSolutions, mask }` under `entities` for both targets.
+9. **V1 backward compatibility** via `CodeGenerationConfigFactory` — detects absence of `"type"` field, deserializes as legacy `CodeGenerationConfig`, maps to V2 with deprecation warning.
 
 ### What was removed
 
@@ -54,6 +55,8 @@ After the initial V2 redesign (which focused on DotNet), the TypeScript config w
 
 1. **Full generator mode removed from V2** — `TypeScriptCodeGenerationConfig` only targets the Light generator. Full mode is V1-only and deprecated.
 2. **Language property made nullable (`int?`)** — `null` means "use organization base language" (deterministic across users). `0` means user language. Any other LCID selects that specific language.
+3. **Form settings moved under `output.forms`** — omission means generate all forms; empty `filter` also means all forms.
+4. **SDK message constants are driven only by `requests` presence** — no separate V2 toggle remains.
 
 ## Config resolution pipeline
 
