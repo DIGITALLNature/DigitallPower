@@ -37,12 +37,12 @@ public class ConfigMappingTests
         var mapped = config.ToDotNetConfig();
 
         await Assert.That(mapped.Namespace).IsEqualTo("Contoso.Dataverse.Model");
-        await Assert.That(mapped.Entities.Names).IsEquivalentTo(new[] { "account" });
-        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(new[] { "ContosoCore" });
+        await Assert.That(mapped.Entities.Names).IsEquivalentTo(["account"]);
+        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
         await Assert.That(mapped.Entities.Mask).IsEqualTo("contoso_*");
         await Assert.That(mapped.Language).IsNull();
-        await Assert.That(mapped.OptionSets).IsEquivalentTo(new[] { "contoso_status" });
-        await Assert.That(mapped.Requests).IsEquivalentTo(new[] { "ActionA", "ApiA", "WhoAmI" });
+        await Assert.That(mapped.OptionSets).IsEquivalentTo(["contoso_status"]);
+        await Assert.That(mapped.Requests).IsEquivalentTo(["ActionA", "ApiA", "WhoAmI"]);
         await Assert.That(mapped.Output.Target).IsEqualTo(DotNetTarget.Framework);
         await Assert.That(mapped.Output.Virtual).IsTrue();
         await Assert.That(mapped.Output.EditableReadOnly).IsTrue();
@@ -77,15 +77,15 @@ public class ConfigMappingTests
         var mapped = config.ToTypeScriptConfig();
 
         await Assert.That(mapped.Namespace).IsNull();
-        await Assert.That(mapped.Entities.Names).IsEquivalentTo(new[] { "account" });
-        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(new[] { "ContosoCore" });
+        await Assert.That(mapped.Entities.Names).IsEquivalentTo(["account"]);
+        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
         await Assert.That(mapped.Entities.Mask).IsEqualTo("contoso_*");
         await Assert.That(mapped.Language).IsEqualTo(0);
-        await Assert.That(mapped.OptionSets).IsEquivalentTo(new[] { "contoso_status" });
-        await Assert.That(mapped.Requests).IsEquivalentTo(new[] { "ActionA", "ApiA", "WhoAmI" });
+        await Assert.That(mapped.OptionSets).IsEquivalentTo(["contoso_status"]);
+        await Assert.That(mapped.Requests).IsEquivalentTo(["ActionA", "ApiA", "WhoAmI"]);
         await Assert.That(mapped.Output.CustomApis).IsTrue();
         await Assert.That(mapped.Output.Forms).IsNotNull();
-        await Assert.That(mapped.Output.Forms!.Filter).IsEquivalentTo(new[] { "account.main.form" });
+        await Assert.That(mapped.Output.Forms!.Filter).IsEquivalentTo(["account.main.form"]);
         await Assert.That(mapped.Output.Forms.FromSolutions).IsTrue();
         await Assert.That(mapped.Output.Forms.TestHelpers).IsTrue();
     }
@@ -120,10 +120,10 @@ public class ConfigMappingTests
         var config = AssertV2<DotNetCodeGenerationConfig>(result);
 
         await Assert.That(config.Namespace).IsEqualTo("Contoso.Dataverse.Model");
-        await Assert.That(config.Entities.Names).IsEquivalentTo(new[] { "account" });
-        await Assert.That(config.Entities.FromSolutions).IsEquivalentTo(new[] { "ContosoCore" });
+        await Assert.That(config.Entities.Names).IsEquivalentTo(["account"]);
+        await Assert.That(config.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
         await Assert.That(config.Entities.Mask).IsEqualTo("contoso_*");
-        await Assert.That(config.OptionSets).IsEquivalentTo(new[] { "contoso_status" });
+        await Assert.That(config.OptionSets).IsEquivalentTo(["contoso_status"]);
         await Assert.That(config.Output.Target).IsEqualTo(DotNetTarget.Framework);
         await Assert.That(config.Output.Virtual).IsTrue();
         await Assert.That(config.Output.EditableReadOnly).IsTrue();
@@ -160,12 +160,12 @@ public class ConfigMappingTests
         var config = AssertV2<TypeScriptCodeGenerationConfig>(result);
 
         await Assert.That(config.Namespace).IsNull();
-        await Assert.That(config.Entities.Names).IsEquivalentTo(new[] { "account" });
-        await Assert.That(config.Entities.FromSolutions).IsEquivalentTo(new[] { "ContosoCore" });
+        await Assert.That(config.Entities.Names).IsEquivalentTo(["account"]);
+        await Assert.That(config.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
         await Assert.That(config.Entities.Mask).IsEqualTo("contoso_*");
-        await Assert.That(config.OptionSets).IsEquivalentTo(new[] { "contoso_status" });
+        await Assert.That(config.OptionSets).IsEquivalentTo(["contoso_status"]);
         await Assert.That(config.Output.Forms).IsNotNull();
-        await Assert.That(config.Output.Forms!.Filter).IsEquivalentTo(new[] { "account.main.form" });
+        await Assert.That(config.Output.Forms!.Filter).IsEquivalentTo(["account.main.form"]);
         await Assert.That(config.Output.Forms.FromSolutions).IsTrue();
         await Assert.That(config.Output.Forms.TestHelpers).IsTrue();
         await Assert.That(config.Output.CustomApis).IsFalse();

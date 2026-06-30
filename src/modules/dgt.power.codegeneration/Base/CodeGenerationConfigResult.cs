@@ -7,6 +7,7 @@ namespace dgt.power.codegeneration.Base;
 ///     Result of config resolution. Either a single V2 typed config or a V1 legacy config
 ///     (which may produce both .NET and TypeScript output in a single run).
 /// </summary>
+#pragma warning disable CA1034 // Nested types — intentional discriminated union: private ctor prevents external subclassing
 public abstract record CodeGenerationConfigResult
 {
     private CodeGenerationConfigResult() { }
@@ -21,4 +22,5 @@ public abstract record CodeGenerationConfigResult
     /// </summary>
     public sealed record V1(CodeGenerationConfig Config) : CodeGenerationConfigResult;
 }
+#pragma warning restore CA1034
 

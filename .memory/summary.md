@@ -94,6 +94,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 - **`CodeGenerationCommand`** injects `IDotNetGenerator` + `ITypeScriptGenerator` (two interfaces, symmetrical)
 - Pattern matches on `CodeGenerationConfigResult` — no silent catch, no dual code paths
+- **`MetadataService`** is split across `MetadataService.cs` (shared + V2 API) and `MetadataService.Legacy.cs` (V1 `CodeGenerationConfig` overloads) so legacy support does not re-trigger S104/S4136 in the main file
 - **`TypeScriptGenerator`** is a pure router using the strategy pattern:
   - `ITypescriptGenerationStrategy` (internal) — single `Generate()` method
   - `TypescriptFullGenerationStrategy` — V1 Full mode (deprecated)
@@ -161,6 +162,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
 | `implementation-assembly-version-upgrade-migration.md` | implementation | Push module: migrate Steps/CustomAPIs on assembly major/minor version upgrade |
+| `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |

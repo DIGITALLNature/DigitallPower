@@ -21,26 +21,34 @@ public interface IMetadataService
     ///     plus any additional names from the provided requests collection.
     /// </summary>
     IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames);
+    /// <inheritdoc cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/>
+    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
 
     SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets);
+    /// <inheritdoc cref="RetrieveOptionSets(IReadOnlyCollection{string})"/>
+    SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
+
     EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
     int RetrieveOrganizationLanguage();
+
     IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlows(IReadOnlyCollection{string})"/>
+    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
+
     IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
 
     Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
-
     Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
-    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName);
-    void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
 
-    #region Legacy V1 support
+    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection{string},string)"/>
+    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
+
+    void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
+    /// <inheritdoc cref="PopulateEntitiesAndSolutions(CodeGenerationConfigBase)"/>
+    void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
+
+    // V1 legacy methods without V2 counterparts
     IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
     IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config);
-    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
-    SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
-    void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
-    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
-    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
-    #endregion
 }
