@@ -266,4 +266,10 @@ public class CodeGenerationContextBuilder
         _requestFakes.Add(requestFake);
         return this;
     }
+
+    public CodeGenerationContextBuilder WithCustomConfiguration(Action<FakeOrganizationServiceAsync> configuration)
+    {
+        _customConfigurations.Add(configuration);
+        return this;
+    }
 }

@@ -195,14 +195,19 @@ public class WebresourcesProcessorTests : PushTestsBase<PushCommand>
         {
             Name = WebresourceLogicalName,
             WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
-            Content = KnownJsBase64
+            Content = KnownJsBase64,
+            Attributes = { [WebResource.LogicalNames.IsManaged] = false }
         };
-        existingWebResource.Attributes[WebResource.LogicalNames.IsManaged] = false;
 
-        var solutionComponent = new SolutionComponent(Guid.NewGuid());
-        solutionComponent.Attributes[SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId;
-        solutionComponent.Attributes[SolutionComponent.LogicalNames.SolutionId] =
-            new EntityReference(Solution.EntityLogicalName, solution.Id);
+        var solutionComponent = new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId,
+                [SolutionComponent.LogicalNames.SolutionId] =
+                    new EntityReference(Solution.EntityLogicalName, solution.Id)
+            }
+        };
 
         var ctx = GetBuilder()
             .WithServiceCollection(new TestServiceCollection().AddScoped<WebresourcesProcessor>())
@@ -240,14 +245,19 @@ public class WebresourcesProcessorTests : PushTestsBase<PushCommand>
         {
             Name = WebresourceLogicalName,
             WebResourceType = new OptionSetValue((int)WebResource.Options.WebResourceType.ScriptJScript),
-            Content = Convert.ToBase64String("old content"u8.ToArray())
+            Content = Convert.ToBase64String("old content"u8.ToArray()),
+            Attributes = { [WebResource.LogicalNames.IsManaged] = false }
         };
-        existingWebResource.Attributes[WebResource.LogicalNames.IsManaged] = false;
 
-        var solutionComponent = new SolutionComponent(Guid.NewGuid());
-        solutionComponent.Attributes[SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId;
-        solutionComponent.Attributes[SolutionComponent.LogicalNames.SolutionId] =
-            new EntityReference(Solution.EntityLogicalName, solution.Id);
+        var solutionComponent = new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = existingWebResourceId,
+                [SolutionComponent.LogicalNames.SolutionId] =
+                    new EntityReference(Solution.EntityLogicalName, solution.Id)
+            }
+        };
 
         var ctx = GetBuilder()
             .WithServiceCollection(new TestServiceCollection().AddScoped<WebresourcesProcessor>())
