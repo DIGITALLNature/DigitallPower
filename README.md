@@ -324,7 +324,7 @@ Only `"type"` is required; every other property has a sensible default and may b
 | `version` | integer | `1` | Must be `2` to use the V2 engine |
 | `type` | `"dotnet"` \| `"typescript"` | — | **Required.** Selects generator and schema |
 | `namespace` | string \| null | `null` (TS) / `"Digitall.Dataverse.Model"` (.NET) | Root namespace for generated classes |
-| `language` | string \| null | `null` | Reserved for future locale-specific generation |
+| `language` | integer \| null | `null` | LCID for label localization (e.g. `1033` for English). `null` or omitted = use the organization's base language |
 
 ##### Scope properties (shared by both types)
 
