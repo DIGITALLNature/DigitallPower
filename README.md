@@ -80,7 +80,7 @@ After installation the command `dgtp` is available globally.
 
 ```bash
 # 1. Create and select a connection
-dgtp connection create dev https://contoso-dev.crm4.dynamics.com --msal
+dgtp connection create dev --url https://contoso-dev.crm4.dynamics.com
 dgtp connection select dev
 
 # 2. Verify the connection by listing connections

@@ -27,7 +27,7 @@ A no-op pre-flight command that:
 - Tries a silent-only MSAL token acquire (no browser, no side effects).
 - Returns exit code `0` if the token is valid.
 - Returns exit code `2` if interactive login is required.
-- For non-MSAL (classic connection string) profiles, always returns `0`.
+- For connection-string (non-MSAL) connections, always returns `0`.
 
 **Intended agent workflow:**
 ```bash
@@ -42,7 +42,7 @@ dgtp connection status
 ### 3. `dgtp connection refresh` Command
 
 Forces an interactive MSAL browser login for the active connection and persists the refreshed token.
-For classic (non-MSAL) connections this is a no-op.
+For connection-string connections this is a no-op.
 
 ```bash
 dgtp connection refresh   # opens browser, user logs in, token saved → exit 0
@@ -80,7 +80,7 @@ This allows any agent monitoring stdout to detect the interactive login event ev
 - `src/dgt.power.common/Logic/TokenConnector.cs` — non-interactive mode + `TryAcquireTokenSilentAsync` + `ForceInteractiveLoginAsync` + clear message
 - `src/dgt.power.common/IXrmConnection.cs` — `CheckAuthAsync()` + `RefreshAuthAsync()` methods
 - `src/dgt.power.common/Logic/XrmConnection.cs` — `CheckAuthAsync` + `RefreshAuthAsync` impl + `IsNonInteractive()` helper
-- `src/modules/dgt.power.connection/` — new module: `ConnectionStatusCommand`, `ConnectionRefreshCommand`, `CreateConnectionCommand`, `ListConnectionCommand`, `SelectConnectionCommand`, `DeleteConnectionCommand`, `PurgeConnectionCommand`
+- `src/modules/dgt.power.connection/` — new module: `ConnectionStatusCommand`, `ConnectionRefreshCommand`, `CreateConnectionCommand`, `ListConnectionCommand`, `SelectConnectionCommand`, `DeleteConnectionCommand`
 - `src/modules/dgt.power.profile/Commands/AuthCheckCommand.cs` — kept for deprecated `profile auth-check` alias
 - `src/dgt.power/DeprecationInterceptor.cs` — prints warning when `profile` branch is used
 - `src/dgt.power/Program.cs` — register `connection` (canonical) + `profile` (deprecated alias), add `DeprecationInterceptor`
