@@ -1,3 +1,19 @@
+# [2.1.0-beta.60](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.59...v2.1.0-beta.60) (2026-07-01)
+
+
+### Bug Fixes
+
+* **codegeneration:** add null guards and use concrete return types in MetadataService ([3d1fa16](https://github.com/DIGITALLNature/DigitallPower/commit/3d1fa160c8c9798363b224ee4a1d5d45a783ef8e))
+* **codegeneration:** ditch json polymorphic ([c84c1ec](https://github.com/DIGITALLNature/DigitallPower/commit/c84c1ecc4c63e11a71e1784eedc5b3553899da3d))
+* **codegeneration:** polymorphic json config deserialization ([063163a](https://github.com/DIGITALLNature/DigitallPower/commit/063163a97376058ff96d1713860d0bc4a70ea0ad))
+* **codegeneration:** resolve covariant array conversion warnings in MetadataService ([543545e](https://github.com/DIGITALLNature/DigitallPower/commit/543545edd5514e0a927eb9c60d37e99191bd32e3))
+* resolve new Qodana findings in codegeneration and push modules ([3f20522](https://github.com/DIGITALLNature/DigitallPower/commit/3f2052290f82acf33436a4228f6944afd2850bda)), closes [#region](https://github.com/DIGITALLNature/DigitallPower/issues/region)
+
+
+### Features
+
+* **codegeneration:** redesign V2 config with scope/output separation ([09880c8](https://github.com/DIGITALLNature/DigitallPower/commit/09880c8940adab7cff1250f7c00913aba828d61c))
+
 # [2.1.0-beta.59](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.58...v2.1.0-beta.59) (2026-06-29)
 
 
