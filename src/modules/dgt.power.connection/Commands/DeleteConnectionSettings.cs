@@ -20,4 +20,9 @@ public class DeleteConnectionSettings : ConnectionSettings
     [Description("Delete all connections")]
     [DefaultValue(false)]
     public bool All { get; init; }
+
+    [CommandOption("--yes|-y")]
+    [Description("Skip the confirmation prompt when deleting all connections")]
+    [DefaultValue(false)]
+    public bool Yes { get; init; }
 }

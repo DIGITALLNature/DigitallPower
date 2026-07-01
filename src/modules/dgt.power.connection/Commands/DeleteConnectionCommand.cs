@@ -26,6 +26,30 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
 
         if (settings.All)
         {
+        var allConnections = profileManager.LoadIdentities();
+        var names = allConnections.Infos.Select(i => i.Name).ToList();
+
+            if (!settings.Yes)
+            {
+                if (names.Count == 0)
+                {
+                    console.MarkupLine("[grey]No connections to delete.[/]");
+                    return 0;
+                }
+
+                console.MarkupLine("[yellow]The following connections will be deleted:[/]");
+                foreach (var name in names)
+                {
+                    console.MarkupLine($"  [red]- {name}[/]");
+                }
+
+                if (!console.Confirm($"Delete all {names.Count} connection(s)?", defaultValue: false))
+                {
+                    console.MarkupLine("[grey]Aborted.[/]");
+                    return 0;
+                }
+            }
+
             profileManager.Purge();
             var allRule = new Rule("All connections have been [red]deleted[/].");
             allRule.LeftJustified();

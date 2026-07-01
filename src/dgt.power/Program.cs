@@ -331,9 +331,10 @@ void RegisterConnectionCommands(IConfigurator<ConnectionSettings> branch)
     branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
     branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
         .WithExample("connection", "create", "<Name>", "<Url>", "--msal");
-    branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections.")
+    branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
         .WithExample("connection", "delete", "<Name>")
-        .WithExample("connection", "delete", "--all");
+        .WithExample("connection", "delete", "--all")
+        .WithExample("connection", "delete", "--all", "--yes");
     branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
     branch.AddCommand<ConnectionStatusCommand>("status")
         .WithDescription(
