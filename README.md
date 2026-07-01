@@ -163,7 +163,7 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `push` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
-| `dgtp connection <TAB>` | `list` `create` `delete` `select` `purge` `status` `refresh` |
+| `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -203,8 +203,8 @@ dgtp <branch> <command> [arguments] [options]
 | `connection list` | List configured connections |
 | `connection create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection |
 | `connection select <name>` | Set the active connection |
-| `connection delete <name>` | Delete a connection |
-| `connection purge` | Remove all connections |
+| `connection delete <name>` | Delete a specific connection |
+| `connection delete --all` | Delete all connections |
 | `connection status` | Check whether the current MSAL token is valid (exit 0 = valid, 2 = login required) |
 | `connection refresh` | Force an interactive MSAL browser login and save the refreshed token |
 
