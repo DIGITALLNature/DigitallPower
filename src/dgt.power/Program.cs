@@ -354,7 +354,6 @@ void RegisterProfileCommands(IConfigurator<ProfileSettings> branch)
     branch.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
     branch.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
     branch.AddCommand<AuthCheckCommand>("auth-check")
-        .WithDescription(
-            "[[Deprecated]] Use 'dgtp connection status' instead. " +
-            "Checks whether the current MSAL token is still valid without opening a browser.");
+        .WithDescription("Checks whether the current MSAL token is still valid without opening a browser. " +
+            "Exit code 0 = token valid, 2 = interactive login required.");
 }
