@@ -19,18 +19,6 @@ public class CreateConnectionCommand(
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
-        if (settings.Url != null && settings.ConnectionString != null)
-        {
-            console.MarkupLine("[red]Error: specify either --url or --connection-string, not both.[/]");
-            return -1;
-        }
-
-        if (settings.Url == null && settings.ConnectionString == null)
-        {
-            console.MarkupLine("[red]Error: provide either --url (for MSAL authentication) or --connection-string.[/]");
-            return -1;
-        }
-
         var identities = profileManager.LoadIdentities();
 
         if (settings.Url != null)

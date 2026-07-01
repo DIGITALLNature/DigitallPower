@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using dgt.power.connection.Base;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -28,4 +29,13 @@ public class CreateConnectionSettings : ConnectionSettings
     [Description("Skip the post-create connectivity check (WhoAmI request). Use when the environment is temporarily unavailable or when pre-configuring connections in a CI pipeline.")]
     [DefaultValue(false)]
     public bool NoVerify { get; init; }
+
+    public override ValidationResult Validate()
+    {
+        if (Url != null && ConnectionString != null)
+            return ValidationResult.Error("Specify either --url or --connection-string, not both.");
+        if (Url == null && ConnectionString == null)
+            return ValidationResult.Error("Provide either --url (for MSAL authentication) or --connection-string.");
+        return ValidationResult.Success();
+    }
 }

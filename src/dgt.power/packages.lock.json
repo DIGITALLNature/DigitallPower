@@ -804,6 +804,7 @@
       "dgt.power.connection": {
         "type": "Project",
         "dependencies": {
+          "Spectre.Console.Cli": "[0.55.0, )",
           "dgt.power.common": "[2.1.0-beta.60, )"
         }
       },
