@@ -1,3 +1,515 @@
+# [2.1.0-beta.60](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.59...v2.1.0-beta.60) (2026-07-01)
+
+
+### Bug Fixes
+
+* **codegeneration:** add null guards and use concrete return types in MetadataService ([3d1fa16](https://github.com/DIGITALLNature/DigitallPower/commit/3d1fa160c8c9798363b224ee4a1d5d45a783ef8e))
+* **codegeneration:** ditch json polymorphic ([c84c1ec](https://github.com/DIGITALLNature/DigitallPower/commit/c84c1ecc4c63e11a71e1784eedc5b3553899da3d))
+* **codegeneration:** polymorphic json config deserialization ([063163a](https://github.com/DIGITALLNature/DigitallPower/commit/063163a97376058ff96d1713860d0bc4a70ea0ad))
+* **codegeneration:** resolve covariant array conversion warnings in MetadataService ([543545e](https://github.com/DIGITALLNature/DigitallPower/commit/543545edd5514e0a927eb9c60d37e99191bd32e3))
+* resolve new Qodana findings in codegeneration and push modules ([3f20522](https://github.com/DIGITALLNature/DigitallPower/commit/3f2052290f82acf33436a4228f6944afd2850bda)), closes [#region](https://github.com/DIGITALLNature/DigitallPower/issues/region)
+
+
+### Features
+
+* **codegeneration:** redesign V2 config with scope/output separation ([09880c8](https://github.com/DIGITALLNature/DigitallPower/commit/09880c8940adab7cff1250f7c00913aba828d61c))
+
+# [2.1.0-beta.59](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.58...v2.1.0-beta.59) (2026-06-29)
+
+
+### Features
+
+* **tsl:** small improve in test mock tab handler ([#159](https://github.com/DIGITALLNature/DigitallPower/issues/159)) ([4de78e8](https://github.com/DIGITALLNature/DigitallPower/commit/4de78e836f8dd073a40d866f1542943453ebbe4f))
+
+# [2.1.0-beta.58](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.57...v2.1.0-beta.58) (2026-06-29)
+
+
+### Performance Improvements
+
+* **push:** load solution webresources once and skip redundant AddSolutionComponent calls ([0cb8373](https://github.com/DIGITALLNature/DigitallPower/commit/0cb8373c251a618b87709769363fb9c6ce3500a8))
+
+# [2.1.0-beta.57](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.56...v2.1.0-beta.57) (2026-06-26)
+
+
+### Features
+
+* **profile:** add non-interactive auth mode for coding agents ([#157](https://github.com/DIGITALLNature/DigitallPower/issues/157)) ([f92e336](https://github.com/DIGITALLNature/DigitallPower/commit/f92e336b87a1400630eabd52094b9d4ddcfab684))
+
+# [2.1.0-beta.56](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.55...v2.1.0-beta.56) (2026-06-26)
+
+
+### Bug Fixes
+
+* **push:** add existing webresources to solution on update and up2date ([829b9be](https://github.com/DIGITALLNature/DigitallPower/commit/829b9be0a1bbcccd010deed5e13a378bff862abe))
+
+
+### Features
+
+* add dotnet-suggest tab completion support ([0ebcf44](https://github.com/DIGITALLNature/DigitallPower/commit/0ebcf4434fe78c6d6f688d797074502ec0849cca))
+* **complete:** add dgtp complete setup and install-shell commands ([0b58e2b](https://github.com/DIGITALLNature/DigitallPower/commit/0b58e2b0c9079dc3263c7dfa840df23290a8fe5e))
+* **completion:** add dynamic profile name completions ([7841d58](https://github.com/DIGITALLNature/DigitallPower/commit/7841d586524d4641a44ccac2f94adb4f8cea2cf9))
+
+# [2.1.0-beta.55](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.54...v2.1.0-beta.55) (2026-06-11)
+
+
+### Bug Fixes
+
+* **push:** address review feedback - migrate Custom APIs for PowerPlugins, use FirstOrDefault ([e4e55b7](https://github.com/DIGITALLNature/DigitallPower/commit/e4e55b7ee0a2e570e1b6c59034c99337997cdd3f))
+* **push:** resolve analyzer warnings in AssemblyProcessor and migration tests ([2d12095](https://github.com/DIGITALLNature/DigitallPower/commit/2d12095a1d6eb1a8b1b71b8c7708415807a0b96a))
+
+
+### Features
+
+* **push:** migrate plugin steps and Custom API references on assembly version upgrade ([93a717f](https://github.com/DIGITALLNature/DigitallPower/commit/93a717f2e5c943469ff0e1b1920ca3190ac4464a)), closes [#91](https://github.com/DIGITALLNature/DigitallPower/issues/91)
+
+# [2.1.0-beta.54](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.53...v2.1.0-beta.54) (2026-06-11)
+
+
+### Bug Fixes
+
+* **push:** rename managed identity assembly linker method ([d774569](https://github.com/DIGITALLNature/DigitallPower/commit/d7745695fc89d36fc1e3edde9c5c63781791b86c))
+
+
+### Features
+
+* **push:** evaluate ManagedIdentityRegistrationAttribute for identity linking ([68de0b2](https://github.com/DIGITALLNature/DigitallPower/commit/68de0b2e9c17792a195d97b54f0a82f13dc22d1c))
+
+# [2.1.0-beta.53](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.52...v2.1.0-beta.53) (2026-06-11)
+
+
+### Features
+
+* **push:** evaluate CustomDataProviderRegistrationAttribute for step generation ([6c169b0](https://github.com/DIGITALLNature/DigitallPower/commit/6c169b0cc0c2e349734300fe50fd70d80fc2c561))
+
+# [2.1.0-beta.52](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.51...v2.1.0-beta.52) (2026-06-11)
+
+
+### Bug Fixes
+
+* **tests:** adapt to regenerated Workflow.Options.Category naming ([1baa966](https://github.com/DIGITALLNature/DigitallPower/commit/1baa9664ab1c481892f9658f5cf7244bc17d28a4))
+
+
+### Features
+
+* **common:** add RoutingRuleItem partial extension for msdyn_routeto and assignobjectidtype ([9779b32](https://github.com/DIGITALLNature/DigitallPower/commit/9779b326b43b99f6c9bf90799316d45a57f875cd))
+
+# [2.1.0-beta.51](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.50...v2.1.0-beta.51) (2026-06-10)
+
+
+### Bug Fixes
+
+* replace Thread.Sleep with Task.Delay in push-adjacent modules ([bd9ab75](https://github.com/DIGITALLNature/DigitallPower/commit/bd9ab756fc84db8958b963e9d111dcbbb5014599)), closes [#78](https://github.com/DIGITALLNature/DigitallPower/issues/78)
+
+
+### Features
+
+* **codegeneration:** remove brownout warnings for Actions, AdditionalSdkMessages and CustomAPIs ([0c58601](https://github.com/DIGITALLNature/DigitallPower/commit/0c58601948d6ebc34907de14103ff6400121e4b6)), closes [#89](https://github.com/DIGITALLNature/DigitallPower/issues/89)
+
+# [2.1.0-beta.50](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.49...v2.1.0-beta.50) (2026-06-10)
+
+
+### Bug Fixes
+
+* **push:** change ExecutionOrder default from 1 to 100 ([5e580a4](https://github.com/DIGITALLNature/DigitallPower/commit/5e580a4b308dd515b68fc34d7d4bdd2c94ae8eab))
+* sign test assemblies and build/test exclusively in Release ([3236382](https://github.com/DIGITALLNature/DigitallPower/commit/3236382cafb96d6efc01a6a5f2dc5cd55dca62b5)), closes [#if](https://github.com/DIGITALLNature/DigitallPower/issues/if)
+
+# [2.1.0-beta.49](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.48...v2.1.0-beta.49) (2026-06-10)
+
+
+### Bug Fixes
+
+* extend known namespaces list ([2cd1174](https://github.com/DIGITALLNature/DigitallPower/commit/2cd1174481284222ae2ad8280ccf12cf6f0ca25b))
+
+# [2.1.0-beta.48](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.47...v2.1.0-beta.48) (2026-06-08)
+
+
+### Features
+
+* **tsl:** correct xrm-type class in template ([#143](https://github.com/DIGITALLNature/DigitallPower/issues/143)) ([149df5a](https://github.com/DIGITALLNature/DigitallPower/commit/149df5adaa4744aeec3fdac14e3c9504813a2fb0))
+
+# [2.1.0-beta.47](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.46...v2.1.0-beta.47) (2026-06-02)
+
+
+### Features
+
+* **tsl:** add small extra corrections to the unit tests utils ([#141](https://github.com/DIGITALLNature/DigitallPower/issues/141)) ([7734377](https://github.com/DIGITALLNature/DigitallPower/commit/7734377f005f3ad6aab93f88fcdc57dcec85e477))
+
+# [2.1.0-beta.46](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.45...v2.1.0-beta.46) (2026-05-29)
+
+
+### Features
+
+* **telemetry:** expose beta version in activity source ([c055f0e](https://github.com/DIGITALLNature/DigitallPower/commit/c055f0e6ba3a9ecc423ecd9a4dc6bec868b47fe6))
+
+# [2.1.0-beta.45](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.44...v2.1.0-beta.45) (2026-05-28)
+
+
+### Bug Fixes
+
+* **codegeneration:** eliminate empty lines in Entity.dotnet.liquid for-loops ([27f4008](https://github.com/DIGITALLNature/DigitallPower/commit/27f40084e1d121e1e6da739919ee302a3dbbd9dd))
+* **codegeneration:** normalize all dotnet Liquid templates to 4 spaces ([3487078](https://github.com/DIGITALLNature/DigitallPower/commit/34870781b88671802f45821399315c940e257531))
+* **codegeneration:** propagate worker failure to exit code ([2a15cb3](https://github.com/DIGITALLNature/DigitallPower/commit/2a15cb3fdfdd71d56f39a61a284a2b597e0c5a3d))
+* complete TUnit assertion API migration ([b4ebb8e](https://github.com/DIGITALLNature/DigitallPower/commit/b4ebb8e93a27e5ccfffa3f96bc320f94acb9bf99))
+* correct TUnit Count() API usage - use IsEqualTo not EqualTo ([e318a0f](https://github.com/DIGITALLNature/DigitallPower/commit/e318a0f700fd9f7dae07d1ba1e2c31412c6ddd30))
+* migrate TUnit assertions from HasCount() to Count() ([157dd99](https://github.com/DIGITALLNature/DigitallPower/commit/157dd99784e9d16f6d96b9d9cd80456e220519b0))
+* plugin package upgrade ([1454086](https://github.com/DIGITALLNature/DigitallPower/commit/1454086514a087f91da16a98168a6b80955b081d))
+* resolve high-priority code analysis warnings ([f71be1f](https://github.com/DIGITALLNature/DigitallPower/commit/f71be1f67a65f88363ea0e886bdda9e6bded4380)), closes [hi#priority](https://github.com/hi/issues/priority)
+* resolve Qodana static analysis findings ([58b5a26](https://github.com/DIGITALLNature/DigitallPower/commit/58b5a26efa9f6749d7f9a5c202bc967e3dfc770c))
+* **telemetry:** align env var name to DGT_TELEMETRY_CONNECTION_STRING ([12f8521](https://github.com/DIGITALLNature/DigitallPower/commit/12f852188201239d255b6cfef64ce20b4e1834e6))
+* **test:** update Digitall.Dataverse.Testing to beta.6 and fix BulkDelete test ([007f20f](https://github.com/DIGITALLNature/DigitallPower/commit/007f20f41ebb05883c4017a5e18db5d282bf286d))
+* update Digitall.Dataverse.Testing to beta.8 and fix telemetry env var typo ([a1906fd](https://github.com/DIGITALLNature/DigitallPower/commit/a1906fd1e2a089907b09e85fdc0deddd0610eb69))
+
+
+### Features
+
+* add detailed option to create workflowstate config ([aca08f2](https://github.com/DIGITALLNature/DigitallPower/commit/aca08f2c963c1404e5cd31d1c637b9aa617fe772))
+* add OpenTelemetry usage telemetry with opt-out ([4676f12](https://github.com/DIGITALLNature/DigitallPower/commit/4676f1228163d6ee6250f4bd81f03ae113ecd8fc))
+* assembly with major version change should replace older version and allow purge of outdated ([6ded506](https://github.com/DIGITALLNature/DigitallPower/commit/6ded5068c1a63b229425c305f0879ce50c8ddd55))
+* **telemetry:** embed connection string at build time via AssemblyMetadata ([8003a80](https://github.com/DIGITALLNature/DigitallPower/commit/8003a808e5af233ab2058c8ad05935f03ea90c1c))
+
+# [2.1.0-beta.44](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.43...v2.1.0-beta.44) (2026-05-25)
+
+
+### Features
+
+* **tsl:** add additional extra mock function in unit test builder ([#138](https://github.com/DIGITALLNature/DigitallPower/issues/138)) ([e0daf8c](https://github.com/DIGITALLNature/DigitallPower/commit/e0daf8cacc0c91fc476d7190bfd18a70076ecd15))
+
+# [2.1.0-beta.43](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.42...v2.1.0-beta.43) (2026-05-20)
+
+
+### Features
+
+* **tsl:** correct issue with the generation of control form when name not attribute ([#137](https://github.com/DIGITALLNature/DigitallPower/issues/137)) ([8b6cde7](https://github.com/DIGITALLNature/DigitallPower/commit/8b6cde766f1fcab261221b40218c7b77788ebcef))
+
+# [2.1.0-beta.42](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.41...v2.1.0-beta.42) (2026-05-19)
+
+
+### Features
+
+* **tsl:** extra auxiliary tester functions ([#136](https://github.com/DIGITALLNature/DigitallPower/issues/136)) ([a69fe7f](https://github.com/DIGITALLNature/DigitallPower/commit/a69fe7fd58d39b2457a930721af5ff81b1c42ad7))
+
+# [2.1.0-beta.41](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.40...v2.1.0-beta.41) (2026-05-19)
+
+
+### Features
+
+* **tsl:** add extra test mock util functions ([#135](https://github.com/DIGITALLNature/DigitallPower/issues/135)) ([d1be7d0](https://github.com/DIGITALLNature/DigitallPower/commit/d1be7d0625646c312bbe3a7f0ac829c99daa13a3))
+
+# [2.1.0-beta.40](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.39...v2.1.0-beta.40) (2026-04-17)
+
+
+### Features
+
+* **tsl:** add type as branding property to distinguish them ([#134](https://github.com/DIGITALLNature/DigitallPower/issues/134)) ([108c468](https://github.com/DIGITALLNature/DigitallPower/commit/108c468d2f7fae622b4f5946239bd83b4d3bc85e))
+
+# [2.1.0-beta.39](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.38...v2.1.0-beta.39) (2026-03-17)
+
+
+### Features
+
+* **tsl:** fix date attribute generation ([#133](https://github.com/DIGITALLNature/DigitallPower/issues/133)) ([f6d4fd5](https://github.com/DIGITALLNature/DigitallPower/commit/f6d4fd5111487ef5668f4da1dd85b21c85e4e031))
+
+# [2.1.0-beta.38](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.37...v2.1.0-beta.38) (2026-02-19)
+
+
+### Features
+
+* **tsl:** added extra handling for lookup with multiple targets polymorphic ones ([#130](https://github.com/DIGITALLNature/DigitallPower/issues/130)) ([43634ce](https://github.com/DIGITALLNature/DigitallPower/commit/43634cecbbd51da5fefaea38a0d8a985de1f9311))
+
+# [2.1.0-beta.37](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.36...v2.1.0-beta.37) (2026-02-18)
+
+
+### Features
+
+* **tsl:** skip tabs and sections for quick view forms ([#129](https://github.com/DIGITALLNature/DigitallPower/issues/129)) ([a375433](https://github.com/DIGITALLNature/DigitallPower/commit/a375433ef26515c197e04001bce283d3702bab9e))
+
+# [2.1.0-beta.36](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.35...v2.1.0-beta.36) (2026-02-17)
+
+
+### Features
+
+* **tsl:** small correction for empty section names and customer type attributess mapping ([#127](https://github.com/DIGITALLNature/DigitallPower/issues/127)) ([741b5b5](https://github.com/DIGITALLNature/DigitallPower/commit/741b5b592eed2aa90b795880bb73413383d67c91))
+
+# [2.1.0-beta.35](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.34...v2.1.0-beta.35) (2026-02-16)
+
+
+### Bug Fixes
+
+* **tsl:** proper default value when Attributemetadata is nowhere to be found ([7af645e](https://github.com/DIGITALLNature/DigitallPower/commit/7af645e82ef6f070fce6c09c02d22050e5dffded))
+
+# [2.1.0-beta.34](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.33...v2.1.0-beta.34) (2026-02-16)
+
+
+### Features
+
+* **tsl:** create initial test helper classes ([#125](https://github.com/DIGITALLNature/DigitallPower/issues/125)) ([884f934](https://github.com/DIGITALLNature/DigitallPower/commit/884f934d6ddc4199304d7ba9f7cbf03bd2079336))
+* **tsl:** improve test helper class generation ([#126](https://github.com/DIGITALLNature/DigitallPower/issues/126)) ([0958642](https://github.com/DIGITALLNature/DigitallPower/commit/09586420115d32c1b19ef01ca8a737bec64016ed))
+
+# [2.1.0-beta.33](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.32...v2.1.0-beta.33) (2026-01-30)
+
+
+### Features
+
+* **tsl:** include formid in the generated classes for frontend logic to use ([#124](https://github.com/DIGITALLNature/DigitallPower/issues/124)) ([fe79624](https://github.com/DIGITALLNature/DigitallPower/commit/fe796246327930aea0f0b58dc6079e8918c15a30))
+
+# [2.1.0-beta.32](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.31...v2.1.0-beta.32) (2026-01-27)
+
+
+### Features
+
+* **tsl:** fix issue with generics and random string inputs ([#123](https://github.com/DIGITALLNature/DigitallPower/issues/123)) ([a0d9046](https://github.com/DIGITALLNature/DigitallPower/commit/a0d904699550681b3f50cd9c51bbea58c5ca414b))
+
+# [2.1.0-beta.31](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.30...v2.1.0-beta.31) (2026-01-26)
+
+
+### Features
+
+* **tsl:** ts generation of ui.quickviews in form context ([#122](https://github.com/DIGITALLNature/DigitallPower/issues/122)) ([1e29ebf](https://github.com/DIGITALLNature/DigitallPower/commit/1e29ebf047dafee438bae75a890bb0757f92b4ab))
+
+# [2.1.0-beta.30](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.29...v2.1.0-beta.30) (2026-01-23)
+
+
+### Features
+
+* **tsl:** add hierarchical namespaces to the form and entities ([#121](https://github.com/DIGITALLNature/DigitallPower/issues/121)) ([4ce3692](https://github.com/DIGITALLNature/DigitallPower/commit/4ce3692c59cfb4ef27600b2e8105113f9e2f6526))
+
+# [2.1.0-beta.29](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.28...v2.1.0-beta.29) (2026-01-23)
+
+
+### Features
+
+* **tsl:** adapt logic so ts files have a folder structure ([#120](https://github.com/DIGITALLNature/DigitallPower/issues/120)) ([d3a70f6](https://github.com/DIGITALLNature/DigitallPower/commit/d3a70f6f8ff48af31b201bc26cbe764ed4c8b3b2))
+
+# [2.1.0-beta.28](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.27...v2.1.0-beta.28) (2026-01-22)
+
+
+### Features
+
+* **tsl:** extra adaptations for ts custom api generation ([#119](https://github.com/DIGITALLNature/DigitallPower/issues/119)) ([79e1735](https://github.com/DIGITALLNature/DigitallPower/commit/79e1735bf6fec291ca96ccc521785bb8c8e9ee06))
+
+# [2.1.0-beta.27](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.26...v2.1.0-beta.27) (2026-01-21)
+
+
+### Features
+
+* **tsl:** add quick view mapping sort header process controls ([#118](https://github.com/DIGITALLNature/DigitallPower/issues/118)) ([28e06d4](https://github.com/DIGITALLNature/DigitallPower/commit/28e06d4688e080f237bcf039c148f22359f9864f))
+
+# [2.1.0-beta.26](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.25...v2.1.0-beta.26) (2026-01-21)
+
+
+### Bug Fixes
+
+* **tsl:** resolving of Attribute via logicalname in filters now returns generic one when not found ([809568a](https://github.com/DIGITALLNature/DigitallPower/commit/809568a3d65d62e9f7d37427a991ed26575a407e))
+
+# [2.1.0-beta.25](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.24...v2.1.0-beta.25) (2026-01-21)
+
+
+### Bug Fixes
+
+* **tsl:** graceful fallback when no localized label found ([9de4a6a](https://github.com/DIGITALLNature/DigitallPower/commit/9de4a6a0e623a44ca402da08f8a2a485cad97e74))
+
+# [2.1.0-beta.24](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.23...v2.1.0-beta.24) (2026-01-21)
+
+
+### Features
+
+* **tsl:** rewrite form control loop from form xml ([#117](https://github.com/DIGITALLNature/DigitallPower/issues/117)) ([1489dee](https://github.com/DIGITALLNature/DigitallPower/commit/1489dee2d694b80d24107d376987144d556c154c))
+
+# [2.1.0-beta.23](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.22...v2.1.0-beta.23) (2026-01-20)
+
+
+### Features
+
+* **tsl:** small corrections on ts generation ([#116](https://github.com/DIGITALLNature/DigitallPower/issues/116)) ([7f19ccb](https://github.com/DIGITALLNature/DigitallPower/commit/7f19ccb7e92d381603ccd04a37b3c1ea6a4394a4))
+
+# [2.1.0-beta.22](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.21...v2.1.0-beta.22) (2026-01-14)
+
+
+### Features
+
+* **tsl:** header bpf field mapping logic ([#115](https://github.com/DIGITALLNature/DigitallPower/issues/115)) ([293c36f](https://github.com/DIGITALLNature/DigitallPower/commit/293c36f94af5997ddf83246852a60fea1ac5b918))
+
+# [2.1.0-beta.21](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.20...v2.1.0-beta.21) (2026-01-09)
+
+
+### Bug Fixes
+
+* **tsl:** use unique for solution form creation ([#114](https://github.com/DIGITALLNature/DigitallPower/issues/114)) ([f78579c](https://github.com/DIGITALLNature/DigitallPower/commit/f78579c02440a880361872858570ee8756207885))
+
+# [2.1.0-beta.20](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.19...v2.1.0-beta.20) (2025-12-19)
+
+
+### Bug Fixes
+
+* **tsl:** add delegate overload to form control collection ([24a8bbc](https://github.com/DIGITALLNature/DigitallPower/commit/24a8bbc254e7a3e0610d828f5c67958ebdae289f))
+
+# [2.1.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.18...v2.1.0-beta.19) (2025-12-19)
+
+
+### Bug Fixes
+
+* **tsl:** correctly skip form generation for bpf entities ([2d3fa95](https://github.com/DIGITALLNature/DigitallPower/commit/2d3fa95f001ebb2a4a5f9c6a7a6735599cbe422e))
+
+# [2.1.0-beta.18](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.17...v2.1.0-beta.18) (2025-12-16)
+
+
+### Features
+
+* **tsl:** form template missed subgrid and creates controls for all attributes even not in form ([#113](https://github.com/DIGITALLNature/DigitallPower/issues/113)) ([edd1fd9](https://github.com/DIGITALLNature/DigitallPower/commit/edd1fd924d3f4a2a33cefac8406b384b621b980b))
+
+# [2.1.0-beta.17](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.16...v2.1.0-beta.17) (2025-12-10)
+
+
+### Features
+
+* **tsl:** support base language option for enums ([#109](https://github.com/DIGITALLNature/DigitallPower/issues/109)) ([1477cba](https://github.com/DIGITALLNature/DigitallPower/commit/1477cba16b316d573658722c8d3af0439299cf83))
+
+# [2.1.0-beta.16](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.15...v2.1.0-beta.16) (2025-11-27)
+
+
+### Bug Fixes
+
+* **tsl:** fix broken Entity enum ([ce136dc](https://github.com/DIGITALLNature/DigitallPower/commit/ce136dc432c8689403f7c1910149828bee211da6))
+
+# [2.1.0-beta.15](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.14...v2.1.0-beta.15) (2025-11-26)
+
+
+### Bug Fixes
+
+* **tsl:** fix inlining of entity logical name constant ([16a8a01](https://github.com/DIGITALLNature/DigitallPower/commit/16a8a01f838c3db5d22b106680be50901661b811))
+
+# [2.1.0-beta.14](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.13...v2.1.0-beta.14) (2025-11-24)
+
+
+### Features
+
+* **tsl:** further improvements to TypeScript models ([#108](https://github.com/DIGITALLNature/DigitallPower/issues/108)) ([ff898ac](https://github.com/DIGITALLNature/DigitallPower/commit/ff898ac320eefed2cf137d6183f5d5aa2e3c49c9))
+
+# [2.1.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.12...v2.1.0-beta.13) (2025-11-18)
+
+
+### Features
+
+* **tsl:** improve dto generation ([060ccb2](https://github.com/DIGITALLNature/DigitallPower/commit/060ccb2dee511acb3ef3ad2369326efaaf799075))
+
+# [2.1.0-beta.12](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.11...v2.1.0-beta.12) (2025-11-18)
+
+
+### Bug Fixes
+
+* dto properties formatting ([a664ded](https://github.com/DIGITALLNature/DigitallPower/commit/a664ded55a92cf2d9cfbd873b0064a2264a3d163))
+
+# [2.1.0-beta.11](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.10...v2.1.0-beta.11) (2025-11-18)
+
+
+### Features
+
+* **tsl:** enhance generated types ([#107](https://github.com/DIGITALLNature/DigitallPower/issues/107)) ([8cdd380](https://github.com/DIGITALLNature/DigitallPower/commit/8cdd38093f8181f0b8466cd74640c5b06b26c2ce))
+
+# [2.1.0-beta.10](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.9...v2.1.0-beta.10) (2025-11-17)
+
+
+### Bug Fixes
+
+* incompatible update of Microsoft.AspNetCore.DataProtection ([4c75604](https://github.com/DIGITALLNature/DigitallPower/commit/4c75604c6275951ea809a894408974f1e1cc5462))
+
+# [2.1.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.8...v2.1.0-beta.9) (2025-11-17)
+
+
+### Features
+
+* **tsl:** add Typescript Light DTO generation for Entites ([3c66950](https://github.com/DIGITALLNature/DigitallPower/commit/3c6695093282dd5f591bfa23df978b523a1efa16))
+
+# [2.1.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.7...v2.1.0-beta.8) (2025-11-04)
+
+
+### Features
+
+* lightweight model generation for TypeScript ([992c8c7](https://github.com/DIGITALLNature/DigitallPower/commit/992c8c758bf914667f9f27e630640771f8ab2edf))
+
+# [2.1.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.6...v2.1.0-beta.7) (2025-08-27)
+
+
+### Bug Fixes
+
+* escape markup for component name ([#105](https://github.com/DIGITALLNature/DigitallPower/issues/105)) ([4d9bf34](https://github.com/DIGITALLNature/DigitallPower/commit/4d9bf341ada770a1e031a740327468f48c97a340))
+
+# [2.1.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.5...v2.1.0-beta.6) (2025-07-02)
+
+
+### Features
+
+* add msal example ([fb594d7](https://github.com/DIGITALLNature/DigitallPower/commit/fb594d7140b684fe12668251309e4e350c4b1645))
+
+# [2.1.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.4...v2.1.0-beta.5) (2025-07-02)
+
+
+### Features
+
+* add semi global profile parameter to run commands against specific profile ([#102](https://github.com/DIGITALLNature/DigitallPower/issues/102)) ([e368247](https://github.com/DIGITALLNature/DigitallPower/commit/e3682472e5878ca7047252ef26e8740c6d92b77a)), closes [#103](https://github.com/DIGITALLNature/DigitallPower/issues/103)
+
+# [2.1.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.3...v2.1.0-beta.4) (2025-05-26)
+
+
+### Bug Fixes
+
+* link plugin to custom api ([#100](https://github.com/DIGITALLNature/DigitallPower/issues/100)) ([56a1d2a](https://github.com/DIGITALLNature/DigitallPower/commit/56a1d2abb007999af0305a964a0119b89bcb7e4b))
+
+# [2.1.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2025-03-20)
+
+
+### Features
+
+* lighter typescript model generation ([#79](https://github.com/DIGITALLNature/DigitallPower/issues/79)) ([978678b](https://github.com/DIGITALLNature/DigitallPower/commit/978678bea4b2babfdbaef1137f2aae40d96d0c07))
+
+# [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-27)
+
+
+### Bug Fixes
+
+* update dotnet version mentioned ([af0dd1c](https://github.com/DIGITALLNature/DigitallPower/commit/af0dd1c8c9e8b46a7a180b16890a565424fdd3c4))
+* use home account identifier for msal token ([b05ac7c](https://github.com/DIGITALLNature/DigitallPower/commit/b05ac7c7d9c2fab555dcae1205c9df213dae8479))
+
+# [2.1.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* use home account identifier for msal token ([b05ac7c](https://github.com/DIGITALLNature/DigitallPower/commit/b05ac7c7d9c2fab555dcae1205c9df213dae8479))
+
+# [2.1.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.2...v2.1.0-beta.1) (2025-01-08)
+
+
+### Bug Fixes
+
+* add necessary test data ([3e4b373](https://github.com/DIGITALLNature/DigitallPower/commit/3e4b37396f08ac335ad5f7a479b326afe5aa7504))
+
+
+### Features
+
+* treat macro as workflow with normal name ([6e6a8db](https://github.com/DIGITALLNature/DigitallPower/commit/6e6a8db8dc1952747f5092ab479f303050412876))
+
+## [2.0.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.1-beta.1...v2.0.1-beta.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* problem with adding a dependent plugin to a solution ([5f8696e](https://github.com/DIGITALLNature/DigitallPower/commit/5f8696e86d87d460052b79bef0dedd960c6d4247))
+
+## [2.0.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0...v2.0.1-beta.1) (2024-05-28)
+
+
+### Bug Fixes
+
+* **maintenance workflowstate:** assign workflows before enabling then  Mitigates issues with licensing when old owner is no longer licensed ([d1da4c5](https://github.com/DIGITALLNature/DigitallPower/commit/d1da4c5bd33d5b8a0ca8569de3f6a2b2b09b6587))
+
+# [2.0.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v2.0.0-beta.8...v2.0.0-beta.9) (2024-05-28)
+
+
+### Bug Fixes
+
+* **maintenance workflowstate:** assign workflows before enabling then  Mitigates issues with licensing when old owner is no longer licensed ([d1da4c5](https://github.com/DIGITALLNature/DigitallPower/commit/d1da4c5bd33d5b8a0ca8569de3f6a2b2b09b6587))
+
 # [2.0.0](https://github.com/DIGITALLNature/DigitallPower/compare/v1.12.1...v2.0.0) (2024-05-24)
 
 

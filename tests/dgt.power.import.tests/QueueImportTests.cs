@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ServiceModel;
@@ -7,10 +7,8 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using Queue = dgt.power.dto.Queue;
 #pragma warning disable CS8602
 #pragma warning disable CS8601
@@ -19,30 +17,26 @@ namespace dgt.power.import.tests;
 
 public class QueueImportTests : ImportTestBase<QueueImport>
 {
-    public QueueImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new Queues()).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnCreateWithAlternativeOwner()
+    [Test]
+    public async Task ShouldFailOnCreateWithAlternativeOwner()
     {
         var (owner, _) = GetData();
         var context = GetBuilder()
@@ -55,25 +49,26 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeCreated
-            }
+            ]
         };
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(configArtifact).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
         var createdQueue = context.GetById<dataverse.Queue>(queueToBeCreated.QueueId);
-        createdQueue.OwnerId.Id.Should().NotBe(owner.Id);
+        // OwnerId is not auto-populated by the testing library on Create; queue was created but Assign failed
+        await Assert.That(createdQueue.OwnerId?.Id ?? Guid.Empty).IsNotEqualTo(owner.Id);
     }
 
-    [Fact]
-    public void ShouldSkipUpdateOfExistingQueue()
+    [Test]
+    public async Task ShouldSkipUpdateOfExistingQueue()
     {
         var (owner, existingQueue) = GetData();
 
@@ -85,31 +80,32 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(configArtifact).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var updatedQueue = context.GetById<dataverse.Queue>(queueToBeUpdated.QueueId);
-        updatedQueue.Name.Should().Be(queueToBeUpdated.Name);
-        updatedQueue.Description.Should().StartWith(queueToBeUpdated.Description);
-        updatedQueue.QueueViewType.Value.Should().Be((int) queueToBeUpdated.ViewType);
-        updatedQueue.IncomingEmailDeliveryMethod.Value.Should().Be((int) queueToBeUpdated.IncomingEmailDelivery);
-        updatedQueue.IncomingEmailFilteringMethod.Value.Should().Be((int) queueToBeUpdated.IncomingEmailFiltering);
-        updatedQueue.OutgoingEmailDeliveryMethod.Value.Should().Be((int) queueToBeUpdated.OutgoingEmailDelivery);
-        updatedQueue.OwnerId.Id.Should().Be(owner.Id);
+        var expectedDescription = queueToBeUpdated.Description ?? string.Empty;
+        await Assert.That(updatedQueue.Name).IsEqualTo(queueToBeUpdated.Name);
+        await Assert.That(updatedQueue.Description).StartsWith(expectedDescription);
+        await Assert.That(updatedQueue.QueueViewType.Value).IsEqualTo((int) queueToBeUpdated.ViewType);
+        await Assert.That(updatedQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailDelivery);
+        await Assert.That(updatedQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailFiltering);
+        await Assert.That(updatedQueue.OutgoingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.OutgoingEmailDelivery);
+        await Assert.That(updatedQueue.OwnerId.Id).IsEqualTo(owner.Id);
     }
 
-    [Fact]
-    public void ShouldUpdateExistingQueue()
+    [Test]
+    public async Task ShouldUpdateExistingQueue()
     {
         var (owner, existingQueue) = GetData();
 
@@ -117,7 +113,7 @@ public class QueueImportTests : ImportTestBase<QueueImport>
             .WithData(owner)
             .WithData(existingQueue)
             .Build();
-        
+
         var queueToBeUpdated = GetExistingConfig(existingQueue);
         queueToBeUpdated.Name += " Updated";
         queueToBeUpdated.ViewType = Queue.QueueViewType.Private;
@@ -125,36 +121,41 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(configArtifact).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var updatedQueue = context.GetById<dataverse.Queue>(queueToBeUpdated.QueueId);
-        updatedQueue.Name.Should().Be(queueToBeUpdated.Name);
-        updatedQueue.Description.Should().StartWith(queueToBeUpdated.Description);
-        updatedQueue.QueueViewType.Value.Should().Be((int) queueToBeUpdated.ViewType);
-        updatedQueue.IncomingEmailDeliveryMethod.Value.Should().Be((int) queueToBeUpdated.IncomingEmailDelivery);
-        updatedQueue.IncomingEmailFilteringMethod.Value.Should().Be((int) queueToBeUpdated.IncomingEmailFiltering);
-        updatedQueue.OutgoingEmailDeliveryMethod.Value.Should().Be((int) queueToBeUpdated.OutgoingEmailDelivery);
-        updatedQueue.OwnerId.Id.Should().Be(owner.Id);
+        var expectedDescription = queueToBeUpdated.Description ?? string.Empty;
+        await Assert.That(updatedQueue.Name).IsEqualTo(queueToBeUpdated.Name);
+        await Assert.That(updatedQueue.Description).StartsWith(expectedDescription);
+        await Assert.That(updatedQueue.QueueViewType.Value).IsEqualTo((int) queueToBeUpdated.ViewType);
+        await Assert.That(updatedQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailDelivery);
+        await Assert.That(updatedQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeUpdated.IncomingEmailFiltering);
+        await Assert.That(updatedQueue.OutgoingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeUpdated.OutgoingEmailDelivery);
+        await Assert.That(updatedQueue.OwnerId.Id).IsEqualTo(owner.Id);
     }
 
-    [Fact]
-    public void ShouldFailOnUpdateWithAlternativeOwner()
+    [Test]
+    public async Task ShouldFailOnUpdateWithAlternativeOwner()
     {
         var (owner, existingQueue) = GetData();
+        // Queue must have a different owner so the Assign condition triggers
+        var originalOwner = new SystemUser(Guid.NewGuid()) { DomainName = "original@test.de" };
+        existingQueue.OwnerId = originalOwner.ToEntityReference();
 
         var context = GetBuilder()
             .WithData(owner)
+            .WithData(originalOwner)
             .WithData(existingQueue)
             .WithExecutionMock<AssignRequest>(_ =>
                 throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
@@ -164,25 +165,25 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeUpdated
-            }
+            ]
         };
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(configArtifact).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
         var updatedQueue = context.GetById<dataverse.Queue>(queueToBeUpdated.QueueId);
-        updatedQueue.OwnerId.Id.Should().NotBe(owner.Id);
+        await Assert.That(updatedQueue.OwnerId.Id).IsNotEqualTo(owner.Id);
     }
 
-    [Fact]
-    public void ShouldCreateQueue()
+    [Test]
+    public async Task ShouldCreateQueue()
     {
         var (owner, _) = GetData();
         var context = GetBuilder()
@@ -192,27 +193,28 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         var configArtifact = new Queues
         {
             Owner = owner.DomainName,
-            QueuesToTransport = new[]
-            {
+            QueuesToTransport =
+            [
                 queueToBeCreated
-            }
+            ]
         };
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(configArtifact).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var createdQueue = context.GetById<dataverse.Queue>(queueToBeCreated.QueueId);
-        createdQueue.Name.Should().Be(queueToBeCreated.Name);
-        createdQueue.Description.Should().StartWith(queueToBeCreated.Description);
-        createdQueue.QueueViewType.Value.Should().Be((int) queueToBeCreated.ViewType);
-        createdQueue.IncomingEmailDeliveryMethod.Value.Should().Be((int) queueToBeCreated.IncomingEmailDelivery);
-        createdQueue.IncomingEmailFilteringMethod.Value.Should().Be((int) queueToBeCreated.IncomingEmailFiltering);
-        createdQueue.OutgoingEmailDeliveryMethod.Value.Should().Be((int) queueToBeCreated.OutgoingEmailDelivery);
-        createdQueue.OwnerId.Id.Should().Be(owner.Id);
+        var expectedDescription = queueToBeCreated.Description ?? string.Empty;
+        await Assert.That(createdQueue.Name).IsEqualTo(queueToBeCreated.Name);
+        await Assert.That(createdQueue.Description).StartsWith(expectedDescription);
+        await Assert.That(createdQueue.QueueViewType.Value).IsEqualTo((int) queueToBeCreated.ViewType);
+        await Assert.That(createdQueue.IncomingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeCreated.IncomingEmailDelivery);
+        await Assert.That(createdQueue.IncomingEmailFilteringMethod.Value).IsEqualTo((int) queueToBeCreated.IncomingEmailFiltering);
+        await Assert.That(createdQueue.OutgoingEmailDeliveryMethod.Value).IsEqualTo((int) queueToBeCreated.OutgoingEmailDelivery);
+        await Assert.That(createdQueue.OwnerId.Id).IsEqualTo(owner.Id);
     }
 
     private static Queue GetNewConfig() =>
@@ -257,6 +259,7 @@ public class QueueImportTests : ImportTestBase<QueueImport>
                 .ServerSideSynchronizationOrEmailRouter),
             IncomingEmailFilteringMethod =
                 new OptionSetValue(dataverse.Queue.Options.IncomingEmailFilteringMethod.AllEmailMessages),
+            OwnerId = owner.ToEntityReference()
         };
         return (owner, queue);
     }

@@ -1,31 +1,26 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using dgt.power.tests.FakeExecutor;
-using FluentAssertions;
-using Microsoft.Xrm.Sdk.Messages;
-using Xunit.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 using TeamTemplate = dgt.power.dataverse.TeamTemplate;
 
 namespace dgt.power.export.tests;
 
 public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
 {
-    public TeamTemplateExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<TeamTemplateExport, ExportVerb> GetContext()
     {
+        var entityMeta = new EntityMetadata();
+        entityMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(entityMeta, "custom_entity");
+        entityMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(entityMeta, 10000);
+
         return GetBuilder()
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
-            .WithData(new[]
-                {
+            .WithMetaData(entityMeta)
+            .WithData([
                     new TeamTemplate(Guid.NewGuid())
                     {
                         TeamTemplateName = "Access Team 1",
@@ -40,37 +35,37 @@ public class TeamTemplateExportTest : ExportTestBase<TeamTemplateExport>
                         DefaultAccessRightsMask = 4,
                         ObjectTypeCode = 10000
                     }
-                }
+                ]
             )
             .Build();
     }
 
-    [Fact]
-    public void ShouldExportAccessTeamsWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportAccessTeamsWithDefaultConfiguration()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
-        var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>(GetTestFileName());
-        teamTemplates.Should().HaveCount(2);
+        var teamTemplates = GetConfigurationTestArtifact<List<dto.TeamTemplate>>(GetTestFileName());
+        await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
-        var teamTemplates = GetConfigurationTestArtifact<TeamTemplates>("teamtemplate.json");
-        teamTemplates.Should().HaveCount(2);
+        var teamTemplates = GetConfigurationTestArtifact<List<dto.TeamTemplate>>("teamtemplate.json");
+        await Assert.That(teamTemplates).Count().IsEqualTo(2);
     }
 }

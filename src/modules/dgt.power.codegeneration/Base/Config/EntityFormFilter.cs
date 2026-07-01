@@ -10,50 +10,41 @@ namespace dgt.power.codegeneration.Base.Config;
 /// </summary>
 public class EntityFormFilter
 {
-    private readonly HashSet<string> _attributes;
-    private readonly HashSet<string> _optionsets;
-    private readonly HashSet<string> _tabs;
-    private readonly HashSet<string> _sections;
-    private readonly HashSet<string> _grids;
-
-    public EntityFormFilter()
-    {
-        _attributes = new HashSet<string>();
-        _optionsets = new HashSet<string>();
-        _tabs = new HashSet<string>();
-        _sections = new HashSet<string>();
-        _grids = new HashSet<string>();
-    }
+    private readonly HashSet<string> _attributes = [];
+    private readonly HashSet<string> _optionsets = [];
+    private readonly HashSet<string> _tabs = [];
+    private readonly HashSet<string> _sections = [];
+    private readonly HashSet<string> _grids = [];
 
     public required string EntityForm { get; init; }
 
-    public string[] Attributes
+    public IReadOnlyCollection<string> Attributes
     {
-        get => _attributes.ToArray();
-        init => _attributes = new HashSet<string>(value);
+        get => _attributes;
+        init => _attributes = [..value];
     }
 
-    public string[] Optionsets
+    public IReadOnlyCollection<string> Optionsets
     {
-        get => _optionsets.ToArray();
-        init => _optionsets = new HashSet<string>(value);
+        get => _optionsets;
+        init => _optionsets = [..value];
     }
 
-    public string[] Tabs
+    public IReadOnlyCollection<string> Tabs
     {
-        get => _tabs.ToArray();
-        init => _tabs = new HashSet<string>(value);
+        get => _tabs;
+        init => _tabs = [..value];
     }
 
-    public string[] Sections
+    public IReadOnlyCollection<string> Sections
     {
-        get => _sections.ToArray();
-        init => _sections = new HashSet<string>(value);
+        get => _sections;
+        init => _sections = [..value];
     }
 
-    public string[] Grids
+    public IReadOnlyCollection<string> Grids
     {
-        get => _grids.ToArray();
-        init => _grids = new HashSet<string>(value);
+        get => _grids;
+        init => _grids = [..value];
     }
 }

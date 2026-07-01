@@ -6,31 +6,22 @@ using Spectre.Console;
 
 namespace dgt.power.push.Model;
 
-internal record Webresources
+internal sealed record Webresources(
+    int Type,
+    string Name,
+    string DisplayName,
+    string? Content,
+    string? Hash,
+    WebresourceState? State = null,
+    Guid? XrmId = null)
 {
     // Should be matching to WebResource.Options.WebResourceType
-    public int Type { get; }
-    public string Name { get; }
-    public string DisplayName { get; }
-    public string? Content { get; }
-    public string? Hash { get; }
-    public WebresourceState? State { get; set; }
-    public Guid? XrmId { get; set; }
-
-    public Webresources(int type, string name, string displayName, string? content, string? hash, WebresourceState? webresourceState = default, Guid? xrmId = default)
-    {
-        Type = type;
-        Name = name;
-        DisplayName = displayName;
-        Content = content;
-        Hash = hash;
-        State = webresourceState;
-        XrmId = xrmId;
-    }
+    public WebresourceState? State { get; set; } = State;
+    public Guid? XrmId { get; set; } = XrmId;
 
     public Webresources(int type, string name, WebresourceState webresourceState, Guid xrmId) : this(type, name, name, null, null, webresourceState, xrmId) { }
 
-    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string> fileMapping = default)
+    public static Webresources FromFile(string localFilePath, string localFolderPath, int type, string solutionPrefix, IDictionary<string, string>? fileMapping = null, IAnsiConsole? console = null)
     {
         var content = File.ReadAllBytes(localFilePath);
         var hash = Convert.ToHexString(SHA256.HashData(content));
@@ -39,12 +30,12 @@ internal record Webresources
         string name;
         string displayName;
 
-        if (fileMapping?.ContainsKey(relativePath) == true)
+        if (fileMapping is not null && fileMapping.TryGetValue(relativePath, out var mappedPath))
         {
-            name = fileMapping[relativePath];
-            displayName = Path.GetFileName(fileMapping[relativePath]);
+            name = mappedPath;
+            displayName = Path.GetFileName(mappedPath);
 
-            AnsiConsole.MarkupLine($" - [yellow]Applying mapping[/]: [blue]{relativePath}[/] {Emoji.Known.RightArrow} [green]{name}[/]");
+            (console ?? AnsiConsole.Console).MarkupLine($" - [yellow]Applying mapping[/]: [blue]{relativePath}[/] {Emoji.Known.RightArrow} [green]{name}[/]");
         }
         else if (relativePath.StartsWith($"{solutionPrefix}_/", StringComparison.InvariantCulture))
         {

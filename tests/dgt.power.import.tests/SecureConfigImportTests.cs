@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ServiceModel;
@@ -7,47 +7,42 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Xunit.Abstractions;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.import.tests;
 
 public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
 {
-    public SecureConfigImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-    
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new SecureConfig()).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnSecureConfigUpdate()
+    [Test]
+    public async Task ShouldFailOnSecureConfigUpdate()
     {
         var securePluginConfig = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid());
         var pluginStep = GetData();
         pluginStep.SdkMessageProcessingStepSecureConfigId = securePluginConfig.ToEntityReference();
         var secureConfig = new SecureConfig
         {
-            PluginStep = pluginStep.Name!,
+            PluginStep = pluginStep.Name!
         };
         var context = GetBuilder()
             .WithData(pluginStep)
@@ -57,32 +52,32 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
             .Build();
 
         const string secret = "secret";
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 InlineData = secret,
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
         var postStep = context.GetById<SdkMessageProcessingStep>(pluginStep.Id);
-        postStep.SdkMessageProcessingStepSecureConfigId.Should().NotBeNull();
+        await Assert.That(postStep.SdkMessageProcessingStepSecureConfigId).IsNotNull();
 
         var createdSecureConfig = context
             .GetById<SdkMessageProcessingStepSecureConfig>(postStep.SdkMessageProcessingStepSecureConfigId.Id);
-        createdSecureConfig.SecureConfig.Should().BeNull();
+        await Assert.That(createdSecureConfig.SecureConfig).IsNull();
     }
 
 
-    [Fact]
-    public void ShouldUpdateSecurecConfig()
+    [Test]
+    public async Task ShouldUpdateSecurecConfig()
     {
         var securePluginConfig = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid());
         var pluginStep = GetData();
         pluginStep.SdkMessageProcessingStepSecureConfigId = securePluginConfig.ToEntityReference();
         var secureConfig = new SecureConfig
         {
-            PluginStep = pluginStep.Name!,
+            PluginStep = pluginStep.Name!
         };
         var context = GetBuilder()
             .WithData(pluginStep)
@@ -90,24 +85,24 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
             .Build();
 
         const string secret = "secret";
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 InlineData = secret,
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var postStep = context.GetById<SdkMessageProcessingStep>(pluginStep.Id);
-        postStep.SdkMessageProcessingStepSecureConfigId.Should().NotBeNull();
+        await Assert.That(postStep.SdkMessageProcessingStepSecureConfigId).IsNotNull();
 
         var createdSecureConfig = context
             .GetById<SdkMessageProcessingStepSecureConfig>(postStep.SdkMessageProcessingStepSecureConfigId.Id);
-        createdSecureConfig.SecureConfig.Should().Be(secret);
+        await Assert.That(createdSecureConfig.SecureConfig).IsEqualTo(secret);
     }
 
-    [Fact]
-    public void ShouldCreateSecureConfig()
+    [Test]
+    public async Task ShouldCreateSecureConfig()
     {
         var pluginStep = GetData();
         var secureConfig = new SecureConfig
@@ -119,23 +114,23 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
             .WithData(pluginStep)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var postStep = context.GetById<SdkMessageProcessingStep>(pluginStep.Id);
-        postStep.SdkMessageProcessingStepSecureConfigId.Should().NotBeNull();
+        await Assert.That(postStep.SdkMessageProcessingStepSecureConfigId).IsNotNull();
 
         var createdSecureConfig = context
             .GetById<SdkMessageProcessingStepSecureConfig>(postStep.SdkMessageProcessingStepSecureConfigId.Id);
-        createdSecureConfig.SecureConfig.Should().Be(secureConfig.Data);
+        await Assert.That(createdSecureConfig.SecureConfig).IsEqualTo(secureConfig.Data);
     }
 
-    [Fact]
-    public void ShouldFailOnSecureConfigCreation()
+    [Test]
+    public async Task ShouldFailOnSecureConfigCreation()
     {
         var pluginStep = GetData();
         var secureConfig = new SecureConfig
@@ -149,18 +144,17 @@ public class SecureConfigImportTests : ImportTestBase<SecureConfigImport>
                 throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(secureConfig).Name,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
         var postStep = context.GetById<SdkMessageProcessingStep>(pluginStep.Id);
-        postStep.SdkMessageProcessingStepSecureConfigId.Should().BeNull();
+        await Assert.That(postStep.SdkMessageProcessingStepSecureConfigId).IsNull();
 
-        context.Get<SdkMessageProcessingStepSecureConfig>()
-            .Should().BeEmpty();
+        await Assert.That(context.Get<SdkMessageProcessingStepSecureConfig>()).IsEmpty();
     }
 
     private static SdkMessageProcessingStep GetData()

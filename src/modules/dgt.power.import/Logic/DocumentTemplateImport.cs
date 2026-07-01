@@ -17,17 +17,21 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using static dgt.power.dataverse.DocumentTemplate.Options;
 using DocumentTemplate = dgt.power.dto.DocumentTemplate;
+using IAnsiConsole = Spectre.Console.IAnsiConsole;
 
 namespace dgt.power.import.Logic;
 
-public sealed class DocumentTemplateImport : BaseImport
+public sealed class DocumentTemplateImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public DocumentTemplateImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -40,7 +44,7 @@ public sealed class DocumentTemplateImport : BaseImport
         }
 
         //anything to do?
-        if (!templates.Templates.Any())
+        if (templates.Templates.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -57,7 +61,7 @@ public sealed class DocumentTemplateImport : BaseImport
         //find document template which need to be disabled (missing)
         Tracer.Log("disable check", TraceEventType.Information);
         foreach (var deleteTemplate in documentTemplates.Where(e =>
-                     templates.Templates.TrueForAll(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
+                     templates.Templates.All(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
         {
             result = DisableTemplate(templates, deleteTemplate) && result;
         }
@@ -65,7 +69,7 @@ public sealed class DocumentTemplateImport : BaseImport
         //find queues need to be updated
         Tracer.Log("update check", TraceEventType.Information);
         foreach (var updateTemplate in documentTemplates.Where(e =>
-                     templates.Templates.Exists(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
+                     templates.Templates.Any(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
         {
             result = UpdateTemplate(args, templates, updateTemplate) && result;
         }
@@ -84,7 +88,7 @@ public sealed class DocumentTemplateImport : BaseImport
     private bool CreateTemplate(ImportVerb args, DocumentTemplate createTemplate)
     {
         Tracer.Log("--->", TraceEventType.Verbose);
-        var name = createTemplate.Name.Trim().Replace(".xlsx", "").Replace(".docx", "");
+        var name = createTemplate.Name.Trim().Replace(".xlsx", "", StringComparison.Ordinal).Replace(".docx", "", StringComparison.Ordinal);
         Tracer.Log($"create document template: {name}", TraceEventType.Verbose);
         //create
         var template = new dataverse.DocumentTemplate
@@ -163,7 +167,7 @@ public sealed class DocumentTemplateImport : BaseImport
             var template = new dataverse.DocumentTemplate
             {
                 DocumentTemplateId = existingTemplate.DocumentTemplateId ?? updateTemplate.Id,
-                Name = existingTemplate.Name.Trim().Replace(".xlsx", "").Replace(".docx", ""),
+                Name = existingTemplate.Name.Trim().Replace(".xlsx", "", StringComparison.Ordinal).Replace(".docx", "", StringComparison.Ordinal),
                 DocumentType = existingTemplate.DocumentType == DocumentTemplate.DocumentTemplateType.MicrosoftExcel
                     ? new OptionSetValue(DocumentType.MicrosoftExcel)
                     : new OptionSetValue(DocumentType.MicrosoftWord),
@@ -234,10 +238,16 @@ public sealed class DocumentTemplateImport : BaseImport
                 using (var doc = WordprocessingDocument.Open(memoryStream, true,
                            new OpenSettings { AutoSave = true }))
                 {
+                    var mainDocumentPart = doc.MainDocumentPart;
+                    if (mainDocumentPart?.Document == null)
+                    {
+                        throw new InvalidDataException("Word template does not contain a main document part.");
+                    }
+
                     var etc = GetEntityTypeCode(entity);
                     var matcher = $"({entity}/" + @"\d{1,5})";
                     var replacement = $"{entity}/{etc}";
-                    var match = Regex.Match(doc.MainDocumentPart!.Document.InnerXml, matcher,
+                    var match = Regex.Match(mainDocumentPart.Document.InnerXml, matcher,
                         RegexOptions.CultureInvariant | RegexOptions.Multiline);
 
                     while (match.Success)
@@ -250,8 +260,8 @@ public sealed class DocumentTemplateImport : BaseImport
                                 {
                                     Tracer.Log($"Replace InnerXml etc: {capture} -> {replacement}",
                                         TraceEventType.Information);
-                                    doc.MainDocumentPart.Document.InnerXml =
-                                        doc.MainDocumentPart.Document.InnerXml.Replace(capture.Value, replacement);
+                                    mainDocumentPart.Document.InnerXml =
+                                        mainDocumentPart.Document.InnerXml.Replace(capture.Value, replacement, StringComparison.Ordinal);
                                 }
                             }
                         }
@@ -260,26 +270,28 @@ public sealed class DocumentTemplateImport : BaseImport
                     }
 
                     // replace type code in CustomXml
-                    doc.MainDocumentPart.CustomXmlParts.ToList()
+                    mainDocumentPart.CustomXmlParts.ToList()
                         .ForEach(part => ReplacePatternInPart(part, matcher, replacement));
 
                     // replace type code in Footer
-                    doc.MainDocumentPart.FooterParts.ToList()
+                    mainDocumentPart.FooterParts.ToList()
                         .ForEach(part => ReplacePatternInPart(part, matcher, replacement));
 
                     // replace type code in Header
-                    doc.MainDocumentPart.HeaderParts.ToList()
+                    mainDocumentPart.HeaderParts.ToList()
                         .ForEach(part => ReplacePatternInPart(part, matcher, replacement));
                 }
 
                 obj = memoryStream.ToArray();
             }
         }
+#pragma warning disable CA1031 // Intentional: log any error before rethrowing to preserve original exception
         catch (Exception e)
         {
             Tracer.Log(e.Message, TraceEventType.Error);
             throw;
         }
+#pragma warning restore CA1031
 
         return Convert.ToBase64String(obj);
     }
@@ -299,7 +311,7 @@ public sealed class DocumentTemplateImport : BaseImport
                     {
                         Tracer.Log($"Replace '${part.Uri}' etc: {capture} -> {replacement}",
                             TraceEventType.Information);
-                        xml = xml.Replace(capture.Value, replacement);
+                        xml = xml.Replace(capture.Value, replacement, StringComparison.Ordinal);
                         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
                         part.FeedData(stream);
                     }

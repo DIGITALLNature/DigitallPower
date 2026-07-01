@@ -10,17 +10,45 @@ namespace dgt.power.codegeneration.Services.Contracts;
 
 public interface IMetadataService
 {
-    IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
-    IEnumerable<WfAction> RetrieveCustomAPIs(CodeGenerationConfig config);
-    IEnumerable<Tuple<string, string>> RetrieveSdkMessageNames(CodeGenerationConfig config);
+    /// <summary>
+    ///     Retrieves request metadata (actions, custom APIs, built-in SDK messages) for the given names.
+    ///     Auto-detects type per entry: custom API → CustomAPI table, classic action → Workflow XAML, built-in → name only.
+    /// </summary>
+    IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames);
+
+    /// <summary>
+    ///     Returns SDK message name constants. Includes hardcoded defaults (Create, Update, etc.)
+    ///     plus any additional names from the provided requests collection.
+    /// </summary>
+    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames);
+    /// <inheritdoc cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/>
+    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
+
+    SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets);
+    /// <inheritdoc cref="RetrieveOptionSets(IReadOnlyCollection{string})"/>
     SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
+
     EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
     int RetrieveOrganizationLanguage();
-    List<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
-    List<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions);
+    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlows(IReadOnlyCollection{string})"/>
+    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName);
+    IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
+
+    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
+    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
+
+    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection{string},string)"/>
+    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
+
+    void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
+    /// <inheritdoc cref="PopulateEntitiesAndSolutions(CodeGenerationConfigBase)"/>
     void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
+
+    // V1 legacy methods without V2 counterparts
+    IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
+    IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config);
 }

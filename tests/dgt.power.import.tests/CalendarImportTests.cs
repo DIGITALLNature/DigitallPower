@@ -1,15 +1,12 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
-using FluentAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 #pragma warning disable CS8602
@@ -18,57 +15,53 @@ namespace dgt.power.import.tests;
 
 public class CalendarImportTests : ImportTestBase<CalendarImport>
 {
-    public CalendarImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContextBuilder<CalendarImport, ImportVerb> GetBuilder() =>
         base.GetBuilder()
-            .WithRelationship(Calendar.Relations.OneToMany.InnerCalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.InnerCalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.InnerCalendarCalendarRules,
+                ReferencingEntity = CalendarRule.EntityLogicalName,
+                ReferencingAttribute = CalendarRule.LogicalNames.InnerCalendarId,
+                ReferencedEntity = Calendar.EntityLogicalName,
+                ReferencedAttribute = Calendar.LogicalNames.CalendarId
             })
-            .WithRelationship(Calendar.Relations.OneToMany.CalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.CalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.CalendarCalendarRules,
+                ReferencingEntity = CalendarRule.EntityLogicalName,
+                ReferencingAttribute = CalendarRule.LogicalNames.CalendarId,
+                ReferencedEntity = Calendar.EntityLogicalName,
+                ReferencedAttribute = Calendar.LogicalNames.CalendarId
             });
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
-                FileName = WriteConfigurationArtifact(new Calendars()).Name,
+                FileName = WriteConfigurationArtifact(new List<dto.Calendar>()).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldUpdateExistingCalendar()
+    [Test]
+    public async Task ShouldUpdateExistingCalendar()
     {
-        var calendarConfiguration = GetConfigurationResource<Calendars>("update-calendar.json");
+        var calendarConfiguration = GetConfigurationResource<List<dto.Calendar>>("update-calendar.json");
         var calendarToBeUpdated = calendarConfiguration.Single();
         var innerCalendarRule = calendarToBeUpdated.Rules.Single(x => x.InnerCalendar != null);
         var existingCalendar = new Calendar(calendarToBeUpdated.CalendarId)
         {
             Name = calendarToBeUpdated.Name,
-            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule),
+            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
         };
         var existingInnerCalendar = new Calendar(innerCalendarRule.InnerCalendar.CalendarId)
         {
@@ -84,47 +77,47 @@ public class CalendarImportTests : ImportTestBase<CalendarImport>
             .WithData(existingInnerCalendar)
             .WithData(existingCalendarRules)
             .Build();
-        
-        context.Execute(new ImportVerb
+
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "update-calendar.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var updatedCalendars = context.GetSingle<Calendar>(c => c.Id == existingCalendar.Id);
-        updatedCalendars.Name.Should().Be(existingCalendar.Name);
-        
+        await Assert.That(updatedCalendars.Name).IsEqualTo(existingCalendar.Name);
+
         var calendarRules = context.Get<CalendarRule>(x => x.CalendarId.Id == calendarToBeUpdated.CalendarId);
-        calendarRules.Should().HaveCount(calendarToBeUpdated.Rules.Count);
-        
+        await Assert.That(calendarRules).Count().IsEqualTo(calendarToBeUpdated.Rules.Count);
+
         var innerCalendar = context.GetById<Calendar>(innerCalendarRule.InnerCalendar.CalendarId);
-        innerCalendar.Name.Should().Be(innerCalendarRule.InnerCalendar.Name);
+        await Assert.That(innerCalendar.Name).IsEqualTo(innerCalendarRule.InnerCalendar.Name);
     }
 
-    [Fact]
-    public void ShouldCreateNewCalendar()
+    [Test]
+    public async Task ShouldCreateNewCalendar()
     {
-        var calendarImportConfig = GetConfigurationResource<Calendars>("create-calendar.json");
+        var calendarImportConfig = GetConfigurationResource<List<dto.Calendar>>("create-calendar.json");
         var calendarToBeCreated = calendarImportConfig.Single();
         var innerCalendarRule = calendarToBeCreated.Rules.Single(x => x.InnerCalendar != null);
         var context = GetBuilder().Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "create-calendar.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var createdCalendar = context.GetById<Calendar>(calendarToBeCreated.CalendarId);
-        createdCalendar.Should().NotBeNull();
-        createdCalendar.Name.Should().Be(calendarToBeCreated.Name);
+        await Assert.That(createdCalendar).IsNotNull();
+        await Assert.That(createdCalendar.Name).IsEqualTo(calendarToBeCreated.Name);
 
         var calendarRules = context.Get<CalendarRule>(x => x.CalendarId.Id == createdCalendar.Id);
-        calendarRules.Should().HaveCount(calendarToBeCreated.Rules.Count);
+        await Assert.That(calendarRules).Count().IsEqualTo(calendarToBeCreated.Rules.Count);
 
         var innerCalendar = context.GetById<Calendar>(innerCalendarRule.InnerCalendar.CalendarId);
-        innerCalendar.Name.Should().Be(innerCalendarRule.InnerCalendar.Name);
+        await Assert.That(innerCalendar.Name).IsEqualTo(innerCalendarRule.InnerCalendar.Name);
     }
 }

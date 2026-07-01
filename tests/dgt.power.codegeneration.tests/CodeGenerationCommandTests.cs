@@ -2,48 +2,55 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common.Logic;
 using dgt.power.tests;
-using FakeItEasy;
-using FluentAssertions;
+using Spectre.Console;
 using Spectre.Console.Cli;
-using Xunit.Abstractions;
 
 namespace dgt.power.codegeneration.tests;
 
+
+[NotInParallel("AnsiConsole")]
 public class CodeGenerationCommandTests
 {
-    private readonly CodeGenerationCommand _command;
+    private readonly ICommand<CodeGenerationVerb> _command;
 
-    public CodeGenerationCommandTests(ITestOutputHelper testOutputHelper)
+    public CodeGenerationCommandTests()
     {
-        var tracer = new TestTracer(testOutputHelper);
-        var configResolver = new ConfigResolver(tracer);
-        var dotNetCommand = A.Fake<DotNetCommand>();
-        var typescriptCommand = A.Fake<TypescriptCommand>();
-        var metadataCommand = A.Fake<MetadataCommand>();
-        var metadataService = A.Fake<IMetadataService>();
-        _command = new CodeGenerationCommand(tracer, configResolver,
-            dotNetCommand, typescriptCommand, metadataCommand, metadataService);
+        var tracer = new TestTracer();
+
+        var dotNetGeneratorMock = Mock.Of<IDotNetGenerator>();
+        dotNetGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<DotNetCodeGenerationConfig>()).Returns(true);
+
+        var typeScriptGeneratorMock = Mock.Of<ITypeScriptGenerator>();
+        typeScriptGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<TypeScriptCodeGenerationConfig>()).Returns(true);
+        typeScriptGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<CodeGenerationConfig>()).Returns(true);
+
+        var metadataServiceMock = Mock.Of<IMetadataService>();
+
+        _command = new CodeGenerationCommand(tracer,
+            dotNetGeneratorMock.Object, typeScriptGeneratorMock.Object,
+            metadataServiceMock.Object, AnsiConsole.Console);
     }
 
-    [Fact]
-    public void ShouldExecuteALlCommands() =>
-        _command.Execute(new CommandContext(Enumerable.Empty<string>(), A.Dummy<IRemainingArguments>(), "codegeneration", null),
-            new CodeGenerationVerb
-            {
-                Config = "Resources/CodeGenerationCommand/config.json"
-            }
-        ).Should().Be(0);
+    [Test]
+    public async Task ShouldExecuteALlCommands() =>
+        await Assert.That(
+            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb
+                {
+                    Config = "Resources/CodeGenerationCommand/config.json"
+                }, CancellationToken.None
+            ).GetAwaiter().GetResult()).IsEqualTo(0);
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        _command.Execute(new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "codegeneration", null),
-            new CodeGenerationVerb
-            {
-                Config = "missing.json"
-            }
-        ).Should().Be(-1);
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(
+            () => _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb
+                {
+                    Config = "missing.json"
+                }, CancellationToken.None
+            )).Throws<FileNotFoundException>();
 }

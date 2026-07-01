@@ -1,0 +1,9 @@
+﻿{
+  "Entities": [
+    "account",
+    "activitypointer",
+    "dgt_test_table"
+  ],
+  "SuppressTypeScript": true,
+  "SuppressDotNet": true
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "TypeScriptCodeGenerationConfig",
+  "description": "V2 configuration for TypeScript code generation (Light mode only). Produces entity definitions, form typings, OptionSet constants, SDK message name constants, and Custom API wrappers.",
+  "required": ["type"],
+  "properties": {
+    "type":      { "type": "string", "const": "typescript" },
+    "version":   { "type": "integer", "const": 2, "default": 2 },
+    "namespace": { "type": ["string", "null"], "description": "Reserved for future TypeScript module prefix. Not currently used by the generator.", "default": null },
+    "language":  { "type": ["integer", "null"], "description": "LCID for label localization. null = org base language.", "default": null },
+    "entities": {
+      "type": "object",
+      "description": "Entity scope — defines which entities to include via additive mechanisms.",
+      "properties": {
+        "names":         { "type": "array", "items": { "type": "string" }, "description": "Explicit entity logical names." },
+        "fromSolutions": { "type": "array", "items": { "type": "string" }, "description": "Solution unique names. All entities in these solutions are added to the scope." },
+        "mask":          { "type": ["string", "null"], "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities.", "default": null }
+      },
+      "additionalProperties": false
+    },
+    "requests":   { "type": "array", "items": { "type": "string" }, "description": "SDK message names (actions, custom APIs, built-in messages). Presence generates SDK message name constants. Entries with parameters also produce Custom API typed wrappers when output.customApis is true." },
+    "optionSets": { "type": "array", "items": { "type": "string" }, "description": "Global OptionSet logical names to generate as standalone constants." },
+    "output": {
+      "type": "object",
+      "description": "Controls which artifacts are generated.",
+      "properties": {
+        "forms": {
+          "type": "object",
+          "description": "Form generation configuration. Omit to generate all forms for all scoped entities.",
+          "properties": {
+            "filter":        { "type": "array", "items": { "type": "string" }, "description": "Explicit form allowlist (format: 'entity.formname.form'). Empty = all forms." },
+            "fromSolutions": { "type": "boolean", "description": "Only generate forms belonging to the solutions in the entity scope.", "default": false },
+            "testHelpers":   { "type": "boolean", "description": "Generate XrmMock test helper files alongside form files. Opt-in.", "default": false }
+          },
+          "additionalProperties": false
+        },
+        "customApis": { "type": "boolean", "description": "Generate typed Custom API wrappers for requests that have parameters.", "default": true }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

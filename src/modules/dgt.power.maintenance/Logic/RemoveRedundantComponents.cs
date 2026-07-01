@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -20,7 +20,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
 {
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
 
-    public RemoveRedundantComponents(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
+    public RemoveRedundantComponents(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();
@@ -32,7 +32,10 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         }
     }
 
-    protected override bool Invoke(RemoveRedundantComponentsVerb args)
+    protected override Task<bool> InvokeAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(RemoveRedundantComponentsVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -48,18 +51,23 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         var sourceComponents = new HashSet<Guid?>();
         foreach (var sourceSolution in args.SourceSolutions.Split(','))
         {
-            AnsiConsole.WriteLine($"Fetch components for source {sourceSolution}");
+            Console.WriteLine($"Fetch components for source {sourceSolution}");
             sourceComponents.UnionWith(GetSolutionComponents(context, sourceSolution).Select(s => s.ObjectId));
         }
-        AnsiConsole.WriteLine($"Fetch components for target {args.TargetSolution}");
+        Console.WriteLine($"Fetch components for target {args.TargetSolution}");
         var targetComponents = GetSolutionComponents(context, args.TargetSolution);
 
-        foreach (var component in targetComponents.IntersectBy(sourceComponents,o => o.ObjectId).OrderByDescending(o => o.ComponentType.Value))
+        var componentsToProcess = targetComponents
+            .Where(component => component.ComponentType?.Value != null)
+            .IntersectBy(sourceComponents, component => component.ObjectId)
+            .OrderByDescending(component => component.ComponentType!.Value);
+
+        foreach (var component in componentsToProcess)
         {
             if (component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && !args.Entities)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId!.Value);
-                AnsiConsole.WriteLine($"Found entity {entity.LogicalName} - ignore");
+                Console.WriteLine($"Found entity {entity.LogicalName} - ignore");
                 continue;
             }
 
@@ -89,7 +97,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                 typeColumn = component.ComponentType.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            AnsiConsole.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
+            Console.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
             if (!args.DryRun)
             {
                 Connection.Execute(new RemoveSolutionComponentRequest
@@ -98,7 +106,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                     ComponentType = component.ComponentType.Value,
                     SolutionUniqueName = args.TargetSolution
                 });
-                AnsiConsole.WriteLine(" - removed");
+                Console.WriteLine(" - removed");
             }
         }
 
@@ -107,6 +115,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
 
     protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
     {
+        ArgumentNullException.ThrowIfNull(context);
         var solution = GetSolution(context, uniqueName);
 
         var pagequery = new QueryExpression

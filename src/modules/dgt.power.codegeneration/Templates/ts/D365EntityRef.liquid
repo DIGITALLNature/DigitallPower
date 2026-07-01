@@ -1,0 +1,35 @@
+/* eslint-disable */
+///<reference path="{{ model.TypingPath }}" />
+
+export module {{ model.ModuleName }} {
+	export class Attributes {
+		constructor() {
+		}
+{% for attribute in model.Attributes %}
+		public static {{ attribute.Name }}: string = "{{ attribute.LogicalName }}";
+{% endfor %}
+	}
+
+{{ model.EntitySummary }}
+	export class EntityRef {
+
+		public static EntitylogicalName: string = "{{ model.EntityLogicalName }}";
+
+	}
+
+{% if model.IncludeOptions %}
+	export module Optionsets {
+{% for optionSet in model.Optionsets %}
+		export class {{ optionSet.Name }} {
+			constructor() {
+			}
+
+{% for option in optionSet.Options %}
+			public static {{ option.Name }} = { value: {{ option.Value }} };
+{% endfor %}
+
+		}
+{% endfor %}
+	}
+{% endif %}
+}

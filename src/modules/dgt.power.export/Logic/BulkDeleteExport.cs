@@ -8,17 +8,22 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class BulkDeleteExport : BaseExport
+public sealed class BulkDeleteExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public BulkDeleteExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ExportVerb args)
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -55,7 +60,7 @@ public sealed class BulkDeleteExport : BaseExport
             var data = operation.Data!;
             var start = data.IndexOf("<string>&lt;fetch", StringComparison.InvariantCultureIgnoreCase) + 8;
             var end = data.IndexOf("fetch&gt;</string>", StringComparison.InvariantCultureIgnoreCase) + 9;
-            var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<").Replace("&gt;", ">");
+            var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<", StringComparison.Ordinal).Replace("&gt;", ">", StringComparison.Ordinal);
             var bulkDelete = new BulkDelete
             {
                 Name = operation.Name!,

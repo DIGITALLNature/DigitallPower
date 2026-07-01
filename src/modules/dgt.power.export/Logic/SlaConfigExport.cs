@@ -8,17 +8,22 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class SlaConfigExport : BaseExport
+public sealed class SlaConfigExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public SlaConfigExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ExportVerb args)
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -27,15 +32,15 @@ public sealed class SlaConfigExport : BaseExport
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        var configs = new SlaConfigs();
+        var configs = new List<SlaConfig>();
 
         using (var context = new DataContext(Connection))
         {
             configs.AddRange(context.SLASet.Select(s => new SlaConfig
             {
-                Name = s.Name,
+                Name = s.Name ?? string.Empty,
                 SlaId = s.SLAId,
-                BusinessHours = s.BusinessHoursId != null ? s.BusinessHoursId.Id : default(Guid?),
+                BusinessHours = s.BusinessHoursId != null ? s.BusinessHoursId.Id : null,
                 Active = s.StatusCode != null && s.StatusCode.Value == SLA.Options.StatusCode.Active
             }).ToList());
         }

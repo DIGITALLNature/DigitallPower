@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -6,9 +6,9 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
-using FluentAssertions;
+using dgt.power.tests;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
 
 #pragma warning disable CS8629
@@ -17,14 +17,22 @@ namespace dgt.power.import.tests;
 
 public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport>
 {
-    public DocumentTemplateImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    protected override CommandTestContextBuilder<DocumentTemplateImport, ImportVerb> GetBuilder()
     {
-    }
+        var accountMeta = new EntityMetadata();
+        accountMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(accountMeta, Account.EntityLogicalName);
+        accountMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(accountMeta, Account.EntityTypeCode);
 
-    private (DocumentTemplate accountExcel, DocumentTemplate contactExcel, DocumentTemplate accountWord,
-        DocumentTemplate contactWord) GetData() =>
-    (
-        new DocumentTemplate(Guid.NewGuid())
+        var contactMeta = new EntityMetadata();
+        contactMeta.GetType().GetProperty(nameof(EntityMetadata.LogicalName))!.SetValue(contactMeta, Contact.EntityLogicalName);
+        contactMeta.GetType().GetProperty(nameof(EntityMetadata.ObjectTypeCode))!.SetValue(contactMeta, Contact.EntityTypeCode);
+
+        return base.GetBuilder()
+            .WithMetaData(accountMeta)
+            .WithMetaData(contactMeta);
+    }
+    private DocumentTemplate GetAccountExcelTemplate() =>
+        new(Guid.NewGuid())
         {
             Name = "AccountExcel",
             DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
@@ -33,18 +41,10 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             LanguageCode = 1033,
             Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
             AssociatedEntityTypeCode = "account"
-        },
-        new DocumentTemplate(Guid.NewGuid())
-        {
-            Name = "ContactExcel",
-            DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftExcel),
-            Content = Convert.ToBase64String(File.ReadAllBytes(GetResourcePath("Contacts.xlsx"))),
-            Description = "Internal",
-            LanguageCode = 1033,
-            Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
-            AssociatedEntityTypeCode = Contact.EntityLogicalName
-        },
-        new DocumentTemplate(Guid.NewGuid())
+        };
+
+    private DocumentTemplate GetAccountWordTemplate() =>
+        new(Guid.NewGuid())
         {
             Name = "AccountWord",
             DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
@@ -53,32 +53,21 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             LanguageCode = 1033,
             Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
             AssociatedEntityTypeCode = "account"
-        },
-        new DocumentTemplate(Guid.Parse("d1004e38-1033-461c-aa0e-7043f80c49cb"))
-        {
-            Name = "ContactWord",
-            DocumentType = new OptionSetValue(DocumentTemplate.Options.DocumentType.MicrosoftWord),
-            Content = Convert.ToBase64String(File.ReadAllBytes(GetResourcePath("Contact.docx"))),
-            Description = "Internal",
-            LanguageCode = 1033,
-            Status = DocumentTemplate.Options.Status.Activated, //inverted logic, don't ask why
-            AssociatedEntityTypeCode = Contact.EntityLogicalName
-        }
-    );
+        };
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new DocumentTemplates
                 {
@@ -86,12 +75,12 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
                 }).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldForceTemplateUpdate()
+    [Test]
+    public async Task ShouldForceTemplateUpdate()
     {
-        var (existingTemplate, _, _, _) = GetData();
+        var existingTemplate = GetAccountExcelTemplate();
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("force-update-templates.json");
         var forceUpdateTemplate = templateConfiguration.Templates.Single();
 
@@ -99,29 +88,29 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .WithData(existingTemplate)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "force-update-templates.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == forceUpdateTemplate.Name);
-        template.Id.Should().Be(forceUpdateTemplate.DocumentTemplateId.Value);
-        template.Description.Should().Be(forceUpdateTemplate.Description);
-        template.Status.Should().Be(forceUpdateTemplate.DocumentStatus);
+        await Assert.That(template.Id).IsEqualTo(forceUpdateTemplate.DocumentTemplateId.Value);
+        await Assert.That(template.Description).IsEqualTo(forceUpdateTemplate.Description);
+        await Assert.That(template.Status).IsEqualTo(forceUpdateTemplate.DocumentStatus);
     }
 
-    [Fact]
-    public void ShouldDisableExistingTemplate()
+    [Test]
+    public async Task ShouldDisableExistingTemplate()
     {
-        var (_, _, existingTemplate, _) = GetData();
+        var existingTemplate = GetAccountWordTemplate();
         var templateConfiguration = new DocumentTemplates
         {
             IgnoreMissing = false,
@@ -147,105 +136,104 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .WithData(existingTemplate)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(templateConfiguration).FullName,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == updateTemplate.Name);
-        template.Status.Should().BeTrue();
+        await Assert.That(template.Status).IsTrue();
     }
 
-    [Fact]
-    public void ShouldUpdateTemplate()
+    [Test]
+    public async Task ShouldUpdateTemplate()
     {
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("update-templates.json");
         var updateTemplate = templateConfiguration.Templates.Single();
-        var (_, _, existingTemplate, _) = GetData();
+        var existingTemplate = GetAccountWordTemplate();
         existingTemplate.Status = true;
         var context = GetBuilder()
             .WithData(existingTemplate)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "update-templates.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == updateTemplate.Name);
-        template.Id.Should().NotBe(updateTemplate.DocumentTemplateId.Value);
-        template.Description.Should().Be(updateTemplate.Description);
-        template.Status.Should().Be(updateTemplate.DocumentStatus);
+        await Assert.That(template.Id).IsNotEqualTo(updateTemplate.DocumentTemplateId.Value);
+        await Assert.That(template.Description).IsEqualTo(updateTemplate.Description);
+        await Assert.That(template.Status).IsEqualTo(updateTemplate.DocumentStatus);
     }
 
-    [Fact]
-    public void ShouldFailOnMissingDocumentTemplateFile()
+    [Test]
+    public async Task ShouldFailOnMissingDocumentTemplateFile()
     {
-        var templateConfiguration = GetConfigurationResource<DocumentTemplates>("not-found-templates.json");
-        var createTemplate = templateConfiguration.Templates.Single();
+        GetConfigurationResource<DocumentTemplates>("not-found-templates.json");
         var context = GetBuilder()
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ResourceDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(0);
+        await Assert.That(templates).Count().IsEqualTo(0);
     }
 
 
-    [Fact]
-    public void ShouldCreateTemplate()
+    [Test]
+    public async Task ShouldCreateTemplate()
     {
         var templateConfiguration = GetConfigurationResource<DocumentTemplates>("create-templates.json");
         var createTemplate = templateConfiguration.Templates.Single();
         var context = GetBuilder()
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "create-templates.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(1);
+        await Assert.That(templates).Count().IsEqualTo(1);
 
         var template = templates.Single(x => x.Name == createTemplate.Name);
-        template.Id.Should().Be(createTemplate.DocumentTemplateId.Value);
-        template.Description.Should().Be(createTemplate.Description);
-        template.Status.Should().Be(createTemplate.DocumentStatus);
+        await Assert.That(template.Id).IsEqualTo(createTemplate.DocumentTemplateId.Value);
+        await Assert.That(template.Description).IsEqualTo(createTemplate.Description);
+        await Assert.That(template.Status).IsEqualTo(createTemplate.DocumentStatus);
     }
 
-    [Fact]
-    public void ShouldIgnoreMissingTemplates()
+    [Test]
+    public async Task ShouldIgnoreMissingTemplates()
     {
         var missingTemplate = new DocumentTemplate(Guid.NewGuid())
         {
@@ -256,24 +244,26 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .WithData(missingTemplate)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "update-templates.json", // We abuse update config here.
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(2);
+        await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
-        missing.Status.Should().Be(DocumentTemplate.Options.Status.Activated);
+#pragma warning disable TUnitAssertions0015 // bool is earlybound
+        await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Activated);
+#pragma warning restore TUnitAssertions0015
     }
 
-    [Fact]
-    public void ShouldDisableMissingDocument()
+    [Test]
+    public async Task ShouldDisableMissingDocument()
     {
         var missingTemplate = new DocumentTemplate(Guid.NewGuid())
         {
@@ -284,19 +274,21 @@ public class DocumentTemplateImportTests : ImportTestBase<DocumentTemplateImport
             .WithData(missingTemplate)
             .Build();
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "create-templates.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var templates = context.Get<DocumentTemplate>()
             .OrderBy(x => x.Name)
             .ToList();
 
-        templates.Should().HaveCount(2);
+        await Assert.That(templates).Count().IsEqualTo(2);
         var missing = templates.Single(x => x.Id == missingTemplate.Id);
-        missing.Status.Should().Be(DocumentTemplate.Options.Status.Draft);
+#pragma warning disable TUnitAssertions0015 // bool is earlybound
+        await Assert.That(missing.Status).IsEqualTo(DocumentTemplate.Options.Status.Draft);
+#pragma warning restore TUnitAssertions0015
     }
 }

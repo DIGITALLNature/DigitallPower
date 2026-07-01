@@ -5,7 +5,7 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public class WorkflowStateTracker
+public sealed class WorkflowStateTracker
 {
     private Dictionary<string, WorflowChange> _workflowChanges = [];
 
@@ -35,20 +35,20 @@ public class WorkflowStateTracker
         workflowChange.CategoryName = workflow.Category?.Value switch
         {
             Workflow.Options.Category.ModernFlow => ":cloud: Modern Flow",
-            Workflow.Options.Category.Workflow_ => ":gear: Workflow",
+            Workflow.Options.Category.Workflow => ":gear: Workflow",
             Workflow.Options.Category.Action => ":gear: Action",
             Workflow.Options.Category.BusinessProcessFlow => ":bookmark: Business Process Flow",
             Workflow.Options.Category.BusinessRule => ":scroll: Business Rule",
-            _ => workflow.Category?.Value.ToString(CultureInfo.InvariantCulture),
+            _ => workflow.Category?.Value.ToString(CultureInfo.InvariantCulture)
         };
 
         workflow.TryGetAttributeValue<AliasedValue>("owner.domainname", out var ownerName);
-        workflowChange.OwnerPre = (ownerName?.Value ?? workflow.OwnerId!.Id).ToString();
+        workflowChange.OwnerPre = (ownerName?.Value ?? workflow.OwnerId?.Id)?.ToString() ?? string.Empty;
 
         return workflowChange;
     }
 
-    internal void TrackDisabled(Workflow workflow, bool disabledTarget, bool? disabledPost = default)
+    internal void TrackDisabled(Workflow workflow, bool disabledTarget, bool? disabledPost = null)
     {
         var identifier = $"{workflow.PrimaryEntity}.{workflow.UniqueName}.{workflow.Name}";
 
@@ -61,7 +61,7 @@ public class WorkflowStateTracker
         workflowChange.DisabledPost = disabledPost ?? workflowChange.DisabledPre;
     }
 
-    internal void TrackOwner(Workflow workflow, SystemUser? desiredOwnerTarget, SystemUser? desiredOwnerPost = default)
+    internal void TrackOwner(Workflow workflow, SystemUser? desiredOwnerTarget, SystemUser? desiredOwnerPost = null)
     {
         var identifier = $"{workflow.PrimaryEntity}.{workflow.UniqueName}.{workflow.Name}";
 
@@ -74,7 +74,7 @@ public class WorkflowStateTracker
         workflowChange.OwnerPost = desiredOwnerPost?.DomainName ?? desiredOwnerPost?.SystemUserId.ToString() ?? workflowChange.OwnerPre;
     }
 
-    internal void WriteToConsole()
+    internal void WriteToConsole(IAnsiConsole console)
     {
         var table = new Table()
             .AddColumn(" ")
@@ -87,7 +87,7 @@ public class WorkflowStateTracker
 
         var orderedWorfklowChanges = _workflowChanges.Values
             .OrderBy(w => w.TableName)
-            .OrderBy(w => w.UniqueName)
+            .ThenBy(w => w.UniqueName)
             .ThenBy(w => w.Name);
 
         foreach (var workflowChange in orderedWorfklowChanges)
@@ -97,29 +97,29 @@ public class WorkflowStateTracker
 
             var status = success ? $"[green]{Emoji.Known.CheckMark}[/]" : Emoji.Known.CrossMark;
 
-            var tableNameFormat = workflowChange.TableName != default && workflowChange.TableName != "none" ? "white" : "grey italic";
+            var tableNameFormat = workflowChange.TableName != null && workflowChange.TableName != "none" ? "white" : "grey italic";
 
             var disabledState = workflowChange.GetDisabledState();
 
             var owner = workflowChange.GetOwnerText();
 
-            var row = new string[] {
+            var row = new[] {
                 status,
                 workflowChange.UniqueName?.EscapeMarkup() ?? "[grey italic]null[/]",
                 workflowChange.Name?.EscapeMarkup() ?? "[grey italic]null[/]",
                 workflowChange.CategoryName?.EscapeMarkup() ?? "[grey italic]null[/]",
                 $"[{tableNameFormat}]{workflowChange.TableName.EscapeMarkup()}[/]",
                 disabledState,
-                owner,
+                owner
             };
             table.AddRow(row);
         }
 
-        AnsiConsole.Write(table);
+        console.Write(table);
     }
 }
 
-internal class WorflowChange
+internal sealed class WorflowChange
 {
     internal string? Name { get; set; }
     internal string? UniqueName { get; set; }
@@ -144,15 +144,28 @@ internal class WorflowChange
             (_, false, true) => $"[red]Enabled[/] [strikethrough grey]{Emoji.Known.RightArrow} Enabled[/]",
             (true, null, null) => "[blue]Disabled[/]",
             (false, null, null) => "[blue]Enabled[/]",
-            _ => "[orange3]Unknown[/]",
+            _ => "[orange3]Unknown[/]"
         };
     }
 
     internal string GetOwnerText()
     {
+        // No change desired
         if (OwnerPre == OwnerTarget) return $"[grey]{OwnerPre}[/]";
-        if (!string.IsNullOrWhiteSpace(OwnerPost) && OwnerPost == OwnerTarget) return $"[blue]{OwnerPre}[/] {Emoji.Known.RightArrow} [green]{OwnerPost}[/]";
-        if (OwnerPost == OwnerTarget) return $"[blue]{OwnerPre}[/]";
-        return $"[red]{OwnerPre}[/] [strikethrough grey]{Emoji.Known.RightArrow} {OwnerPost}[/]";
+
+        // Successful change: OwnerPost matches the target and is not empty
+        if (!string.IsNullOrWhiteSpace(OwnerPost) && OwnerPost == OwnerTarget)
+        {
+            return $"[blue]{OwnerPre}[/] {Emoji.Known.RightArrow} [green]{OwnerPost}[/]";
+        }
+
+        // Failed change: OwnerPost doesn't match target
+        if (OwnerPost != OwnerTarget)
+        {
+            return $"[red]{OwnerPre}[/] [strikethrough grey]{Emoji.Known.RightArrow} {OwnerPost ?? "[grey italic]null[/]"}[/]";
+        }
+
+        // Fallback (shouldn't reach here in normal cases)
+        return $"[blue]{OwnerPre}[/]";
     }
 }

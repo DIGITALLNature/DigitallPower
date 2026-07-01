@@ -7,25 +7,18 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
-using FluentAssertions;
-using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.export.tests;
 
 public class UserRoleExportTest : ExportTestBase<UserRoleExport>
 {
-    public UserRoleExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<UserRoleExport, ExportVerb> GetContext()
     {
         var businessUnit = new BusinessUnit(Guid.NewGuid())
         {
             Name = "devlab",
-            IsDisabled = false,
+            IsDisabled = false
         };
         var user1 = new SystemUser(Guid.NewGuid())
         {
@@ -94,28 +87,27 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
         var roleassociation1 = new SystemUserRoles(Guid.NewGuid())
         {
             [SystemUserRoles.LogicalNames.RoleId] = systemadministrator.Id,
-            [SystemUserRoles.LogicalNames.SystemUserId] = user4.Id,
+            [SystemUserRoles.LogicalNames.SystemUserId] = user4.Id
         };
 
         var roleassociation2 = new SystemUserRoles(Guid.NewGuid())
         {
             [SystemUserRoles.LogicalNames.RoleId] = salesAppAccess.Id,
-            [SystemUserRoles.LogicalNames.SystemUserId] = user1.Id,
+            [SystemUserRoles.LogicalNames.SystemUserId] = user1.Id
         };
 
         return GetBuilder()
-            .WithRelationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation,
-                new XrmFakedRelationship
+            .WithRelationship(new ManyToManyRelationshipMetadata
                 {
-                    IntersectEntity = SystemUserRoles.EntityLogicalName,
+                    SchemaName = SystemUser.Relations.ManyToMany.SystemuserrolesAssociation,
+                    IntersectEntityName = SystemUserRoles.EntityLogicalName,
                     Entity1LogicalName = SystemUser.EntityLogicalName,
-                    Entity1Attribute = SystemUser.LogicalNames.SystemUserId,
+                    Entity1IntersectAttribute = SystemUser.LogicalNames.SystemUserId,
                     Entity2LogicalName = Role.EntityLogicalName,
-                    Entity2Attribute = Role.LogicalNames.RoleId
+                    Entity2IntersectAttribute = Role.LogicalNames.RoleId
                 }
             )
-            .WithData(new Entity[]
-                {
+            .WithData([
                     businessUnit,
                     user1,
                     user2,
@@ -127,69 +119,69 @@ public class UserRoleExportTest : ExportTestBase<UserRoleExport>
                     salesAppAccess,
                     roleassociation1,
                     roleassociation2
-                }
+                ]
             )
             .Build();
     }
 
-    [Fact]
-    public void ShouldFailOnInvalidInlineDataFilter()
+    [Test]
+    public async Task ShouldFailOnInvalidInlineDataFilter()
     {
         const string fetchXml = @"<filter>
       <condition attribute=""wrongattribute"" operator=""eq"" value=""1"" />
     </filter>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeFalse();
+        )).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFilterUsersWithInlineDataFilter()
+    [Test]
+    public async Task ShouldFilterUsersWithInlineDataFilter()
     {
         const string domainName = "process.owner@devlab.onmicrosoft.com";
         const string fetchXml = $@"<filter>
       <condition attribute=""domainname"" operator=""eq"" value=""{domainName}"" />
     </filter>";
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
                 FileDir = ArtifactDirectory,
                 InlineData = fetchXml
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        userRoles.Should().ContainSingle();
-        userRoles.Single().UserName.Should().Be(domainName);
+        await Assert.That(userRoles).Count().IsEqualTo(1);
+        await Assert.That(userRoles.Single().UserName).IsEqualTo(domainName);
     }
 
-    [Fact]
-    public void ShouldExportUserRolesWithDefaultConfiguration()
+    [Test]
+    public async Task ShouldExportUserRolesWithDefaultConfiguration()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>(GetTestFileName());
-        userRoles.Should().HaveCount(6);
+        await Assert.That(userRoles).Count().IsEqualTo(6);
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
         var userRoles = GetConfigurationTestArtifact<List<UserRole>>("userrole.json");
-        userRoles.Should().HaveCount(6);
+        await Assert.That(userRoles).Count().IsEqualTo(6);
     }
 }

@@ -1,0 +1,24 @@
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable All
+namespace {{ NameSpace }}
+{
+    /// <summary>
+    /// This class contains global option sets which are used in more than one entity!
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
+    public sealed class OptionSetValues
+    {
+        private OptionSetValues() {}
+{%- for optionSet in OptionSets %}
+
+        public struct {{ optionSet.Name | camelcase }}
+        {
+{%- for option in optionSet.Options %}
+            public const int {{ option.Label | sanitize | camelcase }} = {{ option.Value }};
+{%- endfor %}
+        }
+{%- endfor %}
+    }
+}

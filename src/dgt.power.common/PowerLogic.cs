@@ -1,9 +1,9 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.common;
@@ -11,31 +11,35 @@ namespace dgt.power.common;
 public abstract class PowerLogic<TConfig>(
     ITracer tracer,
     IOrganizationService connection,
-    IConfigResolver configResolver)
-    : Command<TConfig>, IPowerLogic
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : AsyncCommand<TConfig>, IPowerLogic
     where TConfig : BaseProgramSettings
 {
     protected const int PageSize = 5000;
 
+    protected IAnsiConsole Console { get; } = console;
     protected IConfigResolver ConfigResolver { get; } = configResolver;
 
     protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
-    public override int Execute(CommandContext context, [NotNull] TConfig settings) => Execute(settings) ? 0 : 1;
-
-    private bool Execute(TConfig args)
+    protected override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken)
     {
-        try
+        // Propagate --non-interactive flag so any MSAL token refresh that occurs
+        // during this command's lifetime respects the non-interactive constraint.
+        if (settings.NonInteractive)
         {
-            return Invoke(args);
+            Environment.SetEnvironmentVariable("DGTP_NON_INTERACTIVE", "true");
         }
-        catch (Exception e)
-        {
-            Tracer.Exception(e, TraceEventType.Error);
-            return false;
-        }
+
+        return await ExecuteAsync(settings, cancellationToken) ? 0 : 1;
     }
 
-    protected abstract bool Invoke(TConfig args);
+    private async Task<bool> ExecuteAsync(TConfig args, CancellationToken cancellationToken)
+    {
+        return await InvokeAsync(args, cancellationToken);
+    }
+
+    protected abstract Task<bool> InvokeAsync(TConfig args, CancellationToken cancellationToken);
 }

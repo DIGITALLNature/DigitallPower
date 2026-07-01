@@ -9,28 +9,32 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
-public sealed class UserRoleImport : BaseImport
+public sealed class UserRoleImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public UserRoleImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
-        connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<UserRoles>(args.FileDir, fileName, out var userRoles))
+        if (!ConfigResolver.TryGetConfigFile<List<UserRole>>(args.FileDir, fileName, out var userRoles))
         {
             return Tracer.NotConfigured(this);
         }
 
-        if (!userRoles.Any())
+        if (userRoles.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -74,7 +78,7 @@ public sealed class UserRoleImport : BaseImport
             }
 
             List<Role> securityRoles;
-            if (userRole.SecurityRoles.Any())
+            if (userRole.SecurityRoles.Count > 0)
             {
                 // SecurityRoles
                 securityRoles = GetSecurityRoles(businessUnit, userRole.SecurityRoles);

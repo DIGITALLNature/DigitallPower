@@ -9,17 +9,22 @@ using dgt.power.export.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Spectre.Console;
 
 namespace dgt.power.export.Logic;
 
-public sealed class TeamTemplateExport : BaseExport
+public sealed class TeamTemplateExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public TeamTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ExportVerb args)
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

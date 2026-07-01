@@ -12,47 +12,39 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: pnpm
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
+        cache: true
+        cache-dependency-path: '**/packages.lock.json'
 
-    - name: Cache Packages
-      uses: actions/cache@v3
+    - name: Enable Automated Test Report Artifact Upload
+      uses: actions/github-script@v9
       with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+        script: |
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
+          core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
 
     - name: Restore dependencies
       run: dotnet restore --locked-mode
 
+    - name: Install Node dependencies
+      run: pnpm install --frozen-lockfile
+
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
 
     - name: Run Tests
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings --blame-hang-timeout 5m
-
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()    # run this step even if previous step failed
-      with:
-        name: ${{ matrix.os }} Tests
-        path: tests/**/test-results.trx
-        reporter: dotnet-trx
-
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19
-      with:
-        reports: 'tests/**/coverage.cobertura.xml'
-        targetdir: 'coveragereport'
-        reporttypes: 'lcov'
-
-    - name: publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: coveragereport/lcov.info
+      run: dotnet test --no-build --configuration Release -- --output Detailed

@@ -2,66 +2,56 @@ name: Check DGTP
 
 on:
   push:
-    branches: [ "beta" ]
+    branches: ["beta"]
   pull_request:
-    branches: [ "main", "beta" ]
+    branches: ["main", "beta"]
 
 jobs:
   check:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     permissions:
-      id-token: write
       contents: read
       checks: write
+      pull-requests: write
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-    - name: Cache Packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
-    - name: Restore dependencies
-      run: dotnet restore --locked-mode
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
 
-    - name: Build
-      run: dotnet build --no-restore
+      - name: Enable Automated Test Report Artifact Upload
+        uses: actions/github-script@v9
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
 
-    - name: Run Tests
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --settings tests/coverlet.runsettings --blame-hang-timeout 3m
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode
 
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()    # run this step even if previous step failed
-      with:
-        name: ${{ matrix.os }} Tests
-        path: tests/**/test-results.trx
-        reporter: dotnet-trx
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19
-      if: matrix.os == 'ubuntu-latest'
-      with:
-        reports: 'tests/**/coverage.cobertura.xml'
-        targetdir: 'coveragereport'
-        reporttypes: 'lcov'
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
 
-    - name: publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@master
-      if: matrix.os == 'ubuntu-latest'
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: coveragereport/lcov.info
+      - name: Run Tests
+        run: dotnet test --no-build --configuration Release -- --output Detailed

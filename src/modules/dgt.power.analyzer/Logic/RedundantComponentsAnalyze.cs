@@ -6,8 +6,8 @@ using System.Text;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -16,14 +16,19 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class RedundantComponentsAnalyze : BaseAnalyze
+public sealed class RedundantComponentsAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public RedundantComponentsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(AnalyzeVerb args)
+    private bool InvokeCore(AnalyzeVerb args)
     {
+        ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -51,12 +56,12 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             var components = GetSolutionComponents(context, uniqueName);
 
-            var table = new Table().Centered();
-            AnsiConsole.Live(table)
+            var table = new Table();
+            Console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");
@@ -116,8 +121,8 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
 
             var groupedMetrics = resultTable.Where(r => r.OriginSolution == uniqueName).GroupBy(rc => rc.AlsoInSolution).ToList();
 
-            AnsiConsole.WriteLine();
-            AnsiConsole.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
+            Console.WriteLine();
+            Console.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
             var summaryTable = new Table();
 
 
@@ -129,7 +134,7 @@ public sealed class RedundantComponentsAnalyze : BaseAnalyze
                 summaryTable.AddRow(groupedMetric.Key!, $"[green]{groupedMetric.Count()}[/]");
             }
 
-            AnsiConsole.Write(summaryTable);
+            Console.Write(summaryTable);
         }
 
         if (args.GenerateSummaryFile)

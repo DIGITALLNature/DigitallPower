@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.analyzer.Base;
@@ -7,25 +7,19 @@ using dgt.power.analyzer.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnalyze>
 {
-    public EntityAllAssetsAnalyzeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<EntityAllAssetsAnalyze, AnalyzeVerb> GetContext()
     {
         return GetBuilder()
-            .WithMetaData(new[]
-            {
+            .WithMetaData([
                 new EntityMetadata
                 {
                     LogicalName = SystemUser.EntityLogicalName,
@@ -71,19 +65,19 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
                         UserLocalizedLabel = new LocalizedLabel("Contact", 1031)
                     }
                 }
-            })
+            ])
             .WithData(PrepareData)
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
-        var testEntityMetadata = context.GetEntityMetadataByName(TestEntity.EntityLogicalName);
-        var userMetadata = context.GetEntityMetadataByName(SystemUser.EntityLogicalName);
-        var teamMetadata = context.GetEntityMetadataByName(Team.EntityLogicalName);
-        var queueMetadata = context.GetEntityMetadataByName(Queue.EntityLogicalName);
-        var contactMetadata = context.GetEntityMetadataByName(Contact.EntityLogicalName);
+        var testEntityMetadata = service.State.EntityMetadata[TestEntity.EntityLogicalName];
+        var userMetadata = service.State.EntityMetadata[SystemUser.EntityLogicalName];
+        var teamMetadata = service.State.EntityMetadata[Team.EntityLogicalName];
+        var queueMetadata = service.State.EntityMetadata[Queue.EntityLogicalName];
+        var contactMetadata = service.State.EntityMetadata[Contact.EntityLogicalName];
 
         var solution = new Solution(Guid.NewGuid())
         {
@@ -140,59 +134,59 @@ public class EntityAllAssetsAnalyzeTests : AnalyzeTestsBase<EntityAllAssetsAnaly
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference()
         };
 
-        return new Entity[]
-        {
+        return
+        [
             solution,
             accountComponent,
             testEntityComponent,
             teamComponent,
             queueComponent,
             contactComponent
-        };
+        ];
     }
 
-    [Fact]
-    public void ShouldFailOnMissingConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = "missing.json"
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("empty.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldApproveAllEntityAssetsAnalysis() =>
-        GetContext()
+    [Test]
+    public async Task ShouldApproveAllEntityAssetsAnalysis() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("approved.json")
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 
-    [Fact]
-    public void ShouldNotApproveAllEntityAssetsAnalysis() =>
-        GetContext()
+    [Test]
+    public async Task ShouldNotApproveAllEntityAssetsAnalysis() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("unapproved.json")
                 }
-            ).Should().BeFalse();
+            )).IsFalse();
 
-    [Fact]
-    public void ShouldApproveAllEntityAssetsWithWarning() =>
-        GetContext()
+    [Test]
+    public async Task ShouldApproveAllEntityAssetsWithWarning() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
                 {
                     Config = GetResourcePath("approved-not-strict.json")
                 }
-            ).Should().BeTrue();
+            )).IsTrue();
 }

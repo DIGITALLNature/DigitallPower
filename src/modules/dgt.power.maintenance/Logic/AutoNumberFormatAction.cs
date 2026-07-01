@@ -8,28 +8,32 @@ using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public sealed class AutoNumberFormatAction : BaseMaintenance
+public sealed class AutoNumberFormatAction(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    public AutoNumberFormatAction(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(MaintenanceVerb args)
+    private bool InvokeCore(MaintenanceVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         //read config
-        if (!ConfigResolver.TryGetConfigFile<AutoNumberFormats>(args.Config, out var autoNumberFormats))
+        if (!ConfigResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))
         {
             return Tracer.End(this, false);
         }
 
         //anything to do?
-        if (!autoNumberFormats.Any())
+        if (autoNumberFormats.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

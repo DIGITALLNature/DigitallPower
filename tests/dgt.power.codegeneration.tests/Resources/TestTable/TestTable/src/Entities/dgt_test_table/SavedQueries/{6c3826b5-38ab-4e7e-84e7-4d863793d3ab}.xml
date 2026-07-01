@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{6c3826b5-38ab-4e7e-84e7-4d863793d3ab}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="dgt_primaryname" select="1" icon="1" preview="1">
+        <row name="result" id="dgt_test_tableid">
+          <cell name="dgt_primaryname" width="300" />
+          <cell name="createdon" width="125" />
+          <cell name="dgt_text_area" width="150" />
+          <cell name="dgt_text_email" width="150" />
+          <cell name="dgt_textphonenumber" width="150" />
+          <cell name="dgt_text_ticker_symbol" width="150" />
+          <cell name="dgt_text_url" width="150" />
+          <cell name="dgt_text_multiline" width="150" />
+          <cell name="dgt_number_whole" width="150" />
+          <cell name="dgt_number_decimal" width="150" />
+          <cell name="dgt_number_float" width="150" />
+          <cell name="dgt_number_language_code" width="150" />
+          <cell name="dgt_number_duration" width="150" />
+          <cell name="dgt_number_time_zone" width="150" />
+          <cell name="dgt_date_and_time" width="150" />
+          <cell name="dgt_date_only" width="150" />
+          <cell name="dgt_lookup" width="150" />
+          <cell name="dgt_choice_single" width="150" />
+          <cell name="dgt_choice_multiple" width="150" />
+          <cell name="dgt_choice_bool" width="150" />
+          <cell name="dgt_currency" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="dgt_test_table">
+          <attribute name="dgt_test_tableid" />
+          <attribute name="dgt_primaryname" />
+          <attribute name="createdon" />
+          <order attribute="dgt_primaryname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="dgt_text_area" />
+          <attribute name="dgt_text_email" />
+          <attribute name="dgt_textphonenumber" />
+          <attribute name="dgt_text_ticker_symbol" />
+          <attribute name="dgt_text_url" />
+          <attribute name="dgt_text_multiline" />
+          <attribute name="dgt_number_whole" />
+          <attribute name="dgt_number_decimal" />
+          <attribute name="dgt_number_float" />
+          <attribute name="dgt_number_language_code" />
+          <attribute name="dgt_number_duration" />
+          <attribute name="dgt_number_time_zone" />
+          <attribute name="dgt_date_and_time" />
+          <attribute name="dgt_date_only" />
+          <attribute name="dgt_lookup" />
+          <attribute name="dgt_choice_single" />
+          <attribute name="dgt_choice_multiple" />
+          <attribute name="dgt_choice_bool" />
+          <attribute name="dgt_currency" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active TestTables" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

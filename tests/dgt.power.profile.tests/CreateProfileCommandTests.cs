@@ -10,15 +10,11 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, CreateProfileSettings>
 {
-    public CreateProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldSaveCreatedProfileAsCurrent()
+    [Test]
+    public async Task ShouldSaveCreatedProfileAsCurrent()
     {
         var settings = new CreateProfileSettings
         {
@@ -33,14 +29,14 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
   LoginPrompt=Auto"
         };
 
-        GetContext().Execute(settings).Should().Succeed();
+        await GetContext().Execute(settings).Succeed();
 
-        GetIdentities().Current.Should().Be(settings.Name);
-        GetIdentities().CurrentConnectionString.Should().Be(settings.ConnectionString);
+        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.ConnectionString);
     }
 
-    [Fact]
-    public void ShouldSkipConnectionCheck()
+    [Test]
+    public async Task ShouldSkipConnectionCheck()
     {
 
         var settings = new CreateProfileSettings
@@ -61,14 +57,14 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
             .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
             .Build();
 
-        context.Execute(settings).Should().Succeed();
+        await context.Execute(settings).Succeed();
 
-        GetIdentities().Current.Should().Be(settings.Name);
-        GetIdentities().CurrentConnectionString.Should().Be(settings.ConnectionString);
+        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.ConnectionString);
     }
 
-    [Fact]
-    public void ShouldFailOnInvalidConnection()
+    [Test]
+    public async Task ShouldFailOnInvalidConnection()
     {
 
         var settings = new CreateProfileSettings
@@ -81,15 +77,13 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
   AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
   RedirectUri=app://58145B91-0C36-4500-8554-080854F2AC97;
   TokenCacheStorePath=c:\MyTokenCache;
-  LoginPrompt=Auto",
+  LoginPrompt=Auto"
         };
 
         var context = GetBuilder()
             .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
             .Build();
 
-        Action actor = () => context.Execute(settings);
-
-        actor.Should().ThrowExactly<FaultException<OrganizationServiceFault>>();
+        await Assert.That(() => context.Execute(settings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
     }
 }

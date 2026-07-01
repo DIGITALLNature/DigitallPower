@@ -1,0 +1,26 @@
+{
+    "type": "typescript",
+    "version": 2,
+    "namespace": null,
+    "language": null,
+    "entities": {
+        "names": [
+            "account",
+            "contact"
+        ],
+        "fromSolutions": [
+            "dgt_entities"
+        ],
+        "mask": "dgt_*"
+    },
+    "requests": [],
+    "optionSets": [],
+    "output": {
+        "forms": {
+            "filter": [],
+            "fromSolutions": false,
+            "testHelpers": false
+        },
+        "customApis": true
+    }
+}

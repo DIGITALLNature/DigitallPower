@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "DotNetCodeGenerationConfig",
+  "description": "V2 configuration for .NET code generation. Produces C# early-bound entity classes, typed request/response wrappers, SDK message constants, and optionally XML metadata.",
+  "required": ["type"],
+  "properties": {
+    "type":      { "type": "string", "const": "dotnet" },
+    "version":   { "type": "integer", "const": 2, "default": 2 },
+    "namespace": { "type": "string", "description": "C# namespace for generated classes.", "default": "Digitall.Dataverse.Model" },
+    "language":  { "type": ["integer", "null"], "description": "LCID for label localization. null = org base language.", "default": null },
+    "entities": {
+      "type": "object",
+      "description": "Entity scope — defines which entities to include via additive mechanisms.",
+      "properties": {
+        "names":         { "type": "array", "items": { "type": "string" }, "description": "Explicit entity logical names." },
+        "fromSolutions": { "type": "array", "items": { "type": "string" }, "description": "Solution unique names. All entities in these solutions are added to the scope." },
+        "mask":          { "type": ["string", "null"], "description": "Wildcard pattern (e.g. 'contoso_*') to auto-include matching entities.", "default": null }
+      },
+      "additionalProperties": false
+    },
+    "requests":   { "type": "array", "items": { "type": "string" }, "description": "SDK message names (actions, custom APIs, built-in messages). Presence generates SDK message name constants and typed Request/Response classes for entries with parameters." },
+    "optionSets": { "type": "array", "items": { "type": "string" }, "description": "Global OptionSet logical names to generate as standalone constants." },
+    "output": {
+      "type": "object",
+      "description": "Controls target framework and which artifacts are generated.",
+      "properties": {
+        "target":           { "type": "string", "enum": ["Modern", "Framework"], "description": "'Modern' = net8.0+ (nullable, implicit usings). 'Framework' = .NET Framework 4.6.2 (plugins, no nullable).", "default": "Modern" },
+        "virtual":          { "type": "boolean", "description": "Make generated entity properties virtual (for mocking/proxying).", "default": false },
+        "editableReadOnly": { "type": "boolean", "description": "Generate setters even for read-only attributes.", "default": false },
+        "include": {
+          "type": "object",
+          "description": "Controls which optional sections are included in generated entity classes. All default to true except metadata.",
+          "properties": {
+            "context":         { "type": "boolean", "default": true, "description": "Generate OrganizationServiceContext (DataContext) partial class." },
+            "options":         { "type": "boolean", "default": true, "description": "Generate nested Options class with OptionSet value constants." },
+            "logicalNames":    { "type": "boolean", "default": true, "description": "Generate nested LogicalNames class with attribute name constants." },
+            "relations":       { "type": "boolean", "default": true, "description": "Generate nested Relations class with relationship schema name constants." },
+            "navigationProps": { "type": "boolean", "default": true, "description": "Generate navigation properties for 1:N relationships." },
+            "entityTypeCode":  { "type": "boolean", "default": true, "description": "Generate EntityTypeCode constant." },
+            "alternateKeys":   { "type": "boolean", "default": true, "description": "Generate nested AlternateKeys class." },
+            "metadata":        { "type": "boolean", "default": false, "description": "Generate XML metadata files. Opt-in — most projects don't need raw metadata XML." }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

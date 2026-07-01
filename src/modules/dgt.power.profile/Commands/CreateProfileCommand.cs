@@ -3,72 +3,62 @@
 
 using System.Diagnostics;
 using dgt.power.common;
-using dgt.power.common.Commands;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
 using dgt.power.common.Logic;
 using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace dgt.power.profile.Commands;
 
-public class CreateProfileCommand : AbstractPowerCommand<CreateProfileSettings>
+public class CreateProfileCommand(
+    IProfileManager profileManager,
+    IXrmConnection connection,
+    IAnsiConsole console)
+    : AsyncCommand<CreateProfileSettings>
 {
-    private readonly IXrmConnection _connection;
-    private readonly IProfileManager _profileManager;
-
-
-    public CreateProfileCommand(IProfileManager profileManager, IConfigResolver configResolver, IXrmConnection connection) : base(configResolver)
-    {
-        _profileManager = profileManager;
-        _connection = connection;
-    }
-
-    public override ExitCode Execute(CreateProfileSettings settings)
+    protected override async Task<int> ExecuteAsync(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.LoadIdentities();
+        var identities = profileManager.LoadIdentities();
         if (settings.TokenBased)
         {
-            identities.Upsert(settings.Name.ToUpperInvariant(),
+            identities.Upsert(settings.Name,
                 new TokenIdentity
                 {
                     ConnectionString = settings.ConnectionString,
-                    Insecure = settings.Insecure,
-                    SecurityProtocol = settings.SecurityProtocol,
-                    Token = null
+                    Token = string.Empty
                 });
         }
         else
         {
-            identities.Upsert(settings.Name.ToUpperInvariant(),
+            identities.Upsert(settings.Name,
                 new Identity
                 {
-                    ConnectionString = settings.ConnectionString,
-                    Insecure = settings.Insecure,
-                    SecurityProtocol = settings.SecurityProtocol
+                    ConnectionString = settings.ConnectionString
                 });
         }
-        
-        _profileManager.Save();
+
+        profileManager.Save();
 
         if (!settings.SkipChecking)
         {
             try
             {
-                _connection.Connect();
+                await connection.ConnectAsync();
             }
             catch (FailedConnectionException fc)
             {
-                AnsiConsole.WriteLine(fc.RootMessage());
+                console.WriteLine(fc.RootMessage());
                 throw;
             }
         }
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        console.Write(rule);
 
-        return ExitCode.Success;
+        return 0;
     }
 }

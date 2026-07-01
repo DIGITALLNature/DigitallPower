@@ -1,33 +1,22 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Organization;
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class RetrieveCurrentOrganizationExecutor : IFakeMessageExecutor
+public class RetrieveCurrentOrganizationExecutor : IOrganizationRequestFake
 {
-    public bool CanExecute(OrganizationRequest request)
-    {
-        return request is RetrieveCurrentOrganizationRequest;
-    }
+    public Type ForType => typeof(RetrieveCurrentOrganizationRequest);
 
-    public Type GetResponsibleRequestType()
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
     {
-        return typeof(RetrieveCurrentOrganizationRequest);
-    }
-
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        var typed = (RetrieveCurrentOrganizationRequest)request;
-
         var detail = new OrganizationDetail
         {
-            Endpoints = { },
             EnvironmentId = "any-unique-name",
             Geo = "EMEA",
             OrganizationId = Guid.NewGuid(),
@@ -39,14 +28,12 @@ public class RetrieveCurrentOrganizationExecutor : IFakeMessageExecutor
             UniqueName = "any-unique-name"
         };
 
-        var response = new RetrieveCurrentOrganizationResponse
+        return new RetrieveCurrentOrganizationResponse
         {
             Results =
             {
                 ["Detail"] = detail
             }
         };
-
-        return response;
     }
 }

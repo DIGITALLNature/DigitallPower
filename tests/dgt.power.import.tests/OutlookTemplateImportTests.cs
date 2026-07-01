@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ServiceModel;
@@ -9,39 +9,32 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FluentAssertions;
 using Microsoft.Crm.Sdk;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.import.tests;
 
 public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
 {
-    public OutlookTemplateImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContextBuilder<OutlookTemplateImport, ImportVerb> GetBuilder()
     {
         return base.GetBuilder()
-            .WithFakeMessageExecutor<QueryExpressionToFetchXmlRequest>(new QueryExpressionToFetchXmlExecutor());
+            .WithFakeMessageExecutor(new QueryExpressionToFetchXmlExecutor());
     }
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = "",
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
 
-    [Fact]
-    public void ShouldDisableSpecifiedOutlookTemplates()
+    [Test]
+    public async Task ShouldDisableSpecifiedOutlookTemplates()
     {
         var toBeDisabledOutlookTemplate = new SavedQuery(Guid.NewGuid())
         {
@@ -62,27 +55,27 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
 
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            DisabledOutlookTemplates = new[]
-            {
+            DisabledOutlookTemplates =
+            [
                 toBeDisabledOutlookTemplate.Name
-            }
+            ]
         });
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = configFile.Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         toBeDisabledOutlookTemplate = context.GetById<SavedQuery>(toBeDisabledOutlookTemplate.Id);
-        toBeDisabledOutlookTemplate.IsDefault.Should().BeFalse();
+        await Assert.That(toBeDisabledOutlookTemplate.IsDefault).IsFalse();
         toBeActivatedOutlookTemplate = context.GetById<SavedQuery>(toBeActivatedOutlookTemplate.Id);
-        toBeActivatedOutlookTemplate.IsDefault.Should().BeTrue();
+        await Assert.That(toBeActivatedOutlookTemplate.IsDefault).IsTrue();
     }
 
-    [Fact]
-    public void ShouldUpdateExistingOutlookTemplate()
+    [Test]
+    public async Task ShouldUpdateExistingOutlookTemplate()
     {
         var existingOutlookTemplate = new SavedQuery(Guid.NewGuid())
         {
@@ -108,31 +101,31 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
-                existingConfig,
-            }
+            OutlookTemplates =
+            [
+                existingConfig
+            ]
         });
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = configFile.Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         existingOutlookTemplate = context.GetSingle<SavedQuery>(x => x.Name == existingConfig.Name);
-        existingOutlookTemplate.IsDefault.Should().Be(existingConfig.IsDefault);
-        existingOutlookTemplate.FetchXml.Should().Be(existingConfig.FetchXml);
-        existingOutlookTemplate.IsQuickFindQuery.Should().BeFalse();
-        existingOutlookTemplate.QueryType.Should().Be(SavedQueryQueryType.OutlookTemplate);
-        existingOutlookTemplate.ReturnedTypeCode.Should().Be(existingConfig.Entity);
-        existingOutlookTemplate.Name.Should().Be(existingConfig.Name);
-        existingOutlookTemplate.Description.Should().StartWith(existingConfig.Description);
+        await Assert.That(existingOutlookTemplate.IsDefault).IsEqualTo(existingConfig.IsDefault);
+        await Assert.That(existingOutlookTemplate.FetchXml).IsEqualTo(existingConfig.FetchXml);
+        await Assert.That(existingOutlookTemplate.IsQuickFindQuery).IsFalse();
+        await Assert.That(existingOutlookTemplate.QueryType).IsEqualTo(SavedQueryQueryType.OutlookTemplate);
+        await Assert.That(existingOutlookTemplate.ReturnedTypeCode).IsEqualTo(existingConfig.Entity);
+        await Assert.That(existingOutlookTemplate.Name).IsEqualTo(existingConfig.Name);
+        await Assert.That(existingOutlookTemplate.Description).StartsWith(existingConfig.Description);
     }
 
-    [Fact]
-    public void ShouldCreateNewOutlookTemplate()
+    [Test]
+    public async Task ShouldCreateNewOutlookTemplate()
     {
 
 
@@ -151,31 +144,31 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
-                template,
-            }
+            OutlookTemplates =
+            [
+                template
+            ]
         });
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = configFile.Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var createdTemplate = context.GetSingle<SavedQuery>(x => x.Name == template.Name);
-        createdTemplate.IsDefault.Should().Be(template.IsDefault);
-        createdTemplate.FetchXml.Should().Be(template.FetchXml);
-        createdTemplate.IsQuickFindQuery.Should().BeFalse();
-        createdTemplate.QueryType.Should().Be(SavedQueryQueryType.OutlookTemplate);
-        createdTemplate.ReturnedTypeCode.Should().Be(template.Entity);
-        createdTemplate.Name.Should().Be(template.Name);
-        createdTemplate.Description.Should().StartWith(template.Description);
+        await Assert.That(createdTemplate.IsDefault).IsEqualTo(template.IsDefault);
+        await Assert.That(createdTemplate.FetchXml).IsEqualTo(template.FetchXml);
+        await Assert.That(createdTemplate.IsQuickFindQuery).IsFalse();
+        await Assert.That(createdTemplate.QueryType).IsEqualTo(SavedQueryQueryType.OutlookTemplate);
+        await Assert.That(createdTemplate.ReturnedTypeCode).IsEqualTo(template.Entity);
+        await Assert.That(createdTemplate.Name).IsEqualTo(template.Name);
+        await Assert.That(createdTemplate.Description).StartsWith(template.Description);
     }
 
-    [Fact]
-    public void ShouldSkipUpdateForExistingTemplate()
+    [Test]
+    public async Task ShouldSkipUpdateForExistingTemplate()
     {
         var existingOutlookTemplate = new SavedQuery(Guid.NewGuid())
         {
@@ -201,20 +194,20 @@ public class OutlookTemplateImportTests : ImportTestBase<OutlookTemplateImport>
         };
         var configFile = WriteConfigurationArtifact(new dto.SavedQuery
         {
-            OutlookTemplates = new[]
-            {
-                existingConfig,
-            }
+            OutlookTemplates =
+            [
+                existingConfig
+            ]
         });
 
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = configFile.Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var postOutlookTemplate = context.GetSingle<SavedQuery>(x => x.Id == existingOutlookTemplate.Id);
-        postOutlookTemplate.FetchXml.Should().Be(existingConfig.FetchXml);
+        await Assert.That(postOutlookTemplate.FetchXml).IsEqualTo(existingConfig.FetchXml);
     }
 }

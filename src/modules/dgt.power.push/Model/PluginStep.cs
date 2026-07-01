@@ -6,11 +6,13 @@ using System.Runtime.Serialization;
 using dgt.power.dataverse;
 
 #pragma warning disable CA1067
+#pragma warning disable CA1002 // PluginStepImages populated via .Add()/.AddRange() by AssemblyModelBuilder
 
 namespace dgt.power.push.Model;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 [DataContract]
-public class PluginStep : IEquatable<PluginStep>
+public sealed class PluginStep : IEquatable<PluginStep>
 {
     /// <summary>
     ///     Mode of plugin for this registration
@@ -56,12 +58,12 @@ public class PluginStep : IEquatable<PluginStep>
     ///     Attributes which atleast one needs contained in the target
     /// </summary>
     [DataMember(Name = "filter_attributes", IsRequired = false)]
-    public string[]? FilterAttributes { get; set; }
+    public IReadOnlyList<string>? FilterAttributes { get; set; }
 
     /// <summary>
     /// </summary>
     [DataMember(Name = "execution_order", IsRequired = false)]
-    public int ExecutionOrder { get; set; } = 100;
+    public int? ExecutionOrder { get; set; } = 100;
 
     [DataMember(Name = "plugin_step_imagess", IsRequired = false, EmitDefaultValue = false)]
     public List<PluginStepImage> PluginStepImages { get; init; } = new();
@@ -81,11 +83,15 @@ public class PluginStep : IEquatable<PluginStep>
             return true;
         }
 
-        return ((PrimaryEntityName == "none" && other.PrimaryEntityName == "none") || PrimaryEntityName == other.PrimaryEntityName) &&
-               Mode == other.Mode &&
-               MessageName == other.MessageName &&
-               Stage == other.Stage;
+        return HasSamePrimaryEntity(other)
+               && Mode == other.Mode
+               && MessageName == other.MessageName
+               && Stage == other.Stage;
     }
+
+    private bool HasSamePrimaryEntity(PluginStep other) =>
+        (PrimaryEntityName == "none" && other.PrimaryEntityName == "none")
+        || PrimaryEntityName == other.PrimaryEntityName;
 
     #region IgnoreDataMember
 

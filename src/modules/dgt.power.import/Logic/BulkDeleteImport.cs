@@ -11,17 +11,21 @@ using dgt.power.import.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.import.Logic;
 
-public sealed class BulkDeleteImport : BaseImport
+public sealed class BulkDeleteImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public BulkDeleteImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
-        connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -34,7 +38,7 @@ public sealed class BulkDeleteImport : BaseImport
         }
 
         //anything to do?
-        if (!bulkDeletes.Deletes.Any())
+        if (bulkDeletes.Deletes.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -133,12 +137,12 @@ public sealed class BulkDeleteImport : BaseImport
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = create.Name,
-            QuerySet = new[] { response.Query },
+            QuerySet = [response.Query],
             StartDateTime = startTime,
             RecurrencePattern = create.RecurrencePattern,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
+            ToRecipients = [],
+            CCRecipients = []
         };
         Tracer.Log(
             $"create bulk delete '{create.Name}'; StartTime:{create.RecurrenceStartTime}; Pattern:{create.RecurrencePattern}",
@@ -236,7 +240,7 @@ public sealed class BulkDeleteImport : BaseImport
         var data = bulkDeleteJob.Data!;
         var start = data.IndexOf("<string>&lt;fetch", StringComparison.InvariantCultureIgnoreCase) + 8;
         var end = data.IndexOf("fetch&gt;</string>", StringComparison.InvariantCultureIgnoreCase) + 9;
-        var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<").Replace("&gt;", ">");
+        var fetchXml = data.Substring(start, end - start).Replace("&lt;", "<", StringComparison.Ordinal).Replace("&gt;", ">", StringComparison.Ordinal);
         var fetchXmlToQueryExpressionRequest = new FetchXmlToQueryExpressionRequest
         {
             FetchXml = fetchXml
@@ -246,12 +250,12 @@ public sealed class BulkDeleteImport : BaseImport
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = bulkDeleteJob.Name,
-            QuerySet = new[] { fetchXmlToQueryExpressionResponse.Query },
+            QuerySet = [fetchXmlToQueryExpressionResponse.Query],
             StartDateTime = startTime,
             RecurrencePattern = recurrencePattern,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
+            ToRecipients = [],
+            CCRecipients = []
         };
         if (Connection.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
                 out _))

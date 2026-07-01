@@ -5,31 +5,24 @@ using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
-using Spectre.Console;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class ListProfileCommandTests : ProfileTestsBase<ListProfileCommand, ProfileSettings>
 {
-    public ListProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldListProfiles()
+    [Test]
+    public async Task ShouldListProfiles()
     {
         const string identity1 = "FIRST";
         AddIdentity(identity1, "connection");
         const string identity2 = "SECOND";
         AddIdentity(identity2, "connection");
 
-        AnsiConsole.Record();
+        await GetContext().Execute(new ProfileSettings()).Succeed();
 
-        GetContext().Execute(new ProfileSettings()).Should().Succeed();
-
-        var consoleOutput = AnsiConsole.ExportText();
-        consoleOutput.Should().Contain(identity1);
-        consoleOutput.Should().Contain(identity2);
+        var consoleOutput = TestConsole.Output;
+        await Assert.That(consoleOutput).Contains(identity1);
+        await Assert.That(consoleOutput).Contains(identity2);
     }
 }

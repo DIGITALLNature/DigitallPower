@@ -1,0 +1,86 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+
+// ReSharper disable All
+namespace {{ NameSpace }}
+{
+{%- for action in Actions %}
+
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
+    [RequestProxy("{{ action.LogicalName }}")]
+    public class {{ action.LogicalName | camelcase }}Request : OrganizationRequest
+    {
+        public {{ action.LogicalName | camelcase }}Request()
+        {
+            RequestName = "{{ action.LogicalName }}";
+        }
+
+        #region consts
+        public const string RequestLogicalName = "{{ action.LogicalName }}";
+        #endregion
+{%- if action.InParameters.size > 0 %}
+
+        #region InParameters
+        public struct InParameters
+        {
+{%- for param in action.InParameters %}
+            public const string {{ param.Name | sanitize | camelcase | maskoverrides }} = "{{ param.UniqueName }}";
+{%- endfor %}
+        }
+        #endregion
+{%- endif %}
+{%- for param in action.InParameters %}
+
+        public {{ param.Type }} {{ param.Name | sanitize | camelcase | maskoverrides }}
+        {
+            get
+            {
+                if (base.Parameters.Contains("{{ param.UniqueName }}"))
+                {
+                    return ({{ param.Type }})base.Parameters["{{ param.UniqueName }}"];
+                }
+                return default({{ param.Type }});
+            }
+            set
+            {
+                base.Parameters["{{ param.UniqueName }}"] = value;
+            }
+        }
+{%- endfor %}
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
+    [ResponseProxy("{{ action.LogicalName }}")]
+    public class {{ action.LogicalName | camelcase }}Response : OrganizationResponse
+    {
+{%- if action.OutParameters.size > 0 %}
+        #region OutParameters
+        public struct OutParameters
+        {
+{%- for param in action.OutParameters %}
+            public const string {{ param.Name | sanitize | camelcase }} = "{{ param.UniqueName }}";
+{%- endfor %}
+        }
+        #endregion
+{%- endif %}
+{%- for param in action.OutParameters %}
+
+        public {{ param.Type }} {{ param.Name | sanitize | camelcase }}
+        {
+            get
+            {
+                if (base.Results.Contains("{{ param.UniqueName }}"))
+                {
+                    return ({{ param.Type }})base.Results["{{ param.UniqueName }}"];
+                }
+                return default({{ param.Type }});
+            }
+        }
+{%- endfor %}
+    }
+{%- endfor %}
+}

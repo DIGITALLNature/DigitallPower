@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -15,28 +15,46 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="3.4.0" />
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="3.4.2" />
-    <PackageReference Include="FakeXrmEasy.Messages.v9" Version="3.4.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageReference Include="xunit" Version="2.8.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="DiffPlex" Version="1.9.0" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="TUnit" Version="1.56.35" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
+    <ProjectReference Include="..\..\src\dgt.power.common\dgt.power.common.csproj" />
+    <ProjectReference
+      Include="..\..\src\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
     <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\TypescriptCommand\dgt_test_table.main.form.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\model.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\model.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateSdkMessageNames\sdkmessagenames.d.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None
+      Update="Resources\TypescriptCommand\TestScenarios\GenerateGlobalOptionSets\optionsetvalues.d.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

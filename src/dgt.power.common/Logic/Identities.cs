@@ -7,7 +7,7 @@ namespace dgt.power.common.Logic;
 
 public class Identities : IIdentities
 {
-    [JsonPropertyName("Storage")] public Dictionary<string, Identity> IdentityStore { get; set; } = new();
+    [JsonPropertyName("Storage")] public Dictionary<string, Identity> IdentityStore { get; init; } = new();
 
     [JsonPropertyName("Current")] public string Current { get; set; } = string.Empty;
 
@@ -17,38 +17,44 @@ public class Identities : IIdentities
 
     [JsonIgnore] public string CurrentConnectionString => IdentityStore[Current].ConnectionString;
 
-    [JsonIgnore] public string SecurityProtocol => IdentityStore[Current].SecurityProtocol;
-
-    [JsonIgnore] public bool Insecure => IdentityStore[Current].Insecure;
-
 
     public void Upsert(string key, Identity identity)
     {
-        IdentityStore[key] = identity;
-        Current = key;
+        ArgumentNullException.ThrowIfNull(key);
+        var normalizedKey = key.ToUpperInvariant();
+        IdentityStore[normalizedKey] = identity;
+        Current = normalizedKey;
     }
 
     public void Remove(string key)
     {
-        IdentityStore.Remove(key);
+        ArgumentNullException.ThrowIfNull(key);
+        var normalizedKey = key.ToUpperInvariant();
+        IdentityStore.Remove(normalizedKey);
 
-        if (Current == key)
+        if (Current == normalizedKey)
         {
             Current = string.Empty;
         }
     }
 
-    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key,i.Value is TokenIdentity?  "Token" : "Classic"));
+    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key, i.Value is TokenIdentity ? "Token" : "Classic"));
 
     public void SetCurrent(string key)
     {
-        if (!IdentityStore.ContainsKey(key))
+        ArgumentNullException.ThrowIfNull(key);
+        var normalizedKey = key.ToUpperInvariant();
+        if (!IdentityStore.ContainsKey(normalizedKey))
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        Current = key;
+        Current = normalizedKey;
     }
 
-    public bool Contains(string key) => IdentityStore.ContainsKey(key);
+    public bool Contains(string key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        return IdentityStore.ContainsKey(key.ToUpperInvariant());
+    }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -9,29 +10,35 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal class CrmConnector: IConnector
+internal sealed partial class CrmConnector: IConnector
 {
     private readonly string _connectionString;
+    private readonly IAnsiConsole _console;
 
-    internal CrmConnector(string connectionString) => _connectionString = connectionString;
-
-    public IOrganizationServiceAsync2 CreateOrganizationServiceProxy()
+    internal CrmConnector(string connectionString, IAnsiConsole? console = null)
     {
-        if (!Regex.IsMatch(_connectionString, "SkipDiscovery=True", RegexOptions.IgnoreCase))
+        _connectionString = connectionString;
+        _console = console ?? AnsiConsole.Console;
+    }
+
+    public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
+    {
+        if (!SkipDiscoveryRegex().IsMatch(_connectionString))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
         }
 
-        if (!Regex.IsMatch(_connectionString, "RequireNewInstance=True", RegexOptions.IgnoreCase))
+        if (!RequireNewInstanceRegex().IsMatch(_connectionString))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
         }
 
         var serviceClient = new ServiceClient(_connectionString);
 
-        return GetOrganizationService(serviceClient);
+        return Task.FromResult(GetOrganizationService(serviceClient));
     }
 
+    [SuppressMessage("Performance", "CA1859:Verwenden Sie nach Möglichkeit konkrete Typen, um die Leistung zu verbessern.")]
     private static IOrganizationServiceAsync2 GetOrganizationService(ServiceClient serviceClient)
     {
         if (!serviceClient.IsReady)
@@ -41,4 +48,9 @@ internal class CrmConnector: IConnector
 
         return serviceClient;
     }
+
+    [GeneratedRegex("SkipDiscovery=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex SkipDiscoveryRegex();
+    [GeneratedRegex("RequireNewInstance=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex RequireNewInstanceRegex();
 }

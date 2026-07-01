@@ -6,10 +6,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
-using Xunit.Abstractions;
 
 namespace dgt.power.tests;
 
@@ -17,14 +15,10 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     where TCommand : class, ICommand<TCommandSettings>
     where TCommandSettings : CommandSettings
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-    protected IAnsiConsole TestConsole { get; } = new TestConsole();
+    protected TestConsole TestConsole { get; } = new();
 
-    public CommandTestsBase(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-        AnsiConsole.Console = TestConsole;
-    }
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}};
+
 
     protected virtual string ResourceDirectory => Path.Combine("Resources", typeof(TCommand).Name);
 
@@ -37,13 +31,12 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     /// Creates an file from an artifact. Uses System.Text.Json to serialize the artifact.
     /// </summary>
     /// <param name="artifact">The artifact to write to a file.</param>
-    /// <param name="fileName">The name of the artifact file.</param>
     /// <typeparam name="TArtifact">The type of the artifact.</typeparam>
     /// <returns>The file info for the the artifact.</returns>
     protected FileInfo WriteConfigurationArtifact<TArtifact>(TArtifact artifact)
     {
         var json = Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(artifact,
-            new JsonSerializerOptions {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}}))).Trim('"');
+            _jsonSerializerOptions))).Trim('"');
 
         var fileName = $"{Guid.NewGuid():N}.json";
         var artifactFqn = Path.Combine(Directory.GetCurrentDirectory(), ArtifactDirectory);
@@ -97,7 +90,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     }
 
     protected virtual CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder() =>
-        new(_testOutputHelper);
+        new CommandTestContextBuilder<TCommand, TCommandSettings>().WithAnsiConsole(TestConsole);
 
     protected virtual CommandTestContext<TCommand, TCommandSettings> GetContext() =>
         GetBuilder()
@@ -118,9 +111,9 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
         var artifactDirectory = ArtifactDirectory.TrimEnd('/');
         if (Directory.Exists(artifactDirectory))
         {
-
             Directory.Delete(artifactDirectory, true);
         }
 
+        GC.SuppressFinalize(this);
     }
 }

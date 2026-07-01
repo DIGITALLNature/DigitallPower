@@ -7,13 +7,19 @@ using System.Text.RegularExpressions;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.export.Base;
 
-public abstract class BaseExport : PowerLogic<ExportVerb>
+public abstract class BaseExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : PowerLogic<ExportVerb>(tracer,
+        connection, configResolver, console)
 {
-    private readonly IFileService _fileService;
-
     private readonly JsonSerializerOptions _options = new()
     {
         Converters =
@@ -22,17 +28,11 @@ public abstract class BaseExport : PowerLogic<ExportVerb>
         }
     };
 
-    protected BaseExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService) : base(tracer,
-        connection, configResolver)
-    {
-        _fileService = fileService;
-    }
-
     protected string GetJson(object obj) => Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(obj, _options))).Trim('"');
 
     protected string HandleExportFile(string fileDir, string fileName, string content) =>
-        _fileService.ExportFile(fileDir, fileName, content);
+        fileService.ExportFile(fileDir, fileName, content);
 
     protected string HandleExportFile(string fileDir, string fileName, byte[] content) =>
-        _fileService.ExportFile(fileDir, fileName, content);
+        fileService.ExportFile(fileDir, fileName, content);
 }

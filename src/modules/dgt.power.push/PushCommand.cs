@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -22,19 +21,21 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
     private readonly IOrganizationService _connection;
     private readonly WebresourcesProcessor _webresourcesProcessor;
     private readonly ITracer _tracer;
+    private readonly IAnsiConsole _console;
 
-    public PushCommand(ITracer tracer, IConfigResolver configResolver, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor)
+    public PushCommand(ITracer tracer, IOrganizationService connection, WebresourcesProcessor webresourcesProcessor, IAnsiConsole console)
     {
         _tracer = tracer;
         _connection = connection;
         _webresourcesProcessor = webresourcesProcessor;
+        _console = console;
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] PushVerb settings)
+    protected override int Execute(CommandContext context, PushVerb settings, CancellationToken cancellationToken)
     {
         _tracer.Start(this);
 
-        AnsiConsole.Status()
+        _console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Connect to XRM...", ctx =>
@@ -57,7 +58,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 }
                 else
                 {
-                    AnsiConsole.MarkupLine("[Red] File or Folder not existing - aborting[/]");
+                    _console.MarkupLine("[Red] File or Folder not existing - aborting[/]");
                 }
 
                 ctx.Status("Finishing");
@@ -68,18 +69,25 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
 
     private void ProcessAssemblyFile(PushVerb settings, StatusContext ctx)
     {
-        List<Assembly?> assemblies;
-        var modelBuilder = new AssemblyModelBuilder(_connection);
-        var processor = new AssemblyProcessor(_connection);
+        IReadOnlyList<Assembly?> assemblies;
+        Guid? currentPackageId = null;
+        using var modelBuilder = new AssemblyModelBuilder(_connection, _console);
+        using var processor = new AssemblyProcessor(_connection, _console);
 
         var solutionPrefix = processor.GetSolutionPrefix(settings.Solution);
 
         if (settings.Target.EndsWith(".nupkg", StringComparison.InvariantCultureIgnoreCase))
         {
             // Dependent Plugin
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Package found - unpack");
 
             var packageLocal = modelBuilder.BuildPackageFromFile(settings.Target);
+            if (packageLocal == null)
+            {
+                _console.MarkupLine("[red]Failed to read package metadata - aborting[/]");
+                return;
+            }
+
             var packageCrm = modelBuilder.BuildPackageFromCrm(packageLocal.Name, packageLocal.Version);
 
             if (packageCrm.State == AssemblyState.Create)
@@ -87,7 +95,7 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 ctx.Status("CreatePluginPackage");
                 if (solutionPrefix == "new")
                 {
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
+                    _console.MarkupLine(CultureInfo.InvariantCulture, "[yellow] Solution not set or found - Package will have prefix 'new' [/]");
                 }
 
                 packageCrm = processor.CreatePluginPackage(packageLocal, solutionPrefix, settings.Solution);
@@ -99,34 +107,36 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
             }
 
             assemblies = modelBuilder.BuildAssemblyFromPackage(packageCrm);
+            currentPackageId = packageCrm.Id;
         }
         else
         {
-            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location!)!,"*.dll")));
-            var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            var env = new List<string>(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(),"*.dll").Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PushCommand).Assembly.Location)!,"*.dll")));
+            using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
             assemblies = new List<Assembly?> { modelBuilder.BuildAssemblyFromDll(settings.Target,loadContext) };
         }
 
 
         foreach (var localAssembly in assemblies)
         {
-            if (localAssembly == default(Assembly))
+            if (localAssembly == null)
             {
                 continue;
             }
 
             if (localAssembly.Type == AssemblyType.Undefined)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] plugins or workflows - aborting", localAssembly.Name, localAssembly.Version);
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] plugins or workflows - aborting", localAssembly.Name, localAssembly.Version);
                 continue;
             }
 
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", localAssembly.Name, localAssembly.Version);
 
             ctx.Status("BuildFromCrm");
             var crmAssembly = modelBuilder.BuildAssemblyFromCrm(localAssembly.Name, localAssembly.Version);
+            var state = crmAssembly.State;
 
-            if (crmAssembly.State == AssemblyState.Create || (crmAssembly.State == AssemblyState.Upgrade && crmAssembly.Type.HasFlag(AssemblyType.Workflow)))
+            if (crmAssembly.State == AssemblyState.Create || crmAssembly.State == AssemblyState.Upgrade)
             {
                 ctx.Status("CreatePluginAssembly");
                 crmAssembly = processor.CreatePluginAssembly(localAssembly, settings.Solution);
@@ -143,10 +153,25 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                 processor.UpsertAndPurgeWorkflowTypes(localAssembly, crmAssembly);
             }
 
+            // Link managed identity if attribute is present
+            if (!string.IsNullOrWhiteSpace(localAssembly.ManagedIdentityClientId))
+            {
+                ctx.Status("LinkManagedIdentity");
+                processor.LinkManagedIdentityToAssembly(crmAssembly.Id, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
+
+                // For package deployments, also link the managed identity to the package entity itself
+                if (currentPackageId.HasValue)
+                {
+                    ctx.Status("LinkManagedIdentityToPackage");
+                    processor.LinkManagedIdentityToPackage(currentPackageId.Value, localAssembly.ManagedIdentityClientId, localAssembly.ManagedIdentityTenantId);
+                    currentPackageId = null; // only link once per package (first assembly with the attribute wins)
+                }
+            }
+
             if (localAssembly.Type.HasFlag(AssemblyType.Plugin))
             {
                 ctx.Status("UpsertAndPurgePluginTypes");
-                crmAssembly = processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly, settings.Solution);
+                crmAssembly = processor.UpsertAndPurgePluginTypes(localAssembly, crmAssembly);
 
                 if (localAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
                 {
@@ -154,6 +179,61 @@ public class PushCommand : Command<PushVerb>, IPowerLogic
                     crmAssembly = processor.UpsertAndPurgePluginSteps(localAssembly, crmAssembly, settings.Solution);
                     ctx.Status("UpsertAndPurgePluginStepImages");
                     processor.UpsertAndPurgePluginStepImages(localAssembly, crmAssembly);
+                }
+            }
+
+            if (settings.DeleteOnUpgrade  && state == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin))
+            {
+                ctx.Status("Build outdated assembly references");
+                var outdated = modelBuilder.BuildOutdatedAssemblyContentFromCrm(localAssembly.Name);
+
+                // Migrate steps to new assembly before deleting old one (non-PowerPlugin only,
+                // PowerPlugins re-create steps from attributes above)
+                if (!localAssembly.Type.HasFlag(AssemblyType.PowerPlugin) && outdated.Count > 0)
+                {
+                    ctx.Status("Migrate plugin steps to new assembly");
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate plugin steps from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigratePluginSteps(outdated, crmAssembly);
+                }
+
+                // Custom APIs must always be migrated when deleting old assembly to prevent broken references.
+                // This applies to ALL assembly types including PowerPlugins (covers manually linked Custom APIs
+                // that aren't handled by the attribute-based CreatePluginType linking).
+                if (outdated.Count > 0)
+                {
+                    ctx.Status("Migrate Custom API references to new assembly");
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate Custom API references from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigrateCustomApis(outdated, crmAssembly);
+                }
+
+                ctx.Status("Purge outdated plugin types");
+                foreach (var assemblyContent in outdated)
+                {
+                    foreach (var pluginType in assemblyContent.PluginTypes)
+                    {
+                        processor.DeletePluginType(pluginType);
+                    }
+
+                    processor.DeletePluginAssembly(assemblyContent.Id);
+                }
+            }
+            else if (!settings.NoMigrateCustomApis && state == AssemblyState.Upgrade && localAssembly.Type.HasFlag(AssemblyType.Plugin)
+                     && !localAssembly.Type.HasFlag(AssemblyType.PowerPlugin))
+            {
+                // Migrate Custom APIs by default on Upgrade (even without --delete-on-upgrade)
+                // PowerPlugins handle Custom API linking via CreatePluginType already
+                ctx.Status("Migrate Custom API references to new assembly");
+                var outdated = modelBuilder.BuildOutdatedAssemblyContentFromCrm(localAssembly.Name);
+                if (outdated.Count > 0)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Migrate Custom API references from outdated assemblies to [bold green]{0} ({1})[/]",
+                        localAssembly.Name, localAssembly.Version);
+                    processor.MigrateCustomApis(outdated, crmAssembly);
                 }
             }
         }

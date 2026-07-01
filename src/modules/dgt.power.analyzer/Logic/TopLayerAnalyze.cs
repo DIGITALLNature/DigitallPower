@@ -5,22 +5,26 @@ using System.Diagnostics;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
- using Spectre.Console;
+using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class TopLayerAnalyze : BaseAnalyze
+public sealed class TopLayerAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public TopLayerAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(AnalyzeVerb args)
+    private bool InvokeCore(AnalyzeVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -51,12 +55,12 @@ public sealed class TopLayerAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             var components = GetSolutionComponents(context, uniqueName);
 
-            var table = new Table().Centered();
-            AnsiConsole.Live(table)
+            var table = new Table();
+            Console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");

@@ -8,32 +8,36 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Queue = dgt.power.dataverse.Queue;
 using RoutingRuleItem = dgt.power.dataverse.RoutingRuleItem;
 
 namespace dgt.power.import.Logic;
 
-public sealed class RoutingRuleConfigImport : BaseImport
+public sealed class RoutingRuleConfigImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public RoutingRuleConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(
-        tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<RoutingRuleConfigs>(args.FileDir, fileName, out var rules))
+        if (!ConfigResolver.TryGetConfigFile<List<RoutingRuleConfig>>(args.FileDir, fileName, out var rules))
         {
             return Tracer.NotConfigured(this);
         }
 
         //anything to do?
-        if (!rules.Any())
+        if (rules.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -119,7 +123,7 @@ public sealed class RoutingRuleConfigImport : BaseImport
     }
 
     private bool HandleRoutingRuleItem(DataContext context, RoutingRuleConfig rule,
-        IQueryable<RoutingRuleItem> ruleItemsInTarget, dto.RoutingRuleItem item, RoutingRule ruleInTarget,
+        IQueryable<RoutingRuleItem> ruleItemsInTarget, common.DTO.RoutingRuleItem item, RoutingRule ruleInTarget,
         ref bool isDeactivatedToUpdate)
     {
         var ruleItemInTarget =

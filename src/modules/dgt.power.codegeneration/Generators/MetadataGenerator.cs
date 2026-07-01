@@ -7,21 +7,15 @@ using System.Text;
 using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators;
 
-public class MetadataGenerator : IMetadataGenerator
+public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole console) : IMetadataGenerator
 {
-    private readonly IMetadataService _metadataService;
-
-    public MetadataGenerator(IMetadataService metadataService)
-    {
-        _metadataService = metadataService;
-    }
-
     public void PrepareDirectory(CodeGenerationVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -44,21 +38,21 @@ public class MetadataGenerator : IMetadataGenerator
         }
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        foreach (var entity in config.Entities)
+        foreach (var entity in config.Entities.Names)
         {
-            var metadata = _metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new DataContractSerializer(typeof(EntityMetadata));
             var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8};
 
             using var file = XmlWriter.Create(fileName, settings);
-            AnsiConsole.MarkupLine($"Creating File: [bold green]{fileName}[/]");
+            console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }
     }

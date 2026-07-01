@@ -1,8 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Runtime.Serialization;
-
 namespace dgt.power.common.Exceptions;
 
 [Serializable]
@@ -12,12 +10,15 @@ public class MissingConnectionException : AbstractPowerException
     {
     }
 
-    public MissingConnectionException(Exception innerException) : base(ErrorMessage, innerException)
+    public MissingConnectionException(string message) : base(message)
     {
     }
 
-    protected MissingConnectionException(SerializationInfo serializationInfo, StreamingContext streamingContext) :
-        base(serializationInfo, streamingContext)
+    public MissingConnectionException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    public MissingConnectionException(Exception innerException) : base(ErrorMessage, innerException)
     {
     }
 

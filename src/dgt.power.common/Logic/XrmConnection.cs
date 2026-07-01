@@ -1,101 +1,133 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Net;
 using dgt.power.common.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public class XrmConnection(IProfileManager profileManager, IConfiguration configuration)
+public class XrmConnection(IProfileManager profileManager, IConfiguration configuration, IAnsiConsole console)
     : IXrmConnection
 {
-    public IOrganizationService Connect()
+    public async Task<IOrganizationServiceAsync2> ConnectAsync()
     {
         var xrmConfiguration = configuration.GetSection("xrm").GetChildren().ToList();
 
+        var profile = configuration.GetValue<string>("profile");
+
         if (xrmConfiguration.Count != 0)
         {
-            return ConnectWithConfiguration();
+            return await ConnectWithConfigurationAsync();
+        }
+
+        if (!string.IsNullOrEmpty(profile))
+        {
+            return await ConnectWithProfileNameAsync(profile);
         }
 
         if (profileManager.CurrentIdentity != null)
         {
-            return ConnectWithProfile(profileManager.CurrentIdentity);
+            return await ConnectWithProfileAsync(profileManager.CurrentIdentity);
         }
 
         throw new MissingConnectionException();
     }
 
-    private  IOrganizationService ConnectWithConfiguration()
+    /// <inheritdoc/>
+    public async Task<bool> CheckAuthAsync()
     {
-        var protocol = configuration.GetValue<SecurityProtocolType>("xrm:securityprotocol");
-
-        ServicePointManager.SecurityProtocol = protocol;
-        if (configuration.GetValue<bool>("xrm:insecure"))
+        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
         {
-#pragma warning disable CA5359
-#pragma warning disable S4830
-            ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-#pragma warning restore S4830
-#pragma warning restore CA5359
+            // Classic connection string profiles do not use MSAL — no interactive login required.
+            return true;
         }
 
-        AnsiConsole.MarkupLine("Connect to given configuration.");
-        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection"));
+        var connector = new TokenConnector(tokenIdentity, profileManager, console);
+        return await connector.TryAcquireTokenSilentAsync();
+    }
+
+    private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
+    {
+        console.MarkupLine("Connect to given configuration.");
+        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection")!, console);
         try
         {
-            return connector.CreateOrganizationServiceProxy();
+            return await connector.CreateOrganizationServiceProxyAsync();
         }
+#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
         catch (Exception e)
         {
             throw new FailedConnectionException("xrm:connection", e);
         }
+#pragma warning restore CA1031
     }
 
-    private IOrganizationService ConnectWithProfile(Identity identity)
+    public async Task<IOrganizationServiceAsync2> ConnectWithProfileNameAsync(string profileName)
     {
-        Enum.TryParse(identity.SecurityProtocol, true, out SecurityProtocolType value);
-        ServicePointManager.SecurityProtocol = value;
-        if (identity.Insecure)
+        ArgumentNullException.ThrowIfNull(profileName);
+        var identities = profileManager.LoadIdentities();
+        if (!identities.Contains(profileName.ToUpperInvariant()))
         {
-#pragma warning disable CA5359
-#pragma warning disable S4830
-            ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-#pragma warning restore S4830
-#pragma warning restore CA5359
+            throw new MissingConnectionException($"Profile {profileName} not found!");
         }
 
+        identities.SetCurrent(profileName.ToUpperInvariant());
+        return await ConnectWithProfileAsync(profileManager.CurrentIdentity!);
+    }
+
+    private async Task<IOrganizationServiceAsync2> ConnectWithProfileAsync(Identity identity)
+    {
         IConnector connector;
         if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
-            AnsiConsole.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
-            connector = new TokenConnector(tokenIdentity, profileManager);
+            console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
+            connector = new TokenConnector(tokenIdentity, profileManager, console, nonInteractive: IsNonInteractive());
         }
         else
         {
-            AnsiConsole.MarkupLine($"Connect to {profileManager.Current} via classic connection");
-            connector = new CrmConnector(identity.ConnectionString);
+            console.MarkupLine($"Connect to {profileManager.Current} via classic connection");
+            connector = new CrmConnector(identity.ConnectionString, console);
         }
 
         try
         {
-            var service = connector.CreateOrganizationServiceProxy();
-            CheckWhoAmI(service);
+            var service = await connector.CreateOrganizationServiceProxyAsync();
+            await CheckWhoAmIAsync(service);
             return service;
         }
+#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
         catch (Exception exception)
         {
             throw new FailedConnectionException(profileManager.Current, exception);
         }
+#pragma warning restore CA1031
     }
 
-    private static void CheckWhoAmI(IOrganizationService service)
+    private async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
     {
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        AnsiConsole.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+        var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest())).UserId;
+        console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> when the caller has requested non-interactive mode via either:
+    /// <list type="bullet">
+    ///   <item><description><c>--non-interactive true</c> CLI flag (passed through IConfiguration)</description></item>
+    ///   <item><description><c>DGTP_NON_INTERACTIVE=true</c> environment variable</description></item>
+    /// </list>
+    /// </summary>
+    private bool IsNonInteractive()
+    {
+        if (configuration.GetValue<bool>("non-interactive"))
+        {
+            return true;
+        }
+
+        var envVar = Environment.GetEnvironmentVariable("DGTP_NON_INTERACTIVE");
+        return string.Equals(envVar, "true", StringComparison.OrdinalIgnoreCase)
+               || envVar == "1";
     }
 }

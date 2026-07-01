@@ -1,0 +1,10 @@
+// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
+/* eslint-disable */
+
+declare namespace XrmMetadata {
+    const enum SdkMessageNames {
+    {%- for sdkMessage in SdkMessages  %}
+        {{ sdkMessage.Name  }} = "{{ sdkMessage.Message }}",
+    {%- endfor %}
+    }
+}

@@ -2,10 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.common.Commands;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -14,145 +12,166 @@ using dgt.power.maintenance.Model.Settings;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
 
-public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
+public class ExportCarrierInfo(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : PowerLogic<CarrierInfoSettings>(tracer, connection, configResolver, console)
 {
-    public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4uCarrier.EntityLogicalName}' or  '{DgtCarrier.EntityLogicalName}' isn't installed in the current environment.";
-    private readonly IFileService _fileService;
+    private const string Ec4UCarrierEntityName = "ec4u_carrier";
+    private const string DgtCarrierEntityName = "dgt_carrier";
 
-    public ExportCarrierInfo(IOrganizationService organizationService, IConfigResolver configResolver, IFileService fileService) : base(
-        organizationService, configResolver)
-    {
-        _fileService = fileService;
-    }
+    public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4UCarrierEntityName}' or  '{DgtCarrierEntityName}' isn't installed in the current environment.";
 
-    public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] CarrierInfoSettings settings)
+    protected override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
     {
-        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
-            LogicalName = DgtCarrier.EntityLogicalName
+            LogicalName = DgtCarrierEntityName
         }, out _);
 
-        var isSuccessfulEc4u = !isSuccessfulDgt && OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulEc4U = !isSuccessfulDgt && Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4uCarrier.EntityLogicalName
+            LogicalName = Ec4UCarrierEntityName
         }, out _);
 
-        return (isSuccessfulDgt || isSuccessfulEc4u)
+        return isSuccessfulDgt || isSuccessfulEc4U
             ? base.Validate(context, settings)
             : ValidationResult.Error(ValidationErrorMessage);
     }
 
-    public override ExitCode Execute(CarrierInfoSettings settings)
+    protected override Task<bool> InvokeAsync(CarrierInfoSettings settings, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(settings));
+
+    private bool InvokeCore(CarrierInfoSettings settings)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
+        Tracer.Start(this);
 
-        var isSuccessfulOld = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulOld = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4uCarrier.EntityLogicalName
+            LogicalName = Ec4UCarrierEntityName
         }, out _);
 
-        var isSuccessfulDgt = OrganizationService.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
+        var isSuccessfulDgt = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {
             EntityFilters = EntityFilters.Entity,
-            LogicalName = DgtCarrier.EntityLogicalName
+            LogicalName = DgtCarrierEntityName
         }, out _);
 
-        List<Ec4uCarrier> carriers = new List<Ec4uCarrier>();
-        if (isSuccessfulOld)
+        List<CarrierRecord> carriers;
+        if (isSuccessfulDgt)
         {
-            carriers = DataContext.Ec4uCarrierSet
-                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
-                .OrderBy(x => x.Ec4uCarTransportOrderNo)
-                .Select(x => new Ec4uCarrier
-                {
-                    Id = x.Id,
-                    Ec4uCarrierId = x.Ec4uCarrierId,
-                    Ec4uCarReference = x.Ec4uCarReference,
-                    Ec4uCarSolutionversion = x.Ec4uCarSolutionversion,
-                    Ec4uCarSolutionid = x.Ec4uCarSolutionid,
-                    Ec4uCarSolutionuniquename = x.Ec4uCarSolutionuniquename,
-                    Ec4uCarSolutionfriendlyname = x.Ec4uCarSolutionfriendlyname,
-                    Ec4uCarTransportOrderNo = x.Ec4uCarTransportOrderNo
-                })
-                .ToList();
+            carriers = RetrieveCarriers(DgtCarrierEntityName, "dgt_carrierid", "dgt_reference",
+                "dgt_solutionversion", "dgt_solutionid", "dgt_solutionuniquename",
+                "dgt_solutionfriendlyname", "dgt_transport_order_no");
+        }
+        else if (isSuccessfulOld)
+        {
+            carriers = RetrieveCarriers(Ec4UCarrierEntityName, "ec4u_carrierid", "ec4u_car_reference",
+                "ec4u_car_solutionversion", "ec4u_car_solutionid", "ec4u_car_solutionuniquename",
+                "ec4u_car_solutionfriendlyname", "ec4u_car_transport_order_no");
+        }
+        else
+        {
+            carriers = [];
         }
 
-        if(isSuccessfulDgt)
+        if (carriers.Count == 0)
         {
-            carriers = DataContext.DgtCarrierSet
-                .Where(x => x.Statecode!.Value == Ec4uCarrier.Options.Statecode.Active)
-                .OrderBy(x => x.DgtTransportOrderNo)
-                .Select(x => new Ec4uCarrier
-                {
-                    Id = x.Id,
-                    Ec4uCarrierId = x.DgtCarrierId,
-                    Ec4uCarReference = x.DgtReference,
-                    Ec4uCarSolutionversion = x.DgtSolutionversion,
-                    Ec4uCarSolutionid = x.DgtSolutionid,
-                    Ec4uCarSolutionuniquename = x.DgtSolutionuniquename,
-                    Ec4uCarSolutionfriendlyname = x.DgtSolutionfriendlyname,
-                    Ec4uCarTransportOrderNo = x.DgtTransportOrderNo
-                })
-                .ToList();
+            Console.MarkupLine("[red]No active carrier[/]");
+            return Tracer.End(this, false);
         }
 
-        if (!carriers.Any())
+        using var dataContext = new DataContext(Connection);
+        var carrierInfo = new List<Carrier>();
+        foreach (var carrier in carriers)
         {
-            AnsiConsole.MarkupLine("[red]No active carrier[/]");
-            return ExitCode.Error;
+            if (!IsCarrierValid(carrier))
+            {
+                continue;
+            }
+
+            var solutionLookup = GetSolution(dataContext, carrier);
+            if (solutionLookup == null)
+            {
+                continue;
+            }
+
+            carrierInfo.Add(ToCarrierInfo(solutionLookup, carrier));
         }
 
-        var carrierInfo = carriers
-            .Where(IsCarrierValid)
-            .Select(ExtractIdAndOrder)
-            .Select(GetSolution)
-            .Where(SolutionIsNotNull)
-            .Select(ToCarrierInfo)
-            .OrderBy(carrier => carrier.Order);
+        fileService.ExportJsonFile(settings.FileDir, settings.FileName, carrierInfo.OrderBy(carrier => carrier.Order).ToList());
 
-        _fileService.ExportJsonFile(settings.FileDir, settings.FileName, new Carriers(carrierInfo));
-
-        return ExitCode.Success;
+        return Tracer.End(this, true);
     }
 
-    private static bool SolutionIsNotNull((Solution? Solution, Ec4uCarrier Carrier) tuple)
+#pragma warning disable S107
+    private List<CarrierRecord> RetrieveCarriers(string entityName, string idField, string referenceField,
+        string versionField, string solutionIdField, string uniqueNameField, string friendlyNameField, string orderField)
+#pragma warning restore S107
     {
-        return tuple.Solution != null;
+        var query = new QueryExpression(entityName)
+        {
+            ColumnSet = new ColumnSet(idField, referenceField, versionField, solutionIdField,
+                uniqueNameField, friendlyNameField, orderField, "statecode"),
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression("statecode", ConditionOperator.Equal, 0) }
+            },
+            Orders = { new OrderExpression(orderField, OrderType.Ascending) }
+        };
+
+        return Connection.RetrieveMultiple(query).Entities
+            .Select(e => new CarrierRecord
+            {
+                Id = e.Id,
+                Reference = e.GetAttributeValue<string>(referenceField),
+                SolutionVersion = e.GetAttributeValue<string>(versionField),
+                SolutionId = e.GetAttributeValue<string>(solutionIdField),
+                SolutionUniqueName = e.GetAttributeValue<string>(uniqueNameField),
+                SolutionFriendlyName = e.GetAttributeValue<string>(friendlyNameField),
+                TransportOrderNo = e.GetAttributeValue<int?>(orderField)
+            })
+            .ToList();
     }
 
-    private static Carrier ToCarrierInfo((Solution? Solution, Ec4uCarrier Carrier) tuple) => new()
+    private static Carrier ToCarrierInfo(Solution solution, CarrierRecord carrier) => new()
     {
-        UniqueName = tuple.Solution!.UniqueName!,
-        FriendlyName = tuple.Solution.FriendlyName!,
-        SolutionId = tuple.Solution.Id,
-        CarrierId = tuple.Carrier.Id,
-        Order = tuple.Carrier.Ec4uCarTransportOrderNo!.Value,
-        Version = tuple.Solution.Version!
+        UniqueName = solution.UniqueName!,
+        FriendlyName = solution.FriendlyName!,
+        SolutionId = solution.Id,
+        CarrierId = carrier.Id,
+        Order = carrier.TransportOrderNo ?? -1,
+        Version = solution.Version!
     };
 
-
-    private static bool IsCarrierValid(Ec4uCarrier carrier)
+    private bool IsCarrierValid(CarrierRecord carrier)
     {
-        if (!string.IsNullOrWhiteSpace(carrier.Ec4uCarSolutionid) && Guid.TryParse(carrier.Ec4uCarSolutionid,CultureInfo.InvariantCulture, out _))
+        if (!string.IsNullOrWhiteSpace(carrier.SolutionId) && Guid.TryParse(carrier.SolutionId, CultureInfo.InvariantCulture, out _))
         {
             return true;
         }
 
-        AnsiConsole.MarkupLine($"[yellow]Solution '{carrier.Ec4uCarSolutionuniquename}' has invalid solutionid '{carrier.Ec4uCarSolutionid}'[/]");
+        Console.MarkupLine($"[yellow]Solution '{carrier.SolutionUniqueName}' has invalid solutionid '{carrier.SolutionId}'[/]");
         return false;
     }
 
-    private (Solution? Solution, Ec4uCarrier Carrier) GetSolution((Guid SolutionId, Ec4uCarrier Order) tuple)
+    private Solution? GetSolution(DataContext dataContext, CarrierRecord carrier)
     {
-        var solution = DataContext.SolutionSet.Where(x => x.Id == tuple.SolutionId)
+        var solutionId = Guid.Parse(carrier.SolutionId!, CultureInfo.InvariantCulture);
+        var solution = dataContext.SolutionSet.Where(x => x.Id == solutionId)
             .Select(x => new Solution
             {
                 Id = x.Id,
@@ -163,14 +182,23 @@ public class ExportCarrierInfo : AbstractDataverseCommand<CarrierInfoSettings>
             })
             .SingleOrDefault();
 
-        AnsiConsole.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{tuple.SolutionId}' not found[/]");
+        Console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{solutionId}' not found[/]");
 
-        return (solution, tuple.Order);
+        return solution;
     }
 
-    private static (Guid SolutionId, Ec4uCarrier Carrier) ExtractIdAndOrder(Ec4uCarrier carrier)
+    /// <summary>
+    /// Internal record to hold carrier data retrieved via late-bound access.
+    /// Both ec4u_carrier and dgt_carrier share the same logical structure.
+    /// </summary>
+    private sealed class CarrierRecord
     {
-        carrier.Ec4uCarTransportOrderNo ??= -1;
-        return (Guid.Parse(carrier.Ec4uCarSolutionid!,CultureInfo.InvariantCulture), carrier);
+        public Guid Id { get; init; }
+        public string? Reference { get; init; }
+        public string? SolutionVersion { get; init; }
+        public string? SolutionId { get; init; }
+        public string? SolutionUniqueName { get; init; }
+        public string? SolutionFriendlyName { get; init; }
+        public int? TransportOrderNo { get; init; }
     }
 }

@@ -3,14 +3,12 @@
 
 using dgt.power.codegeneration.Base;
 
-namespace dgt.power.codegeneration.Generators;
+namespace dgt.power.codegeneration.Generators.Contracts;
 
 public interface IDotNetGenerator
 {
-    void PrepareDirectory(CodeGenerationVerb args);
-    void GenerateActions(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateContext(CodeGenerationVerb args, CodeGenerationConfig config);
-    void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config);
+    /// <summary>
+    ///     Runs the full .NET code generation pipeline for the given config.
+    /// </summary>
+    bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config);
 }

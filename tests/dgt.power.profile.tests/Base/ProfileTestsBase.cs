@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.IO.IsolatedStorage;
@@ -10,7 +10,7 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.profile.tests.Base;
 
-public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCommand, TCommandSettings>, IDisposable
+public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCommand, TCommandSettings>
     where TCommandSettings : CommandSettings
     where TCommand : class, ICommand<TCommandSettings>
 {
@@ -20,7 +20,7 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
 
     public string IdentityFileName { get; } = $"{Guid.NewGuid():N}.dat";
 
-    public ProfileTestsBase(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    public ProfileTestsBase()
     {
         _services = new TestServiceCollection();
         _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
@@ -36,9 +36,9 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
         return base.GetBuilder().WithServiceCollection(_services);
     }
 
-    protected ProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>().As<ProfileManager>();
+    protected IProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>();
 
-    protected Identities GetIdentities() => ProfileManager.LoadIdentities().As<Identities>();
+    protected IIdentities GetIdentities() => ProfileManager.LoadIdentities();
 
     protected void AddIdentity(string name, string connectionString)
     {
@@ -51,6 +51,8 @@ public class ProfileTestsBase<TCommand, TCommandSettings> : CommandTestsBase<TCo
     {
         _storage.Remove();
         _storage.Dispose();
+        _serviceProvider.Dispose();
         base.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -4,29 +4,37 @@
 #-------------------------------------------------------------------------------#
 version: "1.0"
 
-#Specify IDE code to run analysis without container (Applied in CI/CD pipeline)
-ide: QDNET
+linter: jetbrains/qodana-cdnet:2026.1-eap
 
 #Specify inspection profile for code analysis
 profile:
   name: qodana.recommended
-include:
-  - name: CheckDependencyLicenses
 
+dotnet:
+  solution: ./DigitallPower.slnx
+  configuration: Debug
 
 #Enable inspections
-#include:
-#  - name: <SomeEnabledInspectionId>
+include:
+  - name: VulnerableLibrariesLocal
 
-#Disable inspections
-#exclude:
-#  - name: <SomeDisabledInspectionId>
-#    paths:
-#      - <path/where/not/run/inspection>
+exclude:
+  - name: All
+    paths:
+      - tests/dgt.power.codegeneration.tests/Resources
+      - README.md
 
 #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
-#bootstrap: sh ./prepare-qodana.sh
+bootstrap: dotnet restore ./DigitallPower.slnx && dotnet build ./DigitallPower.slnx --configuration Debug
 
-#Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
-#plugins:
-#  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
+# Quality gate. Will fail the CI/CD pipeline if any condition is not met
+# severityThresholds - configures maximum thresholds for different problem severities
+# testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+# Code Coverage is available in Ultimate and Ultimate Plus plans
+failureConditions:
+  severityThresholds:
+    any: 15
+    critical: 5
+#  testCoverageThresholds:
+#    fresh: 70
+#    total: 50

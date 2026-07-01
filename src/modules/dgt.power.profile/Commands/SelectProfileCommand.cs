@@ -1,8 +1,7 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -11,29 +10,25 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.profile.Commands;
 
-public class SelectProfileCommand : Command<NamedProfileSettings>
+public class SelectProfileCommand(IProfileManager profileManager, IAnsiConsole console) : Command<NamedProfileSettings>
 {
-    private readonly IProfileManager _profileManager;
-
-    public SelectProfileCommand(IProfileManager profileManager) => _profileManager = profileManager;
-
-    public override int Execute([NotNull] CommandContext context, [NotNull] NamedProfileSettings settings)
+    protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 
-        var identities = _profileManager.LoadIdentities();
-        if (!identities.Contains(settings.Name.ToUpperInvariant()))
+        var identities = profileManager.LoadIdentities();
+        if (!identities.Contains(settings.Name))
         {
-            AnsiConsole.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
+            console.MarkupLine($"[Red]Identity {settings.Name} not found![/]");
             return -1;
         }
 
-        identities.SetCurrent(settings.Name.ToUpperInvariant());
-        _profileManager.Save();
+        identities.SetCurrent(settings.Name);
+        profileManager.Save();
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] set.");
         rule.LeftJustified();
-        AnsiConsole.Write(rule);
+        console.Write(rule);
 
         return 0;
     }

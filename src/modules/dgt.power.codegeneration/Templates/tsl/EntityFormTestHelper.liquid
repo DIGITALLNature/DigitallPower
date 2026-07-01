@@ -1,0 +1,105 @@
+// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
+/* eslint-disable */
+
+{%- assign FormName = FormDetail.FormUniqueName  | sanitize | camelcase -%}
+{%- assign FormType = FormDetail.FormTypeName  | sanitize | camelcase -%}
+{%- assign FormEntityName = FormDetail.FormEntityName | camelcase -%}
+{%- assign FormClassNamespace = "XrmForm." | append: FormEntityName | append: "." | append: FormType | append: "." | append: FormName -%}
+{%- assign HasAnyControl = false %}{%- if FormDetail.FormControls.size > 0 or FormDetail.HeaderControlFields.size > 0 or BpfControls.size > 0 -%}{%- assign HasAnyControl = true %}{%- endif %}
+{%- assign HasAnyAttribute = false %}{%- if FormDetail.Attributes.size > 0 -%}{%- assign HasAnyAttribute = true %}{%- endif %}
+{%- assign HasAnyTab = false %}{%- if FormDetail.TabDetails.size > 0 -%}{%- assign HasAnyTab = true %}{%- endif %}
+{%- assign HasAnySection = false %}{% assign tabSections = FormDetail.TabDetails | map: "Sections" | map: "size" | join: "" -%}
+{%- if tabSections != "" and tabSections != "0" -%}{%- assign HasAnySection = true %}{%- endif %}
+
+export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
+    {% if HasAnyControl == true %}
+    export const FormControlNames: string[] = [{%- for formControl in FormDetail.FormControls  %}
+        "{{ formControl.ControlName }}",{%- endfor %}
+        {%- for headerField in FormDetail.HeaderControlFields  %}
+        "header_{{ headerField }}",{%- endfor %}
+        {%- for bpfControl in BpfControls %}
+        "header_process_{{ bpfControl.DataFieldName }}",{%- endfor %}
+    ] as const;{% endif %}
+
+    {% if HasAnyAttribute == true -%}
+    export const FormAttributeNames: string[] = [{%- for attribute in FormDetail.Attributes  %}
+        "{{ attribute.DataFieldName }}",{%- endfor %}
+    ] as const;{% endif %}
+    {% if HasAnyControl == true %}{% if HasAnyAttribute == true %}
+
+    export const FormControlTypesConfig: XrmForm.Tester.XrmFormMockControl<{{FormClassNamespace}}.ControlName, {{FormClassNamespace}}.AttributeName>[] = [
+    {%- else %}
+
+    export const FormControlTypesConfig: XrmForm.Tester.XrmFormMockControl<{{FormClassNamespace}}.ControlName, string>[] = [{%- endif %}
+        {% for formControl in FormDetail.FormControls  %}{
+            name: "{{ formControl.ControlName }}",
+            {%- if formControl.AttributeName != blank %}
+            attributeName: "{{ formControl.AttributeName }}",
+            {%- endif %}
+            type: "{{ formControl.MockXrmControlType }}",
+            isVisible: {{ formControl.IsVisible }},
+            isDisabled: {{ formControl.IsDisabled }},
+        },{%- endfor %}{% for headerField in FormDetail.HeaderControlFields  %}
+        {
+            name: "header_{{ headerField }}",
+            type: "{{ headerField | xrmMockControlType: Attributes }}", // HeaderControl
+            attributeName: "{{ headerField }}",
+        },{%- endfor %}{% for bpfControl in BpfControls %}
+        {
+            name: "header_process_{{ bpfControl.DataFieldName }}",
+            type: "{{ bpfControl.XrmMockControlType }}", //bpfControl
+            attributeName: "{{ bpfControl.DataFieldName }}",
+        },{% endfor %}
+    ] as const;{%- endif %}
+    {% if HasAnyAttribute == true %}
+    export const FormAttributeTypesConfig: XrmForm.Tester.XrmFormMockAttribute<{{FormClassNamespace}}.AttributeName>[] = [{% for attribute in FormDetail.Attributes  %}
+        {
+            {% assign AtttributeType = attribute.DataFieldName | xrmMockAttributeType: Attributes -%}
+            name: "{{ attribute.DataFieldName }}",
+            type: "{{ AtttributeType }}",
+            requiredLevel: "{{ attribute.DataFieldName | requiredAttributeLevel: Attributes }}",
+            {% if AtttributeType == "optionSet" or AtttributeType == "multiSet" %}{% assign enumAttribute = attribute.DataFieldName | getAttributeItem: EnumAttributes -%}
+            options: [{% for option in enumAttribute.Options  %}
+            {
+                text: "{{ option.Label | localize: LanguageCode | sanitize | camelcase   }}",
+                value: {{ option.Value }},
+            }, {% endfor %}
+            ],{% endif %}
+        },{%- endfor %}
+    ] as const;{%- endif %}
+    {%- if FormType != "QuickView" -%}
+    {% if HasAnyTab == true %}
+    export const TabNames: string[] = [
+        {% for tab in FormDetail.TabDetails  %}"{{ tab.TabName }}",{% endfor %}
+    ] as const;
+    {% if HasAnySection == true %}
+    export const SectionNames: string[] = [{% for tab in FormDetail.TabDetails  %}{% for section in tab.Sections  %}
+        "{{section.SectionName}}",{% endfor %}{% endfor %}
+    ] as const;{%- endif %}
+    {% if HasAnyTab == true and HasAnyControl == true and HasAnySection == true %}
+    export const TabSectionControlsConfig: XrmForm.Tester.XrmFormMockTab<{{FormClassNamespace}}.TabName, {{FormClassNamespace}}.SectionNames, {{FormClassNamespace}}.ControlName>[]
+    {%- elsif HasAnyTab == true and HasAnyControl == true -%}
+    export const TabSectionControlsConfig: XrmForm.Tester.XrmFormMockTab<{{FormClassNamespace}}.TabName, string, {{FormClassNamespace}}.ControlName>[]
+    {%- elsif  HasAnyControl == true -%}
+    export const TabSectionControlsConfig: XrmForm.Tester.XrmFormMockTab<string, string, {{FormClassNamespace}}.ControlName>[]
+    {%- else -%}
+    export const TabSectionControlsConfig: XrmForm.Tester.XrmFormMockTab<string, string, string>[]
+    {%- endif %}
+    = [
+        {% for tab in FormDetail.TabDetails  %}
+        {
+            name: "{{ tab.TabName }}",
+            sectionNames: [{%- for section in tab.Sections  %}"{{section.SectionName}}"{% if tab.Sections.size > 1 %},{% endif %}{% endfor -%}],
+            sections: [
+                {% for section in tab.Sections  %}
+                {
+                    name: "{{section.SectionName}}",
+                    controlNames: [
+                        {%- for controlName in section.ControlNames %}
+                        "{{ controlName }}",{% endfor %}
+                    ],
+                },{% endfor %}
+            ],
+        },{% endfor -%}
+    ] as const;{%- endif %}{%- endif %}
+}

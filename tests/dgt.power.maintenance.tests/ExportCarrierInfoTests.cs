@@ -14,12 +14,20 @@ namespace dgt.power.maintenance.tests;
 
 public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, CarrierInfoSettings>
 {
-    public ExportCarrierInfoTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    private const string DgtCarrierEntityName = "dgt_carrier";
+
+    protected override CommandTestContext<ExportCarrierInfo, CarrierInfoSettings> GetContext()
     {
+        return GetBuilder()
+            .WithMetaData(new EntityMetadata
+            {
+                LogicalName = DgtCarrierEntityName
+            })
+            .Build();
     }
 
-    [Fact]
-    public void ShouldFailValidationOnNotExistingCarrierEntity()
+    [Test]
+    public async Task ShouldFailValidationOnNotExistingCarrierEntity()
     {
         // Arrange
         var context = GetBuilder()
@@ -33,62 +41,80 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
         var validationResult = context.Validate(new CarrierInfoSettings());
 
         // Assert
-        validationResult.Successful.Should().BeFalse();
-        validationResult.Message.Should().Be(ExportCarrierInfo.ValidationErrorMessage);
+        await Assert.That(validationResult.Successful).IsFalse();
+        await Assert.That(validationResult.Message).IsEqualTo(ExportCarrierInfo.ValidationErrorMessage);
     }
 
-    [Fact]
-    public void ShouldSucceedValidation()
+    [Test]
+    public async Task ShouldSucceedValidation()
     {
         var context = GetContext();
 
         var validationResult = context.Validate(new CarrierInfoSettings());
 
-        validationResult.Successful.Should().BeTrue();
+        await Assert.That(validationResult.Successful).IsTrue();
     }
 
-    [Fact]
-    public void ShouldFailOnMissingActiveCarriers()
+    [Test]
+    public async Task ShouldFailOnMissingActiveCarriers()
     {
         var context = GetContext();
 
-        context.Execute(new CarrierInfoSettings()).Should().Fail();
+        await context.Execute(new CarrierInfoSettings()).Fail();
     }
 
-    [Fact]
-    public void ShouldExportCarrierInfoInAscendingOrder()
+    [Test]
+    public async Task ShouldExportCarrierInfoInAscendingOrder()
     {
-        var carrierSolution1 = new Solution(Guid.NewGuid())
+        var solutionId1 = Guid.NewGuid();
+        var carrierSolution1 = new Solution(solutionId1)
         {
+            SolutionId = solutionId1,
             UniqueName = "solution_a",
             FriendlyName = "Solution A",
             Version = "1.0.0.1"
         };
-        var activeCarrier1 = new DgtCarrier(Guid.NewGuid())
+        var activeCarrier1 = new Entity(DgtCarrierEntityName, Guid.NewGuid())
         {
-            DgtSolutionuniquename = carrierSolution1.UniqueName,
-            DgtSolutionfriendlyname = carrierSolution1.FriendlyName,
-            DgtSolutionversion = carrierSolution1.Version,
-            DgtSolutionid = carrierSolution1.Id.ToString(),
-            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 1,
+            ["dgt_solutionuniquename"] = carrierSolution1.UniqueName,
+            ["dgt_solutionfriendlyname"] = carrierSolution1.FriendlyName,
+            ["dgt_solutionversion"] = carrierSolution1.Version,
+            ["dgt_solutionid"] = carrierSolution1.Id.ToString(),
+            ["statecode"] = new OptionSetValue(0), // Active
+            ["dgt_transport_order_no"] = 1
         };
-        var carrierSolution2 = new Solution(Guid.NewGuid())
+        var solutionId2 = Guid.NewGuid();
+        var carrierSolution2 = new Solution(solutionId2)
         {
+            SolutionId = solutionId2,
             UniqueName = "solution_b",
             FriendlyName = "Solution B",
             Version = "1.0.1.1"
         };
-        var activeCarrier2 = new DgtCarrier(Guid.NewGuid())
+        var activeCarrier2 = new Entity(DgtCarrierEntityName, Guid.NewGuid())
         {
-            DgtSolutionuniquename = carrierSolution2.UniqueName,
-            DgtSolutionfriendlyname = carrierSolution2.FriendlyName,
-            DgtSolutionversion = carrierSolution2.Version,
-            DgtSolutionid = carrierSolution2.Id.ToString(),
-            Statecode = new OptionSetValue(DgtCarrier.Options.Statecode.Active),
-            DgtTransportOrderNo = 2,
+            ["dgt_solutionuniquename"] = carrierSolution2.UniqueName,
+            ["dgt_solutionfriendlyname"] = carrierSolution2.FriendlyName,
+            ["dgt_solutionversion"] = carrierSolution2.Version,
+            ["dgt_solutionid"] = carrierSolution2.Id.ToString(),
+            ["statecode"] = new OptionSetValue(0), // Active
+            ["dgt_transport_order_no"] = 2
         };
+
+        var carrierMeta = new EntityMetadata { LogicalName = DgtCarrierEntityName };
+        carrierMeta.SetAttributeCollection([
+            new UniqueIdentifierAttributeMetadata { LogicalName = "dgt_carrierid" },
+            new StringAttributeMetadata { LogicalName = "dgt_reference" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionversion" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionid" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionuniquename" },
+            new StringAttributeMetadata { LogicalName = "dgt_solutionfriendlyname" },
+            new IntegerAttributeMetadata { LogicalName = "dgt_transport_order_no" },
+            new StateAttributeMetadata { LogicalName = "statecode" }
+        ]);
+
         var context = GetBuilder()
+            .WithMetaData(carrierMeta)
             .WithData(activeCarrier1)
             .WithData(carrierSolution1)
             .WithData(activeCarrier2)
@@ -99,25 +125,25 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
         {
             FileDir = ArtifactDirectory
         };
-        context.Execute(settings).Should().Succeed();
+        await context.Execute(settings).Succeed();
 
-        var carriers = GetConfigurationTestArtifact<Carriers>(settings.FileName);
+        var carriers = GetConfigurationTestArtifact<List<Carrier>>(settings.FileName);
 
-        carriers.Should().HaveCount(2);
-        carriers.Should().BeInAscendingOrder(x => x.Order);
-        carriers.Should().Contain(x =>
+        await Assert.That(carriers).Count().IsEqualTo(2);
+        await Assert.That(carriers.SequenceEqual(carriers.OrderBy(x => x.Order))).IsTrue();
+        await Assert.That(carriers.Any(x =>
             x.UniqueName == carrierSolution1.UniqueName
             && x.FriendlyName == carrierSolution1.FriendlyName
             && x.Version == carrierSolution1.Version
             && x.SolutionId == carrierSolution1.SolutionId
             && x.CarrierId == activeCarrier1.Id
-        );
-        carriers.Should().Contain(x =>
+        )).IsTrue();
+        await Assert.That(carriers.Any(x =>
             x.UniqueName == carrierSolution2.UniqueName
             && x.FriendlyName == carrierSolution2.FriendlyName
             && x.Version == carrierSolution2.Version
             && x.SolutionId == carrierSolution2.SolutionId
             && x.CarrierId == activeCarrier2.Id
-        );
+        )).IsTrue();
     }
 }

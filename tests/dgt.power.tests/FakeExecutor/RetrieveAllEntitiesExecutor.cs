@@ -1,38 +1,26 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dataverse;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class RetrieveAllEntitiesExecutor : IFakeMessageExecutor
+public class RetrieveAllEntitiesExecutor : IOrganizationRequestFake
 {
-    public bool CanExecute(OrganizationRequest request)
-    {
-        return request is RetrieveAllEntitiesRequest;
-    }
+    public Type ForType => typeof(RetrieveAllEntitiesRequest);
 
-    public Type GetResponsibleRequestType()
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
     {
-        return typeof(RetrieveAllEntitiesRequest);
-    }
-
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        var knownMetadata = ctx.CreateMetadataQuery().ToArray();
-        //var typed = ((RetrieveAllEntitiesRequest)request);
-        var entityMetadata = ctx.GetEntityMetadataByName(TestEntity.EntityLogicalName);
-        var response = new RetrieveAllEntitiesResponse
+        var knownMetadata = state.State.EntityMetadata.Values.ToArray();
+        return new RetrieveAllEntitiesResponse
         {
             Results =
             {
                 ["EntityMetadata"] = knownMetadata
             }
         };
-        return response;
     }
 }

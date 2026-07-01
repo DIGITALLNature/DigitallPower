@@ -8,30 +8,35 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Calendar = dgt.power.dataverse.Calendar;
 
 namespace dgt.power.import.Logic;
 
-public class SlaConfigImport : BaseImport
+public class SlaConfigImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public SlaConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<SlaConfigs>(args.FileDir, fileName, out var slaConfigs))
+        if (!ConfigResolver.TryGetConfigFile<List<SlaConfig>>(args.FileDir, fileName, out var slaConfigs))
         {
             return Tracer.NotConfigured(this);
         }
 
         //anything to do?
-        if (!slaConfigs.Any())
+        if (slaConfigs.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -58,10 +63,7 @@ public class SlaConfigImport : BaseImport
                 systemuser = context.SystemUserSet.SingleOrDefault(s => s.DomainName != null && s.DomainName == owner);
             }
 
-            if (sla.BusinessHours != slaCrm.BusinessHoursId?.Id ||
-                (sla.Active == true && slaCrm.StatusCode?.Value == SLA.Options.StatusCode.Draft) ||
-                (sla.Active == false && slaCrm.StatusCode?.Value == SLA.Options.StatusCode.Active) ||
-                (systemuser != default(SystemUser) && systemuser.Id != slaCrm.OwnerId?.Id))
+            if (RequiresUpdate(sla, slaCrm, systemuser))
             {
                 Tracer.Log($"Update Sla {sla.Name}({sla.SlaId:D})", TraceEventType.Information);
 
@@ -73,10 +75,10 @@ public class SlaConfigImport : BaseImport
                 var slatoUpdate = new SLA
                 {
                     Id = sla.SlaId ?? Guid.Empty,
-                    BusinessHoursId = sla.BusinessHours == default ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? Guid.Empty)
+                    BusinessHoursId = sla.BusinessHours == null ? null : new EntityReference(Calendar.EntityLogicalName, sla.BusinessHours ?? Guid.Empty)
                 };
 
-                if (systemuser != default(SystemUser))
+                if (systemuser != null)
                 {
                     slatoUpdate.OwnerId = systemuser.ToEntityReference();
                 }
@@ -91,5 +93,25 @@ public class SlaConfigImport : BaseImport
         }
 
         return Tracer.End(this, result);
+    }
+
+    private static bool RequiresUpdate(SlaConfig sla, SLA slaCrm, SystemUser? systemuser)
+    {
+        if (sla.BusinessHours != slaCrm.BusinessHoursId?.Id)
+        {
+            return true;
+        }
+
+        if (sla.Active == true && slaCrm.StatusCode?.Value == SLA.Options.StatusCode.Draft)
+        {
+            return true;
+        }
+
+        if (sla.Active == false && slaCrm.StatusCode?.Value == SLA.Options.StatusCode.Active)
+        {
+            return true;
+        }
+
+        return systemuser != null && systemuser.Id != slaCrm.OwnerId?.Id;
     }
 }

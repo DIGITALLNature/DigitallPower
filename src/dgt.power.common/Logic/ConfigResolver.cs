@@ -10,17 +10,13 @@ using System.Text.Json.Serialization;
 
 namespace dgt.power.common.Logic;
 
-public class ConfigResolver : IConfigResolver
+public class ConfigResolver(ITracer tracer) : IConfigResolver
 {
     private readonly JsonSerializerOptions _options = new()
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         AllowTrailingCommas = true
     };
-
-    private readonly ITracer _tracer;
-
-    public ConfigResolver(ITracer tracer) => _tracer = tracer;
 
     public bool TryGetConfigFile<TC>(string fileDir, string file, out TC config) where TC : class, new() => ConfigFromFileCached(Path.Combine(fileDir, file), out config);
 
@@ -36,13 +32,13 @@ public class ConfigResolver : IConfigResolver
 
         try
         {
-            _tracer.Log($"Read {file} ", TraceEventType.Information);
+            tracer.Log($"Read {file} ", TraceEventType.Information);
             obj = JsonSerializer.Deserialize<T>(File.ReadAllText(file, Encoding.UTF8), _options) ?? throw new InvalidOperationException();
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            _tracer.Log(e.Message, TraceEventType.Error);
+            tracer.Log(e.Message, TraceEventType.Error);
             obj = new T();
             return false;
         }
@@ -52,7 +48,7 @@ public class ConfigResolver : IConfigResolver
     {
         if (MemoryCache.Default.Contains($"cfg-{file}"))
         {
-            var cached = (TC)MemoryCache.Default.Get($"cfg-{file}");
+            var cached = MemoryCache.Default.Get($"cfg-{file}") as TC;
             if (cached != null)
             {
                 config = cached;

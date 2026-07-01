@@ -1,0 +1,235 @@
+{%- if IsFramework -%}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+{% endif -%}
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+
+// ReSharper disable All
+namespace {{ NameSpace }}
+{
+    /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
+    {{ Summary }}
+    [EntityLogicalName("{{ EntityLogicalName }}")]
+    [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
+    [ExcludeFromCodeCoverage]
+    [SuppressMessage("Design", "CA1034")]
+    [SuppressMessage("Performance", "CA1815")]
+    public partial class {{ EntitySchemaName }} : Entity
+    {
+        #region ctor
+        public {{ EntitySchemaName }}() : base(EntityLogicalName) { }
+
+        public {{ EntitySchemaName }}(Guid id) : base(EntityLogicalName, id) { }
+
+        public {{ EntitySchemaName }}(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public {{ EntitySchemaName }}(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
+        #endregion
+
+        #region consts
+        public const string EntityLogicalName = "{{ EntityLogicalName }}";
+{%- if HasPrimaryNameAttribute %}
+        public const string PrimaryNameAttribute = "{{ PrimaryNameAttribute }}";
+{%- endif %}
+{%- if IncludeEntityTypeCode %}
+        public const int EntityTypeCode = {{ ObjectTypeCode }};
+{%- endif %}
+        #endregion
+
+        #region Attributes
+        [AttributeLogicalName("{{ PrimaryIdAttribute }}")]
+        public new {{ Virtual }}Guid Id
+        {
+            get
+            {
+                return base.Id;
+            }
+            set
+            {
+{%- if KeyAttributeIsValidForCreate %}
+                {{ KeyAttributeSchemaName }} = value;
+{%- else %}
+                base.Id = value;
+{%- endif %}
+            }
+        }
+{%- for attr in Attributes %}
+
+        {{ attr.Summary }}
+        [AttributeLogicalName("{{ attr.LogicalName }}")]
+        public {{ Virtual }}{{ attr.CSharpType }} {{ attr.Name }}
+        {
+{%- if attr.IsValidForRead %}
+            get
+            {
+{%- if attr.IsPartyList %}
+                var collection = this.GetAttributeValue<EntityCollection>("{{ attr.LogicalName }}");
+                if (collection?.Entities != null)
+                {
+                    return collection.Entities.Select(e => e.ToEntity<ActivityParty>());
+                }
+                else
+                {
+                    return null;
+                }
+{%- else %}
+                return GetAttributeValue<{{ attr.CSharpType }}>("{{ attr.LogicalName }}");
+{%- endif %}
+            }
+{%- endif %}
+{%- if attr.HasSetter %}
+            set
+            {
+{%- if attr.IsPartyList %}
+                if ((value == null))
+                {
+                    this.SetAttributeValue("{{ attr.LogicalName }}", value);
+                }
+                else
+                {
+                    this.SetAttributeValue("{{ attr.LogicalName }}", new EntityCollection(new List<Entity>(value)));
+                }
+{%- else %}
+                SetAttributeValue("{{ attr.LogicalName }}", value);
+{%- if attr.IsPrimaryId %}
+                base.Id = value.HasValue ? value.Value : Guid.Empty;
+{%- endif %}
+{%- endif %}
+            }
+{%- endif %}
+        }
+{%- endfor %}
+        #endregion
+{%- if IncludeNavigationProperties %}
+
+        #region NavigationProperties
+{%- for attr in NavigationProperties %}
+
+        /// <summary>
+        /// 1:N {{ attr.SchemaName }}
+        /// </summary>
+        [RelationshipSchemaName("{{ attr.SchemaName }}")]
+        public IEnumerable<{{ attr.ReferencingEntitySchemaName }}> {{ attr.Name }}
+        {
+            get
+            {
+                return GetRelatedEntities<{{ attr.ReferencingEntitySchemaName }}>("{{ attr.SchemaName }}", null);
+            }
+            set
+            {
+                SetRelatedEntities("{{ attr.SchemaName }}", null, value);
+            }
+        }
+{%- endfor %}
+        #endregion
+{%- endif %}
+{%- if IncludeOptions %}
+
+        #region Options
+        public static partial class Options
+        {
+{%- for optionField in OptionFields %}
+{%- if optionField.AttributeType == "Picklist" or optionField.AttributeType == "Virtual" or optionField.AttributeType == "Status" or optionField.AttributeType == "State" %}
+            public struct {{ optionField.Name }}
+            {
+{%- for option in optionField.Options %}
+                public const int {{ option.Label | camelcase | sanitize | unique: optionField.Name }} = {{ option.Value }};
+{%- endfor %}
+            }
+{%- else %}
+            public struct {{ optionField.StructLabel }}
+            {
+                public const bool {{ optionField.FalseLabel }} = false;
+                public const bool {{ optionField.TrueLabel }} = true;
+            }
+{%- endif %}
+{%- endfor %}
+        }
+        #endregion
+{%- endif %}
+{%- if IncludeLogicalNames %}
+
+        #region LogicalNames
+        public static partial class LogicalNames
+        {
+{%- for attr in LogicalNameEntries %}
+            public const string {{ attr.Name }} = "{{ attr.LogicalName }}";
+{%- endfor %}
+        }
+        #endregion
+{%- endif %}
+{%- if IncludeAlternateKeys and AlternateKeys.size > 0 %}
+
+        #region AlternateKeys
+        public static partial class AlternateKeys
+        {
+{%- for key in AlternateKeys %}
+            public const string {{ key.Name }} = "{{ key.LogicalName }}";
+{%- endfor %}
+        }
+        #endregion
+{%- endif %}
+{%- if IncludeRelations %}
+
+        #region Relations
+        public static partial class Relations
+        {
+            public static class OneToMany
+            {
+{%- for attr in OneToManyRelationships %}
+                public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
+
+            public static partial class ManyToOne
+            {
+{%- for attr in ManyToOneRelationships %}
+                public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
+
+            public static partial class ManyToMany
+            {
+{%- for attr in ManyToManyRelationships %}
+                public const string {{ attr.Name }} = "{{ attr.SchemaName }}";
+{%- endfor %}
+            }
+        }
+        #endregion
+{%- endif %}
+
+        #region Methods
+{%- if HasPrimaryNameAttribute %}
+
+        public EntityReference ToNamedEntityReference()
+        {
+            var reference = ToEntityReference();
+{%- if IsFramework %}
+            reference.Name = GetAttributeValue<string>(PrimaryNameAttribute);
+{%- else %}
+            reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
+{%- endif %}
+            return reference;
+        }
+{%- endif %}
+        #endregion
+    }
+{%- if IncludeContext %}
+
+    #region Context
+    public partial class DataContext
+    {
+        public IQueryable<{{ EntitySchemaName }}> {{ EntitySchemaName }}Set
+        {
+            get
+            {
+                return CreateQuery<{{ EntitySchemaName }}>();
+            }
+        }
+    }
+    #endregion
+{%- endif %}
+}

@@ -1,0 +1,73 @@
+// Automatically generated typings file https://github.com/DIGITALLNature/DigitallPower
+/* eslint-disable */
+
+declare namespace Xrm.Events {
+    export interface EventContext {
+        getFormContext<{{ SchemaName | camelcase }}FormContext>(): {{ SchemaName | camelcase }}FormContext;
+    }
+}
+
+declare namespace XrmTable.{{ SchemaName | camelcase }} {
+    export interface FormContext extends Xrm.FormContext {
+        getAttribute():  Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>[];
+        getControl(): Xrm.Controls.Control[];
+        {%- for attr in Attributes %}
+        getAttribute(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedAttributeType  }};
+        getControl(name: "{{ attr.LogicalName }}"): {{ attr.DefinitelyTypedControlType  }};{%- endfor %}
+    }
+
+    export const enum AttributeTypes {
+    {%- for attr in Attributes  %}
+        {{ attr.SchemaName | sanitize | camelcase | unique: "M"  }} =  "{{ attr.DefinitelyType }}",
+    {%- endfor %}
+    }
+
+    export const enum LogicalNames {
+    {%- for attr in Attributes  %}
+        {{ attr.SchemaName | sanitize | camelcase | unique: "A"  }} =  "{{ attr.LogicalName }}",
+    {%- endfor %}
+    }
+
+    export const enum Entity {
+        LogicalName = "{{ LogicalName }}",
+    }
+
+    export interface DTO extends XrmTable.DTO.TableFields<LogicalNames> {
+    {%- for attr in Attributes  %}
+        {%- if attr.DefinitelyType == "Lookup" %}
+        "_{{ attr.LogicalName }}_value@OData.Community.Display.V1.FormattedValue"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.associatednavigationproperty"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
+        _{{ attr.LogicalName }}_value?: string;
+        {{ attr.LogicalName }}?: any;
+        {%- if attr.TargetEntityNames.size < 2  %}
+        "{{ attr.LogicalName }}@odata.bind"?: string | null;
+        {%- else %}{%- for targetEntity in attr.TargetEntityNames %}
+        "{{ attr.LogicalName }}_{{ targetEntity }}@odata.bind"?: string | null;{%- endfor %}{%- endif %}
+        {%- elsif attr.DefinitelyType == "Customer" %}
+        "_{{ attr.LogicalName }}_value@OData.Community.Display.V1.FormattedValue"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.associatednavigationproperty"?: string;
+        "_{{ attr.LogicalName }}_value@Microsoft.Dynamics.CRM.lookuplogicalname"?: string;
+        _{{ attr.LogicalName }}_value?: string;
+        {{ attr.LogicalName }}_account?: any;
+        "{{ attr.LogicalName }}_account@odata.bind"?: string | null;
+        {{ attr.LogicalName }}_contact?: any;
+        "{{ attr.LogicalName }}_contact@odata.bind"?: string | null;        
+        {%- elsif attr.DefinitelyType == "OptionSet" %}
+        {{ attr.LogicalName }}?: {{ attr.NativeType }};
+        "{{ attr.LogicalName }}@OData.Community.Display.V1.FormattedValue"?: string;
+        {%- else %}
+        {{ attr.LogicalName }}?: {{ attr.NativeType }};
+        {%- endif %}
+    {%- endfor %}
+    }
+
+    namespace Options {
+    {% for attr in EnumAttributes  %}
+        export const enum {{ attr.SchemaName | sanitize | camelcase | unique: "O"  }} {
+        {%- for option in attr.Options  %}
+            {{ option.Label | localize: LanguageCode | sanitize | camelcase   }} =  {{ option.Value }},
+        {%- endfor %}
+        }{% endfor %}
+    }
+}

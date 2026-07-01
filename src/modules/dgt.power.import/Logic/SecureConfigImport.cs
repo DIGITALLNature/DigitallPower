@@ -8,19 +8,23 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace dgt.power.import.Logic;
 
-public sealed class SecureConfigImport : BaseImport
+public sealed class SecureConfigImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public SecureConfigImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer,
-        connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -40,7 +44,7 @@ public sealed class SecureConfigImport : BaseImport
             where ps.Name == config.PluginStep
             select ps).SingleOrDefault();
 
-        if (pluginStep == default)
+        if (pluginStep == null)
         {
             Tracer.Log("Can't find PluginStep...", TraceEventType.Warning);
             return Tracer.NotConfigured(this);
@@ -56,7 +60,7 @@ public sealed class SecureConfigImport : BaseImport
             {
                 CreateSecureConfig(secureConfig, pluginStep, out created);
             }
-            catch (Exception e)
+            catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
             {
                 if (created)
                 {
@@ -82,7 +86,7 @@ public sealed class SecureConfigImport : BaseImport
                     Connection.Update(secureConfig);
                     Tracer.Log("updated SecureConfig!", TraceEventType.Information);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
                     Tracer.Log(e.Message, TraceEventType.Error);
                     Tracer.Log("ERROR: Could not update SecureConfig!", TraceEventType.Error);

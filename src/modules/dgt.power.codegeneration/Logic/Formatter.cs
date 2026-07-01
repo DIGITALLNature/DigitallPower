@@ -8,39 +8,22 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.codegeneration.Logic;
 
-public static class Formatter
+public static partial class Formatter
 {
-    public static readonly Regex NewlineRegex = new (@"\r\n|\r|\n", RegexOptions.Compiled);
+    private static readonly Regex s_newlineRegex = NewLineRegex();
 
     // TODO: This method is not really camel casing. The first character isn't lowered, instead the casing isn't changed.
     public static string CamelCase(string? phrase)
-    {
-        return ConvertCaseString(phrase, Case.CamelCase);
-    }
-
-    // TODO: This method is not really pascal casing. It is actually camel casing.
-    public static string PascalCase(string? phrase)
-    {
-        return ConvertCaseString(phrase, Case.PascalCase);
-    }
-
-    private static string ConvertCaseString(string? phrase, Case cases)
     {
         if (string.IsNullOrWhiteSpace(phrase))
         {
             return CamelCase(Sanitize(phrase));
         }
 
-        var leadingUnderscore = phrase.StartsWith("_", StringComparison.InvariantCulture);//"_AddMemberBatch" and "AddMemberBatch"
+        var leadingUnderscore = phrase.StartsWith('_'); //"_AddMemberBatch" and "AddMemberBatch"
 
         var splittedPhrase = phrase.Split(' ', '-', '_');
         var sb = new StringBuilder();
-
-        if (cases == Case.PascalCase)
-        {
-            sb.Append(splittedPhrase[0].ToLower(CultureInfo.InvariantCulture));
-            splittedPhrase[0] = string.Empty;
-        }
 
         foreach (var item in splittedPhrase.Where(item => item.Length > 0))
         {
@@ -61,7 +44,7 @@ public static class Formatter
 
     public static string Sanitize(string? value, bool allowWhiteSpace = false, bool allowSafeStringChars = false, bool allowFirstNumber = false)
     {
-        // Empty Value (occures on Organization-entity Optionsets)
+        // Empty Value (occurs on Organization-entity OptionSets)
         if (string.IsNullOrWhiteSpace(value))
         {
             value = "_empty_";
@@ -70,21 +53,22 @@ public static class Formatter
         // leading number
         var result = PreventFirstNumber(value, allowFirstNumber);
         result = result
-            .Replace("...", "_ellipsis_")
-            .Replace("@", "_euro_")
-            .Replace("%", "_percent_");
+            .Replace("...", "_ellipsis_", StringComparison.Ordinal)
+            .Replace("@", "_euro_", StringComparison.Ordinal)
+            .Replace("%", "_percent_", StringComparison.Ordinal);
         return value.ToLowerInvariant().Where(character => !IsValidFieldNameCharacter(character, allowWhiteSpace, allowSafeStringChars))
             .Aggregate(result, (current, character) => current.Replace(character, '_'));
     }
 
     public static string GetLocalizedLabel(Label label, bool useBaseLanguage, int systemLanguage)
     {
+        ArgumentNullException.ThrowIfNull(label);
         var txt = useBaseLanguage
             ? label.LocalizedLabels?.SingleOrDefault(l => l.LanguageCode == systemLanguage)?.Label
             : label.UserLocalizedLabel?.Label;
         if (!string.IsNullOrEmpty(txt))
         {
-            txt = NewlineRegex.Replace(txt, "\r\n");
+            txt = s_newlineRegex.Replace(txt, "\r\n");
         }
         return txt!;
     }
@@ -102,7 +86,7 @@ public static class Formatter
             validValues += "(/)-.";
         }
 
-        return validValues.Contains(character);
+        return validValues.Contains(character, StringComparison.Ordinal);
     }
 
     public static string PreventFirstNumber(string input, bool allowFirstNumber = false)
@@ -116,16 +100,14 @@ public static class Formatter
 
     public static string MaskDoubleQuote(string input)
     {
-        return input.Replace("\"", "\\\"");
+        ArgumentNullException.ThrowIfNull(input);
+        return input.Replace("\"", "\\\"", StringComparison.Ordinal);
     }
 
-    #region Nested type: Case
+    #region Nested type: NameCase
 
-    private enum Case
-    {
-        PascalCase,
-        CamelCase
-    }
+    [GeneratedRegex(@"\r\n|\r|\n", RegexOptions.Compiled)]
+    private static partial Regex NewLineRegex();
 
     #endregion
 }

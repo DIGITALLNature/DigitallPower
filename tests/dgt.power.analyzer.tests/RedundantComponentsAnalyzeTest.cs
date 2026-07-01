@@ -1,27 +1,22 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.analyzer.tests.Base;
-using dgt.power.analyzer.Base;
 using dgt.power.dataverse;
 using dgt.power.tests;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Extensions;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponentsAnalyze>
 {
     private const string SolutionUniqueName = "customizations";
     private const string SolutionPatchUniqueName = "customizations_Patch_ABC123";
     private const string ParallelSolutionUniqueName = "customizations_parallel";
-
-    public RedundantComponentsAnalyzeTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
 
     protected override CommandTestContext<RedundantComponentsAnalyze, AnalyzeVerb> GetContext()
     {
@@ -30,7 +25,7 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -39,8 +34,9 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
 
         var solutionPatch = new Solution(Guid.NewGuid())
         {
-            UniqueName = SolutionPatchUniqueName
-        }.AddAttribute(Solution.LogicalNames.ParentSolutionId, solution.ToEntityReference());
+            UniqueName = SolutionPatchUniqueName,
+            [Solution.LogicalNames.ParentSolutionId] = solution.ToEntityReference()
+        };
 
         var parallelSolution = new Solution(Guid.NewGuid())
         {
@@ -54,7 +50,7 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
         //    [SolutionComponent.LogicalNames.RootComponentBehavior] =
         //        new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents),
         //    [SolutionComponent.LogicalNames.ObjectId] =
-        //        context.GetEntityMetadataByName(TestEntity.EntityLogicalName).MetadataId,
+        //        service.State.EntityMetadata[TestEntity.EntityLogicalName].MetadataId,
         //    [SolutionComponent.LogicalNames.IsMetadata] = true,
         //    [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
         //    FormattedValues =
@@ -99,8 +95,8 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
         //    MsdynOrder = 2,
         //    MsdynComponentid = $"{entityComponent.ObjectId:B}"
         //};
-        return new Entity[]
-        {
+        return
+        [
             solution,
             solutionPatch,
             parallelSolution
@@ -121,15 +117,15 @@ public class RedundantComponentsAnalyzeTest : AnalyzeTestsBase<RedundantComponen
             //        {SolutionComponent.LogicalNames.ComponentType, "Email Template"}
             //    }
             //}
-        };
+        ];
     }
 
 
-    [Fact]
-    public void ShouldFailOnMissingInlineData() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingInlineData() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = string.Empty
-            }).Should().BeFalse();
+            })).IsFalse();
 }

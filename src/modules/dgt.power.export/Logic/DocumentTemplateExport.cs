@@ -10,18 +10,25 @@ using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;
 
 namespace dgt.power.export.Logic;
 
-public sealed class DocumentTemplateExport : BaseExport
+public sealed class DocumentTemplateExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public DocumentTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
-    {
-    }
+    private static readonly char[] s_separators = ['|', ',', ';'];
 
-    protected override bool Invoke(ExportVerb args)
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -33,13 +40,15 @@ public sealed class DocumentTemplateExport : BaseExport
         var force = true;
         var missing = true;
         var filter = args.InlineData;
-        if (!string.IsNullOrWhiteSpace(args.InlineData) && !args.InlineData.StartsWith("<", StringComparison.InvariantCulture))
+        if (!string.IsNullOrWhiteSpace(args.InlineData) && !args.InlineData.StartsWith('<'))
         {
-            var idx = args.InlineData.IndexOf("<", StringComparison.InvariantCulture);
-            filter = args.InlineData.Substring(idx);
-            foreach (var fragment in args.InlineData.Substring(0, idx).Split(new[] {'|', ',', ';'}, StringSplitOptions.RemoveEmptyEntries))
+            var idx = args.InlineData.IndexOf('<', StringComparison.Ordinal);
+            var commandData = idx >= 0 ? args.InlineData.Substring(0, idx) : args.InlineData;
+            filter = idx >= 0 ? args.InlineData.Substring(idx) : string.Empty;
+
+            foreach (var fragment in commandData.Split(s_separators, StringSplitOptions.RemoveEmptyEntries))
             {
-                var pair = fragment.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+                var pair = fragment.Split('=', StringSplitOptions.RemoveEmptyEntries);
                 if (pair.Length == 2)
                 {
                     switch (pair[0].ToUpperInvariant())
@@ -103,7 +112,7 @@ public sealed class DocumentTemplateExport : BaseExport
     private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
-        query = default;
+        query = null;
         try
         {
             fetchXml = "<fetch no-lock=\"true\" >" +
@@ -123,7 +132,7 @@ public sealed class DocumentTemplateExport : BaseExport
             query = response.Query;
             return true;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             tracer.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
             return false;

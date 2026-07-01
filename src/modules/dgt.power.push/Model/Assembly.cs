@@ -6,11 +6,12 @@ using System.Runtime.Serialization;
 using dgt.power.dataverse;
 
 #pragma warning disable CA1067
+#pragma warning disable CA1002 // WorkflowTypes and PluginTypes populated via .Add() by AssemblyModelBuilder
 
 namespace dgt.power.push.Model;
 
 [DataContract]
-public class Assembly : IEquatable<Assembly>
+public sealed class Assembly : AssemblyContent, IEquatable<Assembly>
 {
     [DataMember(Name = "name", IsRequired = true)]
     [Required]
@@ -30,22 +31,29 @@ public class Assembly : IEquatable<Assembly>
 
     [IgnoreDataMember] public string? Content { get; set; }
 
-    [DataMember(Name = "plugin_types", IsRequired = false, EmitDefaultValue = false)]
-    public List<PluginType> PluginTypes { get; set; } = new();
-
     [DataMember(Name = "workflow_types", IsRequired = false, EmitDefaultValue = false)]
     public List<WorkflowType> WorkflowTypes { get; set; } = new();
 
     [DataMember(Name = "solutions", IsRequired = false)]
-    public List<string> Solutions { get; set; } = new();
-
-    [IgnoreDataMember] public Guid Id { get; set; }
+    public IReadOnlyList<string> Solutions { get; set; } = [];
 
     [IgnoreDataMember] public string TypeCode { get; set; } = PluginAssembly.EntityLogicalName;
 
     [IgnoreDataMember] public AssemblyState State { get; set; } = AssemblyState.Undefined;
 
     [IgnoreDataMember] public AssemblyType Type { get; set; } = AssemblyType.Undefined;
+
+    /// <summary>
+    /// Client ID from ManagedIdentityRegistrationAttribute (assembly-level).
+    /// When set, the assembly should be linked to a managed identity in Dataverse.
+    /// </summary>
+    [IgnoreDataMember] public string? ManagedIdentityClientId { get; set; }
+
+    /// <summary>
+    /// Optional Tenant ID from ManagedIdentityRegistrationAttribute.
+    /// Defaults to the environment's tenant if not provided.
+    /// </summary>
+    [IgnoreDataMember] public string? ManagedIdentityTenantId { get; set; }
 
     public bool Equals(Assembly? other)
     {

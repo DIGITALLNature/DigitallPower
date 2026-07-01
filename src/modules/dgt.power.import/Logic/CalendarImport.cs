@@ -5,34 +5,38 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 
 namespace dgt.power.import.Logic;
 
-public sealed class CalendarImport : BaseImport
+public sealed class CalendarImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public CalendarImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<Calendars>(args.FileDir, fileName, out var calendars))
+        if (!ConfigResolver.TryGetConfigFile<List<dto.Calendar>>(args.FileDir, fileName, out var calendars))
         {
             return Tracer.NotConfigured(this);
         }
 
         //anything to do?
-        if (!calendars.Any())
+        if (calendars.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }

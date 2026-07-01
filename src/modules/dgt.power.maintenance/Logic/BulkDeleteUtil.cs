@@ -8,23 +8,32 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public sealed class BulkDeleteUtil : BaseMaintenance
+public sealed class BulkDeleteUtil(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IConfiguration configuration,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    private readonly int _sleepTime;
+    private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
 
-    public BulkDeleteUtil(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IConfiguration configuration) : base(tracer, connection, configResolver)
+    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        _sleepTime = configuration.GetValue<int>("pollrate");
+        ArgumentNullException.ThrowIfNull(args);
+        return InvokeCoreAsync(args, cancellationToken);
     }
 
-    protected override bool Invoke(MaintenanceVerb args)
+    private async Task<bool> InvokeCoreAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -32,14 +41,15 @@ public sealed class BulkDeleteUtil : BaseMaintenance
             return Tracer.Skipped(this);
         }
 
-        if (GetQueryExpression(args.InlineData, out var query))
+        var (success, query) = await GetQueryExpressionAsync(args.InlineData, cancellationToken);
+        if (success)
         {
             Tracer.Log("Retrieved query expression from inlineData", TraceEventType.Information);
 
-            var asyncOperationId = ExecuteBulkDeleteJob(query);
+            var asyncOperationId = await ExecuteBulkDeleteJobAsync(query!, cancellationToken);
             Tracer.Log($"bulk delete job '{asyncOperationId}' started.", TraceEventType.Information);
 
-            if (Wait(asyncOperationId))
+            if (await WaitAsync(asyncOperationId, cancellationToken))
             {
                 Tracer.Log($"bulk delete job '{asyncOperationId}' finished.", TraceEventType.Information);
                 return Tracer.End(this, true);
@@ -49,16 +59,19 @@ public sealed class BulkDeleteUtil : BaseMaintenance
         return Tracer.End(this, false);
     }
 
-    private bool Wait(Guid asyncOperationId)
+    private async Task<bool> WaitAsync(Guid asyncOperationId, CancellationToken cancellationToken)
     {
+        var orgAsync = (IOrganizationServiceAsync2)Connection;
         AsyncOperation asyncOperation;
         do
         {
-            Thread.Sleep(_sleepTime);
-            asyncOperation = Connection.Retrieve(
-                AsyncOperation.EntityLogicalName,
-                asyncOperationId,
-                new ColumnSet(AsyncOperation.LogicalNames.StatusCode)).ToEntity<AsyncOperation>();
+            await Task.Delay(_sleepTime, cancellationToken);
+            var retrieveResponse = (RetrieveResponse)await orgAsync.ExecuteAsync(new RetrieveRequest
+            {
+                Target = new EntityReference(AsyncOperation.EntityLogicalName, asyncOperationId),
+                ColumnSet = new ColumnSet(AsyncOperation.LogicalNames.StatusCode)
+            }, cancellationToken);
+            asyncOperation = retrieveResponse.Entity.ToEntity<AsyncOperation>();
             Tracer.Log($"bulk delete job '{asyncOperationId}' running...", TraceEventType.Information);
         } while (IsInExecution(asyncOperation));
 
@@ -76,38 +89,38 @@ public sealed class BulkDeleteUtil : BaseMaintenance
         && asyncOperation.StatusCode.Value != AsyncOperation.Options.StatusCode.Failed
         && asyncOperation.StatusCode.Value != AsyncOperation.Options.StatusCode.Succeeded;
 
-    private Guid ExecuteBulkDeleteJob(QueryExpression query)
+    private async Task<Guid> ExecuteBulkDeleteJobAsync(QueryExpression query, CancellationToken cancellationToken)
     {
-        var response = (BulkDeleteResponse)Connection.Execute(new BulkDeleteRequest
+        var orgAsync = (IOrganizationServiceAsync2)Connection;
+        var response = (BulkDeleteResponse)await orgAsync.ExecuteAsync(new BulkDeleteRequest
         {
             JobName = "Maintenance BulkDelete job",
-            QuerySet = new[] { query },
+            QuerySet = [query],
             //RunNow = true, forces a sync call, but this may run to long and you'll get a timeout!
             StartDateTime = DateTime.UtcNow,
             RecurrencePattern = string.Empty,
             SendEmailNotification = false,
-            ToRecipients = Array.Empty<Guid>(),
-            CCRecipients = Array.Empty<Guid>()
-        });
+            ToRecipients = [],
+            CCRecipients = []
+        }, cancellationToken);
         return response.JobId;
     }
 
-    private bool GetQueryExpression(string fetchXml, out QueryExpression query)
+    private async Task<(bool Success, QueryExpression? Query)> GetQueryExpressionAsync(string fetchXml, CancellationToken cancellationToken)
     {
-        query = default!;
         try
         {
-            var response = (FetchXmlToQueryExpressionResponse)Connection.Execute(new FetchXmlToQueryExpressionRequest
+            var orgAsync = (IOrganizationServiceAsync2)Connection;
+            var response = (FetchXmlToQueryExpressionResponse)await orgAsync.ExecuteAsync(new FetchXmlToQueryExpressionRequest
             {
                 FetchXml = fetchXml
-            });
-            query = response.Query;
-            return true;
+            }, cancellationToken);
+            return (true, response.Query);
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             Tracer.Log($"Invalid fetch-xml: {e.RootMessage()}", TraceEventType.Error);
-            return false;
+            return (false, null);
         }
     }
 }

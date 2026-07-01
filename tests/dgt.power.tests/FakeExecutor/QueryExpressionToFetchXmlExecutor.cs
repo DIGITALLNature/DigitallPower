@@ -1,31 +1,24 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Digitall.Dataverse.Testing;
+using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+
 #pragma warning disable CS8602
 
 namespace dgt.power.tests.FakeExecutor;
 
-public class QueryExpressionToFetchXmlExecutor : IFakeMessageExecutor
+public class QueryExpressionToFetchXmlExecutor : IOrganizationRequestFake
 {
-    public bool CanExecute(OrganizationRequest request)
-    {
-        return request is QueryExpressionToFetchXmlRequest;
-    }
+    public Type ForType => typeof(QueryExpressionToFetchXmlRequest);
 
-    public Type GetResponsibleRequestType()
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
     {
-        return typeof(QueryExpressionToFetchXmlRequest);
-    }
-
-    public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-    {
-        var typed = (QueryExpressionToFetchXmlRequest)request;
+        var typed = (QueryExpressionToFetchXmlRequest)organizationRequest;
 
         var query = typed.Query as QueryExpression;
 
@@ -49,18 +42,16 @@ public class QueryExpressionToFetchXmlExecutor : IFakeMessageExecutor
             fetchXml.Append(orders.OrderType == OrderType.Descending ? "true" : "false");
             fetchXml.Append("\" />");
         }
-        
+
         fetchXml.Append("</entity>");
         fetchXml.Append("</fetch>");
 
-        var response = new QueryExpressionToFetchXmlResponse
+        return new QueryExpressionToFetchXmlResponse
         {
             Results =
             {
                 ["FetchXml"] = fetchXml.ToString()
             }
         };
-
-        return response;
     }
 }

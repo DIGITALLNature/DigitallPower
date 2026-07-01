@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -8,52 +8,45 @@ using dgt.power.import.Logic;
 using dgt.power.import.tests.Base;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FluentAssertions;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 
 namespace dgt.power.import.tests;
 
 public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
 {
-    public BulkDeleteImportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContextBuilder<BulkDeleteImport, ImportVerb> GetBuilder()
     {
         return base.GetBuilder()
-            .WithFakeMessageExecutor<WhoAmIRequest>(new WhoAmIExecutor())
-            .WithFakeMessageExecutor<BulkDeleteRequest>(new BulkDeleteExecutor());
+            .WithFakeMessageExecutor(new WhoAmIExecutor())
+            .WithFakeMessageExecutor(new BulkDeleteExecutor())
+            .WithCustomConfiguration(svc => svc.Options.UserId = Guid.Parse("f4e8821a-97d2-4938-8b73-8744431e59c8"));
     }
 
 
-    [Fact]
-    public void ShouldFailOnCreationOfBulkDeleteWithoutFetchXml()
+    [Test]
+    public async Task ShouldFailOnCreationOfBulkDeleteWithoutFetchXml()
     {
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
 
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
-            })
+                existingBulkDeleteJob
+            ])
             .Build();
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "missing-fetch-deletes.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-        context.Get<AsyncOperation>().Should().NotContain(x => x.Name == "Missing FetchXml");
+        await Assert.That(context.Get<AsyncOperation>().Any(x => x.Name == "Missing FetchXml")).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFailOnMissingBulkDeleteJobs()
+    [Test]
+    public async Task ShouldFailOnMissingBulkDeleteJobs()
     {
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
         var missingBulkDeleteJob = new AsyncOperation(Guid.NewGuid())
@@ -64,165 +57,159 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         };
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob,
                 missingBulkDeleteJob
-            })
+            ])
             .Build();
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = GetResourcePath("bulk-deletes.json"),
                 FileDir = ResourceDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
     }
 
-    [Fact]
-    public void ShouldFailOnEmptyConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnEmptyConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = WriteConfigurationArtifact(new BulkDeletes
                 {
-                    Deletes = new List<BulkDelete>(),
+                    Deletes = []
                 }).Name,
                 FileDir = ArtifactDirectory
             }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldFailOnWrongConfiguration() =>
-        GetContext().Execute(new ImportVerb
+    [Test]
+    public async Task ShouldFailOnWrongConfiguration() =>
+        await Assert.That(GetContext().Execute(new ImportVerb
             {
                 FileName = string.Empty,
                 FileDir = ArtifactDirectory
         }
-        ).Should().BeFalse();
+        )).IsFalse();
 
-    [Fact]
-    public void ShouldCopyDeactivatedBulkDeleteJob()
+    [Test]
+    public async Task ShouldCopyDeactivatedBulkDeleteJob()
     {
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
         existingBulkDeleteJob.RecurrencePattern = string.Empty;
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
-                existingBulkDeleteJob,
-            })
+                existingBulkDeleteJob
+            ])
             .Build();
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "bulk-deletes.json",
                 FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
         var deletes = context.Get<AsyncOperation>(x => x.OperationType != null
-                                                       && x.OperationType.Value == AsyncOperation.Options.OperationType
-                                                           .BulkDelete
-                                                       && x.RecurrenceStartTime != null)
+                                                        && x.OperationType.Value == AsyncOperation.Options.OperationType
+                                                            .BulkDelete
+                                                        && x.RecurrenceStartTime != null)
             .OrderBy(x => x.Name)
             .ToList();
 
-        deletes.Should().HaveCount(3);
+        await Assert.That(deletes).Count().IsEqualTo(3);
 
         var existing = deletes.Single(x => x.Name == existingBulkDeleteJob.Name);
-        existing.RecurrencePattern.Should().NotBeNullOrWhiteSpace();
+        await Assert.That(string.IsNullOrWhiteSpace(existing.RecurrencePattern)).IsFalse();
     }
 
-    [Fact]
-    public void ShouldImportBulkDeleteJobsWithAlreadyDisabledJob()
+    [Test]
+    public async Task ShouldImportBulkDeleteJobsWithAlreadyDisabledJob()
     {
         var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
         disabledBulkDeleteJob.RecurrencePattern = string.Empty;
         var context = GetBuilder()
             .WithData(data)
-            .WithData(new[]
-            {
-                disabledBulkDeleteJob,
-                existingBulkDeleteJob,
-            })
-            .Build();
-        context.Execute(new ImportVerb
-            {
-                FileName = "bulk-deletes.json",
-                FileDir = ResourceDirectory
-            }
-        ).Should().BeTrue();
-
-        var deletes = context.Get<AsyncOperation>(x => x.OperationType != null
-                                                       && x.OperationType.Value == AsyncOperation.Options.OperationType
-                                                           .BulkDelete
-                                                       && x.RecurrenceStartTime != null)
-            .OrderBy(x => x.Name)
-            .ToList();
-
-        deletes.Should().HaveCount(3);
-
-        var disabled = deletes.Single(e => e.Id == disabledBulkDeleteJob.Id);
-        disabled.RecurrencePattern.Should().Be(disabledBulkDeleteJob.RecurrencePattern);
-    }
-
-
-    [Fact]
-    public void ShouldImportBulkDeleteJobs()
-    {
-        var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
-        var context = GetBuilder()
-            .WithData(data)
-            .WithData(new[]
-            {
-                disabledBulkDeleteJob,
-                existingBulkDeleteJob,
-            })
-            .Build();
-        context.Execute(new ImportVerb
-            {
-                FileName = "bulk-deletes.json",
-                FileDir = ResourceDirectory
-            }
-        ).Should().BeTrue();
-
-        var deletes = context.Get<AsyncOperation>(x => x.OperationType != null
-                                                       && x.OperationType.Value == AsyncOperation.Options.OperationType
-                                                           .BulkDelete
-                                                       && x.RecurrenceStartTime != null)
-            .OrderBy(x => x.Name)
-            .ToList();
-
-        deletes.Should().HaveCount(3);
-
-        var disabled = deletes.Single(e => e.Name == disabledBulkDeleteJob.Name);
-        (disabled.RecurrenceStartTime?.Ticks ?? -1)
-            .Should()
-            .BeInRange(DateTime.UtcNow.Ticks, DateTime.UtcNow.AddMinutes(10).AddSeconds(5).Ticks);
-
-        var existing = deletes.Single(e => e.Name == existingBulkDeleteJob.Name);
-        existing.RecurrencePattern.Should().Be("FREQ=DAILY");
-        $"{existing.RecurrenceStartTime:HH:mm}".Should().Be("05:34");
-    }
-
-    [Fact]
-    public void ShouldNotCreateDisabledBulkDeleteJob()
-    {
-        var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
-        var context = GetBuilder()
-            .WithData(data)
-            .WithData(new[]
-            {
+            .WithData([
                 disabledBulkDeleteJob,
                 existingBulkDeleteJob
-            })
+            ])
             .Build();
-        context.Execute(new ImportVerb
+        await Assert.That(context.Execute(new ImportVerb
+            {
+                FileName = "bulk-deletes.json",
+                FileDir = ResourceDirectory
+            }
+        )).IsTrue();
+
+        var deletes = context.Get<AsyncOperation>(x => x.OperationType != null
+                                                        && x.OperationType.Value == AsyncOperation.Options.OperationType
+                                                            .BulkDelete
+                                                        && x.RecurrenceStartTime != null)
+            .OrderBy(x => x.Name)
+            .ToList();
+
+        await Assert.That(deletes).Count().IsEqualTo(3);
+
+        var disabled = deletes.Single(e => e.Id == disabledBulkDeleteJob.Id);
+        await Assert.That(disabled.RecurrencePattern).IsEqualTo(disabledBulkDeleteJob.RecurrencePattern);
+    }
+
+
+    [Test]
+    public async Task ShouldImportBulkDeleteJobs()
+    {
+        var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
+        var context = GetBuilder()
+            .WithData(data)
+            .WithData([
+                disabledBulkDeleteJob,
+                existingBulkDeleteJob
+            ])
+            .Build();
+        await Assert.That(context.Execute(new ImportVerb
+            {
+                FileName = "bulk-deletes.json",
+                FileDir = ResourceDirectory
+            }
+        )).IsTrue();
+
+        var deletes = context.Get<AsyncOperation>(x => x.OperationType != null
+                                                        && x.OperationType.Value == AsyncOperation.Options.OperationType
+                                                            .BulkDelete
+                                                        && x.RecurrenceStartTime != null)
+            .OrderBy(x => x.Name)
+            .ToList();
+
+        await Assert.That(deletes).Count().IsEqualTo(3);
+
+        var disabled = deletes.Single(e => e.Name == disabledBulkDeleteJob.Name);
+        var disabledTicks = disabled.RecurrenceStartTime?.Ticks ?? -1;
+        await Assert.That(disabledTicks >= DateTime.UtcNow.Ticks && disabledTicks <= DateTime.UtcNow.AddMinutes(10).AddSeconds(5).Ticks).IsTrue();
+
+        var existing = deletes.Single(e => e.Name == existingBulkDeleteJob.Name);
+        await Assert.That(existing.RecurrencePattern).IsEqualTo("FREQ=DAILY");
+        await Assert.That($"{existing.RecurrenceStartTime:HH:mm}").IsEqualTo("05:34");
+    }
+
+    [Test]
+    public async Task ShouldNotCreateDisabledBulkDeleteJob()
+    {
+        var (disabledBulkDeleteJob, existingBulkDeleteJob, data) = GetData();
+        var context = GetBuilder()
+            .WithData(data)
+            .WithData([
+                disabledBulkDeleteJob,
+                existingBulkDeleteJob
+            ])
+            .Build();
+        await Assert.That(context.Execute(new ImportVerb
             {
                 FileName = "disabled-bulk-deletes.json",
-                FileDir = ResourceDirectory,
+                FileDir = ResourceDirectory
             }
-        ).Should().BeTrue();
+        )).IsTrue();
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var deletes = (from rec in context.DataContext.AsyncOperationSet
@@ -233,19 +220,15 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
             select rec).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-        deletes.Should().HaveCount(2);
+        await Assert.That(deletes).Count().IsEqualTo(2);
 
         var disabled = deletes.Single(e => e.Name == disabledBulkDeleteJob.Name);
-        Assert.InRange(disabled.RecurrenceStartTime?.Ticks ?? -1, DateTime.UtcNow.Ticks,
-            DateTime.UtcNow.AddMinutes(10).AddSeconds(5).Ticks);
-        (disabled.RecurrenceStartTime?.Ticks ?? -1)
-            .Should()
-            .BeInRange(DateTime.UtcNow.Ticks, DateTime.UtcNow.AddMinutes(10).AddSeconds(5).Ticks);
-
+        var disabledTicks = disabled.RecurrenceStartTime?.Ticks ?? -1;
+        await Assert.That(disabledTicks >= DateTime.UtcNow.Ticks && disabledTicks <= DateTime.UtcNow.AddMinutes(10).AddSeconds(5).Ticks).IsTrue();
 
         var existing = deletes.Single(e => e.Name == existingBulkDeleteJob.Name);
-        existing.RecurrencePattern.Should().Be("FREQ=DAILY");
-        $"{existing.RecurrenceStartTime:HH:mm}".Should().Be("09:34");
+        await Assert.That(existing.RecurrencePattern).IsEqualTo("FREQ=DAILY");
+        await Assert.That($"{existing.RecurrenceStartTime:HH:mm}").IsEqualTo("09:34");
     }
 
     private static (AsyncOperation disabledBulkDelete, AsyncOperation existingBulkDelete, IEnumerable<Entity> data)
@@ -308,6 +291,6 @@ public class BulkDeleteImportTests : ImportTestBase<BulkDeleteImport>
         };
 
 
-        return (disabledBulkDelete, existingBulkDelete, new[] {system, techUser, pipelineUser});
+        return (disabledBulkDelete, existingBulkDelete, [system, techUser, pipelineUser]);
     }
 }

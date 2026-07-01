@@ -4,49 +4,39 @@
 using dgt.power.profile.Commands;
 using dgt.power.profile.tests.Base;
 using dgt.power.tests.Extensions;
-using Spectre.Console;
 
 namespace dgt.power.profile.tests;
 
-[Collection("Serial_Profile_Tests")]
+[NotInParallel("Serial_Profile_Tests")]
 public class SelectProfileCommandTests : ProfileTestsBase<SelectProfileCommand, NamedProfileSettings>
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public SelectProfileCommandTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    [Test]
+    public async Task ShouldSetProfileAsCurrentOnSelection()
     {
-        _testOutputHelper = testOutputHelper;
-    }
-
-    [Fact]
-    public void ShouldSetProfileAsCurrentOnSelection()
-    {
-        AnsiConsole.Record();
         const string identity = "SOME IDENTITY";
         const string connectionString = "con";
         AddIdentity(identity, connectionString);
         AddIdentity("SOMETHING DIFFERENT", "something");
-        GetIdentities().CurrentIdentity.Should().NotBe(identity);
-        GetIdentities().CurrentConnectionString.Should().NotBe(connectionString);
+        await Assert.That(GetIdentities().Current).IsNotEqualTo(identity);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsNotEqualTo(connectionString);
 
-        GetContext().Execute(new NamedProfileSettings
+        await GetContext().Execute(new NamedProfileSettings
         {
             Name = identity
-        }).Should().Succeed();
+        }).Succeed();
 
-        _testOutputHelper.WriteLine(AnsiConsole.ExportText());
-        GetIdentities().Current.Should().Be(identity);
-        GetIdentities().CurrentConnectionString.Should().Be(connectionString);
+        await Assert.That(GetIdentities().Current).IsEqualTo(identity);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(connectionString);
     }
 
-    [Fact]
-    public void ShouldFailIfIdentityIsMissing()
+    [Test]
+    public async Task ShouldFailIfIdentityIsMissing()
     {
         const string identity = "some identity";
 
-        GetContext().Execute(new NamedProfileSettings
+        await GetContext().Execute(new NamedProfileSettings
         {
             Name = identity
-        }).Should().Fail();
+        }).Fail();
     }
 }

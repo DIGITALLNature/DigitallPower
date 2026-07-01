@@ -3,12 +3,13 @@
 
 using dgt.power.common;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.push.Base;
 
-public abstract class BasePush : PowerLogic<PushVerb>
-{
-    protected BasePush(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
-}
+public abstract class BasePush(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<PushVerb>(tracer, connection, configResolver, console);

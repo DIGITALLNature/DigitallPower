@@ -7,8 +7,8 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Base.Config;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -17,13 +17,17 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public sealed class EntityAllAssetsAnalyze : BaseAnalyze
+public sealed class EntityAllAssetsAnalyze(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    public EntityAllAssetsAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(AnalyzeVerb args)
+    private bool InvokeCore(AnalyzeVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         var result = true;
@@ -36,7 +40,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
         }
 
         //anything to do?
-        if (!entitiesAllAssets.Any())
+        if (entitiesAllAssets.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -61,7 +65,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
             var solutionTag = new Rule($"solution unique name: [lime]{entityAllAssets.Solution}[/]");
             solutionTag.LeftJustified();
 
-            AnsiConsole.Write(solutionTag);
+            Console.Write(solutionTag);
 
             using var context = new DataContext(Connection);
             var solution = GetSolution(context, entityAllAssets);
@@ -83,7 +87,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                     {
                         var patternWl = entryWl;
                         var matchWl = true;
-                        if (entryWl.StartsWith("!", StringComparison.InvariantCulture))
+                        if (entryWl.StartsWith('!'))
                         {
                             patternWl = entryWl.Remove(0, 1);
                             matchWl = false;
@@ -96,7 +100,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                             {
                                 var patternBl = entryBl;
                                 var matchBl = true;
-                                if (entryBl.StartsWith("!", StringComparison.InvariantCulture))
+                                if (entryBl.StartsWith('!'))
                                 {
                                     patternBl = entryBl.Remove(0, 1);
                                     matchBl = false;
@@ -152,7 +156,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                     {
                         var patternWl = entryWl;
                         var matchWl = false;
-                        if (entryWl.StartsWith("!", StringComparison.InvariantCulture))
+                        if (entryWl.StartsWith('!'))
                         {
                             patternWl = entryWl.Remove(0, 1);
                             matchWl = true;
@@ -169,7 +173,7 @@ public sealed class EntityAllAssetsAnalyze : BaseAnalyze
                         {
                             var patternBl = entryBl;
                             var matchBl = true;
-                            if (entryBl.StartsWith("!", StringComparison.InvariantCulture))
+                            if (entryBl.StartsWith('!'))
                             {
                                 patternBl = entryBl.Remove(0, 1);
                                 matchBl = false;

@@ -12,5 +12,5 @@ public enum WebresourceState
     [EnumMember] Create,
     [EnumMember] Update,
     [EnumMember] Delete,
-    [EnumMember] Up2date
+    [EnumMember] Up2Date
 }

@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
@@ -12,14 +12,17 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public class FilterPowerFxPluginSteps : BaseMaintenance
+public class FilterPowerFxPluginSteps(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseMaintenance(tracer, connection, configResolver, console)
 {
-    public FilterPowerFxPluginSteps(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) :
-        base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(MaintenanceVerb args)
+    private bool InvokeCore(MaintenanceVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -30,18 +33,18 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
             throw new NotSupportedException("Inline arguments are not yet supported");
         }
 
-        if (!ConfigResolver.TryGetConfigFile<PowerFxPluginsConfigs>(args.Config, out var powerfxpluginConfig))
+        if (!ConfigResolver.TryGetConfigFile<List<PowerFxPluginsConfig>>(args.Config, out var powerfxpluginConfig))
         {
             return Tracer.End(this, false);
         }
 
-        AnsiConsole.Status()
+        Console.Status()
             .Start("Working on PowerFX Plugin Steps...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
 
-                AnsiConsole.MarkupLine("Working on PowerFX Plugin Steps...");
+                Console.MarkupLine("Working on PowerFX Plugin Steps...");
                 // Do the actual work
                 foreach (var config in powerfxpluginConfig)
                 {
@@ -49,14 +52,15 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
                     var step = SearchPowerFxPluginStep(config.Name,config.MessageName);
 
                     ctx.Status($"Build filter for {config.Name}");
-                    var filter = config.FilterAttributes.Any()
-                        ? string.Join(",", config.FilterAttributes.Order()): null;
+                    var filter = config.FilterAttributes.Count > 0
+                        ? string.Join(",", config.FilterAttributes.OrderBy(attribute => attribute, StringComparer.Ordinal))
+                        : null;
 
                     step.FilteringAttributesField = filter;
 
                     ctx.Status($"Update {config.Name}");
                     Connection.Update(step);
-                    AnsiConsole.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
+                    Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
                 ctx.Status("Finishing");
@@ -67,7 +71,7 @@ public class FilterPowerFxPluginSteps : BaseMaintenance
     }
 
 
-    private SdkMessageProcessingStep SearchPowerFxPluginStep(string name, string message)
+    private SdkMessageProcessingStep SearchPowerFxPluginStep(string name, string? message)
     {
 // Instantiate QueryExpression query
         var query = new QueryExpression("sdkmessageprocessingstep")

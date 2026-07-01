@@ -1,0 +1,9 @@
+/* eslint-disable */
+
+export class D365SdkMessages {
+	constructor() {
+	}
+{% for sdkMessage in model.Messages %}
+	public static {{ sdkMessage.Name }}: string = "{{ sdkMessage.Message }}";
+{% endfor %}
+}

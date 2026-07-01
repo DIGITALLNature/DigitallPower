@@ -1,21 +1,25 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : BaseAnalyze(tracer, connection, configResolver)
+public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : BaseAnalyze(tracer, connection, configResolver, console)
 {
-    protected override bool Invoke(AnalyzeVerb args)
+    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
+
+    private bool InvokeCore(AnalyzeVerb args)
     {
+        ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -36,19 +40,20 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
         var solution = GetSolution(context, args.InlineData);
         if (!solution.IsManaged.GetValueOrDefault(false))
         {
-            AnsiConsole.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
             return Tracer.End(this, false);
         }
 
         Guid parentSolutionId = solution.Id;
         if (solution.ParentSolutionId != null)
         {
-            AnsiConsole.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
+        var patches = GetPatchSolutions(context, parentSolutionId);
 
-        var table = new Table().Centered();
-        AnsiConsole.Live(table)
+        var table = new Table();
+        Console.Live(Align.Center(table))
             .Start(ctx =>
             {
                 table.AddColumn("Solution");
@@ -58,10 +63,10 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                 table.AddColumn("Suggestion");
 
                 ctx.Refresh();
-                var patches = GetPatchSolutions(context, parentSolutionId);
                 foreach (var patch in patches)
                 {
-                    table.AddRow(patch.UniqueName, patch.FriendlyName, "", "", "Checking");
+                    var patchUniqueName = patch.UniqueName ?? string.Empty;
+                    table.AddRow(patchUniqueName, patch.FriendlyName ?? patchUniqueName, "", "", "Checking");
                     ctx.Refresh();
                     table.RemoveRow(table.Rows.Count - 1);
                     var components = GetSolutionComponents(patch.Id);
@@ -77,7 +82,10 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                         }
 
                         var first = GetTopNotActiveLayer(layers);
-                        if (!first.MsdynSolutionname!.ToUpperInvariant().StartsWith(patch.UniqueName.ToUpperInvariant(),StringComparison.Ordinal))
+                        var layerSolutionName = first.MsdynSolutionname;
+                        if (string.IsNullOrWhiteSpace(patchUniqueName) ||
+                            string.IsNullOrWhiteSpace(layerSolutionName) ||
+                            !layerSolutionName.StartsWith(patchUniqueName, StringComparison.OrdinalIgnoreCase))
                         {
                             notTopLayers++;
                         }
@@ -99,7 +107,12 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                     }
 
 
-                    table.AddRow(patch.UniqueName, patch.FriendlyName, topLayers.ToString("D",CultureInfo.InvariantCulture), notTopLayers.ToString("D", CultureInfo.InvariantCulture), topLayers == 0 ? "Obsolete": "Needed");
+                    table.AddRow(
+                        patchUniqueName,
+                        patch.FriendlyName ?? string.Empty,
+                        topLayers.ToString("D", CultureInfo.InvariantCulture),
+                        notTopLayers.ToString("D", CultureInfo.InvariantCulture),
+                        topLayers == 0 ? "Obsolete" : "Needed");
                     ctx.Refresh();
                 }
 
@@ -113,7 +126,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution));
+            WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution ?? string.Empty, StringComparer.OrdinalIgnoreCase));
         }
 
         return Tracer.End(this, true);
@@ -122,7 +135,7 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
     private static List<Solution> GetPatchSolutions(DataContext context, Guid parentSolutionId)
     {
         return (from su in context.SolutionSet
-            where su.ParentSolutionId.Id == parentSolutionId
+            where su.ParentSolutionId != null && su.ParentSolutionId.Id == parentSolutionId
                 select su).ToList();
     }
 }

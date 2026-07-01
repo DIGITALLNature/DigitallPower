@@ -1,11 +1,12 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO.IsolatedStorage;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using dgt.power.Telemetry;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
 using Spectre.Console;
@@ -13,28 +14,24 @@ using Spectre.Console.Cli;
 
 namespace dgt.power;
 
-public class VersionCheckInterceptor : ICommandInterceptor
+public class VersionCheckInterceptor(
+    IsolatedStorageFile isolatedStorageFile,
+    PackageMetadataResource packageMetadataClient,
+    IAnsiConsole console)
+    : ICommandInterceptor
 {
-    private readonly IsolatedStorageFile _isolatedStorageFile;
-    private readonly PackageMetadataResource _packageMetadataClient;
-    public const string FileName = "last-updated.json";
-    public const int CheckBarrierInDays = 3;
-
-    public VersionCheckInterceptor(IsolatedStorageFile isolatedStorageFile, PackageMetadataResource packageMetadataClient)
-    {
-        _isolatedStorageFile = isolatedStorageFile;
-        _packageMetadataClient = packageMetadataClient;
-    }
+    private const string FileName = "last-updated.json";
+    private const int CheckBarrierInDays = 3;
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
-        if (CheckForBuildAgent())
+        if (TelemetryConfig.IsCi)
         {
-            AnsiConsole.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
+            console.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
             return;
         }
 
-        var localPackageData = _isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
+        var localPackageData = isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
 
         var today = DateTime.Today;
         var daysSinceLastCheck = (today - localPackageData.LastUpdateCheckOn.Date).TotalDays;
@@ -46,54 +43,49 @@ public class VersionCheckInterceptor : ICommandInterceptor
         }
     }
 
-    private static bool CheckForBuildAgent()
-    {
-        var isAgent = false;
-
-        // Azure DevOps
-        isAgent |= Environment.GetEnvironmentVariable("BUILD_BUILDURI") != null;
-        // GitHub
-        isAgent |= Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null;
-
-        return isAgent;
-    }
-
     private void CheckForNewVersion()
     {
-        var packageMetadata = _packageMetadataClient.GetMetadataAsync(
+        using var sourceCache = new SourceCacheContext();
+        var packageMetadata = RunSynchronously(packageMetadataClient.GetMetadataAsync(
             "dgt.power",
             false,
             false,
-            new SourceCacheContext(),
+            sourceCache,
             NullLogger.Instance,
             CancellationToken.None
-        ).GetAwaiter().GetResult();
+        ));
         var lastPackage = packageMetadata.OrderByDescending(package => package.Published).First();
 
-        var localPackageVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        var localPackageVersion = typeof(VersionCheckInterceptor).Assembly.GetName().Version;
         var remoteVersion = lastPackage.Identity.Version.Version;
         if (remoteVersion > localPackageVersion)
         {
-            AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
-            AnsiConsole.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
-            AnsiConsole.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"Theres a new version [green]({remoteVersion})[/] available");
+            console.MarkupLine("[yellow]Consider upgrading dgt.power by running:[/]");
+            console.MarkupLine("[grey]dotnet tool update -g dgt.power[/]");
         }
     }
 
     private void WriteLastUpdateCheck(LastUpdateCheck lastUpdate)
     {
-        using var storageStream = _isolatedStorageFile.OpenFile(FileName, FileMode.Create);
+        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Create);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(lastUpdate);
         storageStream.Write(bytes, 0, bytes.Length);
     }
 
     private LastUpdateCheck ReadOrCreateLastUpdateCheck()
     {
-        using var storageStream = _isolatedStorageFile.OpenFile(FileName, FileMode.Open);
+        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Open);
         using var memoryStream = new MemoryStream();
         storageStream.CopyTo(memoryStream);
         return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
     }
+
+    [SuppressMessage(
+        "Usage",
+        "VSTHRD002:Avoid problematic synchronous waits",
+        Justification = "Spectre's ICommandInterceptor is synchronous. Version check runs once in CLI startup and has no async hook.")]
+    private static T RunSynchronously<T>(Task<T> task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
 
     private sealed class LastUpdateCheck
     {

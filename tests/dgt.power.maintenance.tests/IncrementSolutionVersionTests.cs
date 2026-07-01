@@ -11,28 +11,24 @@ namespace dgt.power.maintenance.tests;
 
 public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionVersion, IncrementSolutionVersionSettings>
 {
-    public IncrementSolutionVersionTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
-    [Fact]
-    public void ShouldFailOnEmptySolutionOption() => GetContext()
+    [Test]
+    public async Task ShouldFailOnEmptySolutionOption() => await GetContext()
         .Execute(new IncrementSolutionVersionSettings
         {
             Solution = string.Empty
-        }).Should()
+        })
         .Fail();
 
-    [Fact]
-    public void ShouldFailOnNonExistingSolution() => GetContext()
+    [Test]
+    public async Task ShouldFailOnNonExistingSolution() => await GetContext()
         .Execute(new IncrementSolutionVersionSettings
         {
             Solution = "missing"
-        }).Should()
+        })
         .Fail();
 
-    [Fact]
-    public void ShouldFailOnInvalidSolutionVersion() => GetBuilder()
+    [Test]
+    public async Task ShouldFailOnInvalidSolutionVersion() => await GetBuilder()
         .WithData(new Solution(Guid.NewGuid())
         {
             UniqueName = "existing",
@@ -42,11 +38,11 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
         .Execute(new IncrementSolutionVersionSettings
         {
             Solution = "existing"
-        }).Should()
+        })
         .Fail();
 
-    [Fact]
-    public void ShouldFailOnInvalidOptionCombination() => GetBuilder()
+    [Test]
+    public async Task ShouldFailOnInvalidOptionCombination() => await GetBuilder()
         .WithData(new Solution(Guid.NewGuid())
         {
             UniqueName = "existing",
@@ -60,11 +56,11 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             Minor = false,
             Build = false,
             Revision = false
-        }).Should()
+        })
         .Fail();
 
-    [Fact]
-    public void ShouldUpdateMajorVersion()
+    [Test]
+    public async Task ShouldUpdateMajorVersion()
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -76,20 +72,20 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .WithData(solution)
             .Build();
 
-        context
+        await context
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
                 Major = true
-            }).Should()
+            })
             .Succeed();
 
-        context.GetSingle<Solution>(x => x.Id == solution.Id)
-            .Version.Should().Be("2.0.0.0");
+        await Assert.That(context.GetSingle<Solution>(x => x.Id == solution.Id)
+            .Version).IsEqualTo("2.0.0.0");
     }
 
-    [Fact]
-    public void ShouldUpdateMinorVersion()
+    [Test]
+    public async Task ShouldUpdateMinorVersion()
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -101,20 +97,20 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .WithData(solution)
             .Build();
 
-        context
+        await context
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Minor = true,
-            }).Should()
+                Minor = true
+            })
             .Succeed();
 
-        context.GetSingle<Solution>(x => x.Id == solution.Id)
-            .Version.Should().Be("1.1.0.0");
+        await Assert.That(context.GetSingle<Solution>(x => x.Id == solution.Id)
+            .Version).IsEqualTo("1.1.0.0");
     }
 
-    [Fact]
-    public void ShouldUpdateBuildVersion()
+    [Test]
+    public async Task ShouldUpdateBuildVersion()
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -126,20 +122,20 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .WithData(solution)
             .Build();
 
-        context
+        await context
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Build = true,
-            }).Should()
+                Build = true
+            })
             .Succeed();
 
-        context.GetSingle<Solution>(x => x.Id == solution.Id)
-            .Version.Should().Be("1.0.2.0");
+        await Assert.That(context.GetSingle<Solution>(x => x.Id == solution.Id)
+            .Version).IsEqualTo("1.0.2.0");
     }
 
-    [Fact]
-    public void ShouldUpdateRevisionVersion()
+    [Test]
+    public async Task ShouldUpdateRevisionVersion()
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -151,20 +147,20 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .WithData(solution)
             .Build();
 
-        context
+        await context
             .Execute(new IncrementSolutionVersionSettings
             {
                 Solution = solution.UniqueName,
-                Revision = true,
-            }).Should()
+                Revision = true
+            })
             .Succeed();
 
-        context.GetSingle<Solution>(x => x.Id == solution.Id)
-            .Version.Should().Be("1.0.1.3");
+        await Assert.That(context.GetSingle<Solution>(x => x.Id == solution.Id)
+            .Version).IsEqualTo("1.0.1.3");
     }
 
-    [Fact]
-    public void ShouldUpdateRevisionIfAllFlagsOmitted()
+    [Test]
+    public async Task ShouldUpdateRevisionIfAllFlagsOmitted()
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -176,14 +172,14 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .WithData(solution)
             .Build();
 
-        context
+        await context
             .Execute(new IncrementSolutionVersionSettings
             {
-                Solution = solution.UniqueName,
-            }).Should()
+                Solution = solution.UniqueName
+            })
             .Succeed();
 
-        context.GetSingle<Solution>(x => x.Id == solution.Id)
-            .Version.Should().Be("1.0.1.3");
+        await Assert.That(context.GetSingle<Solution>(x => x.Id == solution.Id)
+            .Version).IsEqualTo("1.0.1.3");
     }
 }

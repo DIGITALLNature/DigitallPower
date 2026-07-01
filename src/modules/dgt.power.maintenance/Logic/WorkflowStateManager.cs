@@ -14,24 +14,24 @@ namespace dgt.power.maintenance.Logic;
 
 public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService,
     string[] solutions, string[] publishers,
-    ITracer? tracer = default,
-    WorkflowStateManager.TaskStatusCallback? taskStatusCallback = default)
+    ITracer? tracer = null,
+    WorkflowStateManager.TaskStatusCallback? taskStatusCallback = null)
 {
-    public delegate void TaskStatusCallback(string taskName, string message, int progress, double? total = default);
+    public delegate void TaskStatusCallback(string taskName, string message, int progress, double? total = null);
 
-    public async Task<Workflow[]> LoadAllWorkflows()
+    public async Task<Workflow[]> LoadAllWorkflowsAsync()
     {
         taskStatusCallback?.Invoke("Loading all workflows", "preparing tasks", -1);
         tracer?.Log("Loading all workflows: starting tasks", TraceEventType.Verbose);
 
         var loadTasks = new[]
         {
-            LoadDirectWorkflows(),
-            LoadIndirectBusinessRules(),
+            LoadDirectWorkflowsAsync(),
+            LoadIndirectBusinessRulesAsync()
         };
 
         taskStatusCallback?.Invoke("Loading all workflows", "loading", 0, loadTasks.Length);
-        while (loadTasks.Any(t => !t.IsCompleted))
+        while (Array.Exists(loadTasks, t => !t.IsCompleted))
         {
             await Task.WhenAny(loadTasks);
 
@@ -51,7 +51,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return uniqueWorkflows;
     }
 
-    private async Task<Workflow[]> LoadDirectWorkflows()
+    private async Task<Workflow[]> LoadDirectWorkflowsAsync()
     {
         tracer?.Log("Loading workflows in solution: preparing query", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Workflows in solution", "preparing query", -1);
@@ -100,7 +100,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         tracer?.Log("Loading workflows in solution: executing query", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Workflows in solution", "loading", 0);
 
-        var workflows = await RetrieveMultipleWorkflows(query);
+        var workflows = await RetrieveMultipleWorkflowsAsync(query);
 
         tracer?.Log($"Loading workflows in solution: {workflows.Length} workflows loaded", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Workflows in solution", "loaded", workflows.Length, workflows.Length);
@@ -108,12 +108,12 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return workflows;
     }
 
-    private async Task<Workflow[]> LoadIndirectBusinessRules()
+    private async Task<Workflow[]> LoadIndirectBusinessRulesAsync()
     {
         tracer?.Log("Loading workflows indirectly: load full tables", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "starting tasks", -1);
 
-        var tableIds = await LoadIndirectBusinessRuleTables();
+        var tableIds = await LoadIndirectBusinessRuleTablesAsync();
 
         tracer?.Log($"Loading workflows indirectly: found {tableIds.Length} tables with potential business rules", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "resolving table names", 0, tableIds.Length + 1);
@@ -123,9 +123,9 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         await Parallel.ForEachAsync(tableIds, async (tableId, _) =>
         {
             tracer?.Log($"Loading workflows indirectly {tableId}: resolving table name", TraceEventType.Verbose);
-            var tableName = await GetTableNameFromMetadata(tableId);
+            var tableName = await GetTableNameFromMetadataAsync(tableId);
 
-            if (tableName != default)
+            if (tableName != null)
             {
                 tracer?.Log($"Loading workflows indirectly {tableId} ({tableName}): resolved table name", TraceEventType.Verbose);
                 tableNames.Add(tableName);
@@ -142,7 +142,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         tracer?.Log($"Loading workflows indirectly: resolved {tableNames.Count} tables with potential business rules", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "loading business rules", tableIds.Length, tableIds.Length + 1);
 
-        var workflows = tableNames.Count > 0 ? await LoadBusinessRules(tableNames.ToArray()) : [];
+        var workflows = tableNames.Count > 0 ? await LoadBusinessRulesAsync(tableNames.ToArray()) : [];
 
         tracer?.Log($"Loading workflows indirectly: {workflows.Length} business rules loaded", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "loaded", tableIds.Length + 1, tableIds.Length + 1);
@@ -150,7 +150,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return workflows.ToArray();
     }
 
-    private async Task<Workflow[]> LoadBusinessRules(string[] tableNames)
+    private async Task<Workflow[]> LoadBusinessRulesAsync(string[] tableNames)
     {
         var tablesString = string.Join(",", tableNames);
         tracer?.Log($"Loading business rules ({tablesString}): preparing query", TraceEventType.Verbose);
@@ -162,24 +162,24 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         query.Criteria.AddFilter(filter);
         filter.AddCondition(Workflow.LogicalNames.Type, ConditionOperator.Equal, Workflow.Options.Type.Definition);
         filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessRule);
-        filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tableNames.Select(t => (object)t).ToArray());
+        filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tableNames.Select(object (t) => t).ToArray());
 
         tracer?.Log($"Loading business rules ({tablesString}): executing query", TraceEventType.Verbose);
 
-        var workflows = await RetrieveMultipleWorkflows(query);
+        var workflows = await RetrieveMultipleWorkflowsAsync(query);
 
         tracer?.Log($"Loading business rules ({tablesString}): {workflows.Length} business rules loaded", TraceEventType.Verbose);
 
         return workflows;
     }
 
-    private async Task<string?> GetTableNameFromMetadata(Guid tableId)
+    private async Task<string?> GetTableNameFromMetadataAsync(Guid tableId)
     {
         var metadataRequest = new RetrieveEntityRequest
         {
             RetrieveAsIfPublished = true,
             MetadataId = tableId,
-            EntityFilters = EntityFilters.Entity,
+            EntityFilters = EntityFilters.Entity
         };
 
         try
@@ -187,14 +187,14 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
             var metadataResponse = await ExecuteAsync<RetrieveEntityResponse>(metadataRequest);
             return metadataResponse.EntityMetadata.LogicalName;
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             tracer?.Log($"Failed to resolve table name for id '{tableId}' with error '{e.Message}'", TraceEventType.Error);
-            return default;
+            return null;
         }
     }
 
-    private async Task<Guid[]> LoadIndirectBusinessRuleTables()
+    private async Task<Guid[]> LoadIndirectBusinessRuleTablesAsync()
     {
         tracer?.Log("Loading workflows indirectly: preparing query", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "preparing table query", -1);
@@ -241,11 +241,11 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         tracer?.Log("Loading workflows indirectly: executing query", TraceEventType.Verbose);
         taskStatusCallback?.Invoke("Business rules", "loading tables", 0);
 
-        var RetrieveMultipleRequest = new RetrieveMultipleRequest
+        var retrieveMultipleRequest = new RetrieveMultipleRequest
         {
-            Query = query,
+            Query = query
         };
-        var response = await ExecuteAsync<RetrieveMultipleResponse>(RetrieveMultipleRequest);
+        var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultipleRequest);
         var solutionComponents = response.EntityCollection.Entities.Cast<SolutionComponent>().ToArray();
 
         tracer?.Log($"Loading workflows indirectly: {solutionComponents.Length} tables loaded", TraceEventType.Verbose);
@@ -256,7 +256,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
             .ToArray();
     }
 
-    private async Task<Workflow[]> RetrieveMultipleWorkflows(QueryExpression query)
+    private async Task<Workflow[]> RetrieveMultipleWorkflowsAsync(QueryExpression query)
     {
         query.ColumnSet.AddColumns
         (
@@ -277,7 +277,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         var retrieveMultpipleRequest = new RetrieveMultipleRequest
         {
-            Query = query,
+            Query = query
         };
         var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultpipleRequest);
         var workflows = response.EntityCollection.Entities.Cast<Workflow>().ToArray();

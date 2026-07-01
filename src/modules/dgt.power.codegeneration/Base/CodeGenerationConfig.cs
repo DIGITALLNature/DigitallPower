@@ -2,93 +2,95 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base.Config;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable CollectionNeverUpdated.Global
 
-
 namespace dgt.power.codegeneration.Base;
 
+/// <summary>
+///     V1 legacy configuration. Kept for backward compatibility with existing config files
+///     that don't have a <c>"type"</c> discriminator. Use <see cref="DotNetCodeGenerationConfig"/>
+///     or <see cref="TypeScriptCodeGenerationConfig"/> for new configs.
+/// </summary>
+#pragma warning disable CA2227 // Entities and Forms are assigned post-construction
 public class CodeGenerationConfig
 {
-    private HashSet<string> _actions;
-    private HashSet<string> _customApis;
+    private HashSet<string> _actions = [];
+    private HashSet<string> _customApis = [];
 
-    private HashSet<string> _entities;
-    private HashSet<string> _forms;
-    private HashSet<string> _sdkMessages;
-    private HashSet<string> _solutions;
+    private HashSet<string> _entities = [];
+    private HashSet<string> _forms = [];
+    private HashSet<string> _sdkMessages = [];
+    private HashSet<string> _solutions = [];
 
-    public CodeGenerationConfig()
-    {
-        _entities = new HashSet<string>();
-        _actions = new HashSet<string>();
-        _customApis = new HashSet<string>();
-        _sdkMessages = new HashSet<string>();
-        _solutions = new HashSet<string>();
-        _forms = new HashSet<string>();
-    }
+    /// <summary>
+    ///     Config version. Defaults to 1 for backward compatibility.
+    ///     Can be set explicitly to <c>1</c> in JSON to be explicit about the format.
+    /// </summary>
+    public int Version { get; init; } = 1;
 
     public string NameSpace { get; init; } = "Digitall.APower.Model";
 
     public ICollection<string> Entities
     {
-        get => _entities.ToHashSet();
+        get => _entities;
         set
         {
-            _entities = new HashSet<string>(value);
+            _entities = [..value];
             _entities.TrimExcess();
         }
     }
 
-    public string[] Actions
+    public IReadOnlyCollection<string> Actions
     {
-        get => _actions.ToArray();
+        get => _actions;
         init
         {
-            _actions = new HashSet<string>(value);
+            _actions = [..value];
             _actions.TrimExcess();
         }
     }
 
     // ReSharper disable once InconsistentNaming
-    public string[] CustomAPIs
+    public IReadOnlyCollection<string> CustomAPIs
     {
-        get => _customApis.ToArray();
+        get => _customApis;
         init
         {
-            _customApis = new HashSet<string>(value);
+            _customApis = [..value];
             _customApis.TrimExcess();
         }
     }
 
     //additional sdk messages
-    public string[] AdditionalSdkMessages
+    public IReadOnlyCollection<string> AdditionalSdkMessages
     {
-        get => _sdkMessages.ToArray();
+        get => _sdkMessages;
         init
         {
-            _sdkMessages = new HashSet<string>(value);
+            _sdkMessages = [..value];
             _sdkMessages.TrimExcess();
         }
     }
 
-    public string[] Solutions
+    public IReadOnlyCollection<string> Solutions
     {
-        get => _solutions.ToArray();
+        get => _solutions;
         init
         {
-            _solutions = new HashSet<string>(value);
+            _solutions = [..value];
             _solutions.TrimExcess();
         }
     }
 
-    public string[] Forms
+    public IReadOnlyCollection<string> Forms
     {
-        get => _forms.ToArray();
+        get => _forms;
         set
         {
-            _forms = new HashSet<string>(value);
+            _forms = [..value];
             _forms.TrimExcess();
         }
     }
@@ -101,116 +103,127 @@ public class CodeGenerationConfig
 
     public bool SuppressMetaData { get; init; }
 
-    public bool Hints { get; init; } = true;
+    public TypescriptGeneratorVersion TypescriptGeneratorVersion { get; init; } = TypescriptGeneratorVersion.Light;
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public bool SuppressOptions { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressLogicalNames { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressContext { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressActions { get; init; }
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
     public bool SuppressSdkMessages { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressRelations { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressNavigationProperties { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressEntityTypeCode { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool SuppressAlternateKeys { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Make generated properties virtual
-    /// </summary>
     public bool Virtual { get; init; }
 
-    /// <summary>
-    ///     DotNet only
-    /// </summary>
     public bool UseBaseLanguage { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Skip annotation of generated properties with 'DebuggerNonUserCode'
-    /// </summary>
     public bool NonDebuggerNonUserCode { get; init; }
 
-    /// <summary>
-    ///     DotNet only; Make generated readonly properties editable
-    /// </summary>
     public bool EditableReadOnlyProperties { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public string TypingPath { get; init; } = "\"\"../../Typings/Xrm/index.d.ts\"\"";
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
     public bool OnlyFormsFromSolutions { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
-    public HashSet<EntityFilter> EntityFilters { get; init; } = new ();
+    public bool XrmMockFormHelpers { get; init; }
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
-    public HashSet<EntityRefFilter> EntityRefFilters { get; init; } = new();
+    public HashSet<EntityFilter> EntityFilters { get; init; } = [];
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
-    public HashSet<EntityFormFilter> EntityFormFilters { get; init; } = new();
+    public HashSet<EntityRefFilter> EntityRefFilters { get; init; } = [];
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
-    public HashSet<string> SdkMessageFilters { get; init; } = new();
+    public HashSet<EntityFormFilter> EntityFormFilters { get; init; } = [];
 
-    /// <summary>
-    ///     DotNet & TypeScript
-    /// </summary>
-    public HashSet<string> GlobalOptionSets { get; init; } = new();
+    public HashSet<string> SdkMessageFilters { get; init; } = [];
 
-    /// <summary>
-    ///     TypeScript only
-    /// </summary>
-    public HashSet<string> BusinessProcessFlows { get; init; } = new();
+    public HashSet<string> GlobalOptionSets { get; init; } = [];
 
+    public HashSet<string> BusinessProcessFlows { get; init; } = [];
 
-    /// <summary>
-    ///     DotNet only; Make generated properties virtual
-    /// </summary>
     public bool SuppressNullableSupport { get; init; }
+
+    /// <summary>
+    ///     Maps this V1 config to the appropriate V2 config(s).
+    ///     Returns a <see cref="DotNetCodeGenerationConfig"/> when DotNet is not suppressed,
+    ///     or a <see cref="TypeScriptCodeGenerationConfig"/> when TypeScript is not suppressed.
+    /// </summary>
+    public DotNetCodeGenerationConfig ToDotNetConfig()
+    {
+        var requests = new HashSet<string>();
+        foreach (var a in Actions) requests.Add(a);
+        foreach (var c in CustomAPIs) requests.Add(c);
+        foreach (var s in AdditionalSdkMessages) requests.Add(s);
+
+        return new DotNetCodeGenerationConfig
+        {
+            Namespace = NameSpace,
+            Entities = new EntityScopeConfig
+            {
+                Names = new HashSet<string>(Entities),
+                FromSolutions = Solutions,
+                Mask = EntityMask
+            },
+            Language = UseBaseLanguage ? null : 0,
+            OptionSets = GlobalOptionSets,
+            Requests = requests,
+            Output = new DotNetOutput
+            {
+                Target = SuppressNullableSupport ? DotNetTarget.Framework : DotNetTarget.Modern,
+                Virtual = Virtual,
+                EditableReadOnly = EditableReadOnlyProperties,
+                Include = new DotNetInclude
+                {
+                    Context = !SuppressContext,
+                    Options = !SuppressOptions,
+                    LogicalNames = !SuppressLogicalNames,
+                    Relations = !SuppressRelations,
+                    NavigationProps = !SuppressNavigationProperties,
+                    EntityTypeCode = !SuppressEntityTypeCode,
+                    AlternateKeys = !SuppressAlternateKeys,
+                    Metadata = !SuppressMetaData
+                }
+            }
+        };
+    }
+
+    public TypeScriptCodeGenerationConfig ToTypeScriptConfig()
+    {
+        var requests = new HashSet<string>();
+        foreach (var a in Actions) requests.Add(a);
+        foreach (var c in CustomAPIs) requests.Add(c);
+        foreach (var s in AdditionalSdkMessages) requests.Add(s);
+
+        return new TypeScriptCodeGenerationConfig
+        {
+            Entities = new EntityScopeConfig
+            {
+                Names = new HashSet<string>(Entities),
+                FromSolutions = Solutions,
+                Mask = EntityMask
+            },
+            Language = UseBaseLanguage ? null : 0,
+            OptionSets = GlobalOptionSets,
+            Requests = requests,
+            Output = new TypeScriptOutput
+            {
+                Forms = new TypeScriptFormsOutput
+                {
+                    Filter = new HashSet<string>(Forms),
+                    FromSolutions = OnlyFormsFromSolutions,
+                    TestHelpers = XrmMockFormHelpers
+                },
+                CustomApis = true
+            }
+        };
+    }
 }
+#pragma warning restore CA2227

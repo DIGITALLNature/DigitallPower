@@ -9,18 +9,23 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
 namespace dgt.power.export.Logic;
 
-public sealed class OutlookTemplateExport : BaseExport
+public sealed class OutlookTemplateExport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IFileService fileService,
+    IAnsiConsole console)
+    : BaseExport(tracer, connection, configResolver, fileService, console)
 {
-    public OutlookTemplateExport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IFileService fileService)
-        : base(tracer, connection, configResolver, fileService)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ExportVerb args)
+    private bool InvokeCore(ExportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);

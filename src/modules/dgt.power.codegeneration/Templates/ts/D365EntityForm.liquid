@@ -1,0 +1,145 @@
+/* eslint-disable */
+///<reference path="{{ model.TypingPath }}" />
+
+import { D365Model } from "./model";
+
+export module {{ model.ModuleName }} {
+	export class Attributes {
+		constructor() {
+		}
+{% for attribute in model.AttributeConstants %}
+		public static {{ attribute.Name }}: string = "{{ attribute.LogicalName }}";
+{% endfor %}
+	}
+	export class Tabs {
+		constructor() {
+		}
+{% for tab in model.TabConstants %}
+		public static {{ tab.Name }}: string = "{{ tab.Value }}";
+{% endfor %}
+	}
+	export class Sections {
+		constructor() {
+		}
+{% for section in model.SectionConstants %}
+		public static {{ section.Name }}: string = "{{ section.Value }}";
+{% endfor %}
+	}
+	export class Grids {
+		constructor() {
+		}
+{% for grid in model.GridConstants %}
+		public static {{ grid.Name }}: string = "{{ grid.Value }}";
+{% endfor %}
+	}
+	export class Form implements D365Model.Form {
+
+		public static EntitylogicalName: string = "{{ model.EntityLogicalName }}";
+
+		public FormContext!: Xrm.FormContext;
+		public Tabs!: FormTabs.Tabs;
+
+		constructor(private context?: Xrm.FormContext) {
+			if (this.context) {
+				this.FormContext = this.context;
+				this.Tabs = new FormTabs.Tabs(this.context.ui.tabs);
+			}
+		}
+
+		/**
+		 * @deprecated
+		 * @param formContext 
+		 */
+		protected onFormLoad(formContext: Xrm.FormContext): void {
+			this.FormContext = formContext;
+		};
+
+		EntitylogicalName(): string {
+			return Form.EntitylogicalName;
+		};
+
+		EntityId(): string {
+			return this.FormContext.data.entity.getId().replace("{", "").replace("}", "").trim();
+		};
+
+{% for attribute in model.AttributeFields %}
+{{ attribute.Summary }}
+		{{ attribute.Name }}: D365Model.EntityField<{{ attribute.AttributeType }}, {{ attribute.ControlType }}> = new D365Model.EntityField<{{ attribute.AttributeType }}, {{ attribute.ControlType }}>(
+			//{{ model.ModuleName }}.Attributes.{{ attribute.Name }},
+			"{{ attribute.LogicalName }}",
+			{{ attribute.XrmEnum }},
+			() => this._a<{{ attribute.AttributeType }}>("{{ attribute.LogicalName }}"),
+			(header?: boolean, index?: number) => this._c<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", header, index),
+			(delegate: (control: {{ attribute.ControlType }}) => void) => this._f<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", delegate),
+			(value) => this._v<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", value),
+			(value) => this._d<{{ attribute.ControlType }}>("{{ attribute.LogicalName }}", value)
+		);
+
+{% endfor %}
+{% for grid in model.GridFields %}
+		{{ grid.Name }}: D365Model.FormGrid = new  D365Model.FormGrid(
+			//{{ model.ModuleName }}.Grids.{{ grid.Name }},
+			"{{ grid.Value }}",
+			() => this.FormContext.getControl<Xrm.Controls.GridControl>("{{ grid.Value }}").getGrid(),
+			() => this.FormContext.getControl<Xrm.Controls.GridControl>("{{ grid.Value }}")
+		);
+
+{% endfor %}
+		private _a<A extends Xrm.Attributes.Attribute>(attributeName: string): A {
+			return this.FormContext.getAttribute(attributeName);
+		}
+
+		private _c<C extends Xrm.Controls.StandardControl>(attributeName: string, header?: boolean, index?: number): C {
+			var name = attributeName;
+			if (header) {
+				name = "header_process_" + name;
+			}
+			if (index) {
+				name = name + "_" + index;
+			}
+			return this.FormContext.getControl(name);
+		}
+
+		private _v<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName).controls.forEach((c) => (c as C).setVisible(value));
+		}
+
+		private _d<C extends Xrm.Controls.StandardControl>(attributeName: string, value: boolean) {
+			this.FormContext.getAttribute(attributeName).controls.forEach((c) => (c as C).setDisabled(value));
+		}
+
+		private _f<C extends Xrm.Controls.StandardControl>(attributeName: string, callback: (control: C) => void) {
+			this.FormContext.getAttribute(attributeName).controls.forEach((c) => callback((c as C)));
+		}
+	}
+{% if model.IncludeOptions %}
+	export module Optionsets {
+{% for optionSet in model.Optionsets %}
+		export class {{ optionSet.Name }} implements D365Model.Optionset {
+			constructor() {
+			}
+
+{% for option in optionSet.Options %}
+			public static {{ option.Name }}: D365Model.OptionsetValue = new D365Model.OptionsetValue("{{ option.Label }}", {{ option.Value }});
+{% endfor %}
+		}
+{% endfor %}		  
+	}
+{% endif %}
+	export module FormTabs {
+		export class Tabs extends D365Model.FormTabs {
+{% for tab in model.FormTabs %}
+			{{ tab.Name }} = new D365Model.Tab<{{ tab.Name }}Sections>(
+				this.Tabs.get({{ model.ModuleName }}.Tabs.{{ tab.Name }}),
+				new {{ tab.Name }}Sections(this.Tabs.get({{ model.ModuleName }}.Tabs.{{ tab.Name }}).sections)); 
+{% endfor %}
+		}
+{% for tabSectionClass in model.TabSectionClasses %}
+		export class {{ tabSectionClass.Name }}Sections extends D365Model.Sections {
+{% for section in tabSectionClass.Sections %}
+			{{ section.Name }}: Xrm.Controls.Section = this.Sections.get({{ model.ModuleName }}.Sections.{{ section.Name }});
+{% endfor %}
+		}
+{% endfor %}
+	}
+}

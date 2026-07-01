@@ -7,22 +7,15 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using FluentAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
 
 namespace dgt.power.export.tests;
 
 public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
 {
-    public BulkDeleteExportTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<BulkDeleteExport, ExportVerb> GetContext() =>
         GetBuilder()
-            .WithData(new Entity[]
-            {
+            .WithData([
                 new AsyncOperation(Guid.NewGuid())
                 {
                     Name = "Analysis Results Cleanup Job",
@@ -41,25 +34,25 @@ public class BulkDeleteExportTest : ExportTestBase<BulkDeleteExport>
                     Data =
                         "<string>&lt;fetch version=\"1.0\" output-format=\"xml-platform\" mapping=\"logical\" &gt;&lt;entity name=\"testentity\" &gt;&lt;attribute name=\"name\" /&gt;&lt;/entity&gt;&lt;/fetch&gt;</string>"
                 }
-            }).Build();
+            ]).Build();
 
-    [Fact]
-    public void ShouldGetPlainBulkDeleteExport()
+    [Test]
+    public async Task ShouldGetPlainBulkDeleteExport()
     {
         var context = GetContext();
-        context.Execute(new ExportVerb {FileName = GetTestFileName(), FileDir = ArtifactDirectory,}
-        ).Should().BeTrue();
+        await Assert.That(context.Execute(new ExportVerb {FileName = GetTestFileName(), FileDir = ArtifactDirectory,}
+        )).IsTrue();
         var bulkDeletes = GetConfigurationTestArtifact<BulkDeletes>(GetTestFileName());
-        bulkDeletes.Deletes.Should().HaveCount(2);
+        await Assert.That(bulkDeletes.Deletes).Count().IsEqualTo(2);
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb {FileName = string.Empty, FileDir = ArtifactDirectory,}
-        ).Should().BeTrue();
+        await Assert.That(GetContext().Execute(new ExportVerb {FileName = string.Empty, FileDir = ArtifactDirectory,}
+        )).IsTrue();
 
         var bulkDeletes = GetConfigurationTestArtifact<BulkDeletes>("bulkdelete.json");
-        bulkDeletes.Deletes.Should().HaveCount(2);
+        await Assert.That(bulkDeletes.Deletes).Count().IsEqualTo(2);
     }
 }

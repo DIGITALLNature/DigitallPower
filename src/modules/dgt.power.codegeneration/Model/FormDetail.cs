@@ -2,17 +2,21 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 namespace dgt.power.codegeneration.Model;
+// ReSharper disable CollectionNeverQueried.Global
+
 
 public class FormDetail
 {
-    public FormDetail()
-    {
-        Tabs = new Dictionary<string, List<string>>();
-        Fields = new HashSet<string>();
-        Grids = new HashSet<string>();
-    }
-
-    public Dictionary<string, List<string>> Tabs { get; }
-    public HashSet<string> Fields { get; }
-    public HashSet<string> Grids { get; }
+    public SortedSet<FormAttributeData> Attributes { get; } = [];
+    public SortedSet<FormXmlControlData> FormControls { get; } = [];
+    public string? FormId { get; set; }
+    public string FormUniqueName { get; set; } = string.Empty;
+    public string FormEntityName { get; set; } = string.Empty;
+    public int FormType { get; set; }
+    public string FormTypeName { get; set; } = string.Empty;
+    public SortedSet<string> Grids { get; } = [];
+    public SortedSet<string> HeaderControlFields { get; } = [];
+    public SortedSet<QuickViewFormControl> QuickViews { get; } = [];
+    public SortedSet<TabDetail> TabDetails { get; } = [];
+    public SortedDictionary<string, List<string>> Tabs { get; } = [];
 }

@@ -1,15 +1,13 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.dto;
+using System.Globalization;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.export.tests.Base;
 using dgt.power.tests;
-using FakeXrmEasy.Abstractions;
-using FluentAssertions;
 using Microsoft.Xrm.Sdk;
-using Xunit.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
 
@@ -17,39 +15,34 @@ namespace dgt.power.export.tests;
 
 public class CalendarExportTests : ExportTestBase<CalendarExport>
 {
-    public CalendarExportTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<CalendarExport, ExportVerb> GetContext()
     {
         var calendar1 = new Calendar(Guid.Parse("5d2fc991-a347-4e67-ad8b-6d6c517d510a"))
         {
             Name = "Test Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule),
+            Type = new OptionSetValue(Calendar.Options.Type.HolidaySchedule)
         };
         var innerCalendar = new Calendar(Guid.NewGuid())
         {
             Name = "Inner Customer Service Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.InnerCalendarType),
+            Type = new OptionSetValue(Calendar.Options.Type.InnerCalendarType)
         };
         var calendar2 = new Calendar(Guid.NewGuid())
         {
             Name = "Customer Service Calendar",
-            Type = new OptionSetValue(Calendar.Options.Type.CustomerService),
+            Type = new OptionSetValue(Calendar.Options.Type.CustomerService)
 
         };
         return GetBuilder()
-            .WithRelationship(Calendar.Relations.OneToMany.CalendarCalendarRules, new XrmFakedRelationship
+            .WithRelationship(new OneToManyRelationshipMetadata
             {
-                Entity1LogicalName = Calendar.EntityLogicalName,
-                Entity1Attribute = Calendar.LogicalNames.CalendarId,
-                Entity2LogicalName = CalendarRule.EntityLogicalName,
-                Entity2Attribute = CalendarRule.LogicalNames.CalendarId,
-                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
+                SchemaName = Calendar.Relations.OneToMany.CalendarCalendarRules,
+                ReferencingEntity = Calendar.EntityLogicalName,
+                ReferencingAttribute = Calendar.LogicalNames.CalendarId,
+                ReferencedEntity = CalendarRule.EntityLogicalName,
+                ReferencedAttribute = CalendarRule.LogicalNames.CalendarId
             })
-            .WithData(new Entity[]
-            {
+            .WithData([
                 calendar1,
                 calendar2,
                 innerCalendar,
@@ -57,7 +50,7 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                 {
                     Name = "New Year",
                     CalendarId = calendar1.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -67,14 +60,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.Parse("2a17af31-25c6-4c8d-adae-7ac26e3899e8"))
                 {
                     Name = "Easter Sunday",
                     CalendarId = calendar1.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -84,14 +77,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.NewGuid())
                 {
                     Name = "New Year",
                     CalendarId = calendar2.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Weekly Rec Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -102,14 +95,14 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-01-02T00:00:00Z", CultureInfo.InvariantCulture)
                 },
                 new CalendarRule(Guid.NewGuid())
                 {
                     Name = "Easter Sunday",
                     CalendarId = calendar2.ToEntityReference(),
-                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z"),
+                    StartTime = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
                     Duration = 1440,
                     Description = "Holiday Rule",
                     Pattern = "FREQ=DAILY;INTERVAL=1;COUNT=1",
@@ -119,39 +112,39 @@ public class CalendarExportTests : ExportTestBase<CalendarExport>
                     TimeZoneCode = -1,
                     ExtentCode = 2,
                     IsSimple = false,
-                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z"),
-                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z")
+                    EffectiveIntervalStart = DateTime.Parse("2020-04-12T00:00:00Z", CultureInfo.InvariantCulture),
+                    EffectiveIntervalEnd = DateTime.Parse("2020-04-13T00:00:00Z", CultureInfo.InvariantCulture)
                 }
-            }).Build();
+            ]).Build();
     }
 
-    [Fact]
-    public void ShouldExportCalendar()
+    [Test]
+    public async Task ShouldExportCalendar()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = GetTestFileName(),
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
-        var calendars = GetConfigurationTestArtifact<Calendars>(GetTestFileName());
-        calendars.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay == false).Rules.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay).Rules.Should().BeEmpty();
+        )).IsTrue();
+        var calendars = GetConfigurationTestArtifact<List<dto.Calendar>>(GetTestFileName());
+        await Assert.That(calendars).Count().IsEqualTo(2);
+        await Assert.That(calendars.Single(x => !x.IsVaryByDay).Rules).Count().IsEqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 
-    [Fact]
-    public void ShouldUseDefaultOnEmptyFileName()
+    [Test]
+    public async Task ShouldUseDefaultOnEmptyFileName()
     {
-        GetContext().Execute(new ExportVerb
+        await Assert.That(GetContext().Execute(new ExportVerb
             {
                 FileName = string.Empty,
-                FileDir = ArtifactDirectory,
+                FileDir = ArtifactDirectory
             }
-        ).Should().BeTrue();
-        var calendars = GetConfigurationTestArtifact<Calendars>("calendar.json");
-        calendars.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay == false).Rules.Should().HaveCount(2);
-        calendars.Single(x => x.IsVaryByDay).Rules.Should().BeEmpty();
+        )).IsTrue();
+        var calendars = GetConfigurationTestArtifact<List<dto.Calendar>>("calendar.json");
+        await Assert.That(calendars).Count().IsEqualTo(2);
+        await Assert.That(calendars.Single(x => !x.IsVaryByDay).Rules).Count().IsEqualTo(2);
+        await Assert.That(calendars.Single(x => x.IsVaryByDay).Rules).IsEmpty();
     }
 }

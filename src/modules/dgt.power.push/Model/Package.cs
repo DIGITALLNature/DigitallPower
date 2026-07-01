@@ -7,28 +7,29 @@ using System.Runtime.Serialization;
 namespace dgt.power.push.Model;
 
 [DataContract]
-public class Package : IEquatable<Package>
+public record Package
 {
     [DataMember(Name = "name", IsRequired = true)]
     [Required]
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
     [DataMember(Name = "version", IsRequired = true)]
     [Required]
-    public string Version { get; set; } = null!;
+    public string Version { get; init; } = null!;
 
     [DataMember(Name = "solutions", IsRequired = false)]
-    public List<string> Solutions { get; set; } = new();
+    public IReadOnlyList<string> Solutions { get; init; } = [];
 
-    [IgnoreDataMember] public string? Content { get; set; }
+    [IgnoreDataMember] public string? Content { get; init; }
 
-    [IgnoreDataMember] public AssemblyState State { get; set; } = AssemblyState.Undefined;
+    [IgnoreDataMember] public AssemblyState State { get; init; } = AssemblyState.Undefined;
 
-    [IgnoreDataMember] public Guid Id { get; set; }
+    [IgnoreDataMember] public Guid Id { get; init; }
 
-    public bool Equals(Package? other)
+    // Equality is based on identity (Name + Version) and content — not on runtime state (Id, State, Solutions)
+    public virtual bool Equals(Package? other)
     {
-        if (other == null)
+        if (other is null)
         {
             return false;
         }
@@ -38,8 +39,10 @@ public class Package : IEquatable<Package>
             return true;
         }
 
-        return Name == other.Name &&
-               Version == other.Version &&
-               Content == other.Content;
+        return Name == other.Name
+               && Version == other.Version
+               && Content == other.Content;
     }
+
+    public override int GetHashCode() => HashCode.Combine(Name, Version, Content);
 }

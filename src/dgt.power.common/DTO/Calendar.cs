@@ -1,0 +1,26 @@
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Text.Json.Serialization;
+
+namespace dgt.power.dto;
+
+public sealed class Calendar
+{
+    [JsonPropertyName("CalendarId")] public required Guid CalendarId { get; init; }
+
+    [JsonPropertyName("Name")] public required string Name { get; init; }
+
+    [JsonPropertyName("IsVaryByDay")] public bool IsVaryByDay { get; set; }
+
+    [JsonPropertyName("Type")] public required int Type { get; init; }
+
+    [JsonPropertyName("Description")] public string? Description { get; init; }
+
+    [JsonPropertyName("HolidaySchedule")] public Guid? HolidayScheduleId { get; init; }
+
+    [JsonPropertyName("CalendarRules")]
+#pragma warning disable CA1002 // List is mutated by export logic
+    public List<CalendarRule> Rules { get; init; } = new();
+#pragma warning restore CA1002
+}

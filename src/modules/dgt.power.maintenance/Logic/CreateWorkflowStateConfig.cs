@@ -1,7 +1,6 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,81 +9,52 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
-using Spectre.Console.Cli;
 
 namespace dgt.power.maintenance.Logic;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
-public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Settings>
+public class CreateWorkflowStateConfig(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    JsonSerializerOptions jsonSerializerOptions,
+    IAnsiConsole console)
+    : PowerLogic<CreateWorkflowStateConfigSettings>(tracer, connection, configResolver, console)
 {
-    public class Settings : BaseProgramSettings
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+    private readonly WorkflowStateTracker _workflowStateTracker = new();
+
+    protected override Task<bool> InvokeAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {
-        [CommandOption("-o|--output")]
-        [Description("Full path to the output file, e.g. C:\\temp\\config.json")]
-        [DefaultValue("config.json")]
-        public required string Config { get; init; }
+        ArgumentNullException.ThrowIfNull(args);
 
-        [CommandOption("--overwrite")]
-        [Description("If set to true the output file will be overwritten if it exists")]
-        [DefaultValue(false)]
-        public bool Overwrite { get; init; }
-
-        [CommandOption("-s|--solutions")]
-        [Description("Comma separated list of solution uniquenames to consider. Wildcards (%) are allowed")]
-        public string? Solutions { get; set; }
-
-        [CommandOption("-p|--publishers")]
-        [Description("Comma separated list of publisher names to consider. Wildcards (%) are allowed")]
-        public string? Publishers { get; set; }
-
-        [CommandOption("--tablereport")]
-        [Description("Print a table report to the console after the config file has been created")]
-        [DefaultValue(true)]
-        public bool TableReport { get; init; }
+        return InvokeCoreAsync(args, cancellationToken);
     }
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly WorkflowStateTracker _workflowStateTracker;
-
-    public CreateWorkflowStateConfig(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, JsonSerializerOptions jsonSerializerOptions) : base(tracer, connection, configResolver)
+    private async Task<bool> InvokeCoreAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {
-        _jsonSerializerOptions = new JsonSerializerOptions(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-        _workflowStateTracker = new WorkflowStateTracker();
-    }
-
-    protected override bool Invoke(Settings args)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(args.Config, nameof(args.Config));
+        _ = cancellationToken;
         Tracer.Start(this);
-
-        // Check if output file exists and if so abort if overwrite is not set
-        if (File.Exists(args.Config) && !args.Overwrite)
-        {
-            throw new InvalidOperationException($"Output file '{args.Config}' already exists. Use --overwrite flag to overwrite the existng file");
-        }
 
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');
 
         // Do the actual work
-        var task = CollectWorkflowStates(solutions, publishers, args.Config);
-        task.Wait();
+        await CollectWorkflowStatesAsync(solutions, publishers, args.Config, args.Detailed, args.Overwrite);
 
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole();
+            _workflowStateTracker.WriteToConsole(Console);
         }
 
         return Tracer.End(this, true);
     }
 
-    private async Task CollectWorkflowStates(string[]? solutions, string[]? publishers, string configFile)
+    private async Task CollectWorkflowStatesAsync(string[]? solutions, string[]? publishers, string configFile, bool detailed, bool overwrite)
     {
-        await AnsiConsole.Progress()
+        await Console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();
@@ -107,7 +77,7 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 var workflowStateManager = new WorkflowStateManager((IOrganizationServiceAsync2)Connection, solutions ?? [], publishers ?? [], Tracer, progress);
 
                 Tracer.Log("Loading all workflows", TraceEventType.Information);
-                var workflows = await workflowStateManager.LoadAllWorkflows();
+                var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
                 Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
@@ -130,21 +100,21 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     Actions = [],
                     BusinessRules = [],
                     SolutionFilter = solutions,
-                    PublisherFilter = publishers,
+                    PublisherFilter = publishers
                 };
 
                 // collect modern flow and legacy workflow configs (both identified by name)
-                foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow_).OrderBy(f => f.Name))
+                foreach (var flow in workflows.Where(w => w.Category!.Value == Workflow.Options.Category.ModernFlow || w.Category!.Value == Workflow.Options.Category.Workflow).OrderBy(f => f.Name))
                 {
                     var disabled = flow.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = flow.OwnerId?.Id != defaultOwnerId ? flow.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (disabled || owner != default)
+                    if (detailed || disabled || owner != null)
                     {
-                        config.Flows.TryAdd(flow.Name!, new WorkflowConfig.FlowConfig
+                        config.Flows.TryAdd(flow.Name!, new WorkflowFlowConfig
                         {
                             Disabled = disabled,
-                            Owner = owner,
+                            Owner = owner
                         });
                     }
                 }
@@ -155,12 +125,12 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                     var disabled = action.StateCode?.Value != Workflow.Options.StateCode.Activated;
                     var owner = action.OwnerId?.Id != defaultOwnerId ? action.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                    if (disabled || owner != default)
+                    if (detailed || disabled || owner != null)
                     {
-                        config.Actions.TryAdd(action.UniqueName!, new WorkflowConfig.BaseWorkflowConfig
+                        config.Actions.TryAdd(action.UniqueName!, new WorkflowBaseConfig
                         {
                             Disabled = disabled,
-                            Owner = owner,
+                            Owner = owner
                         });
                     }
                 }
@@ -169,18 +139,18 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 var businessRuleTables = workflows.Where(w => w.Category!.Value == Workflow.Options.Category.BusinessRule).GroupBy(b => b.PrimaryEntity).ToList();
                 foreach (var table in businessRuleTables.OrderBy(t => t.Key))
                 {
-                    var tableEntries = new Dictionary<string, WorkflowConfig.BaseWorkflowConfig>();
+                    var tableEntries = new Dictionary<string, WorkflowBaseConfig>();
                     foreach (var rule in table)
                     {
                         var disabled = rule.StateCode?.Value != Workflow.Options.StateCode.Activated;
                         var owner = rule.OwnerId?.Id != defaultOwnerId ? rule.GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                        if (disabled || owner != default)
+                        if (detailed || disabled || owner != null)
                         {
-                            tableEntries.TryAdd(rule.Name!, new WorkflowConfig.BaseWorkflowConfig
+                            tableEntries.TryAdd(rule.Name!, new WorkflowBaseConfig
                             {
                                 Disabled = disabled,
-                                Owner = owner,
+                                Owner = owner
                             });
                         }
                     }
@@ -191,7 +161,8 @@ public class CreateWorkflowStateConfig : PowerLogic<CreateWorkflowStateConfig.Se
                 // Write config to file
                 Tracer.Log($"Writing config to {configFile}", TraceEventType.Verbose);
 
-                using var fileStream = new FileStream(configFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
+                using var fileStream = new FileStream(configFile, fileMode, FileAccess.Write, FileShare.None);
                 await JsonSerializer.SerializeAsync(fileStream, config, _jsonSerializerOptions);
 
                 prepareConfigTask.Value = prepareConfigTask.MaxValue;

@@ -9,17 +9,22 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 using Queue = dgt.power.dto.Queue;
 
 namespace dgt.power.import.Logic;
 
-public sealed class QueueImport : BaseImport
+public sealed class QueueImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : BaseImport(tracer, connection, configResolver, console)
 {
-    public QueueImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
+    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
+        Task.FromResult(InvokeCore(args));
 
-    protected override bool Invoke(ImportVerb args)
+    private bool InvokeCore(ImportVerb args)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Tracer.Start(this);
@@ -32,7 +37,7 @@ public sealed class QueueImport : BaseImport
         }
 
         //anything to do?
-        if (!queuesToTransport.QueuesToTransport.Any())
+        if (queuesToTransport.QueuesToTransport.Count == 0)
         {
             return Tracer.NotConfigured(this);
         }
@@ -53,7 +58,7 @@ public sealed class QueueImport : BaseImport
 
         //find queues need to be updated
         Tracer.Log("update check", TraceEventType.Information);
-        foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Any(e => e.Id == c.QueueId)))
+        foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Exists(e => e.Id == c.QueueId)))
         {
             result = UpdateQueue(queues, updateQueue, alternativeOwner) && result;
         }
@@ -61,7 +66,7 @@ public sealed class QueueImport : BaseImport
         //find queues which need to be created
         //create
         Tracer.Log("create check", TraceEventType.Information);
-        foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.All(e => e.Id != c.QueueId)))
+        foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
             var isCreated = CreateQueue(newQueue, out var id);
             if (!isCreated)
@@ -160,7 +165,7 @@ public sealed class QueueImport : BaseImport
         return alternativeOwner;
     }
 
-    private IList<dataverse.Queue> GetQueues()
+    private List<dataverse.Queue> GetQueues()
     {
         var query = new QueryExpression
         {
@@ -195,7 +200,7 @@ public sealed class QueueImport : BaseImport
             PageNumber = 1,
             PagingCookie = null
         };
-        IList<dataverse.Queue> queues = new List<dataverse.Queue>();
+        List<dataverse.Queue> queues = new List<dataverse.Queue>();
         var moreRecords = true;
         while (moreRecords)
         {
@@ -222,31 +227,25 @@ public sealed class QueueImport : BaseImport
 
     private static bool Unchanged(dataverse.Queue existing, Queue config)
     {
-        if (config == null)
+        if (!IsSameText(existing.Name, config.Name))
         {
             return false;
         }
 
-        return
-            (
-                existing.Name == config.Name ||
-                (existing.Name != null &&
-                 existing.Name.Equals(config.Name, StringComparison.Ordinal))
-            ) &&
-            existing.QueueViewType?.Value == (int)config.ViewType
-            &&
-            existing.IncomingEmailFilteringMethod?.Value == (int)config.IncomingEmailFiltering
-            &&
-            //(
-            //    existing.IncomingEmailDeliveryMethod?.Value == (int)config.IncomingEmailDelivery
-            //) &&
-            //(
-            //    existing.OutgoingEmailDeliveryMethod?.Value == (int)config.OutgoingEmailDelivery
-            //) &&
-            (
-                existing.Description == config.Description ||
-                (existing.Description != null &&
-                 existing.Description.Equals(config.Description, StringComparison.Ordinal))
-            );
+        if (existing.QueueViewType?.Value != (int)config.ViewType)
+        {
+            return false;
+        }
+
+        if (existing.IncomingEmailFilteringMethod?.Value != (int)config.IncomingEmailFiltering)
+        {
+            return false;
+        }
+
+        // Incoming/Outgoing delivery method checks stay intentionally disabled.
+        return IsSameText(existing.Description, config.Description);
     }
+
+    private static bool IsSameText(string? current, string? expected) =>
+        string.Equals(current, expected, StringComparison.Ordinal);
 }

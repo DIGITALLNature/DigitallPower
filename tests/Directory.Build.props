@@ -1,5 +1,11 @@
 <Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
   <PropertyGroup>
-    <SignAssembly>False</SignAssembly>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)dgt.tests.snk</AssemblyOriginatorKeyFile>
+    <StaticAnalysisCodeType>Test</StaticAnalysisCodeType>
   </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'dgt.power.tests'">
+    <PackageReference Include="TUnit" Version="1.51.0" />
+  </ItemGroup>
 </Project>

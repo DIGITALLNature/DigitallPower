@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -8,34 +8,27 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.analyzer.Reports;
 using dgt.power.analyzer.tests.Base;
+using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using dgt.power.dto;
 using dgt.power.tests;
 using dgt.power.tests.FakeExecutor;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Spectre.Console;
 
 namespace dgt.power.analyzer.tests;
 
-[Collection("Serial_Analyzer_Tests")]
+[NotInParallel("Serial_Analyzer_Tests")]
 public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
 {
     private const string SolutionUniqueName = "customizations";
 
-    public NoActiveLayerAnalyzeTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-    {
-    }
-
     protected override CommandTestContext<NoActiveLayerAnalyze, AnalyzeVerb> GetContext()
     {
         return GetBuilder()
-            .WithFakeMessageExecutor<RetrieveAllEntitiesRequest>(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithData(PrepareData)
-            .WithMetaData(new[]
-            {
+            .WithMetaData([
                 new EntityMetadata
                 {
                     LogicalName = TestEntity.EntityLogicalName,
@@ -44,12 +37,12 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
                     {
                         UserLocalizedLabel = new LocalizedLabel("Test Entity", 1031)
                     }
-                },
-            })
+                }
+            ])
             .Build();
     }
 
-    private IEnumerable<Entity> PrepareData(IXrmFakedContext context)
+    private IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -62,7 +55,7 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             [SolutionComponent.LogicalNames.RootComponentBehavior] =
                 new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents),
             [SolutionComponent.LogicalNames.ObjectId] =
-                context.GetEntityMetadataByName(TestEntity.EntityLogicalName).MetadataId,
+                service.State.EntityMetadata[TestEntity.EntityLogicalName].MetadataId,
             [SolutionComponent.LogicalNames.IsMetadata] = true,
             [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
             FormattedValues =
@@ -107,8 +100,8 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
             MsdynOrder = 2,
             MsdynComponentid = $"{entityComponent.ObjectId:B}"
         };
-        return new Entity[]
-        {
+        return
+        [
             solution,
             entityComponent,
             entityLayer,
@@ -127,47 +120,45 @@ public class NoActiveLayerAnalyzeTests : AnalyzeTestsBase<NoActiveLayerAnalyze>
                     {SolutionComponent.LogicalNames.ComponentType, "Email Template"}
                 }
             }
-        };
+        ];
     }
 
-    [Fact]
-    public void ShouldFailOnMissingInlineData() =>
-        GetContext()
+    [Test]
+    public async Task ShouldFailOnMissingInlineData() =>
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = string.Empty
-            }).Should().BeFalse();
+            })).IsFalse();
 
-    [Fact]
-    public void ShouldAnalyzeNoActiveLayer()
+    [Test]
+    public async Task ShouldAnalyzeNoActiveLayer()
     {
-        AnsiConsole.Record();
-        GetContext()
+        await Assert.That(GetContext()
             .Execute(new AnalyzeVerb
             {
                 InlineData = SolutionUniqueName,
                 GenerateSummaryFile = true,
                 GenerateReportFile = true
-            })
-            .Should().BeTrue();
+            })).IsTrue();
 
-        var output = AnsiConsole.ExportText();
-        Assert.StartsWith("── solution unique name: customizations ──", output);
-        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-summary.json")));
-        Assert.True(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-result.csv")));
+        var output = TestConsole.Output;
+        await Assert.That(output).StartsWith("── solution unique name: customizations ──");
+        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-summary.json"))).IsTrue();
+        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder,"NoActiveLayer-result.csv"))).IsTrue();
 
         // Check Summary
-        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(File.ReadAllBytes(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
-        Assert.Equal(1,summary.Anomalies);
+        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(await File.ReadAllBytesAsync(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-summary.json")));
+        await Assert.That(summary.Anomalies).IsEqualTo(1);
 
         // Check Result
         using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "NoActiveLayer-result.csv"));
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         var results = csv.GetRecords<ActiveLayerLine>().ToArray();
-        Assert.Equal(1,results.Length);
-        Assert.Equal("SystemForm", results[0].Component);
-        Assert.Equal("Test Formular (testentity)", results[0].Name);
-        Assert.Equal(SolutionUniqueName, results[0].Solution);
-        Assert.Equal(1, results[0].Order);
+        await Assert.That(results.Length).IsEqualTo(1);
+        await Assert.That(results[0].Component).IsEqualTo("SystemForm");
+        await Assert.That(results[0].Name).IsEqualTo("Test Formular (testentity)");
+        await Assert.That(results[0].Solution).IsEqualTo(SolutionUniqueName);
+        await Assert.That(results[0].Order).IsEqualTo(1);
     }
 }

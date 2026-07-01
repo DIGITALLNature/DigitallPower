@@ -1,11 +1,10 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Linq.Expressions;
 using dgt.power.common;
 using dgt.power.dataverse;
-using FakeItEasy;
-using FakeXrmEasy.Abstractions;
+using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
@@ -23,27 +22,28 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
 {
     private readonly TCommand _command;
     public DataContext DataContext { get; }
-    public IXrmFakedContext FakedContext { get; }
+    public FakeOrganizationServiceAsync FakedService { get; }
     public IConfigResolver ConfigResolver { get; }
 
-    internal CommandTestContext(TCommand command, IXrmFakedContext fakedContext, IConfigResolver configResolver)
+    internal CommandTestContext(TCommand command, FakeOrganizationServiceAsync fakedService, IConfigResolver configResolver)
     {
         _command = command;
-        DataContext = new DataContext(fakedContext.GetOrganizationService());
-        FakedContext = fakedContext;
+        DataContext = new DataContext(fakedService);
+        FakedService = fakedService;
         ConfigResolver = configResolver;
     }
 
     public bool Execute(TCommandSettings settings)
     {
-        return _command.Execute(GetCommandContext(), settings).GetAwaiter().GetResult() == 0;
+        // Intentional sync-over-async: test infrastructure requires a synchronous entry point
+        return _command.ExecuteAsync(GetCommandContext(), settings,CancellationToken.None).GetAwaiter().GetResult() == 0;
     }
 
     public ValidationResult Validate(TCommandSettings settings) => _command.Validate(GetCommandContext(), settings);
 
     private static CommandContext GetCommandContext()
     {
-        var commandContext = new CommandContext(Enumerable.Empty<string>(),A.Dummy<IRemainingArguments>(), "test", null);
+        var commandContext = new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "test", null);
         return commandContext;
     }
 
@@ -52,7 +52,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
             ? DataContext.CreateQuery<TEntity>().ToList()
             : DataContext.CreateQuery<TEntity>().Where(query).ToList();
 
-    public TEntity GetById<TEntity>(Guid id) where TEntity : Entity, new() => FakedContext.GetOrganizationService()
+    public TEntity GetById<TEntity>(Guid id) where TEntity : Entity, new() => FakedService
         .Retrieve(new TEntity().LogicalName, id, new ColumnSet(true)).ToEntity<TEntity>();
 
     public TEntity GetSingle<TEntity>(Expression<Func<TEntity, bool>>? query = null) where TEntity : Entity =>

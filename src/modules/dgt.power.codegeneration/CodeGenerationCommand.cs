@@ -1,9 +1,8 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.codegeneration.Base;
-using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using Spectre.Console;
@@ -11,64 +10,68 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration;
 
-public class CodeGenerationCommand : Command<CodeGenerationVerb>, IPowerLogic
+public class CodeGenerationCommand(
+    ITracer tracer,
+    IDotNetGenerator dotNetGenerator,
+    ITypeScriptGenerator typeScriptGenerator,
+    IMetadataService metadataService,
+    IAnsiConsole console)
+    : Command<CodeGenerationVerb>, IPowerLogic
 {
-    private readonly ITracer _tracer;
-    private readonly IConfigResolver _configResolver;
-    private readonly DotNetCommand _dotNetCommand;
-    private readonly TypescriptCommand _typescriptCommand;
-    private readonly MetadataCommand _metadataCommand;
-    private readonly IMetadataService _metadataService;
-
-    public CodeGenerationCommand(
-        ITracer tracer,
-        IConfigResolver configResolver,
-        DotNetCommand dotNetCommand,
-        TypescriptCommand typescriptCommand,
-        MetadataCommand metadataCommand,
-        IMetadataService metadataService)
-
+    protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
-        _tracer = tracer;
-        _configResolver = configResolver;
-        _dotNetCommand = dotNetCommand;
-        _typescriptCommand = typescriptCommand;
-        _metadataCommand = metadataCommand;
-        _metadataService = metadataService;
-    }
+        ArgumentNullException.ThrowIfNull(verb);
+        tracer.Start(this);
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] CodeGenerationVerb verb)
-    {
-        _tracer.Start(this);
-        if (!_configResolver.TryGetConfigFile<CodeGenerationConfig>(verb.Config, out var config))
-        {
-            return _tracer.End(this, false) ? 0 : -1;
-        }
+        var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, console);
 
-        AnsiConsole.Status()
+        var success = true;
+
+        console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
-            .Start("Generate Model ...", ctx =>
+            .Start("Generate Model ...", _ =>
                 {
-                    _metadataService.PopulateEntitiesAndSolutions(config);
-
-                    if (!config.SuppressDotNet)
+                    success = result switch
                     {
-                        _dotNetCommand.Execute(context, verb);
-                    }
-
-                    if (!config.SuppressTypeScript)
-                    {
-                        _typescriptCommand.Execute(context, verb);
-                    }
-
-                    if (!config.SuppressMetaData)
-                    {
-                        _metadataCommand.Execute(context, verb);
-                    }
+                        CodeGenerationConfigResult.V2(var config) => ExecuteV2(verb, config),
+                        CodeGenerationConfigResult.V1(var config) => ExecuteV1(verb, config),
+                        _ => false
+                    };
                 }
             );
 
-        return _tracer.End(this, true) ? 0 : -1;
+        return tracer.End(this, success) ? 0 : -1;
+    }
+
+    private bool ExecuteV2(CodeGenerationVerb verb, CodeGenerationConfigBase config)
+    {
+        metadataService.PopulateEntitiesAndSolutions(config);
+
+        return config switch
+        {
+            DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
+            TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
+            _ => false
+        };
+    }
+
+    private bool ExecuteV1(CodeGenerationVerb verb, CodeGenerationConfig config)
+    {
+        metadataService.PopulateEntitiesAndSolutions(config);
+
+        var success = true;
+
+        if (!config.SuppressDotNet)
+        {
+            success &= dotNetGenerator.Generate(verb, config.ToDotNetConfig());
+        }
+
+        if (!config.SuppressTypeScript)
+        {
+            success &= typeScriptGenerator.Generate(verb, config);
+        }
+
+        return success;
     }
 }

@@ -7,37 +7,31 @@ namespace dgt.power.codegeneration.Base.Config;
 
 
 /// <summary>
-/// TypeScript only (shrink imports, e.g. odata query or form open)
+/// TypeScript only (shrink imports, e.g., odata query or form open)
 /// </summary>
 public class EntityFilter
 {
-    private readonly HashSet<string> _attributes;
-    private readonly HashSet<string> _optionsets;
-
-    public EntityFilter()
-    {
-        _attributes = new HashSet<string>();
-        _optionsets = new HashSet<string>();
-    }
+    private readonly HashSet<string> _attributes = [];
+    private readonly HashSet<string> _optionsets = [];
 
     public required string Entity { get; init; }
 
-    public string[] Attributes
+    public IReadOnlyCollection<string> Attributes
     {
-        get => _attributes.ToArray();
+        get => _attributes;
         init
         {
-            _attributes = new HashSet<string>(value);
+            _attributes = [..value];
             _attributes.TrimExcess();
         }
     }
 
-    public string[] Optionsets
+    public IReadOnlyCollection<string> Optionsets
     {
-        get => _optionsets.ToArray();
+        get => _optionsets;
         init
         {
-            _optionsets = new HashSet<string>(value);
+            _optionsets = [..value];
             _optionsets.TrimExcess();
         }
     }

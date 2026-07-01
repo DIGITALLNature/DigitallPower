@@ -1,0 +1,15 @@
+# Test projects inherit from root .editorconfig but suppress rules that
+# conflict with test-method naming conventions or test infrastructure patterns.
+[*.cs]
+# S4261: async methods without "Async" suffix — test method names are the display name
+dotnet_diagnostic.S4261.severity = none
+# CA1063: IDisposable pattern — test base classes are intentionally abstract; full pattern not required
+dotnet_diagnostic.CA1063.severity = none
+# VSTHRD002: synchronous wait on task — safe in TUnit test runner context (no deadlock risk)
+dotnet_diagnostic.VSTHRD002.severity = none
+# S103: line length — test data / fake executors naturally contain long lines
+dotnet_diagnostic.S103.severity = none
+# S125: commented-out code — sample/reference data in test fixtures is intentional
+dotnet_diagnostic.S125.severity = none
+# S6966: use async file IO — test infrastructure helpers are synchronous by design
+dotnet_diagnostic.S6966.severity = none

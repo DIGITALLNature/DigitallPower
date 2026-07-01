@@ -5,16 +5,17 @@ using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dto;
 using Microsoft.Xrm.Sdk;
+using Spectre.Console;
 
 namespace dgt.power.import.Base;
 
-public abstract class BaseImport : PowerLogic<ImportVerb>
+public abstract class BaseImport(
+    ITracer tracer,
+    IOrganizationService connection,
+    IConfigResolver configResolver,
+    IAnsiConsole console)
+    : PowerLogic<ImportVerb>(tracer, connection, configResolver, console)
 {
-    protected BaseImport(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver) : base(tracer, connection, configResolver)
-    {
-    }
-
-
     protected static string GetAssignee(string assignee, Assignee owner)
     {
         Debug.Assert(owner != null, nameof(owner) + " != null");

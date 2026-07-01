@@ -14,14 +14,20 @@ using PluginType = dgt.power.push.Model.PluginType;
 
 namespace dgt.power.push.Logic;
 
-internal class AssemblyProcessor
+// CA1031 suppressed: outer catches wrap Dataverse exceptions into InvalidOperationException (Category A);
+// inner rollback catches must catch broadly to avoid masking the original exception (Category C)
+#pragma warning disable CA1031
+internal sealed class AssemblyProcessor : IDisposable
 {
     private readonly DataContext _context;
     private readonly IOrganizationService _service;
+    private readonly IAnsiConsole _console;
+    private static readonly string[] s_separator = [","];
 
-    public AssemblyProcessor(IOrganizationService service)
+    public AssemblyProcessor(IOrganizationService service, IAnsiConsole? console = null)
     {
         _service = service;
+        _console = console ?? AnsiConsole.Console;
         _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
     }
 
@@ -37,10 +43,10 @@ internal class AssemblyProcessor
             Version = packageLocal.Version
         };
 
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, "Create Package [green]{0} ({1})[/]", package.Name,
+        _console.Markup(CultureInfo.InvariantCulture, "Create Package [green]{0} ({1})[/]", package.Name,
             package.Version);
         package.Id = _service.Create(package);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
 
        if (!string.IsNullOrWhiteSpace(solution))
        {
@@ -61,16 +67,17 @@ internal class AssemblyProcessor
         var package = new PluginPackage
         {
             Id = packageCrm.Id,
+            Name = packageCrm.Name,
             Content = packageLocal.Content,
-            Version = packageLocal.Version
+            Version = packageCrm.Version
         };
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
        _service.Update(package);
 
        if (publish)
        {
-           AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+           _console.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
            _service.Execute(new PublishXmlRequest
            {
                ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrm.Id}</pluginpackage></pluginpackages></importexportxml>"
@@ -84,8 +91,8 @@ internal class AssemblyProcessor
 
        return new Package
         {
-            Name = package.Name,
-            Version = package.Version,
+            Name = packageCrm.Name,
+            Version = packageCrm.Version,
             Content = package.Content,
             Id = package.Id
         };
@@ -93,18 +100,38 @@ internal class AssemblyProcessor
 
     private void AddPluginPackageToSolution(PluginPackage pluginPackage, string solution)
     {
-        // Plugin package = 10119
+        // Determinate Componenttype for PluginPackage
+        var scd = _service.RetrieveMultiple(new QueryExpression(SolutionComponentDefinition.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(SolutionComponentDefinition.LogicalNames.SolutionComponentType),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, PluginPackage.EntityLogicalName)
+                }
+            }
+        }).Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>();
+
+        if (scd == null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
+            throw new InvalidOperationException(
+                "The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " +
+                pluginPackage.Name);
+        }
         var addReq = new AddSolutionComponentRequest
         {
             AddRequiredComponents = false,
-            ComponentType = 10119,
+            ComponentType = scd.SolutionComponentType!.Value,
             ComponentId = pluginPackage.Id,
             SolutionUniqueName = solution
         };
 
         try
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
                 pluginPackage.Name!, solution);
             _service.Execute(addReq);
         }
@@ -112,15 +139,16 @@ internal class AssemblyProcessor
         {
             try
             {
-                _service.Delete(PluginAssembly.EntityLogicalName, pluginPackage.Id);
+                _service.Delete(PluginPackage.EntityLogicalName, pluginPackage.Id);
             }
             catch (Exception rb)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                AnsiConsole.WriteException(rb.RootException());
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Package: " + pluginPackage.Name, ex.RootException());
+            throw new InvalidOperationException("The Plugin Registration was aborted. Package: " + pluginPackage.Name,
+                ex.RootException());
         }
     }
 
@@ -128,7 +156,7 @@ internal class AssemblyProcessor
 
     #region PluginAssembly
 
-    public Model.Assembly CreatePluginAssembly(Model.Assembly dll, string solution)
+    public Assembly CreatePluginAssembly(Assembly dll, string solution)
     {
         var pluginAssembly = new PluginAssembly
         {
@@ -138,17 +166,17 @@ internal class AssemblyProcessor
             Content = dll.Content
         };
 
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, "Create Assembly [green]{0} ({1})[/]", pluginAssembly.Name,
+        _console.Markup(CultureInfo.InvariantCulture, "Create Assembly [green]{0} ({1})[/]", pluginAssembly.Name,
             dll.Version);
         pluginAssembly.Id = _service.Create(pluginAssembly);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", pluginAssembly.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", pluginAssembly.Id);
 
         if (!string.IsNullOrWhiteSpace(solution))
         {
             AddPluginAssemblyToSolution(pluginAssembly, solution);
         }
 
-        return new Model.Assembly
+        return new Assembly
         {
             Name = pluginAssembly.Name,
             Version = dll.Version,
@@ -159,10 +187,10 @@ internal class AssemblyProcessor
 
     public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution, bool publish)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
             crm.Name, crm.Version, dll.Version);
         //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly"
-        foreach (var oldType in crm.PluginTypes.ToList().Where(t => dll.PluginTypes.All(d => d.TypeName != t.TypeName)))
+        foreach (var oldType in crm.PluginTypes.Where(t => dll.PluginTypes.TrueForAll(d => d.TypeName != t.TypeName)).ToList())
         {
             crm.PluginTypes.Remove(DeletePluginType(oldType));
         }
@@ -175,7 +203,7 @@ internal class AssemblyProcessor
 
         if (publish)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
             _service.Execute(new PublishXmlRequest
             {
                 ParameterXml = $"<importexportxml><pluginassemblies><pluginassembly>{crm.Id}</pluginassembly></pluginassemblies></importexportxml>"
@@ -192,6 +220,105 @@ internal class AssemblyProcessor
         return crm;
     }
 
+    /// <summary>
+    /// Deletes a plugin assembly from the CRM system based on the provided assembly ID.
+    /// </summary>
+    /// <param name="assemblyId">The unique identifier of the plugin assembly to be deleted.</param>
+    public void DeletePluginAssembly(Guid assemblyId)
+    {
+        // Delete the plugin assembly using the CRM service
+        _service.Delete(PluginAssembly.EntityLogicalName, assemblyId);
+    }
+
+    /// <summary>
+    /// Migrates plugin steps from old assembly types to new assembly types (matched by TypeName).
+    /// Used during upgrade with --delete-on-upgrade for non-PowerPlugin assemblies to preserve
+    /// manually registered steps that would otherwise be lost when the old assembly is deleted.
+    /// </summary>
+    public void MigratePluginSteps(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .Find(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - steps will be deleted[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                foreach (var step in oldType.PluginSteps)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Step [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        step.Name, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new SdkMessageProcessingStep(step.Id)
+                    {
+                        EventHandler = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Migrates Custom API references from old assembly types to new assembly types (matched by TypeName).
+    /// By default, Custom APIs should point to the latest assembly version so they execute the newest code.
+    /// </summary>
+    public void MigrateCustomApis(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .Find(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - Custom API references cannot be migrated[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                var query = new QueryExpression
+                {
+                    EntityName = CustomAPI.EntityLogicalName,
+                    ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName, CustomAPI.LogicalNames.PluginTypeId),
+                    NoLock = true,
+                    Criteria = new FilterExpression(LogicalOperator.And)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(CustomAPI.LogicalNames.PluginTypeId,
+                                ConditionOperator.Equal, oldType.Id)
+                        }
+                    }
+                };
+
+                var apis = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).ToList();
+                foreach (var api in apis)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Custom API [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        api.UniqueName ?? string.Empty, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new CustomAPI(api.Id)
+                    {
+                        PluginTypeId = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
     private void AddPluginAssemblyToSolution(PluginAssembly pluginAssembly, string solution)
     {
         // PluginAssembly = 91
@@ -205,7 +332,7 @@ internal class AssemblyProcessor
 
         try
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Add Assembly [green]{0}[/] to Solution [bold]{1}[/]",
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add Assembly [green]{0}[/] to Solution [bold]{1}[/]",
                 pluginAssembly.Name!, solution);
             _service.Execute(addReq);
         }
@@ -217,19 +344,112 @@ internal class AssemblyProcessor
             }
             catch (Exception rb)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                AnsiConsole.WriteException(rb.RootException());
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
             }
 
-            throw new Exception("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name, ex.RootException());
+            throw new InvalidOperationException("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
+                ex.RootException());
         }
+    }
+
+    #endregion
+
+    #region ManagedIdentity
+
+    /// <summary>
+    /// Links a plugin assembly to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginAssembly.ManagedIdentityId.
+    /// </summary>
+    internal void LinkManagedIdentityToAssembly(Guid assemblyId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Assembly [green]{1:D}[/]", clientId, assemblyId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginAssembly(assemblyId)
+        {
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Links a plugin package to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginPackage.Managedidentityid.
+    /// The managed identity is typically derived from the ManagedIdentityRegistrationAttribute on the
+    /// assemblies contained within the package.
+    /// </summary>
+    internal void LinkManagedIdentityToPackage(Guid packageId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Package [green]{1:D}[/]", clientId, packageId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginPackage(packageId)
+        {
+            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Looks up an existing managed identity by ApplicationId, or creates a new one.
+    /// </summary>
+    /// <returns>The Guid of the existing or newly created managed identity record.</returns>
+    private Guid EnsureManagedIdentity(string clientId, string? tenantId)
+    {
+        var applicationId = Guid.Parse(clientId);
+
+        var query = new QueryExpression(ManagedIdentity.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                ManagedIdentity.LogicalNames.ApplicationId,
+                ManagedIdentity.LogicalNames.TenantId),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId,
+                        ConditionOperator.Equal, applicationId)
+                }
+            }
+        };
+
+        var existing = _service.RetrieveMultiple(query).Entities.FirstOrDefault();
+
+        if (existing != null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "  Found existing ManagedIdentity [italic]{0:D}[/]", existing.Id);
+            return existing.Id;
+        }
+
+        var managedIdentity = new ManagedIdentity
+        {
+            ApplicationId = applicationId,
+            CredentialSource = new OptionSetValue(ManagedIdentity.Options.CredentialSource.IsManaged),
+            SubjectScope = new OptionSetValue(ManagedIdentity.Options.SubjectScope.EnviornmentScope)
+        };
+
+        if (!string.IsNullOrWhiteSpace(tenantId))
+        {
+            managedIdentity.TenantId = Guid.Parse(tenantId);
+        }
+
+        var managedIdentityId = _service.Create(managedIdentity);
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "  Created ManagedIdentity [italic]{0:D}[/]", managedIdentityId);
+        return managedIdentityId;
     }
 
     #endregion
 
     #region PluginType
 
-    public Model.Assembly UpsertAndPurgePluginTypes(Model.Assembly dll, Model.Assembly crm, string solution)
+    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm)
     {
         // Update
         foreach (var updateType in dll.PluginTypes.Where(t => crm.PluginTypes.Contains(t)))
@@ -239,15 +459,15 @@ internal class AssemblyProcessor
         }
 
         // New
-        foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.All(t => t.TypeName != d.TypeName)))
+        foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.TrueForAll(t => t.TypeName != d.TypeName)))
         {
-            crm.PluginTypes.Add(CreatePluginType(crm, newType, solution));
+            crm.PluginTypes.Add(CreatePluginType(crm, newType));
         }
 
         return crm;
     }
 
-    private PluginType CreatePluginType(Model.Assembly crm, PluginType pluginType, string solution)
+    private PluginType CreatePluginType(Assembly crm, PluginType pluginType)
     {
         var type = new dataverse.PluginType
         {
@@ -256,10 +476,10 @@ internal class AssemblyProcessor
             TypeName = pluginType.TypeName,
             FriendlyName = pluginType.FriendlyName
         };
-        AnsiConsole.Markup(CultureInfo.InvariantCulture, " Create PluginType [green]{0}[/] for Assembly [bold]{1}[/]",
+        _console.Markup(CultureInfo.InvariantCulture, " Create PluginType [green]{0}[/] for Assembly [bold]{1}[/]",
             pluginType.Name, pluginType.ParentName!);
         type.Id = _service.Create(type);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
 
         if (!string.IsNullOrWhiteSpace(pluginType.CustomApi))
         {
@@ -278,13 +498,13 @@ internal class AssemblyProcessor
                 }
             };
             var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
-            AnsiConsole.Markup(CultureInfo.InvariantCulture,
+            _console.Markup(CultureInfo.InvariantCulture,
                 "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
             _service.Update(new CustomAPI(api.Id)
             {
                 PluginTypeId = type.ToEntityReference()
             });
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
         }
 
         return new PluginType
@@ -299,9 +519,9 @@ internal class AssemblyProcessor
         };
     }
 
-    private PluginType DeletePluginType(PluginType pluginType)
+    internal PluginType DeletePluginType(PluginType pluginType)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             " Delete PluginType [green]{0}[/] for Assembly [bold]{1}[/] first", pluginType.Name,
             pluginType.ParentName!);
         var request = new RetrieveDependenciesForDeleteRequest
@@ -314,7 +534,7 @@ internal class AssemblyProcessor
         {
             if (dependency.DependentComponentType!.Value == 92) //SDK Message Processing Step
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "  Delete [green]{0}[/] for PluginType [bold]{1}[/]", "PluginStep", pluginType.Name);
                 _service.Delete(SdkMessageProcessingStep.EntityLogicalName,
                     dependency.DependentComponentObjectId!.Value);
@@ -347,9 +567,9 @@ internal class AssemblyProcessor
             var missing = true;
             foreach (var api in apis)
             {
-                if (string.Compare(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase) != 0)
+                if (!string.Equals(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase))
                 {
-                    AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                    _console.Markup(CultureInfo.InvariantCulture,
                         "  Unlink PluginType [green]{0}[/] from Custom API [bold]{1}[/]", pluginType.Name,
                         api.UniqueName!);
                     _service.Update(new CustomAPI(api.Id)
@@ -359,13 +579,13 @@ internal class AssemblyProcessor
                 }
                 else
                 {
-                    AnsiConsole.Markup(CultureInfo.InvariantCulture,
+                    _console.Markup(CultureInfo.InvariantCulture,
                         "  Match PluginType [green]{0}[/] for Custom API [bold]{1}[/]", pluginType.Name,
                         api.UniqueName!);
                     missing = false;
                 }
 
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
             }
 
             if (missing)
@@ -385,28 +605,29 @@ internal class AssemblyProcessor
                     }
                 };
                 var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
-                AnsiConsole.Markup("  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name,
-                    api.UniqueName!);
+                _console.Markup(CultureInfo.InvariantCulture,
+                    "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
                 _service.Update(new CustomAPI(api.Id)
                 {
                     PluginTypeId = new EntityReference(dataverse.PluginType.EntityLogicalName, pluginType.Id)
                 });
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
             }
         }
     }
 
-    public Model.Assembly UpsertAndPurgeWorkflowTypes(Model.Assembly dll, Model.Assembly crm)
+    public Assembly UpsertAndPurgeWorkflowTypes(Assembly dll, Assembly crm)
     {
         // New
-        foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.All(t => t.TypeName != d.TypeName)))
+        foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.TrueForAll(t => t.TypeName != d.TypeName)))
         {
             crm.WorkflowTypes.Add(CreateWorkflowType(crm, newType));
         }
 
         // Purge
-        foreach (var oldType in crm.WorkflowTypes.ToList()
-                     .Where(t => dll.WorkflowTypes.All(d => d.TypeName != t.TypeName)))
+        foreach (var oldType in crm.WorkflowTypes
+                     .Where(t => dll.WorkflowTypes.TrueForAll(d => d.TypeName != t.TypeName))
+                     .ToList())
         {
             crm.WorkflowTypes.Remove(DeleteWorkflowType(oldType));
         }
@@ -414,7 +635,7 @@ internal class AssemblyProcessor
         return crm;
     }
 
-    private WorkflowType CreateWorkflowType(Model.Assembly crm, WorkflowType workflowType)
+    private WorkflowType CreateWorkflowType(Assembly crm, WorkflowType workflowType)
     {
         var type = new dataverse.PluginType
         {
@@ -424,11 +645,11 @@ internal class AssemblyProcessor
             FriendlyName = workflowType.FriendlyName,
             WorkflowActivityGroupName = workflowType.WorkflowActivityGroupName
         };
-        AnsiConsole.Markup(
+        _console.Markup(CultureInfo.InvariantCulture,
             " Create WorkflowType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
             workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
         type.Id = _service.Create(type);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
 
         return new WorkflowType
         {
@@ -444,7 +665,7 @@ internal class AssemblyProcessor
 
     private WorkflowType DeleteWorkflowType(WorkflowType workflowType)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             " Delete PluginType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
             workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
         _service.Delete(workflowType.TypeCode, workflowType.Id);
@@ -455,14 +676,14 @@ internal class AssemblyProcessor
 
     #region PluginStep
 
-    public Model.Assembly UpsertAndPurgePluginSteps(Model.Assembly dll, Model.Assembly crm, string solution)
+    public Assembly UpsertAndPurgePluginSteps(Assembly dll, Assembly crm, string solution)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {
             var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
-            if (!dllPluginType.PluginSteps.Any())
+            if (dllPluginType.PluginSteps.Count == 0)
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
+                _console.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
                     dllPluginType.Name);
                 continue;
             }
@@ -475,14 +696,15 @@ internal class AssemblyProcessor
 
             // New
             foreach (var newStep in dllPluginType.PluginSteps.Where(d =>
-                         crmPluginType.PluginSteps.All(t => !t.Equals(d))))
+                         crmPluginType.PluginSteps.TrueForAll(t => !t.Equals(d))))
             {
                 crmPluginType.PluginSteps.Add(CreatePluginStep(crmPluginType, newStep, solution));
             }
 
             // Purge
-            foreach (var oldStep in crmPluginType.PluginSteps.ToList()
-                         .Where(t => dllPluginType.PluginSteps.All(d => !d.Equals(t))))
+            foreach (var oldStep in crmPluginType.PluginSteps
+                         .Where(t => dllPluginType.PluginSteps.TrueForAll(d => !d.Equals(t)))
+                         .ToList())
             {
                 crmPluginType.PluginSteps.Remove(DeletePluginStep(oldStep));
             }
@@ -498,17 +720,17 @@ internal class AssemblyProcessor
             Stage = new OptionSetValue(pluginStep.Stage),
             SdkMessageId = new EntityReference(pluginStep.MessageTypeCode, pluginStep.MessageId),
             EventHandler = new EntityReference(pluginStep.ParentTypeCode, pluginType.Id),
-            Rank = pluginStep.ExecutionOrder,
+            Rank = pluginStep.ExecutionOrder ?? 1,
             Name = pluginStep.Name,
             Mode = new OptionSetValue(pluginStep.Mode),
             AsyncAutoDelete = SdkMessageProcessingStep.Options.Mode.Asynchronous == pluginStep.Mode,
-            FilteringAttributesField = pluginStep.FilterAttributes == null || pluginStep.FilterAttributes.Length < 1
+            FilteringAttributesField = pluginStep.FilterAttributes == null || pluginStep.FilterAttributes.Count == 0
                 ? null
                 : string.Join(",", pluginStep.FilterAttributes),
             Configuration = pluginStep.Configuration
         };
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
         AssemblyValidator.Validate(step);
 
         if (!Guid.Empty.Equals(pluginStep.MessageFilterId))
@@ -518,13 +740,13 @@ internal class AssemblyProcessor
 
         try
         {
-            AnsiConsole.Markup("  Create PluginStep: [green]{0}[/]", step.Name);
+            _console.Markup(CultureInfo.InvariantCulture, "  Create PluginStep: [green]{0}[/]", step.Name);
             step.Id = _service.Create(step);
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
         }
         catch (Exception ex)
         {
-            throw new Exception(
+            throw new InvalidOperationException(
                 "The Plugin Registration was aborted. Maybe you try to register a Async with Pre. Check your Plugin dll and try again. Plugin Step: " +
                 step.Name, ex.RootException());
         }
@@ -542,7 +764,7 @@ internal class AssemblyProcessor
 
             try
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "  Add PluginStep [green]{0}[/] to Solution [bold]{1}[/]", step.Name, solution);
                 _service.Execute(addReq);
             }
@@ -554,11 +776,11 @@ internal class AssemblyProcessor
                 }
                 catch (Exception rb)
                 {
-                    AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
-                    AnsiConsole.WriteException(rb.RootException());
+                    _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                    _console.WriteException(rb.RootException());
                 }
 
-                throw new Exception("The Plugin Registration was aborted. PluginStep: " + step.Name,
+                throw new InvalidOperationException("The Plugin Registration was aborted. PluginStep: " + step.Name,
                     ex.RootException());
             }
         }
@@ -581,14 +803,14 @@ internal class AssemblyProcessor
 
     private PluginStep DeletePluginStep(PluginStep pluginStep)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Delete PluginStep [green]{0}[/]", pluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Delete PluginStep [green]{0}[/]", pluginStep.Name);
         //del image
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         (from mpsi in _context.SdkMessageProcessingStepImageSet
             where mpsi.SdkMessageProcessingStepId.Equals(new EntityReference(pluginStep.TypeCode, pluginStep.Id))
             select mpsi).ToList().ForEach(e =>
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Delete PluginStepImage [bold]{0}[/] for PluginStep [green]{1}[/]", e.Name!, pluginStep.Name);
             _service.Delete(SdkMessageProcessingStepImage.EntityLogicalName, e.Id);
         });
@@ -599,24 +821,24 @@ internal class AssemblyProcessor
         return pluginStep;
     }
 
-    private PluginStep UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
+    private void UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
 
-        var name = dllPluginStep.Name;
+        var name = dllPluginStep.Name ?? string.Empty;
 
         var updatedStep = _service
             .Retrieve(SdkMessageProcessingStep.EntityLogicalName, crmPluginStep.Id, new ColumnSet(true))
             ?.ToEntity<SdkMessageProcessingStep>();
         if (updatedStep == null)
         {
-            return crmPluginStep;
+            return;
         }
 
         var updated = false;
         if (crmPluginStep.Name != name)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Rename PluginStep from [navy]{0}[/] to [green]{1}[/]", crmPluginStep.Name, name);
             updatedStep.Name = name;
             updated = true;
@@ -624,24 +846,26 @@ internal class AssemblyProcessor
 
         if (crmPluginStep.ExecutionOrder != dllPluginStep.ExecutionOrder)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update ExecutionOrder from [navy]{0}[/] to [green]{1}[/] for PluginStep {2}",
-                crmPluginStep.ExecutionOrder, dllPluginStep.ExecutionOrder, name);
-            updatedStep.Rank = dllPluginStep.ExecutionOrder;
+                crmPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                dllPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                name);
+            updatedStep.Rank = dllPluginStep.ExecutionOrder ?? 1;
             crmPluginStep.ExecutionOrder = dllPluginStep.ExecutionOrder;
             updated = true;
         }
 
-        var crmFilter = crmPluginStep.FilterAttributes == null || crmPluginStep.FilterAttributes.Length < 1
+        var crmFilter = crmPluginStep.FilterAttributes == null || crmPluginStep.FilterAttributes.Count == 0
             ? null
             : string.Join(",", crmPluginStep.FilterAttributes);
-        var dllFilter = dllPluginStep.FilterAttributes == null || dllPluginStep.FilterAttributes.Length < 1
+        var dllFilter = dllPluginStep.FilterAttributes == null || dllPluginStep.FilterAttributes.Count == 0
             ? null
             : string.Join(",", dllPluginStep.FilterAttributes);
 
         if (!string.IsNullOrEmpty(crmFilter) && string.IsNullOrEmpty(dllFilter))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] filters from '{1}' to <empty>", name, crmFilter);
             updatedStep.FilteringAttributesField = null;
             crmPluginStep.FilterAttributes = null;
@@ -649,7 +873,7 @@ internal class AssemblyProcessor
         }
         else if (string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] filters from <empty> to '{1}'", name, dllFilter);
             updatedStep.FilteringAttributesField = dllFilter;
             crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
@@ -657,14 +881,17 @@ internal class AssemblyProcessor
         }
         else if (!string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
         {
-            var crmFilteringAttributes = crmFilter.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            var dllFilteringAttributes = dllPluginStep.FilterAttributes;
-            Array.Sort(crmFilteringAttributes);
-            Array.Sort(dllFilteringAttributes!);
-            if (!string.Join(",", crmFilteringAttributes)
-                    .Equals(string.Join(",", dllFilteringAttributes!), StringComparison.Ordinal))
+            var normalizedCrmFilteringAttributes = crmFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+            var normalizedDllFilteringAttributes = dllFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+
+            if (!string.Join(",", normalizedCrmFilteringAttributes)
+                    .Equals(string.Join(",", normalizedDllFilteringAttributes), StringComparison.Ordinal))
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+                _console.MarkupLine(CultureInfo.InvariantCulture,
                     "   Update PluginStep [green]{0}[/] filters from '{1}' to '{2}'", name, crmFilter, dllFilter);
                 updatedStep.FilteringAttributesField = dllFilter;
                 crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
@@ -674,7 +901,7 @@ internal class AssemblyProcessor
 
         if (!string.IsNullOrEmpty(crmPluginStep.Configuration) && string.IsNullOrEmpty(dllPluginStep.Configuration))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration from '{1}' to <empty>", name,
                 crmPluginStep.Configuration);
             updatedStep.Configuration = null;
@@ -684,7 +911,7 @@ internal class AssemblyProcessor
         else if (string.IsNullOrEmpty(crmPluginStep.Configuration) &&
                  !string.IsNullOrEmpty(dllPluginStep.Configuration))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration from <empty> to '{1}'", name,
                 dllPluginStep.Configuration);
             updatedStep.Configuration = dllPluginStep.Configuration;
@@ -693,7 +920,7 @@ internal class AssemblyProcessor
         }
         else if (!crmPluginStep.Configuration?.Equals(dllPluginStep.Configuration, StringComparison.Ordinal) ?? false)
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "   Update PluginStep [green]{0}[/] Configuration '{1}' to '{2}'", name, crmPluginStep.Configuration,
                 dllPluginStep.Configuration!);
             updatedStep.Configuration = dllPluginStep.Configuration;
@@ -703,27 +930,26 @@ internal class AssemblyProcessor
 
         if (!updated)
         {
-            return crmPluginStep;
+            return;
         }
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
         AssemblyValidator.Validate(updatedStep);
 
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
         _service.Update(updatedStep);
-        return crmPluginStep;
     }
 
     #endregion
 
     #region PluginStepImage
 
-    public Model.Assembly UpsertAndPurgePluginStepImages(Model.Assembly dll, Model.Assembly crm)
+    public Assembly UpsertAndPurgePluginStepImages(Assembly dll, Assembly crm)
     {
         foreach (var dllPluginType in dll.PluginTypes)
         {
             var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
-            if (!dllPluginType.PluginSteps.Any())
+            if (dllPluginType.PluginSteps.Count == 0)
             {
                 //Custom API
                 continue;
@@ -742,14 +968,15 @@ internal class AssemblyProcessor
 
                 // New
                 foreach (var newStepImage in dllPluginStep.PluginStepImages.Where(d =>
-                             crmPluginStep.PluginStepImages.All(t => !t.Equals(d))))
+                             crmPluginStep.PluginStepImages.TrueForAll(t => !t.Equals(d))))
                 {
                     crmPluginStep.PluginStepImages.Add(CreatePluginStepImage(crmPluginStep, newStepImage));
                 }
 
                 // Purge
-                foreach (var oldStepImage in crmPluginStep.PluginStepImages.ToList()
-                             .Where(t => dllPluginStep.PluginStepImages.All(d => !d.Equals(t))))
+                foreach (var oldStepImage in crmPluginStep.PluginStepImages
+                                 .Where(t => dllPluginStep.PluginStepImages.TrueForAll(d => !d.Equals(t)))
+                                 .ToList())
                 {
                     crmPluginStep.PluginStepImages.Remove(DeletePluginStepImage(oldStepImage));
                 }
@@ -768,17 +995,18 @@ internal class AssemblyProcessor
             Name = pluginStepImage.Name,
             EntityAlias = pluginStepImage.EntityAlias,
             MessagePropertyName = pluginStepImage.MessagePropertyName,
-            AttributesField = pluginStepImage.Attributes == null || pluginStepImage.Attributes.Length < 1
+            AttributesField = pluginStepImage.Attributes == null || pluginStepImage.Attributes.Count == 0
                 ? null
                 : string.Join(",", pluginStepImage.Attributes)
         };
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name, pluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
-        AnsiConsole.Markup("   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
+        _console.Markup(CultureInfo.InvariantCulture,
+            "   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
             pluginStepImage.ParentName!);
         image.Id = _service.Create(image);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
 
         pluginStepImage.Id = image.Id;
         pluginStepImage.ParentId = pluginStep.Id;
@@ -797,17 +1025,17 @@ internal class AssemblyProcessor
 
     private PluginStepImage DeletePluginStepImage(PluginStepImage pluginStepImage)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Delete PluginStepImage: [green]{0}[/] for [bold]{1}[/]", pluginStepImage.Name,
             pluginStepImage.ParentName!);
         _service.Delete(pluginStepImage.TypeCode, pluginStepImage.Id);
         return pluginStepImage;
     }
 
-    private PluginStepImage UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
+    private void UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
         PluginStepImage crmPluginStepImage)
     {
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
+        _console.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
             crmPluginStepImage.Name, crmPluginStepImage.ParentName!);
 
         var crmFilter = crmPluginStepImage.Attributes;
@@ -818,36 +1046,37 @@ internal class AssemblyProcessor
             ?.ToEntity<SdkMessageProcessingStepImage>();
         if (updatedStepImage == null)
         {
-            return crmPluginStepImage;
+            return;
         }
 
         var updated = false;
 
-        if (!(crmFilter == null || crmFilter.Length < 1) && (dllFilter == null || dllFilter.Length < 1))
+        if (!(crmFilter == null || crmFilter.Count == 0) && (dllFilter == null || dllFilter.Count == 0))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from [green]{0}[/] to <empty>", string.Join(",", crmFilter));
             updatedStepImage.AttributesField = null;
             crmPluginStepImage.Attributes = null;
             updated = true;
         }
-        else if ((crmFilter == null || crmFilter.Length < 1) && !(dllFilter == null || dllFilter.Length < 1))
+        else if ((crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
         {
-            AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+            _console.MarkupLine(CultureInfo.InvariantCulture,
                 "    Update PreImage filters from <empty> to [green]{0}[/]", string.Join(",", dllFilter));
             updatedStepImage.AttributesField = string.Join(",", dllFilter);
             crmPluginStepImage.Attributes = dllFilter;
             updated = true;
         }
-        else if (!(crmFilter == null || crmFilter.Length < 1) && !(dllFilter == null || dllFilter.Length < 1))
+        else if (!(crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
         {
-            Array.Sort(crmFilter);
-            Array.Sort(dllFilter);
-            if (!string.Join(",", crmFilter).Equals(string.Join(",", dllFilter), StringComparison.Ordinal))
+            var normalizedCrmFilter = crmFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+            var normalizedDllFilter = dllFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+
+            if (!string.Join(",", normalizedCrmFilter).Equals(string.Join(",", normalizedDllFilter), StringComparison.Ordinal))
             {
-                AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
-                    "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", crmFilter),
-                    string.Join(",", dllFilter));
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", normalizedCrmFilter),
+                    string.Join(",", normalizedDllFilter));
                 updatedStepImage.AttributesField = string.Join(",", dllFilter);
                 crmPluginStepImage.Attributes = dllFilter;
                 updated = true;
@@ -856,18 +1085,18 @@ internal class AssemblyProcessor
 
         if (!updated)
         {
-            return crmPluginStepImage;
+            return;
         }
 
-        AnsiConsole.Markup("   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
+        _console.Markup(CultureInfo.InvariantCulture,
+            "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
             updatedStepImage.ImageType!.Value);
-        AnsiConsole.MarkupLine(CultureInfo.InvariantCulture,
+        _console.MarkupLine(CultureInfo.InvariantCulture,
             "   Update PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
             crmPluginStepImage.ParentName!);
         _service.Update(updatedStepImage);
-        return crmPluginStepImage;
     }
 
     #endregion
@@ -880,5 +1109,10 @@ internal class AssemblyProcessor
             select p.CustomizationPrefix).SingleOrDefault();
 
         return prefix ?? defaultValue;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }
