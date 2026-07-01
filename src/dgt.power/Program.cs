@@ -330,7 +330,8 @@ void RegisterConnectionCommands(IConfigurator<ConnectionSettings> branch)
 {
     branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
     branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
-        .WithExample("connection", "create", "<Name>", "<Url>", "--msal");
+        .WithExample("connection", "create", "<Name>", "--url", "<Url>")
+        .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
     branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
     branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
         .WithExample("connection", "delete", "<Name>")

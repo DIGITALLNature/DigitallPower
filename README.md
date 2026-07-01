@@ -201,7 +201,9 @@ dgtp <branch> <command> [arguments] [options]
 | Command | Description |
 |---------|-------------|
 | `connection list` | List configured connections |
-| `connection create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection |
+| `connection create <name> --url <url>` | Create a new MSAL connection |
+| `connection create <name> --connection-string <string>` | Create a connection using a full Dataverse connection string (service principal, etc.) |
+| `connection create ... --no-verify` | Skip the post-create connectivity check |
 | `connection select <name>` | Set the active connection |
 | `connection delete <name>` | Delete a specific connection |
 | `connection delete --all` | Delete all connections |
@@ -213,7 +215,7 @@ dgtp <branch> <command> [arguments] [options]
 Example:
 
 ```bash
-dgtp connection create prod https://contoso.crm4.dynamics.com --msal
+dgtp connection create prod --url https://contoso.crm4.dynamics.com
 ```
 
 Agent-friendly auth workflow:

@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
@@ -20,15 +19,26 @@ public class CreateConnectionCommand(
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
-        Debug.Assert(settings != null, nameof(settings) + " != null");
+        if (settings.Url != null && settings.ConnectionString != null)
+        {
+            console.MarkupLine("[red]Error: specify either --url or --connection-string, not both.[/]");
+            return -1;
+        }
+
+        if (settings.Url == null && settings.ConnectionString == null)
+        {
+            console.MarkupLine("[red]Error: provide either --url (for MSAL authentication) or --connection-string.[/]");
+            return -1;
+        }
 
         var identities = profileManager.LoadIdentities();
-        if (settings.TokenBased)
+
+        if (settings.Url != null)
         {
             identities.Upsert(settings.Name,
                 new TokenIdentity
                 {
-                    ConnectionString = settings.ConnectionString,
+                    ConnectionString = settings.Url,
                     Token = string.Empty
                 });
         }
@@ -37,13 +47,13 @@ public class CreateConnectionCommand(
             identities.Upsert(settings.Name,
                 new Identity
                 {
-                    ConnectionString = settings.ConnectionString
+                    ConnectionString = settings.ConnectionString!
                 });
         }
 
         profileManager.Save();
 
-        if (!settings.SkipChecking)
+        if (!settings.NoVerify)
         {
             try
             {
@@ -63,3 +73,4 @@ public class CreateConnectionCommand(
         return 0;
     }
 }
+

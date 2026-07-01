@@ -7,27 +7,25 @@ using Spectre.Console.Cli;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-#pragma warning disable CS8618
 
 namespace dgt.power.connection.Commands;
 
 public class CreateConnectionSettings : ConnectionSettings
 {
     [CommandArgument(0, "<Name>")]
-    [Description("Name")]
-    public string Name { get; init; }
+    [Description("Name of the connection")]
+    public string Name { get; init; } = string.Empty;
 
-    [CommandArgument(1, "<ConnectionString>")]
-    [Description("ConnectionString")]
-    public string ConnectionString { get; init; }
+    [CommandOption("--url")]
+    [Description("Environment URL for MSAL (interactive/device-flow) authentication. Example: https://contoso.crm4.dynamics.com")]
+    public string? Url { get; init; }
 
-    [CommandOption("--msal")]
-    [Description("Token-based authentication (with MSAL)")]
+    [CommandOption("--connection-string")]
+    [Description("Full Dataverse connection string for service principal or other non-interactive auth. Example: AuthType=ClientSecret;Url=...;ClientId=...;ClientSecret=...")]
+    public string? ConnectionString { get; init; }
+
+    [CommandOption("--no-verify")]
+    [Description("Skip the post-create connectivity check (WhoAmI request). Use when the environment is temporarily unavailable or when pre-configuring connections in a CI pipeline.")]
     [DefaultValue(false)]
-    public bool TokenBased { get; init; }
-
-    [CommandOption("--skipcheck")]
-    [Description("Skip testing of the connection")]
-    [DefaultValue(false)]
-    public bool SkipChecking { get; init; }
+    public bool NoVerify { get; init; }
 }
