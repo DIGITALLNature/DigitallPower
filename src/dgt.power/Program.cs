@@ -196,7 +196,7 @@ void RegisterCommands(IConfigurator config)
 
     config.AddBranch<ProfileSettings>("profile", profile =>
     {
-        profile.SetDescription("[Deprecated] Use 'connection' instead");
+        profile.SetDescription("[[Deprecated]] Use 'connection' instead");
         RegisterProfileCommands(profile);
     });
 
@@ -355,6 +355,6 @@ void RegisterProfileCommands(IConfigurator<ProfileSettings> branch)
     branch.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
     branch.AddCommand<AuthCheckCommand>("auth-check")
         .WithDescription(
-            "[Deprecated] Use 'dgtp connection status' instead. " +
+            "[[Deprecated]] Use 'dgtp connection status' instead. " +
             "Checks whether the current MSAL token is still valid without opening a browser.");
 }
