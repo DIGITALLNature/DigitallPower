@@ -34,7 +34,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Tab Completion](#-tab-completion)
 - [Configuration](#%EF%B8%8F-configuration)
 - [Command Reference](#-command-reference)
-  - [profile](#profile--authentication--environments)
+  - [connection](#connection--authentication--environments)
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
@@ -79,12 +79,12 @@ After installation the command `dgtp` is available globally.
 ## ⚡ Quick Start
 
 ```bash
-# 1. Create and select a connection profile
-dgtp profile create dev https://contoso-dev.crm4.dynamics.com --msal
-dgtp profile select dev
+# 1. Create and select a connection
+dgtp connection create dev https://contoso-dev.crm4.dynamics.com --msal
+dgtp connection select dev
 
-# 2. Verify the connection by listing profiles
-dgtp profile list
+# 2. Verify the connection by listing connections
+dgtp connection list
 
 # 3. Export configuration data from the environment
 dgtp export queues --filedir ./out/queues
@@ -160,10 +160,10 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` `complete` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `push` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
-| `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` |
+| `dgtp connection <TAB>` | `list` `create` `delete` `select` `purge` `status` `refresh` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -184,7 +184,7 @@ Example `dgtp.json`:
 }
 ```
 
-Profile data (credentials, selected profile) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
+Profile data (credentials, selected connection) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
 
 JSON schemas for the various configuration files used by the modules live under [`schemas/`](schemas) and can be referenced from your own config files via the `$schema` property for autocomplete in modern editors.
 
@@ -196,20 +196,32 @@ The CLI is organized into branches. The general invocation pattern is:
 dgtp <branch> <command> [arguments] [options]
 ```
 
-### `profile` — Authentication & environments
+### `connection` — Authentication & environments
 
 | Command | Description |
 |---------|-------------|
-| `profile list` | List configured profiles |
-| `profile create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection profile |
-| `profile select <name>` | Set the active profile |
-| `profile delete <name>` | Delete a profile |
-| `profile purge` | Remove all profiles |
+| `connection list` | List configured connections |
+| `connection create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection |
+| `connection select <name>` | Set the active connection |
+| `connection delete <name>` | Delete a connection |
+| `connection purge` | Remove all connections |
+| `connection status` | Check whether the current MSAL token is valid (exit 0 = valid, 2 = login required) |
+| `connection refresh` | Force an interactive MSAL browser login and save the refreshed token |
+
+> **Note:** The `profile` command is a deprecated alias for `connection` and will be removed in a future release.
 
 Example:
 
 ```bash
-dgtp profile create prod https://contoso.crm4.dynamics.com --msal
+dgtp connection create prod https://contoso.crm4.dynamics.com --msal
+```
+
+Agent-friendly auth workflow:
+
+```bash
+dgtp connection status       # exit 0 = valid, exit 2 = login required
+dgtp connection refresh      # re-authenticate interactively
+dgtp connection status       # confirm valid before proceeding
 ```
 
 ### `export` — Export Dataverse artifacts
@@ -544,7 +556,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
        ┌─────────────────────────┼─────────────────────────────┐
        │            │            │            │                │
 ┌──────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴──────┐  ┌──────┴───────┐
-│  profile   │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
+│ connection │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
 └────────────┘ └──────────┘ └──────────┘ └───────────┘  └──────────────┘
        │            │            │            │                │
        └──────┬─────┴────────────┴────────────┴────────────────┘
@@ -559,7 +571,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                   │     dgt.power.common     │
                   │  (Xrm connection, file   │
                   │   access, tracer,        │
-                  │   profile management,    │
+                  │   connection management, │
                   │   shared base commands)  │
                   └──────────────────────────┘
                                │
@@ -572,9 +584,9 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `export`, `import`, `maintenance`, `profile`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, profile management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
-- **DI everywhere.** Long-lived services (HTTP/NuGet clients, profile manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active profile via `IXrmConnection.Connect()`.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, connection management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
 
@@ -589,10 +601,11 @@ DigitallPower/
 │   └── modules/
 │       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
+│       ├── dgt.power.connection/      # `connection` commands (auth management)
 │       ├── dgt.power.export/          # `export` commands
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
-│       ├── dgt.power.profile/         # `profile` commands
+│       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
 │       └── dgt.power.push/            # `push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)

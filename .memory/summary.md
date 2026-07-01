@@ -26,10 +26,11 @@ src/
 └── modules/
     ├── dgt.power.analyzer/     Solution layer analysis (redundant patches, active layers)
     ├── dgt.power.codegeneration/  .NET + TypeScript code generation (Liquid/TSL templates)
+    ├── dgt.power.connection/   Connection management + auth lifecycle (canonical)
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.profile/      Connection profile CRUD
+    ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     └── dgt.power.push/         Plugin assembly + webresource deployment
 ```
 
@@ -69,7 +70,7 @@ src/
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
-| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp profile auth-check` command |
+| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh`; `profile` is deprecated alias |
 
 ## TSL Template Engine (codegeneration)
 

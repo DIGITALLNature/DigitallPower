@@ -49,6 +49,19 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         return await connector.TryAcquireTokenSilentAsync();
     }
 
+    /// <inheritdoc/>
+    public async Task RefreshAuthAsync()
+    {
+        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
+        {
+            // Classic connection string profiles do not use MSAL — nothing to refresh.
+            return;
+        }
+
+        var connector = new TokenConnector(tokenIdentity, profileManager, console);
+        await connector.ForceInteractiveLoginAsync();
+    }
+
     private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
     {
         console.MarkupLine("Connect to given configuration.");
