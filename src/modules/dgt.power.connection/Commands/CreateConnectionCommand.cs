@@ -23,7 +23,7 @@ public class CreateConnectionCommand(
         return ExecuteCoreAsync(settings, cancellationToken);
     }
 
-    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken cancellationToken)
+    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken _)
     {
         var identities = profileManager.LoadIdentities();
 
