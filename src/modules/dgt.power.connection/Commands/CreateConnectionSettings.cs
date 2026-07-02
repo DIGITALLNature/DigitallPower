@@ -8,6 +8,7 @@ using Spectre.Console.Cli;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace dgt.power.connection.Commands;
 
@@ -19,7 +20,9 @@ public class CreateConnectionSettings : ConnectionSettings
 
     [CommandOption("--url")]
     [Description("Environment URL for MSAL (interactive/device-flow) authentication. Example: https://contoso.crm4.dynamics.com")]
+#pragma warning disable CA1056, S3996 // CLI argument is intentionally a string, not Uri
     public string? Url { get; init; }
+#pragma warning restore CA1056, S3996
 
     [CommandOption("--connection-string")]
     [Description("Full Dataverse connection string for service principal or other non-interactive auth. Example: AuthType=ClientSecret;Url=...;ClientId=...;ClientSecret=...")]

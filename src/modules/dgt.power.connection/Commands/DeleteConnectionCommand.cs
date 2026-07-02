@@ -12,13 +12,15 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
 {
     protected override int Execute(CommandContext context, DeleteConnectionSettings settings, CancellationToken cancellationToken)
     {
-        if (settings.All && settings.Name != null)
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (settings is { All: true, Name: not null })
         {
             console.MarkupLine("[red]Error: specify either a connection name or --all, not both.[/]");
             return -1;
         }
 
-        if (!settings.All && settings.Name == null)
+        if (settings is { All: false, Name: null })
         {
             console.MarkupLine("[red]Error: provide a connection name or use --all to delete all connections.[/]");
             return -1;
@@ -26,8 +28,8 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
 
         if (settings.All)
         {
-        var allConnections = profileManager.LoadIdentities();
-        var names = allConnections.Infos.Select(i => i.Name).ToList();
+            var allConnections = profileManager.LoadIdentities();
+            var names = allConnections.Infos.Select(i => i.Name).ToList();
 
             if (!settings.Yes)
             {

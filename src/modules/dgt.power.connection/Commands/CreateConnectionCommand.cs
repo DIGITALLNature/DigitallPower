@@ -19,6 +19,7 @@ public class CreateConnectionCommand(
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(settings);
         var identities = profileManager.LoadIdentities();
 
         if (settings.Url != null)
