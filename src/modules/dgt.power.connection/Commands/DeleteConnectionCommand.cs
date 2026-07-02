@@ -42,7 +42,7 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
                 console.MarkupLine("[yellow]The following connections will be deleted:[/]");
                 foreach (var name in names)
                 {
-                    console.MarkupLine($"  [red]- {name}[/]");
+                    console.MarkupLine($"  [red]- {Markup.Escape(name)}[/]");
                 }
 
                 if (!console.Confirm($"Delete all {names.Count} connection(s)?", defaultValue: false))
@@ -63,7 +63,7 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
         identities.Remove(settings.Name!);
         profileManager.Save();
 
-        var rule = new Rule($"Connection [lime]{settings.Name}[/] is removed.");
+        var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name!)}[/] is removed.");
         rule.LeftJustified();
         console.Write(rule);
         return 0;

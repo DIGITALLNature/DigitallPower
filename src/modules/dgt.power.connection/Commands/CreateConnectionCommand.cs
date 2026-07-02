@@ -17,9 +17,14 @@ public class CreateConnectionCommand(
     IAnsiConsole console)
     : AsyncCommand<CreateConnectionSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
+    protected override Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        return ExecuteCoreAsync(settings, cancellationToken);
+    }
+
+    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken cancellationToken)
+    {
         var identities = profileManager.LoadIdentities();
 
         if (settings.Url != null)
@@ -55,7 +60,7 @@ public class CreateConnectionCommand(
             }
         }
 
-        var rule = new Rule($"Connection [lime]{settings.Name}[/] upserted.");
+        var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] upserted.");
         rule.LeftJustified();
         console.Write(rule);
 

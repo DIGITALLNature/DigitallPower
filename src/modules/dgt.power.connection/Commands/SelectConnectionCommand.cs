@@ -19,14 +19,14 @@ public class SelectConnectionCommand(IProfileManager profileManager, IAnsiConsol
         var identities = profileManager.LoadIdentities();
         if (!identities.Contains(settings.Name))
         {
-            console.MarkupLine($"[Red]Connection {settings.Name} not found![/]");
+            console.MarkupLine($"[Red]Connection {Markup.Escape(settings.Name)} not found![/]");
             return -1;
         }
 
         identities.SetCurrent(settings.Name);
         profileManager.Save();
 
-        var rule = new Rule($"Connection [lime]{settings.Name}[/] set.");
+        var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] set.");
         rule.LeftJustified();
         console.Write(rule);
 

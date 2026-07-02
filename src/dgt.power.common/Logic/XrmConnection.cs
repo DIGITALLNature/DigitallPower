@@ -41,7 +41,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     {
         if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
         {
-            // Classic connection string profiles do not use MSAL — no interactive login required.
+            // Connection-string profiles do not use MSAL — no interactive login required.
             return true;
         }
 
@@ -54,7 +54,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     {
         if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
         {
-            // Classic connection string profiles do not use MSAL — nothing to refresh.
+            // Connection-string profiles do not use MSAL — nothing to refresh.
             return;
         }
 
@@ -101,7 +101,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         }
         else
         {
-            console.MarkupLine($"Connect to {profileManager.Current} via classic connection");
+            console.MarkupLine($"Connect to {profileManager.Current} via connection string");
             connector = new CrmConnector(identity.ConnectionString, console);
         }
 

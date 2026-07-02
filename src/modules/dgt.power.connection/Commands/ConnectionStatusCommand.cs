@@ -12,7 +12,7 @@ namespace dgt.power.connection.Commands;
 /// <summary>
 /// Checks whether the current MSAL token is still valid without opening a browser.
 /// Exit codes:
-///   0 — token is valid (or connection uses classic auth, no MSAL)
+///   0 — token is valid (or connection uses a connection string — no MSAL token to check)
 ///   2 — interactive login is required; ask the user to re-authenticate
 /// Intended for coding agents to use as a pre-flight check before any Dataverse command.
 /// </summary>

@@ -52,7 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 
 | Area | What it does |
 |------|--------------|
-| **Profiles** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) |
+| **Connections** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) |
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
@@ -184,7 +184,7 @@ Example `dgtp.json`:
 }
 ```
 
-Profile data (credentials, selected connection) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
+Connection data (credentials, selected connection) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
 
 JSON schemas for the various configuration files used by the modules live under [`schemas/`](schemas) and can be referenced from your own config files via the `$schema` property for autocomplete in modern editors.
 
