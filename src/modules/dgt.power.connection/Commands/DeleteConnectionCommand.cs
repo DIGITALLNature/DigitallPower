@@ -14,18 +14,6 @@ public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsol
     {
         ArgumentNullException.ThrowIfNull(settings);
 
-        if (settings is { All: true, Name: not null })
-        {
-            console.MarkupLine("[red]Error: specify either a connection name or --all, not both.[/]");
-            return -1;
-        }
-
-        if (settings is { All: false, Name: null })
-        {
-            console.MarkupLine("[red]Error: provide a connection name or use --all to delete all connections.[/]");
-            return -1;
-        }
-
         if (settings.All)
         {
             var allConnections = profileManager.LoadIdentities();

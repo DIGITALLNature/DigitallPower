@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using dgt.power.connection.Base;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -25,4 +26,13 @@ public class DeleteConnectionSettings : ConnectionSettings
     [Description("Skip the confirmation prompt when deleting all connections")]
     [DefaultValue(false)]
     public bool Yes { get; init; }
+
+    public override ValidationResult Validate()
+    {
+        if (All && Name != null)
+            return ValidationResult.Error("Specify either a connection name or --all, not both.");
+        if (!All && Name == null)
+            return ValidationResult.Error("Provide a connection name or use --all to delete all connections.");
+        return ValidationResult.Success();
+    }
 }
