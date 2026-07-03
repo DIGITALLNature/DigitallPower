@@ -83,6 +83,8 @@ registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
 );
 registrations.AddSingleton<VersionCheckInterceptor>();
 
+registrations.AddSingleton<DeprecationInterceptor>();
+
 // Telemetry setup
 var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
 var telemetryEnabled = !TelemetryConfig.IsOptedOut;
@@ -136,8 +138,11 @@ var app = new CommandApp(registrar);
 
 app.Configure(config =>
 {
-    var versionCheckInterceptor = registrations.BuildServiceProvider().GetRequiredService<VersionCheckInterceptor>();
-    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, new DeprecationInterceptor(args, appConsole)));
+    var serviceProvider = registrations.BuildServiceProvider();
+
+    var versionCheckInterceptor = serviceProvider.GetRequiredService<VersionCheckInterceptor>();
+    var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
+    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
     RegisterCommands(config);
 
     config.SetExceptionHandler((exception, _) =>

@@ -9,7 +9,12 @@ namespace dgt.power;
 /// <summary>
 /// Prints a deprecation warning when the user invokes a command via a deprecated command name.
 /// </summary>
-internal sealed class DeprecationInterceptor(string[] args, IAnsiConsole console) : ICommandInterceptor
+/// <remarks>
+/// <see cref="CommandContext.Name"/> only exposes the leaf command's name (e.g. "list"), not the
+/// top-level branch name (e.g. "profile") that was actually typed, so <see cref="CommandContext.Arguments"/>
+/// (the raw, unparsed application arguments) is used instead to detect the invoked branch.
+/// </remarks>
+internal sealed class DeprecationInterceptor(IAnsiConsole console) : ICommandInterceptor
 {
     private static readonly Dictionary<string, string> s_deprecations = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -18,9 +23,9 @@ internal sealed class DeprecationInterceptor(string[] args, IAnsiConsole console
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
-        if (args.Length > 0 && s_deprecations.TryGetValue(args[0], out var replacement))
+        if (context.Arguments.Count > 0 && s_deprecations.TryGetValue(context.Arguments[0], out var replacement))
         {
-            console.MarkupLine($"[yellow]DEPRECATED: '{args[0]}' has been renamed to '{replacement}'. Please update your scripts.[/]");
+            console.MarkupLine($"[yellow]DEPRECATED: '{context.Arguments[0]}' has been renamed to '{replacement}'. Please update your scripts.[/]");
         }
     }
 }
