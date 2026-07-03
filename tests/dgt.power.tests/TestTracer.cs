@@ -45,4 +45,11 @@ public class TestTracer : ITracer
         Console.WriteLine($"{type}: {error.Message}");
         Console.WriteLine($"{type}: {error.StackTrace}");
     }
+
+    public void TrackFatalException(Exception e)
+    {
+        var error = e.RootException();
+        Console.WriteLine($"FATAL: {error.Message}");
+        Console.WriteLine($"FATAL: {error.StackTrace}");
+    }
 }

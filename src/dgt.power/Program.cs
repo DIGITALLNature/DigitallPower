@@ -105,7 +105,25 @@ if (telemetryEnabled)
     }
 }
 
-registrations.AddSingleton<ITracer>(_ => new Tracer(telemetryEnabled, installId, appConsole));
+var tracer = new Tracer(telemetryEnabled, installId, appConsole);
+registrations.AddSingleton<ITracer>(tracer);
+
+AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+{
+    if (e.ExceptionObject is Exception ex)
+    {
+        tracer.TrackFatalException(ex);
+    }
+    tracerProvider?.ForceFlush(5000);
+    tracerProvider?.Dispose();
+};
+
+TaskScheduler.UnobservedTaskException += (_, e) =>
+{
+    tracer.TrackFatalException(e.Exception);
+    e.SetObserved();
+};
+
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
 registrations.AddSingleton<IProfileManager, ProfileManager>();
@@ -140,6 +158,7 @@ app.Configure(config =>
 
     config.SetExceptionHandler((exception, _) =>
     {
+        tracer.TrackFatalException(exception);
         var inner = exception.IsDerivedFrom<AbstractPowerException>()
             ? exception.GetInnerException<AbstractPowerException>()
             : null;
