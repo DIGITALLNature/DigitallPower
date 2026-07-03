@@ -5,6 +5,7 @@
   "description": "V2 configuration for .NET code generation. Produces C# early-bound entity classes, typed request/response wrappers, SDK message constants, and optionally XML metadata.",
   "required": ["type"],
   "properties": {
+    "$schema":  { "type": "string", "description": "A field for the JSON schema specification: https://json-schema.org/" },
     "type":      { "type": "string", "const": "dotnet" },
     "version":   { "type": "integer", "const": 2, "default": 2 },
     "namespace": { "type": "string", "description": "C# namespace for generated classes.", "default": "Digitall.Dataverse.Model" },
