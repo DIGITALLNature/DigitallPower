@@ -52,7 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 
 | Area | What it does |
 |------|--------------|
-| **Connections** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) |
+| **Connections** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) and check MSAL token validity (`connection status`) |
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
@@ -226,6 +226,13 @@ dgtp connection refresh      # re-authenticate interactively
 dgtp connection status       # confirm valid before proceeding
 ```
 
+`profile auth-check` is intended as a pre-flight check for CI/automation before running other Dataverse commands. It never opens a browser and returns one of the following exit codes:
+
+| Exit code | Meaning |
+|-----------|---------|
+| `0` | Token is valid (or the profile uses classic auth, no MSAL) — no interactive login required |
+| `2` | Interactive login is required; ask the user to re-authenticate |
+
 ### `export` — Export Dataverse artifacts
 
 Exports configuration data from the currently selected environment into JSON files.
@@ -299,7 +306,7 @@ Day-to-day administrative actions against a live environment.
 | `maintenance solution-version <solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version |
 | `maintenance createworkflowstate` | Generate a workflow-state configuration file |
 | `maintenance workflowstate` | Apply a workflow-state configuration |
-| `maintenance removeredundantcomponents <target> <source> [--dryrun]` | Remove solution components that already exist in another solution |
+| `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
 | `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
 | `maintenance ensuresdksteps` | Enable/disable SDK steps within a solution |
 
@@ -317,6 +324,11 @@ dgtp codegeneration ./generated -c ./genconfig.json
 # alias
 dgtp cg ./generated -c ./genconfig.json
 ```
+
+| Option | Description |
+|--------|-------------|
+| `-f`, `--folder` | Alternate name for the model folder (default: `Model`) |
+| `-c`, `--config` | Full path to the config file (default: `config.json`) |
 
 JSON schemas for all config versions are available under [`schemas/codegeneration/`](schemas/codegeneration).
 
@@ -514,7 +526,7 @@ dgtp push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
 
 #### Supported Registration Attributes
 
-When pushing a plugin assembly, `push` evaluates the following attributes from the `dgt.registration` package:
+When pushing a plugin assembly, `push` evaluates the following attributes from the `Digitall.Plugins.Registration` package:
 
 | Attribute | Purpose |
 |-----------|---------|
