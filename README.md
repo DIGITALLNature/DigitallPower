@@ -52,7 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 
 | Area | What it does |
 |------|--------------|
-| **Profiles** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) |
+| **Profiles** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) and check MSAL token validity (`auth-check`) |
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
@@ -163,7 +163,7 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
-| `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` |
+| `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` `auth-check` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -205,12 +205,20 @@ dgtp <branch> <command> [arguments] [options]
 | `profile select <name>` | Set the active profile |
 | `profile delete <name>` | Delete a profile |
 | `profile purge` | Remove all profiles |
+| `profile auth-check` | Non-interactive check whether the active profile's MSAL token is still valid |
 
 Example:
 
 ```bash
 dgtp profile create prod https://contoso.crm4.dynamics.com --msal
 ```
+
+`profile auth-check` is intended as a pre-flight check for CI/automation before running other Dataverse commands. It never opens a browser and returns one of the following exit codes:
+
+| Exit code | Meaning |
+|-----------|---------|
+| `0` | Token is valid (or the profile uses classic auth, no MSAL) — no interactive login required |
+| `2` | Interactive login is required; ask the user to re-authenticate |
 
 ### `export` — Export Dataverse artifacts
 
@@ -285,7 +293,7 @@ Day-to-day administrative actions against a live environment.
 | `maintenance solution-version <solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version |
 | `maintenance createworkflowstate` | Generate a workflow-state configuration file |
 | `maintenance workflowstate` | Apply a workflow-state configuration |
-| `maintenance removeredundantcomponents <target> <source> [--dryrun]` | Remove solution components that already exist in another solution |
+| `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
 | `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
 | `maintenance ensuresdksteps` | Enable/disable SDK steps within a solution |
 
@@ -303,6 +311,11 @@ dgtp codegeneration ./generated -c ./genconfig.json
 # alias
 dgtp cg ./generated -c ./genconfig.json
 ```
+
+| Option | Description |
+|--------|-------------|
+| `-f`, `--folder` | Alternate name for the model folder (default: `Model`) |
+| `-c`, `--config` | Full path to the config file (default: `config.json`) |
 
 JSON schemas for all config versions are available under [`schemas/codegeneration/`](schemas/codegeneration).
 
@@ -500,7 +513,7 @@ dgtp push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
 
 #### Supported Registration Attributes
 
-When pushing a plugin assembly, `push` evaluates the following attributes from the `dgt.registration` package:
+When pushing a plugin assembly, `push` evaluates the following attributes from the `Digitall.Plugins.Registration` package:
 
 | Attribute | Purpose |
 |-----------|---------|
