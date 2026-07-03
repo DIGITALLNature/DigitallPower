@@ -68,7 +68,61 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
     {
         var error = e.RootException();
         _console.WriteException(error);
-        _currentActivity?.SetStatus(ActivityStatusCode.Error, error.Message);
+        if (IsActive && _currentActivity != null)
+        {
+            var anonymizedMessage = TelemetryAnonymizer.Anonymize(error.Message);
+            var anonymizedStackTrace = TelemetryAnonymizer.AnonymizeStackTrace(error.StackTrace);
+
+            _currentActivity.SetStatus(ActivityStatusCode.Error, anonymizedMessage);
+            RecordException(_currentActivity, error, anonymizedMessage, anonymizedStackTrace, escaped: false);
+        }
+    }
+
+    public void TrackFatalException(Exception e)
+    {
+        if (!IsActive) return;
+
+        var error = e.RootException();
+        using var activity = DgtpActivitySource.Instance.StartActivity("fatal_exception");
+        if (activity != null)
+        {
+            activity.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
+            activity.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());
+            activity.SetTag("dgtp.version", DgtpActivitySource.Instance.Version);
+            if (installId != null)
+            {
+                activity.SetTag("dgtp.install_id", installId);
+            }
+
+            var anonymizedMessage = TelemetryAnonymizer.Anonymize(error.Message);
+            var anonymizedStackTrace = TelemetryAnonymizer.AnonymizeStackTrace(error.StackTrace);
+
+            activity.SetStatus(ActivityStatusCode.Error, anonymizedMessage);
+            RecordException(activity, error, anonymizedMessage, anonymizedStackTrace, escaped: true);
+        }
+    }
+
+    /// <summary>
+    /// Records the exception both as tags (for quick filtering on the enclosing span/dependency via
+    /// customDimensions) and as an OpenTelemetry "exception" event following the standard semantic
+    /// conventions (<c>exception.type</c>, <c>exception.message</c>, <c>exception.stacktrace</c>,
+    /// <c>exception.escaped</c>). The Azure Monitor exporter turns exception *events* - but not plain
+    /// tags - into proper entries in the Application Insights "exceptions" table / Failures blade.
+    /// </summary>
+    private static void RecordException(Activity activity, Exception error, string anonymizedMessage, string anonymizedStackTrace, bool escaped)
+    {
+        activity.SetTag("exception.type", error.GetType().FullName);
+        activity.SetTag("exception.message", anonymizedMessage);
+        activity.SetTag("exception.stacktrace", anonymizedStackTrace);
+
+        var tags = new ActivityTagsCollection
+        {
+            { "exception.type", error.GetType().FullName },
+            { "exception.message", anonymizedMessage },
+            { "exception.stacktrace", anonymizedStackTrace },
+            { "exception.escaped", escaped }
+        };
+        activity.AddEvent(new ActivityEvent("exception", tags: tags));
     }
 
     private void EndActivity(bool success)

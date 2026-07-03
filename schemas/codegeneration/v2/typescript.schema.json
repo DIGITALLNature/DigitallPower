@@ -5,6 +5,7 @@
   "description": "V2 configuration for TypeScript code generation (Light mode only). Produces entity definitions, form typings, OptionSet constants, SDK message name constants, and Custom API wrappers.",
   "required": ["type"],
   "properties": {
+    "$schema":  { "type": "string", "description": "A field for the JSON schema specification: https://json-schema.org/" },
     "type":      { "type": "string", "const": "typescript" },
     "version":   { "type": "integer", "const": 2, "default": 2 },
     "namespace": { "type": ["string", "null"], "description": "Reserved for future TypeScript module prefix. Not currently used by the generator.", "default": null },
