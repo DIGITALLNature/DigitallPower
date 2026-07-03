@@ -133,8 +133,8 @@ dgtp complete setup
 dgtp complete install-shell
 ```
 
-This auto-detects your current shell and writes the shim to your RC file.  
-Use `--shell bash|zsh|pwsh|fish` to override the detected shell.  
+This auto-detects your current shell and writes the shim to your RC file.
+Use `--shell bash|zsh|pwsh|fish` to override the detected shell.
 Use `--dry-run` to preview what would be written without making changes.
 
 The shim is written with idempotency markers — running the command again does nothing if already installed:
@@ -645,8 +645,18 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | OS platform | `Unix` | Platform distribution |
 | Tool version | `2.1.0` | Version adoption |
 | Anonymous install ID | `a1b2c3d4-...` | Count unique installations |
+| Crash data | `ExceptionType`, `anonymized stacktrace` | Improve reliability by identifying common crashes |
 
-**No personally identifiable information is collected.** No usernames, organization URLs, file contents, or environment-specific data is ever transmitted.
+**No personally identifiable information is collected.** Error messages and stack traces are automatically anonymized before being sent — the following data is stripped or replaced with fixed placeholders:
+
+| Found in error data | Replaced with |
+|---|---|
+| GUIDs (record IDs, solution IDs, ...) | `00000000-0000-0000-0000-000000000000` |
+| Local home-directory paths (`/Users/<name>/...`, `/home/<name>/...`, `C:\Users\<name>\...`) | just the file name, e.g. `Program.cs` |
+| Dataverse organization URLs (`https://contoso.crm4.dynamics.com/...`) | `[dataverse-org-url-redacted]` |
+| Entra ID tenant URLs (`https://contoso.onmicrosoft.com/...`) | `[entra-tenant-url-redacted]` |
+
+This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach — see `.memory/decision-error-telemetry-anonymization.md` for its exact scope and known limitations.
 
 CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 
@@ -688,6 +698,39 @@ dependencies
 | summarize CI = countif(is_ci), NonCI = countif(not(is_ci)) by module
 | order by CI + NonCI desc
 ```
+
+### Retrieving crash/error data in Application Insights
+
+Every exception (whether it terminates a command, or crashes the process entirely) is recorded both as an OpenTelemetry span attribute (for quick filtering alongside command telemetry) **and** as a standard OpenTelemetry exception event, which the Azure Monitor exporter surfaces natively in the **`exceptions`** table / the **Failures** blade of the Application Insights resource.
+
+**To look at it in the Azure Portal:**
+
+1. Open the Application Insights resource associated with the connection string configured via `DGT_TELEMETRY_CONNECTION_STRING` (or the build's embedded default).
+2. Go to **Investigate → Failures** for a quick overview of the most frequent exception types and their trend over time, or
+3. Go to **Monitoring → Logs** and run a KQL query directly, e.g.:
+
+```kusto
+// Most frequent (anonymized) exception types over the last 30 days
+exceptions
+| where timestamp > ago(30d)
+| extend
+    exceptionType = tostring(customDimensions["exception.type"]),
+    version = tostring(customDimensions["dgtp.version"]),
+    isFatal = operation_Name == "fatal_exception"
+| summarize Count = count() by exceptionType, version, isFatal
+| order by Count desc
+```
+
+```kusto
+// Full anonymized message + stack trace for a specific exception type
+exceptions
+| where timestamp > ago(30d)
+| where tostring(customDimensions["exception.type"]) == "System.IO.DirectoryNotFoundException"
+| project timestamp, message = tostring(customDimensions["exception.message"]), stack = tostring(customDimensions["exception.stacktrace"]), version = tostring(customDimensions["dgtp.version"])
+| order by timestamp desc
+```
+
+Since crashes outside of a command's lifecycle (startup failures, unobserved task exceptions) are recorded as their own `fatal_exception` operation rather than under a `command.*` operation, filter on `operation_Name == "fatal_exception"` to isolate those from regular command-scoped exceptions.
 
 ### First-run notice
 

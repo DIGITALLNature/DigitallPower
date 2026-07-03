@@ -20,4 +20,6 @@ public interface ITracer
     bool End<T>(T action, bool result) where T : IPowerLogic;
 
     void Exception(Exception e, TraceEventType type);
+
+    void TrackFatalException(Exception e);
 }
