@@ -12,6 +12,7 @@
   <Folder Name="/Tests/">
     <Project Path="tests/dgt.power.analyzer.tests/dgt.power.analyzer.tests.csproj" />
     <Project Path="tests/dgt.power.codegeneration.tests/dgt.power.codegeneration.tests.csproj" />
+    <Project Path="tests/dgt.power.connection.tests/dgt.power.connection.tests.csproj" />
     <Project Path="tests/dgt.power.export.tests/dgt.power.export.tests.csproj" />
     <Project Path="tests/dgt.power.import.tests/dgt.power.import.tests.csproj" />
     <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />

@@ -45,8 +45,9 @@ public class CreateConnectionCommand(
                 });
         }
 
-        profileManager.Save();
-
+        // Verify connectivity against the in-memory identity (Upsert already made it Current for
+        // ConnectAsync to pick up) BEFORE persisting, so a failed check never leaves an invalid
+        // connection saved and selected as active on disk.
         if (!settings.NoVerify)
         {
             try
@@ -59,6 +60,8 @@ public class CreateConnectionCommand(
                 throw;
             }
         }
+
+        profileManager.Save();
 
         var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] upserted.");
         rule.LeftJustified();
