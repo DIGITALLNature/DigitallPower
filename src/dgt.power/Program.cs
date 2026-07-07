@@ -90,6 +90,17 @@ var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
 var telemetryEnabled = !TelemetryConfig.IsOptedOut;
 string? installId = null;
 TracerProvider? tracerProvider = null;
+void FlushAndDisposeTelemetryProvider()
+{
+    var provider = System.Threading.Interlocked.Exchange(ref tracerProvider, null);
+    if (provider is null)
+    {
+        return;
+    }
+
+    provider.ForceFlush(5000);
+    provider.Dispose();
+}
 
 if (telemetryEnabled)
 {
@@ -118,8 +129,7 @@ AppDomain.CurrentDomain.UnhandledException += (_, e) =>
     {
         tracer.TrackFatalException(ex);
     }
-    tracerProvider?.ForceFlush(5000);
-    tracerProvider?.Dispose();
+    FlushAndDisposeTelemetryProvider();
 };
 
 TaskScheduler.UnobservedTaskException += (_, e) =>
@@ -199,8 +209,7 @@ if (args.Length == 0)
 
 var exitCode = await app.RunAsync(args);
 
-tracerProvider?.ForceFlush(5000);
-tracerProvider?.Dispose();
+FlushAndDisposeTelemetryProvider();
 
 return exitCode;
 

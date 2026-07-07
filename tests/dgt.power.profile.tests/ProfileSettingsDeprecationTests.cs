@@ -7,7 +7,7 @@ using dgt.power.profile.Base;
 namespace dgt.power.profile.tests;
 
 /// <summary>
-/// Guards the '[[Deprecated]] profile' branch marker. <see cref="DeprecationInterceptor"/> (in
+/// Guards the '[[Deprecated]] profile' branch marker. <c>DeprecationInterceptor</c> (in
 /// dgt.power) relies on <see cref="ProfileSettings"/> carrying a <see cref="DeprecatedCommandAttribute"/>
 /// to print the deprecation warning for every command under the 'profile' branch - if this attribute is
 /// ever removed by accident, the warning silently stops firing for all profile commands.

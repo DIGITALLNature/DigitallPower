@@ -12,7 +12,7 @@ internal sealed class FakeXrmConnection : IXrmConnection
 
     public bool RefreshThrows { get; init; }
 
-    public Exception RefreshException { get; init; } = new InvalidOperationException("refresh failed");
+    private static readonly Exception s_refreshException = new InvalidOperationException("refresh failed");
 
     public int RefreshCalls { get; private set; }
 
@@ -24,6 +24,6 @@ internal sealed class FakeXrmConnection : IXrmConnection
     public Task RefreshAuthAsync()
     {
         RefreshCalls++;
-        return RefreshThrows ? Task.FromException(RefreshException) : Task.CompletedTask;
+        return RefreshThrows ? Task.FromException(s_refreshException) : Task.CompletedTask;
     }
 }

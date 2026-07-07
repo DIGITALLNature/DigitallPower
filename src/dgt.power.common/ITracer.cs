@@ -21,5 +21,6 @@ public interface ITracer
 
     void Exception(Exception e, TraceEventType type);
 
+    // ReSharper disable once UnusedMemberInSuper.Global
     void TrackFatalException(Exception e);
 }

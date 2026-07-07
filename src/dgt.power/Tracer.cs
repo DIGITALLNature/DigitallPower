@@ -83,7 +83,7 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
         if (!IsActive) return;
 
         var error = e.RootException();
-        using var activity = DgtpActivitySource.Instance.StartActivity("fatal_exception");
+        using var activity = DgtpActivitySource.Instance.StartActivity();
         if (activity != null)
         {
             activity.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);

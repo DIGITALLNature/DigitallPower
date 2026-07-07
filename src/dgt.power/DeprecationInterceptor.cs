@@ -13,7 +13,7 @@ namespace dgt.power;
 /// annotated with <see cref="DeprecatedCommandAttribute"/> is invoked.
 /// </summary>
 /// <remarks>
-/// Detection is based on the actual bound <paramref name="settings"/> instance, not on the raw,
+/// Detection is based on the actual bound <c>settings</c> instance, not on the raw,
 /// unparsed application arguments. This is inherently reliable, unlike scanning
 /// <c>CommandContext.Arguments</c> for the branch name: it does not care where in the argument
 /// list the branch appeared, whether global options precede it, or how deep the command is nested.

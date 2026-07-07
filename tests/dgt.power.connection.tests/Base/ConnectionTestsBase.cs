@@ -20,7 +20,7 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
 
     public string IdentityFileName { get; } = $"{Guid.NewGuid():N}.dat";
 
-    public ConnectionTestsBase()
+    protected ConnectionTestsBase()
     {
         _services = new TestServiceCollection();
         _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
@@ -39,18 +39,6 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
     protected IProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>();
 
     protected IIdentities GetIdentities() => ProfileManager.LoadIdentities();
-
-    protected void AddIdentity(string name, string connectionString)
-    {
-        AddIdentity(name, new Identity { ConnectionString = connectionString });
-    }
-
-    protected void AddIdentity(string name, Identity identity)
-    {
-        var identities = GetIdentities();
-        identities.Upsert(name, identity);
-        ProfileManager.Save();
-    }
 
     public override void Dispose()
     {

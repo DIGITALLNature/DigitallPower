@@ -18,7 +18,7 @@ namespace dgt.power.common.Commands;
 /// warning message. Leave <see langword="null"/> if the command is deprecated without a direct
 /// replacement.
 /// </param>
-[AttributeUsage(AttributeTargets.Class, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class)]
 public sealed class DeprecatedCommandAttribute(string? useInstead = null) : Attribute
 {
     public string? UseInstead { get; } = useInstead;

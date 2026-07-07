@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.connection.Base;
 using dgt.power.common.Logic;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
