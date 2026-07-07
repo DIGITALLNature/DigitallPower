@@ -40,6 +40,18 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
 
     protected IIdentities GetIdentities() => ProfileManager.LoadIdentities();
 
+    protected void AddIdentity(string name, string connectionString)
+    {
+        AddIdentity(name, new Identity { ConnectionString = connectionString });
+    }
+
+    protected void AddIdentity(string name, Identity identity)
+    {
+        var identities = GetIdentities();
+        identities.Upsert(name, identity);
+        ProfileManager.Save();
+    }
+
     public override void Dispose()
     {
         _storage.Remove();

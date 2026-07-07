@@ -5,6 +5,7 @@ using System.ServiceModel;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
 using dgt.power.tests.Extensions;
+using dgt.power.common.Logic;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
@@ -35,6 +36,23 @@ public class CreateConnectionCommandTests : ConnectionTestsBase<CreateConnection
 
         await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
         await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.ConnectionString);
+    }
+
+    [Test]
+    public async Task ShouldCreateTokenIdentity_WhenUrlIsProvided()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "TOKEN",
+            Url = "https://contoso.crm.dynamics.com",
+            NoVerify = true
+        };
+
+        await GetContext().Execute(settings).Succeed();
+
+        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.Url);
+        await Assert.That(ProfileManager.CurrentIdentity is TokenIdentity).IsTrue();
     }
 
     [Test]
