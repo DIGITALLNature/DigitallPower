@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -14,7 +13,7 @@ public class SelectConnectionCommand(IProfileManager profileManager, IAnsiConsol
 {
     protected override int Execute(CommandContext context, NamedConnectionSettings settings, CancellationToken cancellationToken)
     {
-        Debug.Assert(settings != null, nameof(settings) + " != null");
+        ArgumentNullException.ThrowIfNull(settings);
 
         var identities = profileManager.LoadIdentities();
         if (!identities.Contains(settings.Name))
