@@ -1,31 +1,40 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Reflection;
+using dgt.power.common.Commands;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power;
 
 /// <summary>
-/// Prints a deprecation warning when the user invokes a command via a deprecated command name.
+/// Prints a deprecation warning whenever a command whose <see cref="CommandSettings"/> type is
+/// annotated with <see cref="DeprecatedCommandAttribute"/> is invoked.
 /// </summary>
 /// <remarks>
-/// <see cref="CommandContext.Name"/> only exposes the leaf command's name (e.g. "list"), not the
-/// top-level branch name (e.g. "profile") that was actually typed, so <see cref="CommandContext.Arguments"/>
-/// (the raw, unparsed application arguments) is used instead to detect the invoked branch.
+/// Detection is based on the actual bound <paramref name="settings"/> instance, not on the raw,
+/// unparsed application arguments. This is inherently reliable, unlike scanning
+/// <c>CommandContext.Arguments</c> for the branch name: it does not care where in the argument
+/// list the branch appeared, whether global options precede it, or how deep the command is nested.
+/// <para>
+/// To deprecate a command or an entire branch, annotate its <see cref="CommandSettings"/> class with
+/// <c>[DeprecatedCommand("replacement")]</c> — no changes to the command's execution logic, and no
+/// per-module wiring, are required.
+/// </para>
 /// </remarks>
 internal sealed class DeprecationInterceptor(IAnsiConsole console) : ICommandInterceptor
 {
-    private static readonly Dictionary<string, string> s_deprecations = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["profile"] = "connection"
-    };
-
     public void Intercept(CommandContext context, CommandSettings settings)
     {
-        if (context.Arguments.Count > 0 && s_deprecations.TryGetValue(context.Arguments[0], out var replacement))
+        var deprecation = settings.GetType().GetCustomAttribute<DeprecatedCommandAttribute>(inherit: true);
+        if (deprecation is null)
         {
-            console.MarkupLine($"[yellow]DEPRECATED: '{context.Arguments[0]}' has been renamed to '{replacement}'. Please update your scripts.[/]");
+            return;
         }
+
+        var replacementHint = deprecation.UseInstead is { } replacement ? $" Use '{replacement}' instead." : string.Empty;
+
+        console.MarkupLine($"[yellow]DEPRECATED: This command is deprecated.{replacementHint} Please update your scripts.[/]");
     }
 }

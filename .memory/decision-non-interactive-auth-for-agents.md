@@ -82,7 +82,7 @@ This allows any agent monitoring stdout to detect the interactive login event ev
 - `src/dgt.power.common/Logic/XrmConnection.cs` — `CheckAuthAsync` + `RefreshAuthAsync` impl + `IsNonInteractive()` helper
 - `src/modules/dgt.power.connection/` — new module: `ConnectionStatusCommand`, `ConnectionRefreshCommand`, `CreateConnectionCommand`, `ListConnectionCommand`, `SelectConnectionCommand`, `DeleteConnectionCommand`
 - `src/modules/dgt.power.profile/Commands/AuthCheckCommand.cs` — kept for deprecated `profile auth-check` alias
-- `src/dgt.power/DeprecationInterceptor.cs` — prints warning when `profile` branch is used
-- `src/dgt.power/Program.cs` — register `connection` (canonical) + `profile` (deprecated alias), add `DeprecationInterceptor`
+- `src/modules/dgt.power.profile/Base/ProfileSettings.cs` — marked `[DeprecatedCommand("connection")]` (see `decision-generic-command-deprecation.md`)
+- `src/dgt.power/Program.cs` — register `connection` (canonical) + `profile` (deprecated alias)
 - `tests/dgt.power.tests/TestConnection.cs` — stub `CheckAuthAsync` → `true`, `RefreshAuthAsync` → `CompletedTask`
 
