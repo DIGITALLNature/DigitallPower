@@ -1,3 +1,10 @@
+# [2.2.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0...v2.2.0-beta.1) (2026-07-21)
+
+
+### Features
+
+* **telemetry:** anonymize org URLs and home paths, record exceptions as OTel events ([4889812](https://github.com/DIGITALLNature/DigitallPower/commit/4889812384f93a9b9615a9fe9df6d56b4a3ef76f))
+
 # [2.1.0-beta.61](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0-beta.60...v2.1.0-beta.61) (2026-07-03)
 
 
