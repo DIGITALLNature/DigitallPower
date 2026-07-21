@@ -33,6 +33,12 @@ To protect user privacy, all captured error data must be anonymized before trans
 - **Exception recording as OTel events:** Both `Tracer.Exception` and `Tracer.TrackFatalException` record the anonymized exception as a standard OpenTelemetry **exception event** (`ActivityEvent("exception", tags: {exception.type, exception.message, exception.stacktrace, exception.escaped})`) on top of setting them as span tags. The Azure Monitor exporter only projects exception *events* — not plain span tags — into the Application Insights `exceptions` table / Failures blade, so this is required for crashes to show up as first-class exception telemetry rather than only as custom dimensions on a `dependency` row.
 - **`Program.cs` Integration:** The global handlers are registered as early as possible after the tracer is initialized.
 
+### Provider Lifecycle
+
+- Global exception handlers must only record errors through `ITracer`; they must never flush or dispose the local `TracerProvider` captured during startup.
+- `Program.cs` owns the provider and flushes/disposes it exactly once from its normal `finally` block after removing the global handler subscriptions.
+- `TrackFatalException` starts its activity without an explicit name so the caller-info default (`TrackFatalException`) becomes the stable operation name.
+
 ## Alternatives Considered
 
 - **Transmitting full stack traces:** Rejected due to privacy concerns regarding local user names in paths.

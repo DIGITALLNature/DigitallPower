@@ -92,7 +92,7 @@ string? installId = null;
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
-    var provider = System.Threading.Interlocked.Exchange(ref tracerProvider, null);
+    var provider = Interlocked.Exchange(ref tracerProvider, null);
     if (provider is null)
     {
         return;
@@ -123,20 +123,22 @@ if (telemetryEnabled)
 var tracer = new Tracer(telemetryEnabled, installId, appConsole);
 registrations.AddSingleton<ITracer>(tracer);
 
-AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {
     if (e.ExceptionObject is Exception ex)
     {
         tracer.TrackFatalException(ex);
     }
-    FlushAndDisposeTelemetryProvider();
 };
 
-TaskScheduler.UnobservedTaskException += (_, e) =>
+EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = (_, e) =>
 {
     tracer.TrackFatalException(e.Exception);
     e.SetObserved();
 };
+
+AppDomain.CurrentDomain.UnhandledException += unhandledExceptionHandler;
+TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
@@ -207,11 +209,16 @@ if (args.Length == 0)
 }
 
 
-var exitCode = await app.RunAsync(args);
-
-FlushAndDisposeTelemetryProvider();
-
-return exitCode;
+try
+{
+    return await app.RunAsync(args);
+}
+finally
+{
+    AppDomain.CurrentDomain.UnhandledException -= unhandledExceptionHandler;
+    TaskScheduler.UnobservedTaskException -= unobservedTaskExceptionHandler;
+    FlushAndDisposeTelemetryProvider();
+}
 
 // ── Command registration ──────────────────────────────────────────────────────
 // Shared by the normal app path and the dotnet-suggest capture path.

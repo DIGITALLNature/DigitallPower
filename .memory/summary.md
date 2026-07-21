@@ -71,7 +71,7 @@ src/
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
 | Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh`; `profile` is deprecated alias |
-| Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction for privacy |
+| Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 
