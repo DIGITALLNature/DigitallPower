@@ -1,3 +1,23 @@
+# [2.2.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.1...v2.2.0-beta.2) (2026-07-21)
+
+
+### Bug Fixes
+
+* **connection:** escape Spectre markup brackets in deprecation descriptions ([5379d5f](https://github.com/DIGITALLNature/DigitallPower/commit/5379d5fdaceee46ab9c54de0c090a05bd714bc7a))
+* **connection:** rename type labels from Token/Classic to MSAL/ConnectionString ([159920f](https://github.com/DIGITALLNature/DigitallPower/commit/159920f9193cdac4be2f2ed4f4e22566d21822b0))
+* dont persist profile when connection fails ([7c122e1](https://github.com/DIGITALLNature/DigitallPower/commit/7c122e1a078fe223db1c93b811dddf7b525a0763))
+* qoadana issue ([b6ed909](https://github.com/DIGITALLNature/DigitallPower/commit/b6ed9097dc9a5ddbb17845a8d5e63c2f80845bf5))
+* resolve new qodana issues ([c3a63a2](https://github.com/DIGITALLNature/DigitallPower/commit/c3a63a2b5452f02dfcd0233eb2c6cd998652dfb5))
+* resolve qodana issues ([384f653](https://github.com/DIGITALLNature/DigitallPower/commit/384f653d9bc6d58a09b1cb17c80013a12b65d37c))
+* throw ArgumentNullException instead of Debug.Assert ([7ad7216](https://github.com/DIGITALLNature/DigitallPower/commit/7ad7216e775bc71ed8b237eb5d10a73c5fc46f2c))
+
+
+### Features
+
+* **connection:** add confirmation prompt to delete --all ([2deceef](https://github.com/DIGITALLNature/DigitallPower/commit/2deceef8b6198601539341382e26e7747a17d1f7))
+* **connection:** add Validate() to CreateConnectionSettings for mutual exclusivity ([06bf182](https://github.com/DIGITALLNature/DigitallPower/commit/06bf182a207f5f17ef22d9a7ba50924ffe320dc5))
+* **connection:** introduce connection command, deprecate profile ([5635d32](https://github.com/DIGITALLNature/DigitallPower/commit/5635d326df1fc236d4787fd318c50df2ec9c323a))
+
 # [2.2.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0...v2.2.0-beta.1) (2026-07-21)
 
 
