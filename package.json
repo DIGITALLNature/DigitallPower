@@ -1,14 +1,14 @@
 {
     "devDependencies": {
-        "@commitlint/cli": "^21.0.2",
-        "@commitlint/config-conventional": "^21.0.2",
+        "@commitlint/cli": "^21.2.1",
+        "@commitlint/config-conventional": "^21.2.0",
         "@droidsolutions-oss/semantic-release-nuget": "^2.1.0",
         "@droidsolutions-oss/semantic-release-update-file": "^1.4.0",
         "@semantic-release/changelog": "github:semantic-release/changelog",
         "@semantic-release/git": "github:semantic-release/git",
         "husky": "^9.1.7",
-        "semantic-release": "^25.0.5",
-        "typescript": "6.0.3"
+        "semantic-release": "^25.0.8",
+        "typescript": "7.0.2"
     },
     "release": {
         "branches": [
@@ -70,7 +70,7 @@
     "scripts": {
         "prepare": "husky install"
     },
-    "packageManager": "pnpm@10.6.4+sha512.da3d715bfd22a9a105e6e8088cfc7826699332ded60c423b14ec613a185f1602206702ff0fe4c438cb15c979081ce4cb02568e364b15174503a63c7a8e2a5f6c",
+    "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065",
     "dependencies": {
         "@odata/parser": "^0.2.14",
         "xrm-mock": "^3.6.2"

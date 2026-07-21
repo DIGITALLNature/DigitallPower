@@ -40,12 +40,14 @@ public class CreateConnectionCommandTests : ConnectionTestsBase<CreateConnection
     [Test]
     public async Task ShouldCreateTokenIdentity_WhenUrlIsProvided()
     {
+#pragma warning disable S1075
         var settings = new CreateConnectionSettings
         {
             Name = "TOKEN",
             Url = "https://contoso.crm.dynamics.com",
             NoVerify = true
         };
+#pragma warning restore S1075
 
         await GetContext().Execute(settings).Succeed();
 
