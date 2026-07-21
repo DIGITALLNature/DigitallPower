@@ -13,13 +13,13 @@ public class RetrieveOptionSetExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(RetrieveOptionSetRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var request = (RetrieveOptionSetRequest)organizationRequest;
         var name = request.Name;
 
         // Search metadata for a global option set matching the requested name
-        foreach (var entityMetadata in state.State.EntityMetadata.Values)
+        foreach (var entityMetadata in fakeOrganizationService.State.EntityMetadata.Values)
         {
             if (entityMetadata.Attributes == null) continue;
             foreach (var attribute in entityMetadata.Attributes)
