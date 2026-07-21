@@ -13,7 +13,7 @@ public class RetrieveAttributeExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(RetrieveAttributeRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var request = (RetrieveAttributeRequest)organizationRequest;
 

@@ -86,4 +86,62 @@ public class CreateProfileCommandTests : ProfileTestsBase<CreateProfileCommand, 
 
         await Assert.That(() => context.Execute(settings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
     }
+
+    [Test]
+    public async Task ShouldNotPersistIdentity_WhenConnectionCheckFails()
+    {
+        var settings = new CreateProfileSettings
+        {
+            Name = "BROKEN",
+            ConnectionString = @"AuthType=OAuth;
+  Username=jsmith@contoso.onmicrosoft.com;
+  Password=passcode;
+  Url=https://contosotest.crm.dynamics.com;
+  AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
+  RedirectUri=app://58145B91-0C36-4500-8554-080854F2AC97;
+  TokenCacheStorePath=c:\MyTokenCache;
+  LoginPrompt=Auto"
+        };
+
+        var context = GetBuilder()
+            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
+            .Build();
+
+        await Assert.That(() => context.Execute(settings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
+
+        await Assert.That(GetIdentities().Contains(settings.Name)).IsFalse();
+    }
+
+    [Test]
+    public async Task ShouldNotChangeCurrentIdentity_WhenNewIdentityCreationFails()
+    {
+        var existingSettings = new CreateProfileSettings
+        {
+            Name = "GOOD",
+            ConnectionString = @"AuthType=OAuth;
+  Username=jsmith@contoso.onmicrosoft.com;
+  Password=passcode;
+  Url=https://contosotest.crm.dynamics.com;
+  AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
+  RedirectUri=app://58145B91-0C36-4500-8554-080854F2AC97;
+  TokenCacheStorePath=c:\MyTokenCache;
+  LoginPrompt=Auto"
+        };
+        await GetContext().Execute(existingSettings).Succeed();
+        await Assert.That(GetIdentities().Current).IsEqualTo(existingSettings.Name);
+
+        var brokenSettings = new CreateProfileSettings
+        {
+            Name = "BROKEN",
+            ConnectionString = existingSettings.ConnectionString
+        };
+        var context = GetBuilder()
+            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
+            .Build();
+
+        await Assert.That(() => context.Execute(brokenSettings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
+
+        await Assert.That(GetIdentities().Current).IsEqualTo(existingSettings.Name);
+        await Assert.That(GetIdentities().Contains(brokenSettings.Name)).IsFalse();
+    }
 }

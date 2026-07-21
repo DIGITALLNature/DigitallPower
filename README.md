@@ -34,7 +34,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Tab Completion](#-tab-completion)
 - [Configuration](#%EF%B8%8F-configuration)
 - [Command Reference](#-command-reference)
-  - [profile](#profile--authentication--environments)
+  - [connection](#connection--authentication--environments)
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
@@ -52,7 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 
 | Area | What it does |
 |------|--------------|
-| **Profiles** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) and check MSAL token validity (`auth-check`) |
+| **Connections** | Manage multiple Dataverse environment connections (interactive, MSAL, client-secret) and check MSAL token validity (`connection status`) |
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
@@ -79,12 +79,12 @@ After installation the command `dgtp` is available globally.
 ## ⚡ Quick Start
 
 ```bash
-# 1. Create and select a connection profile
-dgtp profile create dev https://contoso-dev.crm4.dynamics.com --msal
-dgtp profile select dev
+# 1. Create and select a connection
+dgtp connection create dev --url https://contoso-dev.crm4.dynamics.com
+dgtp connection select dev
 
-# 2. Verify the connection by listing profiles
-dgtp profile list
+# 2. Verify the connection by listing connections
+dgtp connection list
 
 # 3. Export configuration data from the environment
 dgtp export queues --filedir ./out/queues
@@ -133,8 +133,8 @@ dgtp complete setup
 dgtp complete install-shell
 ```
 
-This auto-detects your current shell and writes the shim to your RC file.  
-Use `--shell bash|zsh|pwsh|fish` to override the detected shell.  
+This auto-detects your current shell and writes the shim to your RC file.
+Use `--shell bash|zsh|pwsh|fish` to override the detected shell.
 Use `--dry-run` to preview what would be written without making changes.
 
 The shim is written with idempotency markers — running the command again does nothing if already installed:
@@ -160,10 +160,10 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `profile` `codegeneration` `push` `complete` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `push` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
-| `dgtp profile <TAB>` | `list` `create` `delete` `select` `purge` `auth-check` |
+| `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -184,7 +184,7 @@ Example `dgtp.json`:
 }
 ```
 
-Profile data (credentials, selected profile) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
+Connection data (credentials, selected connection) is stored in the user's [Isolated Storage](https://learn.microsoft.com/dotnet/standard/io/isolated-storage), not in the repository.
 
 JSON schemas for the various configuration files used by the modules live under [`schemas/`](schemas) and can be referenced from your own config files via the `$schema` property for autocomplete in modern editors.
 
@@ -196,21 +196,34 @@ The CLI is organized into branches. The general invocation pattern is:
 dgtp <branch> <command> [arguments] [options]
 ```
 
-### `profile` — Authentication & environments
+### `connection` — Authentication & environments
 
 | Command | Description |
 |---------|-------------|
-| `profile list` | List configured profiles |
-| `profile create <name> <connection-string> [--msal] [--skipcheck]` | Create a new connection profile |
-| `profile select <name>` | Set the active profile |
-| `profile delete <name>` | Delete a profile |
-| `profile purge` | Remove all profiles |
-| `profile auth-check` | Non-interactive check whether the active profile's MSAL token is still valid |
+| `connection list` | List configured connections |
+| `connection create <name> --url <url>` | Create a new MSAL connection |
+| `connection create <name> --connection-string <string>` | Create a connection using a full Dataverse connection string (service principal, etc.) |
+| `connection create ... --no-verify` | Skip the post-create connectivity check |
+| `connection select <name>` | Set the active connection |
+| `connection delete <name>` | Delete a specific connection |
+| `connection delete --all` | Delete all connections |
+| `connection status` | Check whether the current MSAL token is valid (exit 0 = valid, 2 = login required) |
+| `connection refresh` | Force an interactive MSAL browser login and save the refreshed token |
+
+> **Note:** The `profile` command is a deprecated alias for `connection` and will be removed in a future release.
 
 Example:
 
 ```bash
-dgtp profile create prod https://contoso.crm4.dynamics.com --msal
+dgtp connection create prod --url https://contoso.crm4.dynamics.com
+```
+
+Agent-friendly auth workflow:
+
+```bash
+dgtp connection status       # exit 0 = valid, exit 2 = login required
+dgtp connection refresh      # re-authenticate interactively
+dgtp connection status       # confirm valid before proceeding
 ```
 
 `profile auth-check` is intended as a pre-flight check for CI/automation before running other Dataverse commands. It never opens a browser and returns one of the following exit codes:
@@ -557,7 +570,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
        ┌─────────────────────────┼─────────────────────────────┐
        │            │            │            │                │
 ┌──────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴──────┐  ┌──────┴───────┐
-│  profile   │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
+│ connection │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
 └────────────┘ └──────────┘ └──────────┘ └───────────┘  └──────────────┘
        │            │            │            │                │
        └──────┬─────┴────────────┴────────────┴────────────────┘
@@ -572,7 +585,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                   │     dgt.power.common     │
                   │  (Xrm connection, file   │
                   │   access, tracer,        │
-                  │   profile management,    │
+                  │   connection management, │
                   │   shared base commands)  │
                   └──────────────────────────┘
                                │
@@ -585,9 +598,9 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `export`, `import`, `maintenance`, `profile`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, profile management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
-- **DI everywhere.** Long-lived services (HTTP/NuGet clients, profile manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active profile via `IXrmConnection.Connect()`.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, connection management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
 
@@ -602,10 +615,11 @@ DigitallPower/
 │   └── modules/
 │       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
+│       ├── dgt.power.connection/      # `connection` commands (auth management)
 │       ├── dgt.power.export/          # `export` commands
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
-│       ├── dgt.power.profile/         # `profile` commands
+│       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
 │       └── dgt.power.push/            # `push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
@@ -658,8 +672,18 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | OS platform | `Unix` | Platform distribution |
 | Tool version | `2.1.0` | Version adoption |
 | Anonymous install ID | `a1b2c3d4-...` | Count unique installations |
+| Crash data | `ExceptionType`, `anonymized stacktrace` | Improve reliability by identifying common crashes |
 
-**No personally identifiable information is collected.** No usernames, organization URLs, file contents, or environment-specific data is ever transmitted.
+**No personally identifiable information is collected.** Error messages and stack traces are automatically anonymized before being sent — the following data is stripped or replaced with fixed placeholders:
+
+| Found in error data | Replaced with |
+|---|---|
+| GUIDs (record IDs, solution IDs, ...) | `00000000-0000-0000-0000-000000000000` |
+| Local home-directory paths (`/Users/<name>/...`, `/home/<name>/...`, `C:\Users\<name>\...`) | just the file name, e.g. `Program.cs` |
+| Dataverse organization URLs (`https://contoso.crm4.dynamics.com/...`) | `[dataverse-org-url-redacted]` |
+| Entra ID tenant URLs (`https://contoso.onmicrosoft.com/...`) | `[entra-tenant-url-redacted]` |
+
+This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach — see `.memory/decision-error-telemetry-anonymization.md` for its exact scope and known limitations.
 
 CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 
@@ -701,6 +725,39 @@ dependencies
 | summarize CI = countif(is_ci), NonCI = countif(not(is_ci)) by module
 | order by CI + NonCI desc
 ```
+
+### Retrieving crash/error data in Application Insights
+
+Every exception (whether it terminates a command, or crashes the process entirely) is recorded both as an OpenTelemetry span attribute (for quick filtering alongside command telemetry) **and** as a standard OpenTelemetry exception event, which the Azure Monitor exporter surfaces natively in the **`exceptions`** table / the **Failures** blade of the Application Insights resource.
+
+**To look at it in the Azure Portal:**
+
+1. Open the Application Insights resource associated with the connection string configured via `DGT_TELEMETRY_CONNECTION_STRING` (or the build's embedded default).
+2. Go to **Investigate → Failures** for a quick overview of the most frequent exception types and their trend over time, or
+3. Go to **Monitoring → Logs** and run a KQL query directly, e.g.:
+
+```kusto
+// Most frequent (anonymized) exception types over the last 30 days
+exceptions
+| where timestamp > ago(30d)
+| extend
+    exceptionType = tostring(customDimensions["exception.type"]),
+    version = tostring(customDimensions["dgtp.version"]),
+    isFatal = operation_Name == "fatal_exception"
+| summarize Count = count() by exceptionType, version, isFatal
+| order by Count desc
+```
+
+```kusto
+// Full anonymized message + stack trace for a specific exception type
+exceptions
+| where timestamp > ago(30d)
+| where tostring(customDimensions["exception.type"]) == "System.IO.DirectoryNotFoundException"
+| project timestamp, message = tostring(customDimensions["exception.message"]), stack = tostring(customDimensions["exception.stacktrace"]), version = tostring(customDimensions["dgtp.version"])
+| order by timestamp desc
+```
+
+Since crashes outside of a command's lifecycle (startup failures, unobserved task exceptions) are recorded as their own `fatal_exception` operation rather than under a `command.*` operation, filter on `operation_Name == "fatal_exception"` to isolate those from regular command-scoped exceptions.
 
 ### First-run notice
 

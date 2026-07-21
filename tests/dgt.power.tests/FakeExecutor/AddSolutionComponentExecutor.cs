@@ -12,7 +12,7 @@ public class AddSolutionComponentExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(AddSolutionComponentRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         return new AddSolutionComponentResponse();
     }

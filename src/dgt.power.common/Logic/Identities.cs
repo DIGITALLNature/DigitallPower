@@ -38,7 +38,7 @@ public class Identities : IIdentities
         }
     }
 
-    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key, i.Value is TokenIdentity ? "Token" : "Classic"));
+    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key, i.Value is TokenIdentity ? "MSAL" : "ConnectionString"));
 
     public void SetCurrent(string key)
     {

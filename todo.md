@@ -43,3 +43,24 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 ### Note on DataContext
 `DataContext` (LINQ to CRM) is fundamentally synchronous. Replacing it requires switching to
 `QueryExpression` + `RetrieveMultipleAsync`. This is the main effort per class.
+
+---
+
+## Internal Rename: profile → connection terminology
+
+The `dgt.power.connection` module is the canonical replacement for `dgt.power.profile`.
+The `profile` branch is kept as a deprecated alias until a future breaking release removes it.
+
+Once `dgt.power.profile` is removed, the following internal renames should follow:
+
+| Current | Target |
+|---------|--------|
+| `IProfileManager` | `IConnectionManager` |
+| `ProfileManager` | `ConnectionManager` |
+| `ProfileManager` constructor param names | `connectionManager` |
+| `XrmConnection.ConnectWithProfileNameAsync` | `ConnectWithConnectionNameAsync` |
+| `"Profile not found"` error messages | `"Connection not found"` |
+| `profileManager.Current` console output | use "connection" wording |
+
+**Do not rename while both modules coexist** — the `profile` commands still depend on
+the current naming and premature renaming adds churn without user-visible benefit.
