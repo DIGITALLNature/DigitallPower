@@ -1,3 +1,15 @@
+# [2.2.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.2...v2.2.0-beta.3) (2026-07-21)
+
+
+### Bug Fixes
+
+* **telemetry:** centralize tracer provider cleanup ([f41c087](https://github.com/DIGITALLNature/DigitallPower/commit/f41c0876b69d0902f33166bf6edce0efb297e3e0))
+
+
+### Features
+
+* **cli:** add command tree and settings parsing tests ([4debb06](https://github.com/DIGITALLNature/DigitallPower/commit/4debb06be1a6bd5ff192e6b95b039be863c53a90))
+
 # [2.2.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.1...v2.2.0-beta.2) (2026-07-21)
 
 
