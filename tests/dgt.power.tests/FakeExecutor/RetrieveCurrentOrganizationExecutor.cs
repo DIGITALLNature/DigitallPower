@@ -13,7 +13,7 @@ public class RetrieveCurrentOrganizationExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(RetrieveCurrentOrganizationRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var detail = new OrganizationDetail
         {

@@ -12,7 +12,7 @@ public class RetrieveFormattedImportJobResultsExecutor : IOrganizationRequestFak
 {
     public Type ForType => typeof(RetrieveFormattedImportJobResultsRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var response = new RetrieveFormattedImportJobResultsResponse
         {

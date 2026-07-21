@@ -12,7 +12,7 @@ public class WhoAmIExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(WhoAmIRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         return new WhoAmIResponse
         {
