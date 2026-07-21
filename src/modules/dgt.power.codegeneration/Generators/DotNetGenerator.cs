@@ -62,21 +62,14 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
 
         var requests = metadataService.RetrieveRequests(config.Requests);
-
-        // Only generate request/response classes for entries that have parameters
-        var requestsWithParams = requests.Where(r => r.InParameters.Count > 0 || r.OutParameters.Count > 0).ToArray();
-        if (requestsWithParams.Length == 0)
-        {
-            return;
-        }
-
+       
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         using var file = File.CreateText(fileName);
         var context = DotNetLiquidRenderer.CreateContext();
         context.SetValue("NameSpace", config.Namespace);
-        context.SetValue("Actions", requestsWithParams);
+        context.SetValue("Actions", requests);
 
         var content = DotNetLiquidRenderer.Render("Action.dotnet.liquid", context);
         file.Write(content);
