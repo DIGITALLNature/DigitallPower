@@ -225,6 +225,27 @@ public async Task MethodName_Scenario_ExpectedResult()
 }
 ```
 
+### CLI Command-Tree & Settings-Parsing Tests (MANDATORY when changing commands)
+
+The dgtp command tree is registered in `src/dgt.power/CommandTree.cs` and covered by two test
+layers in `tests/dgt.power.cli.tests/`, independent from the `PowerLogic`/business-logic tests in
+`CommandTestContext`:
+
+- `CommandTreeTests.cs` — structural wiring test (`CommandTree.Register` + `ValidateExamples()`
+  must build without throwing) and a data-driven smoke test over every top-level branch/command
+  path (via `CommandAppTester`).
+- `SettingsParsingTests.cs` — one test per distinct `CommandSettings` type, verifying that CLI
+  arguments (positional arguments, options, aliases, comma-separated lists, defaults) are parsed
+  correctly, using the dependency-free `NoOpCommand<TSettings>` test double.
+
+**When you add, remove, or rename a top-level command/branch in `CommandTree.cs`**, add/update the
+corresponding case in `CommandTreeTests.cs`.
+
+**When you add a new `CommandSettings` subclass, or change `[CommandArgument]`/`[CommandOption]`
+attributes (name, alias, position, default value) on an existing one**, add/update the
+corresponding test in `SettingsParsingTests.cs`. Reuse an existing settings type's test if the new
+command shares that settings class — do not duplicate tests per command.
+
 ---
 
 ## Build & Test Commands

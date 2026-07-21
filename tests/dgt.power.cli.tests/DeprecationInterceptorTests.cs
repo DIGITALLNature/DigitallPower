@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power;
 using dgt.power.common.Commands;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
