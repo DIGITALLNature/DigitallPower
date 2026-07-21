@@ -26,10 +26,11 @@ src/
 └── modules/
     ├── dgt.power.analyzer/     Solution layer analysis (redundant patches, active layers)
     ├── dgt.power.codegeneration/  .NET + TypeScript code generation (Liquid/TSL templates)
+    ├── dgt.power.connection/   Connection management + auth lifecycle (canonical)
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.profile/      Connection profile CRUD
+    ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     └── dgt.power.push/         Plugin assembly + webresource deployment
 ```
 
@@ -69,8 +70,10 @@ src/
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
-| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp profile auth-check` command |
+| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh`; `profile` is deprecated alias |
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction for privacy |
+| Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
+| Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 
 ## TSL Template Engine (codegeneration)
 
@@ -159,6 +162,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |
 | `guide-sonar-rules-applied.md` | guide | Fix patterns for S3902, S3971, S2930, S3900, S4261 |
 | `guide-code-quality-patterns.md` | guide | Anti-patterns with canonical fixes (DI downcasts, GetHashCode, covariant arrays) |
+| `guide-connection-command-test-pattern.md` | guide | Connection command tests: reuse the same `ProfileManager` instance, save after seeding, and use `TokenIdentity` plus fake `IXrmConnection` for MSAL branches |
+| `guide-qodana-telemetry-and-doc-analyzer-fixes.md` | guide | Patterns for analyzer-safe telemetry provider disposal, XML docs for inaccessible types, regex naming cleanup, and test-hygiene warnings |
 | `implementation-centralized-ci-environment-detection.md` | implementation | ExecutionEnvironment in common; reused by telemetry + codegen |
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
@@ -171,3 +176,5 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-v2-codegeneration-config-shape.md` | implementation | Final nested V2 config shape: shared `entities` scope, `optionSets`, and target-specific `output` blocks |
 | `implementation-v2-schema-allows-dollar-schema.md` | implementation | V2 schemas now allow top-level `$schema` for editor compatibility under `additionalProperties: false` |
 | `decision-error-telemetry-anonymization.md` | decision | Crash reporting via OTel exception events; anonymization scope (GUIDs, home-dir paths, org/tenant URLs) and known limitations |
+| `decision-generic-command-deprecation.md` | decision | `[DeprecatedCommand]` attribute + `DeprecationInterceptor`: how to deprecate any command/branch, and why argv-position detection was replaced |
+| `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`/`CreateProfileCommand`: why `Save()` must run after connectivity check, not before; test pattern with Transient `IProfileManager` |

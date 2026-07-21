@@ -16,16 +16,16 @@ internal static partial class TelemetryAnonymizer
     private const string RedactedOrgUrl = "[dataverse-org-url-redacted]";
     private const string RedactedTenantUrl = "[entra-tenant-url-redacted]";
 
-    private static readonly Regex GuidRegex = GetGuidRegex();
-    private static readonly Regex DataverseOrgUrlRegex = GetDataverseOrgUrlRegex();
-    private static readonly Regex EntraTenantUrlRegex = GetEntraTenantUrlRegex();
+    private static readonly Regex s_guidRegex = GetGuidRegex();
+    private static readonly Regex s_dataverseOrgUrlRegex = GetDataverseOrgUrlRegex();
+    private static readonly Regex s_entraTenantUrlRegex = GetEntraTenantUrlRegex();
 
     // Matches well-known "home directory" roots that carry a local username, on any OS:
     // /Users/<name>/... (macOS), /home/<name>/... (Linux), /root/... (Linux root), C:\Users\<name>\... (Windows).
     // We deliberately don't try to anonymize *every* absolute path (e.g. /tmp/, /var/, arbitrary URLs) to avoid
     // mangling unrelated text - only paths that are likely to reveal a real person's username.
-    private static readonly Regex UnixHomePathRegex = GetUnixHomePathRegex();
-    private static readonly Regex WindowsHomePathRegex = GetWindowsHomePathRegex();
+    private static readonly Regex s_unixHomePathRegex = GetUnixHomePathRegex();
+    private static readonly Regex s_windowsHomePathRegex = GetWindowsHomePathRegex();
 
     /// <summary>
     /// Anonymizes a single-line message: GUIDs, Dataverse organization URLs, Entra tenant URLs and
@@ -38,11 +38,11 @@ internal static partial class TelemetryAnonymizer
             return string.Empty;
         }
 
-        var result = GuidRegex.Replace(input, RedactedGuid);
-        result = DataverseOrgUrlRegex.Replace(result, RedactedOrgUrl);
-        result = EntraTenantUrlRegex.Replace(result, RedactedTenantUrl);
-        result = UnixHomePathRegex.Replace(result, m => StripToFileName(m.Value, '/'));
-        result = WindowsHomePathRegex.Replace(result, m => StripToFileName(m.Value, '\\'));
+        var result = s_guidRegex.Replace(input, RedactedGuid);
+        result = s_dataverseOrgUrlRegex.Replace(result, RedactedOrgUrl);
+        result = s_entraTenantUrlRegex.Replace(result, RedactedTenantUrl);
+        result = s_unixHomePathRegex.Replace(result, m => StripToFileName(m.Value, '/'));
+        result = s_windowsHomePathRegex.Replace(result, m => StripToFileName(m.Value, '\\'));
 
         return result;
     }
@@ -96,7 +96,7 @@ internal static partial class TelemetryAnonymizer
         return lastSeparator == -1 ? path : path[(lastSeparator + 1)..];
     }
 
-    [GeneratedRegex(@"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")]
+    [GeneratedRegex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")]
     private static partial Regex GetGuidRegex();
 
     // Matches https://<org>[.api].crm[N].dynamics.com(/path?query) - covers all regional CRM instance

@@ -4,14 +4,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-minimum</AnalysisLevel>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0-beta.8" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.57.1" />
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\dgt.power\dgt.power.csproj" />
+    <ProjectReference Include="..\..\src\dgt.power.common\dgt.power.common.csproj" />
+    <ProjectReference Include="..\..\src\modules\dgt.power.connection\dgt.power.connection.csproj" />
+    <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
@@ -9,25 +8,31 @@ using dgt.power.common.Logic;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace dgt.power.profile.Commands;
+namespace dgt.power.connection.Commands;
 
-public class CreateProfileCommand(
+// ReSharper disable once ClassNeverInstantiated.Global
+public class CreateConnectionCommand(
     IProfileManager profileManager,
     IXrmConnection connection,
     IAnsiConsole console)
-    : AsyncCommand<CreateProfileSettings>
+    : AsyncCommand<CreateConnectionSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
+    protected override Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
-        Debug.Assert(settings != null, nameof(settings) + " != null");
+        ArgumentNullException.ThrowIfNull(settings);
+        return ExecuteCoreAsync(settings, cancellationToken);
+    }
 
+    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken _)
+    {
         var identities = profileManager.LoadIdentities();
-        if (settings.TokenBased)
+
+        if (settings.Url != null)
         {
             identities.Upsert(settings.Name,
                 new TokenIdentity
                 {
-                    ConnectionString = settings.ConnectionString,
+                    ConnectionString = settings.Url,
                     Token = string.Empty
                 });
         }
@@ -36,14 +41,14 @@ public class CreateProfileCommand(
             identities.Upsert(settings.Name,
                 new Identity
                 {
-                    ConnectionString = settings.ConnectionString
+                    ConnectionString = settings.ConnectionString!
                 });
         }
 
         // Verify connectivity against the in-memory identity (Upsert already made it Current for
         // ConnectAsync to pick up) BEFORE persisting, so a failed check never leaves an invalid
-        // identity saved and selected as active on disk.
-        if (!settings.SkipChecking)
+        // connection saved and selected as active on disk.
+        if (!settings.NoVerify)
         {
             try
             {
@@ -58,10 +63,11 @@ public class CreateProfileCommand(
 
         profileManager.Save();
 
-        var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");
+        var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] upserted.");
         rule.LeftJustified();
         console.Write(rule);
 
         return 0;
     }
 }
+
