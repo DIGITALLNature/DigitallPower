@@ -515,6 +515,24 @@ V1 configs use a single file for both .NET and TypeScript output and are detecte
 | `DGT_POWER_TSL_STRICT_MODE` | Enables fail-fast handling for undefined Liquid values (`1` / `true` / `yes`) | Falls back to CI-agent detection |
 | `DGT_POWER_TSL_MAX_STEPS` | Overrides Fluid template execution step limit with a positive integer | `20000` |
 
+#### Known limitations
+
+**Form names depend on the connection's UI language, not the configured `language`.** Dataverse resolves the
+`name` attribute of out-of-box records (including system forms) using the *connecting user's personal UI
+language setting* (`usersettings.uilanguageid`), not any per-request parameter. This means:
+
+- Labels rendered *inside* generated form/option-set typings (e.g. option set labels) correctly follow the
+  `language`/`UseBaseLanguage` config value, since those come from metadata `Label`/`LocalizedLabels`, which
+  *do* support per-request LCID resolution.
+- The system form's own `name` — used to build the generated file name and to match entries in `Forms` —
+  is retrieved in whatever language the connecting user's Dataverse profile is set to. If that differs from
+  the language configured for code generation, form names may not match `Forms` filter entries, and matching
+  forms can be silently skipped.
+
+`dgtp` detects this mismatch and prints a warning at generation time when the connection's UI language differs
+from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
+→ Personalization Settings → Language) to match the `language` configured for code generation.
+
 ### `push` — Deploy artifacts
 
 Pushes a plugin assembly or web resource into a target solution.

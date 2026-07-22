@@ -182,13 +182,23 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         var entityMetadata =
                 metadataService.RetrieveEntityMetadata(entityLogicalName, EntityFilters.Attributes | EntityFilters.Entity);
 
+        var languageCode = config.UseBaseLanguage
+            ? metadataService.RetrieveOrganizationLanguage()
+            : 1031;
+
+        var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
+        if (sessionLanguageCode != languageCode)
+        {
+            Console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, languageCode));
+        }
+
         var forms = config.OnlyFormsFromSolutions
             ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], null)
             : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, null);
 
         foreach (var formDetail in forms)
         {
-            GenerateFormDetailFile(args, config, entityMetadata, formDetail);
+            GenerateFormDetailFile(args, config, entityMetadata, formDetail, languageCode);
         }
     }
 
@@ -199,7 +209,8 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
     /// <param name="config"></param>
     /// <param name="entityMetadata"></param>
     /// <param name="formDetail"></param>
-    private void GenerateFormDetailFile(CodeGenerationVerb args, CodeGenerationConfig config, EntityMetadata entityMetadata, KeyValuePair<string, FormDetail> formDetail)
+    /// <param name="languageCode">Language LCID to use for localizing option set labels rendered on the form.</param>
+    private void GenerateFormDetailFile(CodeGenerationVerb args, CodeGenerationConfig config, EntityMetadata entityMetadata, KeyValuePair<string, FormDetail> formDetail, int languageCode)
     {
         var form =
                $"{entityMetadata.LogicalName}.{Formatter.Sanitize(formDetail.Key.ToLowerInvariant(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
@@ -227,7 +238,7 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
             .Replace(".quickcreate", "QuickCreate", StringComparison.Ordinal);
 
 
-        var model = TsLiquidTemplateModelFactory.CreateEntityFormModel(config.TypingPath, form, formname, formDetail.Value, entityMetadata, config, metadataService.RetrieveOrganizationLanguage());
+        var model = TsLiquidTemplateModelFactory.CreateEntityFormModel(config.TypingPath, form, formname, formDetail.Value, entityMetadata, config, languageCode);
         CreateLiquidTemplateFile("D365EntityForm.liquid", model, form, args);
     }
 }
