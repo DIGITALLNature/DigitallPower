@@ -108,7 +108,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
-        int languageCode = 1031;
+        var languageCode = 1031;
         if (config.UseBaseLanguage)
         {
             languageCode = metadataService.RetrieveOrganizationLanguage();
@@ -372,7 +372,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
-        int languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
+        var languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
         Console.MarkupLine($"Using Language: {languageCode}");
 
         WarnIfSessionLanguageMismatch(languageCode);

@@ -182,7 +182,7 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         var entityMetadata =
                 metadataService.RetrieveEntityMetadata(entityLogicalName, EntityFilters.Attributes | EntityFilters.Entity);
 
-        int languageCode = config.UseBaseLanguage
+        var languageCode = config.UseBaseLanguage
             ? metadataService.RetrieveOrganizationLanguage()
             : 1031;
 
