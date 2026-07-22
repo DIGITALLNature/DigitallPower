@@ -14,4 +14,5 @@ public record FormViewModel
     public required IReadOnlyList<BpfControlDetail> BpfControls { get; init; }
     public required FormDetail FormDetail { get; init; }
     public required string Name { get; init; }
+    public int LanguageCode { get; init; }
 }
