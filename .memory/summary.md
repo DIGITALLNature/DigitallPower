@@ -173,6 +173,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
 | `research-v2-typescript-config-design-gaps.md` | research | Current V2 TS caveats after redesign: no `TypingPath`, no per-entity filters, string-based `forms.filter` |
+| `research-form-language-localization.md` | research | Metadata `Label` LCID resolution vs. OOB record data (`systemform.name`) being session-UI-language dependent, not per-request; `FormViewModel.LanguageCode` gap fix; known limitation + warning for form name/config.Forms matching |
 | `implementation-v2-codegeneration-config-shape.md` | implementation | Final nested V2 config shape: shared `entities` scope, `optionSets`, and target-specific `output` blocks |
 | `implementation-v2-schema-allows-dollar-schema.md` | implementation | V2 schemas now allow top-level `$schema` for editor compatibility under `additionalProperties: false` |
 | `decision-error-telemetry-anonymization.md` | decision | Crash reporting via OTel exception events; anonymization scope (GUIDs, home-dir paths, org/tenant URLs) and known limitations |

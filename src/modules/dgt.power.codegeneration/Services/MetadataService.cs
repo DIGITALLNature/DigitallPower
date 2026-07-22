@@ -11,6 +11,7 @@ using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
 using dgt.power.dataverse;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -69,6 +70,28 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
 
         return organization.Entities.Single().ToEntity<Organization>().LanguageCode!.Value;
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Best-effort/diagnostic only: falls back to the organization's base language if the connecting
+    ///     user's UI language cannot be determined (e.g. insufficient privileges, missing entity in test
+    ///     doubles), since this value is only used to emit a warning, never to control actual retrieval.
+    /// </remarks>
+#pragma warning disable CA1031 // Diagnostic-only best-effort lookup: any failure (privileges, missing metadata, connectivity) must not break generation, only skip the warning.
+    public int RetrieveConnectionUserLanguage()
+    {
+        try
+        {
+            var userId = ((WhoAmIResponse)connection.Execute(new WhoAmIRequest())).UserId;
+            var userSettings = connection.Retrieve("usersettings", userId, new ColumnSet("uilanguageid"));
+            return userSettings.GetAttributeValue<int?>("uilanguageid") ?? RetrieveOrganizationLanguage();
+        }
+        catch (Exception)
+        {
+            return RetrieveOrganizationLanguage();
+        }
+    }
+#pragma warning restore CA1031
 
 
     public IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
