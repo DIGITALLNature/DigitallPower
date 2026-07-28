@@ -1,3 +1,10 @@
+# [2.2.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.3...v2.2.0-beta.4) (2026-07-28)
+
+
+### Bug Fixes
+
+* **ts:** add warning when user language mismatches base language ([08fd134](https://github.com/DIGITALLNature/DigitallPower/commit/08fd13462f616ffae59c3968ba4431e8d959b76b))
+
 # [2.2.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.2...v2.2.0-beta.3) (2026-07-21)
 
 
