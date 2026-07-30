@@ -24,6 +24,14 @@ public class TslTemplateContractTests
             new RenderCase("Entity.liquid", CreateEntityModel(), "account", null, "account.entity.d.ts", "namespace XrmTable.Account"),
             new RenderCase("EntityForm.liquid", CreateFormModel(), "account", "account.main.default", "account.main.form.d.ts", "declare namespace XrmForm.Account"),
             new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "TestHelper"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "export function createBuilder"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "export interface CreateBuilderOptions"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "languageId?: number"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "export type FormContext"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "export type ControlName"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModel(), "account", "account.main.default", "account.main.testhelper.ts", "export type AttributeName"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModelWithTabs(), "account", "account.main.default", "account.main.testhelper.ts", "export type TabName"),
+            new RenderCase("EntityFormTestHelper.liquid", CreateFormModelWithTabsAndSections(), "account", "account.main.default", "account.main.testhelper.ts", "export type SectionNames"),
             new RenderCase("OptionSets.liquid", CreateOptionSetModel(), null, null, "optionsetvalues.d.ts", "declare namespace XrmEnum"),
             new RenderCase("SdkMessages.liquid", CreateSdkMessagesModel(), null, null, "sdkmessagenames.d.ts", "declare namespace XrmMetadata"),
             new RenderCase("CustomApi.liquid", CreateCustomApiModel(), "sample_customapi", null, "sample_customapi.customapi.d.ts", "declare namespace XrmCustomApi")
@@ -137,6 +145,28 @@ public class TslTemplateContractTests
             Attributes = [attribute],
             BpfControls = []
         };
+    }
+
+    private static FormViewModel CreateFormModelWithTabs()
+    {
+        var viewModel = CreateFormModel();
+        viewModel.FormDetail.TabDetails.Add(new TabDetail
+        {
+            TabName = "general"
+        });
+        return viewModel;
+    }
+
+    private static FormViewModel CreateFormModelWithTabsAndSections()
+    {
+        var viewModel = CreateFormModel();
+        var tab = new TabDetail
+        {
+            TabName = "general"
+        };
+        tab.Sections.Add(new KeyValuePair<string, SectionDetail>("details", new SectionDetail()));
+        viewModel.FormDetail.TabDetails.Add(tab);
+        return viewModel;
     }
 
     private static OptionSetViewModel CreateOptionSetModel() =>
