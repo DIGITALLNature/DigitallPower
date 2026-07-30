@@ -12,6 +12,22 @@
 {%- if tabSections != "" and tabSections != "0" -%}{%- assign HasAnySection = true %}{%- endif %}
 
 export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
+    export type FormContext = {{FormClassNamespace}}.FormContext;
+    export type ControlName = {{FormClassNamespace}}.ControlName;
+    export type AttributeName = {{FormClassNamespace}}.AttributeName;
+    {%- if FormType != "QuickView" -%}
+    {%- if HasAnyTab == true %}
+    export type TabName = {{FormClassNamespace}}.TabName;
+    {%- endif %}
+    {%- if HasAnySection == true %}
+    export type SectionNames = {{FormClassNamespace}}.SectionNames;
+    {%- endif %}
+    {%- endif %}
+
+    export interface CreateBuilderOptions {
+        languageId?: number;
+    }
+
     {% if HasAnyControl == true %}
     export const FormControlNames: string[] = [{%- for formControl in FormDetail.FormControls  %}
         "{{ formControl.ControlName }}",{%- endfor %}
@@ -102,4 +118,23 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
             ],
         },{% endfor -%}
     ] as const;{%- endif %}{%- endif %}
+
+    export function createBuilder(options?: CreateBuilderOptions): XrmForm.Tester.XrmMockFormTestContextBuilder<
+        {%- if FormType != "QuickView" and HasAnyTab == true -%}{{FormClassNamespace}}.TabName{%- else -%}string{%- endif -%},
+        {%- if FormType != "QuickView" and HasAnyTab == true and HasAnySection == true -%}{{FormClassNamespace}}.SectionNames{%- else -%}string{%- endif -%},
+        {%- if HasAnyControl == true -%}{{FormClassNamespace}}.ControlName{%- else -%}string{%- endif -%},
+        {%- if HasAnyAttribute == true -%}{{FormClassNamespace}}.AttributeName{%- else -%}string{%- endif -%}
+    > {
+        const builder = new XrmMockFormTestContextBuilder(
+            [...FormControlTypesConfig],
+            [...FormAttributeTypesConfig],
+            [...TabSectionControlsConfig]
+        );
+
+        if (options?.languageId !== undefined) {
+            builder.withLanguageId(options.languageId);
+        }
+
+        return builder;
+    }
 }
