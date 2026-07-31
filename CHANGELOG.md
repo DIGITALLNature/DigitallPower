@@ -1,3 +1,10 @@
+# [2.2.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.5...v2.2.0-beta.6) (2026-07-31)
+
+
+### Bug Fixes
+
+* **tsl:** correct const array types in entity form test helper ([fc8c31a](https://github.com/DIGITALLNature/DigitallPower/commit/fc8c31a6ee5bd985dbd00759784af99b84a330b8))
+
 # [2.2.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.4...v2.2.0-beta.5) (2026-07-31)
 
 
