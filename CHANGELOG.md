@@ -1,3 +1,10 @@
+# [2.2.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.6...v2.2.0-beta.7) (2026-07-31)
+
+
+### Bug Fixes
+
+* **tsl:** repair TypeScript mock helper templates for stricter tsc ([3c4cbfe](https://github.com/DIGITALLNature/DigitallPower/commit/3c4cbfedd11b18cb7fb4866160b9f2c6f964bd19))
+
 # [2.2.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.5...v2.2.0-beta.6) (2026-07-31)
 
 
