@@ -748,21 +748,26 @@ export class XrmMockFormTestContextBuilder<
 				(
 					entityLogicalName: string,
 					record: XrmTable.DTO.Table<string>,
-				): Xrm.Async.PromiseLike<Xrm.CreateResponse> => {
-					return Promise.resolve({
-						entityType: entityLogicalName,
-						id: crypto.randomUUID(),
-					}) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
-				},
+				): Xrm.Async.PromiseLike<Xrm.CreateResponse> =>
+					this.asXrmPromise(
+						Promise.resolve({
+							entityType: entityLogicalName,
+							id: crypto.randomUUID(),
+						}),
+					),
 			),
 			deleteRecord: jest.fn(
-				(entityLogicalName: string, id: string): Xrm.Async.PromiseLike<any> => {
-					return Promise.resolve({
-						entityType: entityLogicalName,
-						id,
-						name: "deleteRecordName",
-					}) as unknown as Xrm.Async.PromiseLike<any>;
-				},
+				(
+					entityLogicalName: string,
+					id: string,
+				): Xrm.Async.PromiseLike<Xrm.DeleteResponse> =>
+					this.asXrmPromise(
+						Promise.resolve({
+							entityType: entityLogicalName,
+							id,
+							name: "deleteRecordName",
+						}),
+					),
 			),
 			retrieveRecord: jest.fn(
 				(entityLogicalName: string, id: string, options?: string) =>
@@ -773,8 +778,11 @@ export class XrmMockFormTestContextBuilder<
 					this.RetrieveMultipleRecords(entityLogicalName, options, maxPageSize),
 			),
 			updateRecord: jest.fn(
-				(entityLogicalName: string, id: string, _data: any) =>
-					this.UpdateRecord(entityLogicalName, id),
+				(
+					entityLogicalName: string,
+					id: string,
+					_data: XrmTable.DTO.Table<string>,
+				) => this.UpdateRecord(entityLogicalName, id),
 			),
 		};
 		jest
@@ -805,7 +813,7 @@ export class XrmMockFormTestContextBuilder<
 				(
 					request: XrmWebApi.ExecuteRequest[],
 				): Xrm.Async.PromiseLike<Response[]> =>
-					Promise.resolve([]) as unknown as Xrm.Async.PromiseLike<Response[]>,
+					this.asXrmPromise(Promise.resolve([] as Response[])),
 			),
 		};
 		jest
@@ -824,17 +832,13 @@ export class XrmMockFormTestContextBuilder<
 						| Xrm.Navigation.PageInputHtmlWebResource
 						| Xrm.Navigation.Dashboard,
 					_navigationOptions?: Xrm.Navigation.NavigationOptions,
-				) => {
-					return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
-				},
+				) => this.asXrmPromise(Promise.resolve()),
 			),
 			openAlertDialog: jest.fn(
 				(
 					_alertStrings: Xrm.Navigation.AlertStrings,
 					_alertOptions?: Xrm.Navigation.DialogSizeOptions,
-				) => {
-					return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
-				},
+				) => this.asXrmPromise(Promise.resolve()),
 			),
 			openConfirmDialog: jest.fn(
 				(
@@ -846,15 +850,16 @@ export class XrmMockFormTestContextBuilder<
 						item.executed = true;
 					}
 					/// no dialog seq provided for this dialog... return false by default
-					return Promise.resolve({
-						confirmed: item?.confirmed ?? false,
-					}) as unknown as Xrm.Async.PromiseLike<Xrm.Navigation.ConfirmResult>;
+					return this.asXrmPromise(
+						Promise.resolve({
+							confirmed: item?.confirmed ?? false,
+						}),
+					);
 				},
 			),
 			openErrorDialog: jest.fn(
-				(_errorOptions: Xrm.Navigation.ErrorDialogOptions) => {
-					return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
-				},
+				(_errorOptions: Xrm.Navigation.ErrorDialogOptions) =>
+					this.asXrmPromise(Promise.resolve()),
 			),
 			openFile: jest.fn(),
 			openForm: jest.fn(),
@@ -895,13 +900,13 @@ export class XrmMockFormTestContextBuilder<
 				if (this.refreshErrorMessage) {
 					throw new Error(this.refreshErrorMessage);
 				}
-				return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
+				return this.asXrmPromise(Promise.resolve());
 			}),
 			save: jest.fn((): Xrm.Async.PromiseLike<void> => {
 				if (this.saveErrorMessage) {
 					throw new Error(this.saveErrorMessage);
 				}
-				return Promise.resolve() as unknown as Xrm.Async.PromiseLike<void>;
+				return this.asXrmPromise(Promise.resolve());
 			}),
 		};
 
@@ -921,9 +926,9 @@ export class XrmMockFormTestContextBuilder<
 
 	private InitConsoleMock(): void {
 		this.xrmConsoleMockStubs = {
-			log: jest.fn((_message?: any, ..._optionalParams: any[]) => {}),
-			error: jest.fn((_message?: any, ..._optionalParams: any[]) => {}),
-			debug: jest.fn((_message?: any, ..._optionalParams: any[]) => {}),
+			log: jest.fn((_message?: unknown, ..._optionalParams: unknown[]) => {}),
+			error: jest.fn((_message?: unknown, ..._optionalParams: unknown[]) => {}),
+			debug: jest.fn((_message?: unknown, ..._optionalParams: unknown[]) => {}),
 		};
 		jest.spyOn(console, "log").mockImplementation(this.xrmConsoleMockStubs.log);
 		jest
@@ -1074,28 +1079,28 @@ export class XrmMockFormTestContextBuilder<
 		Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
 	> {
 		if (this.retrieveServerMockDateError) {
-			return Promise.reject(
-				new Error(this.retrieveServerMockDateError),
-			) as unknown as Xrm.Async.PromiseLike<
-				Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
-			>;
+			return this.asXrmPromise(
+				Promise.reject(
+					new Error(this.retrieveServerMockDateError),
+				),
+			);
 		}
 		const entityDTOs = this.serverMockData[entityLogicalName];
 		if (!entityDTOs) {
-			return Promise.resolve({
-				entities: [],
-				nextLink: "",
-			}) as unknown as Xrm.Async.PromiseLike<
-				Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
-			>;
+			return this.asXrmPromise(
+				Promise.resolve({
+					entities: [],
+					nextLink: "",
+				}),
+			);
 		}
 		if (!options) {
-			return Promise.resolve({
-				entities: [...entityDTOs],
-				nextLink: "",
-			}) as unknown as Xrm.Async.PromiseLike<
-				Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
-			>;
+			return this.asXrmPromise(
+				Promise.resolve({
+					entities: [...entityDTOs],
+					nextLink: "",
+				}),
+			);
 		}
 		const oDataQueryString = options?.startsWith("?")
 			? options.substring(1)
@@ -1106,12 +1111,12 @@ export class XrmMockFormTestContextBuilder<
 				entityDTOs,
 				oDataQueryString,
 			);
-		return Promise.resolve({
-			entities: [...mockFilterResults],
-			nextLink: "",
-		}) as unknown as Xrm.Async.PromiseLike<
-			Xrm.RetrieveMultipleResult<XrmTable.DTO.Table<string>>
-		>;
+		return this.asXrmPromise(
+			Promise.resolve({
+				entities: [...mockFilterResults],
+				nextLink: "",
+			}),
+		);
 	}
 
 	private UpdateRecord(
@@ -1119,14 +1124,16 @@ export class XrmMockFormTestContextBuilder<
 		id: string,
 	): Xrm.Async.PromiseLike<Xrm.UpdateResponse> {
 		if (this.updateServerMockDateError) {
-			return Promise.reject(
-				new Error(this.updateServerMockDateError),
-			) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
+			return this.asXrmPromise(
+				Promise.reject(new Error(this.updateServerMockDateError)),
+			);
 		}
-		return Promise.resolve({
-			entityType: entityLogicalName,
-			id,
-		}) as unknown as Xrm.Async.PromiseLike<Xrm.CreateResponse>;
+		return this.asXrmPromise(
+			Promise.resolve({
+				entityType: entityLogicalName,
+				id,
+			}),
+		);
 	}
 
 	private RetrieveSingleStubRecord(
@@ -1153,15 +1160,9 @@ export class XrmMockFormTestContextBuilder<
 				oDataQueryString,
 			);
 			item[`${entityLogicalName}id`] = id;
-			return Promise.resolve({
-				...item,
-			}) as unknown as Xrm.Async.PromiseLike<
-				Partial<XrmTable.DTO.Table<string>>
-			>;
+			return this.asXrmPromise(Promise.resolve({ ...item }));
 		}
-		return Promise.resolve(record) as unknown as Xrm.Async.PromiseLike<
-			Partial<XrmTable.DTO.Table<string>>
-		>;
+		return this.asXrmPromise(Promise.resolve(record));
 	}
 
 	private GetCustomApiMockResponse(
@@ -1172,25 +1173,30 @@ export class XrmMockFormTestContextBuilder<
 			if (apiName) {
 				const webApiResponse = this.serverCustomApiMockData[apiName];
 				if (webApiResponse) {
-					return Promise.resolve(
-						new Response(JSON.stringify(webApiResponse)),
-					) as unknown as Xrm.Async.PromiseLike<Response>;
+					return this.asXrmPromise(
+						Promise.resolve(new Response(JSON.stringify(webApiResponse))),
+					);
 				}
 				if (this.serverCustomApiExceptions.has(apiName)) {
 					throw new Error(this.serverCustomApiExceptions.get(apiName));
 				}
 			}
-			return Promise.resolve(
-				new Response(
-					JSON.stringify({ error: "no response for received request " }),
-					{
-						status: 400,
-						statusText: XrmMockFormTestContextBuilder.ERROR_NO_CUSTOM_API,
-					},
+			return this.asXrmPromise(
+				Promise.resolve(
+					new Response(
+						JSON.stringify({ error: "no response for received request " }),
+						{
+							status: 400,
+							statusText: XrmMockFormTestContextBuilder.ERROR_NO_CUSTOM_API,
+						},
+					),
 				),
-			) as unknown as Xrm.Async.PromiseLike<Response>;
-		} catch (error: any) {
-			throw new Error(error?.message);
+			);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error(String(error));
 		}
 	}
 
@@ -1440,7 +1446,9 @@ export class XrmMockFormTestContextBuilder<
 				controlMock.addOnLoad = gridControlMock.addOnLoad;
 				controlMock.refresh = gridControlMock.refresh;
 				controlMock.getGrid = gridControlMock.getGrid;
-				(<any>controlMock).setFilterXml = gridControlMock.setFilterXml;
+				(
+					controlMock as GridControlMock & { setFilterXml: jest.Mock }
+				).setFilterXml = gridControlMock.setFilterXml;
 			}
 			if (this.isControlLookupMethodMock && this.isLookupControl(controlMock)) {
 				const lookupControlMock = {
@@ -1700,7 +1708,7 @@ export class XrmMockFormTestContextBuilder<
 	): OptionSetAttributeMock {
 		const multiOptionSetAttr = new OptionSetAttributeMock({
 			name,
-			value: (mockAttribute.value?.valueNumberMset ?? []) as any,
+			value: (mockAttribute.value?.valueNumberMset ?? []) as number[],
 			options: mockAttribute.options ?? [],
 			isDirty: mockAttribute?.isDirty,
 			requiredLevel: mockAttribute?.requiredLevel,
@@ -1730,7 +1738,10 @@ export class XrmMockFormTestContextBuilder<
 			requiredLevel: mockAttribute?.requiredLevel,
 		});
 		// Known gap of xrm-mock which cannot properly handle the return of empty/null values force the initial assignment to mock the real dynamics behavior
-		attributeBoolean.value = mockAttribute.value?.valueBoolean as any;
+		attributeBoolean.value = mockAttribute.value?.valueBoolean as
+			| boolean
+			| null
+			| undefined;
 		return attributeBoolean;
 	}
 
@@ -1873,7 +1884,7 @@ export class XrmMockFormTestContextBuilder<
 			const mockOptions = (<OptionSetAttributeMock>mockAttribute).options ?? [];
 			return XrmMockGenerator.Control.createOptionSet({
 				name: control.name,
-				attribute: mockAttribute as any,
+				attribute: mockAttribute as OptionSetAttributeMock,
 				visible: control.isVisible,
 				options: mockOptions.map((opt) => ({ ...opt })),
 				disabled: control.isDisabled,
@@ -1914,6 +1925,10 @@ export class XrmMockFormTestContextBuilder<
 
 	private getIsDirty() {
 		return Array.from(this.mockAttributes).some(([name, attr]) => attr.isDirty);
+	}
+
+	private asXrmPromise<T>(promise: Promise<T>): Xrm.Async.PromiseLike<T> {
+		return promise as unknown as Xrm.Async.PromiseLike<T>;
 	}
 
 	private isGridControl(

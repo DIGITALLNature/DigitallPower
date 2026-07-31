@@ -1,0 +1,9 @@
+{
+    "Entities": [
+        "dgt_test_table"
+    ],
+    "SuppressDotNet": true,
+    "SuppressSdkMessages": true,
+    "TypescriptGeneratorVersion": "Light",
+    "XrmMockFormHelpers": true
+}
