@@ -1,3 +1,10 @@
+# [2.2.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.4...v2.2.0-beta.5) (2026-07-31)
+
+
+### Features
+
+* **codegen:** improve generated TS mock form files and runtime helpers ([ff0e636](https://github.com/DIGITALLNature/DigitallPower/commit/ff0e63671a470783674cba9a63e4e9b2bd07c3e5))
+
 # [2.2.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.3...v2.2.0-beta.4) (2026-07-28)
 
 
