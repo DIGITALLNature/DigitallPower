@@ -1,3 +1,10 @@
+# [2.2.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.7...v2.2.0-beta.8) (2026-07-31)
+
+
+### Bug Fixes
+
+* **codegeneration:** keep subgrid row attributes instead of discarding them ([f08b328](https://github.com/DIGITALLNature/DigitallPower/commit/f08b3281ba8a5726f1964930706ffecaf6f641d8)), closes [#179](https://github.com/DIGITALLNature/DigitallPower/issues/179)
+
 # [2.2.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.6...v2.2.0-beta.7) (2026-07-31)
 
 
