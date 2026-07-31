@@ -29,16 +29,16 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
     }
 
     {% if HasAnyControl == true %}
-    export const FormControlNames: string[] = [{%- for formControl in FormDetail.FormControls  %}
-        "{{ formControl.ControlName }}",{%- endfor %}
+    export const FormControlNames = [{% for formControl in FormDetail.FormControls  %}
+        "{{ formControl.ControlName }}",{% endfor %}
         {%- for headerField in FormDetail.HeaderControlFields  %}
-        "header_{{ headerField }}",{%- endfor %}
+        "header_{{ headerField }}",{% endfor %}
         {%- for bpfControl in BpfControls %}
-        "header_process_{{ bpfControl.DataFieldName }}",{%- endfor %}
+        "header_process_{{ bpfControl.DataFieldName }}",{% endfor %}
     ] as const;{% endif %}
 
     {% if HasAnyAttribute == true -%}
-    export const FormAttributeNames: string[] = [{%- for attribute in FormDetail.Attributes  %}
+    export const FormAttributeNames = [{% for attribute in FormDetail.Attributes  %}
         "{{ attribute.DataFieldName }}",{%- endfor %}
     ] as const;{% endif %}
     {% if HasAnyControl == true %}{% if HasAnyAttribute == true %}
