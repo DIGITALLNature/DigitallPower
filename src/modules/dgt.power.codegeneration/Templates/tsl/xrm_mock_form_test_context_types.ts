@@ -94,7 +94,10 @@ export interface XrmSubGridRowMocks {
 	selectedGridRowMocksIndexes: number[];
 }
 
-export type XrmFormMockServerData = Record<string, unknown[]>;
+export type XrmFormMockServerData = Record<
+	string,
+	XrmTable.DTO.Table<string>[]
+>;
 export type XrmCustomApiMockData = Record<string, XrmWebApi.ExecuteResponse>;
 
 export type XrmWebApiMockStubMethods = jest.FunctionPropertyNames<
@@ -215,9 +218,12 @@ export interface XrmMockFormTestContextBuilderConstructor {
 		TControlName extends string,
 		TAttributeNames extends string,
 	>(
-		initialControlsConfig: XrmFormMockControl<TControlName, TAttributeNames>[],
-		initialAttributesConfig: XrmFormMockAttribute<TAttributeNames>[],
-		initialTabsConfig: XrmFormMockTab<
+		initialControlsConfig: XrmForm.Tester.XrmFormMockControl<
+			TControlName,
+			TAttributeNames
+		>[],
+		initialAttributesConfig: XrmForm.Tester.XrmFormMockAttribute<TAttributeNames>[],
+		initialTabsConfig: XrmForm.Tester.XrmFormMockTab<
 			TTabNames,
 			TSectionNames,
 			TControlName

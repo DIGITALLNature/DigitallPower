@@ -387,7 +387,7 @@ export class XrmMockFormTestContextBuilder<
 		selectedIds: string[],
 	): this {
 		this.isSubGridMethodsMock = true;
-		return this.withSubGridMockRows<string>({
+		return this.withSubGridMockRows<string>(name, {
 			entityName,
 			subGridRowsAttributeConfig: [],
 			gridRows: selectedIds.map((id) => ({
@@ -760,7 +760,7 @@ export class XrmMockFormTestContextBuilder<
 				(
 					entityLogicalName: string,
 					id: string,
-				): Xrm.Async.PromiseLike<Xrm.DeleteResponse> =>
+				): Xrm.Async.PromiseLike<Xrm.LookupValue> =>
 					this.asXrmPromise(
 						Promise.resolve({
 							entityType: entityLogicalName,
@@ -1080,9 +1080,7 @@ export class XrmMockFormTestContextBuilder<
 	> {
 		if (this.retrieveServerMockDateError) {
 			return this.asXrmPromise(
-				Promise.reject(
-					new Error(this.retrieveServerMockDateError),
-				),
+				Promise.reject(new Error(this.retrieveServerMockDateError)),
 			);
 		}
 		const entityDTOs = this.serverMockData[entityLogicalName];
@@ -1708,7 +1706,7 @@ export class XrmMockFormTestContextBuilder<
 	): OptionSetAttributeMock {
 		const multiOptionSetAttr = new OptionSetAttributeMock({
 			name,
-			value: (mockAttribute.value?.valueNumberMset ?? []) as number[],
+			value: (mockAttribute.value?.valueNumberMset ?? []) as unknown as number,
 			options: mockAttribute.options ?? [],
 			isDirty: mockAttribute?.isDirty,
 			requiredLevel: mockAttribute?.requiredLevel,
@@ -1738,10 +1736,7 @@ export class XrmMockFormTestContextBuilder<
 			requiredLevel: mockAttribute?.requiredLevel,
 		});
 		// Known gap of xrm-mock which cannot properly handle the return of empty/null values force the initial assignment to mock the real dynamics behavior
-		attributeBoolean.value = mockAttribute.value?.valueBoolean as
-			| boolean
-			| null
-			| undefined;
+		attributeBoolean.value = mockAttribute.value?.valueBoolean as boolean;
 		return attributeBoolean;
 	}
 
