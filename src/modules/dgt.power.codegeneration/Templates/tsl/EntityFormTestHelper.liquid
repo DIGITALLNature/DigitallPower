@@ -135,6 +135,11 @@ export namespace XrmForm{{ FormEntityName }}{{FormType}}{{FormName}}TestHelper {
             builder.withLanguageId(options.languageId);
         }
 
-        return builder;
+        return builder as XrmForm.Tester.XrmMockFormTestContextBuilder<
+            {%- if FormType != "QuickView" and HasAnyTab == true -%}{{FormClassNamespace}}.TabName{%- else -%}string{%- endif -%},
+            {%- if FormType != "QuickView" and HasAnyTab == true and HasAnySection == true -%}{{FormClassNamespace}}.SectionNames{%- else -%}string{%- endif -%},
+            {%- if HasAnyControl == true -%}{{FormClassNamespace}}.ControlName{%- else -%}string{%- endif -%},
+            {%- if HasAnyAttribute == true -%}{{FormClassNamespace}}.AttributeName{%- else -%}string{%- endif -%}
+        >;
     }
 }

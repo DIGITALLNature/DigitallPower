@@ -1,4 +1,4 @@
-import {
+import type {
 	BooleanAttributeMock,
 	BooleanControlMock,
 	DateAttributeMock,
@@ -14,7 +14,7 @@ import {
 	StringAttributeMock,
 	StringControlMock,
 } from "xrm-mock";
-import { EventContextWithEventArgsMock } from "xrm-mock/dist/xrm-mock/events/eventcontextwitheventargs.mock";
+import type { EventContextWithEventArgsMock } from "xrm-mock/dist/xrm-mock/events/eventcontextwitheventargs.mock";
 
 export type XrmMockAttributeType =
 	| StringAttributeMock
@@ -208,7 +208,27 @@ export type XrmFormTabUpdateData<
 	TTabNames extends string,
 	TTabSectionNames extends string,
 > = Partial<Record<TTabNames, XrmFormTabUpdateBase<TTabSectionNames>>>;
-
+export interface XrmMockFormTestContextBuilderConstructor {
+	new <
+		TTabNames extends string,
+		TSectionNames extends string,
+		TControlName extends string,
+		TAttributeNames extends string,
+	>(
+		initialControlsConfig: XrmFormMockControl<TControlName, TAttributeNames>[],
+		initialAttributesConfig: XrmFormMockAttribute<TAttributeNames>[],
+		initialTabsConfig: XrmFormMockTab<
+			TTabNames,
+			TSectionNames,
+			TControlName
+		>[],
+	): IXrmMockFormTestContextBuilder<
+		TTabNames,
+		TSectionNames,
+		TControlName,
+		TAttributeNames
+	>;
+}
 export interface IXrmMockFormTestContextBuilder<
 	TTabNames extends string,
 	TSectionNames extends string,
