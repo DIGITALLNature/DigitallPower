@@ -1336,7 +1336,7 @@ export class XrmMockFormTestContextBuilder<
 		);
 		const mockAttributes: XrmMockAttributeType[] = mergeSubGridRowDefinition
 			.map((x) => this.CreateXrmMockFakeAttribute(x.name, x))
-			.filter((x): x is XrmMockAttributeType => !x);
+			.filter((x): x is XrmMockAttributeType => !!x);
 		return new ItemCollectionMock<
 			Xrm.Attributes.Attribute<Xrm.Attributes.AttributeValues>
 		>(
