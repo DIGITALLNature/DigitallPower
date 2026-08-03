@@ -31,6 +31,14 @@ public interface IMetadataService
     EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
     int RetrieveOrganizationLanguage();
 
+    /// <summary>
+    ///     Returns the UI language (LCID) of the currently connected user, as configured in their personal
+    ///     <c>usersettings</c>. Dataverse resolves translatable out-of-box record text (e.g. system form
+    ///     <c>name</c>) based on this session language, not on any per-request parameter - so it can differ
+    ///     from the language configured for code generation. Used to warn about this known limitation.
+    /// </summary>
+    int RetrieveConnectionUserLanguage();
+
     IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows);
     /// <inheritdoc cref="RetrieveBusinessProcessFlows(IReadOnlyCollection{string})"/>
     IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);

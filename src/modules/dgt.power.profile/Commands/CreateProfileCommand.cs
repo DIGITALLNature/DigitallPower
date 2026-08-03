@@ -40,8 +40,9 @@ public class CreateProfileCommand(
                 });
         }
 
-        profileManager.Save();
-
+        // Verify connectivity against the in-memory identity (Upsert already made it Current for
+        // ConnectAsync to pick up) BEFORE persisting, so a failed check never leaves an invalid
+        // identity saved and selected as active on disk.
         if (!settings.SkipChecking)
         {
             try
@@ -54,6 +55,8 @@ public class CreateProfileCommand(
                 throw;
             }
         }
+
+        profileManager.Save();
 
         var rule = new Rule($"Identity [lime]{settings.Name}[/] upserted.");
         rule.LeftJustified();

@@ -11,15 +11,15 @@
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.7.0">
+    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="TUnit" Version="1.56.35" />
+    <PackageReference Update="TUnit" Version="1.61.15" />
   </ItemGroup>
 
   <ItemGroup>

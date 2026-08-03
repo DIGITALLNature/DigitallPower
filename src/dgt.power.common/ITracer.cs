@@ -20,4 +20,7 @@ public interface ITracer
     bool End<T>(T action, bool result) where T : IPowerLogic;
 
     void Exception(Exception e, TraceEventType type);
+
+    // ReSharper disable once UnusedMemberInSuper.Global
+    void TrackFatalException(Exception e);
 }

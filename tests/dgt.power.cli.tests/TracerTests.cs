@@ -199,6 +199,20 @@ public class TracerTests
         await Assert.That(stoppedActivities[0].StatusDescription).IsEqualTo("Something failed");
     }
 
+    [Test]
+    public async Task TrackFatalException_UsesCallerNameForActivity()
+    {
+        var stoppedActivities = new List<Activity>();
+        using var listener = CreateListener(stopped: stoppedActivities);
+        var tracer = new Tracer(telemetryEnabled: true, installId: "test-id");
+
+        tracer.TrackFatalException(new InvalidOperationException("Something failed"));
+
+        await Assert.That(stoppedActivities).Count().IsEqualTo(1);
+        await Assert.That(stoppedActivities[0].OperationName).IsEqualTo("TrackFatalException");
+        await Assert.That(stoppedActivities[0].Status).IsEqualTo(ActivityStatusCode.Error);
+    }
+
     private static ActivityListener CreateListener(List<Activity>? started = null, List<Activity>? stopped = null)
     {
         var listener = new ActivityListener

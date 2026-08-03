@@ -267,6 +267,7 @@ public class CodeGenerationContextBuilder
         return this;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public CodeGenerationContextBuilder WithCustomConfiguration(Action<FakeOrganizationServiceAsync> configuration)
     {
         _customConfigurations.Add(configuration);

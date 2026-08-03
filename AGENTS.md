@@ -44,6 +44,44 @@ When making changes to this codebase, **you MUST keep the documentation up to da
 
 ---
 
+## Fixing Qodana Issues (MANDATORY before merge)
+
+Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the merge.
+
+### Workflow
+
+1. **The user provides the Qodana SARIF file** from the CI run. Do not attempt to download it yourself.
+
+2. **Identify new-only findings** by filtering on `baselineState == "new"` in the SARIF — Qodana sets this authoritatively against the repo baseline. Do not diff fingerprints manually.
+
+3. **Fix the code** — see rule patterns below.
+
+4. **Never edit `baseline.sarif.json` manually.** The baseline is maintained by Qodana. Suppressing findings by modifying the baseline file is prohibited.
+
+5. **Verify** with `dotnet build` — ensure 0 errors before committing.
+
+### Common Fix Patterns
+
+| Rule | Fix |
+|------|-----|
+| `CA1062` | Add `ArgumentNullException.ThrowIfNull(param);` at top of method |
+| `AutoPropertyCanBeMadeGetOnly.Global` | Add `// ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global` or suppress at class level if many properties are affected |
+| `UnusedMember.Global` | Add `// ReSharper disable once UnusedMember.Global` above the member (test helpers, builder methods used indirectly) |
+| `MergeIntoPattern` | Convert `if (x.A && x.B != null)` to `if (x is { A: true, B: not null })` |
+| `BadControlBracesIndent` | Fix indentation of the flagged line to align with the surrounding block |
+| `CA1056` / `S3996` | Change property type to `Uri`, or suppress with `#pragma warning disable CA1056, S3996` + comment if the property is a CLI argument (must stay `string`) |
+| `S2302` | Replace string literal `"param"` with `nameof(param)` in `ArgumentException`/`ThrowIfNullOrWhiteSpace` calls |
+| `S1135` | Resolve or remove the `TODO` comment; if deferring is intentional, move it to `todo.md` and delete the comment from code |
+
+### Suppression Policy
+
+- **Prefer fixing** over suppressing.
+- **ReSharper inline comments** (`// ReSharper disable once …`) are acceptable for false positives in test helpers and DI-registered types that ReSharper cannot see are used.
+- **`#pragma warning disable`** is acceptable when a rule conflicts with a framework constraint (e.g., CLI argument properties must be `string`, not `Uri`). Always include a brief comment explaining why.
+- **Never suppress by editing `baseline.sarif.json`.**
+
+---
+
 ## Code Conventions
 
 - **Language:** C# with latest LangVersion, nullable enabled, implicit usings
@@ -186,6 +224,27 @@ public async Task MethodName_Scenario_ExpectedResult()
     // Assert
 }
 ```
+
+### CLI Command-Tree & Settings-Parsing Tests (MANDATORY when changing commands)
+
+The dgtp command tree is registered in `src/dgt.power/CommandTree.cs` and covered by two test
+layers in `tests/dgt.power.cli.tests/`, independent from the `PowerLogic`/business-logic tests in
+`CommandTestContext`:
+
+- `CommandTreeTests.cs` — structural wiring test (`CommandTree.Register` + `ValidateExamples()`
+  must build without throwing) and a data-driven smoke test over every top-level branch/command
+  path (via `CommandAppTester`).
+- `SettingsParsingTests.cs` — one test per distinct `CommandSettings` type, verifying that CLI
+  arguments (positional arguments, options, aliases, comma-separated lists, defaults) are parsed
+  correctly, using the dependency-free `NoOpCommand<TSettings>` test double.
+
+**When you add, remove, or rename a top-level command/branch in `CommandTree.cs`**, add/update the
+corresponding case in `CommandTreeTests.cs`.
+
+**When you add a new `CommandSettings` subclass, or change `[CommandArgument]`/`[CommandOption]`
+attributes (name, alias, position, default value) on an existing one**, add/update the
+corresponding test in `SettingsParsingTests.cs`. Reuse an existing settings type's test if the new
+command shares that settings class — do not duplicate tests per command.
 
 ---
 

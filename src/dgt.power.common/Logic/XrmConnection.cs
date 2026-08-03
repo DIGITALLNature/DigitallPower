@@ -41,12 +41,25 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     {
         if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
         {
-            // Classic connection string profiles do not use MSAL — no interactive login required.
+            // Connection-string profiles do not use MSAL — no interactive login required.
             return true;
         }
 
         var connector = new TokenConnector(tokenIdentity, profileManager, console);
         return await connector.TryAcquireTokenSilentAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task RefreshAuthAsync()
+    {
+        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
+        {
+            // Connection-string profiles do not use MSAL — nothing to refresh.
+            return;
+        }
+
+        var connector = new TokenConnector(tokenIdentity, profileManager, console);
+        await connector.ForceInteractiveLoginAsync();
     }
 
     private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
@@ -88,7 +101,7 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         }
         else
         {
-            console.MarkupLine($"Connect to {profileManager.Current} via classic connection");
+            console.MarkupLine($"Connect to {profileManager.Current} via connection string");
             connector = new CrmConnector(identity.ConnectionString, console);
         }
 

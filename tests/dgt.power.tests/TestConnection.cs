@@ -17,4 +17,6 @@ public class TestConnection(IOrganizationServiceAsync2 service) : IXrmConnection
     }
 
     public Task<bool> CheckAuthAsync() => Task.FromResult(true);
+
+    public Task RefreshAuthAsync() => Task.CompletedTask;
 }

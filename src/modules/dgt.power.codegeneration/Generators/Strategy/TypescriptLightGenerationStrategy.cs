@@ -108,6 +108,15 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
+        var languageCode = 1031;
+        if (config.UseBaseLanguage)
+        {
+            languageCode = metadataService.RetrieveOrganizationLanguage();
+            Console.MarkupLine($"Using Base Language: {languageCode}");
+        }
+
+        WarnIfSessionLanguageMismatch(languageCode);
+
         var bpfControls = GetCompleteEntityBpfControlList(config);
         var entityWithParsedFormList = GenerateEntityWithMetadata(config, bpfControls);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
@@ -125,11 +134,25 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
-                CreateFormFile(parsedForm, entityMetadata, liquidTemplateForm, LiquidTemplates.EntityForm, args, formName, bpfControlsForEntity);
+                var renderContext = new FormFileRenderContext(
+                    parsedForm,
+                    entityMetadata,
+                    liquidTemplateForm,
+                    LiquidTemplates.EntityForm,
+                    args,
+                    formName,
+                    bpfControlsForEntity,
+                    languageCode);
+
+                CreateFormFile(renderContext);
                 if (config.XrmMockFormHelpers)
                 {
-                    CreateFormTestHelperFile(parsedForm, entityMetadata, liquidTemplateFormTestHelpers, LiquidTemplates.EntityFormTestHelper, args,
-                        $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}", bpfControlsForEntity);
+                    CreateFormTestHelperFile(renderContext with
+                    {
+                        LiquidTemplate = liquidTemplateFormTestHelpers,
+                        TemplateName = LiquidTemplates.EntityFormTestHelper,
+                        FormName = $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
+                    });
                 }
             }
         }
@@ -363,6 +386,11 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
+        var languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
+        Console.MarkupLine($"Using Language: {languageCode}");
+
+        WarnIfSessionLanguageMismatch(languageCode);
+
         var bpfControls = GetCompleteEntityBpfControlListV2(config);
         var entityWithParsedFormList = GenerateEntityWithMetadataV2(config, bpfControls);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
@@ -380,24 +408,25 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
-                CreateFormFile(
+                var renderContext = new FormFileRenderContext(
                     parsedForm,
                     entityMetada,
                     liquidTemplateForm,
                     LiquidTemplates.EntityForm,
                     args,
                     formName,
-                    bpfControlsForEntity);
+                    bpfControlsForEntity,
+                    languageCode);
+
+                CreateFormFile(renderContext);
                 if (config.Output.Forms?.TestHelpers ?? false)
                 {
-                    CreateFormTestHelperFile(
-                        parsedForm,
-                        entityMetada,
-                        liquidTemplateFormTestHelpers,
-                        LiquidTemplates.EntityFormTestHelper,
-                        args,
-                        $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
-                        bpfControlsForEntity);
+                    CreateFormTestHelperFile(renderContext with
+                    {
+                        LiquidTemplate = liquidTemplateFormTestHelpers,
+                        TemplateName = LiquidTemplates.EntityFormTestHelper,
+                        FormName = $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
+                    });
                 }
             }
         }
@@ -565,43 +594,33 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
     #region Shared Helpers
 
-    private void CreateFormFile(
-        KeyValuePair<string, FormDetail> formDetail,
-        EntityMetadata metadata,
-        IFluidTemplate liquidTemplate,
-        string templateName,
-        CodeGenerationVerb args,
-        string form,
-        SortedSet<BpfControlDetail> bpfControls)
+    private sealed record FormFileRenderContext(
+        KeyValuePair<string, FormDetail> FormDetail,
+        EntityMetadata Metadata,
+        IFluidTemplate LiquidTemplate,
+        string TemplateName,
+        CodeGenerationVerb Args,
+        string FormName,
+        SortedSet<BpfControlDetail> BpfControls,
+        int LanguageCode);
+
+    private void CreateFormFile(FormFileRenderContext context)
     {
-        var artifact = $"{form}.{FileNames.Typescript.FileExtension.TypeExtension}";
-        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, templateName, bpfControls, artifact);
-        CreateFile(content, form, args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityForms));
+        var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TypeExtension}";
+        var content = CreateFormFileContent(context, artifact);
+        CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityForms));
     }
 
-    private void CreateFormTestHelperFile(
-        KeyValuePair<string, FormDetail> formDetail,
-        EntityMetadata metadata,
-        IFluidTemplate liquidTemplate,
-        string templateName,
-        CodeGenerationVerb args,
-        string form,
-        SortedSet<BpfControlDetail> bpfControls)
+    private void CreateFormTestHelperFile(FormFileRenderContext context)
     {
-        var artifact = $"{form}.{FileNames.Typescript.FileExtension.TsExtension}";
-        var content = CreateFormFileContent(formDetail, metadata, liquidTemplate, templateName, bpfControls, artifact);
-        CreateFile(content, form, args, FileNames.Typescript.FileExtension.TsExtension, GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntityTestHelper));
+        var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TsExtension}";
+        var content = CreateFormFileContent(context, artifact);
+        CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TsExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityTestHelper));
     }
 
-    private string CreateFormFileContent(
-        KeyValuePair<string, FormDetail> formDetail,
-        EntityMetadata metadata,
-        IFluidTemplate liquidTemplate,
-        string templateName,
-        SortedSet<BpfControlDetail> bpfControls,
-        string artifact)
+    private string CreateFormFileContent(FormFileRenderContext context, string artifact)
     {
-        var formname = formDetail.Key
+        var formname = context.FormDetail.Key
                     .Replace(".main", "Main", StringComparison.Ordinal)
                     .Replace(".quickview", "QuickView", StringComparison.Ordinal)
                     .Replace(".quickcreate", "QuickCreate", StringComparison.Ordinal);
@@ -609,16 +628,17 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var viewModel = new FormViewModel
         {
             Name = formname,
-            FormDetail = formDetail.Value,
-            Attributes = FilterEntityMetadataAttributes(metadata),
-            BpfControls = formDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : bpfControls.ToList()
+            FormDetail = context.FormDetail.Value,
+            Attributes = FilterEntityMetadataAttributes(context.Metadata),
+            BpfControls = context.FormDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : context.BpfControls.ToList(),
+            LanguageCode = context.LanguageCode
         };
         return RenderTemplateWithDiagnostics(
-            liquidTemplate,
-            templateName,
+            context.LiquidTemplate,
+            context.TemplateName,
             viewModel,
-            entityKey: metadata.LogicalName,
-            formKey: formDetail.Key,
+            entityKey: context.Metadata.LogicalName,
+            formKey: context.FormDetail.Key,
             artifact: artifact);
     }
 
@@ -673,6 +693,20 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     {
         var formEntityName = entityLogicalName.ToLowerInvariant().Trim();
         return [Folders.TypescriptEntities, Formatter.CamelCase(Formatter.Sanitize(formEntityName)), subFolder];
+    }
+
+    /// <summary>
+    ///     Warns once when the connecting user's session UI language differs from the language configured for
+    ///     code generation, since Dataverse resolves translatable out-of-box record text (e.g. system form
+    ///     <c>name</c>) using the session language - not the configured one. See <see cref="Warnings.FormNameLanguageMismatch"/>.
+    /// </summary>
+    private void WarnIfSessionLanguageMismatch(int configuredLanguageCode)
+    {
+        var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
+        if (sessionLanguageCode != configuredLanguageCode)
+        {
+            Console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));
+        }
     }
 
     private TemplateContext CreateTemplateContext(object viewModel)

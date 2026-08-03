@@ -55,3 +55,9 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --no-build --configuration Release -- --output Detailed
+
+      - name: Install generated TypeScript Jest fixture dependencies
+        run: pnpm --dir tests/dgt.power.codegeneration.tests/Fixtures/TslJest install --frozen-lockfile
+
+      - name: Run generated TypeScript Jest tests
+        run: pnpm test:tsl-jest

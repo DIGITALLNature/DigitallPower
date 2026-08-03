@@ -69,6 +69,22 @@ internal sealed class TokenConnector : IConnector
         }
     }
 
+    /// <summary>
+    /// Forces an interactive browser login and persists the refreshed token.
+    /// </summary>
+    internal async Task ForceInteractiveLoginAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(_identity.Username))
+        {
+            _account = await _application.GetAccountAsync(_identity.Username);
+        }
+
+        var interactive = await _application.AcquireTokenInteractive(_scopes).ExecuteAsync();
+        _identity.Username = interactive.Account.HomeAccountId.Identifier;
+        _account = interactive.Account;
+        _profileManager.Save();
+    }
+
     public async Task<string> GetTokenAsync(string instanceUri)
     {
         try

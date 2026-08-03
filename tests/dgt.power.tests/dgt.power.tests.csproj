@@ -12,16 +12,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit.Assertions" Version="1.56.35" />
-    <PackageReference Include="TUnit.Core" Version="1.56.35" />
-    <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0-beta.8" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.57.1" />
-    <PackageReference Include="System.Runtime.Caching" Version="10.0.9" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
+    <PackageReference Include="TUnit.Assertions" Version="1.61.15" />
+    <PackageReference Include="TUnit.Core" Version="1.61.15" />
+    <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0" />
+    <PackageReference Include="Spectre.Console.Testing" Version="0.57.2" />
+    <PackageReference Include="System.Runtime.Caching" Version="10.0.10" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.7.0">
+    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -17,10 +17,10 @@ public class RetrieveEntityExecutor(Dictionary<string, int> map) : IOrganization
 
     public Type ForType => typeof(RetrieveEntityRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var typed = (RetrieveEntityRequest)organizationRequest;
-        var entityMetadata = state.State.EntityMetadata[TestEntity.EntityLogicalName];
+        var entityMetadata = fakeOrganizationService.State.EntityMetadata[TestEntity.EntityLogicalName];
         entityMetadata.GetType().GetProperty("ObjectTypeCode")!.SetValue(entityMetadata, map[typed.LogicalName], null);
         return new RetrieveEntityResponse
         {

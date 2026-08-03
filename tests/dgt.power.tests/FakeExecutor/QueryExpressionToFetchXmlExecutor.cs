@@ -16,7 +16,7 @@ public class QueryExpressionToFetchXmlExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(QueryExpressionToFetchXmlRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var typed = (QueryExpressionToFetchXmlRequest)organizationRequest;
 

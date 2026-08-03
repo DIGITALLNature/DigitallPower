@@ -12,7 +12,7 @@ public class RemoveSolutionComponentExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(RemoveSolutionComponentRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         Thread.Sleep(TestFixtures.FakeCallDurations);
         return new RemoveSolutionComponentResponse();

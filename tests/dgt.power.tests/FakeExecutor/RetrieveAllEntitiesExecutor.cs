@@ -12,9 +12,9 @@ public class RetrieveAllEntitiesExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(RetrieveAllEntitiesRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
-        var knownMetadata = state.State.EntityMetadata.Values.ToArray();
+        var knownMetadata = fakeOrganizationService.State.EntityMetadata.Values.ToArray();
         return new RetrieveAllEntitiesResponse
         {
             Results =

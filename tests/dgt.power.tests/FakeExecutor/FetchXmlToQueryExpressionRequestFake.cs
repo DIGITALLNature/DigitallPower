@@ -18,7 +18,7 @@ public class FetchXmlToQueryExpressionRequestFake : IOrganizationRequestFake
 {
     public Type ForType => typeof(FetchXmlToQueryExpressionRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var request = (FetchXmlToQueryExpressionRequest)organizationRequest;
         var queryExpression = ConvertFetchXmlToQueryExpression(request.FetchXml);

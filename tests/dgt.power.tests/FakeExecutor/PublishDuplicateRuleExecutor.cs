@@ -13,11 +13,11 @@ public class PublishDuplicateRuleExecutor : IOrganizationRequestFake
 {
     public Type ForType => typeof(PublishDuplicateRuleRequest);
 
-    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService state)
+    public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var typed = (PublishDuplicateRuleRequest)organizationRequest;
 
-        state.Update(new DuplicateRule(typed.DuplicateRuleId)
+        fakeOrganizationService.Update(new DuplicateRule(typed.DuplicateRuleId)
         {
             Attributes =
             {
