@@ -1,3 +1,31 @@
+# [2.2.0](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0...v2.2.0) (2026-08-03)
+
+
+### Bug Fixes
+
+* **codegeneration:** keep subgrid row attributes instead of discarding them ([f08b328](https://github.com/DIGITALLNature/DigitallPower/commit/f08b3281ba8a5726f1964930706ffecaf6f641d8)), closes [#179](https://github.com/DIGITALLNature/DigitallPower/issues/179)
+* **connection:** escape Spectre markup brackets in deprecation descriptions ([5379d5f](https://github.com/DIGITALLNature/DigitallPower/commit/5379d5fdaceee46ab9c54de0c090a05bd714bc7a))
+* **connection:** rename type labels from Token/Classic to MSAL/ConnectionString ([159920f](https://github.com/DIGITALLNature/DigitallPower/commit/159920f9193cdac4be2f2ed4f4e22566d21822b0))
+* dont persist profile when connection fails ([7c122e1](https://github.com/DIGITALLNature/DigitallPower/commit/7c122e1a078fe223db1c93b811dddf7b525a0763))
+* qoadana issue ([b6ed909](https://github.com/DIGITALLNature/DigitallPower/commit/b6ed9097dc9a5ddbb17845a8d5e63c2f80845bf5))
+* resolve new qodana issues ([c3a63a2](https://github.com/DIGITALLNature/DigitallPower/commit/c3a63a2b5452f02dfcd0233eb2c6cd998652dfb5))
+* resolve qodana issues ([384f653](https://github.com/DIGITALLNature/DigitallPower/commit/384f653d9bc6d58a09b1cb17c80013a12b65d37c))
+* **telemetry:** centralize tracer provider cleanup ([f41c087](https://github.com/DIGITALLNature/DigitallPower/commit/f41c0876b69d0902f33166bf6edce0efb297e3e0))
+* throw ArgumentNullException instead of Debug.Assert ([7ad7216](https://github.com/DIGITALLNature/DigitallPower/commit/7ad7216e775bc71ed8b237eb5d10a73c5fc46f2c))
+* **ts:** add warning when user language mismatches base language ([08fd134](https://github.com/DIGITALLNature/DigitallPower/commit/08fd13462f616ffae59c3968ba4431e8d959b76b))
+* **tsl:** correct const array types in entity form test helper ([fc8c31a](https://github.com/DIGITALLNature/DigitallPower/commit/fc8c31a6ee5bd985dbd00759784af99b84a330b8))
+* **tsl:** repair TypeScript mock helper templates for stricter tsc ([3c4cbfe](https://github.com/DIGITALLNature/DigitallPower/commit/3c4cbfedd11b18cb7fb4866160b9f2c6f964bd19))
+
+
+### Features
+
+* **cli:** add command tree and settings parsing tests ([4debb06](https://github.com/DIGITALLNature/DigitallPower/commit/4debb06be1a6bd5ff192e6b95b039be863c53a90))
+* **codegen:** improve generated TS mock form files and runtime helpers ([ff0e636](https://github.com/DIGITALLNature/DigitallPower/commit/ff0e63671a470783674cba9a63e4e9b2bd07c3e5))
+* **connection:** add confirmation prompt to delete --all ([2deceef](https://github.com/DIGITALLNature/DigitallPower/commit/2deceef8b6198601539341382e26e7747a17d1f7))
+* **connection:** add Validate() to CreateConnectionSettings for mutual exclusivity ([06bf182](https://github.com/DIGITALLNature/DigitallPower/commit/06bf182a207f5f17ef22d9a7ba50924ffe320dc5))
+* **connection:** introduce connection command, deprecate profile ([5635d32](https://github.com/DIGITALLNature/DigitallPower/commit/5635d326df1fc236d4787fd318c50df2ec9c323a))
+* **telemetry:** anonymize org URLs and home paths, record exceptions as OTel events ([4889812](https://github.com/DIGITALLNature/DigitallPower/commit/4889812384f93a9b9615a9fe9df6d56b4a3ef76f))
+
 # [2.2.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0-beta.7...v2.2.0-beta.8) (2026-07-31)
 
 
