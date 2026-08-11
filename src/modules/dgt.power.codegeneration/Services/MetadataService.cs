@@ -412,8 +412,9 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
 
     /// <summary>
     ///     Built-in SDK messages that every Dataverse environment provides, regardless of the requested
-    ///     messages — always included in <see cref="RetrieveSdkMessageNames"/>'s result without requiring a
-    ///     round-trip, and excluded from its "unknown message" warning since they are always valid.
+    ///     messages — always included in <see cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/>'s
+    ///     result without requiring a round-trip, and excluded from its "unknown message" warning since they
+    ///     are always valid.
     /// </summary>
     private static readonly string[] s_builtInSdkMessages =
     [
