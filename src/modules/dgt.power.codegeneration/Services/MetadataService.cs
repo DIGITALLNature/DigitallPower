@@ -396,27 +396,35 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         foreach (var action in actions) remaining.Remove(action.LogicalName);
         if (remaining.Count == 0) return result;
 
-        // 3. Built-in SDK messages — name constant only, no parameters
-        foreach (var name in remaining)
-        {
-            result.Add(new WfAction(name));
-        }
-
+        // 3. Everything left over is a plain SDK message name (e.g. Associate, Merge, SetState, or an
+        // unrecognized/misspelled name) with no parameter metadata available from Dataverse — unlike Custom
+        // APIs and classic Actions, there is no source to populate InParameters/OutParameters for these, so
+        // generating a class for them would always produce an empty, useless shell that, for genuine
+        // out-of-the-box messages, additionally conflicts with the SDK's own strongly typed request/response
+        // classes (e.g. Microsoft.Xrm.Sdk.Messages.AssociateRequest). No WfAction is emitted for this group.
+        // The message name constant is still generated for every requested message via
+        // RetrieveSdkMessageNames/SdkMessageNames.cs regardless, which also performs the "is this a real SDK
+        // message" existence check and warns about typos/missing components for the full requested name set —
+        // deliberately not duplicated here, since DotNetGenerator.Generate always calls both methods with the
+        // same request names.
         return result;
     }
+
+    /// <summary>
+    ///     Built-in SDK messages that every Dataverse environment provides, regardless of the requested
+    ///     messages — always included in <see cref="RetrieveSdkMessageNames"/>'s result without requiring a
+    ///     round-trip, and excluded from its "unknown message" warning since they are always valid.
+    /// </summary>
+    private static readonly string[] s_builtInSdkMessages =
+    [
+        "Assign", "Create", "Delete", "GrantAccess", "ModifyAccess", "Retrieve", "RetrieveMultiple",
+        "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
+    ];
 
     public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
-        var result = new List<(string Name, string Message)>
-        {
-            ("Assign", "Assign"), ("Create", "Create"), ("Delete", "Delete"),
-            ("GrantAccess", "GrantAccess"), ("ModifyAccess", "ModifyAccess"),
-            ("Retrieve", "Retrieve"), ("RetrieveMultiple", "RetrieveMultiple"),
-            ("RetrievePrincipalAccess", "RetrievePrincipalAccess"),
-            ("RetrieveSharedPrincipalsAndAccess", "RetrieveSharedPrincipalsAndAccess"),
-            ("RevokeAccess", "RevokeAccess"), ("SetState", "SetState"), ("Update", "Update")
-        };
+        var result = s_builtInSdkMessages.Select(m => (Name: m, Message: m)).ToList();
 
         if (requestNames.Count == 0) return result;
 
@@ -433,9 +441,11 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
         var hashSet = new HashSet<string>();
+        var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var sdkMessage in sdkMessages)
         {
             var message = sdkMessage.Name!;
+            found.Add(message);
             var name = Formatter.CamelCase(message);
             if (hashSet.Contains(name))
             {
@@ -445,6 +455,13 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
 
             hashSet.Add(name);
             result.Add((name, message));
+        }
+
+        foreach (var unknown in requestNames.Except(found, StringComparer.OrdinalIgnoreCase)
+                     .Except(s_builtInSdkMessages, StringComparer.OrdinalIgnoreCase))
+        {
+            console.WriteLine($"Warning: '{unknown}' is not a known SDK message in this environment and will be " +
+                               "skipped — check for a possible typo or a missing solution/component.");
         }
 
         return result;
