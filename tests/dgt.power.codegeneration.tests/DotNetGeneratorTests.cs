@@ -24,8 +24,19 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var organization = new Organization(Guid.NewGuid()) { LanguageCode = 1033 };
         return base.GetBuilder()
             .WithFakeMessageExecutor(new RetrieveOptionSetExecutor())
-            .WithData(organization);
+            .WithData(organization)
+            .WithData(BuiltInSdkMessages);
     }
+
+    // Every real Dataverse environment provides these as registered SdkMessage records, so the fake
+    // organization data mirrors that to reflect reality (see MetadataService.s_builtInSdkMessages).
+    private static IEnumerable<Entity> BuiltInSdkMessages =>
+        new[]
+        {
+            "Assign", "Create", "Delete", "GrantAccess", "ModifyAccess", "Retrieve", "RetrieveMultiple",
+            "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
+        }
+        .Select(name => new SdkMessage(Guid.NewGuid()) { Name = name });
 
     [Test]
     public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
@@ -76,6 +87,28 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     }
 
     [Test]
+    public async Task ShouldNotDuplicateConstantWhenBuiltInSdkMessageIsExplicitlyRequested()
+    {
+        // "Create" is one of the always-generated built-in SDK messages (already seeded via GetBuilder's
+        // BuiltInSdkMessages). Explicitly requesting it again (e.g. via AdditionalSdkMessages) must not
+        // produce a second, duplicate constant in SdkMessageNames.cs, which would be a compile error.
+        var config = new CodeGenerationConfig { AdditionalSdkMessages = ["Create"] };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+
+        var context = GetBuilder().Build();
+
+        context.DotNetGenerator.Generate(args,
+            config.ToDotNetConfig());
+
+        var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
+        var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
+
+        var occurrences = messagesCode.Split("public const string Create = \"Create\";").Length - 1;
+        await Assert.That(occurrences).IsEqualTo(1);
+    }
+
+    [Test]
     public async Task ShouldGenerateDataContext()
     {
         var config = new CodeGenerationConfig { SuppressSdkMessages = true, SuppressActions = true };
@@ -120,6 +153,81 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(action.Name)} = \"{action.Name}\";");
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(customApi.Name)} = \"{customApi.Name}\";");
         await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(additionalMessage.Name)} = \"{additionalMessage.Name}\";");
+
+        // A plain SDK message (neither a Custom API nor a classic Action) has no parameter metadata
+        // available, so no request/response class is generated for it — only its name constant above.
+        var actionsPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
+        var actionsCode = await File.ReadAllTextAsync(actionsPath);
+        await Assert.That(actionsCode).DoesNotContain($"{Formatter.CamelCase(additionalMessage.Name)}Request");
+    }
+
+    [Test]
+    public async Task ShouldNotGenerateRequestResponseClassesForPlainSdkMessages()
+    {
+        var associateMessage = new SdkMessage(Guid.NewGuid()) { Name = "Associate" };
+        var mergeMessage = new SdkMessage(Guid.NewGuid()) { Name = "Merge" };
+        var config = new CodeGenerationConfig
+        {
+            AdditionalSdkMessages = [associateMessage.Name, mergeMessage.Name]
+        };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+
+        var context = GetBuilder()
+            .WithData(associateMessage)
+            .WithData(mergeMessage)
+            .Build();
+
+        context.DotNetGenerator.Generate(args,
+            config.ToDotNetConfig());
+
+        var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
+
+        // Plain SDK messages (whether out-of-the-box, like Associate/Merge, or otherwise) have no
+        // parameter metadata available, so generating a request/response class for them would always be
+        // an empty, useless shell — and for out-of-the-box messages it would additionally conflict with
+        // the SDK's own strongly typed request/response classes.
+        var actionsPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
+        var actionsCode = await File.ReadAllTextAsync(actionsPath);
+        await Assert.That(actionsCode).DoesNotContain($"{Formatter.CamelCase(associateMessage.Name)}Request");
+        await Assert.That(actionsCode).DoesNotContain($"{Formatter.CamelCase(mergeMessage.Name)}Request");
+
+        // The message name constants must still be generated regardless of the above.
+        var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
+        await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(associateMessage.Name)} = \"{associateMessage.Name}\";");
+        await Assert.That(messagesCode).Contains($"public const string {Formatter.CamelCase(mergeMessage.Name)} = \"{mergeMessage.Name}\";");
+
+        // Both messages are real SdkMessage records, so no "unknown message" warning should be raised.
+        await Assert.That(TestConsole.Output).DoesNotContain("is not a known SDK message");
+    }
+
+    [Test]
+    public async Task ShouldNotGenerateRequestResponseClassForUnknownSdkMessage()
+    {
+        // "DoesNotExist" is not a Custom API, classic Action, or a real SdkMessage record in this
+        // environment (no SdkMessage entity is registered for it below) — it should be dropped entirely
+        // instead of silently producing an empty request/response class pair, and the user should be
+        // warned so they can catch a possible typo.
+        var config = new CodeGenerationConfig { AdditionalSdkMessages = ["DoesNotExist"] };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+
+        var context = GetBuilder().Build();
+        context.DotNetGenerator.Generate(args,
+            config.ToDotNetConfig());
+
+        var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
+
+        var actionsPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
+        var actionsCode = await File.ReadAllTextAsync(actionsPath);
+        await Assert.That(actionsCode).DoesNotContain("DoesNotExistRequest");
+
+        // Since the message doesn't exist, its constant must not be fabricated in SdkMessageNames.cs either.
+        var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
+        await Assert.That(messagesCode).DoesNotContain("DoesNotExist");
+
+        // The user should be warned that the unknown message was skipped, hinting at a possible typo.
+        await Assert.That(TestConsole.Output).Contains("'DoesNotExist' is not a known SDK message");
     }
 
     [Test]
