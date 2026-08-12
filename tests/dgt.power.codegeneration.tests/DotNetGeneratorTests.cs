@@ -24,8 +24,19 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var organization = new Organization(Guid.NewGuid()) { LanguageCode = 1033 };
         return base.GetBuilder()
             .WithFakeMessageExecutor(new RetrieveOptionSetExecutor())
-            .WithData(organization);
+            .WithData(organization)
+            .WithData(BuiltInSdkMessages);
     }
+
+    // Every real Dataverse environment provides these as registered SdkMessage records, so the fake
+    // organization data mirrors that to reflect reality (see MetadataService.s_builtInSdkMessages).
+    private static IEnumerable<Entity> BuiltInSdkMessages =>
+        new[]
+        {
+            "Assign", "Create", "Delete", "GrantAccess", "ModifyAccess", "Retrieve", "RetrieveMultiple",
+            "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
+        }
+        .Select(name => new SdkMessage(Guid.NewGuid()) { Name = name });
 
     [Test]
     public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
@@ -73,6 +84,28 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsTrue();
+    }
+
+    [Test]
+    public async Task ShouldNotDuplicateConstantWhenBuiltInSdkMessageIsExplicitlyRequested()
+    {
+        // "Create" is one of the always-generated built-in SDK messages (already seeded via GetBuilder's
+        // BuiltInSdkMessages). Explicitly requesting it again (e.g. via AdditionalSdkMessages) must not
+        // produce a second, duplicate constant in SdkMessageNames.cs, which would be a compile error.
+        var config = new CodeGenerationConfig { AdditionalSdkMessages = ["Create"] };
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+
+        var context = GetBuilder().Build();
+
+        context.DotNetGenerator.Generate(args,
+            config.ToDotNetConfig());
+
+        var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
+        var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
+        var messagesCode = await File.ReadAllTextAsync(messagesPath);
+
+        var occurrences = messagesCode.Split("public const string Create = \"Create\";").Length - 1;
+        await Assert.That(occurrences).IsEqualTo(1);
     }
 
     [Test]

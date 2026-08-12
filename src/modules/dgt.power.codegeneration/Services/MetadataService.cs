@@ -412,9 +412,10 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
 
     /// <summary>
     ///     Built-in SDK messages that every Dataverse environment provides, regardless of the requested
-    ///     messages — always included in <see cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/>'s
-    ///     result without requiring a round-trip, and excluded from its "unknown message" warning since they
-    ///     are always valid.
+    ///     messages — always merged into the query in
+    ///     <see cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/> so they're only ever generated
+    ///     once (deduplicated with any caller-requested name) and verified against the connected environment
+    ///     like every other requested message.
     /// </summary>
     private static readonly string[] s_builtInSdkMessages =
     [
@@ -425,9 +426,11 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
     public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
-        var result = s_builtInSdkMessages.Select(m => (Name: m, Message: m)).ToList();
 
-        if (requestNames.Count == 0) return result;
+        // Merge the built-in defaults with any caller-requested names into a single deduplicated set, then
+        // resolve all of them in one query. This guarantees each name is generated exactly once, even if a
+        // caller also explicitly requests a built-in message (e.g. via AdditionalSdkMessages).
+        var allNames = requestNames.Concat(s_builtInSdkMessages).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var query = new QueryExpression(SdkMessage.EntityLogicalName)
         {
@@ -436,11 +439,12 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             ColumnSet = new ColumnSet(SdkMessage.LogicalNames.Name),
             Criteria = new FilterExpression(LogicalOperator.And)
             {
-                Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, requestNames.Cast<object>().ToArray()) }
+                Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, allNames.Cast<object>().ToArray()) }
             }
         };
         var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
+        var result = new List<(string Name, string Message)>();
         var hashSet = new HashSet<string>();
         var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var sdkMessage in sdkMessages)
@@ -458,8 +462,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             result.Add((name, message));
         }
 
-        foreach (var unknown in requestNames.Except(found, StringComparer.OrdinalIgnoreCase)
-                     .Except(s_builtInSdkMessages, StringComparer.OrdinalIgnoreCase))
+        foreach (var unknown in allNames.Except(found, StringComparer.OrdinalIgnoreCase))
         {
             console.WriteLine($"Warning: '{unknown}' is not a known SDK message in this environment and will be " +
                                "skipped — check for a possible typo or a missing solution/component.");
