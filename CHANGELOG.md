@@ -1,3 +1,10 @@
+## [2.2.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0...v2.2.1-beta.1) (2026-08-12)
+
+
+### Bug Fixes
+
+* **codegeneration:** skip request/response class generation for plain sdk messages ([#182](https://github.com/DIGITALLNature/DigitallPower/issues/182)) ([4d8e426](https://github.com/DIGITALLNature/DigitallPower/commit/4d8e4269f4028f5341712bde18d95168f47580cf))
+
 # [2.2.0](https://github.com/DIGITALLNature/DigitallPower/compare/v2.1.0...v2.2.0) (2026-08-03)
 
 
