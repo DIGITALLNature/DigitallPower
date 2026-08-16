@@ -15,7 +15,7 @@ internal static class DgtpActivitySource
 
     public static readonly ActivitySource Instance = new(Name, GetVersion());
 
-    private static string GetVersion()
+    internal static string GetVersion()
     {
         var assembly = typeof(DgtpActivitySource).Assembly;
         var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;

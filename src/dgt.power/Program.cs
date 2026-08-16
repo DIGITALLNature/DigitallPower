@@ -227,6 +227,7 @@ finally
 void RegisterCommands(IConfigurator config)
 {
     config.Settings.ApplicationName = "dgtp";
+    config.Settings.ApplicationVersion = DgtpActivitySource.GetVersion();
 
     config.AddBranch<ConnectionSettings>("connection", connection =>
     {
