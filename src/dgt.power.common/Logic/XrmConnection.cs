@@ -39,14 +39,19 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
     /// <inheritdoc/>
     public async Task<bool> CheckAuthAsync()
     {
-        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
+        if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
         {
-            // Connection-string profiles do not use MSAL — no interactive login required.
-            return true;
+            var connector = new TokenConnector(tokenIdentity, profileManager, console);
+            return await connector.TryAcquireTokenSilentAsync();
         }
 
-        var connector = new TokenConnector(tokenIdentity, profileManager, console);
-        return await connector.TryAcquireTokenSilentAsync();
+        if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity federatedIdentity)
+        {
+            return await AzurePipelinesConnector.TryAcquireTokenSilentAsync(federatedIdentity);
+        }
+
+        // Connection-string profiles do not use MSAL — no interactive login required.
+        return true;
     }
 
     /// <inheritdoc/>
@@ -98,6 +103,11 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         {
             console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
             connector = new TokenConnector(tokenIdentity, profileManager, console, nonInteractive: IsNonInteractive());
+        }
+        else if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity federatedIdentity)
+        {
+            console.MarkupLine($"Connect to {profileManager.Current} via Azure DevOps workload identity federation");
+            connector = new AzurePipelinesConnector(federatedIdentity);
         }
         else
         {

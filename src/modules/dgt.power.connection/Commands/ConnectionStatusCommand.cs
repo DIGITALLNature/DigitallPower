@@ -3,6 +3,7 @@
 
 using dgt.power.common;
 using dgt.power.common.Commands;
+using dgt.power.common.Logic;
 using dgt.power.connection.Base;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -17,7 +18,7 @@ namespace dgt.power.connection.Commands;
 /// Intended for coding agents to use as a pre-flight check before any Dataverse command.
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ConnectionStatusCommand(IXrmConnection xrmConnection, IAnsiConsole console)
+public class ConnectionStatusCommand(IXrmConnection xrmConnection, IProfileManager profileManager, IAnsiConsole console)
     : AsyncCommand<ConnectionSettings>
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
@@ -28,6 +29,13 @@ public class ConnectionStatusCommand(IXrmConnection xrmConnection, IAnsiConsole 
         {
             console.MarkupLine("[green]AUTH_OK: Token is valid — no interactive login required.[/]");
             return (int)ExitCode.Success;
+        }
+
+        if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity)
+        {
+            console.MarkupLine("[red]AUTH_REQUIRED: Failed to acquire a token via Azure DevOps workload identity federation.[/]");
+            console.MarkupLine("[red]              Verify 'SYSTEM_ACCESSTOKEN' is exposed to this pipeline step and that the service connection is authorized for this job.[/]");
+            return (int)ExitCode.AuthRequired;
         }
 
         console.MarkupLine("[red]AUTH_REQUIRED: Interactive login is required.[/]");
