@@ -6,7 +6,10 @@ using System.Text.Json.Serialization;
 namespace dgt.power.common.Logic;
 
 [JsonDerivedType(typeof(TokenIdentity),typeDiscriminator:"token")]
+[JsonDerivedType(typeof(AzureDevOpsFederatedIdentity),typeDiscriminator:"azdo-federated")]
+#pragma warning disable CA1724 // "Identity" predates the Azure.Identity package reference introduced for AzurePipelinesCredential; renaming is a breaking change to the persisted profile format.
 public class Identity
+#pragma warning restore CA1724
 {
     public required string ConnectionString { get; init; }
 

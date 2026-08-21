@@ -135,4 +135,32 @@ public class CreateConnectionCommandTests : ConnectionTestsBase<CreateConnection
         await Assert.That(GetIdentities().Current).IsEqualTo(existingSettings.Name);
         await Assert.That(GetIdentities().Contains(brokenSettings.Name)).IsFalse();
     }
+
+    [Test]
+    public async Task ShouldCreateAzureDevOpsFederatedIdentity_WhenFederatedOptionsProvided()
+    {
+#pragma warning disable S1075
+        var settings = new CreateConnectionSettings
+        {
+            Name = "FEDERATED",
+            Url = "https://contoso.crm.dynamics.com",
+            AzureDevOpsFederated = true,
+            TenantId = "11111111-1111-1111-1111-111111111111",
+            ApplicationId = "22222222-2222-2222-2222-222222222222",
+            ServiceConnectionId = "33333333-3333-3333-3333-333333333333",
+            NoVerify = true
+        };
+#pragma warning restore S1075
+
+        await GetContext().Execute(settings).Succeed();
+
+        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
+        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.Url);
+        await Assert.That(ProfileManager.CurrentIdentity is AzureDevOpsFederatedIdentity).IsTrue();
+
+        var identity = (AzureDevOpsFederatedIdentity)ProfileManager.CurrentIdentity!;
+        await Assert.That(identity.TenantId).IsEqualTo(settings.TenantId);
+        await Assert.That(identity.ClientId).IsEqualTo(settings.ApplicationId);
+        await Assert.That(identity.ServiceConnectionId).IsEqualTo(settings.ServiceConnectionId);
+    }
 }

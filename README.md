@@ -41,6 +41,9 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [push](#push--deploy-artifacts)
+- [CI/CD Integration](#-cicd-integration)
+  - [Client Secret service connection](#client-secret-service-connection)
+  - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
 - [Solution Architecture](#-solution-architecture)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
@@ -203,6 +206,7 @@ dgtp <branch> <command> [arguments] [options]
 | `connection list` | List configured connections |
 | `connection create <name> --url <url>` | Create a new MSAL connection |
 | `connection create <name> --connection-string <string>` | Create a connection using a full Dataverse connection string (service principal, etc.) |
+| `connection create <name> --url <url> --azure-devops-federated --tenant <tenantId> --application-id <appId> --service-connection-id <id>` | Create a connection using Azure DevOps Workload Identity Federation (OIDC) — no client secret required or stored |
 | `connection create ... --no-verify` | Skip the post-create connectivity check |
 | `connection select <name>` | Set the active connection |
 | `connection delete <name>` | Delete a specific connection |
@@ -218,6 +222,10 @@ Example:
 dgtp connection create prod --url https://contoso.crm4.dynamics.com
 ```
 
+> **CI/CD pipelines:** see the [CI/CD Integration](#-cicd-integration) section for how to create
+> connections non-interactively in Azure Pipelines, including Workload Identity Federation (OIDC)
+> setups where no client secret is ever available.
+
 Agent-friendly auth workflow:
 
 ```bash
@@ -226,11 +234,11 @@ dgtp connection refresh      # re-authenticate interactively
 dgtp connection status       # confirm valid before proceeding
 ```
 
-`profile auth-check` is intended as a pre-flight check for CI/automation before running other Dataverse commands. It never opens a browser and returns one of the following exit codes:
+`connection status` is intended as a pre-flight check for CI/automation before running other Dataverse commands. It never opens a browser and returns one of the following exit codes:
 
 | Exit code | Meaning |
 |-----------|---------|
-| `0` | Token is valid (or the profile uses classic auth, no MSAL) — no interactive login required |
+| `0` | Token is valid (or the connection uses classic auth, no MSAL) — no interactive login required |
 | `2` | Interactive login is required; ask the user to re-authenticate |
 
 ### `export` — Export Dataverse artifacts
@@ -574,6 +582,140 @@ When a plugin assembly's **major or minor** version changes (e.g. `1.0.0.0` → 
 | `--no-migrate-custom-apis` | Skips Custom API migration (ignored when `--delete-on-upgrade` is set, since deletion requires migration) |
 
 > **Plugin Packages (.nupkg):** No special handling needed — the platform manages assembly GUIDs within a package. Content updates preserve all references automatically.
+
+## 🔄 CI/CD Integration
+
+> **Scope:** this section is specific to **Azure Pipelines**, since the auth mechanisms described
+> here (service connections, Workload Identity Federation, `System.AccessToken`) are Azure
+> DevOps concepts. Other CI systems (GitHub Actions, etc.) aren't covered here — use
+> `dgtp connection create --connection-string` with whatever secret-management approach your
+> platform provides instead.
+
+dgtp is commonly driven from an Azure Pipelines job to authenticate against Dataverse without any
+interactive login. How you feed credentials into `dgtp connection create` depends on how the
+underlying **Power Platform service connection** is configured. This section covers the setups
+in use today; each subsection is self-contained.
+
+### Client Secret service connection
+
+If the service connection still uses a **Client Secret** (an app registration's `applicationId` +
+`clientSecret`), extract a full Dataverse connection string from it using the Power Platform Build
+Tools' `PowerPlatformSetConnectionVariables` task — wrapped by the reusable
+[`azure-pipeline-templates/xrm-connection/build-connectionstring-from-service-connection.yml`](https://github.com/DIGITALLNature/DigitallPipelines/blob/beta/azure-pipeline-templates/xrm-connection/build-connectionstring-from-service-connection.yml)
+template in [DIGITALLNature/DigitallPipelines](https://github.com/DIGITALLNature/DigitallPipelines)
+— and feed the resulting secret variable into `--connection-string`:
+
+```yaml
+resources:
+  repositories:
+    - repository: pipelinetemplates
+      type: github
+      name: DIGITALLNature/DigitallPipelines
+      endpoint: DIGITALL Pipelines Service Connection
+
+steps:
+  - template: azure-pipeline-templates/xrm-connection/build-connectionstring-from-service-connection.yml@pipelinetemplates
+    parameters:
+      serviceConnection: 'MyPowerPlatformConnection'
+      url: 'https://contoso.crm4.dynamics.com'   # optional; falls back to $(BuildTools.EnvironmentUrl) / $(PowerPlatformUrl) if omitted
+
+  - script: dgtp connection create prod --connection-string "$(PowerPlatformConnectionString)" --no-verify
+    displayName: 'Create dgtp connection from client secret service connection'
+```
+
+This flow depends on the service connection actually having a client secret to extract — which is
+exactly what breaks when a service connection is switched to Workload Identity Federation (see
+below), since there's no secret left to read.
+
+### Workload Identity Federation (OIDC) service connection
+
+When the service connection uses **Workload Identity Federation** instead of a client secret, no
+secret is ever available to build a traditional connection string. Use `dgtp connection create
+--azure-devops-federated` instead — dgtp exchanges the pipeline job's short-lived OIDC token for
+an Entra ID access token at connect time, via
+[`Azure.Identity.AzurePipelinesCredential`](https://aka.ms/azsdk/net/identity/azurepipelinescredential/usage).
+See the [`connection` command reference](#connection--authentication--environments) for the full
+option list (`--tenant`, `--application-id`, `--service-connection-id`).
+
+There are two ways to get the required tenant/application/service-connection IDs into the
+pipeline, in increasing order of convenience:
+
+#### Option A — resolve manually (no template dependency)
+
+All four values (`--url`, `--tenant`, `--application-id`, `--service-connection-id`) are non-secret
+and can be read directly from the service connection via the Azure DevOps REST API
+(`GET .../_apis/serviceendpoint/endpoints?endpointNames=<name>&type=powerplatform-spn&api-version=7.1`),
+so nothing needs to be hardcoded even without the template from Option B:
+
+```yaml
+steps:
+  - pwsh: |
+      $headers = @{ Authorization = "Bearer $(System.AccessToken)" }
+      $name = [uri]::EscapeDataString('MyPowerPlatformConnection')
+      $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/serviceendpoint/endpoints?endpointNames=$name&type=powerplatform-spn&api-version=7.1"
+      $conn = (Invoke-RestMethod -Uri $uri -Headers $headers -Method Get).value | Select-Object -First 1
+
+      dgtp connection create prod `
+        --url $($conn.url) `
+        --azure-devops-federated `
+        --tenant $($conn.authorization.parameters.tenantid) `
+        --application-id $($conn.authorization.parameters.serviceprincipalid) `
+        --service-connection-id $($conn.id) `
+        --no-verify
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    displayName: 'Create dgtp connection via Azure DevOps workload identity federation'
+```
+
+> **Permissions:** the pipeline's build identity (usually `Project Collection Build Service`)
+> needs at least **Reader** access to the service connection to call the endpoints API —
+> grant it under the service connection's **Security** tab if the call returns `401`/`403` or
+> an empty result.
+
+#### Option B — resolve via the reusable YAML template (recommended)
+
+Rather than inlining the REST lookup in every pipeline, use the generic step template
+[`azure-pipeline-templates/xrm-connection/resolve-service-connection.yml`](https://github.com/DIGITALLNature/DigitallPipelines/blob/beta/azure-pipeline-templates/xrm-connection/resolve-service-connection.yml)
+in [DIGITALLNature/DigitallPipelines](https://github.com/DIGITALLNature/DigitallPipelines). It does
+the same lookup as Option A and publishes the four values as step output variables. It's **not
+tied to Workload Identity Federation** — it only reads non-secret endpoint metadata, so it works
+regardless of the service connection's underlying authentication scheme — and it has **no
+dependency on dgtp** (it only talks to the Azure DevOps REST API), so you wire the actual
+`dgtp connection create` call yourself in a subsequent step:
+
+```yaml
+resources:
+  repositories:
+    - repository: pipelinetemplates
+      type: github
+      name: DIGITALLNature/DigitallPipelines
+      endpoint: DIGITALL Pipelines Service Connection
+
+steps:
+  - template: azure-pipeline-templates/xrm-connection/resolve-service-connection.yml@pipelinetemplates
+    parameters:
+      serviceConnectionName: 'MyPowerPlatformConnection'  # the only value you name explicitly
+
+  - script: >-
+      dgtp connection create prod
+      --url $(resolveServiceConnection.environmentUrl)
+      --azure-devops-federated
+      --tenant $(resolveServiceConnection.tenantId)
+      --application-id $(resolveServiceConnection.applicationId)
+      --service-connection-id $(resolveServiceConnection.serviceConnectionId)
+      --no-verify
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    displayName: 'Create dgtp connection via Azure DevOps workload identity federation'
+```
+
+The step name defaults to `resolveServiceConnection`. If you need to resolve more than one service
+connection in the same job, pass a distinct `connectionTaskName` per call so the step names don't
+collide.
+
+No environment URL, tenant/application/service-connection ID is ever hardcoded in either option —
+both resolve all four from the service connection **name** at runtime, the same way you'd
+reference it in any built-in task's `azureSubscription` input.
 
 ## 🏗 Solution Architecture
 

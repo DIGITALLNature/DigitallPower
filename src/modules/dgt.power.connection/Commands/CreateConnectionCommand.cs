@@ -27,7 +27,18 @@ public class CreateConnectionCommand(
     {
         var identities = profileManager.LoadIdentities();
 
-        if (settings.Url != null)
+        if (settings.AzureDevOpsFederated)
+        {
+            identities.Upsert(settings.Name,
+                new AzureDevOpsFederatedIdentity
+                {
+                    ConnectionString = settings.Url!,
+                    TenantId = settings.TenantId!,
+                    ClientId = settings.ApplicationId!,
+                    ServiceConnectionId = settings.ServiceConnectionId!
+                });
+        }
+        else if (settings.Url != null)
         {
             identities.Upsert(settings.Name,
                 new TokenIdentity

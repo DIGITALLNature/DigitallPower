@@ -99,6 +99,11 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
             console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
             connector = new TokenConnector(tokenIdentity, profileManager, console, nonInteractive: IsNonInteractive());
         }
+        else if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity federatedIdentity)
+        {
+            console.MarkupLine($"Connect to {profileManager.Current} via Azure DevOps workload identity federation");
+            connector = new AzurePipelinesConnector(federatedIdentity);
+        }
         else
         {
             console.MarkupLine($"Connect to {profileManager.Current} via connection string");
