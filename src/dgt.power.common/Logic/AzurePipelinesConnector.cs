@@ -53,4 +53,25 @@ internal sealed class AzurePipelinesConnector : IConnector
         var token = await _credential.GetTokenAsync(new TokenRequestContext(_scopes), CancellationToken.None);
         return token.Token;
     }
+
+    /// <summary>
+    /// Attempts to acquire a token without opening a browser or throwing. Returns <c>true</c>
+    /// if the OIDC token exchange succeeds (<c>SYSTEM_ACCESSTOKEN</c> is present and the
+    /// service connection accepts the federated credential), <c>false</c> otherwise. There is
+    /// no interactive fallback for this identity type — a failure means the pipeline
+    /// configuration needs to be fixed, not that a user needs to re-authenticate.
+    /// </summary>
+    internal static async Task<bool> TryAcquireTokenSilentAsync(AzureDevOpsFederatedIdentity identity)
+    {
+        try
+        {
+            var connector = new AzurePipelinesConnector(identity);
+            await connector.GetTokenAsync(string.Empty);
+            return true;
+        }
+        catch (Exception ex) when (ex is MissingConnectionException or AuthenticationFailedException or CredentialUnavailableException)
+        {
+            return false;
+        }
+    }
 }

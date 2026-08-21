@@ -6,6 +6,7 @@ using dgt.power.cli.tests.TestDoubles;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
+using dgt.power.connection.Commands;
 using dgt.power.export.Base;
 using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
@@ -270,6 +271,74 @@ public class SettingsParsingTests
         await Assert.That(settings.ConnectionString).IsEqualTo("https://org.crm.dynamics.com");
         await Assert.That(settings.TokenBased).IsTrue();
         await Assert.That(settings.SkipChecking).IsFalse();
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_ParsesMsalOptions()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "myconnection",
+            "--url", "https://org.crm.dynamics.com",
+            "--no-verify");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+
+        await Assert.That(settings.Name).IsEqualTo("myconnection");
+        await Assert.That(settings.Url).IsEqualTo("https://org.crm.dynamics.com");
+        await Assert.That(settings.ConnectionString).IsNull();
+        await Assert.That(settings.AzureDevOpsFederated).IsFalse();
+        await Assert.That(settings.NoVerify).IsTrue();
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_ParsesConnectionStringOption()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "myconnection",
+            "--connection-string", "AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+
+        await Assert.That(settings.Name).IsEqualTo("myconnection");
+        await Assert.That(settings.ConnectionString).IsEqualTo("AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
+        await Assert.That(settings.Url).IsNull();
+        await Assert.That(settings.NoVerify).IsFalse();
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_ParsesAzureDevOpsFederatedOptions()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "myconnection",
+            "--url", "https://org.crm.dynamics.com",
+            "--azure-devops-federated",
+            "--tenant", "11111111-1111-1111-1111-111111111111",
+            "--application-id", "22222222-2222-2222-2222-222222222222",
+            "--service-connection-id", "33333333-3333-3333-3333-333333333333",
+            "--no-verify");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+
+        await Assert.That(settings.AzureDevOpsFederated).IsTrue();
+        await Assert.That(settings.TenantId).IsEqualTo("11111111-1111-1111-1111-111111111111");
+        await Assert.That(settings.ApplicationId).IsEqualTo("22222222-2222-2222-2222-222222222222");
+        await Assert.That(settings.ServiceConnectionId).IsEqualTo("33333333-3333-3333-3333-333333333333");
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_ParsesAzureDevOpsFederatedAlias()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "myconnection",
+            "--url", "https://org.crm.dynamics.com",
+            "--adof",
+            "--tenant", "11111111-1111-1111-1111-111111111111",
+            "--application-id", "22222222-2222-2222-2222-222222222222",
+            "--service-connection-id", "33333333-3333-3333-3333-333333333333");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+
+        await Assert.That(settings.AzureDevOpsFederated).IsTrue();
     }
 
     [Test]
