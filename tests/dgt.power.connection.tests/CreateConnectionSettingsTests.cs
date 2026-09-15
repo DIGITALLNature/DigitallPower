@@ -178,12 +178,14 @@ public class CreateConnectionSettingsTests
     [Test]
     public async Task ShouldFail_WhenServiceConnectionNameProvidedWithoutFederatedFlag()
     {
+#pragma warning disable S1075
         var settings = new CreateConnectionSettings
         {
             Name = "TEST",
             ServiceConnectionName = "MyPowerPlatformConnection",
             Url = "https://contoso.crm.dynamics.com"
         };
+#pragma warning restore S1075
 
         await Assert.That(settings.Validate().Successful).IsFalse();
     }

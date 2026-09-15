@@ -52,7 +52,8 @@ public class CreateConnectionSettings : ConnectionSettings
     public string? ApplicationId { get; init; }
 
     [CommandOption("--service-connection-id")]
-    [Description("GUID of the Azure DevOps service connection (visible in its URL under Project Settings > Service connections). Required with --azure-devops-federated unless --service-connection-name is used.")]
+    [Description("GUID of the Azure DevOps service connection (visible in its URL under Project Settings > Service connections). " +
+                  "Required with --azure-devops-federated unless --service-connection-name is used.")]
     public string? ServiceConnectionId { get; init; }
 
     [CommandOption("--no-verify")]

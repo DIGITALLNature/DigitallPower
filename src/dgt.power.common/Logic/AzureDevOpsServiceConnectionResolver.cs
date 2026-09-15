@@ -6,6 +6,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common.Exceptions;
 
+// ReSharper disable ClassNeverInstantiated.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// The nested DTOs below are only ever populated by System.Text.Json via reflection when
+// deserializing the Azure DevOps REST API response, so ReSharper can't see them being used.
+
 namespace dgt.power.common.Logic;
 
 /// <summary>
@@ -35,7 +41,7 @@ public static class AzureDevOpsServiceConnectionResolver
     // A single, shared HttpClient instance is intentional (avoids socket exhaustion under
     // repeated short-lived instantiation); this resolver is only ever used from a one-off CLI
     // invocation, so there is no need for IHttpClientFactory/DI wiring here.
-    private static readonly HttpClient HttpClient = new();
+    private static readonly HttpClient s_httpClient = new();
 
     public static async Task<ResolvedServiceConnection> ResolveAsync(string serviceConnectionName, CancellationToken cancellationToken)
     {
@@ -52,7 +58,7 @@ public static class AzureDevOpsServiceConnectionResolver
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", systemAccessToken);
 
-        using var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        using var response = await s_httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
         {
             throw new ServiceConnectionResolutionException(
@@ -126,7 +132,9 @@ public static class AzureDevOpsServiceConnectionResolver
         public string Id { get; init; } = string.Empty;
 
         [JsonPropertyName("url")]
+#pragma warning disable CA1056, S3996, CA1054 // mirrors ResolvedServiceConnection.Url, kept as string
         public string Url { get; init; } = string.Empty;
+#pragma warning restore CA1056, S3996, CA1054
 
         [JsonPropertyName("authorization")]
         public ServiceEndpointAuthorizationDto? Authorization { get; init; }
