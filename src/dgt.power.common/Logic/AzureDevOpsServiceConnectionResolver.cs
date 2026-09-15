@@ -15,14 +15,6 @@ using dgt.power.common.Exceptions;
 namespace dgt.power.common.Logic;
 
 /// <summary>
-/// The non-secret values of an Azure DevOps service connection needed to open an
-/// <see cref="AzureDevOpsFederatedIdentity"/> connection, as resolved from its name.
-/// </summary>
-#pragma warning disable CA1056, S3996, CA1054 // Url is intentionally a string, not Uri, to mirror AzureDevOpsFederatedIdentity/CreateConnectionSettings.
-public sealed record ResolvedServiceConnection(string Url, string TenantId, string ClientId, string ServiceConnectionId);
-#pragma warning restore CA1056, S3996, CA1054
-
-/// <summary>
 /// Resolves an Azure DevOps Power Platform service connection (type <c>powerplatform-spn</c>) by
 /// name to its non-secret <see cref="ResolvedServiceConnection"/> values, via the Azure DevOps
 /// REST API (<c>GET .../_apis/serviceendpoint/endpoints?endpointNames=...</c>). This lets users
@@ -45,6 +37,8 @@ public static class AzureDevOpsServiceConnectionResolver
 
     public static async Task<ResolvedServiceConnection> ResolveAsync(string serviceConnectionName, CancellationToken cancellationToken)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(serviceConnectionName);
+
         var systemAccessToken = RequireEnvironmentVariable(
             SystemAccessTokenEnvironmentVariable,
             "Expose it to this pipeline step with 'env: SYSTEM_ACCESSTOKEN: $(System.AccessToken)'.");
@@ -58,18 +52,44 @@ public static class AzureDevOpsServiceConnectionResolver
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", systemAccessToken);
 
-        using var response = await s_httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-        if (!response.IsSuccessStatusCode)
+        HttpResponseMessage response;
+        string body;
+        try
+        {
+            response = await s_httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or InvalidOperationException)
         {
             throw new ServiceConnectionResolutionException(
-                $"Failed to resolve Azure DevOps service connection '{serviceConnectionName}' " +
-                $"({(int)response.StatusCode} {response.ReasonPhrase}). Ensure the pipeline's build identity " +
-                "(usually 'Project Collection Build Service') has Reader access to the service connection, " +
-                "or use --tenant/--application-id/--service-connection-id instead.");
+                $"Failed to reach the Azure DevOps REST API to resolve service connection '{serviceConnectionName}': " +
+                $"{ex.Message}", ex);
         }
 
-        var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-        var payload = JsonSerializer.Deserialize<ServiceEndpointListResponse>(body);
+        using (response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ServiceConnectionResolutionException(
+                    $"Failed to resolve Azure DevOps service connection '{serviceConnectionName}' " +
+                    $"({(int)response.StatusCode} {response.ReasonPhrase}). Ensure the pipeline's build identity " +
+                    "(usually 'Project Collection Build Service') has Reader access to the service connection, " +
+                    "or use --tenant/--application-id/--service-connection-id instead.");
+            }
+        }
+
+        ServiceEndpointListResponse? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<ServiceEndpointListResponse>(body);
+        }
+        catch (JsonException ex)
+        {
+            throw new ServiceConnectionResolutionException(
+                $"Failed to parse the Azure DevOps REST API response while resolving service connection " +
+                $"'{serviceConnectionName}': {ex.Message}", ex);
+        }
+
         var endpoints = payload?.Value ?? [];
 
         if (endpoints.Count == 0)

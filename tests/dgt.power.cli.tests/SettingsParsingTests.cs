@@ -326,6 +326,24 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task CreateConnectionSettings_ParsesServiceConnectionName()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "myconnection",
+            "--azure-devops-federated",
+            "--service-connection-name", "MyPowerPlatformConnection",
+            "--no-verify");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+
+        await Assert.That(settings.AzureDevOpsFederated).IsTrue();
+        await Assert.That(settings.ServiceConnectionName).IsEqualTo("MyPowerPlatformConnection");
+        await Assert.That(settings.TenantId).IsNull();
+        await Assert.That(settings.ApplicationId).IsNull();
+        await Assert.That(settings.ServiceConnectionId).IsNull();
+    }
+
+    [Test]
     public async Task CreateConnectionSettings_ParsesAzureDevOpsFederatedAlias()
     {
         var result = Parse<CreateConnectionSettings>(
