@@ -112,6 +112,45 @@ tenant/application/service-connection-id flags (advanced) in a dedicated "CI/CD 
 section (Azure Pipelines-specific; other CI systems use `--connection-string` with their own
 secret management).
 
+## OIDC token request URI is self-constructed, not task-dependent
+
+`Azure.Identity.AzurePipelinesCredential` reads its OIDC token endpoint from the
+`SYSTEM_OIDCREQUESTURI` environment variable (confirmed by reading the actual SDK source,
+`AzurePipelinesCredential.CreateOidcRequestMessage` in `Azure/azure-sdk-for-net`). Azure DevOps
+only populates this automatically for a handful of built-in tasks (`AzureCLI@2`,
+`AzurePowerShell@5`) that declare an ARM (`connectedService:AzureRM`) service connection input —
+per the [Sprint 240 release notes](https://learn.microsoft.com/en-us/azure/devops/release-notes/2024/sprint-240-update#pipelines-and-tasks-populate-variables-to-customize-workload-identity-federation-authentication).
+A plain `script` step invoking dgtp never gets it for free, and Power Platform Build Tools tasks
+(`PowerPlatformWhoAmi@2`, etc.) do not expose it either — they use a different, task-lib-internal
+WIF mechanism (`ENDPOINT_AUTH_*` env vars scoped to that task's own `connectedService` input), not
+this REST-based flow.
+
+Rather than requiring an extra pipeline task purely to trigger population of this variable, dgtp
+derives the same value itself (`AzurePipelinesConnector.SetOidcRequestUri`) from
+predefined job variables that Azure DevOps always exposes as environment variables without any
+`env:` mapping (`SYSTEM_COLLECTIONURI`, `SYSTEM_TEAMPROJECTID`, `SYSTEM_HOSTTYPE`,
+`SYSTEM_PLANID`, `SYSTEM_JOBID`), matching the shape of the official
+[OIDC token creation REST endpoint](https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/oidctoken/create):
+
+```
+{SYSTEM_COLLECTIONURI}{SYSTEM_TEAMPROJECTID}/_apis/distributedtask/hubs/{SYSTEM_HOSTTYPE}/plans/{SYSTEM_PLANID}/jobs/{SYSTEM_JOBID}/oidctoken
+```
+
+**Verified against a live Azure DevOps pipeline** (2026-09-15): a plain `PowerShell@2` script step,
+with no task referencing the service connection anywhere in the job, successfully requested and
+received a valid OIDC token from this self-constructed URI (using `System.AccessToken` as the
+bearer token and passing `serviceConnectionId` as a query parameter, which `AzurePipelinesCredential`
+appends itself). This disproves the earlier working assumption that a `connectedService`-typed
+task input is required in the job before OIDC issuance for a given service connection — standard
+service-connection resource authorization (the same one-time "grant access" a pipeline already
+needs for any use of the connection) is sufficient; no task reference is needed at the OIDC
+endpoint level.
+
+`SetOidcRequestUri` always overwrites any pre-existing `SYSTEM_OIDCREQUESTURI` value rather than
+trusting one left behind by an earlier task in the same job (e.g. an `AzureCLI@2` step for an
+unrelated ARM service connection) — its provenance and continued validity for the current job
+can't be verified, whereas the value derived here is always correct.
+
 ## Out of Scope
 
 - **Managed Identity connections**: two distinct mechanisms share this name for ADO service
@@ -125,7 +164,7 @@ secret management).
 ## Files Changed
 
 - `src/dgt.power.common/Logic/AzureDevOpsFederatedIdentity.cs` — new identity type
-- `src/dgt.power.common/Logic/AzurePipelinesConnector.cs` — new `IConnector` implementation
+- `src/dgt.power.common/Logic/AzurePipelinesConnector.cs` — new `IConnector` implementation; self-constructs `SYSTEM_OIDCREQUESTURI` (see "OIDC token request URI is self-constructed" above)
 - `src/dgt.power.common/Logic/AzureDevOpsServiceConnectionResolver.cs` — resolves a service connection name to its `Url`/`TenantId`/`ClientId`/`ServiceConnectionId` via the Azure DevOps REST API
 - `src/dgt.power.common/Exceptions/ServiceConnectionResolutionException.cs` — new exception type for resolution failures (missing/ambiguous name, missing permissions, unreachable API)
 - `src/dgt.power.common/Logic/Identity.cs`, `Identities.cs`, `XrmConnection.cs` — wiring

@@ -659,6 +659,15 @@ steps:
 and `System.TeamProjectId` (used to build the lookup URL) are already available as environment
 variables on every pipeline job without any extra configuration.
 
+> **No extra pipeline task is needed for the OIDC exchange itself.**
+> `Azure.Identity.AzurePipelinesCredential` needs a `SYSTEM_OIDCREQUESTURI` value, which Azure
+> DevOps only populates automatically for a few built-in tasks (e.g. `AzureCLI@2`,
+> `AzurePowerShell@5`) that declare an ARM service connection input — a plain `script` step never
+> gets it for free. Rather than requiring one of those tasks purely as a trigger, dgtp derives the
+> same URL itself from predefined job variables (`System.CollectionUri`, `System.TeamProjectId`,
+> `System.HostType`, `System.PlanId`, `System.JobId`) that Azure DevOps always exposes as
+> environment variables, matching the [OIDC token creation REST endpoint](https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/oidctoken/create).
+
 > **Permissions:** the pipeline's build identity (usually `Project Collection Build Service`)
 > needs at least **Reader** access to the service connection to call the endpoints API —
 > grant it under the service connection's **Security** tab if dgtp reports a `401`/`403` or
