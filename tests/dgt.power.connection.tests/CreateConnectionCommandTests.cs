@@ -5,6 +5,7 @@ using System.ServiceModel;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
 using dgt.power.tests.Extensions;
+using dgt.power.common.Exceptions;
 using dgt.power.common.Logic;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
@@ -162,5 +163,40 @@ public class CreateConnectionCommandTests : ConnectionTestsBase<CreateConnection
         await Assert.That(identity.TenantId).IsEqualTo(settings.TenantId);
         await Assert.That(identity.ClientId).IsEqualTo(settings.ApplicationId);
         await Assert.That(identity.ServiceConnectionId).IsEqualTo(settings.ServiceConnectionId);
+    }
+
+    [Test]
+    public async Task ShouldThrowServiceConnectionResolutionException_WhenServiceConnectionNameUsedWithoutPipelineEnvironment()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "FEDERATED_BY_NAME",
+            AzureDevOpsFederated = true,
+            ServiceConnectionName = "MyPowerPlatformConnection",
+            NoVerify = true
+        };
+
+        // Ensure determinism regardless of whether this test happens to run inside an actual
+        // Azure Pipelines job (where these variables could otherwise be present).
+        var originalAccessToken = Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN");
+        var originalCollectionUri = Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI");
+        var originalTeamProjectId = Environment.GetEnvironmentVariable("SYSTEM_TEAMPROJECTID");
+        try
+        {
+            Environment.SetEnvironmentVariable("SYSTEM_ACCESSTOKEN", null);
+            Environment.SetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", null);
+            Environment.SetEnvironmentVariable("SYSTEM_TEAMPROJECTID", null);
+
+            await Assert.That(() => GetContext().Execute(settings))
+                .ThrowsExactly<ServiceConnectionResolutionException>();
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("SYSTEM_ACCESSTOKEN", originalAccessToken);
+            Environment.SetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", originalCollectionUri);
+            Environment.SetEnvironmentVariable("SYSTEM_TEAMPROJECTID", originalTeamProjectId);
+        }
+
+        await Assert.That(GetIdentities().Contains(settings.Name)).IsFalse();
     }
 }

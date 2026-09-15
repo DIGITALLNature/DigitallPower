@@ -25,6 +25,13 @@ service connections) rather than hand-rolling the OIDC token exchange.
 ### CLI surface (`dgtp connection create`)
 
 ```bash
+# Recommended: resolve everything from the service connection name at connect time
+dgtp connection create prod `
+  --azure-devops-federated `
+  --service-connection-name "MyPowerPlatformConnection" `
+  --no-verify
+
+# Advanced: bypass the REST lookup by passing the resolved values explicitly
 dgtp connection create prod `
   --url https://contoso.crm4.dynamics.com `
   --azure-devops-federated `
@@ -35,10 +42,13 @@ dgtp connection create prod `
 ```
 
 - `--azure-devops-federated` / `--adof` — activates this identity type (mutually exclusive with `--connection-string`).
+- `--service-connection-name` — resolves `--url`/`--tenant`/`--application-id`/`--service-connection-id`
+  automatically via the Azure DevOps REST API at connect time (see "Resolving by name" below).
+  Mutually exclusive with providing any of those four explicitly.
 - `--tenant` — Entra ID tenant backing the service connection.
 - `--application-id` — app registration (or user-assigned managed identity) client ID.
 - `--service-connection-id` — GUID of the Azure DevOps service connection (needed by `AzurePipelinesCredential` to resolve the correct OIDC exchange).
-- The pipeline step must expose `SYSTEM_ACCESSTOKEN` as an env var (`env: SYSTEM_ACCESSTOKEN: $(System.AccessToken)`), which `AzurePipelinesConnector` reads to authenticate the OIDC exchange.
+- The pipeline step must expose `SYSTEM_ACCESSTOKEN` as an env var (`env: SYSTEM_ACCESSTOKEN: $(System.AccessToken)`), which `AzurePipelinesConnector` reads to authenticate the OIDC exchange. This is also the only variable that needs explicit mapping for `--service-connection-name` resolution — `SYSTEM_TEAMFOUNDATIONCOLLECTIONURI`/`SYSTEM_TEAMPROJECTID` are already available as env vars on every pipeline job.
 - No token is cached to disk — a fresh access token is derived on every connect, scoped to that pipeline job.
 
 ## Architecture
@@ -54,7 +64,7 @@ dgtp connection create prod `
 - **Reusing `pac`'s auth session**: not possible from a plain script step — see Context above; `pac`'s WIF support is tightly coupled to running inside an ADO task extension.
 - **Requiring the Power Platform Tool Installer task before dgtp**: does not expose any auth-related env vars either — it only resolves/exposes the `pac` CLI path (checked `tool-installer-v2/index.ts` and `task.json` in `microsoft/powerplatform-build-tools`).
 
-## CI/CD Integration — getting the 3 IDs into the pipeline
+## CI/CD Integration — resolving the service connection by name
 
 `--tenant`/`--application-id`/`--service-connection-id`/`--url` are all non-secret and can be
 resolved from the service connection by name at runtime via the Azure DevOps REST API
@@ -72,17 +82,35 @@ schemes: client secret, Managed Service Identity, and Workload Identity Federati
 only ever reads non-secret metadata, so it's the same regardless of which of the 3 schemes is
 active.
 
-A reusable, tool-agnostic step template implementing this lookup —
-`azure-pipeline-templates/xrm-connection/resolve-service-connection.yml` — was contributed to the
-sibling `DIGITALLNature/DigitallPipelines` repo (not this repo) since it has no dependency on dgtp
-and is useful to any consumer needing service-connection metadata in a pipeline. It publishes
-`environmentUrl`/`tenantId`/`applicationId`/`serviceConnectionId` as step output variables. The
-pipeline's build identity (`Project Collection Build Service`) needs **Reader** access to the
-service connection for the lookup to succeed.
+**dgtp performs this lookup itself** (`AzureDevOpsServiceConnectionResolver` in
+`dgt.power.common/Logic`) rather than requiring an external pipeline template — pass
+`--service-connection-name` to `dgtp connection create --azure-devops-federated` and dgtp resolves
+the other four values via a plain `HttpClient` call, authenticated with the same `SYSTEM_ACCESSTOKEN`
+already required for the OIDC exchange itself. `SYSTEM_TEAMFOUNDATIONCOLLECTIONURI`/
+`SYSTEM_TEAMPROJECTID` (used to build the lookup URL) are predefined Azure Pipelines variables,
+already available as env vars without any extra step. This was chosen over the official Azure
+DevOps client SDK (`Microsoft.TeamFoundationServer.Client`, exposing a typed
+`ServiceEndpointHttpClient`) because that package still drags in netfx-era dependencies for a
+single, stable, well-documented REST call — not worth the added dependency surface.
 
-dgtp's README documents both the manual REST-lookup approach and the template approach in a
-dedicated "CI/CD Integration" section (Azure Pipelines-specific; other CI systems use
-`--connection-string` with their own secret management).
+Because service connections can be organized into folders, the same name can exist more than once
+within a project; the resolver treats 0 or >1 matches as an error and tells the user to fall back
+to explicit `--tenant`/`--application-id`/`--service-connection-id` instead. That explicit path is
+kept as a deliberate escape hatch (not removed) for cases where the build identity can't be granted
+**Reader** access to the service connection, the name is ambiguous, or the agent's network policy
+blocks the Azure DevOps REST API — `--service-connection-name` and the explicit values are mutually
+exclusive as a whole group (no partial overrides), to keep the CLI surface simple.
+
+The reusable, tool-agnostic step template
+`azure-pipeline-templates/xrm-connection/resolve-service-connection.yml`, contributed to the
+sibling `DIGITALLNature/DigitallPipelines` repo, still exists and remains useful for consumers who
+want the same lookup as a dgtp-independent step (e.g. to feed other tools), but it is no longer the
+primary/recommended path now that dgtp resolves service connection names natively.
+
+dgtp's README documents both `--service-connection-name` (recommended) and the explicit
+tenant/application/service-connection-id flags (advanced) in a dedicated "CI/CD Integration"
+section (Azure Pipelines-specific; other CI systems use `--connection-string` with their own
+secret management).
 
 ## Out of Scope
 
@@ -98,8 +126,11 @@ dedicated "CI/CD Integration" section (Azure Pipelines-specific; other CI system
 
 - `src/dgt.power.common/Logic/AzureDevOpsFederatedIdentity.cs` — new identity type
 - `src/dgt.power.common/Logic/AzurePipelinesConnector.cs` — new `IConnector` implementation
+- `src/dgt.power.common/Logic/AzureDevOpsServiceConnectionResolver.cs` — resolves a service connection name to its `Url`/`TenantId`/`ClientId`/`ServiceConnectionId` via the Azure DevOps REST API
+- `src/dgt.power.common/Exceptions/ServiceConnectionResolutionException.cs` — new exception type for resolution failures (missing/ambiguous name, missing permissions, unreachable API)
 - `src/dgt.power.common/Logic/Identity.cs`, `Identities.cs`, `XrmConnection.cs` — wiring
 - `src/dgt.power.common/dgt.power.common.csproj` — `Azure.Identity` v1.21.0
-- `src/modules/dgt.power.connection/Commands/CreateConnectionSettings.cs`, `CreateConnectionCommand.cs` — new CLI options + validation
-- `tests/dgt.power.connection.tests/CreateConnectionSettingsTests.cs` (new), `CreateConnectionCommandTests.cs` (extended)
-- `README.md` — `connection` command reference (flag list) + new "CI/CD Integration" section
+- `src/modules/dgt.power.connection/Commands/CreateConnectionSettings.cs` — `--service-connection-name` option + validation
+- `src/modules/dgt.power.connection/Commands/CreateConnectionCommand.cs` — resolves via `AzureDevOpsServiceConnectionResolver` when `--service-connection-name` is used
+- `tests/dgt.power.connection.tests/CreateConnectionSettingsTests.cs`, `CreateConnectionCommandTests.cs` — extended
+- `README.md` — `connection` command reference (flag list) + rewritten "CI/CD Integration" section
