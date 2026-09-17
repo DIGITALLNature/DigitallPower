@@ -1,3 +1,10 @@
+## [2.2.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.1-beta.1...v2.2.1-beta.2) (2026-09-17)
+
+
+### Bug Fixes
+
+* **cli:** expose GetVersion so -v/--version compiles and works ([#183](https://github.com/DIGITALLNature/DigitallPower/issues/183)) ([d563872](https://github.com/DIGITALLNature/DigitallPower/commit/d5638727abc5b55bcc9d6f0f3c42eb086f4d3b16))
+
 ## [2.2.1-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.0...v2.2.1-beta.1) (2026-08-12)
 
 
