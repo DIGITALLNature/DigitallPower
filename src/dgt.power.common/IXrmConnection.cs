@@ -12,7 +12,9 @@ public interface IXrmConnection
     /// <summary>
     /// Checks whether the current connection can acquire a token silently (no browser).
     /// Returns <c>true</c> if authentication is valid, <c>false</c> if interactive login is required.
-    /// For non-MSAL connections this always returns <c>true</c>.
+    /// For connection-string profiles (no token-based auth) this always returns <c>true</c>.
+    /// For Azure DevOps Workload Identity Federation profiles, this performs a real OIDC token
+    /// exchange and can return <c>false</c> if it fails.
     /// Never opens a browser or prompts the user.
     /// </summary>
     Task<bool> CheckAuthAsync();

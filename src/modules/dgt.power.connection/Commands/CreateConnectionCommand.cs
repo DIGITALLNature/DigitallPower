@@ -23,11 +23,38 @@ public class CreateConnectionCommand(
         return ExecuteCoreAsync(settings, cancellationToken);
     }
 
-    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken _)
+    private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
         var identities = profileManager.LoadIdentities();
 
-        if (settings.Url != null)
+        if (settings.AzureDevOpsFederated)
+        {
+            if (!string.IsNullOrWhiteSpace(settings.ServiceConnectionName))
+            {
+                var resolved = await AzureDevOpsServiceConnectionResolver.ResolveAsync(settings.ServiceConnectionName, cancellationToken);
+
+                identities.Upsert(settings.Name,
+                    new AzureDevOpsFederatedIdentity
+                    {
+                        ConnectionString = resolved.Url,
+                        TenantId = resolved.TenantId,
+                        ClientId = resolved.ClientId,
+                        ServiceConnectionId = resolved.ServiceConnectionId
+                    });
+            }
+            else
+            {
+                identities.Upsert(settings.Name,
+                    new AzureDevOpsFederatedIdentity
+                    {
+                        ConnectionString = settings.Url!,
+                        TenantId = settings.TenantId!,
+                        ClientId = settings.ApplicationId!,
+                        ServiceConnectionId = settings.ServiceConnectionId!
+                    });
+            }
+        }
+        else if (settings.Url != null)
         {
             identities.Upsert(settings.Name,
                 new TokenIdentity

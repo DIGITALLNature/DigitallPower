@@ -38,7 +38,12 @@ public class Identities : IIdentities
         }
     }
 
-    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key, i.Value is TokenIdentity ? "MSAL" : "ConnectionString"));
+    [JsonIgnore] public IEnumerable<IdentityInfo> Infos => IdentityStore.Select(i => new IdentityInfo(i.Key, i.Value switch
+    {
+        TokenIdentity => "MSAL",
+        AzureDevOpsFederatedIdentity => "AzureDevOpsFederated",
+        _ => "ConnectionString"
+    }));
 
     public void SetCurrent(string key)
     {

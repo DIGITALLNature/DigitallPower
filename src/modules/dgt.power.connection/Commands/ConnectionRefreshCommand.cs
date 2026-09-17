@@ -25,6 +25,13 @@ public class ConnectionRefreshCommand(IProfileManager profileManager, IXrmConnec
     {
         try
         {
+            if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity)
+            {
+                console.MarkupLine("[grey]AUTH_SKIP: Connection uses Azure DevOps workload identity federation — " +
+                                    "a fresh token is acquired automatically on every connect, no interactive refresh needed.[/]");
+                return (int)ExitCode.Success;
+            }
+
             if (profileManager.CurrentIdentity is not TokenIdentity)
             {
                 console.MarkupLine("[grey]AUTH_SKIP: Connection uses a connection string — no token to refresh.[/]");

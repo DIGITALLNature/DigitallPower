@@ -28,6 +28,34 @@ public class CreateConnectionSettings : ConnectionSettings
     [Description("Full Dataverse connection string for service principal or other non-interactive auth. Example: AuthType=ClientSecret;Url=...;ClientId=...;ClientSecret=...")]
     public string? ConnectionString { get; init; }
 
+    [CommandOption("--azure-devops-federated|--adof")]
+    [Description("Use Azure DevOps Workload Identity Federation (OIDC) for service principal auth. " +
+                  "Requires either --service-connection-name (resolved automatically at connect time), " +
+                  "or --url, --tenant, --application-id and --service-connection-id explicitly. " +
+                  "No client secret is required or stored.")]
+    [DefaultValue(false)]
+    public bool AzureDevOpsFederated { get; init; }
+
+    [CommandOption("--service-connection-name")]
+    [Description("Name of the Azure DevOps service connection to resolve automatically at connect time " +
+                  "(via the Azure DevOps REST API, using the pipeline's SYSTEM_ACCESSTOKEN). " +
+                  "Use this instead of --tenant/--application-id/--service-connection-id/--url. " +
+                  "Only valid with --azure-devops-federated.")]
+    public string? ServiceConnectionName { get; init; }
+
+    [CommandOption("--tenant")]
+    [Description("Entra ID tenant ID hosting the app registration used by the Azure DevOps service connection. Required with --azure-devops-federated unless --service-connection-name is used.")]
+    public string? TenantId { get; init; }
+
+    [CommandOption("--application-id")]
+    [Description("Application (client) ID of the app registration used by the Azure DevOps service connection. Required with --azure-devops-federated unless --service-connection-name is used.")]
+    public string? ApplicationId { get; init; }
+
+    [CommandOption("--service-connection-id")]
+    [Description("GUID of the Azure DevOps service connection (visible in its URL under Project Settings > Service connections). " +
+                  "Required with --azure-devops-federated unless --service-connection-name is used.")]
+    public string? ServiceConnectionId { get; init; }
+
     [CommandOption("--no-verify")]
     [Description("Skip the post-create connectivity check (WhoAmI request). Use when the environment is temporarily unavailable or when pre-configuring connections in a CI pipeline.")]
     [DefaultValue(false)]
@@ -35,6 +63,33 @@ public class CreateConnectionSettings : ConnectionSettings
 
     public override ValidationResult Validate()
     {
+        if (AzureDevOpsFederated)
+        {
+            if (ConnectionString != null)
+                return ValidationResult.Error("Specify either --connection-string or --azure-devops-federated, not both.");
+
+            if (!string.IsNullOrWhiteSpace(ServiceConnectionName))
+            {
+                if (Url != null || TenantId != null || ApplicationId != null || ServiceConnectionId != null)
+                    return ValidationResult.Error(
+                        "--service-connection-name resolves --url, --tenant, --application-id and --service-connection-id automatically; " +
+                        "specify --service-connection-name on its own, or provide all four explicitly instead.");
+                return ValidationResult.Success();
+            }
+
+            if (Url == null)
+                return ValidationResult.Error("--azure-devops-federated requires --url (the environment to connect to).");
+            if (string.IsNullOrWhiteSpace(TenantId) || string.IsNullOrWhiteSpace(ApplicationId) || string.IsNullOrWhiteSpace(ServiceConnectionId))
+                return ValidationResult.Error(
+                    "--azure-devops-federated requires either --service-connection-name, " +
+                    "or --tenant, --application-id and --service-connection-id together.");
+            return ValidationResult.Success();
+        }
+
+        if (ServiceConnectionName != null)
+            return ValidationResult.Error("--service-connection-name is only valid together with --azure-devops-federated.");
+        if (TenantId != null || ApplicationId != null || ServiceConnectionId != null)
+            return ValidationResult.Error("--tenant, --application-id and --service-connection-id are only valid together with --azure-devops-federated.");
         if (Url != null && ConnectionString != null)
             return ValidationResult.Error("Specify either --url or --connection-string, not both.");
         if (Url == null && ConnectionString == null)
