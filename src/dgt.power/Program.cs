@@ -36,8 +36,6 @@ using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
-using dgt.power.connection.Base;
-using dgt.power.connection.Commands;
 using dgt.power.push;
 using dgt.power.push.Logic;
 using dgt.power.Telemetry;
@@ -83,24 +81,11 @@ registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
 );
 registrations.AddSingleton<VersionCheckInterceptor>();
 
-registrations.AddSingleton<DeprecationInterceptor>();
-
 // Telemetry setup
 var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
 var telemetryEnabled = !TelemetryConfig.IsOptedOut;
 string? installId = null;
 TracerProvider? tracerProvider = null;
-void FlushAndDisposeTelemetryProvider()
-{
-    var provider = Interlocked.Exchange(ref tracerProvider, null);
-    if (provider is null)
-    {
-        return;
-    }
-
-    provider.ForceFlush(5000);
-    provider.Dispose();
-}
 
 if (telemetryEnabled)
 {
@@ -123,22 +108,21 @@ if (telemetryEnabled)
 var tracer = new Tracer(telemetryEnabled, installId, appConsole);
 registrations.AddSingleton<ITracer>(tracer);
 
-UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
+AppDomain.CurrentDomain.UnhandledException += (_, e) =>
 {
     if (e.ExceptionObject is Exception ex)
     {
         tracer.TrackFatalException(ex);
     }
+    tracerProvider?.ForceFlush(5000);
+    tracerProvider?.Dispose();
 };
 
-EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = (_, e) =>
+TaskScheduler.UnobservedTaskException += (_, e) =>
 {
     tracer.TrackFatalException(e.Exception);
     e.SetObserved();
 };
-
-AppDomain.CurrentDomain.UnhandledException += unhandledExceptionHandler;
-TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 
 registrations.AddSingleton<IConfiguration>(configuration);
 registrations.AddSingleton<IXrmConnection, XrmConnection>();
@@ -168,11 +152,8 @@ var app = new CommandApp(registrar);
 
 app.Configure(config =>
 {
-    var serviceProvider = registrations.BuildServiceProvider();
-
-    var versionCheckInterceptor = serviceProvider.GetRequiredService<VersionCheckInterceptor>();
-    var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
-    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
+    var versionCheckInterceptor = registrations.BuildServiceProvider().GetRequiredService<VersionCheckInterceptor>();
+    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor));
     RegisterCommands(config);
 
     config.SetExceptionHandler((exception, _) =>
@@ -209,16 +190,12 @@ if (args.Length == 0)
 }
 
 
-try
-{
-    return await app.RunAsync(args);
-}
-finally
-{
-    AppDomain.CurrentDomain.UnhandledException -= unhandledExceptionHandler;
-    TaskScheduler.UnobservedTaskException -= unobservedTaskExceptionHandler;
-    FlushAndDisposeTelemetryProvider();
-}
+var exitCode = await app.RunAsync(args);
+
+tracerProvider?.ForceFlush(5000);
+tracerProvider?.Dispose();
+
+return exitCode;
 
 // ── Command registration ──────────────────────────────────────────────────────
 // Shared by the normal app path and the dotnet-suggest capture path.
@@ -227,18 +204,21 @@ finally
 void RegisterCommands(IConfigurator config)
 {
     config.Settings.ApplicationName = "dgtp";
-    config.Settings.ApplicationVersion = DgtpActivitySource.GetVersion();
-
-    config.AddBranch<ConnectionSettings>("connection", connection =>
-    {
-        connection.SetDescription("Manages connections to Dataverse environments");
-        RegisterConnectionCommands(connection);
-    });
 
     config.AddBranch<ProfileSettings>("profile", profile =>
     {
-        profile.SetDescription("[[Deprecated]] Use 'connection' instead");
-        RegisterProfileCommands(profile);
+        profile.SetDescription("Handles Authentication");
+        profile.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
+        profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
+            .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
+        profile.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
+        profile.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
+        profile.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
+        profile.AddCommand<AuthCheckCommand>("auth-check")
+            .WithDescription(
+                "Checks whether the current MSAL token is still valid without opening a browser. " +
+                "Exit code 0 = token valid, 2 = interactive login required. " +
+                "Intended as a pre-flight check for coding agents.");
     });
 
     config.AddBranch<ExportVerb>("export", export =>
@@ -365,37 +345,4 @@ void RegisterCommands(IConfigurator config)
             .WithExample("complete", "install-shell", "--shell", "zsh")
             .WithExample("complete", "install-shell", "--dry-run");
     });
-}
-
-void RegisterConnectionCommands(IConfigurator<ConnectionSettings> branch)
-{
-    branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
-    branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
-        .WithExample("connection", "create", "<Name>", "--url", "<Url>")
-        .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
-    branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
-    branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
-        .WithExample("connection", "delete", "<Name>")
-        .WithExample("connection", "delete", "--all")
-        .WithExample("connection", "delete", "--all", "--yes");
-    branch.AddCommand<ConnectionStatusCommand>("status")
-        .WithDescription(
-            "Checks whether the current MSAL token is still valid without opening a browser. " +
-            "Exit code 0 = token valid, 2 = interactive login required. " +
-            "Intended as a pre-flight check for coding agents.");
-    branch.AddCommand<ConnectionRefreshCommand>("refresh")
-        .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
-}
-
-void RegisterProfileCommands(IConfigurator<ProfileSettings> branch)
-{
-    branch.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
-    branch.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
-        .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
-    branch.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
-    branch.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
-    branch.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
-    branch.AddCommand<AuthCheckCommand>("auth-check")
-        .WithDescription("Checks whether the current MSAL token is still valid without opening a browser. " +
-            "Exit code 0 = token valid, 2 = interactive login required.");
 }
