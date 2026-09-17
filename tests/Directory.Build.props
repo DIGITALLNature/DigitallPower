@@ -6,6 +6,7 @@
     <StaticAnalysisCodeType>Test</StaticAnalysisCodeType>
   </PropertyGroup>
   <ItemGroup Condition="'$(MSBuildProjectName)' != 'dgt.power.tests'">
-    <PackageReference Include="TUnit" Version="1.51.0" />
+    <PackageReference Include="TUnit" Version="1.61.15" />
+    <PackageReference Include="JetBrains.dotCover.Framework" Version="1.0.2" />
   </ItemGroup>
 </Project>

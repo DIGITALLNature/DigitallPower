@@ -4,41 +4,28 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
-
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-
     <AnalysisLevel>latest-minimum</AnalysisLevel>
-
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.401">
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.10.0">
+    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="TUnit" Version="1.68.4" />
+    <PackageReference Update="TUnit" Version="1.61.15" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\dgt.power.common\dgt.power.common.csproj" />
-    <ProjectReference Include="..\..\src\modules\dgt.power.analyzer\dgt.power.analyzer.csproj" />
+    <ProjectReference Include="..\..\src\modules\dgt.power.linter\dgt.power.linter.csproj" />
     <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Resources\NoActiveLayerAnalyze" />
-  </ItemGroup>
 </Project>
