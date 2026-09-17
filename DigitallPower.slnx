@@ -5,6 +5,7 @@
     <Project Path="src/modules/dgt.power.connection/dgt.power.connection.csproj" />
     <Project Path="src/modules/dgt.power.export/dgt.power.export.csproj" />
     <Project Path="src/modules/dgt.power.import/dgt.power.import.csproj" />
+    <Project Path="src/modules/dgt.power.linter/dgt.power.linter.csproj" />
     <Project Path="src/modules/dgt.power.maintenance/dgt.power.maintenance.csproj" />
     <Project Path="src/modules/dgt.power.profile/dgt.power.profile.csproj" />
     <Project Path="src/modules/dgt.power.push/dgt.power.push.csproj" />
