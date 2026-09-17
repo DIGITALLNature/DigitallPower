@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LintConfig",
+  "description": "Configuration for the Dataverse lint rules. Every rule id has its own closed options schema under $defs/rules - add a new $defs/rules/<id> entry and register it in properties.rules when adding a rule, so existing rules can never regress.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Configuration schema version"
+    },
+    "rules": {
+      "type": "object",
+      "description": "Rule registry keyed by rule id - only known rule ids are accepted",
+      "properties": {
+        "naming.unmanaged-field-logicalname": {
+          "$ref": "#/$defs/rules/naming.unmanaged-field-logicalname"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "severity": {
+      "type": "string",
+      "enum": ["Info", "Warning", "Error"],
+      "description": "Severity used when reporting findings for this rule"
+    },
+    "rules": {
+      "naming.unmanaged-field-logicalname": {
+        "type": "object",
+        "description": "Validates unmanaged custom field logical names against the DIGITALL Nature naming convention (prfx_fieldname[_type-suffix])",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "severity": {
+            "$ref": "#/$defs/severity"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "publisherPrefixes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*_?$"
+                },
+                "minItems": 1,
+                "default": ["dgt_"],
+                "description": "Allowed publisher prefixes (trailing underscore optional, it is added automatically). Default: dgt_"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}
+

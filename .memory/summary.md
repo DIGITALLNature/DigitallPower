@@ -29,6 +29,7 @@ src/
     ├── dgt.power.connection/   Connection management + auth lifecycle (canonical)
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
+    ├── dgt.power.linter/       Configuration-driven Dataverse quality gates (naming convention rule engine, per-attribute-type suffix validation)
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     └── dgt.power.push/         Plugin assembly + webresource deployment
@@ -177,7 +178,10 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-form-language-localization.md` | research | Metadata `Label` LCID resolution vs. OOB record data (`systemform.name`) being session-UI-language dependent, not per-request; `FormViewModel.LanguageCode` gap fix; known limitation + warning for form name/config.Forms matching |
 | `implementation-v2-codegeneration-config-shape.md` | implementation | Final nested V2 config shape: shared `entities` scope, `optionSets`, and target-specific `output` blocks |
 | `implementation-v2-schema-allows-dollar-schema.md` | implementation | V2 schemas now allow top-level `$schema` for editor compatibility under `additionalProperties: false` |
+| `implementation-linter-module-phase-1.md` | implementation | Phase 1 `dgt.power.linter` scaffold: `ILintRule`/`LintRuleCatalog`/`LintContext`/`LintRunCommand`, first rule `naming.unmanaged-field-logicalname` |
+| `guide-linter-rule-implementation-pitfalls.md` | guide | `EntityFilters.Entity` excludes `Attributes` (always-empty cache trap); never paper over a broken cache with a doomed-to-fail fallback call; lint rule tests must assert on findings, not just the command's exit code |
 | `decision-error-telemetry-anonymization.md` | decision | Crash reporting via OTel exception events; anonymization scope (GUIDs, home-dir paths, org/tenant URLs) and known limitations |
 | `decision-generic-command-deprecation.md` | decision | `[DeprecatedCommand]` attribute + `DeprecationInterceptor`: how to deprecate any command/branch, and why argv-position detection was replaced |
 | `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`/`CreateProfileCommand`: why `Save()` must run after connectivity check, not before; test pattern with Transient `IProfileManager` |
 | `implementation-175-ts-mock-form-improvements.md` | implementation | Issue #175 plan: factory function, relaxed server mock types, no-$select fix, type re-exports, SubGrid helper, languageId option |
+| `implementation-linter-module-phase-1.md` | implementation | Phase 1 linter scaffold: rule contract, config model, catalog, CLI wiring, first unmanaged-field logical-name rule |

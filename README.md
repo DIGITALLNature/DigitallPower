@@ -38,6 +38,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
+  - [lint](#lint--dataverse-quality-gates)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [push](#push--deploy-artifacts)
@@ -56,6 +57,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
+| **Lint** | Run configuration-driven Dataverse quality gates such as unmanaged field naming checks against selected solutions |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Push** | Push web resources and plugin assemblies directly into a target solution |
@@ -254,6 +256,33 @@ All export commands accept `--filedir <path>` to control the output directory.
 ```bash
 dgtp export bulkdeletes --filedir ./out/bulkdeletes
 ```
+
+### `lint` — Dataverse quality gates
+
+The `lint` branch is designed for solution-quality checks that are configured in JSON and executed against the live Dataverse metadata for selected solutions.
+
+| Command | Description |
+|---------|-------------|
+| `lint run --solutions <sol1,sol2> -c ./lint.config.json` | Run the enabled lint rules for a comma-separated list of solutions |
+
+Example configuration:
+
+```json
+{
+  "version": 1,
+  "rules": {
+    "naming.unmanaged-field-logicalname": {
+      "enabled": true,
+      "severity": "Error",
+      "options": {
+        "publisherPrefixes": ["dgt_"]
+      }
+    }
+  }
+}
+```
+
+The rule validates unmanaged custom field logical names against the [DIGITALL Nature naming convention](https://digitallnature.github.io/customizing/naming-conventions/): `prfx_fieldname[_type-suffix]`, where the suffix is derived from the attribute's Dataverse type (e.g. `_id` for Lookup, `_set` for Choice, `_cur` for Currency, `_dt`/`_rf`/`_cf` for rollup/calculated modifiers, etc. - see the linked page for the full table). `publisherPrefixes` accepts one or more allowed prefixes (trailing underscore optional) and defaults to `["dgt_"]`. Fields whose logical name contains no underscore at all (e.g. Dataverse-provisioned defaults like `name`, `createdon`, or an auto-created `statecode` on a new custom table) are never flagged, since those are outside of what an unmanaged customization can control.
 
 ### `import` — Import Dataverse artifacts
 

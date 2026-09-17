@@ -1,0 +1,209 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Text.Json;
+using dgt.power.dataverse;
+using dgt.power.linter;
+using dgt.power.linter.Base;
+using dgt.power.linter.Rules;
+using dgt.power.linter.tests.Base;
+using dgt.power.tests.Extensions;
+using dgt.power.tests.FakeExecutor;
+using Digitall.Dataverse.Testing;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
+
+namespace dgt.power.linter.tests;
+
+public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
+{
+    private const string SolutionName = "sample_solution";
+
+    protected override CommandTestContext<LintRunCommand, LintVerb> GetContext() => CreateContext(BuildEntityMetadata());
+
+    [Test]
+    public async Task EvaluateAsync_WithDefaultPrefix_FlagsExactlyTheExpectedViolations()
+    {
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_"]);
+
+        var violatingFields = findings.Select(finding => finding.ComponentLogicalName!).ToHashSet(StringComparer.Ordinal);
+        await Assert.That(violatingFields).IsEquivalentTo(
+        [
+            "dgt_owner", // Lookup missing the _id suffix
+            "unknown_field_txt", // wrong publisher prefix
+            "dgt_BadName_txt", // not snake_case
+            "contoso_amount_cur" // wrong publisher prefix when only "dgt_" is configured
+        ]);
+        foreach (var finding in findings)
+        {
+            await Assert.That(finding.RuleId).IsEqualTo("naming.unmanaged-field-logicalname");
+        }
+    }
+
+    [Test]
+    public async Task EvaluateAsync_SystemProvisionedFieldWithoutUnderscore_IsNeverFlagged()
+    {
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_"]);
+
+        await Assert.That(findings.Select(finding => finding.ComponentLogicalName)).DoesNotContain("customentitydefault");
+    }
+
+    [Test]
+    public async Task EvaluateAsync_ManagedOrNonCustomAttributes_AreSkipped()
+    {
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_"]);
+
+        var flaggedNames = findings.Select(finding => finding.ComponentLogicalName).ToHashSet(StringComparer.Ordinal);
+        await Assert.That(flaggedNames).DoesNotContain("dgt_managed_field_txt");
+        await Assert.That(flaggedNames).DoesNotContain("address1_line1");
+    }
+
+    [Test]
+    public async Task EvaluateAsync_WithMultiplePublisherPrefixes_AcceptsEitherPrefix()
+    {
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_", "contoso_"]);
+
+        await Assert.That(findings.Select(finding => finding.ComponentLogicalName)).DoesNotContain("contoso_amount_cur");
+    }
+
+    [Test]
+    public async Task Execute_WhenFindingsExceedFailOnThreshold_ReturnsFalse()
+    {
+        var path = WriteConfig(["dgt_"]);
+
+        var result = GetContext().Execute(new LintVerb
+        {
+            Solutions = SolutionName,
+            Config = path
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
+    private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes)
+    {
+        var testContext = CreateContext(entityMetadata);
+        var context = new LintContext(testContext.FakedService, [SolutionName], testContext.ConfigResolver);
+        var ruleConfig = CreateRuleConfig(publisherPrefixes);
+        return await new UnmanagedFieldNamingRule().EvaluateAsync(context, ruleConfig, CancellationToken.None);
+    }
+
+    private CommandTestContext<LintRunCommand, LintVerb> CreateContext(EntityMetadata entityMetadata)
+    {
+        return GetBuilder()
+            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
+            .WithMetaData(entityMetadata)
+            .WithData(PrepareData)
+            .Build();
+    }
+
+    // Covers every field-type suffix from https://digitallnature.github.io/customizing/naming-conventions/
+    // plus the deliberate violations/skip scenarios this rule must handle.
+    private static EntityMetadata BuildEntityMetadata()
+    {
+        var attributes = new List<AttributeMetadata>
+        {
+            CreateAttribute(new LookupAttributeMetadata(), "dgt_customer_id"),
+            CreateAttribute(new LookupAttributeMetadata(), "dgt_owner"), // missing _id suffix -> violation
+            CreateAttribute(new PicklistAttributeMetadata(), "dgt_status_set"),
+            CreateAttribute(new MultiSelectPicklistAttributeMetadata(), "dgt_categories_mset"),
+            CreateAttribute(new MoneyAttributeMetadata(), "dgt_amount_cur"),
+            CreateAttribute(new DateTimeAttributeMetadata(), "dgt_duedate_dt"),
+            CreateAttribute(new LookupAttributeMetadata(), "dgt_customer_vid", a => a.SetSealedPropertyValue(nameof(AttributeMetadata.AttributeType), AttributeTypeCode.Customer)),
+            CreateAttribute(new IntegerAttributeMetadata(), "dgt_quantity_int"),
+            CreateAttribute(new IntegerAttributeMetadata { Format = IntegerFormat.Duration }, "dgt_runtime_dur"),
+            CreateAttribute(new IntegerAttributeMetadata { Format = IntegerFormat.Language }, "dgt_preferredlanguage_lcid"),
+            CreateAttribute(new IntegerAttributeMetadata { Format = IntegerFormat.TimeZone }, "dgt_timezone_tzid"),
+            CreateAttribute(new DecimalAttributeMetadata(), "dgt_taxrate_dec"),
+            CreateAttribute(new DoubleAttributeMetadata(), "dgt_measurement_flt"),
+            CreateAttribute(new BooleanAttributeMetadata(), "dgt_isactive_bit"),
+            CreateAttribute(new FileAttributeMetadata(), "dgt_attachment_file"),
+            CreateAttribute(new ImageAttributeMetadata(), "dgt_logo_img"),
+            CreateAttribute(new MemoAttributeMetadata(), "dgt_description_txt"),
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "dgt_name"), // plain Text: no suffix required
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "dgt_title_txt"),
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Url }, "dgt_website_url"),
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Phone }, "dgt_phone_number"),
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Email }, "dgt_email_email"),
+            CreateAttribute(new MoneyAttributeMetadata { SourceType = 2 }, "dgt_totalamount_cur_rf"), // Rollup
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text, SourceType = 1 }, "dgt_fullname_txt_cf"), // Calculated
+            CreateAttribute(new PicklistAttributeMetadata { SourceType = 3 }, "dgt_status_set_fx"), // Formula
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "unknown_field_txt"), // wrong prefix -> violation
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "dgt_BadName_txt"), // not snake_case -> violation
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "contoso_amount_cur"), // only valid with an extra configured prefix
+            CreateAttribute(new StringAttributeMetadata(), "customentitydefault"), // Dataverse-provisioned, no prefix at all -> must never be flagged
+            CreateAttribute(new StringAttributeMetadata(), "dgt_managed_field_txt", isManaged: true), // managed -> skipped
+            CreateAttribute(new StringAttributeMetadata(), "address1_line1", isCustom: false) // OOB attribute -> skipped
+        };
+
+        var entity = new EntityMetadata
+        {
+            LogicalName = "account",
+            MetadataId = Guid.NewGuid()
+        };
+        entity.SetAttributeCollection(attributes);
+        return entity;
+    }
+
+    private static T CreateAttribute<T>(T attribute, string logicalName, Action<T>? configure = null, bool isCustom = true, bool isManaged = false)
+        where T : AttributeMetadata
+    {
+        attribute.MetadataId = Guid.NewGuid();
+        attribute.LogicalName = logicalName;
+        attribute.SetSealedPropertyValue(nameof(AttributeMetadata.IsCustomAttribute), isCustom);
+        attribute.SetSealedPropertyValue(nameof(AttributeMetadata.IsManaged), isManaged);
+        attribute.SetSealedPropertyValue(nameof(AttributeMetadata.EntityLogicalName), "account");
+        configure?.Invoke(attribute);
+        return attribute;
+    }
+
+    private static IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
+    {
+        var solution = new Solution(Guid.NewGuid())
+        {
+            UniqueName = SolutionName
+        };
+
+        var metadata = service.State.EntityMetadata["account"];
+        var components = metadata.Attributes?
+            .Select(attribute => new SolutionComponent(Guid.NewGuid())
+            {
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
+                [SolutionComponent.LogicalNames.ObjectId] = attribute.MetadataId,
+                [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
+                [SolutionComponent.LogicalNames.IsMetadata] = true
+            })
+            .Cast<Entity>()
+            .ToList() ?? [];
+
+        return [solution, .. components];
+    }
+
+    private static LintRuleConfigEntry CreateRuleConfig(IReadOnlyList<string> publisherPrefixes)
+    {
+        var json = JsonSerializer.Serialize(new { publisherPrefixes });
+        return new LintRuleConfigEntry
+        {
+            Enabled = true,
+            Severity = LintSeverity.Error,
+            Options = JsonDocument.Parse(json).RootElement.Clone()
+        };
+    }
+
+    private static string WriteConfig(IReadOnlyList<string> publisherPrefixes)
+    {
+        var path = Path.Combine(Directory.GetCurrentDirectory(), $"{Guid.NewGuid():N}.lint.config.json");
+        var config = new LintConfig
+        {
+            Version = 1,
+            Rules =
+            {
+                ["naming.unmanaged-field-logicalname"] = CreateRuleConfig(publisherPrefixes)
+            }
+        };
+
+        File.WriteAllText(path, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+        return path;
+    }
+}
+

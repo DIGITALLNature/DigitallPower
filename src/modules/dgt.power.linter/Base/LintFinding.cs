@@ -1,0 +1,17 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+namespace dgt.power.linter.Base;
+
+public record LintFinding(
+    string RuleId,
+    LintSeverity Severity,
+    string Message,
+    string? SolutionUniqueName,
+    string? ComponentType,
+    string? ComponentLogicalName,
+    Guid? ComponentId,
+    Dictionary<string, object?>? Properties = null)
+{
+    public string Summary => $"{RuleId}: {Message}";
+}
