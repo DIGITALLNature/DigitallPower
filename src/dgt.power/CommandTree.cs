@@ -154,7 +154,10 @@ internal static class CommandTree
             lint.SetDescription("Runs Dataverse ALM quality-gate rules against solution content");
             lint.AddCommand<LintRunCommand>("run")
                 .WithDescription("Runs the configured linter rule set against the selected solutions")
-                .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json");
+                .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json")
+                .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json", "--fail-on", "Warning")
+                .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--update-baseline")
+                .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--sarif-output", "lint.sarif.json");
         });
 
         config.AddCommand<CodeGenerationCommand>("codegeneration")

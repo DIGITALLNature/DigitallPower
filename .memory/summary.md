@@ -184,4 +184,4 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-generic-command-deprecation.md` | decision | `[DeprecatedCommand]` attribute + `DeprecationInterceptor`: how to deprecate any command/branch, and why argv-position detection was replaced |
 | `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`/`CreateProfileCommand`: why `Save()` must run after connectivity check, not before; test pattern with Transient `IProfileManager` |
 | `implementation-175-ts-mock-form-improvements.md` | implementation | Issue #175 plan: factory function, relaxed server mock types, no-$select fix, type re-exports, SubGrid helper, languageId option |
-| `implementation-linter-module-phase-1.md` | implementation | Phase 1 linter scaffold: rule contract, config model, catalog, CLI wiring, first unmanaged-field logical-name rule |
+| `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |

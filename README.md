@@ -265,6 +265,15 @@ The `lint` branch is designed for solution-quality checks that are configured in
 |---------|-------------|
 | `lint run --solutions <sol1,sol2> -c ./lint.config.json` | Run the enabled lint rules for a comma-separated list of solutions |
 
+| Option | Description |
+|--------|-------------|
+| `--rules <id1,id2>` | Restrict this run to a subset of rule ids (intersected with the enabled rules from config) |
+| `--fail-on <None\|Info\|Warning\|Error>` | Minimum severity that fails the command (exit code 1). Default `Error`. `None` disables the gate - the command always exits 0, useful for report-only runs |
+| `--report <path>` | Write all findings as JSON (each entry includes a `Baselined` flag) |
+| `--sarif-output <path>` | Write all findings as a SARIF 2.1.0 log (suppressed results are marked via SARIF `suppressions`) |
+| `--baseline <path>` | Path to a SARIF baseline file. Findings whose `RuleId + Solution + ComponentType + ComponentLogicalName/Id` match a baseline entry are excluded from the `--fail-on` gate (they still show up in the console/report/SARIF output, flagged as baselined) |
+| `--update-baseline` | Overwrite `--baseline` with the findings from this run instead of gating on them. Requires `--baseline`. Always exits 0 |
+
 Example configuration:
 
 ```json
@@ -282,7 +291,17 @@ Example configuration:
 }
 ```
 
-The rule validates unmanaged custom field logical names against the [DIGITALL Nature naming convention](https://digitallnature.github.io/customizing/naming-conventions/): `prfx_fieldname[_type-suffix]`, where the suffix is derived from the attribute's Dataverse type (e.g. `_id` for Lookup, `_set` for Choice, `_cur` for Currency, `_dt`/`_rf`/`_cf` for rollup/calculated modifiers, etc. - see the linked page for the full table). `publisherPrefixes` accepts one or more allowed prefixes (trailing underscore optional) and defaults to `["dgt_"]`. Fields whose logical name contains no underscore at all (e.g. Dataverse-provisioned defaults like `name`, `createdon`, or an auto-created `statecode` on a new custom table) are never flagged, since those are outside of what an unmanaged customization can control.
+The rule validates unmanaged custom field logical names against the [DIGITALL Nature naming convention](https://digitallnature.github.io/customizing/naming-conventions/): `prfx_fieldname[_type-suffix]`, where the suffix is derived from the attribute's Dataverse type (e.g. `_id` for Lookup, `_set` for Choice, `_cur` for Currency, `_dt`/`_rf`/`_cf`/`_fx` for rollup/calculated/formula modifiers, etc. - see the linked page for the full table). `publisherPrefixes` accepts one or more allowed prefixes (trailing underscore optional) and defaults to `["dgt_"]`. Fields whose logical name contains no underscore at all (e.g. Dataverse-provisioned defaults like `name`, `createdon`, or an auto-created `statecode` on a new custom table) are never flagged, since those are outside of what an unmanaged customization can control.
+
+**Baseline workflow** (accepting existing findings so only *new* violations fail the pipeline):
+
+```bash
+# One-time: snapshot the current findings as the accepted baseline
+dgtp lint run --solutions sol1,sol2 -c lint.config.json --baseline lint-baseline.sarif.json --update-baseline
+
+# CI: only NEW findings (not in the baseline) fail the build
+dgtp lint run --solutions sol1,sol2 -c lint.config.json --baseline lint-baseline.sarif.json --fail-on Error
+```
 
 ### `import` — Import Dataverse artifacts
 

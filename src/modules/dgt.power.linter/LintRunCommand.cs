@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text.Json;
 using dgt.power.common;
 using dgt.power.linter.Base;
+using dgt.power.linter.Reporting;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
@@ -22,6 +23,12 @@ public sealed class LintRunCommand(
         ArgumentNullException.ThrowIfNull(args);
         Tracer.Start(this);
 
+        if (args.UpdateBaseline && string.IsNullOrWhiteSpace(args.Baseline))
+        {
+            Console.MarkupLine("[red]--update-baseline requires --baseline <path>.[/]");
+            return Tracer.End(this, false);
+        }
+
         if (!ConfigResolver.TryGetConfigFile<LintConfig>(args.Config, out var config))
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unable to read lint config from {0}[/]", args.Config);
@@ -35,8 +42,51 @@ public sealed class LintRunCommand(
             return Tracer.End(this, false);
         }
 
-        var context = new LintContext(Connection, solutionNames, ConfigResolver);
-        var requestedRuleIds = ParseRuleIds(args.Rules);
+        var findings = await EvaluateRulesAsync(Connection, ConfigResolver, config, solutionNames, ParseRuleIds(args.Rules), cancellationToken);
+
+        if (args.UpdateBaseline)
+        {
+            await SarifWriter.WriteAsync(args.Baseline, findings, suppressedKeys: null, cancellationToken);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[green]Baseline updated: {0} finding(s) written to {1}[/]", findings.Count, args.Baseline);
+            await WriteJsonReportAsync(args.Report, findings, baselinedKeys: new HashSet<string>(StringComparer.Ordinal), cancellationToken);
+            return Tracer.End(this, true);
+        }
+
+        IReadOnlySet<string> baselinedKeys = string.IsNullOrWhiteSpace(args.Baseline)
+            ? new HashSet<string>(StringComparer.Ordinal)
+            : SarifWriter.ReadBaselineKeys(args.Baseline);
+
+        await WriteJsonReportAsync(args.Report, findings, baselinedKeys, cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(args.SarifOutput))
+        {
+            await SarifWriter.WriteAsync(args.SarifOutput, findings, baselinedKeys, cancellationToken);
+        }
+
+        PrintConsoleReport(findings, baselinedKeys);
+
+        var threshold = ParseSeverity(args.FailOn);
+        if (threshold is null)
+        {
+            return Tracer.End(this, true);
+        }
+
+        var failingFindings = findings
+            .Where(finding => !baselinedKeys.Contains(finding.BaselineKey) && finding.Severity >= threshold.Value)
+            .ToList();
+
+        return Tracer.End(this, failingFindings.Count == 0);
+    }
+
+    private static async Task<List<LintFinding>> EvaluateRulesAsync(
+        IOrganizationService connection,
+        IConfigResolver configResolver,
+        LintConfig config,
+        IReadOnlyList<string> solutionNames,
+        IReadOnlyList<string> requestedRuleIds,
+        CancellationToken cancellationToken)
+    {
+        var context = new LintContext(connection, solutionNames, configResolver);
         var findings = new List<LintFinding>();
 
         foreach (var rule in LintRuleCatalog.All)
@@ -52,28 +102,45 @@ public sealed class LintRunCommand(
                 continue;
             }
 
-            var ruleFindings = await rule.EvaluateAsync(context, ruleConfig, cancellationToken);
-            findings.AddRange(ruleFindings);
+            findings.AddRange(await rule.EvaluateAsync(context, ruleConfig, cancellationToken));
         }
 
-        if (!string.IsNullOrWhiteSpace(args.Report))
+        return findings;
+    }
+
+    private static async Task WriteJsonReportAsync(string reportPath, IReadOnlyList<LintFinding> findings, IReadOnlySet<string> baselinedKeys, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(reportPath))
         {
-            var reportPath = Path.GetFullPath(args.Report);
-            Directory.CreateDirectory(Path.GetDirectoryName(reportPath) ?? ".");
-            await File.WriteAllTextAsync(reportPath, JsonSerializer.Serialize(findings, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            }), cancellationToken);
+            return;
         }
 
+        var fullPath = Path.GetFullPath(reportPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? ".");
+
+        var report = findings.Select(finding => new
+        {
+            finding.RuleId,
+            finding.Severity,
+            finding.Message,
+            finding.SolutionUniqueName,
+            finding.ComponentType,
+            finding.ComponentLogicalName,
+            finding.ComponentId,
+            finding.Properties,
+            Baselined = baselinedKeys.Contains(finding.BaselineKey)
+        });
+
+        await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }), cancellationToken);
+    }
+
+    private void PrintConsoleReport(IReadOnlyList<LintFinding> findings, IReadOnlySet<string> baselinedKeys)
+    {
         if (findings.Count == 0)
         {
             Console.MarkupLine("[green]No lint findings found.[/]");
-            return Tracer.End(this, true);
+            return;
         }
-
-        var threshold = ParseSeverity(args.FailOn);
-        var failingFindings = findings.Where(finding => finding.Severity >= threshold).ToList();
 
         foreach (var finding in findings.OrderBy(static finding => finding.Severity).ThenBy(static finding => finding.RuleId, StringComparer.OrdinalIgnoreCase))
         {
@@ -84,14 +151,13 @@ public sealed class LintRunCommand(
                 _ => "blue"
             };
 
-            Console.MarkupLine(CultureInfo.InvariantCulture, "[{0}]({1}) {2}[/] {3}", color, finding.Severity, finding.RuleId, finding.Message);
+            var baselinedSuffix = baselinedKeys.Contains(finding.BaselineKey) ? " [grey](baselined)[/]" : string.Empty;
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[{0}]({1}) {2}[/] {3}{4}", color, finding.Severity, finding.RuleId, finding.Message, baselinedSuffix);
             if (!string.IsNullOrWhiteSpace(finding.ComponentLogicalName))
             {
                 Console.MarkupLine(CultureInfo.InvariantCulture, "  component: {0}", finding.ComponentLogicalName);
             }
         }
-
-        return Tracer.End(this, failingFindings.Count == 0);
     }
 
     private static LintRuleConfigEntry? GetRuleConfig(LintConfig config, string ruleId)
@@ -126,15 +192,15 @@ public sealed class LintRunCommand(
             .ToList();
     }
 
-    private static LintSeverity ParseSeverity(string value)
+    /// <summary>Returns null for "None" (gate disabled), falls back to Error for empty/unrecognized values.</summary>
+    private static LintSeverity? ParseSeverity(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.Equals(value, "None", StringComparison.OrdinalIgnoreCase))
         {
-            return LintSeverity.Error;
+            return null;
         }
 
-        return Enum.TryParse<LintSeverity>(value, true, out var severity)
-            ? severity
-            : LintSeverity.Error;
+        return Enum.TryParse<LintSeverity>(value, true, out var severity) ? severity : LintSeverity.Error;
     }
 }
+
