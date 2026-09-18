@@ -42,7 +42,7 @@ public sealed class LintRunCommand(
             return Tracer.End(this, false);
         }
 
-        var findings = await EvaluateRulesAsync(Connection, ConfigResolver, config, solutionNames, ParseRuleIds(args.Rules), cancellationToken);
+        var findings = await EvaluateRulesAsync(Console, Connection, ConfigResolver, config, solutionNames, ParseRuleIds(args.Rules), cancellationToken);
 
         if (args.UpdateBaseline)
         {
@@ -79,6 +79,7 @@ public sealed class LintRunCommand(
     }
 
     private static async Task<List<LintFinding>> EvaluateRulesAsync(
+        IAnsiConsole console,
         IOrganizationService connection,
         IConfigResolver configResolver,
         LintConfig config,
@@ -86,7 +87,16 @@ public sealed class LintRunCommand(
         IReadOnlyList<string> requestedRuleIds,
         CancellationToken cancellationToken)
     {
-        var context = new LintContext(connection, solutionNames, configResolver);
+        LintContext? context = null;
+        await console.Status()
+            .Spinner(Spinner.Known.Pong)
+            .SpinnerStyle(Style.Parse("green bold"))
+            .StartAsync("Preparing lint context (fetching metadata and solution components)...", _ =>
+            {
+                context = new LintContext(connection, solutionNames, configResolver);
+                return Task.CompletedTask;
+            });
+
         var findings = new List<LintFinding>();
 
         foreach (var rule in LintRuleCatalog.All)
@@ -102,7 +112,7 @@ public sealed class LintRunCommand(
                 continue;
             }
 
-            findings.AddRange(await rule.EvaluateAsync(context, ruleConfig, cancellationToken));
+            findings.AddRange(await rule.EvaluateAsync(context!, ruleConfig, cancellationToken));
         }
 
         return findings;
