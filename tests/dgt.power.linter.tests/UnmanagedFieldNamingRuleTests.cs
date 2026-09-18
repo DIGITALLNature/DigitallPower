@@ -105,6 +105,44 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
         await Assert.That(result).IsFalse();
     }
 
+    [Test]
+    public async Task Execute_WithHandAuthoredLowercaseJsonConfig_BindsRuleOptionsCorrectly()
+    {
+        // Regression test: LintConfig.Rules is a get-only Dictionary property (to preserve its
+        // OrdinalIgnoreCase comparer). Without [JsonObjectCreationHandling(Populate)],
+        // System.Text.Json silently skips read-only properties entirely - the whole "rules" node
+        // (and with it "options"/"publisherPrefixes") was ignored, no exception, no rule ran with
+        // its configured options.
+        var configPath = Path.Combine(Directory.GetCurrentDirectory(), $"{Guid.NewGuid():N}.lint.config.json");
+        File.WriteAllText(configPath, """
+            {
+              "version": 1,
+              "rules": {
+                "naming.unmanaged-field-logicalname": {
+                  "enabled": true,
+                  "severity": "Error",
+                  "options": {
+                    "publisherPrefixes": ["dgt_", "contoso_"]
+                  }
+                }
+              }
+            }
+            """);
+        var reportPath = Path.Combine(Directory.GetCurrentDirectory(), $"{Guid.NewGuid():N}.report.json");
+
+        GetContext().Execute(new LintVerb
+        {
+            Solutions = SolutionName,
+            Config = configPath,
+            Report = reportPath,
+            FailOn = "None"
+        });
+
+        var report = await File.ReadAllTextAsync(reportPath);
+        await Assert.That(report).Contains("dgt_owner"); // proves "enabled" bound and the rule ran
+        await Assert.That(report).DoesNotContain("contoso_amount_cur"); // proves "publisherPrefixes" bound
+    }
+
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
         var testContext = CreateContext(entityMetadata, rootComponentBehavior);

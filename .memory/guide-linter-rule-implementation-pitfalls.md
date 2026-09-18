@@ -3,6 +3,22 @@
 Lessons from reviewing the first `ILintRule` implementation (`UnmanagedFieldNamingRule`) and its
 tests. Apply these whenever adding/reviewing a lint rule that resolves attribute/entity metadata.
 
+## Get-only collection properties are silently skipped by System.Text.Json unless you opt in
+
+`LintConfig.Rules` is `public Dictionary<string, LintRuleConfigEntry> Rules { get; } = new(StringComparer.OrdinalIgnoreCase);`
+(get-only, so the `OrdinalIgnoreCase` comparer always survives). Without
+`[JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]` on the property, System.Text.Json's
+default `JsonObjectCreationHandling.Replace` behavior means: there's no setter to "replace" the
+property with, so **it silently skips the whole "rules" JSON node - no exception, `Rules` just stays
+empty**. Every rule then ran with `ruleConfig = null`, silently falling back to each rule's own
+defaults (e.g. `UnmanagedFieldNamingRule` always used `["dgt_"]` regardless of a configured
+`publisherPrefixes` list). This looked exactly like a case-sensitivity bug (a hand-authored
+lowercase-JSON config "not being read") but had nothing to do with casing - add the
+`[JsonObjectCreationHandling(Populate)]` attribute (or give the property a setter, accepting the
+loss of the custom comparer) to any get-only collection/dictionary property that must bind from JSON.
+Also: `ConfigResolver`'s `JsonSerializerOptions` had no `PropertyNameCaseInsensitive = true` (separate,
+smaller issue) - added, since hand-authored configs commonly mix casing conventions.
+
 ## `RetrieveAllEntitiesRequest.EntityFilters.Entity` does NOT include `Attributes`
 
 `EntityFilters` is a flags enum (`Entity = 1, Attributes = 2, Privileges = 4, Relationships = 8`).
