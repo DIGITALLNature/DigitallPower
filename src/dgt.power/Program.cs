@@ -33,6 +33,8 @@ using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
+using dgt.power.linter;
+using dgt.power.linter.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
@@ -340,6 +342,14 @@ void RegisterCommands(IConfigurator config)
         import.AddCommand<CalendarImport>("calendar");
         import.AddCommand<SlaConfigImport>("slaconfigs");
         import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
+    });
+
+    config.AddBranch<LintVerb>("lint", lint =>
+    {
+        lint.SetDescription("Runs Dataverse ALM quality-gate rules against solution content");
+        lint.AddCommand<LintRunCommand>("run")
+            .WithDescription("Runs the configured linter rule set against the selected solutions")
+            .WithExample("lint", "run", "--solutions", "sol1,sol2", "-c", "lint.config.json");
     });
 
     config.AddCommand<CodeGenerationCommand>("codegeneration")
