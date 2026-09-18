@@ -5,14 +5,19 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Logic;
 using dgt.power.codegeneration;
 using dgt.power.Commands.Complete;
+using dgt.power.connection.Base;
+using dgt.power.connection.Commands;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
+using dgt.power.plugin.Base;
+using dgt.power.plugin.Commands;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using dgt.power.Telemetry;
 using Spectre.Console.Cli;
 
 namespace dgt.power;
@@ -30,10 +35,32 @@ internal static class CommandTree
     public static void Register(IConfigurator config)
     {
         config.Settings.ApplicationName = "dgtp";
+        config.Settings.ApplicationVersion = DgtpActivitySource.GetVersion();
+
+        config.AddBranch<ConnectionSettings>("connection", connection =>
+        {
+            connection.SetDescription("Manages connections to Dataverse environments");
+            connection.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
+            connection.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
+                .WithExample("connection", "create", "<Name>", "--url", "<Url>")
+                .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
+            connection.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
+            connection.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
+                .WithExample("connection", "delete", "<Name>")
+                .WithExample("connection", "delete", "--all")
+                .WithExample("connection", "delete", "--all", "--yes");
+            connection.AddCommand<ConnectionStatusCommand>("status")
+                .WithDescription(
+                    "Checks whether the current MSAL token is still valid without opening a browser. " +
+                    "Exit code 0 = token valid, 2 = interactive login required. " +
+                    "Intended as a pre-flight check for coding agents.");
+            connection.AddCommand<ConnectionRefreshCommand>("refresh")
+                .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
+        });
 
         config.AddBranch<ProfileSettings>("profile", profile =>
         {
-            profile.SetDescription("Handles Authentication");
+            profile.SetDescription("[[Deprecated]] Use 'connection' instead");
             profile.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
             profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
                 .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
@@ -145,6 +172,17 @@ internal static class CommandTree
             import.AddCommand<CalendarImport>("calendar");
             import.AddCommand<SlaConfigImport>("slaconfigs");
             import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
+        });
+
+        config.AddBranch<PluginSettings>("plugin", plugin =>
+        {
+            plugin.SetDescription("Manages Dataverse plugin assemblies and packages");
+            plugin.AddCommand<PluginPushCommand>("push")
+                .WithAlias("register")
+                .WithDescription("Registers a plugin assembly (.dll) or package (.nupkg), or all such files in a directory")
+                .WithExample("plugin", "push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution")
+                .WithExample("plugin", "push", "c:/TargetDir/plugin.nupkg", "--solution", "samplesolution")
+                .WithExample("plugin", "push", "c:/TargetDir", "--solution", "samplesolution");
         });
 
         config.AddCommand<CodeGenerationCommand>("codegeneration")

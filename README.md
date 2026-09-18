@@ -533,6 +533,45 @@ language setting* (`usersettings.uilanguageid`), not any per-request parameter. 
 from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
 → Personalization Settings → Language) to match the `language` configured for code generation.
 
+### `plugin push` — Deploy plugin assemblies/packages
+
+Resource-oriented replacement for the plugin part of the legacy `push` command (see below). Registers a
+single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg` found directly in a
+directory (mixed content in one directory is supported; each file is processed independently).
+
+```bash
+dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
+dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
+dgtp plugin push ./bin/Release --solution mysolution
+```
+
+| Option | Behavior |
+|--------|----------|
+| `--solution` | Adds newly created assemblies/packages/steps/images to the given solution |
+| `--dry-run` | Reports what would be created/updated/deleted without writing to Dataverse |
+| `--purge-outdated` | On a major/minor version upgrade, migrates steps from superseded assembly(ies) to the new one and deletes them; Custom API links are always migrated regardless of this option |
+
+Reconciles plugin types, steps, step images and Custom API links declared via the
+`Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
+`ManagedIdentityRegistrationAttribute`-decorated assemblies to a managed identity, same as `push`.
+
+**Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
+currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded
+assembly(ies) with the same name are then reconciled:
+- **Custom API links are always migrated** to the same-named replacement plugin type on the new assembly
+  (unconditional - a Custom API should always invoke the latest code).
+- With `--purge-outdated`, plugin steps are additionally re-pointed to their same-named replacement type,
+  and the outdated assembly, its plugin types, and any steps left without a replacement are deleted.
+- Without `--purge-outdated`, the outdated assembly and its steps are left untouched (only Custom API links
+  move).
+
+**Differences from the legacy `push` command:**
+- **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error
+  (exit code `NotSupported`) if the assembly contains any; replace them with a Custom API and use `push` in
+  the meantime if you still need to register them as-is.
+- **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
+  customizations.
+
 ### `push` — Deploy artifacts
 
 Pushes a plugin assembly or web resource into a target solution.
@@ -616,7 +655,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, connection management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
@@ -637,6 +676,7 @@ DigitallPower/
 │       ├── dgt.power.export/          # `export` commands
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
+│       ├── dgt.power.plugin/          # `plugin` commands (resource-oriented replacement for `push`, plugin-only)
 │       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
 │       └── dgt.power.push/            # `push` command
 ├── tests/                        # Unit and integration tests

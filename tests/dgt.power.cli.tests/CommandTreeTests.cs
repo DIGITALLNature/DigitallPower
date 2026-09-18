@@ -48,6 +48,7 @@ public class CommandTreeTests
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
     [Arguments("push")]
+    [Arguments("plugin")]
     [Arguments("complete")]
     public async Task TopLevelPath_HelpInvocation_Succeeds(string path)
     {
@@ -55,6 +56,19 @@ public class CommandTreeTests
         tester.Configure(CommandTree.Register);
 
         var result = tester.Run(path, "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("push")]
+    [Arguments("register")] // alias for push
+    public async Task PluginSubCommand_HelpInvocation_Succeeds(string subCommand)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("plugin", subCommand, "--help");
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }

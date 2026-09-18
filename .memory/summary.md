@@ -30,8 +30,9 @@ src/
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`; webresource half still pending)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
-    └── dgt.power.push/         Plugin assembly + webresource deployment
+    └── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`); being superseded module-by-module by resource-oriented commands (`plugin push`, planned `webresource push`)
 ```
 
 ## Key Conventions
@@ -74,6 +75,7 @@ src/
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
+| Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Az/pac-style `<resource> <verb>` commands (`dgtp plugin push`) built from scratch alongside the legacy `push` command instead of refactoring it in place; module-local repos/executors are constructed via `new`, not registered in the global DI container |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 
 ## TSL Template Engine (codegeneration)
@@ -145,7 +147,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 - **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
-- **`Assembly` model** (push module) has mutable-GetHashCode pattern. Not yet refactored.
+- **`Assembly` model** (legacy `push` module) has mutable-GetHashCode pattern. Not yet refactored. The new `dgt.power.plugin` module uses immutable records (`LocalAssembly`, `RemoteAssembly`) instead and does not share this issue.
+- **`dgt.power.plugin` cleanup pending:** legacy `Logic/`/`Model/` files (`AssemblyProcessor`, `AssemblyModelBuilder`, etc.) and the `UiPath.Workflow` package reference are still present in `dgt.power.push` and have not yet been removed; deletion is tracked as a follow-up once all resource-oriented commands (`plugin push`, `webresource push`) are wired up and the legacy `push` command is deprecated.
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
@@ -168,7 +171,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-centralized-ci-environment-detection.md` | implementation | ExecutionEnvironment in common; reused by telemetry + codegen |
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
-| `implementation-assembly-version-upgrade-migration.md` | implementation | Push module: migrate Steps/CustomAPIs on assembly major/minor version upgrade |
+| `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
+| `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), `--purge-outdated` design, unconditional Custom API migration, code-activity rejection |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |

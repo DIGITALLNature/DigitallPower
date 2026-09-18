@@ -13,5 +13,11 @@ public enum ExitCode
     /// is running in non-interactive mode. The caller must prompt the user to
     /// re-authenticate before retrying the command.
     /// </summary>
-    AuthRequired = 2
+    AuthRequired = 2,
+
+    /// <summary>
+    /// The requested operation is not supported by the invoked command (e.g. a legacy
+    /// feature intentionally not carried over to a newer, resource-oriented command).
+    /// </summary>
+    NotSupported = 3
 }

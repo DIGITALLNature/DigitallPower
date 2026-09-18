@@ -1,0 +1,1118 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Globalization;
+using dgt.power.common.Extensions;
+using dgt.power.dataverse;
+using dgt.power.plugin.Model;
+using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
+using PluginType = dgt.power.plugin.Model.PluginType;
+
+namespace dgt.power.plugin.Logic;
+
+// CA1031 suppressed: outer catches wrap Dataverse exceptions into InvalidOperationException (Category A);
+// inner rollback catches must catch broadly to avoid masking the original exception (Category C)
+#pragma warning disable CA1031
+internal sealed class AssemblyProcessor : IDisposable
+{
+    private readonly DataContext _context;
+    private readonly IOrganizationService _service;
+    private readonly IAnsiConsole _console;
+    private static readonly string[] s_separator = [","];
+
+    public AssemblyProcessor(IOrganizationService service, IAnsiConsole? console = null)
+    {
+        _service = service;
+        _console = console ?? AnsiConsole.Console;
+        _context = new DataContext(_service) { MergeOption = MergeOption.NoTracking };
+    }
+
+
+    #region PluginPackage
+
+    public Package CreatePluginPackage(Package packageLocal, string solutionPrefix, string solution)
+    {
+        var package = new PluginPackage
+        {
+            Name = $"{solutionPrefix}_{packageLocal.Name}",
+            Content = packageLocal.Content,
+            Version = packageLocal.Version
+        };
+
+        _console.Markup(CultureInfo.InvariantCulture, "Create Package [green]{0} ({1})[/]", package.Name,
+            package.Version);
+        package.Id = _service.Create(package);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", package.Id);
+
+       if (!string.IsNullOrWhiteSpace(solution))
+       {
+           AddPluginPackageToSolution(package, solution);
+       }
+
+        return new Package
+        {
+            Name = package.Name,
+            Version = package.Version,
+            Content = package.Content,
+            Id = package.Id
+        };
+    }
+
+    public Package UpdatePluginPackage(Package packageCrm, Package packageLocal, bool publish, string solution)
+    {
+        var package = new PluginPackage
+        {
+            Id = packageCrm.Id,
+            Name = packageCrm.Name,
+            Content = packageLocal.Content,
+            Version = packageCrm.Version
+        };
+
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+       _service.Update(package);
+
+       if (publish)
+       {
+           _console.MarkupLine(CultureInfo.InvariantCulture, "Publish Package [green]{0} ({1})[/]", packageLocal.Name, package.Version);
+           _service.Execute(new PublishXmlRequest
+           {
+               ParameterXml = $"<importexportxml><pluginpackages><pluginpackage>{packageCrm.Id}</pluginpackage></pluginpackages></importexportxml>"
+           });
+       }
+
+       if (!string.IsNullOrWhiteSpace(solution) && !packageCrm.Solutions.Contains(solution))
+       {
+           AddPluginPackageToSolution(package, solution);
+       }
+
+       return new Package
+        {
+            Name = packageCrm.Name,
+            Version = packageCrm.Version,
+            Content = package.Content,
+            Id = package.Id
+        };
+    }
+
+    private void AddPluginPackageToSolution(PluginPackage pluginPackage, string solution)
+    {
+        // Determinate Componenttype for PluginPackage
+        var scd = _service.RetrieveMultiple(new QueryExpression(SolutionComponentDefinition.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(SolutionComponentDefinition.LogicalNames.SolutionComponentType),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, PluginPackage.EntityLogicalName)
+                }
+            }
+        }).Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>();
+
+        if (scd == null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture, "SolutionComponentDefinition [red]{0}[/] not found", PluginPackage.EntityLogicalName);
+            throw new InvalidOperationException(
+                "The Plugin Registration was aborted - SolutionComponentDefinition not found. Package: " +
+                pluginPackage.Name);
+        }
+        var addReq = new AddSolutionComponentRequest
+        {
+            AddRequiredComponents = false,
+            ComponentType = scd.SolutionComponentType!.Value,
+            ComponentId = pluginPackage.Id,
+            SolutionUniqueName = solution
+        };
+
+        try
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add plugin package [green]{0}[/] to Solution [bold]{1}[/]",
+                pluginPackage.Name!, solution);
+            _service.Execute(addReq);
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                _service.Delete(PluginPackage.EntityLogicalName, pluginPackage.Id);
+            }
+            catch (Exception rb)
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
+            }
+
+            throw new InvalidOperationException("The Plugin Registration was aborted. Package: " + pluginPackage.Name,
+                ex.RootException());
+        }
+    }
+
+    #endregion
+
+    #region PluginAssembly
+
+    public Assembly CreatePluginAssembly(Assembly dll, string solution)
+    {
+        var pluginAssembly = new PluginAssembly
+        {
+            SourceType = new OptionSetValue(dll.SourceType),
+            IsolationMode = new OptionSetValue(dll.IsolationMode),
+            Name = dll.Name,
+            Content = dll.Content
+        };
+
+        _console.Markup(CultureInfo.InvariantCulture, "Create Assembly [green]{0} ({1})[/]", pluginAssembly.Name,
+            dll.Version);
+        pluginAssembly.Id = _service.Create(pluginAssembly);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", pluginAssembly.Id);
+
+        if (!string.IsNullOrWhiteSpace(solution))
+        {
+            AddPluginAssemblyToSolution(pluginAssembly, solution);
+        }
+
+        return new Assembly
+        {
+            Name = pluginAssembly.Name,
+            Version = dll.Version,
+            Content = dll.Content,
+            Id = pluginAssembly.Id
+        };
+    }
+
+    public Assembly UpdatePluginAssembly(Assembly dll, Assembly crm, string solution, bool publish)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture, "Update Assembly [green]{0}[/] [italic]({1} -> {2})[/]",
+            crm.Name, crm.Version, dll.Version);
+        //purge missing types first to avoid "PluginType [xxx] not found in PluginAssembly"
+        foreach (var oldType in crm.PluginTypes.Where(t => dll.PluginTypes.TrueForAll(d => d.TypeName != t.TypeName)).ToList())
+        {
+            crm.PluginTypes.Remove(DeletePluginType(oldType));
+        }
+
+        var pluginAssembly = new PluginAssembly(crm.Id)
+        {
+            Content = dll.Content
+        };
+        _service.Update(pluginAssembly);
+
+        if (publish)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Publish PluginAssembly [green]({0})[/]", crm.Id);
+            _service.Execute(new PublishXmlRequest
+            {
+                ParameterXml = $"<importexportxml><pluginassemblies><pluginassembly>{crm.Id}</pluginassembly></pluginassemblies></importexportxml>"
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(solution) && !crm.Solutions.Contains(solution))
+        {
+            AddPluginAssemblyToSolution(pluginAssembly, solution);
+        }
+
+        crm.Content = dll.Content;
+        crm.Version = dll.Version;
+        return crm;
+    }
+
+    /// <summary>
+    /// Deletes a plugin assembly from the CRM system based on the provided assembly ID.
+    /// </summary>
+    /// <param name="assemblyId">The unique identifier of the plugin assembly to be deleted.</param>
+    public void DeletePluginAssembly(Guid assemblyId)
+    {
+        // Delete the plugin assembly using the CRM service
+        _service.Delete(PluginAssembly.EntityLogicalName, assemblyId);
+    }
+
+    /// <summary>
+    /// Migrates plugin steps from old assembly types to new assembly types (matched by TypeName).
+    /// Used during upgrade with --delete-on-upgrade for non-PowerPlugin assemblies to preserve
+    /// manually registered steps that would otherwise be lost when the old assembly is deleted.
+    /// </summary>
+    public void MigratePluginSteps(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .Find(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - steps will be deleted[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                foreach (var step in oldType.PluginSteps)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Step [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        step.Name, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new SdkMessageProcessingStep(step.Id)
+                    {
+                        EventHandler = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Migrates Custom API references from old assembly types to new assembly types (matched by TypeName).
+    /// By default, Custom APIs should point to the latest assembly version so they execute the newest code.
+    /// </summary>
+    public void MigrateCustomApis(IReadOnlyList<AssemblyContent> outdatedAssemblies, Assembly newAssembly)
+    {
+        foreach (var oldAssembly in outdatedAssemblies)
+        {
+            foreach (var oldType in oldAssembly.PluginTypes)
+            {
+                var newType = newAssembly.PluginTypes
+                    .Find(t => t.TypeName == oldType.TypeName);
+
+                if (newType == null)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " [yellow]Type [bold]{0}[/] removed in new version - Custom API references cannot be migrated[/]",
+                        oldType.TypeName);
+                    continue;
+                }
+
+                var query = new QueryExpression
+                {
+                    EntityName = CustomAPI.EntityLogicalName,
+                    ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName, CustomAPI.LogicalNames.PluginTypeId),
+                    NoLock = true,
+                    Criteria = new FilterExpression(LogicalOperator.And)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(CustomAPI.LogicalNames.PluginTypeId,
+                                ConditionOperator.Equal, oldType.Id)
+                        }
+                    }
+                };
+
+                var apis = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).ToList();
+                foreach (var api in apis)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture,
+                        " Migrate Custom API [green]{0}[/] from Type [bold]{1}[/] ({2:D}) to ({3:D})",
+                        api.UniqueName ?? string.Empty, oldType.TypeName, oldType.Id, newType.Id);
+                    _service.Update(new CustomAPI(api.Id)
+                    {
+                        PluginTypeId = new EntityReference(
+                            dataverse.PluginType.EntityLogicalName, newType.Id)
+                    });
+                }
+            }
+        }
+    }
+
+    private void AddPluginAssemblyToSolution(PluginAssembly pluginAssembly, string solution)
+    {
+        // PluginAssembly = 91
+        var addReq = new AddSolutionComponentRequest
+        {
+            AddRequiredComponents = false,
+            ComponentType = 91,
+            ComponentId = pluginAssembly.Id,
+            SolutionUniqueName = solution
+        };
+
+        try
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture, "Add Assembly [green]{0}[/] to Solution [bold]{1}[/]",
+                pluginAssembly.Name!, solution);
+            _service.Execute(addReq);
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                _service.Delete(PluginAssembly.EntityLogicalName, pluginAssembly.Id);
+            }
+            catch (Exception rb)
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                _console.WriteException(rb.RootException());
+            }
+
+            throw new InvalidOperationException("The Plugin Registration was aborted. Assembly: " + pluginAssembly.Name,
+                ex.RootException());
+        }
+    }
+
+    #endregion
+
+    #region ManagedIdentity
+
+    /// <summary>
+    /// Links a plugin assembly to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginAssembly.ManagedIdentityId.
+    /// </summary>
+    internal void LinkManagedIdentityToAssembly(Guid assemblyId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Assembly [green]{1:D}[/]", clientId, assemblyId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginAssembly(assemblyId)
+        {
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Links a plugin package to a managed identity in Dataverse.
+    /// Creates the managed identity record if it doesn't exist, then sets PluginPackage.Managedidentityid.
+    /// The managed identity is typically derived from the ManagedIdentityRegistrationAttribute on the
+    /// assemblies contained within the package.
+    /// </summary>
+    internal void LinkManagedIdentityToPackage(Guid packageId, string clientId, string? tenantId)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "Linking ManagedIdentity [blue]{0}[/] to Package [green]{1:D}[/]", clientId, packageId);
+
+        var managedIdentityId = EnsureManagedIdentity(clientId, tenantId);
+
+        _service.Update(new PluginPackage(packageId)
+        {
+            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
+        });
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  [green]Linked[/] successfully");
+    }
+
+    /// <summary>
+    /// Looks up an existing managed identity by ApplicationId, or creates a new one.
+    /// </summary>
+    /// <returns>The Guid of the existing or newly created managed identity record.</returns>
+    private Guid EnsureManagedIdentity(string clientId, string? tenantId)
+    {
+        var applicationId = Guid.Parse(clientId);
+
+        var query = new QueryExpression(ManagedIdentity.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                ManagedIdentity.LogicalNames.ApplicationId,
+                ManagedIdentity.LogicalNames.TenantId),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId,
+                        ConditionOperator.Equal, applicationId)
+                }
+            }
+        };
+
+        var existing = _service.RetrieveMultiple(query).Entities.FirstOrDefault();
+
+        if (existing != null)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "  Found existing ManagedIdentity [italic]{0:D}[/]", existing.Id);
+            return existing.Id;
+        }
+
+        var managedIdentity = new ManagedIdentity
+        {
+            ApplicationId = applicationId,
+            CredentialSource = new OptionSetValue(ManagedIdentity.Options.CredentialSource.IsManaged),
+            SubjectScope = new OptionSetValue(ManagedIdentity.Options.SubjectScope.EnviornmentScope)
+        };
+
+        if (!string.IsNullOrWhiteSpace(tenantId))
+        {
+            managedIdentity.TenantId = Guid.Parse(tenantId);
+        }
+
+        var managedIdentityId = _service.Create(managedIdentity);
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "  Created ManagedIdentity [italic]{0:D}[/]", managedIdentityId);
+        return managedIdentityId;
+    }
+
+    #endregion
+
+    #region PluginType
+
+    public Assembly UpsertAndPurgePluginTypes(Assembly dll, Assembly crm)
+    {
+        // Update
+        foreach (var updateType in dll.PluginTypes.Where(t => crm.PluginTypes.Contains(t)))
+        {
+            updateType.Id = crm.PluginTypes.Single(e => e.Equals(updateType)).Id;
+            UpdatePluginType(updateType);
+        }
+
+        // New
+        foreach (var newType in dll.PluginTypes.Where(d => crm.PluginTypes.TrueForAll(t => t.TypeName != d.TypeName)))
+        {
+            crm.PluginTypes.Add(CreatePluginType(crm, newType));
+        }
+
+        return crm;
+    }
+
+    private PluginType CreatePluginType(Assembly crm, PluginType pluginType)
+    {
+        var type = new dataverse.PluginType
+        {
+            PluginAssemblyId = new EntityReference(pluginType.ParentTypeCode, crm.Id),
+            Name = pluginType.Name,
+            TypeName = pluginType.TypeName,
+            FriendlyName = pluginType.FriendlyName
+        };
+        _console.Markup(CultureInfo.InvariantCulture, " Create PluginType [green]{0}[/] for Assembly [bold]{1}[/]",
+            pluginType.Name, pluginType.ParentName!);
+        type.Id = _service.Create(type);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+
+        if (!string.IsNullOrWhiteSpace(pluginType.CustomApi))
+        {
+            var query = new QueryExpression
+            {
+                EntityName = CustomAPI.EntityLogicalName,
+                ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName),
+                NoLock = true,
+                Criteria = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(CustomAPI.LogicalNames.UniqueName, ConditionOperator.Equal,
+                            pluginType.CustomApi)
+                    }
+                }
+            };
+            var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
+            _console.Markup(CultureInfo.InvariantCulture,
+                "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
+            _service.Update(new CustomAPI(api.Id)
+            {
+                PluginTypeId = type.ToEntityReference()
+            });
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+        }
+
+        return new PluginType
+        {
+            ParentId = crm.Id,
+            ParentName = pluginType.ParentName,
+            Id = type.Id,
+            Name = pluginType.Name,
+            TypeName = pluginType.TypeName,
+            FriendlyName = pluginType.FriendlyName,
+            CustomApi = pluginType.CustomApi
+        };
+    }
+
+    internal PluginType DeletePluginType(PluginType pluginType)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            " Delete PluginType [green]{0}[/] for Assembly [bold]{1}[/] first", pluginType.Name,
+            pluginType.ParentName!);
+        var request = new RetrieveDependenciesForDeleteRequest
+        {
+            ComponentType = 90, //PluginType
+            ObjectId = pluginType.Id
+        };
+        var response = (RetrieveDependenciesForDeleteResponse)_service.Execute(request);
+        foreach (var dependency in response.EntityCollection.Entities.Select(e => e.ToEntity<Dependency>()))
+        {
+            if (dependency.DependentComponentType!.Value == 92) //SDK Message Processing Step
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "  Delete [green]{0}[/] for PluginType [bold]{1}[/]", "PluginStep", pluginType.Name);
+                _service.Delete(SdkMessageProcessingStep.EntityLogicalName,
+                    dependency.DependentComponentObjectId!.Value);
+            }
+        }
+
+        _service.Delete(pluginType.TypeCode, pluginType.Id);
+        return pluginType;
+    }
+
+    private void UpdatePluginType(PluginType pluginType)
+    {
+        if (!string.IsNullOrWhiteSpace(pluginType.CustomApi))
+        {
+            var query = new QueryExpression
+            {
+                EntityName = CustomAPI.EntityLogicalName,
+                ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName, CustomAPI.LogicalNames.PluginTypeId),
+                NoLock = true,
+                Criteria = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(CustomAPI.LogicalNames.PluginTypeId, ConditionOperator.Equal,
+                            pluginType.Id)
+                    }
+                }
+            };
+            var apis = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>());
+            var missing = true;
+            foreach (var api in apis)
+            {
+                if (!string.Equals(api.UniqueName, pluginType.CustomApi, StringComparison.OrdinalIgnoreCase))
+                {
+                    _console.Markup(CultureInfo.InvariantCulture,
+                        "  Unlink PluginType [green]{0}[/] from Custom API [bold]{1}[/]", pluginType.Name,
+                        api.UniqueName!);
+                    _service.Update(new CustomAPI(api.Id)
+                    {
+                        PluginTypeId = null
+                    });
+                }
+                else
+                {
+                    _console.Markup(CultureInfo.InvariantCulture,
+                        "  Match PluginType [green]{0}[/] for Custom API [bold]{1}[/]", pluginType.Name,
+                        api.UniqueName!);
+                    missing = false;
+                }
+
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+            }
+
+            if (missing)
+            {
+                query = new QueryExpression
+                {
+                    EntityName = CustomAPI.EntityLogicalName,
+                    ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName),
+                    NoLock = true,
+                    Criteria = new FilterExpression(LogicalOperator.And)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(CustomAPI.LogicalNames.UniqueName, ConditionOperator.Equal,
+                                pluginType.CustomApi)
+                        }
+                    }
+                };
+                var api = _service.RetrieveMultiple(query).Entities.Select(e => e.ToEntity<CustomAPI>()).Single();
+                _console.Markup(CultureInfo.InvariantCulture,
+                    "  Link PluginType [green]{0}[/] to Custom API [bold]{1}[/]", pluginType.Name, api.UniqueName!);
+                _service.Update(new CustomAPI(api.Id)
+                {
+                    PluginTypeId = new EntityReference(dataverse.PluginType.EntityLogicalName, pluginType.Id)
+                });
+                _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", api.Id);
+            }
+        }
+    }
+
+    public Assembly UpsertAndPurgeWorkflowTypes(Assembly dll, Assembly crm)
+    {
+        // New
+        foreach (var newType in dll.WorkflowTypes.Where(d => crm.WorkflowTypes.TrueForAll(t => t.TypeName != d.TypeName)))
+        {
+            crm.WorkflowTypes.Add(CreateWorkflowType(crm, newType));
+        }
+
+        // Purge
+        foreach (var oldType in crm.WorkflowTypes
+                     .Where(t => dll.WorkflowTypes.TrueForAll(d => d.TypeName != t.TypeName))
+                     .ToList())
+        {
+            crm.WorkflowTypes.Remove(DeleteWorkflowType(oldType));
+        }
+
+        return crm;
+    }
+
+    private WorkflowType CreateWorkflowType(Assembly crm, WorkflowType workflowType)
+    {
+        var type = new dataverse.PluginType
+        {
+            PluginAssemblyId = new EntityReference(workflowType.ParentTypeCode, crm.Id),
+            Name = workflowType.Name,
+            TypeName = workflowType.TypeName,
+            FriendlyName = workflowType.FriendlyName,
+            WorkflowActivityGroupName = workflowType.WorkflowActivityGroupName
+        };
+        _console.Markup(CultureInfo.InvariantCulture,
+            " Create WorkflowType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
+            workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
+        type.Id = _service.Create(type);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", type.Id);
+
+        return new WorkflowType
+        {
+            ParentId = crm.Id,
+            ParentName = workflowType.ParentName,
+            Id = type.Id,
+            Name = workflowType.Name,
+            TypeName = workflowType.TypeName,
+            FriendlyName = workflowType.FriendlyName,
+            WorkflowActivityGroupName = workflowType.WorkflowActivityGroupName
+        };
+    }
+
+    private WorkflowType DeleteWorkflowType(WorkflowType workflowType)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            " Delete PluginType [green]{0}[/] in WorkflowActivityGroupName [bold]{1}[/] for Assembly {2}",
+            workflowType.Name, workflowType.WorkflowActivityGroupName, workflowType.ParentName!);
+        _service.Delete(workflowType.TypeCode, workflowType.Id);
+        return workflowType;
+    }
+
+    #endregion
+
+    #region PluginStep
+
+    public Assembly UpsertAndPurgePluginSteps(Assembly dll, Assembly crm, string solution)
+    {
+        foreach (var dllPluginType in dll.PluginTypes)
+        {
+            var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
+            if (dllPluginType.PluginSteps.Count == 0)
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture, "  No PluginSteps (Custom API): [green]{0}[/]",
+                    dllPluginType.Name);
+                continue;
+            }
+
+            // Update
+            foreach (var updateStep in dllPluginType.PluginSteps.Where(p => crmPluginType.PluginSteps.Contains(p)))
+            {
+                UpdatePluginStep(updateStep, crmPluginType.PluginSteps.Single(e => e.Equals(updateStep)));
+            }
+
+            // New
+            foreach (var newStep in dllPluginType.PluginSteps.Where(d =>
+                         crmPluginType.PluginSteps.TrueForAll(t => !t.Equals(d))))
+            {
+                crmPluginType.PluginSteps.Add(CreatePluginStep(crmPluginType, newStep, solution));
+            }
+
+            // Purge
+            foreach (var oldStep in crmPluginType.PluginSteps
+                         .Where(t => dllPluginType.PluginSteps.TrueForAll(d => !d.Equals(t)))
+                         .ToList())
+            {
+                crmPluginType.PluginSteps.Remove(DeletePluginStep(oldStep));
+            }
+        }
+
+        return crm;
+    }
+
+    private PluginStep CreatePluginStep(PluginType pluginType, PluginStep pluginStep, string solution)
+    {
+        var step = new SdkMessageProcessingStep
+        {
+            Stage = new OptionSetValue(pluginStep.Stage),
+            SdkMessageId = new EntityReference(pluginStep.MessageTypeCode, pluginStep.MessageId),
+            EventHandler = new EntityReference(pluginStep.ParentTypeCode, pluginType.Id),
+            Rank = pluginStep.ExecutionOrder ?? 1,
+            Name = pluginStep.Name,
+            Mode = new OptionSetValue(pluginStep.Mode),
+            AsyncAutoDelete = SdkMessageProcessingStep.Options.Mode.Asynchronous == pluginStep.Mode,
+            FilteringAttributesField = pluginStep.FilterAttributes == null || pluginStep.FilterAttributes.Count == 0
+                ? null
+                : string.Join(",", pluginStep.FilterAttributes),
+            Configuration = pluginStep.Configuration
+        };
+
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", step.Name);
+        AssemblyValidator.Validate(step);
+
+        if (!Guid.Empty.Equals(pluginStep.MessageFilterId))
+        {
+            step.SdkMessageFilterId = new EntityReference(pluginStep.MessageFilterTypeCode, pluginStep.MessageFilterId);
+        }
+
+        try
+        {
+            _console.Markup(CultureInfo.InvariantCulture, "  Create PluginStep: [green]{0}[/]", step.Name);
+            step.Id = _service.Create(step);
+            _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", step.Id);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException(
+                "The Plugin Registration was aborted. Maybe you try to register a Async with Pre. Check your Plugin dll and try again. Plugin Step: " +
+                step.Name, ex.RootException());
+        }
+
+        if (!string.IsNullOrWhiteSpace(solution))
+        {
+            // SDKMessageProcessingStep = 92
+            var addReq = new AddSolutionComponentRequest
+            {
+                AddRequiredComponents = false,
+                ComponentType = 92,
+                ComponentId = step.Id,
+                SolutionUniqueName = solution
+            };
+
+            try
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "  Add PluginStep [green]{0}[/] to Solution [bold]{1}[/]", step.Name, solution);
+                _service.Execute(addReq);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    _service.Delete(PluginAssembly.EntityLogicalName, step.Id);
+                }
+                catch (Exception rb)
+                {
+                    _console.MarkupLine(CultureInfo.InvariantCulture, "Rollback failed; cleanup manually");
+                    _console.WriteException(rb.RootException());
+                }
+
+                throw new InvalidOperationException("The Plugin Registration was aborted. PluginStep: " + step.Name,
+                    ex.RootException());
+            }
+        }
+
+        return new PluginStep
+        {
+            Id = step.Id,
+            ParentId = pluginType.Id,
+            ParentName = pluginStep.ParentName,
+            Mode = pluginStep.Mode,
+            MessageName = pluginStep.MessageName,
+            Stage = pluginStep.Stage,
+            PrimaryEntityName = pluginStep.PrimaryEntityName,
+            SecondaryEntityName = pluginStep.SecondaryEntityName,
+            FilterAttributes = pluginStep.FilterAttributes,
+            ExecutionOrder = pluginStep.ExecutionOrder,
+            Configuration = pluginStep.Configuration
+        };
+    }
+
+    private PluginStep DeletePluginStep(PluginStep pluginStep)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Delete PluginStep [green]{0}[/]", pluginStep.Name);
+        //del image
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        (from mpsi in _context.SdkMessageProcessingStepImageSet
+            where mpsi.SdkMessageProcessingStepId.Equals(new EntityReference(pluginStep.TypeCode, pluginStep.Id))
+            select mpsi).ToList().ForEach(e =>
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Delete PluginStepImage [bold]{0}[/] for PluginStep [green]{1}[/]", e.Name!, pluginStep.Name);
+            _service.Delete(SdkMessageProcessingStepImage.EntityLogicalName, e.Id);
+        });
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+
+        _service.Delete(pluginStep.TypeCode, pluginStep.Id);
+        return pluginStep;
+    }
+
+    private void UpdatePluginStep(PluginStep dllPluginStep, PluginStep crmPluginStep)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Check PluginStep [green]{0}[/]", crmPluginStep.Name);
+
+        var name = dllPluginStep.Name ?? string.Empty;
+
+        var updatedStep = _service
+            .Retrieve(SdkMessageProcessingStep.EntityLogicalName, crmPluginStep.Id, new ColumnSet(true))
+            ?.ToEntity<SdkMessageProcessingStep>();
+        if (updatedStep == null)
+        {
+            return;
+        }
+
+        var updated = false;
+        if (crmPluginStep.Name != name)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Rename PluginStep from [navy]{0}[/] to [green]{1}[/]", crmPluginStep.Name, name);
+            updatedStep.Name = name;
+            updated = true;
+        }
+
+        if (crmPluginStep.ExecutionOrder != dllPluginStep.ExecutionOrder)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update ExecutionOrder from [navy]{0}[/] to [green]{1}[/] for PluginStep {2}",
+                crmPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                dllPluginStep.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                name);
+            updatedStep.Rank = dllPluginStep.ExecutionOrder ?? 1;
+            crmPluginStep.ExecutionOrder = dllPluginStep.ExecutionOrder;
+            updated = true;
+        }
+
+        var crmFilter = crmPluginStep.FilterAttributes == null || crmPluginStep.FilterAttributes.Count == 0
+            ? null
+            : string.Join(",", crmPluginStep.FilterAttributes);
+        var dllFilter = dllPluginStep.FilterAttributes == null || dllPluginStep.FilterAttributes.Count == 0
+            ? null
+            : string.Join(",", dllPluginStep.FilterAttributes);
+
+        if (!string.IsNullOrEmpty(crmFilter) && string.IsNullOrEmpty(dllFilter))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update PluginStep [green]{0}[/] filters from '{1}' to <empty>", name, crmFilter);
+            updatedStep.FilteringAttributesField = null;
+            crmPluginStep.FilterAttributes = null;
+            updated = true;
+        }
+        else if (string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update PluginStep [green]{0}[/] filters from <empty> to '{1}'", name, dllFilter);
+            updatedStep.FilteringAttributesField = dllFilter;
+            crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
+            updated = true;
+        }
+        else if (!string.IsNullOrEmpty(crmFilter) && !string.IsNullOrEmpty(dllFilter))
+        {
+            var normalizedCrmFilteringAttributes = crmFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+            var normalizedDllFilteringAttributes = dllFilter
+                .Split(s_separator, StringSplitOptions.RemoveEmptyEntries)
+                .OrderBy(attribute => attribute, StringComparer.Ordinal);
+
+            if (!string.Join(",", normalizedCrmFilteringAttributes)
+                    .Equals(string.Join(",", normalizedDllFilteringAttributes), StringComparison.Ordinal))
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "   Update PluginStep [green]{0}[/] filters from '{1}' to '{2}'", name, crmFilter, dllFilter);
+                updatedStep.FilteringAttributesField = dllFilter;
+                crmPluginStep.FilterAttributes = dllPluginStep.FilterAttributes;
+                updated = true;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(crmPluginStep.Configuration) && string.IsNullOrEmpty(dllPluginStep.Configuration))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update PluginStep [green]{0}[/] Configuration from '{1}' to <empty>", name,
+                crmPluginStep.Configuration);
+            updatedStep.Configuration = null;
+            crmPluginStep.Configuration = null;
+            updated = true;
+        }
+        else if (string.IsNullOrEmpty(crmPluginStep.Configuration) &&
+                 !string.IsNullOrEmpty(dllPluginStep.Configuration))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update PluginStep [green]{0}[/] Configuration from <empty> to '{1}'", name,
+                dllPluginStep.Configuration);
+            updatedStep.Configuration = dllPluginStep.Configuration;
+            crmPluginStep.Configuration = dllPluginStep.Configuration;
+            updated = true;
+        }
+        else if (!crmPluginStep.Configuration?.Equals(dllPluginStep.Configuration, StringComparison.Ordinal) ?? false)
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "   Update PluginStep [green]{0}[/] Configuration '{1}' to '{2}'", name, crmPluginStep.Configuration,
+                dllPluginStep.Configuration!);
+            updatedStep.Configuration = dllPluginStep.Configuration;
+            crmPluginStep.Configuration = dllPluginStep.Configuration;
+            updated = true;
+        }
+
+        if (!updated)
+        {
+            return;
+        }
+
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Validate PluginStep [green]{0}[/]", updatedStep.Name!);
+        AssemblyValidator.Validate(updatedStep);
+
+        _console.MarkupLine(CultureInfo.InvariantCulture, "  Update PluginStep [green]{0}[/]", crmPluginStep.Name);
+        _service.Update(updatedStep);
+    }
+
+    #endregion
+
+    #region PluginStepImage
+
+    public Assembly UpsertAndPurgePluginStepImages(Assembly dll, Assembly crm)
+    {
+        foreach (var dllPluginType in dll.PluginTypes)
+        {
+            var crmPluginType = crm.PluginTypes.Single(e => e.Equals(dllPluginType));
+            if (dllPluginType.PluginSteps.Count == 0)
+            {
+                //Custom API
+                continue;
+            }
+
+            foreach (var dllPluginStep in dllPluginType.PluginSteps.Where(p => crmPluginType.PluginSteps.Contains(p)))
+            {
+                var crmPluginStep = crmPluginType.PluginSteps.Single(e => e.Equals(dllPluginStep));
+                // Update
+                foreach (var updateStepImage in dllPluginStep.PluginStepImages.Where(p =>
+                             crmPluginStep.PluginStepImages.Contains(p)))
+                {
+                    UpdatePluginStepImage(crmPluginStep, updateStepImage,
+                        crmPluginStep.PluginStepImages.Single(e => e.Equals(updateStepImage)));
+                }
+
+                // New
+                foreach (var newStepImage in dllPluginStep.PluginStepImages.Where(d =>
+                             crmPluginStep.PluginStepImages.TrueForAll(t => !t.Equals(d))))
+                {
+                    crmPluginStep.PluginStepImages.Add(CreatePluginStepImage(crmPluginStep, newStepImage));
+                }
+
+                // Purge
+                foreach (var oldStepImage in crmPluginStep.PluginStepImages
+                                 .Where(t => dllPluginStep.PluginStepImages.TrueForAll(d => !d.Equals(t)))
+                                 .ToList())
+                {
+                    crmPluginStep.PluginStepImages.Remove(DeletePluginStepImage(oldStepImage));
+                }
+            }
+        }
+
+        return crm;
+    }
+
+    private PluginStepImage CreatePluginStepImage(PluginStep pluginStep, PluginStepImage pluginStepImage)
+    {
+        var image = new SdkMessageProcessingStepImage
+        {
+            SdkMessageProcessingStepId = new EntityReference(pluginStepImage.ParentName, pluginStep.Id),
+            ImageType = new OptionSetValue(pluginStepImage.ImageType),
+            Name = pluginStepImage.Name,
+            EntityAlias = pluginStepImage.EntityAlias,
+            MessagePropertyName = pluginStepImage.MessagePropertyName,
+            AttributesField = pluginStepImage.Attributes == null || pluginStepImage.Attributes.Count == 0
+                ? null
+                : string.Join(",", pluginStepImage.Attributes)
+        };
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name, pluginStepImage.ParentName!);
+        AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage, pluginStepImage.ImageType);
+        _console.Markup(CultureInfo.InvariantCulture,
+            "   Create PluginStepImage: [green]{0}[/] for [bold]{1}[/]", image.Name,
+            pluginStepImage.ParentName!);
+        image.Id = _service.Create(image);
+        _console.MarkupLine(CultureInfo.InvariantCulture, " -> Id [italic]{0:D}[/]", image.Id);
+
+        pluginStepImage.Id = image.Id;
+        pluginStepImage.ParentId = pluginStep.Id;
+        return new PluginStepImage
+        {
+            ParentId = pluginStep.Id,
+            ParentName = pluginStep.ParentName,
+            Id = image.Id,
+            Name = pluginStepImage.Name,
+            EntityAlias = pluginStepImage.EntityAlias,
+            ImageType = pluginStepImage.ImageType,
+            Attributes = pluginStepImage.Attributes!,
+            MessagePropertyName = pluginStepImage.MessagePropertyName
+        };
+    }
+
+    private PluginStepImage DeletePluginStepImage(PluginStepImage pluginStepImage)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "   Delete PluginStepImage: [green]{0}[/] for [bold]{1}[/]", pluginStepImage.Name,
+            pluginStepImage.ParentName!);
+        _service.Delete(pluginStepImage.TypeCode, pluginStepImage.Id);
+        return pluginStepImage;
+    }
+
+    private void UpdatePluginStepImage(PluginStep pluginStep, PluginStepImage dllPluginStepImage,
+        PluginStepImage crmPluginStepImage)
+    {
+        _console.MarkupLine(CultureInfo.InvariantCulture, "   Check PluginStepImage: [green]{0}[/] for [bold]{1}[/]",
+            crmPluginStepImage.Name, crmPluginStepImage.ParentName!);
+
+        var crmFilter = crmPluginStepImage.Attributes;
+        var dllFilter = dllPluginStepImage.Attributes;
+
+        var updatedStepImage = _service
+            .Retrieve(SdkMessageProcessingStepImage.EntityLogicalName, crmPluginStepImage.Id, new ColumnSet(true))
+            ?.ToEntity<SdkMessageProcessingStepImage>();
+        if (updatedStepImage == null)
+        {
+            return;
+        }
+
+        var updated = false;
+
+        if (!(crmFilter == null || crmFilter.Count == 0) && (dllFilter == null || dllFilter.Count == 0))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "    Update PreImage filters from [green]{0}[/] to <empty>", string.Join(",", crmFilter));
+            updatedStepImage.AttributesField = null;
+            crmPluginStepImage.Attributes = null;
+            updated = true;
+        }
+        else if ((crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
+        {
+            _console.MarkupLine(CultureInfo.InvariantCulture,
+                "    Update PreImage filters from <empty> to [green]{0}[/]", string.Join(",", dllFilter));
+            updatedStepImage.AttributesField = string.Join(",", dllFilter);
+            crmPluginStepImage.Attributes = dllFilter;
+            updated = true;
+        }
+        else if (!(crmFilter == null || crmFilter.Count == 0) && !(dllFilter == null || dllFilter.Count == 0))
+        {
+            var normalizedCrmFilter = crmFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+            var normalizedDllFilter = dllFilter.OrderBy(attribute => attribute, StringComparer.Ordinal).ToList();
+
+            if (!string.Join(",", normalizedCrmFilter).Equals(string.Join(",", normalizedDllFilter), StringComparison.Ordinal))
+            {
+                _console.MarkupLine(CultureInfo.InvariantCulture,
+                    "    Update PreImage filters from [navy]{0}[/] to [green]{1}[/]", string.Join(",", normalizedCrmFilter),
+                    string.Join(",", normalizedDllFilter));
+                updatedStepImage.AttributesField = string.Join(",", dllFilter);
+                crmPluginStepImage.Attributes = dllFilter;
+                updated = true;
+            }
+        }
+
+        if (!updated)
+        {
+            return;
+        }
+
+        _console.Markup(CultureInfo.InvariantCulture,
+            "   Validate PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
+            crmPluginStepImage.ParentName!);
+        AssemblyValidator.ValidateImage(pluginStep.Name, pluginStep.MessageName, pluginStep.Stage,
+            updatedStepImage.ImageType!.Value);
+        _console.MarkupLine(CultureInfo.InvariantCulture,
+            "   Update PluginStepImage: [green]{0}[/] for [bold]{1}[/]", crmPluginStepImage.Name,
+            crmPluginStepImage.ParentName!);
+        _service.Update(updatedStepImage);
+    }
+
+    #endregion
+
+    public string GetSolutionPrefix(string solution, string defaultValue = "new")
+    {
+        var prefix = (from s in _context.SolutionSet
+            join p in _context.PublisherSet on s.PublisherId.Id equals p.Id
+            where s.UniqueName == solution
+            select p.CustomizationPrefix).SingleOrDefault();
+
+        return prefix ?? defaultValue;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+}
