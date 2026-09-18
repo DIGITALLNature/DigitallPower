@@ -10,6 +10,7 @@ public static class LintRuleCatalog
 {
     public static IReadOnlyList<ILintRule> All { get; } =
     [
-        new UnmanagedFieldNamingRule()
+        new UnmanagedFieldNamingRule(),
+        new TableRootComponentBehaviorRule()
     ];
 }

@@ -52,7 +52,13 @@ to take an `ObjectId` from).
   `RootComponentBehavior = IncludeSubcomponents` (0) - anything else is a finding. For a table that
   is itself managed (e.g. ISV-owned), its component must be `DoNotIncludeSubcomponents` (1) or
   `IncludeAsShellOnly` (2) - `IncludeSubcomponents` (0) on a managed table is a finding (you'd be
-  attempting to own/re-export a table you don't control).
+  attempting to own/re-export a table you don't control). **Implemented** as
+  `Rules/TableRootComponentBehaviorRule.cs` (id `completeness.table-root-component-behavior`) -
+  no config options, just `enabled`/`severity`. Core check: a membership is valid iff
+  `membership.IsTableManaged != (membership.RootComponentBehavior == IncludeSubcomponents)` (get
+  this comparison direction right - it was inverted in the first draft and silently flagged the
+  exact opposite of every combination; caught by a test asserting the full expected violation set,
+  not just "some findings exist").
 - `ExplicitSubcomponentsByType` is intentionally generic (any componenttype, not just Attribute) so
   future rules (forms, views, relationships, ...) reuse the same resolver without a redesign - only
   `EffectiveAttributes`-style "resolve implicit membership" helpers need to be added per type as
@@ -67,3 +73,7 @@ to take an `ObjectId` from).
   solutioncomponent row (previously only attribute rows existed, which is not a shape Dataverse
   actually produces). Added `EvaluateAsync_EntityAddedWithIncludeSubcomponents_...` and
   `EvaluateAsync_EntityIncludedAsShellOnly_...` regression tests for the exact bug this fixes.
+- `TableRootComponentBehaviorRuleTests.cs` - one entity per (IsManaged x RootComponentBehavior)
+  combination (6 total), asserts the exact set of flagged entities (not just "count > 0"), which is
+  what caught the inverted condition above.
+

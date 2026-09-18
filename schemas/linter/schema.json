@@ -15,6 +15,9 @@
       "properties": {
         "naming.unmanaged-field-logicalname": {
           "$ref": "#/$defs/rules/naming.unmanaged-field-logicalname"
+        },
+        "completeness.table-root-component-behavior": {
+          "$ref": "#/$defs/rules/completeness.table-root-component-behavior"
         }
       },
       "additionalProperties": false
@@ -58,6 +61,23 @@
               }
             },
             "additionalProperties": false
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "additionalProperties": false
+      },
+      "completeness.table-root-component-behavior": {
+        "type": "object",
+        "description": "Ensures unmanaged tables are added completely (IncludeSubcomponents) and managed tables are never added completely (only their delta may be listed, or referenced as a shell)",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "severity": {
+            "$ref": "#/$defs/severity"
           }
         },
         "required": [
