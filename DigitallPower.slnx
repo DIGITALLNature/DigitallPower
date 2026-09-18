@@ -16,6 +16,7 @@
     <Project Path="tests/dgt.power.connection.tests/dgt.power.connection.tests.csproj" />
     <Project Path="tests/dgt.power.export.tests/dgt.power.export.tests.csproj" />
     <Project Path="tests/dgt.power.import.tests/dgt.power.import.tests.csproj" />
+    <Project Path="tests/dgt.power.linter.tests/dgt.power.linter.tests.csproj" />
     <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />
     <Project Path="tests/dgt.power.profile.tests/dgt.power.profile.tests.csproj" />
     <Project Path="tests/dgt.power.push.tests/dgt.power.push.tests.csproj" />
