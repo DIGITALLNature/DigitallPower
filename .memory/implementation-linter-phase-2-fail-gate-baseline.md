@@ -32,13 +32,11 @@ the only difference is whether `suppressedKeys` is passed (baseline writes never
 since a baseline is the accepted-state snapshot itself, not a report against a prior baseline).
 Severity → SARIF `level`: Error→`error`, Warning→`warning`, Info→`note`.
 
-## Known caveat carried over from Phase 1
+## Known caveat carried over from Phase 1 — RESOLVED
 
-`UnmanagedFieldNamingRule` still reads `component.SolutionId?.Name` directly for `SolutionUniqueName`,
-which is empty in the `Digitall.Dataverse.Testing` fake environment (see
-`guide-linter-rule-implementation-pitfalls.md`, "Solution scoping" note). This does not break the
-baseline matching *within a single test/run* (the same empty string is produced consistently), but
-means the `SolutionUniqueName` component of `BaselineKey`/SARIF locations is currently unreliable in
-tests and should be revisited when solution-id→unique-name resolution is added to `LintContext`
-itself (it already resolves solution ids from unique names for the component query - it just never
-publishes that map back out).
+`UnmanagedFieldNamingRule` used to read `component.SolutionId?.Name` directly for
+`SolutionUniqueName`, which is empty in the `Digitall.Dataverse.Testing` fake environment. Fixed as
+part of the entity-component-membership rework (see
+`implementation-linter-entity-component-membership.md`): `LintContext` now resolves and exposes
+`SolutionUniqueNamesById` from the same query used to scope components, and the rule reads
+`EntityComponentMembership.SolutionUniqueName` from that instead of the unreliable `EntityReference.Name`.

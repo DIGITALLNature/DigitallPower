@@ -42,7 +42,9 @@ A `SolutionComponent.SolutionId` is an `EntityReference` and its `Name` field is
 query-built Dataverse contexts unless the record is explicitly resolved. The linter must therefore scope
 components by matching the `SolutionComponent.SolutionId.Id` against the set of `Solution.Id` values whose
 `UniqueName` is in the selected solution list. Checking `component.SolutionId.Name` against the user-supplied
-solution unique names silently drops all components and produces a false "no findings" result.
+solution unique names silently drops all components and produces a false "no findings" result. The same
+applies to any finding that reports a `SolutionUniqueName` back to the user - use
+`LintContext.SolutionUniqueNamesById` (resolved once from the same query), never `component.SolutionId?.Name`.
 
 ## Where things stand
 

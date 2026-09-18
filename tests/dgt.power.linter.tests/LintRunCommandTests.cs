@@ -181,18 +181,28 @@ public class LintRunCommandTests : LintTestsBase<LintRunCommand>
     {
         var solution = new Solution(Guid.NewGuid()) { UniqueName = SolutionName };
         var metadata = service.State.EntityMetadata["account"];
-        var components = metadata.Attributes?
+        var entityComponent = new SolutionComponent(Guid.NewGuid())
+        {
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
+            [SolutionComponent.LogicalNames.ObjectId] = metadata.MetadataId,
+            [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
+            [SolutionComponent.LogicalNames.IsMetadata] = true,
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
+        };
+
+        var attributeComponents = metadata.Attributes?
             .Select(attribute => new SolutionComponent(Guid.NewGuid())
             {
                 [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
                 [SolutionComponent.LogicalNames.ObjectId] = attribute.MetadataId,
                 [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
-                [SolutionComponent.LogicalNames.IsMetadata] = true
+                [SolutionComponent.LogicalNames.IsMetadata] = true,
+                [SolutionComponent.LogicalNames.RootSolutionComponentId] = entityComponent.Id
             })
             .Cast<Entity>()
             .ToList() ?? [];
 
-        return [solution, .. components];
+        return [solution, entityComponent, .. attributeComponents];
     }
 
     private static string WriteConfig()

@@ -67,6 +67,31 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
     }
 
     [Test]
+    public async Task EvaluateAsync_EntityAddedWithIncludeSubcomponents_ChecksAttributesWithoutIndividualComponentRows()
+    {
+        // RootComponentBehavior.IncludeSubcomponents ('whole table') never gets per-attribute
+        // solutioncomponent rows - the same violations must still surface purely from metadata.
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_"], SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents);
+
+        var violatingFields = findings.Select(finding => finding.ComponentLogicalName!).ToHashSet(StringComparer.Ordinal);
+        await Assert.That(violatingFields).IsEquivalentTo(
+        [
+            "dgt_owner",
+            "unknown_field_txt",
+            "dgt_BadName_txt",
+            "contoso_amount_cur"
+        ]);
+    }
+
+    [Test]
+    public async Task EvaluateAsync_EntityIncludedAsShellOnly_NoAttributesAreChecked()
+    {
+        var findings = await EvaluateAsync(BuildEntityMetadata(), ["dgt_"], SolutionComponent.Options.RootComponentBehavior.IncludeAsShellOnly);
+
+        await Assert.That(findings).IsEmpty();
+    }
+
+    [Test]
     public async Task Execute_WhenFindingsExceedFailOnThreshold_ReturnsFalse()
     {
         var path = WriteConfig(["dgt_"]);
@@ -80,20 +105,20 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
         await Assert.That(result).IsFalse();
     }
 
-    private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes)
+    private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
-        var testContext = CreateContext(entityMetadata);
+        var testContext = CreateContext(entityMetadata, rootComponentBehavior);
         var context = new LintContext(testContext.FakedService, [SolutionName], testContext.ConfigResolver);
         var ruleConfig = CreateRuleConfig(publisherPrefixes);
         return await new UnmanagedFieldNamingRule().EvaluateAsync(context, ruleConfig, CancellationToken.None);
     }
 
-    private CommandTestContext<LintRunCommand, LintVerb> CreateContext(EntityMetadata entityMetadata)
+    private CommandTestContext<LintRunCommand, LintVerb> CreateContext(EntityMetadata entityMetadata, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
         return GetBuilder()
             .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithMetaData(entityMetadata)
-            .WithData(PrepareData)
+            .WithData(service => PrepareData(service, rootComponentBehavior))
             .Build();
     }
 
@@ -157,7 +182,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
         return attribute;
     }
 
-    private static IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service)
+    private static IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service, int rootComponentBehavior)
     {
         var solution = new Solution(Guid.NewGuid())
         {
@@ -165,18 +190,31 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<LintRunCommand>
         };
 
         var metadata = service.State.EntityMetadata["account"];
-        var components = metadata.Attributes?
-            .Select(attribute => new SolutionComponent(Guid.NewGuid())
-            {
-                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
-                [SolutionComponent.LogicalNames.ObjectId] = attribute.MetadataId,
-                [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
-                [SolutionComponent.LogicalNames.IsMetadata] = true
-            })
-            .Cast<Entity>()
-            .ToList() ?? [];
+        var entityComponent = new SolutionComponent(Guid.NewGuid())
+        {
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
+            [SolutionComponent.LogicalNames.ObjectId] = metadata.MetadataId,
+            [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
+            [SolutionComponent.LogicalNames.IsMetadata] = true,
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(rootComponentBehavior)
+        };
 
-        return [solution, .. components];
+        // IncludeSubcomponents ('whole table') never gets per-attribute rows of its own.
+        var attributeComponents = rootComponentBehavior == SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents
+            ? metadata.Attributes?
+                .Select(attribute => new SolutionComponent(Guid.NewGuid())
+                {
+                    [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
+                    [SolutionComponent.LogicalNames.ObjectId] = attribute.MetadataId,
+                    [SolutionComponent.LogicalNames.SolutionId] = solution.ToEntityReference(),
+                    [SolutionComponent.LogicalNames.IsMetadata] = true,
+                    [SolutionComponent.LogicalNames.RootSolutionComponentId] = entityComponent.Id
+                })
+                .Cast<Entity>()
+                .ToList() ?? []
+            : [];
+
+        return [solution, entityComponent, .. attributeComponents];
     }
 
     private static LintRuleConfigEntry CreateRuleConfig(IReadOnlyList<string> publisherPrefixes)

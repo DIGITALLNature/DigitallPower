@@ -2,9 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.RegularExpressions;
-using dgt.power.dataverse;
 using dgt.power.linter.Base;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.linter.Rules;
@@ -33,55 +31,54 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
         var severity = ruleConfig?.Severity ?? DefaultSeverity;
         var findings = new List<LintFinding>();
 
-        foreach (var component in context.SolutionComponentEntries.Values)
+        // Iterates the resolved membership (not the raw solutioncomponent rows) so that entities
+        // added with RootComponentBehavior.IncludeSubcomponents - which never get per-attribute
+        // solutioncomponent rows - still have every one of their fields checked.
+        foreach (var membership in context.EntityMemberships.Values)
         {
-            if (component.ComponentType is null || component.ComponentType.Value != SolutionComponent.Options.ComponentType.Attribute ||
-                component.ObjectId is null || component.ObjectId == Guid.Empty)
+            foreach (var attribute in membership.EffectiveAttributes)
             {
-                continue;
-            }
-
-            var attribute = ResolveAttributeMetadata(context, component.ObjectId.Value);
-            if (attribute is null || attribute.IsCustomAttribute != true || attribute.IsManaged == true)
-            {
-                continue;
-            }
-
-            var attributeName = attribute.LogicalName;
-            if (string.IsNullOrWhiteSpace(attributeName) || !attributeName.Contains('_', StringComparison.Ordinal))
-            {
-                // Dataverse itself sometimes provisions default columns without any publisher
-                // prefix (e.g. "name", "createdon", or the auto-created statecode/statuscode on a
-                // new custom table). We never author those, so a missing prefix is treated as
-                // out of our control rather than a violation.
-                continue;
-            }
-
-            var expectedSuffixes = ResolveExpectedSuffixes(attribute);
-            if (expectedSuffixes is null)
-            {
-                continue;
-            }
-
-            var violation = Validate(attributeName, prefixes, expectedSuffixes);
-            if (violation is null)
-            {
-                continue;
-            }
-
-            findings.Add(new LintFinding(
-                Id,
-                severity,
-                $"Custom field '{attributeName}' {violation}.",
-                component.SolutionId?.Name ?? string.Empty,
-                "Attribute",
-                attributeName,
-                component.ObjectId,
-                new Dictionary<string, object?>
+                if (attribute.IsCustomAttribute != true || attribute.IsManaged == true)
                 {
-                    ["entityLogicalName"] = attribute.EntityLogicalName,
-                    ["publisherPrefixes"] = prefixes
-                }));
+                    continue;
+                }
+
+                var attributeName = attribute.LogicalName;
+                if (string.IsNullOrWhiteSpace(attributeName) || !attributeName.Contains('_', StringComparison.Ordinal))
+                {
+                    // Dataverse itself sometimes provisions default columns without any publisher
+                    // prefix (e.g. "name", "createdon", or the auto-created statecode/statuscode on a
+                    // new custom table). We never author those, so a missing prefix is treated as
+                    // out of our control rather than a violation.
+                    continue;
+                }
+
+                var expectedSuffixes = ResolveExpectedSuffixes(attribute);
+                if (expectedSuffixes is null)
+                {
+                    continue;
+                }
+
+                var violation = Validate(attributeName, prefixes, expectedSuffixes);
+                if (violation is null)
+                {
+                    continue;
+                }
+
+                findings.Add(new LintFinding(
+                    Id,
+                    severity,
+                    $"Custom field '{attributeName}' {violation}.",
+                    membership.SolutionUniqueName,
+                    "Attribute",
+                    attributeName,
+                    attribute.MetadataId,
+                    new Dictionary<string, object?>
+                    {
+                        ["entityLogicalName"] = membership.EntityLogicalName,
+                        ["publisherPrefixes"] = prefixes
+                    }));
+            }
         }
 
         return Task.FromResult<IReadOnlyList<LintFinding>>(findings);
@@ -192,9 +189,6 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
 
         return normalized.Count > 0 ? normalized : ["dgt_"];
     }
-
-    private static AttributeMetadata? ResolveAttributeMetadata(LintContext context, Guid attributeId) =>
-        context.AttributeMetadataById.TryGetValue(attributeId, out var attribute) ? attribute : null;
 
     [GeneratedRegex("^[a-z][a-z0-9_]*$")]
     private static partial Regex SnakeCaseNameRegex();
