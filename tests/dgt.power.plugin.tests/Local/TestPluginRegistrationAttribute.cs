@@ -15,11 +15,11 @@ public sealed class PluginRegistrationAttribute(string messageName, int mode, in
 
     public int Stage => stage;
 
-    public string? PrimaryEntityName { get; set; }
+    public string? PrimaryEntityName;
 
     public string? SecondaryEntityName { get; set; }
 
-    public int ExecutionOrder { get; set; }
+    public int ExecutionOrder;
 
     public string? Configuration { get; set; }
 

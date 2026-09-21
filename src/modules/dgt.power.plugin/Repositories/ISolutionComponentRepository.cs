@@ -18,9 +18,4 @@ public interface ISolutionComponentRepository
     /// <summary>Adds a component to a solution.</summary>
     Task AddToSolutionAsync(int componentType, Guid componentId, string solutionUniqueName, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Looks up the customization prefix of the solution's publisher, for naming newly created
-    /// components (e.g. plugin packages). Returns <paramref name="defaultValue"/> when the
-    /// solution is not found or not set.
-    /// </summary>
 }
