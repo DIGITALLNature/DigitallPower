@@ -174,6 +174,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-plugin-push-dry-run-summary.md` | implementation | `plugin push --dry-run` reports aggregate checked/new/unchanged/deleted counts for plugin types, steps, and images |
+| `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
