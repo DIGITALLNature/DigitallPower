@@ -35,15 +35,24 @@ public sealed class PluginPushExecutor(
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(options);
 
-        return ProcessAssemblyCoreAsync(assembly, options, cancellationToken);
+        return ProcessAssemblyCoreAsync(
+            assembly, options, reconcilePackageOwnedAssembly: false, cancellationToken: cancellationToken);
     }
 
-    private async Task<Guid> ProcessAssemblyCoreAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken)
+    private async Task<Guid> ProcessAssemblyCoreAsync(
+        LocalAssembly assembly,
+        PluginPushOptions options,
+        bool reconcilePackageOwnedAssembly,
+        CancellationToken cancellationToken)
     {
         var remote = await assemblyRepository.FindByNameAsync(assembly.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanAssembly(assembly, remote);
 
         var assemblyId = await ApplyAssemblyPlanAsync(plan, options, cancellationToken);
+        if (plan.Action == AssemblyAction.OwnedByPackage && !reconcilePackageOwnedAssembly)
+        {
+            return assemblyId;
+        }
 
         if (!options.DryRun && !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId))
         {
@@ -73,13 +82,15 @@ public sealed class PluginPushExecutor(
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.PublisherPrefix);
 
         return ProcessPackageCoreAsync(package, options, cancellationToken);
     }
 
     private async Task<Guid> ProcessPackageCoreAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        var remote = await packageRepository.FindByNameAsync(package.Package.Name, cancellationToken);
+        var packageName = $"{options.PublisherPrefix}_{package.Package.Name}";
+        var remote = await packageRepository.FindByNameAsync(packageName, cancellationToken);
         var plan = PluginPushPlanner.PlanPackage(package.Package, remote);
 
         var packageId = await ApplyPackagePlanAsync(plan, options, cancellationToken);
@@ -89,7 +100,8 @@ public sealed class PluginPushExecutor(
         var packageIdentityLinked = false;
         foreach (var localAssembly in package.Assemblies)
         {
-            await ProcessAssemblyAsync(localAssembly, options, cancellationToken);
+            await ProcessAssemblyCoreAsync(
+                localAssembly, options, reconcilePackageOwnedAssembly: true, cancellationToken: cancellationToken);
 
             if (packageIdentityLinked || options.DryRun || string.IsNullOrWhiteSpace(localAssembly.ManagedIdentityClientId))
             {
@@ -163,8 +175,7 @@ public sealed class PluginPushExecutor(
             return existing!.Id;
         }
 
-        var prefix = await solutionRepository.GetPublisherPrefixAsync(options.Solution, cancellationToken: cancellationToken);
-        var name = $"{prefix}_{package.Name}";
+        var name = $"{options.PublisherPrefix}_{package.Name}";
         console.MarkupLine(CultureInfo.InvariantCulture, "Create Package [bold green]{0}[/] ({1})", name, package.Version);
 
         if (options.DryRun)

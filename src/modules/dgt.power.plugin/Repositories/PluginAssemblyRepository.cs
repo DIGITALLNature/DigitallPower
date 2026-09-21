@@ -63,7 +63,8 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
                     new ConditionExpression(PluginAssembly.LogicalNames.SourceType, ConditionOperator.In,
                         PluginAssembly.Options.SourceType.Database, PluginAssembly.Options.SourceType.FileStore),
                     new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal,
-                        PluginAssembly.Options.IsolationMode.Sandbox)
+                        PluginAssembly.Options.IsolationMode.Sandbox),
+                    new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Null)
                 }
             },
             Orders = { new OrderExpression(PluginAssembly.LogicalNames.Version, OrderType.Descending) }

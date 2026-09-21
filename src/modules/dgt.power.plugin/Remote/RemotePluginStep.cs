@@ -13,6 +13,7 @@ public sealed record RemotePluginStep(
     string MessageName,
     int Stage,
     string PrimaryEntityName,
+    string SecondaryEntityName,
     IReadOnlyList<string>? FilterAttributes,
     int? ExecutionOrder,
     string? Configuration);

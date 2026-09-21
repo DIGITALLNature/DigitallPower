@@ -160,6 +160,14 @@ public class PluginAssemblyRepositoryTests
             SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
+        service.Create(new PluginAssembly(Guid.NewGuid())
+        {
+            Name = "MyPlugins",
+            Version = "1.5.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox),
+            PackageId = new EntityReference(PluginPackage.EntityLogicalName, Guid.NewGuid())
+        });
 
         var result = await repository.ListOutdatedAsync("MyPlugins", newId);
 

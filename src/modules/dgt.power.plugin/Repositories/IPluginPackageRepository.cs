@@ -12,9 +12,7 @@ namespace dgt.power.plugin.Repositories;
 public interface IPluginPackageRepository
 {
     /// <summary>
-    /// Finds the plugin package whose (solution-prefixed) name ends with the given unprefixed
-    /// package name, if any. When more than one match exists (e.g. deployed under different
-    /// solution prefixes), the most recently created one is returned.
+    /// Finds the plugin package with the exact Dataverse name, if any.
     /// </summary>
     Task<RemotePackage?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
 

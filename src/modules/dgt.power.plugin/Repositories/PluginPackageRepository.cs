@@ -19,7 +19,7 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
             ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId),
             Criteria = new FilterExpression
             {
-                Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.EndsWith, name) }
+                Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.Equal, name) }
             },
             Orders = { new OrderExpression(PluginPackage.LogicalNames.CreatedOn, OrderType.Descending) }
         };

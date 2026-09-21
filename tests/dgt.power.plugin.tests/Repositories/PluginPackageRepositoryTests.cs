@@ -29,17 +29,29 @@ public class PluginPackageRepositoryTests
     }
 
     [Test]
-    public async Task FindByNameAsync_MatchesSolutionPrefixedName()
+    public async Task FindByNameAsync_MatchesExactName()
     {
         var service = CreateService();
         var repository = new PluginPackageRepository(service);
         var id = Guid.NewGuid();
         service.Create(new PluginPackage(id) { Name = "new_MyPackage", Version = "1.0.0" });
 
-        var result = await repository.FindByNameAsync("MyPackage");
+        var result = await repository.FindByNameAsync("new_MyPackage");
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.Id).IsEqualTo(id);
+    }
+
+    [Test]
+    public async Task FindByNameAsync_DoesNotMatchUnrelatedSuffix()
+    {
+        var service = CreateService();
+        var repository = new PluginPackageRepository(service);
+        service.Create(new PluginPackage(Guid.NewGuid()) { Name = "new_OtherMyPackage", Version = "1.0.0" });
+
+        var result = await repository.FindByNameAsync("new_MyPackage");
+
+        await Assert.That(result).IsNull();
     }
 
     [Test]

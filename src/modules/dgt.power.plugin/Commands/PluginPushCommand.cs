@@ -51,6 +51,13 @@ public class PluginPushCommand(
             return Tracer.End(this, true);
         }
 
+        if (targets.Any(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) &&
+            string.IsNullOrWhiteSpace(settings.PublisherPrefix))
+        {
+            Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
+            return Tracer.End(this, false);
+        }
+
         var service = (IOrganizationServiceAsync2)Connection;
         var executor = new PluginPushExecutor(
             new PluginAssemblyRepository(service),
@@ -74,7 +81,7 @@ public class PluginPushCommand(
 
         var assemblyReader = new AssemblyReflectionReader(Console);
         var packageReader = new PluginPackageReader(Console);
-        var options = new PluginPushOptions(settings.Solution, settings.DryRun);
+        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix);
 
         var hadFailure = await Console.Status()
             .Spinner(Spinner.Known.Pong)

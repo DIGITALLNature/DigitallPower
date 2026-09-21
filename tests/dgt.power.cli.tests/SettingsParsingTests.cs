@@ -255,12 +255,14 @@ public class SettingsParsingTests
         var result = Parse<PluginPushSettings>(
             "c:/TargetDir/plugin.dll",
             "--solution", "samplesolution",
+            "--publisher-prefix", "sample",
             "--dry-run");
 
         var settings = (PluginPushSettings)result.Settings!;
 
         await Assert.That(settings.Target).IsEqualTo("c:/TargetDir/plugin.dll");
         await Assert.That(settings.Solution).IsEqualTo("samplesolution");
+        await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
         await Assert.That(settings.DryRun).IsTrue();
     }
 
@@ -272,6 +274,7 @@ public class SettingsParsingTests
         var settings = (PluginPushSettings)result.Settings!;
 
         await Assert.That(settings.Solution).IsNull();
+        await Assert.That(settings.PublisherPrefix).IsNull();
         await Assert.That(settings.DryRun).IsFalse();
     }
 

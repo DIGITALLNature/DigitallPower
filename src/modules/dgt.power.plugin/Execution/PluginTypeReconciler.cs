@@ -47,7 +47,13 @@ public sealed class PluginTypeReconciler(
         Guid assemblyId, IReadOnlyList<LocalPluginType> localTypes, PluginPushOptions options, CancellationToken cancellationToken)
     {
         var remoteTypes = await typeRepository.ListByAssemblyAsync(assemblyId, cancellationToken);
-        var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(localTypes, remoteTypes);
+        var ignoredTypeNames = localTypes
+            .Where(type => !type.HasRegistrationAttribute)
+            .Select(type => type.TypeName)
+            .ToHashSet(StringComparer.Ordinal);
+        var registeredTypes = localTypes.Where(type => type.HasRegistrationAttribute).ToList();
+        var managedRemoteTypes = remoteTypes.Where(type => !ignoredTypeNames.Contains(type.TypeName)).ToList();
+        var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(registeredTypes, managedRemoteTypes);
 
         var steps = default(ReconciliationCounts);
         var images = default(ReconciliationCounts);
@@ -56,7 +62,7 @@ public sealed class PluginTypeReconciler(
         {
             var typeId = await ApplyTypePlanAsync(typePlan, assemblyId, options, cancellationToken);
 
-            if (typePlan.Local.Steps.Count > 0)
+            if (typePlan.Local.HasRegistrationAttribute)
             {
                 var stepSummary = await ReconcileStepsAsync(typeId, typePlan.Local.Steps, options, cancellationToken);
                 steps += stepSummary.Steps;

@@ -45,7 +45,9 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
                     SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId, SdkMessageFilter.LogicalNames.SdkMessageFilterId, JoinOperator.LeftOuter)
                 {
                     EntityAlias = "filter",
-                    Columns = new ColumnSet(SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode)
+                    Columns = new ColumnSet(
+                        SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode,
+                        SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode)
                 }
             }
         };
@@ -59,13 +61,14 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         var step = entity.ToEntity<SdkMessageProcessingStep>();
         var messageName = entity.GetAttributeValue<AliasedValue>($"message.{SdkMessage.LogicalNames.Name}")?.Value as string ?? string.Empty;
         var primaryEntityName = entity.GetAttributeValue<AliasedValue>($"filter.{SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode}")?.Value as string ?? "none";
+        var secondaryEntityName = entity.GetAttributeValue<AliasedValue>($"filter.{SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode}")?.Value as string ?? "none";
 
         var filterAttributes = string.IsNullOrEmpty(step.FilteringAttributesField)
             ? null
             : step.FilteringAttributesField.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         return new RemotePluginStep(
-            step.Id, step.Name!, step.Mode!.Value, messageName, step.Stage!.Value, primaryEntityName,
+            step.Id, step.Name!, step.Mode!.Value, messageName, step.Stage!.Value, primaryEntityName, secondaryEntityName,
             filterAttributes, step.Rank, step.Configuration);
     }
 

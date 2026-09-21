@@ -19,7 +19,7 @@ public class PluginPushExecutorTests
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
+    private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -47,7 +47,7 @@ public class PluginPushExecutorTests
                 console),
             console);
 
-        return (executor, console);
+        return (service, executor, console);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
@@ -119,7 +119,7 @@ public class PluginPushExecutorTests
     [Test]
     public async Task ProcessAssemblyAsync_DryRun_PreviewsPluginTypesForBrandNewAssembly()
     {
-        var (executor, console) = CreateExecutorWithConsole();
+        var (_, executor, console) = CreateExecutorWithConsole();
         var assembly = Assembly() with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
 
         var id = await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
@@ -194,6 +194,36 @@ public class PluginPushExecutorTests
     }
 
     [Test]
+    public async Task ProcessAssemblyAsync_OwnedByPackage_SkipsStandaloneTypeReconciliation()
+    {
+        var (service, executor, console) = CreateExecutorWithConsole();
+        var packageId = Guid.NewGuid();
+        var existingId = Guid.NewGuid();
+        service.Create(new PluginAssembly(existingId)
+        {
+            Name = "MyPlugins",
+            Version = "9.9.9.9",
+            Content = "unchanged",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox),
+            PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
+        });
+
+        var assembly = Assembly() with
+        {
+            PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
+        };
+        await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: false));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("already owned by a plugin package");
+            await Assert.That(console.Output).DoesNotContain("Create PluginType");
+            await Assert.That(console.Output).DoesNotContain("Checked");
+        }
+    }
+
+    [Test]
     public async Task ProcessAssemblyAsync_ManagedIdentityClientId_LinksIdentity()
     {
         var (service, executor) = CreateExecutor();
@@ -210,7 +240,7 @@ public class PluginPushExecutorTests
         var (service, executor) = CreateExecutor();
         var package = new LocalPluginPackage(new LocalPackage("MyPackage", "1.0.0", "pkgcontent"), [Assembly()]);
 
-        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions("TestSolution", DryRun: false));
+        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions("TestSolution", DryRun: false, PublisherPrefix: "new"));
 
         var created = service.Retrieve(PluginPackage.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginPackage>();
         await Assert.That(created.Name).IsEqualTo("new_MyPackage");
@@ -226,7 +256,7 @@ public class PluginPushExecutorTests
         service.Create(new PluginPackage(packageId) { Name = "new_MyPackage", Version = "1.0.0", Content = "old" });
         var package = new LocalPluginPackage(new LocalPackage("MyPackage", "2.0.0", "newcontent"), []);
 
-        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false));
+        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
 
         await Assert.That(id).IsEqualTo(packageId);
         var updated = service.Retrieve(PluginPackage.EntityLogicalName, packageId, new ColumnSet(true)).ToEntity<PluginPackage>();
@@ -242,7 +272,7 @@ public class PluginPushExecutorTests
             new LocalPackage("MyPackage", "1.0.0", "pkgcontent"),
             [Assembly("First", managedIdentityClientId: ClientId), Assembly("Second", managedIdentityClientId: ClientId)]);
 
-        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false));
+        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
 
         var created = service.Retrieve(PluginPackage.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginPackage>();
         await Assert.That(created.Managedidentityid).IsNotNull();

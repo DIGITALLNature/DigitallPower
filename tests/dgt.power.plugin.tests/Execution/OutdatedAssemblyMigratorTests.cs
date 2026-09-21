@@ -113,6 +113,55 @@ public class OutdatedAssemblyMigratorTests
     }
 
     [Test]
+    public async Task MigrateAsync_EquivalentNewStep_LeavesOldStepForPurge()
+    {
+        var (service, migrator) = CreateMigrator();
+        var oldAssemblyId = CreateAssembly(service, "MyPlugins", "1.0.0.0");
+        var oldTypeId = CreateType(service, oldAssemblyId, "MyPlugin");
+        var newAssemblyId = CreateAssembly(service, "MyPlugins", "2.0.0.0");
+        var newTypeId = CreateType(service, newAssemblyId, "MyPlugin");
+        var messageId = SeedMessage(service, "Create");
+        var oldStepId = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(oldStepId)
+        {
+            Name = "step",
+            EventHandler = new EntityReference(PluginType.EntityLogicalName, oldTypeId),
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PostOperation)
+        });
+        var newStepId = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(newStepId)
+        {
+            Name = "step",
+            EventHandler = new EntityReference(PluginType.EntityLogicalName, newTypeId),
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PostOperation)
+        });
+
+        var replacementTypes = new[]
+        {
+            new LocalPluginType(
+                "MyPlugin", "MyPlugin", string.Empty, true,
+                [new LocalPluginStep(
+                    "step",
+                    SdkMessageProcessingStep.Options.Mode.Synchronous,
+                    "Create",
+                    SdkMessageProcessingStep.Options.Stage.PostOperation,
+                    "none", "none", null, null, null, [])])
+        };
+
+        await migrator.MigrateAsync("MyPlugins", newAssemblyId, replacementTypes, new PluginPushOptions(null, DryRun: false));
+
+        await Assert.That(() => service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, oldStepId, new ColumnSet(true)))
+            .Throws<Exception>();
+        var newStep = service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, newStepId, new ColumnSet(true))
+            .ToEntity<SdkMessageProcessingStep>();
+        await Assert.That(newStep.EventHandler!.Id).IsEqualTo(newTypeId);
+    }
+
+    [Test]
     public async Task MigrateAsync_DryRun_DoesNotMigrateOrDeleteAnything()
     {
         var (service, migrator) = CreateMigrator();

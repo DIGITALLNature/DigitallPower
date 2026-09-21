@@ -832,9 +832,7 @@
         "dependencies": {
           "NuGet.Packaging": "[7.6.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.10, )",
-          "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[2.2.1-beta.2, )",
-          "dgt.registration": "[1.0.1, )"
+          "dgt.power.common": "[2.2.1-beta.2, )"
         }
       },
       "dgt.power.profile": {

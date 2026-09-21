@@ -161,7 +161,7 @@ public class PluginPushPlannerTests
     public async Task PlanPluginSteps_RemoteMatchNoContentDiff_ReturnsKeep()
     {
         var local = Step(name: "step", filterAttributes: ["a", "b"]);
-        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", ["b", "a"], 1, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", ["b", "a"], 1, null);
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
@@ -179,7 +179,7 @@ public class PluginPushPlannerTests
         string localName, string remoteName, int localOrder, int remoteOrder, string? localConfig, string? remoteConfig)
     {
         var local = Step(name: localName, executionOrder: localOrder, configuration: localConfig);
-        var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", null, remoteOrder, remoteConfig);
+        var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", "none", null, remoteOrder, remoteConfig);
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
@@ -193,7 +193,7 @@ public class PluginPushPlannerTests
     public async Task PlanPluginSteps_MatchTreatsEmptyAndNoneEntityNamesAsEqual()
     {
         var local = Step(primaryEntityName: "none");
-        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, string.Empty, null, local.ExecutionOrder, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, string.Empty, "none", null, local.ExecutionOrder, null);
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
@@ -203,9 +203,35 @@ public class PluginPushPlannerTests
     }
 
     [Test]
+    public async Task PlanPluginSteps_MatchIsCaseInsensitiveForMessageName()
+    {
+        var local = Step(messageName: "create");
+        var remote = new RemotePluginStep(
+            Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder, null);
+
+        var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
+
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(purge).IsEmpty();
+    }
+
+    [Test]
+    public async Task PlanPluginSteps_DifferentSecondaryEntityNamesDoNotMatch()
+    {
+        var local = Step() with { SecondaryEntityName = "contact" };
+        var remote = new RemotePluginStep(
+            Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder, null);
+
+        var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
+
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Create);
+        await Assert.That(purge).IsEquivalentTo([remote]);
+    }
+
+    [Test]
     public async Task PlanPluginSteps_RemoteNoLocalMatch_ReturnsPurge()
     {
-        var remote = new RemotePluginStep(Guid.NewGuid(), "orphaned", 0, "Create", 40, "account", null, 1, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "orphaned", 0, "Create", 40, "account", "none", null, 1, null);
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([], [remote]);
 

@@ -541,19 +541,22 @@ directory (mixed content in one directory is supported; each file is processed i
 
 ```bash
 dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
-dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
-dgtp plugin push ./bin/Release --solution mysolution
+dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --publisher-prefix contoso --solution mysolution
+dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 ```
 
 | Option | Behavior |
 |--------|----------|
 | `--solution` | Adds newly created assemblies/packages/steps/images to the given solution |
+| `--publisher-prefix` | Publisher customization prefix for plugin packages; required when the target includes a `.nupkg` |
 | `--dry-run` | Reports what would be created/updated/deleted without writing to Dataverse |
 
 Reconciles plugin types, steps, step images and Custom API links declared via the
 `Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
 `ManagedIdentityRegistrationAttribute`-decorated assemblies to a managed identity, same as `push`.
 The dry-run output also summarizes checked plugin types, steps, and images that are already unchanged.
+Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
+require `--publisher-prefix`.
 
 **Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
 currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded
@@ -572,8 +575,8 @@ towards it unconditionally, the same way it already purges orphaned steps/types 
   customizations.
 - **Hint for plugin classes without a registration attribute** - a plain `IPlugin` implementation with no
   `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
-  still registered as a `PluginType` (so it can be wired up manually via the Plugin Registration Tool), but
-  `plugin push` prints a hint in case the attribute was forgotten.
+  detected and reported with a hint, but is ignored by reconciliation so manually managed registrations are
+  not created, changed, or removed.
 
 ### `push` — Deploy artifacts
 

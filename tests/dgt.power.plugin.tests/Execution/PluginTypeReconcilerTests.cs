@@ -190,6 +190,32 @@ public class PluginTypeReconcilerTests
     }
 
     [Test]
+    public async Task ReconcileAsync_UnregisteredType_IsIgnoredAndPreservesExistingRegistration()
+    {
+        var (service, reconciler, console) = CreateReconcilerWithConsole();
+        var assemblyId = Guid.NewGuid();
+        var typeId = Guid.NewGuid();
+        service.Create(new PluginType(typeId)
+        {
+            TypeName = "MyPlugin",
+            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
+        });
+
+        await reconciler.ReconcileAsync(
+            assemblyId,
+            [new LocalPluginType("MyPlugin", "MyPlugin", "new_api", false, [])],
+            new PluginPushOptions(null, DryRun: false));
+
+        var existing = service.Retrieve(PluginType.EntityLogicalName, typeId, new ColumnSet(true)).ToEntity<PluginType>();
+        using (Assert.Multiple())
+        {
+            await Assert.That(existing.Id).IsEqualTo(typeId);
+            await Assert.That(console.Output).DoesNotContain("Create PluginType");
+            await Assert.That(console.Output).DoesNotContain("Link Custom API");
+        }
+    }
+
+    [Test]
     public async Task ReconcileAsync_ExistingStepWithChangedOrder_Updates()
     {
         var (service, reconciler) = CreateReconciler();

@@ -178,10 +178,15 @@ public static class PluginPushPlanner
         local.Major == remote.Major && local.Minor == remote.Minor;
 
     private static bool StepKeysMatch(LocalPluginStep local, RemotePluginStep remote) =>
-        local.MessageName == remote.MessageName
+        string.Equals(local.MessageName, remote.MessageName, StringComparison.OrdinalIgnoreCase)
         && local.Mode == remote.Mode
         && local.Stage == remote.Stage
-        && NormalizeEntityName(local.PrimaryEntityName) == NormalizeEntityName(remote.PrimaryEntityName);
+        && string.Equals(
+            NormalizeEntityName(local.PrimaryEntityName), NormalizeEntityName(remote.PrimaryEntityName),
+            StringComparison.OrdinalIgnoreCase)
+        && string.Equals(
+            NormalizeEntityName(local.SecondaryEntityName), NormalizeEntityName(remote.SecondaryEntityName),
+            StringComparison.OrdinalIgnoreCase);
 
     private static bool StepContentDiffers(LocalPluginStep local, RemotePluginStep remote) =>
         remote.Name != local.Name

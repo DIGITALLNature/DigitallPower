@@ -5,6 +5,7 @@ using System.Globalization;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Remote;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Execution;
@@ -93,8 +94,17 @@ public sealed class OutdatedAssemblyMigrator(
                 }
 
                 var steps = await stepRepository.ListByPluginTypeAsync(migration.OldTypeId, cancellationToken);
+                var newSteps = await stepRepository.ListByPluginTypeAsync(newTypeId, cancellationToken);
                 foreach (var step in steps)
                 {
+                    if (newSteps.Any(newStep => HaveSameIdentity(step, newStep)))
+                    {
+                        console.MarkupLine(CultureInfo.InvariantCulture,
+                            "  Existing equivalent step [bold]{0}[/] already belongs to the new type - leaving old step for purge",
+                            step.Name);
+                        continue;
+                    }
+
                     await stepRepository.ReassignPluginTypeAsync(step.Id, newTypeId, cancellationToken);
                 }
             }
@@ -119,4 +129,18 @@ public sealed class OutdatedAssemblyMigrator(
             await assemblyRepository.DeleteAsync(outdated.Id, cancellationToken);
         }
     }
+
+    private static bool HaveSameIdentity(RemotePluginStep left, RemotePluginStep right) =>
+        string.Equals(left.MessageName, right.MessageName, StringComparison.OrdinalIgnoreCase)
+        && left.Mode == right.Mode
+        && left.Stage == right.Stage
+        && string.Equals(
+            NormalizeEntityName(left.PrimaryEntityName), NormalizeEntityName(right.PrimaryEntityName),
+            StringComparison.OrdinalIgnoreCase)
+        && string.Equals(
+            NormalizeEntityName(left.SecondaryEntityName), NormalizeEntityName(right.SecondaryEntityName),
+            StringComparison.OrdinalIgnoreCase);
+
+    private static string NormalizeEntityName(string entityName) =>
+        string.IsNullOrEmpty(entityName) ? "none" : entityName;
 }

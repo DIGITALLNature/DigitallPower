@@ -21,6 +21,10 @@ public class PluginPushSettings : PluginSettings
     [Description("Add new/updated components to solution; default: none")]
     public string? Solution { get; set; }
 
+    [CommandOption("--publisher-prefix")]
+    [Description("Publisher customization prefix for plugin packages; required when processing a .nupkg")]
+    public string? PublisherPrefix { get; set; }
+
     [CommandOption("--dry-run")]
     [Description("Only report what would be created/updated/deleted; do not write anything to Dataverse")]
     public bool DryRun { get; set; }
