@@ -6,7 +6,7 @@
 implementing `dgtp plugin push`, structured in four layers:
 
 - **`Local/`** — pure parsing of on-disk artifacts: `AssemblyReflectionReader` (reflects a `.dll` for
-  plugin types/steps/images declared via `Digitall.Plugins.Registration` attributes),
+  plugin types/steps/images declared via the registration attributes - see below),
   `PluginPackageReader` (reads `.nupkg` content). Produces `LocalAssembly`, `LocalPluginType`,
   `LocalPluginStep`, `LocalPluginStepImage` records - no Dataverse access.
 - **`Remote/`** — minimal, already-fetched Dataverse state records (`RemoteAssembly`, `RemotePackage`,
@@ -33,6 +33,22 @@ implementing `dgtp plugin push`, structured in four layers:
 once. Per-target processing catches generic exceptions but excludes `AbstractPowerException` subtypes
 from the catch filter so they propagate to `Program.cs`'s global exception handler for correct exit
 codes (e.g. `WorkflowActivityNotSupportedException` → `NotSupported`).
+
+## No Package Dependency on the Registration Attributes
+
+`dgt.power.plugin` has **no `PackageReference` on the registration attributes package**
+(`Digitall.Plugins.Registration`, formerly `dgt.registration`). `AssemblyReflectionReader` loads the
+target `.dll` into a `System.Reflection.MetadataLoadContext` (reflection-only context), so the types it
+sees are never assignable to (or comparable with) any locally referenced attribute type anyway -
+detection is purely by attribute type `Name`/`Namespace` string matching via `CustomAttributeData`.
+`Local/RegistrationAttributeNames.cs` centralizes these well-known names/namespaces (including
+historical aliases: `D365.Extension.Registration`, `DGT.Registrations`, `dgt.registration`,
+`Digitall.APower.Registration`, `Digitall.Plugins.Registration`) as `const`/`static readonly` fields, so
+there is exactly one place to update if an attribute is ever renamed again - no assembly reference, no
+version bump required. The legacy `dgt.power.push` module still has its own independent
+`PackageReference` on the registration package because it actually instantiates
+`WorkflowRegistrationAttribute` at runtime for code-activity support (a real type dependency); that
+module was intentionally left untouched.
 
 ## Code Activities Are Rejected, Not Supported
 

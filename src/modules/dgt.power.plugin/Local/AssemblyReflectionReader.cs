@@ -4,7 +4,6 @@
 using System.Reflection;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using dgt.registration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 using Assembly = System.Reflection.Assembly;
@@ -17,20 +16,15 @@ namespace dgt.power.plugin.Local;
 /// Dataverse. Message/message-filter resolution for declared steps happens later, in the
 /// Dataverse layer, when the step is reconciled against the target environment.
 /// </summary>
+/// <remarks>
+/// Registration attributes are detected purely by type name/namespace via reflection metadata
+/// (<see cref="CustomAttributeData"/>), never by a real type reference - the assembly under
+/// inspection is loaded into a <see cref="MetadataLoadContext"/>, so its types are never
+/// assignable to (or comparable with) any locally referenced attribute type anyway. This module
+/// therefore has no compile-time dependency on the registration attributes package.
+/// </remarks>
 internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 {
-    private static readonly string[] s_knownNamespaces =
-    [
-        "D365.Extension.Registration", "DGT.Registrations", "dgt.registration",
-        "Digitall.APower.Registration", "Digitall.Plugins.Registration"
-    ];
-
-    private static readonly string[] s_knownPluginAttributes =
-    [
-        nameof(PluginRegistrationAttribute), nameof(CustomApiRegistrationAttribute),
-        nameof(CustomDataProviderRegistrationAttribute)
-    ];
-
     public LocalAssembly? Read(string dllFile, MetadataLoadContext metadataLoadContext)
     {
         ArgumentNullException.ThrowIfNull(metadataLoadContext);
@@ -119,17 +113,17 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
             foreach (var customAttribute in customAttributes)
             {
-                if (!s_knownNamespaces.Contains(customAttribute.AttributeType.Namespace))
+                if (!RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace))
                 {
                     continue;
                 }
 
-                if (customAttribute.AttributeType.Name == nameof(CustomApiRegistrationAttribute))
+                if (customAttribute.AttributeType.Name == RegistrationAttributeNames.CustomApiRegistration)
                 {
                     customApi = GetValue<string>(customAttribute, "messageName") ?? string.Empty;
                 }
 
-                if (customAttribute.AttributeType.Name == nameof(CustomDataProviderRegistrationAttribute))
+                if (customAttribute.AttributeType.Name == RegistrationAttributeNames.CustomDataProviderRegistration)
                 {
                     var step = BuildDataProviderStep(pluginType, customAttribute);
                     if (step != null)
@@ -178,8 +172,8 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!s_knownNamespaces.Contains(customAttribute.AttributeType.Namespace) ||
-                customAttribute.AttributeType.Name != nameof(PluginRegistrationAttribute))
+            if (!RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace) ||
+                customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
             {
                 continue;
             }
@@ -238,8 +232,8 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var assemblyAttributes = CustomAttributeData.GetCustomAttributes(assembly);
         foreach (var attr in assemblyAttributes)
         {
-            if (!s_knownNamespaces.Contains(attr.AttributeType.Namespace) ||
-                attr.AttributeType.Name != "ManagedIdentityRegistrationAttribute")
+            if (!RegistrationAttributeNames.KnownNamespaces.Contains(attr.AttributeType.Namespace) ||
+                attr.AttributeType.Name != RegistrationAttributeNames.ManagedIdentityRegistration)
             {
                 continue;
             }
@@ -307,8 +301,8 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>
-            s_knownNamespaces.Contains(customAttribute.AttributeType.Namespace) &&
-            s_knownPluginAttributes.Contains(customAttribute.AttributeType.Name));
+            RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace) &&
+            RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
     }
 
     private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
