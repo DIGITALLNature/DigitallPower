@@ -172,7 +172,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
-| `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), `--purge-outdated` design, unconditional Custom API migration, code-activity rejection |
+| `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |

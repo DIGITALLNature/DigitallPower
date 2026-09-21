@@ -103,7 +103,7 @@ public class PluginPushExecutorTests
     }
 
     [Test]
-    public async Task ProcessAssemblyAsync_DifferentMajorMinor_CreatesNewAssemblyAlongsideOldOne()
+    public async Task ProcessAssemblyAsync_DifferentMajorMinor_CreatesNewAssemblyAndPurgesOldOne()
     {
         var (service, executor) = CreateExecutor();
         var existingId = Guid.NewGuid();
@@ -119,7 +119,8 @@ public class PluginPushExecutorTests
 
         await Assert.That(id).IsNotEqualTo(existingId);
         var all = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
-        await Assert.That(all.Entities.Count).IsEqualTo(2);
+        await Assert.That(all.Entities.Count).IsEqualTo(1);
+        await Assert.That(all.Entities[0].Id).IsEqualTo(id);
     }
 
     [Test]

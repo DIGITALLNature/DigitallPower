@@ -64,7 +64,7 @@ public class PluginPushCommand(
 
         var assemblyReader = new AssemblyReflectionReader(Console);
         var packageReader = new PluginPackageReader(Console);
-        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PurgeOutdated);
+        var options = new PluginPushOptions(settings.Solution, settings.DryRun);
 
         var hadFailure = await Console.Status()
             .Spinner(Spinner.Known.Pong)

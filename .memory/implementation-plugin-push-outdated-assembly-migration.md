@@ -41,18 +41,29 @@ is preserved: `AssemblyReflectionReader`/the plugin type reader detects code act
 assembly and raises `WorkflowActivityNotSupportedException` before any plugin types are processed, even
 if the assembly also contains valid plugin types.
 
-## Outdated Assembly Migration (`--purge-outdated`)
+## Outdated Assembly Migration (unconditional, no flag)
 
 Replaces the legacy `push` module's `--delete-on-upgrade`/`--no-migrate-custom-apis` flags (see
-`implementation-assembly-version-upgrade-migration.md` for the old semantics) with a single flag and
-simplified, unconditional Custom API handling - both explicitly requested by the user:
+`implementation-assembly-version-upgrade-migration.md` for the old semantics). This went through two
+design iterations before landing on the final, flag-free shape:
 
-- **`--purge-outdated`** replaces `--delete-on-upgrade` (same purge/delete semantics: migrate steps,
-  then delete the outdated assembly + its plugin types + any steps left without a replacement type).
-- **The Custom API opt-out flag (`--no-migrate-custom-apis`) was removed entirely.** Custom API links
-  are now migrated **unconditionally** on every `Upgrade` (major/minor version change), independent of
-  `--purge-outdated` - the user's reasoning: "I cant think of any use case for" keeping old Custom API
-  links pointed at a superseded assembly.
+1. First iteration introduced `--purge-outdated` (replacing `--delete-on-upgrade`) while keeping Custom
+   API migration unconditional and gating only step migration + assembly/type deletion behind the flag.
+2. **Final iteration (this one): the flag was removed entirely.** The user's reasoning: registration
+   attributes are the declarative source of truth for the desired Dataverse state, and `plugin push`
+   already unconditionally purges orphaned steps/types on the *current* assembly (no flag) - so gating
+   the *outdated*-assembly cleanup behind a flag was an inconsistency, not a real safety feature. It also
+   produced a worse "split-brain" state than either extreme: Custom API links pointing at the new type
+   while steps still fired the old one. `--dry-run` remains the only safety valve (preview before any
+   write); there is no other opt-out.
+
+Current unconditional behavior on every `Upgrade` (major/minor version change):
+- Custom API links **and** plugin steps are migrated to the same-named replacement type on the new
+  assembly.
+- The outdated assembly, its plugin types, and any steps left without a replacement type are then always
+  deleted.
+
+Mechanics (unchanged since the first iteration):
 - Type matching (old outdated type → new replacement type) is done by `TypeName`, purely in the
   Planning layer (`PluginPushPlanner.PlanOutdatedTypeMigration`), comparing the old `RemotePluginType`
   against the newly-declared `LocalPluginType` list - **not** against the newly-created remote types.

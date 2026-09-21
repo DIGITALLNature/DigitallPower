@@ -24,8 +24,4 @@ public class PluginPushSettings : PluginSettings
     [CommandOption("--dry-run")]
     [Description("Only report what would be created/updated/deleted; do not write anything to Dataverse")]
     public bool DryRun { get; set; }
-
-    [CommandOption("--purge-outdated")]
-    [Description("On a major/minor version upgrade, migrate steps from superseded assembly(ies) to the new one and delete them; Custom API links are always migrated regardless of this option")]
-    public bool PurgeOutdated { get; set; }
 }

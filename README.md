@@ -549,7 +549,6 @@ dgtp plugin push ./bin/Release --solution mysolution
 |--------|----------|
 | `--solution` | Adds newly created assemblies/packages/steps/images to the given solution |
 | `--dry-run` | Reports what would be created/updated/deleted without writing to Dataverse |
-| `--purge-outdated` | On a major/minor version upgrade, migrates steps from superseded assembly(ies) to the new one and deletes them; Custom API links are always migrated regardless of this option |
 
 Reconciles plugin types, steps, step images and Custom API links declared via the
 `Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
@@ -557,13 +556,12 @@ Reconciles plugin types, steps, step images and Custom API links declared via th
 
 **Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
 currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded
-assembly(ies) with the same name are then reconciled:
-- **Custom API links are always migrated** to the same-named replacement plugin type on the new assembly
-  (unconditional - a Custom API should always invoke the latest code).
-- With `--purge-outdated`, plugin steps are additionally re-pointed to their same-named replacement type,
-  and the outdated assembly, its plugin types, and any steps left without a replacement are deleted.
-- Without `--purge-outdated`, the outdated assembly and its steps are left untouched (only Custom API links
-  move).
+assembly(ies) with the same name are then always fully reconciled away, with no opt-out flag - registration
+attributes are the declarative source of truth for the desired Dataverse state, so `plugin push` reconciles
+towards it unconditionally, the same way it already purges orphaned steps/types on the current assembly:
+- Custom API links and plugin steps are migrated to the same-named replacement type on the new assembly.
+- The outdated assembly, its plugin types, and any steps left without a replacement are then deleted.
+- Use `--dry-run` to preview exactly what would be migrated/deleted before it happens.
 
 **Differences from the legacy `push` command:**
 - **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error

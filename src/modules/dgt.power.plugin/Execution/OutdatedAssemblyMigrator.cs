@@ -11,11 +11,12 @@ namespace dgt.power.plugin.Execution;
 
 /// <summary>
 /// Migrates references away from outdated (superseded) plugin assemblies after an
-/// <see cref="AssemblyAction.Upgrade"/>, and optionally purges them. Custom API links are always
-/// migrated to the same-named replacement type on the new assembly (a Custom API should always
-/// invoke the latest code); steps are only migrated - and the outdated assembly only deleted - when
-/// <see cref="PluginPushOptions.PurgeOutdated"/> is set, since re-pointing steps changes their
-/// execution target and is therefore opt-in.
+/// <see cref="AssemblyAction.Upgrade"/>, then purges them. Registration attributes are the declarative
+/// source of truth for the desired Dataverse state, so this reconciliation is unconditional (consistent
+/// with how <see cref="PluginTypeReconciler"/> already purges orphaned steps/types on the current
+/// assembly): Custom API links and steps are always migrated to the same-named replacement type on the
+/// new assembly, and the outdated assembly/types (plus any steps left without a replacement) are then
+/// always deleted.
 /// </summary>
 public sealed class OutdatedAssemblyMigrator(
     IPluginAssemblyRepository assemblyRepository,
@@ -57,7 +58,7 @@ public sealed class OutdatedAssemblyMigrator(
                 }
 
                 console.MarkupLine(CultureInfo.InvariantCulture,
-                    "Migrate Custom API references for type [bold]{0}[/] to the new assembly", migration.TypeName);
+                    "Migrate Custom API/step references for type [bold]{0}[/] to the new assembly", migration.TypeName);
 
                 if (options.DryRun)
                 {
@@ -78,19 +79,11 @@ public sealed class OutdatedAssemblyMigrator(
                     await customApiRepository.LinkPluginTypeAsync(apiId, newTypeId, cancellationToken);
                 }
 
-                if (options.PurgeOutdated)
+                var steps = await stepRepository.ListByPluginTypeAsync(migration.OldTypeId, cancellationToken);
+                foreach (var step in steps)
                 {
-                    var steps = await stepRepository.ListByPluginTypeAsync(migration.OldTypeId, cancellationToken);
-                    foreach (var step in steps)
-                    {
-                        await stepRepository.ReassignPluginTypeAsync(step.Id, newTypeId, cancellationToken);
-                    }
+                    await stepRepository.ReassignPluginTypeAsync(step.Id, newTypeId, cancellationToken);
                 }
-            }
-
-            if (!options.PurgeOutdated)
-            {
-                continue;
             }
 
             console.MarkupLine(CultureInfo.InvariantCulture, "Purge outdated assembly [bold red]{0}[/]", outdated.Id);
