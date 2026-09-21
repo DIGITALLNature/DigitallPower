@@ -2,11 +2,45 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Local;
+using Microsoft.Xrm.Sdk;
+using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Local;
 
 public class AssemblyReflectionReaderTests
 {
+    private sealed class PlainPlugin : IPlugin
+    {
+        public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
+    }
+
+    [Test]
+    public async Task BuildPluginType_TypeWithoutRegistrationAttribute_IsNotPowerPluginAndHasNoSteps()
+    {
+        var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
+
+        var result = reader.BuildPluginType(typeof(PlainPlugin));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(result.IsPowerPlugin).IsFalse();
+            await Assert.That(result.Steps).IsEmpty();
+            await Assert.That(result.CustomApi).IsEmpty();
+        }
+    }
+
+    [Test]
+    public async Task BuildPluginType_TypeWithoutRegistrationAttribute_PrintsHint()
+    {
+        var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
+
+        reader.BuildPluginType(typeof(PlainPlugin));
+
+        await Assert.That(console.Output).Contains(nameof(PlainPlugin));
+    }
+
     [Test]
     [Arguments(0, "Retrieve")]
     [Arguments(1, "RetrieveMultiple")]

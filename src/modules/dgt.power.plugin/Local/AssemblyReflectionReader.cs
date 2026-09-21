@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using System.Reflection;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -102,7 +103,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
     }
 
-    private LocalPluginType BuildPluginType(Type pluginType)
+    internal LocalPluginType BuildPluginType(Type pluginType)
     {
         var isPowerPlugin = IsPowerPlugin(pluginType);
         var steps = new List<LocalPluginStep>();
@@ -134,6 +135,12 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             }
 
             steps.AddRange(BuildRegistrationSteps(pluginType));
+        }
+        else
+        {
+            console.MarkupLine(CultureInfo.InvariantCulture,
+                "[yellow]Hint:[/] plugin type [bold]{0}[/] has no registration attribute - its steps (if any) must be managed manually. Did you forget to add one?",
+                Markup.Escape(pluginType.FullName!));
         }
 
         return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, isPowerPlugin, steps);

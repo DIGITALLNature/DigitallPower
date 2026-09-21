@@ -34,6 +34,28 @@ once. Per-target processing catches generic exceptions but excludes `AbstractPow
 from the catch filter so they propagate to `Program.cs`'s global exception handler for correct exit
 codes (e.g. `WorkflowActivityNotSupportedException` → `NotSupported`).
 
+## "Power Plugin" vs. Plain `IPlugin` Types
+
+`LocalPluginType.IsPowerPlugin` distinguishes a type carrying one of the registration attributes
+(`PluginRegistration`/`CustomApiRegistration`/`CustomDataProviderRegistration`) from a plain
+`IPlugin`-implementing type with none. This mirrors the legacy `push` module's `AssemblyType.PowerPlugin`
+flag exactly (see `AssemblyModelBuilder.cs`). Both kinds of types get a `PluginType` record
+created/kept in Dataverse (a step can only reference a registered type, so even manually-managed types
+need the type row) - but only power-plugin types have their steps/images/Custom-API link parsed and
+reconciled. Non-power-plugin types are intentionally left alone in `PluginTypeReconciler.ReconcileAsync`
+(`ReconcileStepsAsync` is only called when `Local.Steps.Count > 0`), so any steps configured for them
+manually via the Plugin Registration Tool are never touched/purged. This supports a legitimate mixed
+scenario: some plugin types declaratively managed by `plugin push`, others deliberately left to manual
+step configuration in the same assembly.
+
+Because this is easy to trigger by accident (forgetting to add a registration attribute silently
+results in "type registered, no steps ever pushed, no error"), `AssemblyReflectionReader.BuildPluginType`
+prints a console hint for every non-power-plugin type it finds, naming the type and asking whether the
+attribute was forgotten. The assembly-level `LocalAssembly.Kind` flags (`LocalAssemblyKind.Plugin` /
+`.PowerPlugin`) are informational only - the only place `Kind` is read is `PluginPushCommand.cs`'s
+`Kind == Undefined` check (does the assembly contain any plugin types at all); the `Plugin`/`PowerPlugin`
+distinction at the assembly level does not currently drive any different behavior.
+
 ## No Package Dependency on the Registration Attributes
 
 `dgt.power.plugin` has **no `PackageReference` on the registration attributes package**
