@@ -569,6 +569,10 @@ towards it unconditionally, the same way it already purges orphaned steps/types 
   the meantime if you still need to register them as-is.
 - **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
   customizations.
+- **Hint for plugin classes without a registration attribute** - a plain `IPlugin` implementation with no
+  `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
+  still registered as a `PluginType` (so it can be wired up manually via the Plugin Registration Tool), but
+  `plugin push` prints a hint in case the attribute was forgotten.
 
 ### `push` — Deploy artifacts
 
