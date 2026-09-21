@@ -19,13 +19,16 @@ public class SdkMessageRepositoryTests
 
     private static SdkMessageFilter Filter(Guid id, Guid messageId, string primaryObjectTypeCode, string? secondaryObjectTypeCode = null)
     {
-        var filter = new SdkMessageFilter(id) { SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId) };
-        filter.Attributes[SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryObjectTypeCode;
+        var filter = new SdkMessageFilter(id)
+        {
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryObjectTypeCode }
+        };
+
         if (secondaryObjectTypeCode is not null)
         {
             filter.Attributes[SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode] = secondaryObjectTypeCode;
         }
-
         return filter;
     }
 

@@ -12,6 +12,10 @@ cleanup in both production and test code:
   documentation; fully qualify those documentation references instead.
 - Test fixture helpers should suppress S107 when their parameters intentionally map
   one-to-one to the model under test.
+- XML documentation references in repository contracts must use fully qualified
+  names when the corresponding namespace import is removed.
+- Collection-valued entity attributes can use collection initializers in test
+  fixtures, avoiding redundant post-construction assignments.
 
 The remaining dependency vulnerability warnings are existing package advisories,
 not new Qodana findings from the plugin push change.

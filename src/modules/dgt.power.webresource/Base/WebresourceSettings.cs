@@ -9,4 +9,4 @@ namespace dgt.power.webresource.Base;
 /// Branch-level settings for the "webresource" command tree. Command design still under discussion -
 /// no leaf commands are wired up yet.
 /// </summary>
-public class WebresourceSettings : BaseProgramSettings;
+internal sealed class WebresourceSettings : BaseProgramSettings;

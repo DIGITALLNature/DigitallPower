@@ -19,7 +19,7 @@ public class PluginPushExecutorTests
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
+    private static (PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -47,7 +47,7 @@ public class PluginPushExecutorTests
                 console),
             console);
 
-        return (service, executor, console);
+        return (executor, console);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
@@ -119,7 +119,7 @@ public class PluginPushExecutorTests
     [Test]
     public async Task ProcessAssemblyAsync_DryRun_PreviewsPluginTypesForBrandNewAssembly()
     {
-        var (_, executor, console) = CreateExecutorWithConsole();
+        var (executor, console) = CreateExecutorWithConsole();
         var assembly = Assembly() with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
 
         var id = await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));

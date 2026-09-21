@@ -37,9 +37,10 @@ public class SdkMessageProcessingStepRepositoryTests
         var messageId = Guid.NewGuid();
         var filterId = Guid.NewGuid();
         service.Create(new SdkMessage(messageId) { Name = "Create" });
-        var filter = new SdkMessageFilter(filterId);
-        filter.Attributes[SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account";
-        service.Create(filter);
+        service.Create(new SdkMessageFilter(filterId)
+        {
+            Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account" }
+        });
         service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
         {
             Name = "step",

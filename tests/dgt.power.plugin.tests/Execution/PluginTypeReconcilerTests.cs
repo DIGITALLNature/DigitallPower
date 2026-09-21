@@ -59,9 +59,11 @@ public class PluginTypeReconcilerTests
 
         if (primaryEntityName is not null)
         {
-            var filter = new SdkMessageFilter(Guid.NewGuid()) { SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId) };
-            filter.Attributes[SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryEntityName;
-            service.Create(filter);
+            service.Create(new SdkMessageFilter(Guid.NewGuid())
+            {
+                SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+                Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryEntityName }
+            });
         }
 
         return messageId;
@@ -153,9 +155,9 @@ public class PluginTypeReconcilerTests
         var filterId = Guid.NewGuid();
         var filter = new SdkMessageFilter(filterId)
         {
-            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId)
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account" }
         };
-        filter.Attributes[SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account";
         service.Create(filter);
         var assemblyId = Guid.NewGuid();
         var typeId = Guid.NewGuid();
