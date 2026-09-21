@@ -33,6 +33,11 @@ public class PluginPushCommand(
     {
         Tracer.Start(this);
 
+        if (settings.DryRun)
+        {
+            Console.MarkupLine("[yellow]Dry run - no changes will be written to Dataverse[/]");
+        }
+
         var targets = ResolveTargets(settings.Target);
         if (targets is null)
         {

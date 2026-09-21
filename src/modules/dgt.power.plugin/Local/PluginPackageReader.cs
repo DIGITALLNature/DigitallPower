@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using dgt.power.common.Extensions;
@@ -82,10 +83,20 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
             foreach (var dll in Directory.GetFiles(tempPath, "*.dll"))
             {
                 var assembly = _assemblyReader.Read(dll, loadContext);
-                if (assembly != null)
+                if (assembly is null)
                 {
-                    assemblies.Add(assembly);
+                    continue;
                 }
+
+                if (assembly.Kind == LocalAssemblyKind.Undefined)
+                {
+                    console.MarkupLine(CultureInfo.InvariantCulture,
+                        "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] any plugins - skipping",
+                        assembly.Name, assembly.Version);
+                    continue;
+                }
+
+                assemblies.Add(assembly);
             }
         }
         finally
