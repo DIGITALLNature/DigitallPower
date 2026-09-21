@@ -21,7 +21,7 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
     /// <summary>
     /// Reads only the package metadata (id/version/content) without unpacking bundled assemblies.
     /// </summary>
-    public LocalPackage? ReadPackage(string packageFile)
+    private LocalPackage? ReadPackage(string packageFile)
     {
         try
         {
@@ -88,7 +88,7 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
                     continue;
                 }
 
-                if (assembly.Kind == LocalAssemblyKind.Undefined)
+                if (assembly.Kind == LocalAssemblyKind.None)
                 {
                     console.MarkupLine(CultureInfo.InvariantCulture,
                         "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] any plugins - skipping",

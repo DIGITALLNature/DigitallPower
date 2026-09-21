@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Local;
+using dgt.power.common;
 using NuGet.Packaging;
 using NuGet.Versioning;
 using Spectre.Console.Testing;
@@ -14,7 +15,7 @@ public class PluginPackageReaderTests
     public async Task Read_PackageWithNonPluginDependencyDll_OnlyReturnsTheAssemblyContainingPlugins()
     {
         var pluginDllPath = typeof(SamplePlugin).Assembly.Location;
-        var nonPluginDllPath = typeof(dgt.power.common.IPowerLogic).Assembly.Location;
+        var nonPluginDllPath = typeof(IPowerLogic).Assembly.Location;
 
         var nupkgPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.nupkg");
         try

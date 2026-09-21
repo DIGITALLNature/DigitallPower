@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Planning;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
 using dgt.power.plugin.Remote;

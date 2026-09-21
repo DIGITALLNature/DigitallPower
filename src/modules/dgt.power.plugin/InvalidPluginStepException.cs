@@ -11,10 +11,21 @@ namespace dgt.power.plugin;
 /// stage, or a pre-image on a 'Create' message before the record exists).
 /// </summary>
 [Serializable]
+// ReSharper disable once ConvertToPrimaryConstructor
 public sealed class InvalidPluginStepException : AbstractPowerException
 {
     public InvalidPluginStepException(string message)
         : base(message)
+    {
+    }
+
+    public InvalidPluginStepException()
+        : this(string.Empty)
+    {
+    }
+
+    public InvalidPluginStepException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }

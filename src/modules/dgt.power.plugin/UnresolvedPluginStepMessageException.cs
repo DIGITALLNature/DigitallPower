@@ -11,6 +11,7 @@ namespace dgt.power.plugin;
 /// name is misspelled, or the entity does not support that message.
 /// </summary>
 [Serializable]
+// ReSharper disable once ConvertToPrimaryConstructor
 public sealed class UnresolvedPluginStepMessageException : AbstractPowerException
 {
     public UnresolvedPluginStepMessageException(string stepName, string messageName, string primaryEntityName)
@@ -18,6 +19,21 @@ public sealed class UnresolvedPluginStepMessageException : AbstractPowerExceptio
             $"Step '{stepName}' declares message '{messageName}' for entity '{primaryEntityName}', but no matching " +
             "sdkmessage/sdkmessagefilter was found on the target environment. Check for a typo in the message name, " +
             "or that the entity actually supports this message.")
+    {
+    }
+
+    public UnresolvedPluginStepMessageException()
+        : this(string.Empty, string.Empty, string.Empty)
+    {
+    }
+
+    public UnresolvedPluginStepMessageException(string message)
+        : base(message)
+    {
+    }
+
+    public UnresolvedPluginStepMessageException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }

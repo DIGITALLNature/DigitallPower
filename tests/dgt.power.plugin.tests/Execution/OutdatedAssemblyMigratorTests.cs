@@ -15,6 +15,8 @@ namespace dgt.power.plugin.tests.Execution;
 
 public class OutdatedAssemblyMigratorTests
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the migrator.")]
     private static (FakeOrganizationServiceAsync Service, OutdatedAssemblyMigrator Migrator) CreateMigrator()
     {
         var service = new FakeOrganizationServiceAsync();

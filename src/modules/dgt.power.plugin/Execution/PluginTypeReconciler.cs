@@ -235,8 +235,8 @@ public sealed class PluginTypeReconciler(
 
     private async Task ReconcileCustomApiLinkAsync(Guid pluginTypeId, string customApi, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        var desiredCustomApiId = string.IsNullOrEmpty(customApi)
-            ? (Guid?)null
+        Guid? desiredCustomApiId = string.IsNullOrEmpty(customApi)
+            ? null
             : await customApiRepository.FindIdByUniqueNameAsync(customApi, cancellationToken);
 
         var currentlyLinked = await customApiRepository.ListLinkedToPluginTypeAsync(pluginTypeId, cancellationToken);
@@ -250,12 +250,12 @@ public sealed class PluginTypeReconciler(
             }
         }
 
-        if (desiredCustomApiId is { } id && !currentlyLinked.Contains(id))
+        if (desiredCustomApiId is { } customApiId && !currentlyLinked.Contains(customApiId))
         {
             console.MarkupLine(CultureInfo.InvariantCulture, "    Link Custom API [bold green]{0}[/]", customApi);
             if (!options.DryRun)
             {
-                await customApiRepository.LinkPluginTypeAsync(id, pluginTypeId, cancellationToken);
+                await customApiRepository.LinkPluginTypeAsync(customApiId, pluginTypeId, cancellationToken);
             }
         }
     }

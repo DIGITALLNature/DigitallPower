@@ -12,7 +12,7 @@ public class PluginPushPlannerTests
     private static LocalAssembly Assembly(string version) => new()
     {
         Name = "MyPlugins",
-        Version = System.Version.Parse(version),
+        Version = Version.Parse(version),
         Content = "base64",
         Kind = LocalAssemblyKind.Plugin
     };
@@ -32,7 +32,7 @@ public class PluginPushPlannerTests
     [Arguments("2.3.0.0", "2.3.9.9")]
     public async Task PlanAssembly_SameMajorMinor_ReturnsUpdate(string localVersion, string remoteVersion)
     {
-        var remote = new RemoteAssembly(Guid.NewGuid(), System.Version.Parse(remoteVersion), PackageId: null);
+        var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse(remoteVersion), PackageId: null);
 
         var plan = PluginPushPlanner.PlanAssembly(Assembly(localVersion), remote);
 
@@ -46,7 +46,7 @@ public class PluginPushPlannerTests
     [Arguments("2.3.0.0", "2.4.0.0")]
     public async Task PlanAssembly_DifferentMajorOrMinor_ReturnsUpgrade(string localVersion, string remoteVersion)
     {
-        var remote = new RemoteAssembly(Guid.NewGuid(), System.Version.Parse(remoteVersion), PackageId: null);
+        var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse(remoteVersion), PackageId: null);
 
         var plan = PluginPushPlanner.PlanAssembly(Assembly(localVersion), remote);
 
@@ -56,7 +56,7 @@ public class PluginPushPlannerTests
     [Test]
     public async Task PlanAssembly_OwnedByPackage_ReturnsOwnedByPackageRegardlessOfVersion()
     {
-        var remote = new RemoteAssembly(Guid.NewGuid(), System.Version.Parse("9.9.9.9"), Guid.NewGuid());
+        var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse("9.9.9.9"), Guid.NewGuid());
 
         var plan = PluginPushPlanner.PlanAssembly(Assembly("1.0.0.0"), remote);
 
@@ -94,6 +94,8 @@ public class PluginPushPlannerTests
     private static LocalPluginType PluginType(string typeName, params LocalPluginStep[] steps) =>
         new(typeName, typeName, CustomApi: string.Empty, HasRegistrationAttribute: true, steps);
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Major Code Smell", "S107", Justification = "Test fixture factory parameters map directly to LocalPluginStep fields.")]
     private static LocalPluginStep Step(
         string name = "MyPlugin|account|Synchronous|PostOperation|Create",
         string messageName = "Create",

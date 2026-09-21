@@ -49,7 +49,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 LocalPluginStepValidator.Validate(pluginType);
             }
 
-            var kind = LocalAssemblyKind.Undefined;
+            var kind = LocalAssemblyKind.None;
             if (localPluginTypes.Count > 0)
             {
                 kind |= LocalAssemblyKind.Plugin;
@@ -280,14 +280,14 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         _ => "Id"
     };
 
-    internal static string? Mode(int mode) => mode switch
+    internal static string? Mode(int modeValue) => modeValue switch
     {
         0 => "Synchronous",
         1 => "Asynchronous",
         _ => null
     };
 
-    internal static string? Stage(int stage) => stage switch
+    internal static string? Stage(int stageValue) => stageValue switch
     {
         10 => "PreValidation",
         20 => "PreOperation",

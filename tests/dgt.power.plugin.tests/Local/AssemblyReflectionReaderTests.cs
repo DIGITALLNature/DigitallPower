@@ -15,6 +15,8 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "The test console remains in scope for output assertions.")]
     public async Task BuildPluginType_TypeWithoutRegistrationAttribute_HasRegistrationAttributeIsFalseAndHasNoSteps()
     {
         var console = new TestConsole();

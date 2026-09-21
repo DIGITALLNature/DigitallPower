@@ -33,6 +33,8 @@ public class PluginTypeReconcilerTests
         return (service, reconciler, console);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the reconciler.")]
     private static (FakeOrganizationServiceAsync Service, PluginTypeReconciler Reconciler) CreateReconciler()
     {
         var service = new FakeOrganizationServiceAsync();

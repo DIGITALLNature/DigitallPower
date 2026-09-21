@@ -17,6 +17,8 @@ public class PluginPushExecutorTests
 {
     private const string ClientId = "12345678-1234-1234-1234-123456789abc";
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
     private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
@@ -48,6 +50,8 @@ public class PluginPushExecutorTests
         return (service, executor, console);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
     private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();

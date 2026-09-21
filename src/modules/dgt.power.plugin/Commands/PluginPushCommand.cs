@@ -163,7 +163,7 @@ public class PluginPushCommand(
             return;
         }
 
-        if (assembly.Kind == LocalAssemblyKind.Undefined)
+        if (assembly.Kind == LocalAssemblyKind.None)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture,
                 "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] any plugins - skipping",

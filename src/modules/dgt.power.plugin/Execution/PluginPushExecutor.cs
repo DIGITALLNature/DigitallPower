@@ -125,8 +125,6 @@ public sealed class PluginPushExecutor(
 
                 return existing!.Id;
 
-            case AssemblyAction.Create:
-            case AssemblyAction.Upgrade:
             default:
                 if (action == AssemblyAction.Upgrade)
                 {

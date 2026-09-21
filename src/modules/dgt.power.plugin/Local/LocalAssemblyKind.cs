@@ -10,7 +10,7 @@ namespace dgt.power.plugin.Local;
 [Flags]
 public enum LocalAssemblyKind
 {
-    Undefined = 0,
+    None = 0,
     Plugin = 1,
 
     /// <summary>At least one plugin type carries a registration attribute (see <see cref="LocalPluginType.HasRegistrationAttribute"/>).</summary>

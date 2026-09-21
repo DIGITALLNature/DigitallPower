@@ -14,10 +14,26 @@ namespace dgt.power.plugin;
 /// Exit code: <see cref="dgt.power.common.Commands.ExitCode.NotSupported"/> (3).
 /// </summary>
 [Serializable]
+// ReSharper disable once ConvertToPrimaryConstructor
 public sealed class WorkflowActivityNotSupportedException : AbstractPowerException
 {
     public WorkflowActivityNotSupportedException(string assemblyName, IReadOnlyList<string> workflowTypeNames)
         : base(BuildMessage(assemblyName, workflowTypeNames))
+    {
+    }
+
+    public WorkflowActivityNotSupportedException()
+        : this(string.Empty, [])
+    {
+    }
+
+    public WorkflowActivityNotSupportedException(string message)
+        : base(message)
+    {
+    }
+
+    public WorkflowActivityNotSupportedException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 
