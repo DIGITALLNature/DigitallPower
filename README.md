@@ -40,6 +40,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [analyze](#analyze--solution-analysis)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
+  - [plugin push](#plugin-push--deploy-plugin-assembliespackages)
   - [push](#push--deploy-artifacts)
 - [Solution Architecture](#-solution-architecture)
 - [Repository Layout](#-repository-layout)
@@ -58,7 +59,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Push** | Push web resources and plugin assemblies directly into a target solution |
+| **Push** | Push plugin assemblies/packages with `plugin push` and web resources with `push` |
 
 ## 🚀 Installation
 
