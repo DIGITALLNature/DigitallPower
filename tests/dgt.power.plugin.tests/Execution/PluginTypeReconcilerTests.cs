@@ -15,6 +15,24 @@ namespace dgt.power.plugin.tests.Execution;
 
 public class PluginTypeReconcilerTests
 {
+    private static (FakeOrganizationServiceAsync Service, PluginTypeReconciler Reconciler, TestConsole Console) CreateReconcilerWithConsole()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
+        service.AddDefaultRequests();
+
+        var console = new TestConsole();
+        var reconciler = new PluginTypeReconciler(
+            new PluginTypeRepository(service),
+            new SdkMessageProcessingStepRepository(service),
+            new SdkMessageProcessingStepImageRepository(service),
+            new SdkMessageRepository(service),
+            new CustomApiRepository(service),
+            console);
+
+        return (service, reconciler, console);
+    }
+
     private static (FakeOrganizationServiceAsync Service, PluginTypeReconciler Reconciler) CreateReconciler()
     {
         var service = new FakeOrganizationServiceAsync();
@@ -95,6 +113,33 @@ public class PluginTypeReconcilerTests
 
         var types = service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(types.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ReconcileAsync_DryRun_PreviewsStepsAndImagesForBrandNewType()
+    {
+        var (service, reconciler, console) = CreateReconcilerWithConsole();
+        SeedMessage(service, "Update", "account");
+        var image = new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "PreImage", "Target", null);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true,
+            [Step(messageName: "Update", images: [image])]);
+
+        // Even for a brand-new (never-before-registered) assembly/type, dry-run must still preview
+        // every step/image declared on it - not just the type itself - since it can't rely on a real
+        // Dataverse id existing yet to reconcile against.
+        await reconciler.ReconcileAsync(Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: true));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("Create PluginType");
+            await Assert.That(console.Output).Contains("Create Step");
+            await Assert.That(console.Output).Contains("Create Image");
+
+            var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
+            await Assert.That(steps.Count).IsEqualTo(0);
+            var images = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
+            await Assert.That(images.Count).IsEqualTo(0);
+        }
     }
 
     [Test]

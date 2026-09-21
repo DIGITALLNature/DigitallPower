@@ -17,6 +17,37 @@ public class PluginPushExecutorTests
 {
     private const string ClientId = "12345678-1234-1234-1234-123456789abc";
 
+    private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddRequests(new AddSolutionComponentExecutor());
+        service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
+        service.AddDefaultRequests();
+
+        var console = new TestConsole();
+        var executor = new PluginPushExecutor(
+            new PluginAssemblyRepository(service),
+            new PluginPackageRepository(service),
+            new SolutionComponentRepository(service),
+            new ManagedIdentityRepository(service),
+            new PluginTypeReconciler(
+                new PluginTypeRepository(service),
+                new SdkMessageProcessingStepRepository(service),
+                new SdkMessageProcessingStepImageRepository(service),
+                new SdkMessageRepository(service),
+                new CustomApiRepository(service),
+                console),
+            new OutdatedAssemblyMigrator(
+                new PluginAssemblyRepository(service),
+                new PluginTypeRepository(service),
+                new SdkMessageProcessingStepRepository(service),
+                new CustomApiRepository(service),
+                console),
+            console);
+
+        return (service, executor, console);
+    }
+
     private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
@@ -79,6 +110,18 @@ public class PluginPushExecutorTests
         await Assert.That(id).IsEqualTo(Guid.Empty);
         var all = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(all.Entities.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_DryRun_PreviewsPluginTypesForBrandNewAssembly()
+    {
+        var (_, executor, console) = CreateExecutorWithConsole();
+        var assembly = Assembly() with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
+
+        var id = await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
+
+        await Assert.That(id).IsEqualTo(Guid.Empty);
+        await Assert.That(console.Output).Contains("Create PluginType");
     }
 
     [Test]

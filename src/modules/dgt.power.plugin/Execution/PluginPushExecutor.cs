@@ -52,10 +52,10 @@ public sealed class PluginPushExecutor(
             await managedIdentityRepository.LinkToAssemblyAsync(assemblyId, managedIdentityId, cancellationToken);
         }
 
-        if (assemblyId != Guid.Empty)
-        {
-            await typeReconciler.ReconcileAsync(assemblyId, assembly.PluginTypes, options, cancellationToken);
-        }
+        // assemblyId is only Guid.Empty in dry-run for a not-yet-created assembly - reconciling against it
+        // still previews every plugin type/step/image/Custom API link declared in the local assembly, since
+        // every downstream repository lookup keyed by Guid.Empty safely returns "nothing exists yet".
+        await typeReconciler.ReconcileAsync(assemblyId, assembly.PluginTypes, options, cancellationToken);
 
         if (plan.Action == AssemblyAction.Upgrade)
         {

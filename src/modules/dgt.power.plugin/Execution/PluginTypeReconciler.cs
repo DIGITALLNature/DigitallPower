@@ -40,17 +40,13 @@ public sealed class PluginTypeReconciler(
         foreach (var typePlan in typePlans)
         {
             var typeId = await ApplyTypePlanAsync(typePlan, assemblyId, options, cancellationToken);
-            if (typeId is null)
-            {
-                continue; // dry-run Create: nothing to reconcile further without a real id.
-            }
 
             if (typePlan.Local.Steps.Count > 0)
             {
-                await ReconcileStepsAsync(typeId.Value, typePlan.Local.Steps, options, cancellationToken);
+                await ReconcileStepsAsync(typeId, typePlan.Local.Steps, options, cancellationToken);
             }
 
-            await ReconcileCustomApiLinkAsync(typeId.Value, typePlan.Local.CustomApi, options, cancellationToken);
+            await ReconcileCustomApiLinkAsync(typeId, typePlan.Local.CustomApi, options, cancellationToken);
         }
 
         foreach (var orphanedType in orphanedTypes)
@@ -70,13 +66,19 @@ public sealed class PluginTypeReconciler(
         }
     }
 
-    private async Task<Guid?> ApplyTypePlanAsync(PluginTypePlan plan, Guid assemblyId, PluginPushOptions options, CancellationToken cancellationToken)
+    /// <summary>
+    /// Applies the plan for a single plugin type and returns its (real or, in dry-run for a not-yet-created
+    /// type, <see cref="Guid.Empty"/> placeholder) id, so steps/images/Custom API links declared on it can
+    /// still be previewed - every downstream lookup keyed by this id safely returns "nothing exists yet" for
+    /// <see cref="Guid.Empty"/>, which is exactly what a not-yet-created type's steps/images actually are.
+    /// </summary>
+    private async Task<Guid> ApplyTypePlanAsync(PluginTypePlan plan, Guid assemblyId, PluginPushOptions options, CancellationToken cancellationToken)
     {
         if (plan.Action == PluginTypeAction.Create)
         {
             console.MarkupLine(CultureInfo.InvariantCulture, "  Create PluginType [bold green]{0}[/]", plan.Local.TypeName);
             return options.DryRun
-                ? null
+                ? Guid.Empty
                 : await typeRepository.CreateAsync(assemblyId, plan.Local.TypeName, plan.Local.Name, cancellationToken);
         }
 
@@ -92,12 +94,7 @@ public sealed class PluginTypeReconciler(
         foreach (var stepPlan in stepPlans)
         {
             var stepId = await ApplyStepPlanAsync(stepPlan, pluginTypeId, options, cancellationToken);
-            if (stepId is null)
-            {
-                continue; // dry-run Create: nothing to reconcile further without a real id.
-            }
-
-            await ReconcileImagesAsync(stepId.Value, stepPlan.Local.Images, options, cancellationToken);
+            await ReconcileImagesAsync(stepId, stepPlan.Local.Images, options, cancellationToken);
         }
 
         foreach (var orphanedStep in orphanedSteps)
@@ -110,7 +107,7 @@ public sealed class PluginTypeReconciler(
         }
     }
 
-    private async Task<Guid?> ApplyStepPlanAsync(PluginStepPlan plan, Guid pluginTypeId, PluginPushOptions options, CancellationToken cancellationToken)
+    private async Task<Guid> ApplyStepPlanAsync(PluginStepPlan plan, Guid pluginTypeId, PluginPushOptions options, CancellationToken cancellationToken)
     {
         if (plan.Action == PluginStepAction.Keep)
         {
@@ -131,7 +128,7 @@ public sealed class PluginTypeReconciler(
         if (plan.Action == PluginStepAction.Create)
         {
             console.MarkupLine(CultureInfo.InvariantCulture, "    Create Step [bold green]{0}[/]", plan.Local.Name);
-            return options.DryRun ? null : await stepRepository.CreateAsync(data, cancellationToken);
+            return options.DryRun ? Guid.Empty : await stepRepository.CreateAsync(data, cancellationToken);
         }
 
         console.MarkupLine(CultureInfo.InvariantCulture, "    Update Step [bold green]{0}[/]", plan.Local.Name);
