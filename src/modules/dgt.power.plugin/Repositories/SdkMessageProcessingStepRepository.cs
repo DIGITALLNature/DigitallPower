@@ -72,12 +72,16 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
 
     public async Task<Guid> CreateAsync(PluginStepData data, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(data);
+
         var step = ToEntity(data);
         return await service.CreateAsync(step, cancellationToken);
     }
 
     public async Task UpdateAsync(Guid id, PluginStepData data, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(data);
+
         var step = ToEntity(data);
         step.Id = id;
         await service.UpdateAsync(step, cancellationToken);

@@ -44,6 +44,8 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
 
     public async Task<Guid> CreateAsync(PluginStepImageData data, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(data);
+
         var image = new SdkMessageProcessingStepImage
         {
             SdkMessageProcessingStepId = new EntityReference(SdkMessageProcessingStep.EntityLogicalName, data.StepId),

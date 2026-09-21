@@ -25,6 +25,9 @@ public sealed class PluginTypeReconciler(
     public async Task ReconcileAsync(
         Guid assemblyId, IReadOnlyList<LocalPluginType> localTypes, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(localTypes);
+        ArgumentNullException.ThrowIfNull(options);
+
         var remoteTypes = await typeRepository.ListByAssemblyAsync(assemblyId, cancellationToken);
         var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(localTypes, remoteTypes);
 

@@ -32,6 +32,9 @@ public sealed class OutdatedAssemblyMigrator(
         PluginPushOptions options,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(replacementTypes);
+        ArgumentNullException.ThrowIfNull(options);
+
         var outdatedAssemblies = await assemblyRepository.ListOutdatedAsync(assemblyName, newAssemblyId, cancellationToken);
         if (outdatedAssemblies.Count == 0)
         {

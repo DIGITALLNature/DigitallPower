@@ -15,6 +15,8 @@ public static class LocalPluginStepValidator
 {
     public static void Validate(LocalPluginType pluginType)
     {
+        ArgumentNullException.ThrowIfNull(pluginType);
+
         foreach (var step in pluginType.Steps)
         {
             ValidateStep(pluginType.TypeName, step);

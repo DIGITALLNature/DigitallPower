@@ -32,6 +32,9 @@ public sealed class PluginPushExecutor(
     /// </summary>
     public async Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(options);
+
         var remote = await assemblyRepository.FindByNameAsync(assembly.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanAssembly(assembly, remote);
 
@@ -63,6 +66,9 @@ public sealed class PluginPushExecutor(
     /// </summary>
     public async Task<Guid> ProcessPackageAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(package);
+        ArgumentNullException.ThrowIfNull(options);
+
         var remote = await packageRepository.FindByNameAsync(package.Package.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanPackage(package.Package, remote);
 

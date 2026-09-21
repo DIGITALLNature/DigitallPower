@@ -24,6 +24,8 @@ public static class PluginPushPlanner
     /// </param>
     public static AssemblyPlan PlanAssembly(LocalAssembly local, RemoteAssembly? remote)
     {
+        ArgumentNullException.ThrowIfNull(local);
+
         if (remote is null)
         {
             return new AssemblyPlan(local, AssemblyAction.Create, null);
@@ -44,10 +46,14 @@ public static class PluginPushPlanner
     /// plugin packages cannot have their version changed after creation, so an existing package is
     /// always updated in place regardless of the local version.
     /// </summary>
-    public static PackagePlan PlanPackage(LocalPackage local, RemotePackage? remote) =>
-        remote is null
+    public static PackagePlan PlanPackage(LocalPackage local, RemotePackage? remote)
+    {
+        ArgumentNullException.ThrowIfNull(local);
+
+        return remote is null
             ? new PackagePlan(local, PackageAction.Create, null)
             : new PackagePlan(local, PackageAction.Update, remote);
+    }
 
     /// <summary>
     /// Matches local plugin types (keyed by <see cref="LocalPluginType.TypeName"/>) against the
@@ -59,6 +65,9 @@ public static class PluginPushPlanner
     public static PluginTypeReconciliationPlan PlanPluginTypes(
         IReadOnlyList<LocalPluginType> local, IReadOnlyList<RemotePluginType> remote)
     {
+        ArgumentNullException.ThrowIfNull(local);
+        ArgumentNullException.ThrowIfNull(remote);
+
         var plans = new List<PluginTypePlan>();
         var matchedRemoteIds = new HashSet<Guid>();
 
@@ -89,6 +98,9 @@ public static class PluginPushPlanner
     public static PluginStepReconciliationPlan PlanPluginSteps(
         IReadOnlyList<LocalPluginStep> local, IReadOnlyList<RemotePluginStep> remote)
     {
+        ArgumentNullException.ThrowIfNull(local);
+        ArgumentNullException.ThrowIfNull(remote);
+
         var plans = new List<PluginStepPlan>();
         var matchedRemoteIds = new HashSet<Guid>();
 
@@ -119,6 +131,9 @@ public static class PluginPushPlanner
     public static PluginStepImageReconciliationPlan PlanPluginStepImages(
         IReadOnlyList<LocalPluginStepImage> local, IReadOnlyList<RemotePluginStepImage> remote)
     {
+        ArgumentNullException.ThrowIfNull(local);
+        ArgumentNullException.ThrowIfNull(remote);
+
         var plans = new List<PluginStepImagePlan>();
         var matchedRemoteIds = new HashSet<Guid>();
 
@@ -150,6 +165,9 @@ public static class PluginPushPlanner
     public static IReadOnlyList<OutdatedTypeMigration> PlanOutdatedTypeMigration(
         IReadOnlyList<RemotePluginType> outdatedTypes, IReadOnlyList<LocalPluginType> replacementTypes)
     {
+        ArgumentNullException.ThrowIfNull(outdatedTypes);
+        ArgumentNullException.ThrowIfNull(replacementTypes);
+
         var replacementTypeNames = replacementTypes.Select(t => t.TypeName).ToHashSet();
         return outdatedTypes
             .Select(old => new OutdatedTypeMigration(old.Id, old.TypeName, replacementTypeNames.Contains(old.TypeName)))
