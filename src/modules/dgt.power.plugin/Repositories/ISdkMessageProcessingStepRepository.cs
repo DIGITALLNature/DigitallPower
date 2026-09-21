@@ -33,17 +33,3 @@ public interface ISdkMessageProcessingStepRepository
     /// </summary>
     Task ReassignPluginTypeAsync(Guid stepId, Guid newPluginTypeId, CancellationToken cancellationToken = default);
 }
-
-/// <summary>
-/// All Dataverse-facing fields needed to create/update a <c>sdkmessageprocessingstep</c>.
-/// </summary>
-public sealed record PluginStepData(
-    string Name,
-    Guid PluginTypeId,
-    Guid MessageId,
-    Guid? MessageFilterId,
-    int Stage,
-    int Mode,
-    int? ExecutionOrder,
-    IReadOnlyList<string>? FilterAttributes,
-    string? Configuration);

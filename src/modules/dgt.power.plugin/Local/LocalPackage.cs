@@ -14,8 +14,3 @@ namespace dgt.power.plugin.Local;
 /// </param>
 /// <param name="Content">Base64-encoded package content.</param>
 public sealed record LocalPackage(string Name, string Version, string Content);
-
-/// <summary>
-/// A parsed .nupkg together with the plugin assemblies bundled inside it.
-/// </summary>
-public sealed record LocalPluginPackage(LocalPackage Package, IReadOnlyList<LocalAssembly> Assemblies);

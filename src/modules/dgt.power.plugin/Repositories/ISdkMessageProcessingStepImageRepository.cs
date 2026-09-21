@@ -23,14 +23,3 @@ public interface ISdkMessageProcessingStepImageRepository
     /// <summary>Deletes an image.</summary>
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
-
-/// <summary>
-/// All Dataverse-facing fields needed to create a <c>sdkmessageprocessingstepimage</c>.
-/// </summary>
-public sealed record PluginStepImageData(
-    Guid StepId,
-    string Name,
-    string EntityAlias,
-    int ImageType,
-    string MessagePropertyName,
-    IReadOnlyList<string>? Attributes);
