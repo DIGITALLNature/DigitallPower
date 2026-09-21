@@ -45,33 +45,4 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
         await service.ExecuteAsync(request, cancellationToken);
     }
 
-    public async Task<string> GetPublisherPrefixAsync(string? solution, string defaultValue = "new", CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(solution))
-        {
-            return defaultValue;
-        }
-
-        var query = new QueryExpression(Solution.EntityLogicalName)
-        {
-            NoLock = true,
-            ColumnSet = new ColumnSet(false),
-            Criteria = new FilterExpression
-            {
-                Conditions = { new ConditionExpression(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solution) }
-            },
-            LinkEntities =
-            {
-                new LinkEntity(Solution.EntityLogicalName, Publisher.EntityLogicalName,
-                    Solution.LogicalNames.PublisherId, Publisher.LogicalNames.PublisherId, JoinOperator.Inner)
-                {
-                    EntityAlias = "publisher",
-                    Columns = new ColumnSet(Publisher.LogicalNames.CustomizationPrefix)
-                }
-            }
-        };
-
-        var entity = (await service.RetrieveMultipleAsync(query, cancellationToken)).Entities.FirstOrDefault();
-        return entity?.GetAttributeValue<AliasedValue>($"publisher.{Publisher.LogicalNames.CustomizationPrefix}")?.Value as string ?? defaultValue;
-    }
 }

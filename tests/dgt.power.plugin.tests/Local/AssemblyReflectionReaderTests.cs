@@ -4,6 +4,7 @@
 using dgt.power.plugin.Local;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
+using dgt.registration;
 
 namespace dgt.power.plugin.tests.Local;
 
@@ -14,7 +15,7 @@ public class AssemblyReflectionReaderTests
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
     }
 
-    [dgt.registration.PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
+    [PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
     private sealed class ExplicitOrderPlugin : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
@@ -50,6 +51,8 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "The test console is owned by the reader for the duration of the test.")]
     public async Task BuildPluginType_ExplicitExecutionOrder_PreservesMetadataValue()
     {
         var reader = new AssemblyReflectionReader(new TestConsole());

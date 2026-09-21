@@ -357,7 +357,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var nullableType = Nullable.GetUnderlyingType(typeof(T));
         if (nullableType is not null && value is not null && nullableType.IsInstanceOfType(value))
         {
-            result = (T)(object)value;
+            result = (T)value;
             return true;
         }
 

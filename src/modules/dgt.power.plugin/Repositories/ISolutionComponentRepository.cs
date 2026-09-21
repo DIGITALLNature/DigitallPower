@@ -23,5 +23,4 @@ public interface ISolutionComponentRepository
     /// components (e.g. plugin packages). Returns <paramref name="defaultValue"/> when the
     /// solution is not found or not set.
     /// </summary>
-    Task<string> GetPublisherPrefixAsync(string? solution, string defaultValue = "new", CancellationToken cancellationToken = default);
 }

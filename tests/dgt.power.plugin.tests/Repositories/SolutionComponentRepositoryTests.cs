@@ -5,8 +5,6 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
-
 namespace dgt.power.plugin.tests.Repositories;
 
 public class SolutionComponentRepositoryTests
@@ -56,43 +54,4 @@ public class SolutionComponentRepositoryTests
         await repository.AddToSolutionAsync(91, Guid.NewGuid(), "TestSolution");
     }
 
-    [Test]
-    public async Task GetPublisherPrefixAsync_NoSolution_ReturnsDefault()
-    {
-        var service = CreateService();
-        var repository = new SolutionComponentRepository(service);
-
-        var result = await repository.GetPublisherPrefixAsync(null);
-
-        await Assert.That(result).IsEqualTo("new");
-    }
-
-    [Test]
-    public async Task GetPublisherPrefixAsync_SolutionNotFound_ReturnsDefault()
-    {
-        var service = CreateService();
-        var repository = new SolutionComponentRepository(service);
-
-        var result = await repository.GetPublisherPrefixAsync("MySolution");
-
-        await Assert.That(result).IsEqualTo("new");
-    }
-
-    [Test]
-    public async Task GetPublisherPrefixAsync_SolutionFound_ReturnsPublisherPrefix()
-    {
-        var service = CreateService();
-        var publisherId = Guid.NewGuid();
-        service.Create(new Publisher(publisherId) { CustomizationPrefix = "dgt" });
-        service.Create(new Solution(Guid.NewGuid())
-        {
-            UniqueName = "MySolution",
-            PublisherId = new EntityReference(Publisher.EntityLogicalName, publisherId)
-        });
-        var repository = new SolutionComponentRepository(service);
-
-        var result = await repository.GetPublisherPrefixAsync("MySolution");
-
-        await Assert.That(result).IsEqualTo("dgt");
-    }
 }
