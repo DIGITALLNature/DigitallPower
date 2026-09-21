@@ -148,7 +148,6 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
 - **`Assembly` model** (legacy `push` module) has mutable-GetHashCode pattern. Not yet refactored. The new `dgt.power.plugin` module uses immutable records (`LocalAssembly`, `RemoteAssembly`) instead and does not share this issue.
-- **`dgt.power.plugin` cleanup pending:** legacy `Logic/`/`Model/` files (`AssemblyProcessor`, `AssemblyModelBuilder`, etc.) and the `UiPath.Workflow` package reference are still present in `dgt.power.push` and have not yet been removed; deletion is tracked as a follow-up once all resource-oriented commands (`plugin push`, `webresource push`) are wired up and the legacy `push` command is deprecated.
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.

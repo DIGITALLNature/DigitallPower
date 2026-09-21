@@ -103,7 +103,21 @@ Mechanics (unchanged since the first iteration):
 
 ## Status
 
-Implemented, tested (131/131 `dgt.power.plugin.tests`, 173/173 `dgt.power.cli.tests`), and documented in
-README's `plugin push` section. Remaining follow-up: delete legacy `Logic/`/`Model/` files and the
-`UiPath.Workflow` package reference from `dgt.power.push` (tracked as `plugin-cleanup-old` in the
-session's todo list, not yet started as of this writing).
+Implemented, tested (130/130 `dgt.power.plugin.tests`, 173/173 `dgt.power.cli.tests`), and documented in
+README's `plugin push` section. The `--purge-outdated` flag was later removed entirely - outdated
+assembly migration/purge is now unconditional (see the section above).
+
+The scaffolding-era leftover `Logic/`/`Model/` files inside `dgt.power.plugin` (copies of
+`AssemblyProcessor`/`AssemblyModelBuilder`/`AssemblyValidator` and the old `Model/*` types used only as
+a porting reference while building the new Local/Planning/Dataverse/Execution layers) have been deleted,
+along with the now-unneeded `UiPath.Workflow` package reference from `dgt.power.plugin.csproj`. The only
+class from the old `Model` namespace still needed was `AssemblyException` (used by
+`AssemblyReflectionReader.MapDataProviderEventToMessage` for an unresolvable data-provider event value) -
+it was moved to the module root as `dgt.power.plugin.AssemblyException`, alongside the other top-level
+exception types (`WorkflowActivityNotSupportedException`, `InvalidPluginStepException`,
+`UnresolvedPluginStepMessageException`).
+
+**Note:** the legacy `dgt.power.push` module (backing the still-supported `push` command) has its own,
+separate copies of `Logic/AssemblyProcessor.cs`, `Logic/AssemblyModelBuilder.cs`, `Model/*`, etc. Those
+are intentionally left in place - `push` is not yet deprecated - and are unrelated to the cleanup
+described here.

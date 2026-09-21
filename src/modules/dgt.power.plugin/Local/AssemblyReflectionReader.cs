@@ -4,7 +4,6 @@
 using System.Reflection;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using dgt.power.plugin.Model;
 using dgt.registration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
