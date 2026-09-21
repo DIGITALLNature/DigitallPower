@@ -553,6 +553,7 @@ dgtp plugin push ./bin/Release --solution mysolution
 Reconciles plugin types, steps, step images and Custom API links declared via the
 `Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
 `ManagedIdentityRegistrationAttribute`-decorated assemblies to a managed identity, same as `push`.
+The dry-run output also summarizes checked plugin types, steps, and images that are already unchanged.
 
 **Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
 currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded

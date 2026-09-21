@@ -143,6 +143,49 @@ public class PluginTypeReconcilerTests
     }
 
     [Test]
+    public async Task ReconcileAsync_DryRun_ReportsUnchangedItems()
+    {
+        var (service, reconciler, console) = CreateReconcilerWithConsole();
+        var messageId = Guid.NewGuid();
+        service.Create(new SdkMessage(messageId) { Name = "Create" });
+        var filterId = Guid.NewGuid();
+        var filter = new SdkMessageFilter(filterId)
+        {
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId)
+        };
+        filter.Attributes[SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account";
+        service.Create(filter);
+        var assemblyId = Guid.NewGuid();
+        var typeId = Guid.NewGuid();
+        service.Create(new PluginType(typeId)
+        {
+            TypeName = "MyPlugin",
+            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
+        });
+        service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
+        {
+            Name = "step",
+            EventHandler = new EntityReference(PluginType.EntityLogicalName, typeId),
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PostOperation),
+            Rank = 1,
+            SdkMessageFilterId = new EntityReference(SdkMessageFilter.EntityLogicalName, filterId)
+        });
+
+        await reconciler.ReconcileAsync(
+            assemblyId,
+            [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()])],
+            new PluginPushOptions(null, DryRun: true));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("Checked 1 plugin type(s): 0 new, 1 existing, 0 removed");
+            await Assert.That(console.Output).Contains("Steps: 0 created, 0 updated, 1 unchanged, 0 deleted");
+        }
+    }
+
+    [Test]
     public async Task ReconcileAsync_ExistingStepWithChangedOrder_Updates()
     {
         var (service, reconciler) = CreateReconciler();
