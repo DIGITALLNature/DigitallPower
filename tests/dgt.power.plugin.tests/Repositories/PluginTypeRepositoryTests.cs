@@ -66,6 +66,8 @@ public class PluginTypeRepositoryTests
         var created = service.Retrieve(PluginType.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginType>();
         await Assert.That(created.TypeName).IsEqualTo("MyPlugin");
         await Assert.That(created.PluginAssemblyId!.Id).IsEqualTo(assemblyId);
+        await Assert.That(created.FriendlyName).IsNotNull();
+        await Assert.That(Guid.TryParse(created.FriendlyName, out _)).IsTrue();
     }
 
     [Test]

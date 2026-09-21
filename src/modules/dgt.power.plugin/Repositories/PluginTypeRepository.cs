@@ -38,7 +38,8 @@ public sealed class PluginTypeRepository(IOrganizationServiceAsync2 service) : I
         {
             PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId),
             TypeName = typeName,
-            Name = name
+            Name = name,
+            FriendlyName = Guid.NewGuid().ToString("D")
         };
 
         return await service.CreateAsync(pluginType, cancellationToken);
