@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using dgt.power.common;
 using dgt.power.common.Exceptions;
-using dgt.power.plugin.Dataverse;
+using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using Microsoft.PowerPlatform.Dataverse.Client;

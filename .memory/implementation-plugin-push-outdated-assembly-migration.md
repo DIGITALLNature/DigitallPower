@@ -9,14 +9,22 @@ implementing `dgtp plugin push`, structured in four layers:
   plugin types/steps/images declared via `Digitall.Plugins.Registration` attributes),
   `PluginPackageReader` (reads `.nupkg` content). Produces `LocalAssembly`, `LocalPluginType`,
   `LocalPluginStep`, `LocalPluginStepImage` records - no Dataverse access.
+- **`Remote/`** — minimal, already-fetched Dataverse state records (`RemoteAssembly`, `RemotePackage`,
+  `RemotePluginType`, `RemotePluginStep`, `RemotePluginStepImage`), mirroring `Local/` but for the
+  target environment. Split out of `Planning/` (where these types originally lived, mixed in with pure
+  decision logic) to keep the module's namespace layout self-explanatory: `Local` and `Remote` are both
+  plain state/model namespaces, `Planning` is pure logic.
 - **`Planning/`** — pure decision logic, no Dataverse access, fully unit-testable. `PluginPushPlanner`
-  compares Local vs. Remote (Dataverse-shaped) records and returns plan records (not tuples - see
+  compares Local vs. Remote records and returns plan records (not tuples - see
   `PluginTypeReconciliationPlan`, `PluginStepReconciliationPlan`, `PluginStepImageReconciliationPlan`,
   `OutdatedTypeMigration`).
-- **`Dataverse/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
+- **`Repositories/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
   `ISdkMessageProcessingStepRepository`, `ISdkMessageProcessingStepImageRepository`,
   `ICustomApiRepository`, `ISdkMessageRepository`), one per entity, CRUD only - no decision logic.
-- **`Execution/`** — orchestrators that call Planning then apply the plan via Dataverse repos:
+  Renamed from `Dataverse/` because that name collided conceptually with the separate
+  `dgt.power.dataverse` generated-entities project these repositories depend on (`using
+  dgt.power.dataverse;`) - "Dataverse" described *what they talk to*, not *what they are*.
+- **`Execution/`** — orchestrators that call Planning then apply the plan via Repositories:
   `PluginPushExecutor` (top-level per-assembly orchestration), `PluginTypeReconciler` (types/steps/
   images/custom-api reconciliation for the current assembly), `OutdatedAssemblyMigrator` (see below).
 

@@ -3,7 +3,7 @@
 
 using System.Globalization;
 using dgt.power.dataverse;
-using dgt.power.plugin.Dataverse;
+using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
 using Spectre.Console;

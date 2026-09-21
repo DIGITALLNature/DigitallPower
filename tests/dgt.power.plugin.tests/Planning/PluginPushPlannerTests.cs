@@ -3,6 +3,7 @@
 
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Remote;
 
 namespace dgt.power.plugin.tests.Planning;
 

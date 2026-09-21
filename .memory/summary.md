@@ -76,6 +76,7 @@ src/
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 | Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Az/pac-style `<resource> <verb>` commands (`dgtp plugin push`) built from scratch alongside the legacy `push` command instead of refactoring it in place; module-local repos/executors are constructed via `new`, not registered in the global DI container |
+| `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` (parsed assembly state) / `Remote` (fetched Dataverse state) / `Planning` (pure decision logic: actions, plans, reconciliation, `PluginPushPlanner`) / `Repositories` (Dataverse CRUD, renamed from `Dataverse` to avoid colliding with the `dgt.power.dataverse` generated-entities project) / `Execution` / `Commands` / `Base` |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 
 ## TSL Template Engine (codegeneration)

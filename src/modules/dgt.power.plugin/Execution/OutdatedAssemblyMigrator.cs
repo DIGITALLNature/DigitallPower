@@ -2,7 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using dgt.power.plugin.Dataverse;
+using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
 using Spectre.Console;
