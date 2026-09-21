@@ -55,9 +55,9 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 kind |= LocalAssemblyKind.Plugin;
             }
 
-            if (localPluginTypes.Exists(t => t.IsPowerPlugin))
+            if (localPluginTypes.Exists(t => t.HasRegistrationAttribute))
             {
-                kind |= LocalAssemblyKind.PowerPlugin;
+                kind |= LocalAssemblyKind.DeclarativePlugin;
             }
 
             return new LocalAssembly
@@ -105,11 +105,11 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
     internal LocalPluginType BuildPluginType(Type pluginType)
     {
-        var isPowerPlugin = IsPowerPlugin(pluginType);
+        var hasRegistrationAttribute = HasRegistrationAttribute(pluginType);
         var steps = new List<LocalPluginStep>();
         var customApi = string.Empty;
 
-        if (isPowerPlugin)
+        if (hasRegistrationAttribute)
         {
             var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
             foreach (var customAttribute in customAttributes)
@@ -143,7 +143,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 Markup.Escape(pluginType.FullName!));
         }
 
-        return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, isPowerPlugin, steps);
+        return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, hasRegistrationAttribute, steps);
     }
 
     private static LocalPluginStep? BuildDataProviderStep(Type pluginType, CustomAttributeData customAttribute)
@@ -304,7 +304,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     private static bool IsCodeActivityBased(Type declaredType) =>
         declaredType.GetBaseTypes().Any(t => t.FullName == "System.Activities.CodeActivity") && !declaredType.IsAbstract;
 
-    private static bool IsPowerPlugin(Type declaredType)
+    private static bool HasRegistrationAttribute(Type declaredType)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>

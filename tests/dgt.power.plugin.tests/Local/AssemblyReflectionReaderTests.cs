@@ -15,7 +15,7 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
-    public async Task BuildPluginType_TypeWithoutRegistrationAttribute_IsNotPowerPluginAndHasNoSteps()
+    public async Task BuildPluginType_TypeWithoutRegistrationAttribute_HasRegistrationAttributeIsFalseAndHasNoSteps()
     {
         var console = new TestConsole();
         var reader = new AssemblyReflectionReader(console);
@@ -24,7 +24,7 @@ public class AssemblyReflectionReaderTests
 
         using (Assert.Multiple())
         {
-            await Assert.That(result.IsPowerPlugin).IsFalse();
+            await Assert.That(result.HasRegistrationAttribute).IsFalse();
             await Assert.That(result.Steps).IsEmpty();
             await Assert.That(result.CustomApi).IsEmpty();
         }

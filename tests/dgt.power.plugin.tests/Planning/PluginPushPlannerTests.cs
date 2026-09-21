@@ -92,7 +92,7 @@ public class PluginPushPlannerTests
     }
 
     private static LocalPluginType PluginType(string typeName, params LocalPluginStep[] steps) =>
-        new(typeName, typeName, CustomApi: string.Empty, IsPowerPlugin: true, steps);
+        new(typeName, typeName, CustomApi: string.Empty, HasRegistrationAttribute: true, steps);
 
     private static LocalPluginStep Step(
         string name = "MyPlugin|account|Synchronous|PostOperation|Create",

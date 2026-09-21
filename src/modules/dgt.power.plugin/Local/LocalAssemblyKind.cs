@@ -12,5 +12,7 @@ public enum LocalAssemblyKind
 {
     Undefined = 0,
     Plugin = 1,
-    PowerPlugin = 2
+
+    /// <summary>At least one plugin type carries a registration attribute (see <see cref="LocalPluginType.HasRegistrationAttribute"/>).</summary>
+    DeclarativePlugin = 2
 }
