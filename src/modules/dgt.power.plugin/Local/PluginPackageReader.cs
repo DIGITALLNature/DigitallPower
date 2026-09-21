@@ -26,7 +26,7 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
         try
         {
             var content = Convert.ToBase64String(File.ReadAllBytes(packageFile));
-            using var inputStream = new FileStream(packageFile, FileMode.Open);
+            using var inputStream = new FileStream(packageFile, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var reader = new PackageArchiveReader(inputStream);
             var nuspec = reader.NuspecReader;
 

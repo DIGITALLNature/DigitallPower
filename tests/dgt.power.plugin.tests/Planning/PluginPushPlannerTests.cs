@@ -172,6 +172,18 @@ public class PluginPushPlannerTests
     }
 
     [Test]
+    public async Task PlanPluginSteps_EmptyAndNullFilterAttributesAreEquivalent()
+    {
+        var local = Step(name: "step", filterAttributes: []);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", null, 1, null);
+
+        var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
+
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(purge).IsEmpty();
+    }
+
+    [Test]
     [Arguments("step", "renamed", 1, 1, null, null)]
     [Arguments("step", "step", 1, 2, null, null)]
     [Arguments("step", "step", 1, 1, "old", "new")]
@@ -256,6 +268,18 @@ public class PluginPushPlannerTests
     {
         var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["a", "b"]);
         var remote = new RemotePluginStepImage(Guid.NewGuid(), "PreImage", 0, ["b", "a"]);
+
+        var (plans, purge) = PluginPushPlanner.PlanPluginStepImages([local], [remote]);
+
+        await Assert.That(plans).IsEmpty();
+        await Assert.That(purge).IsEmpty();
+    }
+
+    [Test]
+    public async Task PlanPluginStepImages_EmptyAndNullAttributesAreEquivalent()
+    {
+        var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", []);
+        var remote = new RemotePluginStepImage(Guid.NewGuid(), "PreImage", 0, null);
 
         var (plans, purge) = PluginPushPlanner.PlanPluginStepImages([local], [remote]);
 

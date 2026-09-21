@@ -130,16 +130,22 @@ public sealed class OutdatedAssemblyMigrator(
         }
     }
 
-    private static bool HaveSameIdentity(RemotePluginStep left, RemotePluginStep right) =>
-        string.Equals(left.MessageName, right.MessageName, StringComparison.OrdinalIgnoreCase)
-        && left.Mode == right.Mode
-        && left.Stage == right.Stage
-        && string.Equals(
-            NormalizeEntityName(left.PrimaryEntityName), NormalizeEntityName(right.PrimaryEntityName),
-            StringComparison.OrdinalIgnoreCase)
-        && string.Equals(
-            NormalizeEntityName(left.SecondaryEntityName), NormalizeEntityName(right.SecondaryEntityName),
-            StringComparison.OrdinalIgnoreCase);
+    private static bool HaveSameIdentity(RemotePluginStep left, RemotePluginStep right)
+    {
+        if (!string.Equals(left.MessageName, right.MessageName, StringComparison.OrdinalIgnoreCase) ||
+            left.Mode != right.Mode ||
+            left.Stage != right.Stage)
+        {
+            return false;
+        }
+
+        return string.Equals(
+                   NormalizeEntityName(left.PrimaryEntityName), NormalizeEntityName(right.PrimaryEntityName),
+                   StringComparison.OrdinalIgnoreCase)
+            && string.Equals(
+                   NormalizeEntityName(left.SecondaryEntityName), NormalizeEntityName(right.SecondaryEntityName),
+                   StringComparison.OrdinalIgnoreCase);
+    }
 
     private static string NormalizeEntityName(string entityName) =>
         string.IsNullOrEmpty(entityName) ? "none" : entityName;

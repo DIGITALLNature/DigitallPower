@@ -14,6 +14,12 @@ public class AssemblyReflectionReaderTests
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
     }
 
+    [dgt.registration.PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
+    private sealed class ExplicitOrderPlugin : IPlugin
+    {
+        public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
+    }
+
     [Test]
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "The test console remains in scope for output assertions.")]
@@ -41,6 +47,16 @@ public class AssemblyReflectionReaderTests
         reader.BuildPluginType(typeof(PlainPlugin));
 
         await Assert.That(console.Output).Contains(nameof(PlainPlugin));
+    }
+
+    [Test]
+    public async Task BuildPluginType_ExplicitExecutionOrder_PreservesMetadataValue()
+    {
+        var reader = new AssemblyReflectionReader(new TestConsole());
+
+        var result = reader.BuildPluginType(typeof(ExplicitOrderPlugin));
+
+        await Assert.That(result.Steps[0].ExecutionOrder).IsEqualTo(25);
     }
 
     [Test]

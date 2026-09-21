@@ -177,16 +177,22 @@ public static class PluginPushPlanner
     private static bool IsSameMajorMinor(Version local, Version remote) =>
         local.Major == remote.Major && local.Minor == remote.Minor;
 
-    private static bool StepKeysMatch(LocalPluginStep local, RemotePluginStep remote) =>
-        string.Equals(local.MessageName, remote.MessageName, StringComparison.OrdinalIgnoreCase)
-        && local.Mode == remote.Mode
-        && local.Stage == remote.Stage
-        && string.Equals(
-            NormalizeEntityName(local.PrimaryEntityName), NormalizeEntityName(remote.PrimaryEntityName),
-            StringComparison.OrdinalIgnoreCase)
-        && string.Equals(
-            NormalizeEntityName(local.SecondaryEntityName), NormalizeEntityName(remote.SecondaryEntityName),
-            StringComparison.OrdinalIgnoreCase);
+    private static bool StepKeysMatch(LocalPluginStep local, RemotePluginStep remote)
+    {
+        if (!string.Equals(local.MessageName, remote.MessageName, StringComparison.OrdinalIgnoreCase) ||
+            local.Mode != remote.Mode ||
+            local.Stage != remote.Stage)
+        {
+            return false;
+        }
+
+        return string.Equals(
+                   NormalizeEntityName(local.PrimaryEntityName), NormalizeEntityName(remote.PrimaryEntityName),
+                   StringComparison.OrdinalIgnoreCase)
+            && string.Equals(
+                   NormalizeEntityName(local.SecondaryEntityName), NormalizeEntityName(remote.SecondaryEntityName),
+                   StringComparison.OrdinalIgnoreCase);
+    }
 
     private static bool StepContentDiffers(LocalPluginStep local, RemotePluginStep remote) =>
         remote.Name != local.Name
@@ -199,6 +205,9 @@ public static class PluginPushPlanner
 
     private static bool AttributesEqual(IReadOnlyList<string>? left, IReadOnlyList<string>? right)
     {
+        left = left is { Count: > 0 } ? left : null;
+        right = right is { Count: > 0 } ? right : null;
+
         if (left is null || right is null)
         {
             return left is null && right is null;

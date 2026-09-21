@@ -94,7 +94,10 @@ public class PluginPushCommand(
                     try
                     {
                         ctx.Status(string.Format(CultureInfo.InvariantCulture, "Processing {0}", Path.GetFileName(target)));
-                        await ProcessTargetAsync(target, executor, assemblyReader, packageReader, options, cancellationToken);
+                        if (!await ProcessTargetAsync(target, executor, assemblyReader, packageReader, options, cancellationToken))
+                        {
+                            failed = true;
+                        }
                     }
                     catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not AbstractPowerException)
                     {
@@ -137,7 +140,7 @@ public class PluginPushCommand(
         return null;
     }
 
-    private async Task ProcessTargetAsync(
+    private async Task<bool> ProcessTargetAsync(
         string target,
         PluginPushExecutor executor,
         AssemblyReflectionReader assemblyReader,
@@ -151,11 +154,11 @@ public class PluginPushCommand(
             if (package is null)
             {
                 Console.MarkupLine("[red]Failed to read package - aborting[/]");
-                return;
+                return false;
             }
 
             await executor.ProcessPackageAsync(package, options, cancellationToken);
-            return;
+            return true;
         }
 
         var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
@@ -167,7 +170,7 @@ public class PluginPushCommand(
         if (assembly is null)
         {
             Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
-            return;
+            return false;
         }
 
         if (assembly.Kind == LocalAssemblyKind.None)
@@ -175,10 +178,11 @@ public class PluginPushCommand(
             Console.MarkupLine(CultureInfo.InvariantCulture,
                 "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] any plugins - skipping",
                 assembly.Name, assembly.Version);
-            return;
+            return true;
         }
 
         Console.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", assembly.Name, assembly.Version);
         await executor.ProcessAssemblyAsync(assembly, options, cancellationToken);
+        return true;
     }
 }

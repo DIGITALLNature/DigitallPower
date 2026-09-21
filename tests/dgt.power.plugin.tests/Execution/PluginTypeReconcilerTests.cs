@@ -107,6 +107,17 @@ public class PluginTypeReconcilerTests
     }
 
     [Test]
+    public async Task ReconcileAsync_MissingCustomApi_Throws()
+    {
+        var (_, reconciler) = CreateReconciler();
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", "missing_api", true, []);
+
+        await Assert.That(() => reconciler.ReconcileAsync(
+                Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: false)))
+            .Throws<MissingCustomApiException>();
+    }
+
+    [Test]
     public async Task ReconcileAsync_DryRun_CreatesNothing()
     {
         var (service, reconciler) = CreateReconciler();

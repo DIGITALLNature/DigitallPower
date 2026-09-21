@@ -42,6 +42,28 @@ public class PluginPackageReaderTests
         }
     }
 
+    [Test]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability", "CA2000", Justification = "The test console is owned by the package reader for the duration of the test.")]
+    public async Task Read_ReadOnlyPackage_Succeeds()
+    {
+        var nupkgPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.nupkg");
+        try
+        {
+            CreatePackage(nupkgPath, typeof(SamplePlugin).Assembly.Location);
+            File.SetAttributes(nupkgPath, FileAttributes.ReadOnly);
+
+            var result = new PluginPackageReader(new TestConsole()).Read(nupkgPath);
+
+            await Assert.That(result).IsNotNull();
+        }
+        finally
+        {
+            File.SetAttributes(nupkgPath, FileAttributes.Normal);
+            File.Delete(nupkgPath);
+        }
+    }
+
     private static void CreatePackage(string nupkgPath, params string[] dllPaths)
     {
         var builder = new PackageBuilder

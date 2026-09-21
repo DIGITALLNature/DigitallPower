@@ -241,9 +241,15 @@ public sealed class PluginTypeReconciler(
 
     private async Task ReconcileCustomApiLinkAsync(Guid pluginTypeId, string customApi, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        Guid? desiredCustomApiId = string.IsNullOrEmpty(customApi)
-            ? null
-            : await customApiRepository.FindIdByUniqueNameAsync(customApi, cancellationToken);
+        Guid? desiredCustomApiId = null;
+        if (!string.IsNullOrEmpty(customApi))
+        {
+            desiredCustomApiId = await customApiRepository.FindIdByUniqueNameAsync(customApi, cancellationToken);
+            if (desiredCustomApiId is null)
+            {
+                throw new MissingCustomApiException(customApi);
+            }
+        }
 
         var currentlyLinked = await customApiRepository.ListLinkedToPluginTypeAsync(pluginTypeId, cancellationToken);
 

@@ -331,18 +331,38 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
 
         var namedArgument = customAttribute.NamedArguments.SingleOrDefault(a => a.MemberName == property);
-        if (namedArgument.TypedValue.Value is T namedValue)
+        if (TryConvertValue<T>(namedArgument.TypedValue.Value, out var namedValue))
         {
             return namedValue;
         }
 
         var ctorPosition = customAttribute.Constructor.GetParameters().SingleOrDefault(c => c.Name == property)?.Position;
-        if (ctorPosition.HasValue && customAttribute.ConstructorArguments[ctorPosition.Value].Value is T ctorValue)
+        if (ctorPosition.HasValue &&
+            TryConvertValue<T>(customAttribute.ConstructorArguments[ctorPosition.Value].Value, out var ctorValue))
         {
             return ctorValue;
         }
 
         return default;
+    }
+
+    private static bool TryConvertValue<T>(object? value, out T? result)
+    {
+        if (value is T typedValue)
+        {
+            result = typedValue;
+            return true;
+        }
+
+        var nullableType = Nullable.GetUnderlyingType(typeof(T));
+        if (nullableType is not null && value is not null && nullableType.IsInstanceOfType(value))
+        {
+            result = (T)(object)value;
+            return true;
+        }
+
+        result = default;
+        return false;
     }
 
     private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)

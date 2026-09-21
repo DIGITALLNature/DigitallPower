@@ -573,6 +573,8 @@ towards it unconditionally, the same way it already purges orphaned steps/types 
   the meantime if you still need to register them as-is.
 - **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
   customizations.
+- **Declared Custom APIs must exist** - a missing Custom API is reported as an error instead of silently
+  unlinking an existing handler.
 - **Hint for plugin classes without a registration attribute** - a plain `IPlugin` implementation with no
   `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
   detected and reported with a hint, but is ignored by reconciliation so manually managed registrations are
