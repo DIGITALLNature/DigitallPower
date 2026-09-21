@@ -25,7 +25,7 @@ public sealed class OutdatedAssemblyMigrator(
     ICustomApiRepository customApiRepository,
     IAnsiConsole console)
 {
-    public async Task MigrateAsync(
+    public Task MigrateAsync(
         string assemblyName,
         Guid newAssemblyId,
         IReadOnlyList<LocalPluginType> replacementTypes,
@@ -35,6 +35,16 @@ public sealed class OutdatedAssemblyMigrator(
         ArgumentNullException.ThrowIfNull(replacementTypes);
         ArgumentNullException.ThrowIfNull(options);
 
+        return MigrateCoreAsync(assemblyName, newAssemblyId, replacementTypes, options, cancellationToken);
+    }
+
+    private async Task MigrateCoreAsync(
+        string assemblyName,
+        Guid newAssemblyId,
+        IReadOnlyList<LocalPluginType> replacementTypes,
+        PluginPushOptions options,
+        CancellationToken cancellationToken)
+    {
         var outdatedAssemblies = await assemblyRepository.ListOutdatedAsync(assemblyName, newAssemblyId, cancellationToken);
         if (outdatedAssemblies.Count == 0)
         {

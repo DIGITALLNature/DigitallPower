@@ -22,12 +22,18 @@ public sealed class PluginTypeReconciler(
     ICustomApiRepository customApiRepository,
     IAnsiConsole console)
 {
-    public async Task ReconcileAsync(
+    public Task ReconcileAsync(
         Guid assemblyId, IReadOnlyList<LocalPluginType> localTypes, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(localTypes);
         ArgumentNullException.ThrowIfNull(options);
 
+        return ReconcileCoreAsync(assemblyId, localTypes, options, cancellationToken);
+    }
+
+    private async Task ReconcileCoreAsync(
+        Guid assemblyId, IReadOnlyList<LocalPluginType> localTypes, PluginPushOptions options, CancellationToken cancellationToken)
+    {
         var remoteTypes = await typeRepository.ListByAssemblyAsync(assemblyId, cancellationToken);
         var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(localTypes, remoteTypes);
 

@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Planning;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -42,10 +41,14 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
         return new RemotePluginStepImage(image.Id, image.Name!, image.ImageType!.Value, attributes);
     }
 
-    public async Task<Guid> CreateAsync(PluginStepImageData data, CancellationToken cancellationToken = default)
+    public Task<Guid> CreateAsync(PluginStepImageData data, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(data);
+        return CreateCoreAsync(data, cancellationToken);
+    }
 
+    private async Task<Guid> CreateCoreAsync(PluginStepImageData data, CancellationToken cancellationToken)
+    {
         var image = new SdkMessageProcessingStepImage
         {
             SdkMessageProcessingStepId = new EntityReference(SdkMessageProcessingStep.EntityLogicalName, data.StepId),

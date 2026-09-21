@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Planning;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -70,18 +69,26 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             filterAttributes, step.Rank, step.Configuration);
     }
 
-    public async Task<Guid> CreateAsync(PluginStepData data, CancellationToken cancellationToken = default)
+    public Task<Guid> CreateAsync(PluginStepData data, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(data);
+        return CreateCoreAsync(data, cancellationToken);
+    }
 
+    private async Task<Guid> CreateCoreAsync(PluginStepData data, CancellationToken cancellationToken)
+    {
         var step = ToEntity(data);
         return await service.CreateAsync(step, cancellationToken);
     }
 
-    public async Task UpdateAsync(Guid id, PluginStepData data, CancellationToken cancellationToken = default)
+    public Task UpdateAsync(Guid id, PluginStepData data, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(data);
+        return UpdateCoreAsync(id, data, cancellationToken);
+    }
 
+    private async Task UpdateCoreAsync(Guid id, PluginStepData data, CancellationToken cancellationToken)
+    {
         var step = ToEntity(data);
         step.Id = id;
         await service.UpdateAsync(step, cancellationToken);

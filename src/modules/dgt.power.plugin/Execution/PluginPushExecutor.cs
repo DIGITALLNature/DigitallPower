@@ -30,11 +30,16 @@ public sealed class PluginPushExecutor(
     /// Reconciles a standalone plugin assembly. Returns the assembly's Dataverse id, or
     /// <see cref="Guid.Empty"/> in dry-run mode (nothing is actually created).
     /// </summary>
-    public async Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken = default)
+    public Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(options);
 
+        return ProcessAssemblyCoreAsync(assembly, options, cancellationToken);
+    }
+
+    private async Task<Guid> ProcessAssemblyCoreAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken)
+    {
         var remote = await assemblyRepository.FindByNameAsync(assembly.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanAssembly(assembly, remote);
 
@@ -64,11 +69,16 @@ public sealed class PluginPushExecutor(
     /// Reconciles a plugin package and the assemblies bundled inside it. Returns the package's
     /// Dataverse id, or <see cref="Guid.Empty"/> in dry-run mode.
     /// </summary>
-    public async Task<Guid> ProcessPackageAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken = default)
+    public Task<Guid> ProcessPackageAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(options);
 
+        return ProcessPackageCoreAsync(package, options, cancellationToken);
+    }
+
+    private async Task<Guid> ProcessPackageCoreAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken)
+    {
         var remote = await packageRepository.FindByNameAsync(package.Package.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanPackage(package.Package, remote);
 

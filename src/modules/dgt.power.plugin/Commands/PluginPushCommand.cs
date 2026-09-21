@@ -23,9 +23,14 @@ public class PluginPushCommand(
     IAnsiConsole console)
     : PowerLogic<PluginPushSettings>(tracer, connection, configResolver, console)
 {
-    protected override async Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        return InvokeCoreAsync(settings, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    {
         Tracer.Start(this);
 
         var targets = ResolveTargets(settings.Target);
