@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit.Assertions" Version="1.68.4" />
-    <PackageReference Include="TUnit.Core" Version="1.68.4" />
+    <PackageReference Include="TUnit.Assertions" Version="1.68.17" />
+    <PackageReference Include="TUnit.Core" Version="1.68.17" />
     <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0" />
     <PackageReference Include="Spectre.Console.Testing" Version="0.57.2" />
     <PackageReference Include="System.Runtime.Caching" Version="10.0.12" />
