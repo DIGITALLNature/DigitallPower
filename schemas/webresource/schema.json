@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DigitallPower webresource mappings",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "mappings": {
+      "type": "object",
+      "description": "Maps directory-relative source paths to Dataverse webresource logical names.",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "mappings"
+  ],
+  "additionalProperties": false
+}

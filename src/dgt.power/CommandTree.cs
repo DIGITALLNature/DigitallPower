@@ -20,6 +20,8 @@ using dgt.power.push;
 using dgt.power.Telemetry;
 using dgt.power.solution;
 using dgt.power.solution.Base;
+using dgt.power.webresource.Base;
+using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
 
 namespace dgt.power;
@@ -181,6 +183,15 @@ internal static class CommandTree
         config.AddCommand<PushCommand>("push")
             .WithDescription("Import specific Dataverse Artefacts")
             .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
+
+        config.AddBranch<WebResourceSettings>("webresource", webresource =>
+        {
+            webresource.SetDescription("Manages Dataverse webresources");
+            webresource.AddCommand<WebResourcePushCommand>("push")
+                .WithDescription("Pushes webresources from a directory or a single file")
+                .WithExample("webresource", "push", "c:/TargetDir/webresources", "--publisher-prefix", "sample")
+                .WithExample("webresource", "push", "c:/TargetDir/main.js", "--name", "sample_/main.js");
+        });
 
         config.AddBranch<CompleteSettings>("complete", complete =>
         {
