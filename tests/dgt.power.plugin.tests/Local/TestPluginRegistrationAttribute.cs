@@ -3,6 +3,7 @@
 
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
+// ReSharper disable NonAccessedField.Global
 
 namespace dgt.registration;
 
