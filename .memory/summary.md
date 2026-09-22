@@ -9,7 +9,12 @@
 - **Framework:** .NET 10, C# latest, nullable enabled, implicit usings
 - **CLI Host:** `dgt.power` (entry point, Spectre.Console command tree)
 - **Common Layer:** `dgt.power.common` (shared abstractions, extensions, fixtures, `ExecutionEnvironment`)
-- **Modules:** `dgt.power.{analyzer, codegeneration, export, import, maintenance, profile, push}`
+- **Modules:** `dgt.power.{analyzer, codegeneration, export, import, maintenance, profile, push,
+  webresource}`.
+  Resource-oriented plugin and webresource modules are being introduced separately from the
+  legacy `push` module; the plugin target architecture is described on the feature branch and
+  the webresource extraction plan is in
+  [`implementation-webresource-module-plan.md`](implementation-webresource-module-plan.md).
 - **Models:** `dgt.power.dataverse` (generated Dataverse entity wrappers), `dgt.power.dto` (cross-module DTOs)
 - **Tests:** TUnit framework, one test project per module in `tests/`
 - **Static Analysis:** `Microsoft.Extensions.StaticAnalysis` + Qodana (`jetbrains/qodana-cdnet:2026.1-eap`)
@@ -33,7 +38,8 @@ src/
     ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set` (replaces the plugin half of `push`)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`)
-    └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
+    ├── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
+    └── dgt.power.webresource/  Dedicated webresource deployment
 ```
 
 ## Key Conventions
@@ -162,6 +168,9 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 ### Key caveats
 - `DotnetSuggestHandler` must run as the FIRST statement in `Program.cs`, before any I/O, telemetry or network calls
+- `Program.cs` currently maintains an inline command registration function alongside `CommandTree`; new
+  commands must be added to both until registration is centralized, otherwise the CLI executable and
+  command-tree tests can diverge.
 - `AnsiConsoleOutput(TextWriter)` constructor — no static `.Create()` method
 - `IHelpProvider.Write(model, null)` receives `ICommandModel` (not `ICommandInfo`)
 - `ICommand<T>.ExecuteAsync(context, settings, ct)` is an explicit interface impl — tests must cast via `(ICommand<T>)command`
@@ -212,6 +221,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
+| `implementation-webresource-module-plan.md` | implementation | Layered extraction and refactoring plan for `webresource push`, including legacy behavior decisions |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
 | `research-v2-typescript-config-design-gaps.md` | research | Current V2 TS caveats after redesign: no `TypingPath`, no per-entity filters, string-based `forms.filter` |
