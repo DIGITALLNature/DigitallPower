@@ -134,12 +134,6 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
             return null;
         }
 
-        // Plain Text fields accept either no suffix or "_txt" - signal that via an empty entry.
-        if (attribute.AttributeType == AttributeTypeCode.String && baseSuffix == "_txt")
-        {
-            return [string.Empty, "_txt"];
-        }
-
         var modifier = attribute.SourceType switch
         {
             Calculated => "_cf",
@@ -147,6 +141,15 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
             Formula => "_fx",
             _ => null
         };
+
+        // Plain Text fields accept either no suffix or "_txt" - signal that via an empty entry.
+        // The source-type modifier (if any) must still be computed first and applied to both forms,
+        // otherwise a calculated/rollup/formula plain-Text field (e.g. "dgt_name_txt") would pass
+        // without the required modifier.
+        if (attribute.AttributeType == AttributeTypeCode.String && baseSuffix == "_txt")
+        {
+            return modifier is null ? [string.Empty, "_txt"] : [modifier, "_txt" + modifier];
+        }
 
         return modifier is null ? [baseSuffix] : [baseSuffix + modifier];
     }

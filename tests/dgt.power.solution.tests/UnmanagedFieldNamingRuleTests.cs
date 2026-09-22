@@ -32,7 +32,8 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
             "dgt_owner", // Lookup missing the _id suffix
             "unknown_field_txt", // wrong publisher prefix
             "dgt_BadName_txt", // not snake_case
-            "contoso_amount_cur" // wrong publisher prefix when only "dgt_" is configured
+            "contoso_amount_cur", // wrong publisher prefix when only "dgt_" is configured
+            "dgt_badcalc_txt" // calculated plain-Text field missing the required _cf modifier
         ]);
         foreach (var finding in findings)
         {
@@ -79,7 +80,8 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
             "dgt_owner",
             "unknown_field_txt",
             "dgt_BadName_txt",
-            "contoso_amount_cur"
+            "contoso_amount_cur",
+            "dgt_badcalc_txt"
         ]);
     }
 
@@ -190,6 +192,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
             CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Email }, "dgt_email_email"),
             CreateAttribute(new MoneyAttributeMetadata { SourceType = 2 }, "dgt_totalamount_cur_rf"), // Rollup
             CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text, SourceType = 1 }, "dgt_fullname_txt_cf"), // Calculated
+            CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text, SourceType = 1 }, "dgt_badcalc_txt"), // Calculated but missing the required _cf modifier -> violation
             CreateAttribute(new PicklistAttributeMetadata { SourceType = 3 }, "dgt_status_set_fx"), // Formula
             CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "unknown_field_txt"), // wrong prefix -> violation
             CreateAttribute(new StringAttributeMetadata { FormatName = StringFormatName.Text }, "dgt_BadName_txt"), // not snake_case -> violation

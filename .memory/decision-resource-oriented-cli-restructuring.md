@@ -57,7 +57,7 @@ have to re-derive it later; it is not a commitment to build those modules now.
 | `maintenance` command | Target | New command (proposed) | In scope now? |
 |---|---|---|---|
 | `solution-version` (`IncrementSolutionVersion`) | `solution` | `dgtp solution version` | **done** (Phase 2) |
-| `removeredundantcomponents` (`RemoveRedundantComponents`) | `solution` | `dgtp solution remove-redundant-components` | yes |
+| `removeredundantcomponents` (`RemoveRedundantComponents`) | `solution` | `dgtp solution remove-redundant-components` | yes - not started yet |
 | `autonumber` (`AutoNumberFormatAction`) | `column` (future module) | `dgtp column autonumber` | no - stays in maintenance |
 | `protectfields` (`ProtectCalculatedFields`) | `column` (future module) | `dgtp column protect` | no - stays in maintenance |
 | `createworkflowstate` (`CreateWorkflowStateConfig`) | `workflow` (future module) | `dgtp workflow create-state-config` | no - stays in maintenance |
@@ -110,8 +110,10 @@ branch entirely (hard cut, per decision #2).
    `tests/dgt.power.solution.tests/SolutionVersionCommandTests.cs`; added
    `SettingsParsingTests.SolutionVersionSettings_ParsesPositionalArgumentAndFlag` (renamed from the
    old `IncrementSolutionVersionSettings_...` test).
-3. **Only the other `solution`-scoped command**, `removeredundantcomponents` →
-   `dgtp solution remove-redundant-components`, is ported now. Everything else in the mapping table
+3. **Not started yet.** The only other `solution`-scoped command, `removeredundantcomponents` →
+   `dgtp solution remove-redundant-components`, still lives in `dgt.power.maintenance` -
+   no `RemoveRedundantComponents`/`RemoveRedundantComponentsVerb` code has moved and there is no
+   `solution remove-redundant-components` command yet. Everything else in the mapping table also
    stays in `dgt.power.maintenance` untouched - **no `column`/`workflow` module is created in this
    pass.** Revisit the rest of the table as a separate, later decision.
 4. **`analyze` → lint rules**: port all six checks as `ILintRule`s, then delete `dgt.power.analyzer`

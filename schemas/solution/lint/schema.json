@@ -18,6 +18,9 @@
         },
         "completeness.table-root-component-behavior": {
           "$ref": "#/$defs/rules/completeness.table-root-component-behavior"
+        },
+        "webresource.jscript-sourcemap": {
+          "$ref": "#/$defs/rules/webresource.jscript-sourcemap"
         }
       },
       "additionalProperties": false
@@ -71,6 +74,23 @@
       "completeness.table-root-component-behavior": {
         "type": "object",
         "description": "Ensures unmanaged tables are added completely (IncludeSubcomponents) and managed tables are never added completely (only their delta may be listed, or referenced as a shell)",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "severity": {
+            "$ref": "#/$defs/severity"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "additionalProperties": false
+      },
+      "webresource.jscript-sourcemap": {
+        "type": "object",
+        "description": "Flags JScript web resources that still contain a source map reference (e.g. '//# sourceMappingURL=...'), indicating the resource was added unminified",
         "properties": {
           "enabled": {
             "type": "boolean",

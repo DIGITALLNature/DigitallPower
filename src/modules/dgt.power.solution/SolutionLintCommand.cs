@@ -18,6 +18,9 @@ public sealed class SolutionLintCommand(
     IAnsiConsole console)
     : PowerLogic<SolutionLintSettings>(tracer, connection, configResolver, console)
 {
+    // TODO(async): migrate to IOrganizationServiceAsync2 - see todo.md (dgt.power.solution row).
+    // LintContext's constructor performs synchronous Connection.Execute/RetrieveMultiple calls with
+    // no await at all; a real fix requires a static async factory (constructors cannot be async).
     protected override async Task<bool> InvokeAsync(SolutionLintSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -42,6 +45,12 @@ public sealed class SolutionLintCommand(
             await SarifWriter.WriteAsync(args.Baseline, findings, suppressedKeys: null, cancellationToken);
             Console.MarkupLine(CultureInfo.InvariantCulture, "[green]Baseline updated: {0} finding(s) written to {1}[/]", findings.Count, args.Baseline);
             await WriteJsonReportAsync(args.Report, findings, baselinedKeys: new HashSet<string>(StringComparer.Ordinal), cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(args.SarifOutput))
+            {
+                await SarifWriter.WriteAsync(args.SarifOutput, findings, suppressedKeys: null, cancellationToken);
+            }
+
             return Tracer.End(this, true);
         }
 

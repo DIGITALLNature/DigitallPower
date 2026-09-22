@@ -39,6 +39,7 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 | `dgt.power.export` | 9 classes | Mix of LINQ DataContext + direct SDK calls |
 | `dgt.power.import` | 10 classes | Direct SDK calls — most straightforward to migrate |
 | `dgt.power.maintenance` | 7 classes | Mixed; some already async (`EnsureSdkStepStatus`, `UpdateWorkflowState`) |
+| `dgt.power.solution` | `SolutionLintCommand`, `LintContext` | `SolutionLintCommand.InvokeAsync` is already `async`, but `LintContext`'s constructor does synchronous `Connection.Execute`/`RetrieveMultiple` calls (metadata, solutioncomponent, webresource queries) with no `await` at all - worse than the `Task.FromResult(InvokeCore(...))` interim pattern. Constructors cannot be `async`, so migrating requires turning `LintContext` into a static async factory (e.g. `LintContext.CreateAsync(...)`) that awaits `IOrganizationServiceAsync2.ExecuteAsync`/`RetrieveMultipleAsync`; `ILintRule.EvaluateAsync` implementations stay as-is (they only iterate the already-fetched context, no I/O of their own). |
 
 ### Note on DataContext
 `DataContext` (LINQ to CRM) is fundamentally synchronous. Replacing it requires switching to

@@ -45,7 +45,8 @@ public class CommandTreeTests
     [Arguments("export")]
     [Arguments("maintenance")]
     [Arguments("analyze")]
-    [Arguments("import")]    [Arguments("solution")]    [Arguments("solution")]
+    [Arguments("import")]
+    [Arguments("solution")]
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
     [Arguments("push")]

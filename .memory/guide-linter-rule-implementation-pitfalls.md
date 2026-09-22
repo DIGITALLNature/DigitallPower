@@ -58,7 +58,19 @@ Tests for a rule must:
 - Assert on the actual finding collection (count, `RuleId`, `ComponentLogicalName`, `Severity`) for
   both the "should flag" and "should not flag" cases — not only on the command's overall success flag.
 
-## Solution scoping must be keyed by unique-name lookup, not `EntityReference.Name`
+## `SolutionComponentEntries` is scoped to ismetadata=true - standalone components need their own query
+
+`LintContext.SolutionComponentEntries` (used by `EntityMemberships`/table-behavior rules) only
+contains rows where `ismetadata = true` - these are the automatic per-attribute/relationship rows
+that ride along an entity's metadata. Standalone, explicitly-added components (web resources,
+workflows, plugin steps, ...) are NOT metadata rows (`ismetadata = false`/null) and will never show
+up there. A rule that needs a non-metadata component type must add its own `QueryExpression`
+against `solutioncomponent` (filtered by `componenttype` + `solutionid in (...)`, no `ismetadata`
+condition) - see `LintContext.WebResourceComponents`/`BuildWebResourceComponents()` and the
+`webresource.jscript-sourcemap` rule for the established pattern. Do not rely on a component
+record's own tracking field (e.g. `webresource.solutionid`) for solution scoping either - like
+`EntityReference.Name` (see below), it reflects "current unmanaged owner", not solution membership,
+and would misattribute components when linting a patch/managed solution.
 
 A `SolutionComponent.SolutionId` is an `EntityReference` and its `Name` field is often empty in fake or
 query-built Dataverse contexts unless the record is explicitly resolved. The linter must therefore scope
