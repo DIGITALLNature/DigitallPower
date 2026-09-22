@@ -1,0 +1,42 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.ComponentModel;
+using Spectre.Console.Cli;
+
+namespace dgt.power.solution.Base;
+
+public class SolutionLintSettings : SolutionSettings
+{
+    [CommandArgument(0, "<Solution>")]
+    [Description("The unique name of the solution to lint")]
+    public string Solution { get; set; } = string.Empty;
+
+    [CommandOption("-c|--config")]
+    [Description("Full path to the linter configuration file")]
+    public string Config { get; init; } = "lint.config.json";
+
+    [CommandOption("--rules")]
+    [Description("Comma-separated list of rule ids to run")]
+    public string Rules { get; init; } = string.Empty;
+
+    [CommandOption("--report")]
+    [Description("Write the JSON findings report to this file path")]
+    public string Report { get; init; } = string.Empty;
+
+    [CommandOption("--sarif-output")]
+    [Description("Write a SARIF 2.1.0 export of all findings to this file path")]
+    public string SarifOutput { get; init; } = string.Empty;
+
+    [CommandOption("--baseline")]
+    [Description("Path to a SARIF baseline file. Findings matching a baselined entry are excluded from the --fail-on gate")]
+    public string Baseline { get; init; } = string.Empty;
+
+    [CommandOption("--update-baseline")]
+    [Description("Overwrite --baseline with the findings from this run instead of gating on them. Requires --baseline")]
+    public bool UpdateBaseline { get; init; }
+
+    [CommandOption("--fail-on")]
+    [Description("Minimum severity that fails the command (None|Info|Warning|Error)")]
+    public string FailOn { get; init; } = "Error";
+}

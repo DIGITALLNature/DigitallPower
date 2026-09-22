@@ -2,18 +2,18 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.maintenance.Logic;
-using dgt.power.maintenance.Model.Settings;
+using dgt.power.solution;
+using dgt.power.solution.Base;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
 
-namespace dgt.power.maintenance.tests;
+namespace dgt.power.solution.tests;
 
-public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionVersion, IncrementSolutionVersionSettings>
+public class SolutionVersionCommandTests : CommandTestsBase<SolutionVersionCommand, SolutionVersionSettings>
 {
     [Test]
     public async Task ShouldFailOnEmptySolutionOption() => await GetContext()
-        .Execute(new IncrementSolutionVersionSettings
+        .Execute(new SolutionVersionSettings
         {
             Solution = string.Empty
         })
@@ -21,7 +21,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
 
     [Test]
     public async Task ShouldFailOnNonExistingSolution() => await GetContext()
-        .Execute(new IncrementSolutionVersionSettings
+        .Execute(new SolutionVersionSettings
         {
             Solution = "missing"
         })
@@ -35,7 +35,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             Version = "invalid"
         })
         .Build()
-        .Execute(new IncrementSolutionVersionSettings
+        .Execute(new SolutionVersionSettings
         {
             Solution = "existing"
         })
@@ -49,7 +49,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             Version = "1.0.1.2"
         })
         .Build()
-        .Execute(new IncrementSolutionVersionSettings
+        .Execute(new SolutionVersionSettings
         {
             Solution = "existing",
             Major = false,
@@ -73,7 +73,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Build();
 
         await context
-            .Execute(new IncrementSolutionVersionSettings
+            .Execute(new SolutionVersionSettings
             {
                 Solution = solution.UniqueName,
                 Major = true
@@ -98,7 +98,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Build();
 
         await context
-            .Execute(new IncrementSolutionVersionSettings
+            .Execute(new SolutionVersionSettings
             {
                 Solution = solution.UniqueName,
                 Minor = true
@@ -123,7 +123,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Build();
 
         await context
-            .Execute(new IncrementSolutionVersionSettings
+            .Execute(new SolutionVersionSettings
             {
                 Solution = solution.UniqueName,
                 Build = true
@@ -148,7 +148,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Build();
 
         await context
-            .Execute(new IncrementSolutionVersionSettings
+            .Execute(new SolutionVersionSettings
             {
                 Solution = solution.UniqueName,
                 Revision = true
@@ -173,7 +173,7 @@ public class IncrementSolutionVersionTests : CommandTestsBase<IncrementSolutionV
             .Build();
 
         await context
-            .Execute(new IncrementSolutionVersionSettings
+            .Execute(new SolutionVersionSettings
             {
                 Solution = solution.UniqueName
             })

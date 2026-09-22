@@ -1,0 +1,11 @@
+global using System;
+global using System.Collections.Generic;
+global using System.IO;
+global using System.Linq;
+global using dgt.power.solution.Base;
+global using dgt.power.tests;
+global using Microsoft.Xrm.Sdk;
+global using Microsoft.Xrm.Sdk.Metadata;
+global using TUnit.Assertions;
+global using TUnit.Assertions.Extensions;
+global using TUnit.Core;

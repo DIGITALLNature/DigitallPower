@@ -3,23 +3,23 @@
 
 using dgt.power.common;
 using dgt.power.dataverse;
-using dgt.power.maintenance.Model.Settings;
+using dgt.power.solution.Base;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
-namespace dgt.power.maintenance.Logic;
+namespace dgt.power.solution;
 
-public class IncrementSolutionVersion(
+public class SolutionVersionCommand(
     ITracer tracer,
     IOrganizationService connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : PowerLogic<IncrementSolutionVersionSettings>(tracer, connection, configResolver, console)
+    : PowerLogic<SolutionVersionSettings>(tracer, connection, configResolver, console)
 {
-    protected override Task<bool> InvokeAsync(IncrementSolutionVersionSettings settings, CancellationToken cancellationToken) =>
+    protected override Task<bool> InvokeAsync(SolutionVersionSettings settings, CancellationToken cancellationToken) =>
         Task.FromResult(InvokeCore(settings));
 
-    private bool InvokeCore(IncrementSolutionVersionSettings settings)
+    private bool InvokeCore(SolutionVersionSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
         Tracer.Start(this);

@@ -14,6 +14,7 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
+using dgt.power.solution.Base;
 using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
 
@@ -114,6 +115,41 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task SolutionLintSettings_ParsesPositionalArgumentAndOptions()
+    {
+        var result = Parse<SolutionLintSettings>(
+            "sample_solution",
+            "-c", "myconfig.json",
+            "--rules", "ruleA,ruleB",
+            "--report", "report.json",
+            "--sarif-output", "lint.sarif.json",
+            "--baseline", "baseline.sarif.json",
+            "--update-baseline",
+            "--fail-on", "Warning");
+
+        var settings = (SolutionLintSettings)result.Settings!;
+
+        await Assert.That(settings.Solution).IsEqualTo("sample_solution");
+        await Assert.That(settings.Config).IsEqualTo("myconfig.json");
+        await Assert.That(settings.Rules).IsEqualTo("ruleA,ruleB");
+        await Assert.That(settings.Report).IsEqualTo("report.json");
+        await Assert.That(settings.SarifOutput).IsEqualTo("lint.sarif.json");
+        await Assert.That(settings.Baseline).IsEqualTo("baseline.sarif.json");
+        await Assert.That(settings.UpdateBaseline).IsTrue();
+        await Assert.That(settings.FailOn).IsEqualTo("Warning");
+
+        var defaults = Parse<SolutionLintSettings>("sample_solution");
+        var defaultSettings = (SolutionLintSettings)defaults.Settings!;
+        await Assert.That(defaultSettings.Config).IsEqualTo("lint.config.json");
+        await Assert.That(defaultSettings.Rules).IsEqualTo(string.Empty);
+        await Assert.That(defaultSettings.Report).IsEqualTo(string.Empty);
+        await Assert.That(defaultSettings.SarifOutput).IsEqualTo(string.Empty);
+        await Assert.That(defaultSettings.Baseline).IsEqualTo(string.Empty);
+        await Assert.That(defaultSettings.UpdateBaseline).IsFalse();
+        await Assert.That(defaultSettings.FailOn).IsEqualTo("Error");
+    }
+
+    [Test]
     public async Task MaintenanceVerb_ParsesConfigAliasAndDefault()
     {
         var withAlias = Parse<MaintenanceVerb>("-c", "myconfig.json");
@@ -139,11 +175,11 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task IncrementSolutionVersionSettings_ParsesPositionalArgumentAndFlag()
+    public async Task SolutionVersionSettings_ParsesPositionalArgumentAndFlag()
     {
-        var result = Parse<IncrementSolutionVersionSettings>("sample_solution", "--minor");
+        var result = Parse<SolutionVersionSettings>("sample_solution", "--minor");
 
-        var settings = (IncrementSolutionVersionSettings)result.Settings!;
+        var settings = (SolutionVersionSettings)result.Settings!;
 
         await Assert.That(settings.Solution).IsEqualTo("sample_solution");
         await Assert.That(settings.Minor).IsTrue();

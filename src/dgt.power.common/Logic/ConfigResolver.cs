@@ -15,7 +15,8 @@ public class ConfigResolver(ITracer tracer) : IConfigResolver
     private readonly JsonSerializerOptions _options = new()
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-        AllowTrailingCommas = true
+        AllowTrailingCommas = true,
+        PropertyNameCaseInsensitive = true
     };
 
     public bool TryGetConfigFile<TC>(string fileDir, string file, out TC config) where TC : class, new() => ConfigFromFileCached(Path.Combine(fileDir, file), out config);
