@@ -18,6 +18,11 @@ public sealed class WebResourceMappingException : AbstractPowerException
     {
     }
 
+    public WebResourceMappingException(string message)
+        : base(message)
+    {
+    }
+
     public WebResourceMappingException(string message, Exception innerException)
         : base(message, innerException)
     {

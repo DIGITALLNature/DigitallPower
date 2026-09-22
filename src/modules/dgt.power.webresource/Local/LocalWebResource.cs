@@ -8,4 +8,5 @@ public sealed record LocalWebResource(
     string Name,
     string DisplayName,
     string Content,
-    string Hash);
+    string Hash,
+    string RelativePath);
