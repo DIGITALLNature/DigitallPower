@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Monitor.OpenTelemetry.Exporter;
@@ -54,6 +55,8 @@ if (DotnetSuggestHandler.IsSuggestMode(args))
     return await DotnetSuggestHandler.HandleAsync(args, RegisterCommands);
 }
 // ─────────────────────────────────────────────────────────────────────────────
+
+Console.OutputEncoding = Encoding.UTF8;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

@@ -1,10 +1,10 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Globalization;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
+using System.Globalization;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Execution;
@@ -22,16 +22,117 @@ public sealed class PluginTypeReconciler(
     ICustomApiRepository customApiRepository,
     IAnsiConsole console)
 {
-    private readonly record struct ReconciliationCounts(int Created, int Updated, int Unchanged, int Deleted)
+    public async Task<IReadOnlyList<PluginPlanNode>> BuildPlanAsync(
+        Guid assemblyId,
+        IReadOnlyList<LocalPluginType> localTypes,
+        CancellationToken cancellationToken = default)
     {
-        public bool IsEmpty => Created == 0 && Updated == 0 && Unchanged == 0 && Deleted == 0;
+        ArgumentNullException.ThrowIfNull(localTypes);
 
-        public static ReconciliationCounts operator +(ReconciliationCounts left, ReconciliationCounts right) =>
-            new(
-                left.Created + right.Created,
-                left.Updated + right.Updated,
-                left.Unchanged + right.Unchanged,
-                left.Deleted + right.Deleted);
+        var nodes = new List<PluginPlanNode>();
+        var remoteTypes = await typeRepository.ListByAssemblyAsync(assemblyId, cancellationToken);
+        var ignoredTypeNames = localTypes
+            .Where(type => !type.HasRegistrationAttribute)
+            .Select(type => type.TypeName)
+            .ToHashSet(StringComparer.Ordinal);
+        var registeredTypes = localTypes.Where(type => type.HasRegistrationAttribute).ToList();
+        var managedRemoteTypes = remoteTypes.Where(type => !ignoredTypeNames.Contains(type.TypeName)).ToList();
+        var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(registeredTypes, managedRemoteTypes);
+
+        foreach (var typePlan in typePlans)
+        {
+            var typeNode = new PluginPlanNode(typePlan.Local.TypeName, typePlan.Action == PluginTypeAction.Create ? "Create" : "Reconcile");
+            nodes.Add(typeNode);
+            var typeId = typePlan.Existing?.Id ?? Guid.Empty;
+
+            if (typePlan.Local.HasRegistrationAttribute)
+            {
+                var remoteSteps = await stepRepository.ListByPluginTypeAsync(typeId, cancellationToken);
+                var (stepPlans, orphanedSteps) = PluginPushPlanner.PlanPluginSteps(typePlan.Local.Steps, remoteSteps);
+                foreach (var stepPlan in stepPlans)
+                {
+                    if (stepPlan.Action is PluginStepAction.Create or PluginStepAction.Update)
+                    {
+                        var resolved = await messageRepository.ResolveAsync(
+                            stepPlan.Local.MessageName,
+                            stepPlan.Local.PrimaryEntityName,
+                            stepPlan.Local.SecondaryEntityName,
+                            cancellationToken);
+                        if (resolved is null)
+                        {
+                            throw new UnresolvedPluginStepMessageException(
+                                stepPlan.Local.Name,
+                                stepPlan.Local.MessageName,
+                                stepPlan.Local.PrimaryEntityName);
+                        }
+                    }
+
+                    var stepNode = new PluginPlanNode(stepPlan.Local.Name, stepPlan.Action.ToString());
+                    typeNode.AddChild(stepNode);
+                    var stepId = stepPlan.Existing?.Id ?? Guid.Empty;
+                    var remoteImages = await imageRepository.ListByStepAsync(stepId, cancellationToken);
+                    var imagePlans = PluginPushPlanner.PlanPluginStepImages(stepPlan.Local.Images, remoteImages);
+                    foreach (var imagePlan in imagePlans.Plans)
+                    {
+                        stepNode.AddChild(new PluginPlanNode(imagePlan.Local.Name, imagePlan.Action.ToString()));
+                    }
+
+                    foreach (var image in imagePlans.Purge)
+                    {
+                        stepNode.AddChild(new PluginPlanNode(image.Name, "Delete"));
+                    }
+
+                    foreach (var image in stepPlan.Local.Images.Where(image =>
+                                 imagePlans.Plans.All(plan => plan.Local.Name != image.Name) &&
+                                 imagePlans.Purge.All(purge => purge.Name != image.Name)))
+                    {
+                        stepNode.AddChild(new PluginPlanNode(image.Name, "Keep"));
+                    }
+                }
+
+                foreach (var step in orphanedSteps)
+                {
+                    typeNode.AddChild(new PluginPlanNode(step.Name, "Delete"));
+                }
+            }
+
+            await AddCustomApiPlanAsync(typeNode, typeId, typePlan.Local.CustomApi, cancellationToken);
+        }
+
+        foreach (var type in orphanedTypes)
+        {
+            nodes.Add(new PluginPlanNode(type.TypeName, "Delete"));
+        }
+
+        return nodes;
+    }
+
+    private async Task AddCustomApiPlanAsync(
+        PluginPlanNode typeNode,
+        Guid typeId,
+        string customApi,
+        CancellationToken cancellationToken)
+    {
+        Guid? desiredId = null;
+        if (!string.IsNullOrEmpty(customApi))
+        {
+            desiredId = await customApiRepository.FindIdByUniqueNameAsync(customApi, cancellationToken);
+            if (desiredId is null)
+            {
+                throw new MissingCustomApiException(customApi);
+            }
+        }
+
+        var linked = await customApiRepository.ListLinkedToPluginTypeAsync(typeId, cancellationToken);
+        foreach (var linkedId in linked.Where(id => id != desiredId))
+        {
+            typeNode.AddChild(new PluginPlanNode(linkedId.ToString(), "Unlink"));
+        }
+
+        if (desiredId is { } customApiId && !linked.Contains(customApiId))
+        {
+            typeNode.AddChild(new PluginPlanNode(customApi, "Link"));
+        }
     }
 
     public Task ReconcileAsync(
@@ -55,18 +156,13 @@ public sealed class PluginTypeReconciler(
         var managedRemoteTypes = remoteTypes.Where(type => !ignoredTypeNames.Contains(type.TypeName)).ToList();
         var (typePlans, orphanedTypes) = PluginPushPlanner.PlanPluginTypes(registeredTypes, managedRemoteTypes);
 
-        var steps = default(ReconciliationCounts);
-        var images = default(ReconciliationCounts);
-
         foreach (var typePlan in typePlans)
         {
             var typeId = await ApplyTypePlanAsync(typePlan, assemblyId, options, cancellationToken);
 
             if (typePlan.Local.HasRegistrationAttribute)
             {
-                var stepSummary = await ReconcileStepsAsync(typeId, typePlan.Local.Steps, options, cancellationToken);
-                steps += stepSummary.Steps;
-                images += stepSummary.Images;
+                await ReconcileStepsAsync(typeId, typePlan.Local.Steps, options, cancellationToken);
             }
 
             await ReconcileCustomApiLinkAsync(typeId, typePlan.Local.CustomApi, options, cancellationToken);
@@ -88,25 +184,6 @@ public sealed class PluginTypeReconciler(
             await typeRepository.DeleteAsync(orphanedType.Id, cancellationToken);
         }
 
-        var createdTypes = typePlans.Count(p => p.Action == PluginTypeAction.Create);
-        var existingTypes = typePlans.Count - createdTypes;
-        console.MarkupLine(CultureInfo.InvariantCulture,
-            "  [grey]Checked {0} plugin type(s): {1} new, {2} existing, {3} removed[/]",
-            typePlans.Count, createdTypes, existingTypes, orphanedTypes.Count);
-
-        if (!steps.IsEmpty)
-        {
-            console.MarkupLine(CultureInfo.InvariantCulture,
-                "    [grey]Steps: {0} created, {1} updated, {2} unchanged, {3} deleted[/]",
-                steps.Created, steps.Updated, steps.Unchanged, steps.Deleted);
-        }
-
-        if (!images.IsEmpty)
-        {
-            console.MarkupLine(CultureInfo.InvariantCulture,
-                "    [grey]Images: {0} created, {1} updated, {2} unchanged, {3} deleted[/]",
-                images.Created, images.Updated, images.Unchanged, images.Deleted);
-        }
     }
 
     /// <summary>
@@ -128,17 +205,16 @@ public sealed class PluginTypeReconciler(
         return plan.Existing!.Id;
     }
 
-    private async Task<(ReconciliationCounts Steps, ReconciliationCounts Images)> ReconcileStepsAsync(
+    private async Task ReconcileStepsAsync(
         Guid pluginTypeId, IReadOnlyList<LocalPluginStep> localSteps, PluginPushOptions options, CancellationToken cancellationToken)
     {
         var remoteSteps = await stepRepository.ListByPluginTypeAsync(pluginTypeId, cancellationToken);
         var (stepPlans, orphanedSteps) = PluginPushPlanner.PlanPluginSteps(localSteps, remoteSteps);
 
-        var images = default(ReconciliationCounts);
         foreach (var stepPlan in stepPlans)
         {
             var stepId = await ApplyStepPlanAsync(stepPlan, pluginTypeId, options, cancellationToken);
-            images += await ReconcileImagesAsync(stepId, stepPlan.Local.Images, options, cancellationToken);
+            await ReconcileImagesAsync(stepId, stepPlan.Local.Images, options, cancellationToken);
         }
 
         foreach (var orphanedStep in orphanedSteps)
@@ -150,12 +226,6 @@ public sealed class PluginTypeReconciler(
             }
         }
 
-        var steps = new ReconciliationCounts(
-            stepPlans.Count(p => p.Action == PluginStepAction.Create),
-            stepPlans.Count(p => p.Action == PluginStepAction.Update),
-            stepPlans.Count(p => p.Action == PluginStepAction.Keep),
-            orphanedSteps.Count);
-        return (steps, images);
     }
 
     private async Task<Guid> ApplyStepPlanAsync(PluginStepPlan plan, Guid pluginTypeId, PluginPushOptions options, CancellationToken cancellationToken)
@@ -191,19 +261,16 @@ public sealed class PluginTypeReconciler(
         return plan.Existing!.Id;
     }
 
-    private async Task<ReconciliationCounts> ReconcileImagesAsync(
+    private async Task ReconcileImagesAsync(
         Guid stepId, IReadOnlyList<LocalPluginStepImage> localImages, PluginPushOptions options, CancellationToken cancellationToken)
     {
         var remoteImages = await imageRepository.ListByStepAsync(stepId, cancellationToken);
         var (imagePlans, orphanedImages) = PluginPushPlanner.PlanPluginStepImages(localImages, remoteImages);
 
-        var created = 0;
-        var updated = 0;
         foreach (var imagePlan in imagePlans)
         {
             if (imagePlan.Action == PluginStepImageAction.Create)
             {
-                created++;
                 console.MarkupLine(CultureInfo.InvariantCulture, "      Create Image [bold green]{0}[/]", imagePlan.Local.Name);
                 if (options.DryRun)
                 {
@@ -217,7 +284,6 @@ public sealed class PluginTypeReconciler(
             }
             else
             {
-                updated++;
                 console.MarkupLine(CultureInfo.InvariantCulture, "      Update Image [bold green]{0}[/]", imagePlan.Local.Name);
                 if (!options.DryRun)
                 {
@@ -235,8 +301,6 @@ public sealed class PluginTypeReconciler(
             }
         }
 
-        var unchanged = localImages.Count - imagePlans.Count;
-        return new ReconciliationCounts(created, updated, unchanged, orphanedImages.Count);
     }
 
     private async Task ReconcileCustomApiLinkAsync(Guid pluginTypeId, string customApi, PluginPushOptions options, CancellationToken cancellationToken)

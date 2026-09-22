@@ -158,7 +158,7 @@ public class PluginTypeReconcilerTests
     }
 
     [Test]
-    public async Task ReconcileAsync_DryRun_ReportsUnchangedItems()
+    public async Task ReconcileAsync_DryRun_DoesNotReportAggregateCounts()
     {
         var (service, reconciler, console) = CreateReconcilerWithConsole();
         var messageId = Guid.NewGuid();
@@ -193,11 +193,8 @@ public class PluginTypeReconcilerTests
             [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()])],
             new PluginPushOptions(null, DryRun: true));
 
-        using (Assert.Multiple())
-        {
-            await Assert.That(console.Output).Contains("Checked 1 plugin type(s): 0 new, 1 existing, 0 removed");
-            await Assert.That(console.Output).Contains("Steps: 0 created, 0 updated, 1 unchanged, 0 deleted");
-        }
+        await Assert.That(console.Output).DoesNotContain("Checked 1 plugin type(s)");
+        await Assert.That(console.Output).DoesNotContain("Steps:");
     }
 
     [Test]

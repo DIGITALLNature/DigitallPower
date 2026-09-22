@@ -6,6 +6,7 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Output;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Execution;
@@ -24,6 +25,7 @@ public sealed class PluginPushExecutor(
     IManagedIdentityRepository managedIdentityRepository,
     PluginTypeReconciler typeReconciler,
     OutdatedAssemblyMigrator outdatedAssemblyMigrator,
+    PluginPlanRenderer planRenderer,
     IAnsiConsole console)
 {
     /// <summary>
@@ -36,17 +38,44 @@ public sealed class PluginPushExecutor(
         ArgumentNullException.ThrowIfNull(options);
 
         return ProcessAssemblyCoreAsync(
-            assembly, options, reconcilePackageOwnedAssembly: false, cancellationToken: cancellationToken);
+            assembly, options, reconcilePackageOwnedAssembly: false, renderPlan: true, cancellationToken: cancellationToken);
     }
 
     private async Task<Guid> ProcessAssemblyCoreAsync(
         LocalAssembly assembly,
         PluginPushOptions options,
         bool reconcilePackageOwnedAssembly,
+        bool renderPlan,
         CancellationToken cancellationToken)
     {
         var remote = await assemblyRepository.FindByNameAsync(assembly.Name, cancellationToken);
         var plan = PluginPushPlanner.PlanAssembly(assembly, remote);
+
+        if (renderPlan)
+        {
+            var root = new PluginPlanNode(assembly.Name, plan.Action.ToString(), Emoji.Known.PuzzlePiece);
+            if (plan.Action != AssemblyAction.OwnedByPackage)
+            {
+                foreach (var node in await typeReconciler.BuildPlanAsync(
+                             plan.Existing?.Id ?? Guid.Empty, assembly.PluginTypes, cancellationToken))
+                {
+                    root.AddChild(node);
+                }
+                var migrationPlan = await outdatedAssemblyMigrator.BuildPlanAsync(
+                    assembly.Name, plan.Existing?.Id ?? Guid.Empty, assembly.PluginTypes, cancellationToken);
+                if (migrationPlan is not null)
+                {
+                    root.AddChild(migrationPlan);
+                }
+            }
+
+            AddAssemblyAncillaryPlanNodes(root, assembly);
+            planRenderer.Render(root);
+            if (options.DryRun)
+            {
+                return Guid.Empty;
+            }
+        }
 
         var assemblyId = await ApplyAssemblyPlanAsync(plan, options, cancellationToken);
         if (plan.Action == AssemblyAction.OwnedByPackage && !reconcilePackageOwnedAssembly)
@@ -93,6 +122,39 @@ public sealed class PluginPushExecutor(
         var remote = await packageRepository.FindByNameAsync(packageName, cancellationToken);
         var plan = PluginPushPlanner.PlanPackage(package.Package, remote);
 
+        var packagePlanNode = new PluginPlanNode(packageName, plan.Action.ToString(), Emoji.Known.Package);
+        if (package.Assemblies.Any(assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId)))
+        {
+            packagePlanNode.AddChild(new PluginPlanNode("Managed identity", "Link"));
+        }
+
+        foreach (var localAssembly in package.Assemblies)
+        {
+            var assemblyRemote = await assemblyRepository.FindByNameAsync(localAssembly.Name, cancellationToken);
+            var assemblyPlan = PluginPushPlanner.PlanAssembly(localAssembly, assemblyRemote);
+            var assemblyNode = new PluginPlanNode(localAssembly.Name, assemblyPlan.Action.ToString(), Emoji.Known.PuzzlePiece);
+            foreach (var node in await typeReconciler.BuildPlanAsync(
+                         assemblyPlan.Existing?.Id ?? Guid.Empty, localAssembly.PluginTypes, cancellationToken))
+            {
+                assemblyNode.AddChild(node);
+            }
+            var migrationPlan = await outdatedAssemblyMigrator.BuildPlanAsync(
+                localAssembly.Name, assemblyPlan.Existing?.Id ?? Guid.Empty, localAssembly.PluginTypes, cancellationToken);
+            if (migrationPlan is not null)
+            {
+                assemblyNode.AddChild(migrationPlan);
+            }
+            AddAssemblyAncillaryPlanNodes(assemblyNode, localAssembly);
+
+            packagePlanNode.AddChild(assemblyNode);
+        }
+
+        planRenderer.Render(packagePlanNode);
+        if (options.DryRun)
+        {
+            return Guid.Empty;
+        }
+
         var packageId = await ApplyPackagePlanAsync(plan, options, cancellationToken);
 
         // Only the first bundled assembly carrying a ManagedIdentityRegistration attribute links the
@@ -101,7 +163,7 @@ public sealed class PluginPushExecutor(
         foreach (var localAssembly in package.Assemblies)
         {
             await ProcessAssemblyCoreAsync(
-                localAssembly, options, reconcilePackageOwnedAssembly: true, cancellationToken: cancellationToken);
+                localAssembly, options, reconcilePackageOwnedAssembly: true, renderPlan: false, cancellationToken: cancellationToken);
 
             if (packageIdentityLinked || options.DryRun || string.IsNullOrWhiteSpace(localAssembly.ManagedIdentityClientId))
             {
@@ -115,6 +177,16 @@ public sealed class PluginPushExecutor(
         }
 
         return packageId;
+    }
+
+    private static void AddAssemblyAncillaryPlanNodes(
+        PluginPlanNode root,
+        LocalAssembly assembly)
+    {
+        if (!string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId))
+        {
+            root.AddChild(new PluginPlanNode("Managed identity", "Link"));
+        }
     }
 
     private async Task<Guid> ApplyAssemblyPlanAsync(AssemblyPlan plan, PluginPushOptions options, CancellationToken cancellationToken)

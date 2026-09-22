@@ -555,7 +555,10 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 Reconciles plugin types, steps, step images and Custom API links declared via the
 `Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
 `ManagedIdentityRegistrationAttribute`-decorated assemblies to a managed identity, same as `push`.
-The dry-run output also summarizes checked plugin types, steps, and images that are already unchanged.
+Before any writes, plugin push renders a complete deployment tree for the package or assembly,
+including plugin types, steps, images, Custom API links, solution/identity links, and outdated
+assembly migrations. `--dry-run` stops after planning and rendering this tree; missing Custom APIs
+and unresolved step messages fail during planning before Dataverse changes can occur.
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
 require `--publisher-prefix`.
 

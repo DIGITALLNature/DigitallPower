@@ -26,6 +26,40 @@ public sealed class OutdatedAssemblyMigrator(
     ICustomApiRepository customApiRepository,
     IAnsiConsole console)
 {
+    public async Task<PluginPlanNode?> BuildPlanAsync(
+        string assemblyName,
+        Guid newAssemblyId,
+        IReadOnlyList<LocalPluginType> replacementTypes,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(replacementTypes);
+
+        var outdatedAssemblies = await assemblyRepository.ListOutdatedAsync(
+            assemblyName, newAssemblyId, cancellationToken);
+        if (outdatedAssemblies.Count == 0)
+        {
+            return null;
+        }
+
+        var root = new PluginPlanNode("Outdated assemblies", "Plan");
+        foreach (var outdated in outdatedAssemblies)
+        {
+            var assemblyNode = new PluginPlanNode(outdated.Id.ToString(), "Purge");
+            var outdatedTypes = await typeRepository.ListByAssemblyAsync(outdated.Id, cancellationToken);
+            var migrations = PluginPushPlanner.PlanOutdatedTypeMigration(outdatedTypes, replacementTypes);
+            foreach (var migration in migrations)
+            {
+                assemblyNode.AddChild(new PluginPlanNode(
+                    migration.TypeName,
+                    migration.HasReplacement ? "Migrate" : "Delete"));
+            }
+
+            root.AddChild(assemblyNode);
+        }
+
+        return root;
+    }
+
     public Task MigrateAsync(
         string assemblyName,
         Guid newAssemblyId,

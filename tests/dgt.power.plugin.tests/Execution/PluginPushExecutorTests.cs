@@ -5,6 +5,7 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
+using dgt.power.plugin.Output;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -45,6 +46,7 @@ public class PluginPushExecutorTests
                 new SdkMessageProcessingStepRepository(service),
                 new CustomApiRepository(service),
                 console),
+            new PluginPlanRenderer(console),
             console);
 
         return (service, executor, console);
@@ -77,6 +79,7 @@ public class PluginPushExecutorTests
                 new SdkMessageProcessingStepRepository(service),
                 new CustomApiRepository(service),
                 new TestConsole()),
+            new PluginPlanRenderer(new TestConsole()),
             new TestConsole());
 
         return (service, executor);
@@ -125,7 +128,8 @@ public class PluginPushExecutorTests
         var id = await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
 
         await Assert.That(id).IsEqualTo(Guid.Empty);
-        await Assert.That(console.Output).Contains("Create PluginType");
+        await Assert.That(console.Output).Contains("MyPlugin Create");
+        await Assert.That(console.Output).Contains(Spectre.Console.Emoji.Known.PuzzlePiece);
     }
 
     [Test]

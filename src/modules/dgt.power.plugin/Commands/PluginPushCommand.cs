@@ -8,6 +8,7 @@ using dgt.power.common;
 using dgt.power.common.Exceptions;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
+using dgt.power.plugin.Output;
 using dgt.power.plugin.Local;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -35,7 +36,13 @@ public class PluginPushCommand(
 
         if (settings.DryRun)
         {
-            Console.MarkupLine("[yellow]Dry run - no changes will be written to Dataverse[/]");
+            Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
+            {
+                Header = new PanelHeader("DRY RUN"),
+                Border = BoxBorder.Rounded,
+                BorderStyle = new Style(Color.Yellow),
+                Padding = new Padding(1, 0, 1, 0)
+            });
         }
 
         var targets = ResolveTargets(settings.Target);
@@ -77,6 +84,7 @@ public class PluginPushCommand(
                 new SdkMessageProcessingStepRepository(service),
                 new CustomApiRepository(service),
                 Console),
+            new PluginPlanRenderer(Console),
             Console);
 
         var assemblyReader = new AssemblyReflectionReader(Console);
@@ -84,7 +92,7 @@ public class PluginPushCommand(
         var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix);
 
         var hadFailure = await Console.Status()
-            .Spinner(Spinner.Known.Pong)
+            .Spinner(Spinner.Known.Dots)
             .SpinnerStyle(Style.Parse("green bold"))
             .StartAsync("Connect to XRM...", async ctx =>
             {
@@ -175,13 +183,9 @@ public class PluginPushCommand(
 
         if (assembly.Kind == LocalAssemblyKind.None)
         {
-            Console.MarkupLine(CultureInfo.InvariantCulture,
-                "Assembly [bold green]{0} ({1})[/] [bold red]does not contain[/] any plugins - skipping",
-                assembly.Name, assembly.Version);
             return true;
         }
 
-        Console.MarkupLine(CultureInfo.InvariantCulture, "Check Assembly [bold green]{0} ({1})[/]", assembly.Name, assembly.Version);
         await executor.ProcessAssemblyAsync(assembly, options, cancellationToken);
         return true;
     }

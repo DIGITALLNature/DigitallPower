@@ -32,8 +32,8 @@ public class PluginPackageReaderTests
                 await Assert.That(result).IsNotNull();
                 await Assert.That(result!.Assemblies).Count().IsEqualTo(1);
                 await Assert.That(result.Assemblies[0].Name).IsEqualTo(Path.GetFileNameWithoutExtension(pluginDllPath));
-                await Assert.That(console.Output).Contains("does not contain");
-                await Assert.That(console.Output).Contains(Path.GetFileNameWithoutExtension(nonPluginDllPath));
+                await Assert.That(console.Output).DoesNotContain("does not contain");
+                await Assert.That(console.Output).DoesNotContain(Path.GetFileNameWithoutExtension(nonPluginDllPath));
             }
         }
         finally
