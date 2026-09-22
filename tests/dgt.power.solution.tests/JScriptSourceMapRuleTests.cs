@@ -41,7 +41,7 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync()
     {
         var testContext = CreateContext();
-        var context = new LintContext(testContext.FakedService, [SolutionName]);
+        var context = await LintContext.CreateAsync(testContext.FakedService, [SolutionName], CancellationToken.None);
         return await new JScriptSourceMapRule().EvaluateAsync(context, ruleConfig: null, CancellationToken.None);
     }
 

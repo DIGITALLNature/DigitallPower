@@ -4,7 +4,9 @@
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.solution.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.solution;
@@ -17,12 +19,14 @@ public class SolutionVersionCommand(
     IAnsiConsole console)
     : PowerLogic<SolutionVersionSettings>(tracer, connection, configResolver, console)
 {
-    protected override Task<bool> InvokeAsync(SolutionVersionSettings settings, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(settings));
-
-    private bool InvokeCore(SolutionVersionSettings settings)
+    protected override Task<bool> InvokeAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        return InvokeCoreAsync(settings, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
+    {
         Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(settings.Solution))
@@ -31,16 +35,17 @@ public class SolutionVersionCommand(
             return Tracer.End(this, false);
         }
 
-        using var dataContext = new DataContext(Connection);
+        var orgService = (IOrganizationServiceAsync2)Connection;
 
-        var solution = dataContext.SolutionSet.Where(x => x.UniqueName == settings.Solution)
-            .Select(x => new Solution
-            {
-                Id = x.Id,
-                UniqueName = x.UniqueName,
-                FriendlyName = x.FriendlyName,
-                Version = x.Version
-            })
+        var query = new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(Solution.LogicalNames.UniqueName, Solution.LogicalNames.FriendlyName, Solution.LogicalNames.Version)
+        };
+        query.Criteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, settings.Solution);
+
+        var solution = (await orgService.RetrieveMultipleAsync(query, cancellationToken)).Entities
+            .Select(static entity => entity.ToEntity<Solution>())
             .FirstOrDefault();
 
         if (solution == null)
@@ -80,10 +85,10 @@ public class SolutionVersionCommand(
             return Tracer.End(this, false);
         }
 
-        Connection.Update(new Solution(solution.Id)
+        await orgService.UpdateAsync(new Solution(solution.Id)
         {
             Version = incrementedVersion.ToString()
-        });
+        }, cancellationToken);
         Console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
 
         return Tracer.End(this, true);

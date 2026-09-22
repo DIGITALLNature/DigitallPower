@@ -38,7 +38,7 @@ public class TableRootComponentBehaviorRuleTests : LintTestsBase<SolutionLintCom
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync()
     {
         var testContext = CreateContext();
-        var context = new LintContext(testContext.FakedService, [SolutionName]);
+        var context = await LintContext.CreateAsync(testContext.FakedService, [SolutionName], CancellationToken.None);
         return await new TableRootComponentBehaviorRule().EvaluateAsync(context, ruleConfig: null, CancellationToken.None);
     }
 

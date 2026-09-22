@@ -6,6 +6,7 @@ using System.Text.Json;
 using dgt.power.common;
 using dgt.power.solution.Base;
 using dgt.power.solution.Reporting;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
@@ -19,9 +20,6 @@ public sealed class SolutionLintCommand(
     IAnsiConsole console)
     : PowerLogic<SolutionLintSettings>(tracer, connection, configResolver, console)
 {
-    // TODO(async): migrate to IOrganizationServiceAsync2 - see todo.md (dgt.power.solution row).
-    // LintContext's constructor performs synchronous Connection.Execute/RetrieveMultiple calls with
-    // no await at all; a real fix requires a static async factory (constructors cannot be async).
     protected override Task<bool> InvokeAsync(SolutionLintSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -50,7 +48,7 @@ public sealed class SolutionLintCommand(
             return Tracer.End(this, false);
         }
 
-        var findings = await EvaluateRulesAsync(Console, Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
+        var findings = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
 
         if (args.UpdateBaseline)
         {
@@ -94,7 +92,7 @@ public sealed class SolutionLintCommand(
 
     private static async Task<List<LintFinding>> EvaluateRulesAsync(
         IAnsiConsole console,
-        IOrganizationService connection,
+        IOrganizationServiceAsync2 connection,
         LintConfig config,
         IReadOnlyList<string> solutionNames,
         List<string> requestedRuleIds,
@@ -104,10 +102,9 @@ public sealed class SolutionLintCommand(
         await console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
-            .StartAsync("Preparing lint context (fetching metadata and solution components)...", _ =>
+            .StartAsync("Preparing lint context (fetching metadata and solution components)...", async _ =>
             {
-                context = new LintContext(connection, solutionNames);
-                return Task.CompletedTask;
+                context = await LintContext.CreateAsync(connection, solutionNames, cancellationToken);
             });
 
         var findings = new List<LintFinding>();

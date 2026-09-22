@@ -144,7 +144,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
         var testContext = CreateContext(entityMetadata, rootComponentBehavior);
-        var context = new LintContext(testContext.FakedService, [SolutionName]);
+        var context = await LintContext.CreateAsync(testContext.FakedService, [SolutionName], CancellationToken.None);
         var ruleConfig = CreateRuleConfig(publisherPrefixes);
         return await new UnmanagedFieldNamingRule().EvaluateAsync(context, ruleConfig, CancellationToken.None);
     }
