@@ -35,7 +35,7 @@ registered in the global `IServiceCollection`. This keeps module-local wiring vi
 and avoids growing the global container with types no other module needs.
 
 See `PluginPushCommand.cs` in `dgt.power.plugin` for the reference pattern: it constructs all
-`Dataverse/*Repository` instances, `PluginTypeReconciler`, and `OutdatedAssemblyMigrator` directly,
+repository instances plus the module-local planner, renderer, pipeline, and executors directly,
 casting `Connection` to `(IOrganizationServiceAsync2)` once at the top of the method.
 
 ## Alternatives Considered

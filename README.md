@@ -558,7 +558,10 @@ Reconciles plugin types, steps, step images and Custom API links declared via th
 Before any writes, plugin push renders a complete deployment tree for the package or assembly,
 including plugin types, steps, images, Custom API links, solution/identity links, and outdated
 assembly migrations. `--dry-run` stops after planning and rendering this tree; missing Custom APIs
-and unresolved step messages fail during planning before Dataverse changes can occur.
+and unresolved step messages fail during planning before Dataverse changes can occur. Normal
+execution consumes this same immutable plan without recalculating reconciliation decisions.
+Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
+that lookup does not alter the planned actions.
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
 require `--publisher-prefix`.
 

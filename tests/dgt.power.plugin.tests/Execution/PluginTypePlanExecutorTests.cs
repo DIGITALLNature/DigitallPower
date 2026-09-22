@@ -5,6 +5,9 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
+using dgt.power.plugin.Output;
+using dgt.power.plugin.Planning;
+using dgt.power.plugin.Remote;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -13,41 +16,102 @@ using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Execution;
 
-public class PluginTypeReconcilerTests
+public class PluginTypePlanExecutorTests
 {
-    private static (FakeOrganizationServiceAsync Service, PluginTypeReconciler Reconciler, TestConsole Console) CreateReconcilerWithConsole()
+    private sealed class PluginTypePipeline(
+        PluginDeploymentPlanner planner,
+        PluginTypePlanExecutor reconciler,
+        PluginPlanRenderer renderer)
+    {
+        public async Task ReconcileAsync(
+            Guid assemblyId,
+            IReadOnlyList<LocalPluginType> localTypes,
+            PluginPushOptions options)
+        {
+            var localAssembly = new LocalAssembly
+            {
+                Name = "TestAssembly",
+                Version = new Version(1, 0),
+                Content = "base64",
+                Kind = LocalAssemblyKind.Plugin,
+                PluginTypes = localTypes
+            };
+            var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes);
+            var deployment = new AssemblyDeploymentPlan(
+                new AssemblyPlan(
+                    localAssembly,
+                    AssemblyAction.Update,
+                    new RemoteAssembly(assemblyId, localAssembly.Version, null)),
+                typePlan,
+                new OutdatedAssemblyDeploymentPlan([]),
+                LinkManagedIdentity: false,
+                Solution: null);
+            renderer.Render(deployment);
+            if (!options.DryRun)
+            {
+                await reconciler.ApplyAsync(typePlan, assemblyId);
+            }
+        }
+    }
+
+    private static (FakeOrganizationServiceAsync Service, PluginTypePipeline Reconciler, TestConsole Console) CreateReconcilerWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
         var console = new TestConsole();
-        var reconciler = new PluginTypeReconciler(
-            new PluginTypeRepository(service),
-            new SdkMessageProcessingStepRepository(service),
-            new SdkMessageProcessingStepImageRepository(service),
-            new SdkMessageRepository(service),
-            new CustomApiRepository(service),
-            console);
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = new PluginAssemblyRepository(service),
+            Packages = new PluginPackageRepository(service),
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = new SdkMessageRepository(service),
+            CustomApis = customApiRepository,
+            Solutions = new SolutionComponentRepository(service)
+        });
+        var reconciler = new PluginTypePipeline(
+            planner,
+            new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+            new PluginPlanRenderer(console));
 
         return (service, reconciler, console);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the reconciler.")]
-    private static (FakeOrganizationServiceAsync Service, PluginTypeReconciler Reconciler) CreateReconciler()
+    private static (FakeOrganizationServiceAsync Service, PluginTypePipeline Reconciler) CreateReconciler()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
-        var reconciler = new PluginTypeReconciler(
-            new PluginTypeRepository(service),
-            new SdkMessageProcessingStepRepository(service),
-            new SdkMessageProcessingStepImageRepository(service),
-            new SdkMessageRepository(service),
-            new CustomApiRepository(service),
-            new TestConsole());
+        var console = new TestConsole();
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = new PluginAssemblyRepository(service),
+            Packages = new PluginPackageRepository(service),
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = new SdkMessageRepository(service),
+            CustomApis = customApiRepository,
+            Solutions = new SolutionComponentRepository(service)
+        });
+        var reconciler = new PluginTypePipeline(
+            planner,
+            new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+            new PluginPlanRenderer(console));
 
         return (service, reconciler);
     }
@@ -146,9 +210,9 @@ public class PluginTypeReconcilerTests
 
         using (Assert.Multiple())
         {
-            await Assert.That(console.Output).Contains("Create PluginType");
-            await Assert.That(console.Output).Contains("Create Step");
-            await Assert.That(console.Output).Contains("Create Image");
+            await Assert.That(console.Output).Contains("MyPlugin Create");
+            await Assert.That(console.Output).Contains("step Create");
+            await Assert.That(console.Output).Contains("PreImage Create");
 
             var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
             await Assert.That(steps.Count).IsEqualTo(0);
@@ -297,6 +361,39 @@ public class PluginTypeReconcilerTests
 
         var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(steps.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ReconcileAsync_CustomApiHandler_PreservesLegacyImplementationStep()
+    {
+        var (service, reconciler) = CreateReconciler();
+        var assemblyId = Guid.NewGuid();
+        var typeId = Guid.NewGuid();
+        var customApiId = Guid.NewGuid();
+        service.Create(new PluginType(typeId)
+        {
+            TypeName = "MyPlugin",
+            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
+        });
+        service.Create(new CustomAPI(customApiId)
+        {
+            UniqueName = "new_MyApi",
+            PluginTypeId = new EntityReference(PluginType.EntityLogicalName, typeId)
+        });
+        service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
+        {
+            Name = "CustomApi 'new_MyApi' implementation",
+            EventHandler = new EntityReference(PluginType.EntityLogicalName, typeId)
+        });
+
+        await reconciler.ReconcileAsync(
+            assemblyId,
+            [new LocalPluginType("MyPlugin", "MyPlugin", "new_MyApi", true, [])],
+            new PluginPushOptions(null, DryRun: false));
+
+        var steps = service.RetrieveMultiple(
+            new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
+        await Assert.That(steps).Count().IsEqualTo(1);
     }
 
     [Test]

@@ -6,6 +6,7 @@ using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Output;
+using dgt.power.plugin.Planning;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -20,7 +21,7 @@ public class PluginPushExecutorTests
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor, TestConsole Console) CreateExecutorWithConsole()
+    private static (FakeOrganizationServiceAsync Service, PluginDeploymentPipeline Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -28,59 +29,84 @@ public class PluginPushExecutorTests
         service.AddDefaultRequests();
 
         var console = new TestConsole();
-        var executor = new PluginPushExecutor(
-            new PluginAssemblyRepository(service),
-            new PluginPackageRepository(service),
-            new SolutionComponentRepository(service),
-            new ManagedIdentityRepository(service),
-            new PluginTypeReconciler(
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new SdkMessageProcessingStepImageRepository(service),
-                new SdkMessageRepository(service),
-                new CustomApiRepository(service),
-                console),
-            new OutdatedAssemblyMigrator(
-                new PluginAssemblyRepository(service),
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new CustomApiRepository(service),
-                console),
+        var assemblyRepository = new PluginAssemblyRepository(service);
+        var packageRepository = new PluginPackageRepository(service);
+        var solutionRepository = new SolutionComponentRepository(service);
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = assemblyRepository,
+            Packages = packageRepository,
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = new SdkMessageRepository(service),
+            CustomApis = customApiRepository,
+            Solutions = solutionRepository
+        });
+        var executor = new PluginDeploymentPipeline(
+            planner,
             new PluginPlanRenderer(console),
-            console);
+            new PluginPushExecutor(
+                assemblyRepository,
+                packageRepository,
+                solutionRepository,
+                new ManagedIdentityRepository(service),
+                new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+                new OutdatedAssemblyMigrator(
+                    assemblyRepository,
+                    typeRepository,
+                    stepRepository,
+                    customApiRepository)));
 
         return (service, executor, console);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
-    private static (FakeOrganizationServiceAsync Service, PluginPushExecutor Executor) CreateExecutor()
+    private static (FakeOrganizationServiceAsync Service, PluginDeploymentPipeline Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
-        var executor = new PluginPushExecutor(
-            new PluginAssemblyRepository(service),
-            new PluginPackageRepository(service),
-            new SolutionComponentRepository(service),
-            new ManagedIdentityRepository(service),
-            new PluginTypeReconciler(
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new SdkMessageProcessingStepImageRepository(service),
-                new SdkMessageRepository(service),
-                new CustomApiRepository(service),
-                new TestConsole()),
-            new OutdatedAssemblyMigrator(
-                new PluginAssemblyRepository(service),
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new CustomApiRepository(service),
-                new TestConsole()),
-            new PluginPlanRenderer(new TestConsole()),
-            new TestConsole());
+        var console = new TestConsole();
+        var assemblyRepository = new PluginAssemblyRepository(service);
+        var packageRepository = new PluginPackageRepository(service);
+        var solutionRepository = new SolutionComponentRepository(service);
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = assemblyRepository,
+            Packages = packageRepository,
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = new SdkMessageRepository(service),
+            CustomApis = customApiRepository,
+            Solutions = solutionRepository
+        });
+        var executor = new PluginDeploymentPipeline(
+            planner,
+            new PluginPlanRenderer(console),
+            new PluginPushExecutor(
+                assemblyRepository,
+                packageRepository,
+                solutionRepository,
+                new ManagedIdentityRepository(service),
+                new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+                new OutdatedAssemblyMigrator(
+                    assemblyRepository,
+                    typeRepository,
+                    stepRepository,
+                    customApiRepository)));
 
         return (service, executor);
     }
@@ -128,8 +154,55 @@ public class PluginPushExecutorTests
         var id = await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
 
         await Assert.That(id).IsEqualTo(Guid.Empty);
+        await Assert.That(console.Output).Contains("MyPlugins Create");
         await Assert.That(console.Output).Contains("MyPlugin Create");
         await Assert.That(console.Output).Contains(Spectre.Console.Emoji.Known.PuzzlePiece);
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_DryRunUpgrade_PlansReplacementAndCurrentAssemblyPurge()
+    {
+        var (service, executor, console) = CreateExecutorWithConsole();
+        var existingAssemblyId = Guid.NewGuid();
+        service.Create(new PluginAssembly(existingAssemblyId)
+        {
+            Name = "MyPlugins",
+            Version = "1.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginType(Guid.NewGuid())
+        {
+            TypeName = "MyPlugin",
+            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, existingAssemblyId)
+        });
+        var assembly = Assembly(version: "2.0.0.0") with
+        {
+            PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
+        };
+
+        await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("MyPlugins Upgrade");
+            await Assert.That(console.Output).Contains("MyPlugin Create");
+            await Assert.That(console.Output).Contains("Outdated assemblies");
+            await Assert.That(console.Output).Contains(existingAssemblyId.ToString());
+            await Assert.That(console.Output).Contains("Purge");
+        }
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_DryRunWithSolution_IncludesSolutionLink()
+    {
+        var (_, executor, console) = CreateExecutorWithConsole();
+
+        await executor.ProcessAssemblyAsync(
+            Assembly(),
+            new PluginPushOptions("TestSolution", DryRun: true));
+
+        await Assert.That(console.Output).Contains("Solution TestSolution Link");
     }
 
     [Test]
@@ -213,7 +286,7 @@ public class PluginPushExecutorTests
             PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
         });
 
-        var assembly = Assembly() with
+        var assembly = Assembly(managedIdentityClientId: ClientId) with
         {
             PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
         };
@@ -221,8 +294,9 @@ public class PluginPushExecutorTests
 
         using (Assert.Multiple())
         {
-            await Assert.That(console.Output).Contains("already owned by a plugin package");
-            await Assert.That(console.Output).DoesNotContain("Create PluginType");
+            await Assert.That(console.Output).Contains("Managed by package");
+            await Assert.That(console.Output).DoesNotContain("└── MyPlugin");
+            await Assert.That(console.Output).DoesNotContain("Managed identity");
             await Assert.That(console.Output).DoesNotContain("Checked");
         }
     }

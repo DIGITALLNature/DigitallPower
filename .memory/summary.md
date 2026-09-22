@@ -77,6 +77,7 @@ src/
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 | Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Az/pac-style `<resource> <verb>` commands (`dgtp plugin push`) built from scratch alongside the legacy `push` command instead of refactoring it in place; module-local repos/executors are constructed via `new`, not registered in the global DI container |
 | `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` (parsed assembly state) / `Remote` (fetched Dataverse state) / `Planning` (pure decision logic: actions, plans, reconciliation, `PluginPushPlanner`) / `Repositories` (Dataverse CRUD, renamed from `Dataverse` to avoid colliding with the `dgt.power.dataverse` generated-entities project) / `Execution` / `Commands` / `Base` |
+| Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 
 ## TSL Template Engine (codegeneration)
@@ -173,8 +174,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
-| `implementation-plugin-push-dry-run-summary.md` | implementation | `plugin push --dry-run` reports aggregate checked/new/unchanged/deleted counts for plugin types, steps, and images |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
+| `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |

@@ -121,7 +121,7 @@ public class PluginPushPlannerTests
     }
 
     [Test]
-    public async Task PlanPluginTypes_RemoteMatch_ReturnsReconcile()
+    public async Task PlanPluginTypes_RemoteMatch_ReturnsUnchanged()
     {
         var local = PluginType("MyPlugin");
         var remote = new RemotePluginType(Guid.NewGuid(), "MyPlugin");
@@ -129,7 +129,7 @@ public class PluginPushPlannerTests
         var (plans, purge) = PluginPushPlanner.PlanPluginTypes([local], [remote]);
 
         await Assert.That(plans).Count().IsEqualTo(1);
-        await Assert.That(plans[0].Action).IsEqualTo(PluginTypeAction.Reconcile);
+        await Assert.That(plans[0].Action).IsEqualTo(PluginTypeAction.Unchanged);
         await Assert.That(plans[0].Existing).IsEqualTo(remote);
         await Assert.That(purge).IsEmpty();
     }
@@ -158,7 +158,7 @@ public class PluginPushPlannerTests
     }
 
     [Test]
-    public async Task PlanPluginSteps_RemoteMatchNoContentDiff_ReturnsKeep()
+    public async Task PlanPluginSteps_RemoteMatchNoContentDiff_ReturnsUnchanged()
     {
         var local = Step(name: "step", filterAttributes: ["a", "b"]);
         var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", ["b", "a"], 1, null);
@@ -166,7 +166,7 @@ public class PluginPushPlannerTests
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
         await Assert.That(plans).Count().IsEqualTo(1);
-        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Unchanged);
         await Assert.That(plans[0].Existing).IsEqualTo(remote);
         await Assert.That(purge).IsEmpty();
     }
@@ -179,7 +179,7 @@ public class PluginPushPlannerTests
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
-        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Unchanged);
         await Assert.That(purge).IsEmpty();
     }
 
@@ -210,7 +210,7 @@ public class PluginPushPlannerTests
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
         await Assert.That(plans).Count().IsEqualTo(1);
-        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Unchanged);
         await Assert.That(purge).IsEmpty();
     }
 
@@ -223,7 +223,7 @@ public class PluginPushPlannerTests
 
         var (plans, purge) = PluginPushPlanner.PlanPluginSteps([local], [remote]);
 
-        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Keep);
+        await Assert.That(plans[0].Action).IsEqualTo(PluginStepAction.Unchanged);
         await Assert.That(purge).IsEmpty();
     }
 

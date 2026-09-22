@@ -12,8 +12,8 @@ public enum PluginTypeAction
     Create,
 
     /// <summary>
-    /// The type already exists. It is never content-updated (its identity fields are immutable),
-    /// but its Custom API link must still be reconciled (linked, relinked, or unlinked).
+    /// The type already exists and is unchanged. Its Custom API link may still change as a child
+    /// action.
     /// </summary>
-    Reconcile
+    Unchanged
 }

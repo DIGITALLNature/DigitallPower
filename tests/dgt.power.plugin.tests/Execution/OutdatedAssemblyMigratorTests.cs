@@ -5,30 +5,80 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
+using dgt.power.plugin.Planning;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Execution;
 
 public class OutdatedAssemblyMigratorTests
 {
+    private sealed class MigrationPipeline(
+        PluginDeploymentPlanner planner,
+        OutdatedAssemblyMigrator migrator)
+    {
+        public async Task MigrateAsync(
+            string assemblyName,
+            Guid newAssemblyId,
+            IReadOnlyList<LocalPluginType> replacementTypes,
+            PluginPushOptions options)
+        {
+            var plan = await planner.BuildOutdatedAssembliesAsync(
+                assemblyName,
+                replacementTypes,
+                newAssemblyId,
+                default);
+            if (options.DryRun)
+            {
+                return;
+            }
+
+            var replacementTypeIds = (await planner.BuildPluginTypesAsync(
+                    newAssemblyId,
+                    replacementTypes))
+                .Types
+                .Where(type => type.Type.Existing is not null)
+                .ToDictionary(
+                    type => type.Type.Local.TypeName,
+                    type => type.Type.Existing!.Id);
+            await migrator.ApplyAsync(plan, replacementTypeIds);
+        }
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the migrator.")]
-    private static (FakeOrganizationServiceAsync Service, OutdatedAssemblyMigrator Migrator) CreateMigrator()
+    private static (FakeOrganizationServiceAsync Service, MigrationPipeline Migrator) CreateMigrator()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
-        var migrator = new OutdatedAssemblyMigrator(
-            new PluginAssemblyRepository(service),
-            new PluginTypeRepository(service),
-            new SdkMessageProcessingStepRepository(service),
-            new CustomApiRepository(service),
-            new TestConsole());
+        var assemblyRepository = new PluginAssemblyRepository(service);
+        var packageRepository = new PluginPackageRepository(service);
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = assemblyRepository,
+            Packages = packageRepository,
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = new SdkMessageRepository(service),
+            CustomApis = customApiRepository,
+            Solutions = new SolutionComponentRepository(service)
+        });
+        var migrator = new MigrationPipeline(
+            planner,
+            new OutdatedAssemblyMigrator(
+                assemblyRepository,
+                typeRepository,
+                stepRepository,
+                customApiRepository));
 
         return (service, migrator);
     }

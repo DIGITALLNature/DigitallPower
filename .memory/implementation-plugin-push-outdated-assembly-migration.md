@@ -14,8 +14,10 @@ implementing `dgtp plugin push`, structured in four layers:
   target environment. Split out of `Planning/` (where these types originally lived, mixed in with pure
   decision logic) to keep the module's namespace layout self-explanatory: `Local` and `Remote` are both
   plain state/model namespaces, `Planning` is pure logic.
-- **`Planning/`** — pure decision logic, no Dataverse access, fully unit-testable. `PluginPushPlanner`
-  compares Local vs. Remote records and returns plan records (not tuples - see
+- **`Planning/`** — typed deployment plans and planning logic. `PluginPushPlanner` contains pure
+  Local-vs.-Remote matching helpers, while `PluginDeploymentPlanner` loads the complete remote
+  snapshot, validates references, and returns the immutable plan consumed by rendering and execution
+  (not tuples - see
   `PluginTypeReconciliationPlan`, `PluginStepReconciliationPlan`, `PluginStepImageReconciliationPlan`,
   `OutdatedTypeMigration`).
 - **`Repositories/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
@@ -24,9 +26,10 @@ implementing `dgtp plugin push`, structured in four layers:
   Renamed from `Dataverse/` because that name collided conceptually with the separate
   `dgt.power.dataverse` generated-entities project these repositories depend on (`using
   dgt.power.dataverse;`) - "Dataverse" described *what they talk to*, not *what they are*.
-- **`Execution/`** — orchestrators that call Planning then apply the plan via Repositories:
-  `PluginPushExecutor` (top-level per-assembly orchestration), `PluginTypeReconciler` (types/steps/
-  images/custom-api reconciliation for the current assembly), `OutdatedAssemblyMigrator` (see below).
+- **`Execution/`** — `PluginDeploymentPipeline` sequences plan/render/execute,
+  `PluginPushExecutor` applies top-level assembly/package operations, `PluginTypePlanExecutor` applies
+  preplanned type/step/image/Custom API operations, and `OutdatedAssemblyMigrator` applies preplanned
+  upgrade migrations.
 
 `PluginPushCommand` constructs every repo/executor/migrator via `new` (module-local DI convention - see
 `decision-resource-oriented-cli-redesign.md`), casting `Connection` to `(IOrganizationServiceAsync2)`
@@ -44,10 +47,10 @@ naming; that legacy module was left untouched). Both kinds of types get a `Plugi
 created/kept in Dataverse (a step can only reference a registered type, so even manually-managed types
 need the type row) - but only types with a registration attribute have their steps/images/Custom-API
 link parsed and reconciled. Types without one are intentionally left alone in
-`PluginTypeReconciler.ReconcileAsync` (`ReconcileStepsAsync` is only called when
-`Local.Steps.Count > 0`), so any steps configured for them manually via the Plugin Registration Tool are
-never touched/purged. This supports a legitimate mixed scenario: some plugin types declaratively managed
-by `plugin push`, others deliberately left to manual step configuration in the same assembly.
+the deployment plan, so matching remote types and any steps configured for them manually through the
+Plugin Registration Tool are never touched or purged. This supports a legitimate mixed scenario: some
+plugin types are declaratively managed by `plugin push`, while others remain manually managed in the
+same assembly.
 
 Because this is easy to trigger by accident (forgetting to add a registration attribute silently
 results in "type registered, no steps ever pushed, no error"), `AssemblyReflectionReader.BuildPluginType`
@@ -115,9 +118,8 @@ Mechanics (unchanged since the first iteration):
   Planning layer (`PluginPushPlanner.PlanOutdatedTypeMigration`), comparing the old `RemotePluginType`
   against the newly-declared `LocalPluginType` list - **not** against the newly-created remote types.
   This keeps the plan/report step correct even in `--dry-run`, before any Dataverse write happens.
-- The **apply** step (`OutdatedAssemblyMigrator.MigrateAsync`) resolves the actual new-type GUIDs lazily
-  (`newTypeIdsByName ??= ...`), only once, only when non-dry-run and only when at least one migration
-  needs applying.
+- The apply step receives the replacement type IDs produced by `PluginTypePlanExecutor`; it performs
+  no discovery or reconciliation queries.
 - `IPluginAssemblyRepository.ListOutdatedAsync(name, excludeId)` returns **all** previously-superseded
   assemblies with the same name (not just the immediately prior version) ordered by version descending -
   matching the old `BuildOutdatedAssemblyContentFromCrm` behavior.
@@ -125,9 +127,8 @@ Mechanics (unchanged since the first iteration):
   the `EventHandler` field, preserving step id/history/filters/images.
 - Orphaned-step cascade deletion (when a type has no replacement) reuses the existing
   `IPluginTypeRepository.GetDependentStepIdsAsync` + `DeleteAsync` pattern already used for orphaned-type
-  purging in `PluginTypeReconciler` - no new repository method was needed for that path.
-- `PluginPushExecutor.ProcessAssemblyAsync` calls `OutdatedAssemblyMigrator.MigrateAsync` only when
-  `plan.Action == AssemblyAction.Upgrade`.
+  purging in the typed deployment plan - no new repository method was needed for that path.
+- `PluginPushExecutor` applies `OutdatedAssemblyDeploymentPlan` only after replacement types exist.
 
 ## Testing Notes / Fake Service Gotchas
 

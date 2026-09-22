@@ -58,7 +58,7 @@ public static class PluginPushPlanner
     /// <summary>
     /// Matches local plugin types (keyed by <see cref="LocalPluginType.TypeName"/>) against the
     /// types already registered on the assembly. Every local type gets either a <see cref="PluginTypeAction.Create"/>
-    /// plan (no remote match) or a <see cref="PluginTypeAction.Reconcile"/> plan (remote match -
+    /// plan (no remote match) or a <see cref="PluginTypeAction.Unchanged"/> plan (remote match -
     /// its Custom API link still needs checking, even though the type record itself never changes).
     /// Remote types with no local match are returned separately for purging.
     /// </summary>
@@ -81,7 +81,7 @@ public static class PluginPushPlanner
             }
 
             matchedRemoteIds.Add(match.Id);
-            plans.Add(new PluginTypePlan(localType, PluginTypeAction.Reconcile, match));
+            plans.Add(new PluginTypePlan(localType, PluginTypeAction.Unchanged, match));
         }
 
         var purge = remote.Where(r => !matchedRemoteIds.Contains(r.Id)).ToList();
@@ -114,7 +114,7 @@ public static class PluginPushPlanner
             }
 
             matchedRemoteIds.Add(match.Id);
-            var action = StepContentDiffers(localStep, match) ? PluginStepAction.Update : PluginStepAction.Keep;
+            var action = StepContentDiffers(localStep, match) ? PluginStepAction.Update : PluginStepAction.Unchanged;
             plans.Add(new PluginStepPlan(localStep, action, match));
         }
 

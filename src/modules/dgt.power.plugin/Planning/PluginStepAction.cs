@@ -18,5 +18,5 @@ public enum PluginStepAction
     /// A matching step exists and is already up to date. Still returned (with its existing id) so
     /// its images can be reconciled independently of whether the step body itself changed.
     /// </summary>
-    Keep
+    Unchanged
 }

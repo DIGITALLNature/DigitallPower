@@ -6,7 +6,7 @@ using dgt.power.plugin.Remote;
 namespace dgt.power.plugin.Repositories;
 
 /// <summary>
-/// Thin CRUD access to <c>plugintype</c> records. Contains no Create/Reconcile decision logic -
+/// Thin CRUD access to <c>plugintype</c> records. Contains no create/unchanged decision logic -
 /// see <see cref="dgt.power.plugin.Planning.PluginPushPlanner"/> for that.
 /// </summary>
 public interface IPluginTypeRepository

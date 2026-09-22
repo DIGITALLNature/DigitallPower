@@ -10,6 +10,7 @@ using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Output;
 using dgt.power.plugin.Local;
+using dgt.power.plugin.Planning;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -66,26 +67,43 @@ public class PluginPushCommand(
         }
 
         var service = (IOrganizationServiceAsync2)Connection;
+        var assemblyRepository = new PluginAssemblyRepository(service);
+        var packageRepository = new PluginPackageRepository(service);
+        var solutionRepository = new SolutionComponentRepository(service);
+        var managedIdentityRepository = new ManagedIdentityRepository(service);
+        var typeRepository = new PluginTypeRepository(service);
+        var stepRepository = new SdkMessageProcessingStepRepository(service);
+        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
+        var messageRepository = new SdkMessageRepository(service);
+        var customApiRepository = new CustomApiRepository(service);
+        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
+        {
+            Assemblies = assemblyRepository,
+            Packages = packageRepository,
+            Types = typeRepository,
+            Steps = stepRepository,
+            Images = imageRepository,
+            Messages = messageRepository,
+            CustomApis = customApiRepository,
+            Solutions = solutionRepository
+        });
         var executor = new PluginPushExecutor(
-            new PluginAssemblyRepository(service),
-            new PluginPackageRepository(service),
-            new SolutionComponentRepository(service),
-            new ManagedIdentityRepository(service),
-            new PluginTypeReconciler(
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new SdkMessageProcessingStepImageRepository(service),
-                new SdkMessageRepository(service),
-                new CustomApiRepository(service),
-                Console),
+            assemblyRepository,
+            packageRepository,
+            solutionRepository,
+            managedIdentityRepository,
+            new PluginTypePlanExecutor(
+                typeRepository,
+                stepRepository,
+                imageRepository,
+                customApiRepository),
             new OutdatedAssemblyMigrator(
-                new PluginAssemblyRepository(service),
-                new PluginTypeRepository(service),
-                new SdkMessageProcessingStepRepository(service),
-                new CustomApiRepository(service),
-                Console),
-            new PluginPlanRenderer(Console),
-            Console);
+                assemblyRepository,
+                typeRepository,
+                stepRepository,
+                customApiRepository));
+        var renderer = new PluginPlanRenderer(Console);
+        var pipeline = new PluginDeploymentPipeline(planner, renderer, executor);
 
         var assemblyReader = new AssemblyReflectionReader(Console);
         var packageReader = new PluginPackageReader(Console);
@@ -102,7 +120,13 @@ public class PluginPushCommand(
                     try
                     {
                         ctx.Status(string.Format(CultureInfo.InvariantCulture, "Processing {0}", Path.GetFileName(target)));
-                        if (!await ProcessTargetAsync(target, executor, assemblyReader, packageReader, options, cancellationToken))
+                        if (!await ProcessTargetAsync(
+                                target,
+                                pipeline,
+                                assemblyReader,
+                                packageReader,
+                                options,
+                                cancellationToken))
                         {
                             failed = true;
                         }
@@ -150,7 +174,7 @@ public class PluginPushCommand(
 
     private async Task<bool> ProcessTargetAsync(
         string target,
-        PluginPushExecutor executor,
+        PluginDeploymentPipeline pipeline,
         AssemblyReflectionReader assemblyReader,
         PluginPackageReader packageReader,
         PluginPushOptions options,
@@ -165,7 +189,7 @@ public class PluginPushCommand(
                 return false;
             }
 
-            await executor.ProcessPackageAsync(package, options, cancellationToken);
+            await pipeline.ProcessPackageAsync(package, options, cancellationToken);
             return true;
         }
 
@@ -186,7 +210,7 @@ public class PluginPushCommand(
             return true;
         }
 
-        await executor.ProcessAssemblyAsync(assembly, options, cancellationToken);
+        await pipeline.ProcessAssemblyAsync(assembly, options, cancellationToken);
         return true;
     }
 }
