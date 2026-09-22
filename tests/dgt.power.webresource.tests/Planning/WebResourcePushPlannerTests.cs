@@ -68,7 +68,7 @@ public class WebResourcePushPlannerTests
     }
 
     private static LocalWebResource CreateLocal(string name, string content) =>
-        new(3, name, Path.GetFileName(name), Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(content)), "hash");
+        new(3, name, Path.GetFileName(name), Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(content)), "hash", name);
 
     private static RemoteWebResource CreateRemote(string name, string content) =>
         new(Guid.NewGuid(), 3, name, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(content)), false);

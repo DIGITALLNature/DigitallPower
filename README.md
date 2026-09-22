@@ -803,8 +803,21 @@ complete Dataverse webresource logical names:
 Mappings override the default `publisherPrefix_/relative/path` naming convention. The schema is
 available at [`schemas/webresource/schema.json`](schemas/webresource/schema.json).
 
-Supported options include `--publish`, `--dry-run`, and `--delete-obsolete`. Obsolete deletion
-requires a directory target and `--solution`.
+The command first renders the local deployment hierarchy and the resulting Dataverse name for
+each resource:
+
+```text
+WebResource deployment plan
+├── app
+│   └── main.js → contoso_/scripts/main.js Update
+└── pages
+    └── index.html → contoso_/pages/home.html Keep
+```
+
+The tree shows local directory structure; mapping files may intentionally produce a different
+Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
+checkmarks for completed operations. With `--dry-run`, the tree is rendered and execution stops
+after the plan. Obsolete deletion requires a directory target and `--solution`.
 
 ### `push` — Deploy legacy artifacts
 

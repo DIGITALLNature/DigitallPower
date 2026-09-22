@@ -4,6 +4,7 @@
 using dgt.power.common;
 using dgt.power.webresource.Execution;
 using dgt.power.webresource.Local;
+using dgt.power.webresource.Output;
 using dgt.power.webresource.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
@@ -27,7 +28,10 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
         {
             if (settings.DryRun)
             {
-                Console.MarkupLine("[yellow]Dry run - no changes will be written to Dataverse[/]");
+                Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
+                {
+                    Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
+                });
             }
 
             var mapping = settings.MappingFile is null ? null : WebResourceMappingFile.Load(settings.MappingFile);
@@ -39,8 +43,19 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
             }
 
             var service = (IOrganizationServiceAsync2)Connection;
-            var executor = new WebResourcePushExecutor(new WebResourceRepository(service), new SolutionRepository(service), Console);
-            await executor.ExecuteAsync(local, new WebResourcePushOptions(settings.Solution, settings.Publish, settings.DeleteObsolete, settings.DryRun), cancellationToken);
+            var executor = new WebResourcePushExecutor(
+                new WebResourceRepository(service),
+                new SolutionRepository(service),
+                new WebResourcePlanRenderer(Console),
+                new WebResourceExecutionReporter(Console));
+            await executor.ExecuteAsync(
+                local,
+                new WebResourcePushOptions(
+                    settings.Solution,
+                    settings.Publish,
+                    settings.DeleteObsolete,
+                    settings.DryRun),
+                cancellationToken);
 
             return Tracer.End(this, true);
         }
@@ -50,5 +65,4 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
             throw;
         }
     }
-
 }

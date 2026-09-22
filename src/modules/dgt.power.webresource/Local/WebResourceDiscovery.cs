@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography;
+using dgt.power.webresource;
 
 namespace dgt.power.webresource.Local;
 
@@ -29,12 +30,12 @@ public static class WebResourceDiscovery
                     $"Unsupported webresource file extension: '{Path.GetExtension(target)}'.", nameof(target));
             }
 
-            return [ReadFile(target, singleResourceName, type)];
+            return [ReadFile(target, singleResourceName, type, Path.GetFileName(target))];
         }
 
         if (!Directory.Exists(target))
         {
-            throw new DirectoryNotFoundException($"WebResource target was not found: '{target}'.");
+            throw new WebResourceTargetNotFoundException(target);
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(publisherPrefix);
@@ -51,7 +52,7 @@ public static class WebResourceDiscovery
 
             var relativePath = NormalizePath(Path.GetRelativePath(root, file));
             var name = ResolveName(relativePath, publisherPrefix, mappings);
-            resources.Add(ReadFile(file, name, type));
+            resources.Add(ReadFile(file, name, type, relativePath));
         }
 
         var duplicates = resources
@@ -86,7 +87,7 @@ public static class WebResourceDiscovery
             : prefixPath + relativePath;
     }
 
-    private static LocalWebResource ReadFile(string path, string name, int type)
+    private static LocalWebResource ReadFile(string path, string name, int type, string relativePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -96,7 +97,8 @@ public static class WebResourceDiscovery
             NormalizePath(name),
             Path.GetFileName(name),
             Convert.ToBase64String(content),
-            Convert.ToHexString(SHA256.HashData(content)));
+            Convert.ToHexString(SHA256.HashData(content)),
+            relativePath);
     }
 
     private static string NormalizePath(string path) => path.Replace('\\', '/');

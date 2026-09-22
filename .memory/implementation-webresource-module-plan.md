@@ -148,6 +148,9 @@ lowercase `webresource`, matching command conventions and the module namespace.
   single-file target must provide `--name`; its parent directory is not treated as an implicit
   project root.
 - `--delete-obsolete` is available only for directory targets.
+- The command always renders a deployment tree using local relative paths and mapped Dataverse
+  names at the leaves. A normal run then renders a separate execution phase; dry-run stops after
+  the plan. The tree does not imply that local and Dataverse hierarchies are identical.
 
 ## Remaining behavior decisions
 
