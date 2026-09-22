@@ -9,6 +9,7 @@ using Spectre.Console;
 
 namespace dgt.power.solution;
 
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public class SolutionVersionCommand(
     ITracer tracer,
     IOrganizationService connection,

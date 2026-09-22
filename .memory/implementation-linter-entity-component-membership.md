@@ -20,7 +20,7 @@ attributes. Any rule that filtered raw `solutioncomponent` rows by `componenttyp
   resolution: all attributes when `IncludeSubcomponents`, only explicit ones otherwise, none for
   `IncludeAsShellOnly`).
 - `Base/EntityComponentMembershipResolver.cs` - pure static resolver, no Dataverse calls of its own;
-  takes the data `LintContext` already has (`SolutionComponentEntries`, `SolutionUniqueNamesById`,
+  takes the data `LintContext` already has (the `BuildSolutionComponentEntries()` result, `SolutionUniqueNamesById`,
   `EntityMetadata`, `AttributeMetadataById`) and builds the membership dictionary keyed by
   `EntityComponentMembershipResolver.BuildKey(solutionUniqueName, entityLogicalName)`.
 
@@ -38,7 +38,9 @@ attributes. Any rule that filtered raw `solutioncomponent` rows by `componenttyp
 ## Rule changes
 
 `UnmanagedFieldNamingRule.EvaluateAsync` now iterates `context.EntityMemberships.Values` and their
-`EffectiveAttributes` instead of raw `SolutionComponentEntries` filtered by componenttype. Findings
+`EffectiveAttributes` instead of the raw `BuildSolutionComponentEntries()` rows filtered by componenttype
+(note: that method's result was exposed as a public `SolutionComponentEntries` property at the time this
+note was written; it has since been removed as unused - see `decision`/Qodana-cleanup history). Findings
 now carry `membership.SolutionUniqueName` (reliable) instead of `component.SolutionId?.Name`
 (unreliable) and `attribute.MetadataId` instead of `component.ObjectId` (same value in practice, but
 sourced from metadata directly since implicitly-included attributes have no solutioncomponent row

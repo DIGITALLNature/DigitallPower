@@ -11,13 +11,18 @@ public static class SarifWriter
 {
     private const string FingerprintKey = "dgtpLintKey";
     private const string ToolName = "dgtp-lint";
-    private static readonly Uri ToolInformationUri = new("https://digitallnature.github.io/customizing/naming-conventions/");
+    private static readonly Uri s_toolInformationUri = new("https://digitallnature.github.io/customizing/naming-conventions/");
 
-    public static async Task WriteAsync(string path, IReadOnlyList<LintFinding> findings, IReadOnlySet<string>? suppressedKeys, CancellationToken cancellationToken)
+    public static Task WriteAsync(string path, IReadOnlyList<LintFinding> findings, IReadOnlySet<string>? suppressedKeys, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(findings);
 
+        return WriteCoreAsync(path, findings, suppressedKeys, cancellationToken);
+    }
+
+    private static async Task WriteCoreAsync(string path, IReadOnlyList<LintFinding> findings, IReadOnlySet<string>? suppressedKeys, CancellationToken cancellationToken)
+    {
         var fullPath = Path.GetFullPath(path);
         var directory = Path.GetDirectoryName(fullPath);
         if (!string.IsNullOrEmpty(directory))
@@ -53,7 +58,7 @@ public static class SarifWriter
         var driver = new ToolComponent
         {
             Name = ToolName,
-            InformationUri = ToolInformationUri,
+            InformationUri = s_toolInformationUri,
             Rules = findings
                 .Select(static finding => finding.RuleId)
                 .Distinct(StringComparer.Ordinal)

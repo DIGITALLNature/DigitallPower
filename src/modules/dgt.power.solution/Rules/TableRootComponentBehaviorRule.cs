@@ -15,7 +15,6 @@ namespace dgt.power.solution.Rules;
 public sealed class TableRootComponentBehaviorRule : ILintRule
 {
     public string Id => "completeness.table-root-component-behavior";
-    public string Description => "Unmanaged tables must be added completely; managed tables must never be added completely.";
     public LintSeverity DefaultSeverity => LintSeverity.Error;
     public bool IsEnabledByDefault => true;
 

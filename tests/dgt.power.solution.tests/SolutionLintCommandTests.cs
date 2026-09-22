@@ -3,13 +3,10 @@
 
 using System.Text.Json;
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
 using dgt.power.solution.tests.Base;
 using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.solution.tests;
 
@@ -70,7 +67,7 @@ public class SolutionLintCommandTests : LintTestsBase<SolutionLintCommand>
 
         await Assert.That(result).IsTrue();
         await Assert.That(File.Exists(baselinePath)).IsTrue();
-        await Assert.That(File.ReadAllText(baselinePath)).Contains("naming.unmanaged-field-logicalname");
+        await Assert.That(await File.ReadAllTextAsync(baselinePath)).Contains("naming.unmanaged-field-logicalname");
     }
 
     [Test]

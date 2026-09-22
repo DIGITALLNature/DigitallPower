@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -14,14 +13,12 @@ public class LintContext
 {
     private const int PageSize = 5000;
 
-    public LintContext(IOrganizationService connection, IReadOnlyList<string> solutionNames, IConfigResolver configResolver)
+    public LintContext(IOrganizationService connection, IReadOnlyList<string> solutionNames)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        ArgumentNullException.ThrowIfNull(configResolver);
 
         Connection = connection;
         SolutionNames = solutionNames;
-        ConfigResolver = configResolver;
 
         // TODO(async): migrate to IOrganizationServiceAsync2 - see todo.md (dgt.power.solution row).
         // All Connection.Execute/RetrieveMultiple calls in this constructor are synchronous; since
@@ -39,7 +36,6 @@ public class LintContext
             .ToDictionary(group => group.Key, group => group.First(), EqualityComparer<Guid>.Default);
 
         var (components, solutionNamesById) = BuildSolutionComponentEntries();
-        SolutionComponentEntries = components;
         SolutionUniqueNamesById = solutionNamesById;
         EntityMemberships = EntityComponentMembershipResolver.Resolve(components, solutionNamesById, EntityMetadata, AttributeMetadataById);
 
@@ -47,17 +43,13 @@ public class LintContext
         WebResourcesById = BuildWebResourcesById(WebResourceComponents);
     }
 
-    public IOrganizationService Connection { get; }
+    private IOrganizationService Connection { get; }
 
-    public IConfigResolver ConfigResolver { get; }
+    private IReadOnlyList<string> SolutionNames { get; }
 
-    public IReadOnlyList<string> SolutionNames { get; }
+    private IReadOnlyDictionary<string, EntityMetadata> EntityMetadata { get; }
 
-    public IReadOnlyDictionary<string, EntityMetadata> EntityMetadata { get; }
-
-    public IReadOnlyDictionary<Guid, AttributeMetadata> AttributeMetadataById { get; }
-
-    public IReadOnlyDictionary<Guid, SolutionComponent> SolutionComponentEntries { get; }
+    private IReadOnlyDictionary<Guid, AttributeMetadata> AttributeMetadataById { get; }
 
     /// <summary>Solution id -> unique name, resolved once from the same query used to scope components (avoids relying on the unreliable EntityReference.Name).</summary>
     public IReadOnlyDictionary<Guid, string> SolutionUniqueNamesById { get; }
@@ -66,9 +58,9 @@ public class LintContext
     public IReadOnlyDictionary<string, EntityComponentMembership> EntityMemberships { get; }
 
     /// <summary>
-    /// Raw solutioncomponent rows for componenttype=WebResource. Unlike <see cref="SolutionComponentEntries"/>
-    /// (which is scoped to ismetadata=true rows for entity/attribute membership), web resources are standalone
-    /// components with ismetadata=false, so they need their own, unfiltered-by-ismetadata query.
+    /// Raw solutioncomponent rows for componenttype=WebResource. Unlike the ismetadata=true query behind
+    /// <see cref="EntityMemberships"/>, web resources are standalone components with ismetadata=false, so
+    /// they need their own, unfiltered-by-ismetadata query.
     /// </summary>
     public IReadOnlyList<SolutionComponent> WebResourceComponents { get; }
 

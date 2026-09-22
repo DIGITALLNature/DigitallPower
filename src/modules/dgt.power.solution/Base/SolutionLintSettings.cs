@@ -10,7 +10,7 @@ public class SolutionLintSettings : SolutionSettings
 {
     [CommandArgument(0, "<Solution>")]
     [Description("The unique name of the solution to lint")]
-    public string Solution { get; set; } = string.Empty;
+    public string Solution { get; init; } = string.Empty;
 
     [CommandOption("-c|--config")]
     [Description("Full path to the linter configuration file")]
@@ -18,6 +18,7 @@ public class SolutionLintSettings : SolutionSettings
 
     [CommandOption("--rules")]
     [Description("Comma-separated list of rule ids to run")]
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global — set via Spectre.Console.Cli reflection binding
     public string Rules { get; init; } = string.Empty;
 
     [CommandOption("--report")]

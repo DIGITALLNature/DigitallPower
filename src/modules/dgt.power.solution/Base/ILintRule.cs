@@ -7,11 +7,13 @@ public interface ILintRule
 {
     string Id { get; }
 
-    string Description { get; }
-
     LintSeverity DefaultSeverity { get; }
 
     bool IsEnabledByDefault { get; }
 
+    // cancellationToken is unused by every current rule (they only iterate the already-fetched
+    // LintContext) but is kept for interface consistency ahead of the planned IOrganizationServiceAsync2
+    // migration (see todo.md, dgt.power.solution row).
+    // ReSharper disable once UnusedParameter.Global
     Task<IReadOnlyList<LintFinding>> EvaluateAsync(LintContext context, LintRuleConfigEntry? ruleConfig, CancellationToken cancellationToken);
 }

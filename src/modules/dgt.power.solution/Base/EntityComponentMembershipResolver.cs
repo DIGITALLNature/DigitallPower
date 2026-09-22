@@ -60,7 +60,7 @@ public static class EntityComponentMembershipResolver
 
     private static bool TryResolveEntity(
         SolutionComponent entityComponent,
-        IReadOnlyDictionary<Guid, string> entityLogicalNameByMetadataId,
+        Dictionary<Guid, string> entityLogicalNameByMetadataId,
         IReadOnlyDictionary<string, EntityMetadata> entityMetadataByLogicalName,
         out string entityLogicalName,
         out EntityMetadata entityMetadata)
@@ -92,7 +92,7 @@ public static class EntityComponentMembershipResolver
     private static IReadOnlyList<AttributeMetadata> ResolveEffectiveAttributes(
         int behavior,
         EntityMetadata entityMetadata,
-        IReadOnlyDictionary<int, IReadOnlyList<SolutionComponent>> explicitSubcomponentsByType,
+        Dictionary<int, IReadOnlyList<SolutionComponent>> explicitSubcomponentsByType,
         IReadOnlyDictionary<Guid, AttributeMetadata> attributeMetadataById)
     {
         if (behavior == SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)

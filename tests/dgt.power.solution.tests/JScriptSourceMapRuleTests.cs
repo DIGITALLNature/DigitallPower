@@ -3,12 +3,10 @@
 
 using System.Text;
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
 using dgt.power.solution.Rules;
 using dgt.power.solution.tests.Base;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.solution.tests;
 
@@ -24,7 +22,7 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
         var findings = await EvaluateAsync();
 
         var flaggedNames = findings.Select(finding => finding.ComponentLogicalName!).ToHashSet(StringComparer.Ordinal);
-        await Assert.That(flaggedNames).IsEquivalentTo(["unminified.js"]); // false-positive.js merely mentions the token in a string literal, not a real directive
+        await Assert.That(flaggedNames).IsEquivalentTo(["unminified.js"]); // false-positive.js and string-literal.js only mention/embed the token in a string literal, not a real trailing directive
 
         var finding = findings.Single();
         await Assert.That(finding.RuleId).IsEqualTo("webresource.jscript-sourcemap");
@@ -43,7 +41,7 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync()
     {
         var testContext = CreateContext();
-        var context = new LintContext(testContext.FakedService, [SolutionName], testContext.ConfigResolver);
+        var context = new LintContext(testContext.FakedService, [SolutionName]);
         return await new JScriptSourceMapRule().EvaluateAsync(context, ruleConfig: null, CancellationToken.None);
     }
 
@@ -62,9 +60,10 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
         var minified = CreateWebResource("minified.js", "var a=1;", WebResource.Options.WebResourceType.ScriptJScript);
         var unminified = CreateWebResource("unminified.js", "var a = 1;\n//# sourceMappingURL=unminified.js.map", WebResource.Options.WebResourceType.ScriptJScript);
         var falsePositive = CreateWebResource("false-positive.js", "var msg = 'Please avoid sourceMappingURL in production bundles';", WebResource.Options.WebResourceType.ScriptJScript);
+        var stringLiteralDirective = CreateWebResource("string-literal.js", "var x = '//# sourceMappingURL=foo';", WebResource.Options.WebResourceType.ScriptJScript);
         var stylesheet = CreateWebResource("styles.css", "body { }\n/*# sourceMappingURL=styles.css.map */", WebResource.Options.WebResourceType.StyleSheetCSS);
 
-        var components = new[] { minified, unminified, falsePositive, stylesheet }.Select(webResource => new SolutionComponent(Guid.NewGuid())
+        var components = new[] { minified, unminified, falsePositive, stringLiteralDirective, stylesheet }.Select(webResource => new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.WebResource),
             [SolutionComponent.LogicalNames.ObjectId] = webResource.Id,
@@ -72,7 +71,7 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
             [SolutionComponent.LogicalNames.IsMetadata] = false
         }).Cast<Entity>();
 
-        return [solution, minified, unminified, falsePositive, stylesheet, .. components];
+        return [solution, minified, unminified, falsePositive, stringLiteralDirective, stylesheet, .. components];
     }
 
     private static WebResource CreateWebResource(string name, string content, int webResourceType) =>

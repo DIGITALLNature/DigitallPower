@@ -58,10 +58,10 @@ Tests for a rule must:
 - Assert on the actual finding collection (count, `RuleId`, `ComponentLogicalName`, `Severity`) for
   both the "should flag" and "should not flag" cases — not only on the command's overall success flag.
 
-## `SolutionComponentEntries` is scoped to ismetadata=true - standalone components need their own query
+## `BuildSolutionComponentEntries` is scoped to ismetadata=true - standalone components need their own query
 
-`LintContext.SolutionComponentEntries` (used by `EntityMemberships`/table-behavior rules) only
-contains rows where `ismetadata = true` - these are the automatic per-attribute/relationship rows
+The private `LintContext.BuildSolutionComponentEntries()` (feeding `EntityMemberships`/table-behavior
+rules) only contains rows where `ismetadata = true` - these are the automatic per-attribute/relationship rows
 that ride along an entity's metadata. Standalone, explicitly-added components (web resources,
 workflows, plugin steps, ...) are NOT metadata rows (`ismetadata = false`/null) and will never show
 up there. A rule that needs a non-metadata component type must add its own `QueryExpression`

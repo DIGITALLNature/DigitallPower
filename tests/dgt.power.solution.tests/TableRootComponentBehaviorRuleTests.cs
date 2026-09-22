@@ -2,14 +2,11 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
 using dgt.power.solution.Rules;
 using dgt.power.solution.tests.Base;
 using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.solution.tests;
 
@@ -41,7 +38,7 @@ public class TableRootComponentBehaviorRuleTests : LintTestsBase<SolutionLintCom
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync()
     {
         var testContext = CreateContext();
-        var context = new LintContext(testContext.FakedService, [SolutionName], testContext.ConfigResolver);
+        var context = new LintContext(testContext.FakedService, [SolutionName]);
         return await new TableRootComponentBehaviorRule().EvaluateAsync(context, ruleConfig: null, CancellationToken.None);
     }
 

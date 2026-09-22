@@ -13,8 +13,6 @@ public record LintFinding(
     Guid? ComponentId,
     Dictionary<string, object?>? Properties = null)
 {
-    public string Summary => $"{RuleId}: {Message}";
-
     /// <summary>Stable identity used to match a finding against a baseline across runs (RuleId + component + solution).</summary>
     public string BaselineKey => string.Join('|', RuleId, SolutionUniqueName, ComponentType, ComponentLogicalName, ComponentId);
 }

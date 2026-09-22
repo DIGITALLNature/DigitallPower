@@ -19,7 +19,6 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
     private const int Formula = 3;
 
     public string Id => "naming.unmanaged-field-logicalname";
-    public string Description => "Ensures unmanaged custom fields use an allowed publisher prefix and the expected field-type suffix.";
     public LintSeverity DefaultSeverity => LintSeverity.Error;
     public bool IsEnabledByDefault => true;
 
@@ -162,7 +161,7 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
         _ => "_int"
     };
 
-    private static string? ResolveStringSuffix(AttributeMetadata attribute)
+    private static string ResolveStringSuffix(AttributeMetadata attribute)
     {
         var formatName = (attribute as StringAttributeMetadata)?.FormatName?.Value;
         return formatName switch
@@ -198,6 +197,7 @@ public sealed partial class UnmanagedFieldNamingRule : ILintRule
 
     private sealed class UnmanagedFieldNamingOptions
     {
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local — set via System.Text.Json deserialization
         public IReadOnlyList<string> PublisherPrefixes { get; init; } = ["dgt_"];
     }
 }

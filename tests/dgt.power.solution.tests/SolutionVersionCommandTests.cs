@@ -2,9 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.solution;
-using dgt.power.solution.Base;
-using dgt.power.tests;
 using dgt.power.tests.Extensions;
 
 namespace dgt.power.solution.tests;

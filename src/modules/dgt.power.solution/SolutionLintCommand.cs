@@ -11,6 +11,7 @@ using Spectre.Console;
 
 namespace dgt.power.solution;
 
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public sealed class SolutionLintCommand(
     ITracer tracer,
     IOrganizationService connection,
@@ -21,9 +22,14 @@ public sealed class SolutionLintCommand(
     // TODO(async): migrate to IOrganizationServiceAsync2 - see todo.md (dgt.power.solution row).
     // LintContext's constructor performs synchronous Connection.Execute/RetrieveMultiple calls with
     // no await at all; a real fix requires a static async factory (constructors cannot be async).
-    protected override async Task<bool> InvokeAsync(SolutionLintSettings args, CancellationToken cancellationToken)
+    protected override Task<bool> InvokeAsync(SolutionLintSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
+        return InvokeCoreAsync(args, cancellationToken);
+    }
+
+    private async Task<bool> InvokeCoreAsync(SolutionLintSettings args, CancellationToken cancellationToken)
+    {
         Tracer.Start(this);
 
         if (args.UpdateBaseline && string.IsNullOrWhiteSpace(args.Baseline))
@@ -38,7 +44,13 @@ public sealed class SolutionLintCommand(
             return Tracer.End(this, false);
         }
 
-        var findings = await EvaluateRulesAsync(Console, Connection, ConfigResolver, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
+        if (config.Version != 1)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported lint config version {0}. Only version 1 is supported.[/]", config.Version);
+            return Tracer.End(this, false);
+        }
+
+        var findings = await EvaluateRulesAsync(Console, Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
 
         if (args.UpdateBaseline)
         {
@@ -83,10 +95,9 @@ public sealed class SolutionLintCommand(
     private static async Task<List<LintFinding>> EvaluateRulesAsync(
         IAnsiConsole console,
         IOrganizationService connection,
-        IConfigResolver configResolver,
         LintConfig config,
         IReadOnlyList<string> solutionNames,
-        IReadOnlyList<string> requestedRuleIds,
+        List<string> requestedRuleIds,
         CancellationToken cancellationToken)
     {
         LintContext? context = null;
@@ -95,7 +106,7 @@ public sealed class SolutionLintCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .StartAsync("Preparing lint context (fetching metadata and solution components)...", _ =>
             {
-                context = new LintContext(connection, solutionNames, configResolver);
+                context = new LintContext(connection, solutionNames);
                 return Task.CompletedTask;
             });
 
@@ -109,7 +120,7 @@ public sealed class SolutionLintCommand(
             }
 
             var ruleConfig = GetRuleConfig(config, rule.Id);
-            if (ruleConfig is { Enabled: false })
+            if (ruleConfig is { Enabled: false } || (ruleConfig is null && !rule.IsEnabledByDefault))
             {
                 continue;
             }
@@ -120,7 +131,7 @@ public sealed class SolutionLintCommand(
         return findings;
     }
 
-    private static async Task WriteJsonReportAsync(string reportPath, IReadOnlyList<LintFinding> findings, IReadOnlySet<string> baselinedKeys, CancellationToken cancellationToken)
+    private static async Task WriteJsonReportAsync(string reportPath, List<LintFinding> findings, IReadOnlySet<string> baselinedKeys, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(reportPath))
         {
@@ -175,7 +186,7 @@ public sealed class SolutionLintCommand(
     private static LintRuleConfigEntry? GetRuleConfig(LintConfig config, string ruleId)
     {
         ArgumentNullException.ThrowIfNull(config);
-        return config.Rules.TryGetValue(ruleId, out var ruleConfig) ? ruleConfig : null;
+        return config.Rules.GetValueOrDefault(ruleId);
     }
 
     private static List<string> ParseRuleIds(string ruleList)

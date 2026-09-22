@@ -16,7 +16,6 @@ namespace dgt.power.solution.Rules;
 public sealed partial class JScriptSourceMapRule : ILintRule
 {
     public string Id => "webresource.jscript-sourcemap";
-    public string Description => "JScript web resources must be minified and must not contain a source map reference.";
     public LintSeverity DefaultSeverity => LintSeverity.Warning;
     public bool IsEnabledByDefault => true;
 
@@ -71,12 +70,19 @@ public sealed partial class JScriptSourceMapRule : ILintRule
             return false;
         }
 
-        return SourceMapDirective().IsMatch(Encoding.UTF8.GetString(bytes));
+        // Per the source map spec, the sourceMappingURL comment must be the last line of the
+        // generated code. Only inspecting that last line (rather than searching the whole text)
+        // is what actually distinguishes a real directive from the same token merely appearing
+        // inside a string literal or identifier earlier in the file.
+        var text = Encoding.UTF8.GetString(bytes).AsSpan().TrimEnd();
+        var lastNewline = text.LastIndexOfAny('\n', '\r');
+        var lastLine = lastNewline >= 0 ? text[(lastNewline + 1)..] : text;
+
+        return SourceMapDirective().IsMatch(lastLine);
     }
 
-    // Matches the source-map comment directive (// or /* form, # or the deprecated @ pragma)
-    // rather than a raw substring search, so the token merely appearing in a string literal or
-    // identifier does not produce a false positive.
-    [GeneratedRegex(@"(?://|/\*)[@#]\s*sourceMappingURL\s*=\s*\S+", RegexOptions.CultureInvariant)]
+    // Anchored to the start of the (already isolated) last line, so a directive-looking string
+    // embedded earlier in the file - e.g. `var x = '//# sourceMappingURL=foo';` - never matches.
+    [GeneratedRegex(@"^\s*(?://|/\*)[@#]\s*sourceMappingURL\s*=\s*\S+", RegexOptions.CultureInvariant)]
     private static partial Regex SourceMapDirective();
 }

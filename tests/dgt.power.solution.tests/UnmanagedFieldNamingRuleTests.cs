@@ -3,15 +3,11 @@
 
 using System.Text.Json;
 using dgt.power.dataverse;
-using dgt.power.solution;
-using dgt.power.solution.Base;
 using dgt.power.solution.Rules;
 using dgt.power.solution.tests.Base;
 using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.solution.tests;
 
@@ -116,7 +112,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
         // (and with it "options"/"publisherPrefixes") was ignored, no exception, no rule ran with
         // its configured options.
         var configPath = Path.Combine(Directory.GetCurrentDirectory(), $"{Guid.NewGuid():N}.lint.config.json");
-        File.WriteAllText(configPath, """
+        await File.WriteAllTextAsync(configPath, """
             {
               "version": 1,
               "rules": {
@@ -148,7 +144,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
     private async Task<IReadOnlyList<LintFinding>> EvaluateAsync(EntityMetadata entityMetadata, IReadOnlyList<string> publisherPrefixes, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
         var testContext = CreateContext(entityMetadata, rootComponentBehavior);
-        var context = new LintContext(testContext.FakedService, [SolutionName], testContext.ConfigResolver);
+        var context = new LintContext(testContext.FakedService, [SolutionName]);
         var ruleConfig = CreateRuleConfig(publisherPrefixes);
         return await new UnmanagedFieldNamingRule().EvaluateAsync(context, ruleConfig, CancellationToken.None);
     }
