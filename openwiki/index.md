@@ -1,10 +1,10 @@
 ---
-okf_version: "0.1"
+okf_version: "0.2"
 ---
 
 # Files
 
-- [DigitallPower code wiki quickstart](quickstart.md) - Navigate the dgtp CLI architecture, Dataverse workflows, contracts, and focused validation guidance.
+- [DigitallPower code wiki quickstart](quickstart.md) - Route a dgtp change from the CLI entrypoint to its owning runtime boundary, workflow contract, and focused validation suite. Use source and focused tests as the authority before changing behavior.
 
 # Directories
 

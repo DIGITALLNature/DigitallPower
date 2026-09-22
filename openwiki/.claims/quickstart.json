@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c17fd3b64bd3eaabcb490ba9c31a09061f6a0ad4cba8c22970d027d9301b2c4f",
+  "claims": [
+    {
+      "id": "claim_a29935f758d2424595a4d4dc76cf55bf",
+      "statement": "`Program.cs` is the CLI composition root: apart from its early completion path, it builds layered configuration, registers the service graph, configures the Spectre command application and its interceptors/exception handler, then runs the selected command and disposes telemetry on exit.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L130-L208",
+          "version": "repo-lines-v1:sha256:88f02c8c19ebfc72be58fcd9237dc1644cf07822ccf424f35d50a9d1ad2fbb4b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZWFmNzMwOGIxMWVlYmViZDNkZDVmM2Q2N2I1NjRmZWRlMDNjZjQzNDUyYmY5N2M2MjIyYjNjMjRhMDVlNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkYzc5MjFlNDg0NGNjMTNiMzk0ZGZkOTU4ZGQwYTc4NDQyOWU4Y2U2NGRkNzI4YzkwNmJkODg5ZDhkMTlkZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhNjQ1Y2UzMTIxYWY3YTk3OTQxY2JjNGUxNGE4NjQzZTMwYzU4NDU3ZTA5MTc3NWQ2ZDFiYTRlN2MwNWU5NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L48-L63",
+          "version": "repo-lines-v1:sha256:69943fd0675139ca6d5992c597818318cd9d1557177a48cbe858e6206cf424d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NzQ0YjU1OWRlOGYwMDcwZDMyZDZhMTk5NTg0YzA1NzhlZWIyNDQzNWQwNDg0ZTEzMTIwYjc1YWIzMmZhZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMmQ1Y2FkZWU1MGZjNmU0MDdmYmIzNTM4NThhYjFmYzJiZDg1ZTgyYTUxNjk5OWEyNmRjMTc2YzMzNGM1NjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5MjJhZTliZjllN2JkMzY0ZDVmYzk4NGJmZmMyMjdjYzRmMTM2OTQyMDQwMzhlMTI1ODI5ZGM4MTE0MjljODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlOGEwYzY2MDJmYzQwYjNiNWZjODAxOTIwZWMzNDlmM2E2Y2Y0MzRhOWYzODRiYWQ5OWI4NTBiOWU0NmQ2MTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_471aec5ef36a4255a23899104b1f2ea7",
+      "statement": "Suggest-mode completion is an early path that invokes `DotnetSuggestHandler` with the same `CommandTree.Register` delegate used by the normal application before normal configuration, telemetry, and Dataverse service wiring.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L22-L28",
+          "version": "repo-lines-v1:sha256:599b29b709053ed533e99a2ab77ed5f82ba5fd8ea27043b9c9f1676f7cbaad88:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjdiZGE4MWM4ZWNlMzFjNmRlOTg5ZjEzYjExMWJlZDAxMDMzY2ZmZDZiZTA2NmNkMTVkMTc4MTM5ODUxYTRiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMzYjlmMDVjNWI1ODBmNWJlODQ1NDc0Nzc2MWFkYmM3ZTgwOTE5MTAxZjQxNjdiMGNiN2FiNGE1ZTZkZWE2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzY5N2Y4NGVmZDQ2OTRkMmNlMTFmODRkMjJkODU3ZGY5ZjgwOTAwZTBmZGEyMWNhZWIwMDYxYzUxNGY3NTYwOSJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L156-L164",
+          "version": "repo-lines-v1:sha256:7bf7fb06bd3d3e3d9c5fd7ff73dd9f7b05e04cdb441b25d915ae47b5b284f05a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFkMzY3ZjkwZTc2Y2EzMGY2MDU1Zjk5OGVmMTRmOTNiY2U2NTQ1OTczNGU5OTA3MzI5ZGJmMDRkNDU1YWIxYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg2Y2U5YmZhNDI5YzgwMjY3MGM1ZWRlYjgzOWZiYWM0ZDhiZTljNzVmMDgyM2Y4MjYwMjdhYmE3Mjg2YjYyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDc5MTc0MTViMDIxMDVlMjJiM2UwNGYxYjVmZDU2OGRmNzE0OTYyMDFhN2YxYWI1ODFmMDk3NDE2NTlmMTcwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZjNTExZTUzMWY3ZmNmZTI2NTcxZDQzODhjYjFmM2ExMThlM2I3NGNlODQ2MjRhZDBlZWU4NzgxOTFkZWQwNyJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L48-L54",
+          "version": "repo-lines-v1:sha256:d857712c6b85c7846a1345e9eedae3a2a3088e2350f8e13fb7ba59e9481be084:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTc3NDRiNTU5ZGU4ZjAwNzBkMzJkNmExOTk1ODRjMDU3OGVlYjI0NDM1ZDA0ODRlMTMxMjBiNzVhYjMyZmFmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjkyMmFlOWJmOWU3YmQzNjRkNWZjOTg0YmZmYzIyN2NjNGYxMzY5NDIwNDAzOGUxMjU4MjlkYzgxMTQyOWM4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWI0YmJmMTI0YjY4NWNmZDNjNGU0Y2NmMDJlZGQxYmY4NTE5ZmI2ZjM3Zjg4NTgwYWExMDhkNWVhOTIyNDhkNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d66e500257f640e58dbc43779118d1f4",
+      "statement": "`CommandTree.Register` owns the public dgtp command model, including the `connection`, deprecated `profile`, `export`, `maintenance`, `analyze`, `import`, `codegeneration`/`cg`, `push`, and `complete` surfaces.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L32-L170",
+          "version": "repo-lines-v1:sha256:3f363139e7dab51e557d05e0f35f80ef36d818c02027917db32bf30880916b9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMDBkNzdkYmI0ZjdjYjJmODkwOTk4MzQ0ZDE5OTQ0ZWEyMzQzZGIxYzA2MjEyOTYwNDFhM2JkNTI4OGQzZWQwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1OWMxMzU5MDY2NTYzMjNkMWM1ZWE0MTY1NGVlNjZhZmI1ODVhY2RjZmFlYWNhMTIxZDVlMzBiZjE5M2VlZGQ3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjNjk3Zjg0ZWZkNDY5NGQyY2UxMWY4NGQyMmQ4NTdkZjlmODA5MDBlMGZkYTIxY2FlYjAwNjFjNTE0Zjc1NjA5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MTg1YjZiODFlYzM0ZmQ0NWU0OGU4MDNkMGRhMWM3ZjlmMDE4N2M2MDI1NTEyM2VlMzQzMmZhMjQzMGZkZjJmIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_75827cdab002406684d7f9c9bc21a4f6",
+      "statement": "CLI structural wiring and settings parsing have separate focused tests: `CommandTreeTests` builds the real command tree and validates examples/top-level help paths, while `SettingsParsingTests` parses each settings type through a dependency-free no-op command.",
+      "evidence": [
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/CommandTreeTests.cs#L9-L61",
+          "version": "repo-lines-v1:sha256:fdbf8f070cd53cf03770cb8948f889966e4eb52d72782f3925c88b00f4c17f06:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YWVlYmRmOTU3OGQzYWZhNmUxMTJjNzY2YzlmOTQzYzcyYmYzYmJlYTAyMmQ0ODlhZjY5Y2IxMDFkYmEwYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/SettingsParsingTests.cs#L22-L42",
+          "version": "repo-lines-v1:sha256:8b71f5d4dccfae52b1c84d5db28a3b982aea25b413a0adb9d38bd8aac2ba929d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YWVlYmRmOTU3OGQzYWZhNmUxMTJjNzY2YzlmOTQzYzcyYmYzYmJlYTAyMmQ0ODlhZjY5Y2IxMDFkYmEwYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkOWE1NjhiNjZlY2M2NDI4ZjZmYzZkNWM2NzZhYzIxOGYwODRmZmNjNWU2OGYwZDQyZTRiN2IzMGZkZDY5YWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3da894150f3b4306ab4c5682a494e18e",
+      "statement": "`connection status` is an agent-safe preflight that does not open a browser and returns exit code 0 when authentication is valid or not applicable and exit code 2 when login is required; `--non-interactive` makes interactive-authentication-required commands exit 2 rather than opening a browser.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/BaseProgramSettings.cs#L15-L22",
+          "version": "repo-lines-v1:sha256:3e3793e9e2833c05fcc3560a0084ce14134c27b96294dbc15390561ceb148465:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmNjNzViZjdiYTZhY2Q2ZGFmYjM2ZGY0YTczM2ZmNzBkYmIxMDY4NTdhYmExMzYzZGY1M2Y5YWM0NTY5OTYwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWE2NmI0MzQ0ODA2ZjY5NGFlMDkxNWE0YjBkMjk3YzFkYjEyMmE1ZWQ5MDBlZDg0MWE4ZGYxODMzMWJiMjViMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2M4NzExN2Y5NmFmZjE1NDY0Nzk5MDVhNDg2NjcwNzZjODIyYWUzZDkyNDI0OTVmOTYyMTMyYmU0MDM2ZjYxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/PowerLogic.cs#L27-L44",
+          "version": "repo-lines-v1:sha256:96cd58672ded1cec2c400d20bff2a3761e7b126a7aef4f9e0a72689f11fb3ef7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZGI0NjM0ZTYzMzczMGJkOWViNmNhZTk5NmU5ZjIzYzdmMDNkMmZiM2ZlOGIxZGZjODNiMTQ2OWU3ZTAzNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YWFlZTEyNDI2OWFhZTY1ODNkMmZkY2U1Y2UyNWRlZjVkNDllMWJiNGU3NzdkNWE2OTcxMmFmNWVjMmQ2YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NTcwOTNjMzcwNmJkNjlkYTZmZTk0ZmNhNjAyNjY5N2NiYTYyNDcwMjc3ZjY3M2Y3M2E0MGY1NTkzNGY2NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/ConnectionStatusCommand.cs#L13-L45",
+          "version": "repo-lines-v1:sha256:ae6af452d994e2e4c6707e28a2daa25d3805ffd526c173ad614c1b62715987b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzZDMwMjczYjIzNTExYmQzN2U5N2UyYjZjNDM0NWZjYzc5MDJiNDU5MjZkYTBjYWU5ZjBkNzJhZGE0YmM0MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_99b9538d1a2a49e4ad7e88c8f5f52512",
+      "statement": "The solution contains focused test projects for the CLI and each feature module, and the repository exposes a separate `test:tsl-jest` script for generated TypeScript consumer tests.",
+      "evidence": [
+        {
+          "resource": "repo://DigitallPower.slnx#L12-L25",
+          "version": "repo-lines-v1:sha256:41f7f3292901d711250b1c259bb53392bf1a9bbf6e7520b63ce57e5660a24352:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyOTZhOGZhODA0MDBkNzRkY2Q0NmViNjg5YzM5NzFlNGZjMGNjNjQ2MmUwMmY3Mzc2NjQ1ODUzOTQ2NDA4NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmODliOWQ0MTc1NDcyNTdlMzA0MDJkM2UyMTI4ZjQ4YjY4YjkyMjFlYjEyNWNhNjdhNjJkYjJmYmYyNmQzMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmOWE5N2M1NThjYjQzNGRkYjUzYzBhNzNjMjhlYzE5ODE5NTc3Mjg4NTNlMGJlZWY2NzY5NjVhYjcwMDExMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2YjAzNmJmMjE4ZWQ1YzZiNTk3M2UzZWVlMGMxNWU0YTlkN2MzYzczYWM3Zjc1OWYyMzExNzA5MmU1MGNlYzIifQ"
+        },
+        {
+          "resource": "repo://package.json#L70-L74",
+          "version": "repo-lines-v1:sha256:bd95eddbc5582519da3bc51f2446fe6c40c32a81db42708243b4bb95bab11810:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTA4ZjFiMzE4ODdjZTRlYTY2ZTQ4MjcyN2IxNjkxZTEwNGYyNWZlMTNhZmJiNWNkNzNiMjQ2MTEyNGQzOTNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE3MWE3YThhYzc2ZTY0OTQ1MjIzZGJlNTNlY2EzYjIwNGNjN2E2NzcwZDIzZjFlYTMwM2FhOWNmYTZlMTk2NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VjOWQ3N2RiNDAwODY0YjVhYzVjY2NkY2FlMzA2OTgxOWU4YTU3ODE3NWU4ZDg1MmYyMjliM2QxYjgyZWM4NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTJmODFlZmY4ZjVkODJiOTg1MmY2MGNhYzQ4YTk0MDI0ZjcxNWE5OWViMmZiOTMwZWM4MmNiMTRjYjg1NTVlYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9381bc54020249ad817432fc92034622",
+      "statement": "Import commands can make multiple independent Dataverse mutations and return failure after a later mutation fails; for example, queue import can create a queue successfully and then mark the operation failed if post-create assignment fails.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/QueueImport.cs#L45-L84",
+          "version": "repo-lines-v1:sha256:81752aca7f6b735fb85f4fe8674535c47fe58a8bdb49ad0b31769bd112297518:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYWQ1NmU5Y2YzZDZmNGFkZDc0YzNiZGM2YjRmZjVkODY4NjNjNDIxZGVkZTVkNDM0Nzc4NzBiOTlkZTgyOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZDhiNTNkYmM0Njc4YTk5MDFkOTE0ZTZiOTM0MDljOGY1M2ZmZDQ0MDlmNjZiYjUzZmYxNjJkYWUxNjQ1NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjMmQwYTM4NWFjZmE3ZmI0NWQ4NzE5ODIwZjVhZWQ0MzcyYzE0NGY1MDAzMzkwYjYwMzU5YjJmNWRiNGQwZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMmUwMzY4OTQ3NzhlYmRjOGE2NmFmMTZlYjI4ZWVkZDFlNTFiZDY2ZDdhNzE3ODY3OGQxZmRlY2Y5NGMwYTYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

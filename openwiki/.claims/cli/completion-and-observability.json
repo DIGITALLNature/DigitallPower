@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:f606fbaa440ff4a4d703b07da8dc415f18199fadff16aaca522f1070f7afa28d",
+  "claims": [
+    {
+      "id": "claim_64b4af60653d4962b8505dfe5861dbad",
+      "statement": "A `[suggest:N]` first argument takes an early `Program.cs` exit through `DotnetSuggestHandler` and therefore bypasses normal configuration construction, telemetry setup, NuGet resource setup, and Dataverse connection registration.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Completion/DotnetSuggestHandler.cs#L24-L52",
+          "version": "repo-lines-v1:sha256:a793a3de53fbeaf2eb5da76edd54bdb6c77edc05879935d91155323f717e157d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1Zjc5ZDg2Mzk5OWY5MDk2YWJmNzMxZTA0OGZlOTFmZmU5MWE4ZjlmYzg5NzFiNDUzN2ZjMzNhMmRmMTQxZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMDZhZTMzYTM2ZmJjNjg2YzMzMzEzNmMxMGI3YzQxZWQwYWU0MGE1ZThlYWI5MmI5M2ExM2E0MDA5OGQ1ZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjNzIzN2E1MTcxMjg2YjI1OTU0ZmJmYWNiNmU2NmE3NjRjYWQ1MDYxNzg2NDEyYjhhMzMxYWIyMDQxNmZhMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxNzBmMjQ0ZTk5YzE0Y2ZiNmNhOTA0NGE0ZTVmYWZkNWQwYjM1ZGQ2ZDUzZjNmMDNiM2M2MTAyNjU4NmNkODIifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L48-L63",
+          "version": "repo-lines-v1:sha256:69943fd0675139ca6d5992c597818318cd9d1557177a48cbe858e6206cf424d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NzQ0YjU1OWRlOGYwMDcwZDMyZDZhMTk5NTg0YzA1NzhlZWIyNDQzNWQwNDg0ZTEzMTIwYjc1YWIzMmZhZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMmQ1Y2FkZWU1MGZjNmU0MDdmYmIzNTM4NThhYjFmYzJiZDg1ZTgyYTUxNjk5OWEyNmRjMTc2YzMzNGM1NjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5MjJhZTliZjllN2JkMzY0ZDVmYzk4NGJmZmMyMjdjYzRmMTM2OTQyMDQwMzhlMTI1ODI5ZGM4MTE0MjljODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlOGEwYzY2MDJmYzQwYjNiNWZjODAxOTIwZWMzNDlmM2E2Y2Y0MzRhOWYzODRiYWQ5OWI4NTBiOWU0NmQ2MTYifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L65-L150",
+          "version": "repo-lines-v1:sha256:6ab16d699fbf4f0bc7cc65945e0e82c83736a4048739b5bbf3fb44c6d815dd0a:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZWZkNDhlNjllY2ViZDA2MGI4YzYzNDMwNGY3MmZkYjEyYjY1ZTRlZGJjM2RhOWIwODY2OGQ5NDU0NWEzNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZGNiZDJjNDBhOTNhNDU3NWEyYzU5Njk3YjA1NjY5NTg5YjRlNzQzOTlhODAzNDI5YzM5OWY5NTFkNDQ5M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmYWNjMjA2YWJiZjE5ZWI4ZDlmMjZmZjVlMTVjZWM2Mjg3YTMzZTNiZGI0NGM2NzZjM2QzZDBjYzk5ZjZhMGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZDY0YThkOWUxMmM1NzIwM2Y5NzkyMTllNDcyOGQwZjU5NTRjYjI5MjY1OWYzNDJlMjE5NDM0ZWZkN2JlM2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_49a1e9bb38944889bdd81ef70985188e",
+      "statement": "Suggestion handling captures a Spectre command model using the same `CommandTree.Register` delegate as the normal CLI, runs capture with a null-output console and temporarily redirected stdout, and emits only the computed candidates one per stdout line; capture errors degrade to no candidates.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L22-L33",
+          "version": "repo-lines-v1:sha256:884867f5fe1952246316628bdc015915ac0440697e9ec44901fe4d6734ce2606:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzM2I5ZjA1YzViNTgwZjViZTg0NTQ3NDc3NjFhZGJjN2U4MDkxOTEwMWY0MTY3YjBjYjdhYjRhNWU2ZGVhNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzOTQyMDg0MDA3ODU3ZDZlYjFkNTIyZTQyYmZmYWMyNDc5MzVlMWVkNGI3YTRmYmQ5Yjg2ZDRhMDA1ZTljNGUifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Completion/DotnetSuggestHandler.cs#L36-L95",
+          "version": "repo-lines-v1:sha256:1e3d5ed6f3a133329d7c048c78ed627a0cacbe73555af645f1d9fd29f1eefa69:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiY2U1NDQzNzJjMDllYzc4NzlhNmVlZjUyNWZmZmI5ZmZhZDE4OTk2YmFkNmMyNGU4NWIwNTc2NWJhYTBkZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyYzllZmQ1MjA2MjQwYjExYmRlMGU1ZDhmYmI0MmZhODA5NWFkOTM5Y2ZmODc3ODA0MTAxZGIwNTk2N2VlYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85e5923a2588436eb9a4a1fa201d24a7",
+      "statement": "Completion truncates input at the cursor, tokenizes quoted values, navigates known commands case-insensitively, filters visible subcommands or long options, excludes hidden/default items, and returns no candidates for an unknown command context.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Completion/CompletionEngine.cs#L122-L162",
+          "version": "repo-lines-v1:sha256:65bd955f25797b3c7ef3b89f82b47561f8165748bef42f983c8dcc988f4f402d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0Mjg4ZThlN2RhNzQ3MzhiOWMyMzVlMTA1OTA1ZDMzNTIxNDQzYWRlNTUxNDY5MThjYzBiYTQ4OTRmNzYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Completion/CompletionEngine.cs#L27-L119",
+          "version": "repo-lines-v1:sha256:bfa29921462bfb39370c67aa6c8f91b533405bedbae6fbcb95b0d8e46adc202a:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2ZmJhOGIxMjNiY2ZkZjhmYzMzYmQ0ODg4MjNkZWYwM2ZiNGJiMWRjMTVjYWJkMWYxZWFhNDU4MzUyYjkwMGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxNmE4OTE4NzMwYzZlNTY1OGRhZDExZmEwMWI3YzhlZTY0ODExN2FkMTY0Y2M2NGM3MGUwYzljODNhNzg0YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiMWY4ZTM4ZDVmZDRhNjVjNDg0ZTAzNDQzMDhmYzZlYjBkMjAxOTg3OWYxOWFlYzU2MTFmOTFkYmZjZWUyMTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88292763c0f54cc09715882086afa16a",
+      "statement": "For leaf commands with positional arguments, completion may use a dynamic provider; `ProfileNamesProvider` supplies best-effort isolated-storage profile-name completion only for `profile select` and `profile delete`, returning an empty list on failure.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Completion/CompletionEngine.cs#L94-L101",
+          "version": "repo-lines-v1:sha256:533b68bb16b58e6712da61da780007f76bc2e1564181856f66a3f473ce4a18c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJlNGQ4MDlkZTRhOGM4YTUyNzc5NmIwMjQ0OTBkZTZjYjVmMzliOTc3MTI0ODg4ZGNkMzc4YWZlZGE2YmM4ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUyMmM0MmNkMTljNmQwM2Q4MDhjNDUyNzIwNTUyODI1YjdlYTFjNWI0OTFiMjE4NTExY2FjNzQxNWNmOWQ5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjMzNzJiZDhjYTViZjFmMDQ2NTgyN2I4YmFjMGE1ZjBiZDYwOTY5NTQ3ZjIwMGMyNmVjMzYwMTA5ODVjZTgwNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjYzZTljYmZjMjBiYWMzYjBiODk4NzRmODQzY2ExNTVlNTQzNDMxODdiZjQzODQzMzc3MWJlMjQ1MGRmYzNhMiJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power/Completion/ProfileNamesProvider.cs#L13-L48",
+          "version": "repo-lines-v1:sha256:d62a3015d6597d2c9975058700e37cc6b54155641d5ef69b14e0bb397cb0eb67:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmNDk1MzkwYWM1ODUyMWQyOTM3ZWIzYjM5NzFjNzNmMjI4ZTRlNDE0YmRiOGU3MWU3MjgxNzU4MmRjNDhiZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExYWRjNDI4NDFkZGFkYjA5Yjk5ZWY5MWVlYmQwY2ViNjQ0NTE4MDE4OWM5OWJmNWUwMWYzODJlZDJmZjE3MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb5d3541c9a14e91907ba56c446975b1",
+      "statement": "`complete setup` registers the current executable with `dotnet-suggest` after checking its registration file, and `--all` continues to shell-shim installation; `complete install-shell --dry-run` reports the destination and returns without invoking the installer.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L157-L170",
+          "version": "repo-lines-v1:sha256:cfb38d99baeda11d06851502174aa36dfcff208a42ef22a2f0d8f70068b820fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0YWVkYmNhYWExYmMxYzBhNmQzN2RlOTQzNzAwZmVlY2RhMDExNzQ0OWU1OTdiZGM1YTNmY2FkMTcyOGZhMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4MDBiYWFkZGY2YmQ3NWEwMWQyMTI3NTljZGJkMDYzM2M1OWQ0MjM5MDc1ZWJmZmJjYzVlNTlkZWYzMjMxM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxODViNmI4MWVjMzRmZDQ1ZTQ4ZTgwM2QwZGExYzdmOWYwMTg3YzYwMjU1MTIzZWUzNDMyZmEyNDMwZmRmMmYifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Commands/Complete/CompleteInstallShellCommand.cs#L12-L40",
+          "version": "repo-lines-v1:sha256:857dd8f0b30ec9d8d6438a14a52c8a94dc3363c6ed6c6abad2dc34e2b174c748:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3ODg1ODhlZGU3YmU5MzcwMjdlM2M0NWQ2NzE1ZjliMGJhN2YxODIxNmUzNmM4MTA2MTQzYzgzNjdlZDNjZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzMzI4OTQ4NTUyNDkxZTIxODZlNDk3M2M5MDFiODc1MzQ1M2Y3NjRlYjBmNWQwNGI4MWIwMmM5YmIzNTZiNTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMzc2ZjRjOGY3YjcyZmJjZGM0MzhjMjUwNTRmZDVhN2Q5NWYxMzE3MDExNzBhYTE1ZTQ4NDBhMTMxNTRlODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmMWRmMjQzODlmZjBlN2JhZmM4M2U5MjdiYzk3YzdkN2QyNmFkNTQ1NmU1NzliYzQ3MzU3NDI2ZmQ3NjJhMmIifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Commands/Complete/CompleteSetupCommand.cs#L13-L77",
+          "version": "repo-lines-v1:sha256:dcbfc945f76e156f1698d06d876c407c04ea88e25397eac715aa9ac15d82e84b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkNjBjNGI3YzQ0YjM1MzU3YzdiZGM0NjYwMGYyODNmMWQ1NTVjYzJjZDk4M2ExMWNiN2ZjMjA2ZDQyNzAzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5NDE0NDA0NWIxN2Q4ZjA3ZTY5NWVhZmI2ODQxNDgwZTA1ZGI1NTdhYjFlYWYyOTIxY2Q0ZjA5YjU4MzczMzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTQ1YTVlN2FmNjJmZGM2NDIzYzBlMjY0ZTk0YWRkNzMzNGYyYjhlNGI1MGQ1YmUyZGI1YTM5ZjRkNzI3ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4YTg3YjdhZTY5ZTYyZjhlNWNiNjUxNjAyOTQ1MTk5YmFhZDJhODdlY2MxNGM4NDg3M2I5N2ZjYTg4NDVmYWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d46c211440914c4d897f38a74bacd3e6",
+      "statement": "Shell installation supports bash, zsh, pwsh, and fish; it locates `dotnet-suggest`, obtains its script for the shell, appends a marker-delimited block to the shell RC file, creates missing parent directories, and returns `AlreadyInstalled` without writing when its start marker is already present.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Commands/Complete/ShellDetector.cs#L9-L68",
+          "version": "repo-lines-v1:sha256:8a7a1bc6268c4555bc40f27a6755e9bda588994c1acc750d074db15a133c2ce8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1ZWU1M2MwZmU3OTBmODRhMTQ5ZTlhMDc5NmI0MmQ1MDEyYzI1ODhkNGViNzM1YzIzYThkYTA0MWIwNjljNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Commands/Complete/ShellShimInstaller.cs#L20-L105",
+          "version": "repo-lines-v1:sha256:da508d57c2ac59ff253a1bc75a09e591cbc76a13f09f5f2bca506db55f4fd653:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiYjljZmRhOTYzMDc5MWVlZmJmYmYxMmQwN2IxZjk2NzM4OTY3MDhmZmYzZDZjMzJhMDllMzQ2N2I5OTM2N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExZGZkMzY4ZDM2YmFmYTkxOGVkZDMzNjI2MDdjZTAzZjVlZjY3NTk5YmFlZmEwN2E0MmMxZjk1MDIwMTliNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3891ee26329e410494197f9c39bb68ee",
+      "statement": "Normal command execution uses one composite Spectre interceptor in this order: telemetry suppression, version checking, then deprecation warning; the composite invokes its members sequentially.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L156-L164",
+          "version": "repo-lines-v1:sha256:7bf7fb06bd3d3e3d9c5fd7ff73dd9f7b05e04cdb441b25d915ae47b5b284f05a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFkMzY3ZjkwZTc2Y2EzMGY2MDU1Zjk5OGVmMTRmOTNiY2U2NTQ1OTczNGU5OTA3MzI5ZGJmMDRkNDU1YWIxYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg2Y2U5YmZhNDI5YzgwMjY3MGM1ZWRlYjgzOWZiYWM0ZDhiZTljNzVmMDgyM2Y4MjYwMjdhYmE3Mjg2YjYyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDc5MTc0MTViMDIxMDVlMjJiM2UwNGYxYjVmZDU2OGRmNzE0OTYyMDFhN2YxYWI1ODFmMDk3NDE2NTlmMTcwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZjNTExZTUzMWY3ZmNmZTI2NTcxZDQzODhjYjFmM2ExMThlM2I3NGNlODQ2MjRhZDBlZWU4NzgxOTFkZWQwNyJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power/Telemetry/CompositeInterceptor.cs#L8-L20",
+          "version": "repo-lines-v1:sha256:fed41359d5a64ad6362949e2ee219e38dc68820084f742379699d0276bfa4a76:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZWIwNmEzZTJkMTUyMWE1YzJmMjMxNGZlNjhiNzgyMGI0ODExNzliYTY5ZTNiMDQ1MWNkMTQ4MGJhYjQzMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Telemetry/TelemetryInterceptor.cs#L9-L20",
+          "version": "repo-lines-v1:sha256:5e383f63cf06b18dc586a97886d09c11c93123bad07d06fa2bfb5452703c489b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZWIwNmEzZTJkMTUyMWE1YzJmMjMxNGZlNjhiNzgyMGI0ODExNzliYTY5ZTNiMDQ1MWNkMTQ4MGJhYjQzMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e78e687f331d4659b6bdee53cae92a12",
+      "statement": "The version-check interceptor skips CI, persists its last-check date in isolated storage, and performs its NuGet metadata check only after more than three days; deprecation detection uses the bound settings type and inherited `DeprecatedCommandAttribute`, optionally presenting a replacement hint.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/DeprecationInterceptor.cs#L11-L39",
+          "version": "repo-lines-v1:sha256:54d62506e8af6ccf3589a491f4aa86bad7df1ece17278ae91593a413eb4aab89:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzM2I5ZjA1YzViNTgwZjViZTg0NTQ3NDc3NjFhZGJjN2U4MDkxOTEwMWY0MTY3YjBjYjdhYjRhNWU2ZGVhNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/VersionCheckInterceptor.cs#L23-L44",
+          "version": "repo-lines-v1:sha256:0d8f2f1fdbd7bef38716bab3635750b6d07b60278aba4a316b6a88ca04e066c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmODk4ZTJmMDAzMWU5NjI2MDBhNmVkMzUyYjljOTgyZDM2NjAxZjcwYjJjZDgzNDU4YTM1MTcwZWRmZWJiZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3ZWU1ZmU5YzQwMDY3YmY0MGJiYzQ1NjRlZmNkZDM4N2NhYmMzMzExY2I1YmU0YTU3ZDQ0YzdhZjFhMDcxMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZTZiMzVlMmM2ZTIzZDQ3NDE5OTdjYjIzZDVmYmE0MTg2YzQzMmE0Y2QzYzQ3NWNlMGMyNGExMjBhMWJlODEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/VersionCheckInterceptor.cs#L46-L94",
+          "version": "repo-lines-v1:sha256:a840ef7864a5de77e72e4b58b34e5aa0ae2588ffb3bbbc7e8ce5c9b980159988:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjYzhkZjA3YzljYzUzYWE5YzI2NWUwODFmNDllYTYyNWI4NmY1OGY3YWU3MTdhMDA0MmFmODk5MjIwNTk5NzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_19c2ae1ddbe94827af150bd654bcadb7",
+      "statement": "Telemetry is enabled unless `DGT_TELEMETRY_OPTOUT` is truthy; enabled normal startup shows a one-time notice, persists an anonymous GUID installation identifier, and creates an Azure Monitor OpenTelemetry provider only when a connection configuration is available.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L75-L110",
+          "version": "repo-lines-v1:sha256:4a9aa8e1a58410f57e2ccaebebcf6acdafb94d8d068b23a47b9c8a8e16d5900f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczZmJlYTRiNjdlYWZiMzU0MzM1M2VmOGU1ZGUxNGRjNzE0ODFjZGNiMGM0NDJmZjU4NjQ5ZTUxZGUyN2U4NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMjY1MTVkYjI4N2NlMjBjYzFiOTU0ZDgyYTlmYjM1ZmEyMDkyYWJhNjkzOTJhMGY2MGU1YzdiMTU5NWViZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NTBlOTQzMTdiODQxMTkwYWRiYzdlZjM1ODkyOTZiZDY0ZmE2YjYxNWVhYjUwMDY3ZGQ5ZTk0NGFiODk2YWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1NzgxM2U5ZWM0Y2ExZDQwN2Q1NDFmZTE2ODE0ZjUyMzhlNTQ5Nzk5OTAyYjA4MGVhNGQ0NTBkN2M5YjdlMmQifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Telemetry/TelemetryConfig.cs#L13-L50",
+          "version": "repo-lines-v1:sha256:c3c6d835327c2cab274612f73d81019e883621eb6e850f0f289512861880ba0d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MzFlYzc2YWZkZGIzNWViM2M1ZmQ0YmJjNGI1NjAyN2MxMzQyM2IwZTM1OGZkYzM2Mzc0ZWZkMzI0NjUxMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmNjI4ZTQzOTM3M2VkOTkyYzgzMTEyZDdiZDFiMWY3ZDY4NzY1MzY2YzVmNDFiM2MwNmQ0MWNkNjdmNGViZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Telemetry/TelemetryNotice.cs#L9-L43",
+          "version": "repo-lines-v1:sha256:6d1691dea4c416056e667dd3f374ee3c5acfe9549804bf30eefa3355c0328dec:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZWIwNmEzZTJkMTUyMWE1YzJmMjMxNGZlNjhiNzgyMGI0ODExNzliYTY5ZTNiMDQ1MWNkMTQ4MGJhYjQzMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afa9d65a5e3248889ce43471c3ac3535",
+      "statement": "`Tracer` creates command activities only when telemetry is enabled and not suppressed, records command/CI/OS/version and optionally installation-id tags, closes activities with success or error status, and anonymizes exception data before recording standard exception events.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Telemetry/TelemetryAnonymizer.cs#L8-L90",
+          "version": "repo-lines-v1:sha256:340dfe59c187861a05cfc33a96afb3256a246c52d198f88ca94a007b8d712768:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ZjgzOTUyYTY4NGUwOTk3ZDQ4MmQ3YjljYjI5ZGQwZmQyOTFhMDk0NjQ5ZGJhYTU1ZmJjNWU4NWZiOGY0MWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZWIwNmEzZTJkMTUyMWE1YzJmMjMxNGZlNjhiNzgyMGI0ODExNzliYTY5ZTNiMDQ1MWNkMTQ4MGJhYjQzMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiMzU1MDhlZmYyNTM2ODgxNzE1YjFiOWM0M2Y2YThkYjg3NWY1NjMyYTg2NTFjMDlmZDJiYmVjMDMwYWI4MzUifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Tracer.cs#L13-L43",
+          "version": "repo-lines-v1:sha256:a4bab83dfeb0f846b49e2a763fdf46802a2e930b3dde72e2d355d2fee1762557:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZjQyYmM0MTk2OTNmNTVhZDE2MmFhNTBkOGRlMWY5YWZlOTc1MTY2Y2M0OWU0YTY4ODYyYjUxMDczN2JkYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzM2I5ZjA1YzViNTgwZjViZTg0NTQ3NDc3NjFhZGJjN2U4MDkxOTEwMWY0MTY3YjBjYjdhYjRhNWU2ZGVhNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4YjQyNGRkYTA4NTY3ZjViZDEzYjJjMmVkYzEyZjViMmE3MjI0NTE4MmE3ZmJlNGJiMGVjODNkNjFmZjBjZmMifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Tracer.cs#L46-L139",
+          "version": "repo-lines-v1:sha256:c807b0cf1b2c44b012e0282218e3f445d3d481b597cdabfd1f22451200277aee:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwODE1ODBkNTg3Yzg2ZGNkYWQxOTMyYTc3NzcxMjExYjM2ZGJmNDk4MTlhNGJlMDU3N2I5NDg5ZThhN2NkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a665a85429b14e72b420236e06abf9ad",
+      "statement": "Normal startup routes configured, unhandled, and unobserved-task exceptions to fatal telemetry, marks unobserved task exceptions observed, then unregisters those handlers and force-flushes/disposes the tracer provider in `finally`.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L113-L128",
+          "version": "repo-lines-v1:sha256:52a614c51e8a821f5f2ef86e0dc50cad7d79d159ae2317dc6451efad565919ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlMzkzN2YyOWFmMzA1YjM1YTZlZDdkZWQwOTM1ZTJkOWY2MjlhZTc3ODdlOGY5NDg4NTkxMGI4Y2FlNDU4NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwMmFmOGE1ZTIyMTg1ZThiY2JkZTljNWZjZWE3ZWMxNzU1MTZjMWFmZTQ1OTE0MzJkYjYwNjk2ZjJiZGZlOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjMWFjMzU1ZDNkNmZlYjY5YTE5ZmFkNjU0Y2Y1MDIxYjM5M2NmZGJkNzVjYzc2MzNmNzEwYmRmY2ZkYjE1MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzODc5MjE5NjZlNjllZjE0MzM4MGI1ZDJhYWYzOWNhODJjMTBiYzlkODBiODg5YWUzZjZlMDdiNmE2MTExODkifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L166-L187",
+          "version": "repo-lines-v1:sha256:20c1c4d2fe38745083403adb72c7e43f10be9add3d25a4e84d54ae4b24d59d39:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0N2MwYThiYzBkZjY4MjhkMmNmZjNjNmRkMzZmODJjZWI4YWQwMjc2MTEyNTY0ZGI4NjljYzRlZGYwM2IwMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzOTlmMDNmYTY5Y2VmZjJhZTU4YmY2MWYxNGMzZTZkOTg3NTA3ZDkzYjcxN2ZkZGI4MjY2NDY2ZTlhNmRhNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyZWJiYTQ0YzE3ODEyYjcxNTRhMWVmZWYzOWNhYTBkZDA1NWJkMGUwYmE2NjA3Njc3MmI3MDdmOTFlZmE0ZTkifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L200-L209",
+          "version": "repo-lines-v1:sha256:101dc60c216bb21883cfaf454b9fcc373bb8667dd1dde425d95cdf6e64d4e3e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZmRiZGYyZmVhNGIzMDZkMDU5ZmFjZjI2YzE4ZDk0Y2IxOTAxODlhMzIyMTAwOGVjYTE0YzVkZDBiMGZjZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5ZjkzMDgzYzE5NzEyMWI5ODI3MDBiYThhZmFiZDE3MjJjZjFkM2U3NDA0NTA5ZTgwZWZhMjcyNDdmNjJmMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L80-L90",
+          "version": "repo-lines-v1:sha256:c9faad3a7144ebb10426976ce5a67ad1cb42deee6eb3cd6d6222277718e7512c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MTc1OTJiNGM3NmU1MTc2ZDFlOThhYTFiZjdhZWFkMTE1MTQ2N2MzYTJlZjdmNjI0MzdjNDU1ZjcxMjZlMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmZWFiYTFjNDQ2NDVhYjg2ZWQ1OTZlYzdiMDgzYTFmM2QwMTk1ZDg5Mzc0NDA0NTY1ZjgwOTcxNTMzNTJlY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwMDEzNDNhNGFiMGFlZGFkMGExZjM2MzU5MzcyMTJiZDRmZGQ5Mzk1NmNkMmVlZWUxMDZiMmZlYjhiMzNlMTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_023955539de042f8aae808e70dbb9c75",
+      "statement": "The focused CLI test project covers completion engine and directive behavior, shell setup/installation/idempotence, production command-tree structural wiring, interceptor behavior, telemetry configuration/tracer behavior, and telemetry anonymization.",
+      "evidence": [
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/CommandTreeTests.cs#L9-L61",
+          "version": "repo-lines-v1:sha256:fdbf8f070cd53cf03770cb8948f889966e4eb52d72782f3925c88b00f4c17f06:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YWVlYmRmOTU3OGQzYWZhNmUxMTJjNzY2YzlmOTQzYzcyYmYzYmJlYTAyMmQ0ODlhZjY5Y2IxMDFkYmEwYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/Completion/CompletionEngineTests.cs#L13-L255",
+          "version": "repo-lines-v1:sha256:e7c43c86ca98ae4ec376ee85d08c201ad168d129002b3de41c2617196ad4dc30:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5MDBlNTVhYmMzMGQ0NDkxNjkyMTRkY2I0N2Q3NjJmOGQ3MTE4NjliOGQ1MGYwMjk0ODQyM2NkNmFhMDBhYWY4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwM2EzYmE4MDYzZjRlMDFhNTBlYzhlMmUxMTJkYzk4OTI4YjJhOWVkNTY1MDBjOTM3ZTZiNmI0NTNkMTI3ZjU2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4OGYwNjI4OGEzZThmOWQzZDEyOTlkMTI0YjZlNTQ5MmI5Y2U4YmVhNzdjYzc5ZmRhMGQzYjI0ODliMWMwMmQxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYWI0NzNiMDQwMTIxZGYxY2JkYzczNWU1OGJlY2IyMzc3ODRhMzlmNjNhMjM1Y2YwYzZmN2NjNWNiMDdjZTYxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/Completion/ShellShimInstallerTests.cs#L8-L98",
+          "version": "repo-lines-v1:sha256:a24d37ebb9a9692559fbd7018fd83680a0a449396065e18086cd13864511530e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyMWE2ZTMxZTk4N2I4ODIxYzYxODMzNWQwMTY1MDhlMjdkMzMzYjRlZjNhOWE1NTVmMWM4ZTM1YWVlYjczY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlNzgyOGU5ZjIyOTBiNjI4NWMwMDI5OWU1NWE4M2QwYTU0Y2QyMjg2MjczODY0ZGYwYjU1NDlkOTkzMmMyNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/TelemetryAnonymizerTests.cs#L8-L124",
+          "version": "repo-lines-v1:sha256:4aed43f3e72ff48d48b038384f248d09b49db54b7f29879af9620e7e07f077f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZmI2MzA2NGQ1ZmIyMDc0MmNmNGRmYzUyOGEwYzVlODIxZmNkN2Y2ZDhhYjU3NjQ0ZGY0YzgyOTU4NjMyOWU4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwNGFlZWJkZjk1NzhkM2FmYTZlMTEyYzc2NmM5Zjk0M2M3MmJmM2JiZWEwMjJkNDg5YWY2OWNiMTAxZGJhMGM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/TelemetryInterceptorTests.cs#L10-L78",
+          "version": "repo-lines-v1:sha256:049a5c7bca4194b633b876fe4e12b031d0b5cb6234dc685bd2b41383c0f2e057:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMTEyY2E3MWRhYTg0OTc5MWEyZDdhNjM1MmVlNDczZjI2MzQ5ODRiMGZmNDBkYWUyZTgwM2ZhYzNiMmIwNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YWVlYmRmOTU3OGQzYWZhNmUxMTJjNzY2YzlmOTQzYzcyYmYzYmJlYTAyMmQ0ODlhZjY5Y2IxMDFkYmEwYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.cli.tests/TracerTests.cs#L10-L227",
+          "version": "repo-lines-v1:sha256:fc482c2a620908bcee44fdd7f2e685c7e006fdc7030290d2cc8fa60744623438:eyJzZWxlY3RlZExpbmVDb3VudCI6MjE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmZTExMmNhNzFkYWE4NDk3OTFhMmQ3YTYzNTJlZTQ3M2YyNjM0OTg0YjBmZjQwZGFlMmU4MDNmYWMzYjJiMDc3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwNGFlZWJkZjk1NzhkM2FmYTZlMTEyYzc2NmM5Zjk0M2M3MmJmM2JiZWEwMjJkNDg5YWY2OWNiMTAxZGJhMGM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNzZkY2RhZTlmMjUxNGEyMWVhZjQ2ZTU4ZDE3ZGY2Y2VhNzlhY2I4ZDgzNTIxYzExY2MxNDc1OTE4MjhmYjkwIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

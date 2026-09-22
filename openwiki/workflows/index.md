@@ -1,7 +1,7 @@
 # Files
 
-- [Dataverse C# and TypeScript code generation](code-generation.md) - Configuration-driven metadata retrieval and deterministic generation of early-bound C#, TypeScript, forms, option sets, and API contracts.
-- [Dataverse configuration export and import](configuration-transfer.md) - Paired JSON artifact transfer commands, atomic output, cached configuration reads, and reconciliation limits for Dataverse configuration.
-- [Dataverse maintenance operations](maintenance.md) - Mutation-oriented maintenance commands grouped by job handling, metadata hygiene, workflow reconciliation, and plugin-step operations.
-- [Plugin and web-resource push deployment](push.md) - Deployment of plugin DLLs or packages and directory-based web resources into a Dataverse solution.
-- [Dataverse solution analysis](solution-analysis.md) - Read-oriented analysis of solution components and layer state with optional CSV and JSON report artifacts.
+- [Dataverse C# and TypeScript code generation](code-generation.md) - How the code-generation command dispatches versioned configuration, expands Dataverse metadata scope, and produces compatibility-sensitive C# or TypeScript artifacts. Covers V1 migration behavior, V2 schemas, output replacement semantics, and focused validation gates.
+- [Dataverse configuration export and import](configuration-transfer.md) - How dgtp transfers selected Dataverse configuration through JSON DTO artifacts, including atomic artifact output, cached reads, artifact-specific reconciliation, and failure boundaries.
+- [Dataverse maintenance operations](maintenance.md) - Operational guide to dgtp maintenance commands that mutate Dataverse metadata, solutions, workflow state, plugin steps, or records. Covers durable configuration, dry runs, asynchronous deletion polling, reconciliation retries, and focused test seams.
+- [Plugin and web-resource push deployment](push.md) - Deploy a plugin DLL or NuGet plugin package, or synchronize a directory of Dataverse web resources. Covers target dispatch, solution membership, registration-derived components, upgrade migration, destructive options, and focused validation.
+- [Dataverse solution analysis](solution-analysis.md) - Read-oriented analysis of Dataverse solution components, component layers, duplicate composition, and entity asset inclusion. Covers paging, analyzer rules, configuration, local CSV and JSON reports, and focused fake-Dataverse tests.

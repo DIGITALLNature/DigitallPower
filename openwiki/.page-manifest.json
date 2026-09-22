@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pages": {
+    "/openwiki/architecture/dataverse-access.md": {
+      "pageVersion": "sha256:85061e3de4e964b5b60eef77a4780bd6d8485542c0f7b36abaf3ba612fbe14a5",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/architecture/dataverse-contracts.md": {
+      "pageVersion": "sha256:d2208b31a11b82c094e1e8d17de8860f62308aa9483a0b66ff71f645bacdc08c",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/architecture/overview.md": {
+      "pageVersion": "sha256:2b2195b75cc9d87cb5f0e4283291c245db584c42b19dec78a4a2dbf6e0fd9abf",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/cli/completion-and-observability.md": {
+      "pageVersion": "sha256:f606fbaa440ff4a4d703b07da8dc415f18199fadff16aaca522f1070f7afa28d",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/quickstart.md": {
+      "pageVersion": "sha256:c17fd3b64bd3eaabcb490ba9c31a09061f6a0ad4cba8c22970d027d9301b2c4f",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/reference/build-and-test.md": {
+      "pageVersion": "sha256:6835bf017138059a7820f47a62aca2c2ef746fff057c592539bf350ca0d2ed6c",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/workflows/code-generation.md": {
+      "pageVersion": "sha256:76bf836920467835a92b6f7822dd76b55aa0ae90f943853c424b467281914017",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/workflows/configuration-transfer.md": {
+      "pageVersion": "sha256:20f5163598eb4f9190067714e89db94250e228ae8dd3fe81d18d2fee0f384113",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/workflows/maintenance.md": {
+      "pageVersion": "sha256:bc9f27117f1987228c16616744a2a1195858ae2a8f11d9e110c6576fd4c0d073",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/workflows/push.md": {
+      "pageVersion": "sha256:7de1d167da5ea4c1115e61ce445c041870c60334fdf867f7c89e9e4c73c58003",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    },
+    "/openwiki/workflows/solution-analysis.md": {
+      "pageVersion": "sha256:1f1cf8941e8daae0a4431f5247565c32492233f171ff6ecc288cddd010ba5bf8",
+      "completedBy": "openwiki/0.5.2",
+      "completedRunId": "a37cf45f-3ba8-442d-ba72-8121a70a1c0a",
+      "gitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+      "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898"
+    }
+  }
+}

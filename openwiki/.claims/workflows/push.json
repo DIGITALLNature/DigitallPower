@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7de1d167da5ea4c1115e61ce445c041870c60334fdf867f7c89e9e4c73c58003",
+  "claims": [
+    {
+      "id": "claim_df9cc27b72ce4981ae7993c2471e52cf",
+      "statement": "`dgtp push` is registered as the `push` command, and `PushCommand` dispatches an existing file to assembly/package processing, an existing directory to web-resource processing, and otherwise prints an abort message after initializing `DataContext`.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L153-L155",
+          "version": "repo-lines-v1:sha256:60bf8ae07137a77cec1b0fb2a76021bcec3f31caca05030c0958f495947216f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjRkNWZkNjJkNzcwZDEyNDUwZDRhOWM3ZjcyMWVkYzAwNDIyMGU4ZWNjODdhY2Y2ODNiYWU1NjkxYjA1OTRiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUyNzFhNDc5OTk4ODJlZmY5NmY1YmZlZWI2YmRjZDFiMjk3ZTQxYzJkZTIwMDYwNDlmZTRmMDk3ZDg1OTYxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODYzMTVlOGU1YzRhMTM3MzgzZDY1ODM2OGRlOWNjOWI5ZjM1NzQ5YzY2NTNlZjAwNWQxMTIzMTAwYTA3MzJhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmUzNDRlNmZmNTg4NDY5YWQyMWYxMjI2MzgyZTJmYzAyM2E5OTBiZjU5YWE0MTQ1N2ZmOTU3MzkxMTY5YzY3MyJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/PushCommand.cs#L34-L67",
+          "version": "repo-lines-v1:sha256:5bd8efac4da1c9b1c6eb045d0260685cfe572112ff5aede7d032b3f3bea274b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3Yzg2ZTJhZmViMTgyZWJiYmRkYWQ3NTdhM2IyNWM2MGUxYmIxMDVhNDJlMWMyYTY2NzgyZjYxYjE1OGVhZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZGNjMzg2OThlZmZlMjA0OGQzY2MxNmM2YzJiNjliZmZjNDFhMmQyZWFkMTJiODRiMDQ2N2YzMGUxODcxYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiZTBmMjY5YTYyZDk3NzU2OTkwMmRlZGU2MTRjZWM4NDEyMDQ3NzAxZGIwYzA2OWY0YTFiNmQyZmRlMjI3MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmNWFkMmQ2M2UyYmQxZDVhOTZhN2Y4NWQ3ZTkwNjkxZTUxYTIzNTU1OGFhZWZjOWQxYzEyZmRlZjg1NDY2MTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_014dace6fe21497dbe6c415df3d8634c",
+      "statement": "A `.nupkg` deployment reads package metadata, creates or updates the Dataverse plugin package, builds assemblies from its DLL contents, and then processes each usable assembly; a standalone DLL is inspected through `MetadataLoadContext`.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs#L44-L129",
+          "version": "repo-lines-v1:sha256:174d4e19acd3405d508bfd0992c58a2b1a068caee9b35e3917fc15868a6e7a41:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYWQ4YjYyZjNkNTdiN2EyNzEyZTdkNWQ0MmY2YmM3ZGQ5MDE1MGJkZDkzMTNlMzc0YjVkNTA1N2Y0YzQ1OTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiNGFlYjlmMjkwYmM1ODUxYmY5MWI2YzNlMjQ5OTRmNzU2ZGNmMTZmMjcwZjVkZGMxZDY2NGMyNTAyYTRmMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4MTg4YzdmMTBlMzFiZDEwNTg0YmI0MmNjNTAwYmVlOTg2NDFjZWE0YmViODFkYzcwZGFkOGRlN2E3NmY0ODkifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/PushCommand.cs#L70-L125",
+          "version": "repo-lines-v1:sha256:ec177f48e6b351b448e087129bf1ed8c6926128bcfcc2db405e70af687f14654:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmN2IzMDljM2U2ZmZiMzlkNWMxZGVlMDg2M2I3M2MzMTJkZjc1ODM4MzgzZTlkZjQxZTA1OWM4ZmVlY2M4YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4Y2QzNTE0MjgwZmU4NGJlODBiNzBiYTM5MzFmYjg0NjAzNmZmN2Y4NmJiOGVlMDBhYTcwZTEwZGM0ZGVmYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhMDc5OGQ1YTI3NmU0NDMzOWY0MjFhODg1Yzc0OTI1MzA0M2Q5YmVlZGYyNmUxMGMzMDM1MTE4MDMwOWU5MDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c608f26a8bfe409d9b4c8dad9cd076eb",
+      "statement": "Assembly lookup is by eligible sandbox assembly name ordered by descending version: matching major/minor versions are updates, while a changed major or minor version is an upgrade; assemblies already associated with a package are recognized as package assemblies.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs#L413-L460",
+          "version": "repo-lines-v1:sha256:6b6ed2d74de0e370869cb70536ec143797c991b836642fa692b4f8e6c68e3e78:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzYjY0NTE0ZDRmNGFkMmExYTQ4MTRkMWM0YTVhNTNjMmUzYWE1MTZkMWJiYmU5Njc4MGZlMmJlM2IzZjE2NWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MTJjNTEzN2FlMjkxOWY0MTkzZWMxZjcwODcwZTc2NTFjMmI3ZjdmYWNmNDA4YTRlMGQ2ZGI4MDc5NjBkNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzBlYTI0MDhmOTVlYmM1OGQxNWVhODMyY2FiNDAwY2JjNzFmNGI4MWYzZGZmOGI2MDRmNTI2NjY0ZjJmOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2ZmI5YmU4YzYwN2Y0ZDE4YzdlMmJkZDM3NzY2NmU1ODIyMWE0YjUyNTRkMWMzYTJmY2Y2MGQ4MmMyNTNiYzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f58c7e980e44544ab5d2e427e00c21f",
+      "statement": "Push derives workflow and plugin registration state from loadable DLL types and supported registration attributes, including plugin steps, Custom API links, data-provider steps, workflow metadata, and assembly-level managed identity metadata.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs#L303-L394",
+          "version": "repo-lines-v1:sha256:fc03e4c423cc627a524d04a687f97ebf74edffae0f17b53fed0f8cdcb01d9bad:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0YjJjZmM4NmU2NDExNDBjYzg0ZWZmZGZkMGU1MzljZGE3MTNmODNkMmExOWIwZGY0Yjg3YjNhZmI1MDhjODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YjRmN2U4OGU5YWY1MTI1NmQyOTk1MTY1NmY5NWMxNjQxMTM0NTM2ODc1ZjI2N2ZkZmI1NjkxZTRhZTdlNGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzMjBkZGJlYWZhMjA3YzBlY2JhYTQzZDM3Y2ZmMmZjMDAwY2M4YjE1YTlkMGNmN2ZhYTZhMWM2NmI3YzEzYTcifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyModelBuilder.cs#L628-L762",
+          "version": "repo-lines-v1:sha256:0cf3760dc168c42ffca0912c27564f0f0d02005d80d45874e9d620ce48163e4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMmI2ZGM5MGIyZjc5Mjk2M2RjZGFkZmVmYjQwODQ4NTQ5M2MwM2MzZTFhODBmMTQ5YmM2MzgwM2NkZDA0NjgwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4NTM1NjRiZjBiNjAwZTJlZmQyODk0NDkzZmFkZmIwOTY4ZWQ1Zjg5NjQ2MTA3MmI0YTFiM2M1NTJhYjlhMTUzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2ZDIyY2RiYzRhM2Q0YWMyNGU0Y2RlODY3Njk1N2I0MDlkZDc5YTliYjQ5OWM3OTdjYmJlN2Q3MWFiYjllYzNjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0ZmJkMDA5MzE0YmMyNzA4NDE2NzM0YTAyYWU1ZmYzOWExZTQ4YTA1MGJlOTFmNDNiMmZhYTkyMDAyYzYyYmZjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8bc6375bbc24524883098f84ba84461",
+      "statement": "For PowerPlugin assemblies, push reconciles attribute-derived plugin steps and images by creating, updating, and deleting registrations absent from the local metadata; step and image validation rejects unsupported async/pre-operation and image combinations.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L679-L714",
+          "version": "repo-lines-v1:sha256:78f005d19cd3ba35e202a997969336dae5ecfa63806377237f44e93a37e1c6d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmNmVhMmVhYjQ4NWE1MTJmNzVjNzA5Njc2NjFmYWE4NzE1NWNlZmJjOTRkMzQ3YjI3ZGM4NzJmMzM5ZDllYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMzllZDNhYmUxYWQyMmE0NzUxYjk3NWFlNDk5ZDY2ODE0YTRhOTBjYWVkNDMwZDljMTIyYTI4MTI2MjliYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkZjA2NWFhZjVhN2EzNjFiNTI1ODQ3YjFkYWQ5ZGEwYjljZTBiZTQ2Y2VhOWQyMDc3MjAyMGJmOGI5NjQ4MGYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L947-L987",
+          "version": "repo-lines-v1:sha256:8c66d33d099a85506de6548a50bd65268e7df0c2be83608ec29b8472c4c2c2fd:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0ZmY5YTBiODVmNjQ2NDk0YjRiZjgxNzY2NDcwZDFjNGUwMDA1OGQ4Mzc2YWI2NjQ5NmFjNmU3YzZmMDIwMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1ZGY4Y2RjNDA2NzIwMGU2MzI1OTM3NWVjMjQ1Mzg0ZTg4YzY4YjBmZGJiZWFhZTI3YTQzZTQ4OTM4MjQ0MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhNzFlNzM3ODhkOWUyZGM0NTNiNzFkYTIyN2RhZmM4ZmZhYTQ5OTgyM2Y1ODU4YjlhZjdlNjgwZTIwYTA4ODUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyValidator.cs#L11-L48",
+          "version": "repo-lines-v1:sha256:453f9a0599ae99f25970c55b70add737dd9dca606e6c5cf21d063bde0208d650:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzNTI5ZjViYzMxMTc0N2RhNTBiNDAzNWRlNWJjZTRhMzUxZmM0ZjkwMDVkMmMwN2FlNjNiNWRjOTY2MGM3YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNTFjMWMyY2FjOWVkYWJkNzIzZWIxMzU2YzkyN2FkMTU2NTZiMzYxOGIyZWZiZTk0NDQ5MGEwZTI1MWY2ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMDk0YTlhZmE2NzQ4YjZmMmE1ZmFmZjVkNzkyZGY3ODI2YWRlZGVhOGMwZGJhNjhjNGRiODJkZmJiN2NiYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/PushCommand.cs#L171-L182",
+          "version": "repo-lines-v1:sha256:abc537f063f76383f404a6c04c1273012f382a46f786a26adae4594d1c3e3412:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxN2M1NzkzZTdjZGI0NmEwMzJlZDYxZWMwMTRhYmMzN2JhMmFlYWE1MGM5OTFkZjk0ZGQxNmNlMzdlNTIzODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNjQ3OWNjMjMwNDQwZmQ0MWU4MjI0MjE4Njc5Njk4NTU5ZDI4OTNiZDY3YjQzODBhZmFiODExYjM4YTU1YWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3NjFiZjRiZTFiMWZjOTM5NDEyZDdiNjhhY2VkZmUyNjNjMWNiYzIyMjMxMjEyZGYzOTA5YzcyMjljZDE2ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4MDRiMGMyZjk3YzRkN2JiNmIyYzdkZDlkMzQyMDE1NzFkMGE1N2EzNTczOWM0NGQ3NmNlZmJiZjFmOWIwNmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2522660c4b5b4705863ece758fd51bb2",
+      "statement": "When an assembly carries managed-identity metadata, push reuses or creates a `ManagedIdentity` by application ID and links it to the assembly; package deployment also links the package once, using the first contained assembly that carries the metadata.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L360-L446",
+          "version": "repo-lines-v1:sha256:891d2eb34b8eefa263ff89be1e80de7626a334dbff15a227c3cccc2447701ba9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0NzZiMjhhZjliMzkwYTgyNzUxZGM4YTE1MzBhNDg2Yjc1MTZmNzMzZWM2Nzg5NzQyYWY5Y2U0MjJlMjNmMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkNTYxODNhM2ZhOGQzNWY2ZjI4ODVjOTRkZGNhNGI1NWU0YmU0ZjQxOTYyZmJlODE5MDIzYzM4YjAxOTc3ZWEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/PushCommand.cs#L156-L169",
+          "version": "repo-lines-v1:sha256:00d1667484efc36c8f927620557dd0dfed54d9c331265ed633059c51671b5725:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMzVhODg4M2Y0YWJhNDk3NzQ5NTg3MDJlOTA0Yzc1NTY4M2MwM2Y2ZmVhODEzYjQ5YzA1YmQwN2IxZjgyYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyNWE5OGI5OTc4NGEwZjczMzliYTczNDE5NTIxMDI4MWYxMWI5ZWM4OGZjMTNjMmFlMWE0ZTcxODc0YTMyMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MmMyODQ5Zjk3OGM1YTI4MWI1NzIxODkwNWRmNDM5NThhNWRkZTUwNmQ5YTA5ZjEyODczNDI0MGFjYzU2MWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bebd5ed17bed4e66becfd4a542ddfe4c",
+      "statement": "Creation plus solution-component addition for plugin packages and assemblies uses only best-effort compensating deletion if solution addition fails; a rollback failure is logged, so this flow is not transactional.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L101-L152",
+          "version": "repo-lines-v1:sha256:e3ea6a75e2512899f2e2f81b8795c2ee419f3890c63dfdc0a93fdf38745e58fd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYzVhOTA2ZTRhNTU4Mjc5Zjk4MmFkMTViYTJjN2M2MzNmMjVhYmZlYTI1Y2I2NTkzNmM5M2U1MTk3MzVkNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MDg4M2RjYzQ1NWNiNGUwODk3NDkxNzMwZmVhYmQzOWM3MTRhYTRmYTUzZTc4MzA1YThkN2ViMWQyZjYxZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwYTQxYTkzMGQ2ZjFlYTRjNTgwOTcyNjgyNzE5ODY5MWQ3OTBlNmEwMmM1ZmRkNGY5NDkyYjFhZWYyMWMwYzYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L159-L186",
+          "version": "repo-lines-v1:sha256:9b707f9d9cff344d51561c0abc40ef45a3aeaf7048c75f5a0a16ea5692457cde:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxY2QzMThmZDllZmNjNmI3MTlmMTYyY2MzNzRlODdiMTg5MTVlNTM5YWEwMTJiN2QzYjA3OGU2OGNjZGM1MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3NmRjYzk4MDY5ZjMzMGE0NWMwY2JmNzhmNTVjYjc1NmExZDVmNmU1MWQ3MTdiZWMxYWY5YzZiYTI1MWJhNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxNmY0NzExNGFiYjVkNWUzN2E1NDY0YTU2ODAwNzI0ZGE2NDhkZjhjMWM5ZjUzYjM2YjU4NWM3MGViNzQxOTIifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L322-L353",
+          "version": "repo-lines-v1:sha256:2b30b92225c43d44a689771fae320c43fd05bc31b7c94f14948b5dd67cdc8f3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNmVjOGY1NjU3MTgwYmQwMmU5NmFlMzEyMmUyYjI1Mzc1ZDA1ZmJiNGRmZTA1YWFlY2JkYzdhYWQxNzY0ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwYTQxYTkzMGQ2ZjFlYTRjNTgwOTcyNjgyNzE5ODY5MWQ3OTBlNmEwMmM1ZmRkNGY5NDkyYjFhZWYyMWMwYzYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L37-L63",
+          "version": "repo-lines-v1:sha256:ba880c2662f8bd30e7057197d78d0bc1d314a8f38f6a2b511ca83ad5abceccce:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NTEzZGYzZTUyZmRiNDg5NzhlNWZkMmFiNzlhNTUyNTQ3Y2MwY2Q0N2JiN2ZmY2NhMDQzMzgyZTRjN2M3YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjMzJjNDJjZDMzNDhlOTAzZWVlMTUxYmU5NmJiZWVhNzU1M2IzNzc3ZmY5MWU5NzczYTU5ZGI1YmQwNjlkMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhMjcwYjUwYTEyNDY4MjkwYjkxMzA2OThlMzI0MmUwNWM4NDVmY2MxOWVkZGU0YzQxMGU2NmNiNTI3NzI3MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_da75cc0857e44c88a054c417219c5212",
+      "statement": "On an upgraded non-PowerPlugin assembly, Custom API references migrate by default unless `--no-migrate-custom-apis` is set; `--delete-on-upgrade` migrates non-PowerPlugin steps and all Custom API references before deleting old plugin types and assemblies, while removed types are warned and not remapped.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Base/PushVerb.cs#L33-L39",
+          "version": "repo-lines-v1:sha256:306acab9241ca3711779b5fa5c1e22a330417f1975d9391cba53970bca46c2a4:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQxYzA1MDU5YWM5N2Q4NjQ1NDBiYzk4NWYxOGVkMmY5YTJmNzk4NTRhYWM0NjZlMjFkZjlkNGM1ZmZjYTAxZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzlkNzc4NWJhODIxNjJmYWI2YzU0ZDU0NGE5MGRkMzgyODc2NDNlY2E3N2Q4NDA5NzNkZWM4MzMxNjAyZmIzMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODQ1NThiMTJlYTM0NzJlMjk1MzA3NTMwNWNmMTcyMDk2MGVmZmExZTlmYTc3MmQ2ZjBlN2JkNTBhMGFlOTM5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWVhNjRiZjQyNjdlNTRhMWU1MzliODM4ZTUwN2M3N2EwNGFiNzI2NWQ1OWExMTQ3Mzg4ODFjYTNhZGQzMjZiMiJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/AssemblyProcessor.cs#L233-L320",
+          "version": "repo-lines-v1:sha256:e7b0b5134e2b29155883a0937dc565eef5161b69340f67d71da31531a0fb6f10:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZWY5ZjFiZWQzZmYxODMxMGE4ZjMzZjdmYzlkZWMzMzRhZTgzYWY5YmNkYmViOTk0ODY3MjYwZjlhOTVhYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkZjE4NGJiZGI5MzlhMDAxM2MwMWNiMGNlOWYwNjJjYjBiMjM1OTVhZTUyOGY1ZWY0MWFkY2Q2MmNlMTNjMGUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/PushCommand.cs#L185-L238",
+          "version": "repo-lines-v1:sha256:7007d9cd25da3304b45fcec8c496f9570f5747690762b647090b6aac93876d1a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3M2MxMzM4NWU4ZDlmMzAxN2Q0N2NiZjU5YTk4ZmM2NzI3YmEzZmI3MzVmMzk1NWIyYWRkMWMyOGE4OTE5MzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3NjFiZjRiZTFiMWZjOTM5NDEyZDdiNjhhY2VkZmUyNjNjMWNiYzIyMjMxMjEyZGYzOTA5YzcyMjljZDE2ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be49233d069f41849e553d5dfdd8eab6",
+      "statement": "Web-resource push recursively recognizes a fixed set of web-resource extensions, derives names from the solution publisher prefix or `new` with optional exact relative-path mappings, and identifies create/update/up-to-date state by Dataverse type/name and base64 content comparison.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/push/schema.json#L1-L15",
+          "version": "repo-lines-v1:sha256:6e65e86d1a17df205f80e4b8ac7c5aa800362a607fa4decfa571d7646beff2b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L122-L160",
+          "version": "repo-lines-v1:sha256:6b5006da702ef850c6f2082931d4c4efaf2d8b07528af9d8eb68a359e87b5e46:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3OTIzNTkyZGIwOTkyOTZmMjdmNDUwM2M5YjM2N2M0NWZiNTI4ZDFiMDVkZGEwMDVjOTdiNmUxZjk1ZDBlOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0ODEyZmEzNDZjYTJjNzc1OTQzYmZiZWM5MjQzN2QwNWY2ZmVjMzA4YTg2ZTc2ODVhZmQ4OWZmY2VlOGJlZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhYzYyY2MyOTQxODE2M2IwZWNjNDQ5YTNmYjNkYjRmMzM1NGMyMzMwNzIzZjBmZjkyM2ZhNDY3ZTgyODVlYWIifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L22-L36",
+          "version": "repo-lines-v1:sha256:38c58675cb65193bfa75e875cc791c0587198879e39f814f66d17a5baf16c7bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyYWJhN2I5N2RhZjVjYmNkM2ZhNzVkNDQyMjYxNzA3MjczOTNkYjg3NDQ4YWY0NWI0MjZmYjQ0NmZmZWU0MmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5NTkyODBmNjE1NmMxZjY1MWI1MjJiMWIxODYxNjNiNjZkYjQ1YWRiZmE5YmM2NzFiZWQwNzM1MjllZWMxZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1ZWVjMTY5ZmQ3YTQ4YmNmZjhkYWNiM2RlZGRhMGU4N2NmMzhhMWNmMjRlODY3ZTQxMTRkYTk5NWZjNGM4MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0ZTAzOGYyNjcwYjA4MjI3ZjJmNjU0NDg2ODBmOTM5Mjk0MmJjYTA1ZDAwNDAxMGNhYTRhNTE4YTJjODQ4ZTgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L40-L75",
+          "version": "repo-lines-v1:sha256:6bab0626c43d0eb860439c773c59459b1b038acfdb50c501842d4a2970f5921b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1MGUyNDcwYWZjYTM0YTEyZjY0ODRmYWExYjlkYjRlYmI5ZmVkYWYxODY0MDJjYWNkNjg0Njg3NDVjMTBjYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMWU0OTFhZjAwZjM1N2ZiZTM4M2ExOGEwMDczNzkyZjhiZGY0NWYzZTA5YTZiODUzNTU3MmRlZTUwNDY4ZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZTAzOGYyNjcwYjA4MjI3ZjJmNjU0NDg2ODBmOTM5Mjk0MmJjYTA1ZDAwNDAxMGNhYTRhNTE4YTJjODQ4ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiNDFhOWE4NzI5MzJkMzgwNjI2YTBhNGU5NDAzMTI2Zjc3YjE5ZTJiY2I0ZmJmZWM2M2ZmNjA0OWY4NTRmZWQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Model/Webresources.cs#L24-L51",
+          "version": "repo-lines-v1:sha256:04c4a0b360fd6e1b6128fc81ee27657be9cf118ccbc3111506eee77fc061552d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NzYwODU5ZGNmMDAyYmVlNjVmMDEyZmU2NjZiMDQyM2M4M2EwNTZlOTFhYTEwMDQyNWYyMWI1N2E4ZTdmODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1MmJkZGQ5ZWM3N2JkZTE1NWFlMDQyZTk4MGQ3NDM5NzJlZGFmN2M1MDIzZDI1NDcxY2Y0OGRjMDczYTUzMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjYzViYTc2YjhlNjQ5YzMwOGJmOTg1MGRmMTRhNTYwYjcwMmI3NzI4NDZiYWU3NjIwZTgwYjMwYzE5OTFiZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4044f7b5174744698de88ab5da66a3d7",
+      "statement": "Web-resource synchronization creates absent resources, updates changed resources, adds resources missing from a selected solution even when content is unchanged, and publishes only changed resources in the update path when `--publish` is set.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L162-L217",
+          "version": "repo-lines-v1:sha256:dcee0a29eeee67e941342cd9aabb118bcbf8e4707ab9fc3608fc7c831083ad90:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkY2RkOGM2M2YwMDZhNWY0NWZiZTA4NmIwMWU4MzJjYjgyODI5YTNjNmEyNzZlZmI1MzM1OGQ1NzUwZTZlMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZDEyOTc4M2VlMWM5YTFmNjQzYzNhNmMwNzljNTEwOWUyMzhjNTg2M2M3YjA4OTBiNDZjNDViZTE4ODQ1Y2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwODQzNTgxMWNmMTc3ZDkyMTk0NmFiY2M5MDNlMzQ5NzEzYWMxYjg0NTA0ZjI5OWI0ODQyNTNjM2UxNDQ2MzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b967ab14791d4bacb85b46d3a44fbef1",
+      "statement": "`--delete-obsolete` requires a resolved solution and deletes unmatched unmanaged web resources already in that solution; it has no dry-run or rollback behavior.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.push/Base/PushVerb.cs#L21-L31",
+          "version": "repo-lines-v1:sha256:ba111d73fabe6f6ef4893bd43bcb77b362fb4e98d42a2221147f7f83cf86cc45:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4Zjg5ZDcyNTRjNTk2N2Y0NzFhM2U3YTUxNmQxZjFhMjc2NmQ5YWJiMDk1ZWU3ZTRiMWI4MjM0OTI4NGNhYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYWNhYmYxNmY3ZWZjYWZmYTA3ZTdjNDZiYzliNjhmMDA0ODc4Nzk1MjBmNjc1ODcwNGNkOTI1ZDVjNmFhZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZWNhMzM2Y2RmNTk1YTA4MjMzYjg3MGYyNGJkMDc4NWE4NDI5YTYwYTNhMzI4ODMzN2MxMDhjZmM1NjhhMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzYjYwYTI0MjkxMjk0ZmIyZjQ3NzllODM2M2FkZTcwMGE3ZWZjNmNkYzBjMTQ0M2I1ZmZkNmQ2NTNkMDI5N2UifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L247-L265",
+          "version": "repo-lines-v1:sha256:83014dd024642bbe136cdcde4ba3819f10149a73bb8c04e7509f6fbfab9bc82f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlMzFlYjY3YTY1MjYxOTdkMWY4ZWRiYTU5MjdiNjhlZDE0N2ZjYzJmOGY1MmZkM2E3M2ExZThmNmU5OGQ2OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhMjRmZjgyNTk5YTc0NjY3ZDdmMDBlOGFjZTdlMjRiNTdiOWU4OWUzZGI5OTczNzE3YzcxMjQ2MjU4NjZjNTIifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L58-L84",
+          "version": "repo-lines-v1:sha256:4a6e80bf695d8b62e7008ee4985a790c9695e109052d8464e0e5fd239d020999:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZDQ4M2VkNjk5Zjk3ZjI1YzI4YWU2N2EzNGNhZTRiNTdiNzBjNzY3N2U2MmNiNDA4MjJhYWE3MTFiZDg1MGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhOWY4NmQyOGU3ODRmOWZkMzFmYjcyZDE1ZjYwY2JjZWFhZmRkNjY5Y2JkNWI2ZGE3ODg4YTAyMzMyMWViYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4ZWQ4MDU0N2NlYmE3NWY2M2UxMTY2YTk1OTFkNGRjODA4ODNiMTUxZmIwODNiMDU2MmUyZTkyOTc2M2M2MGEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.push/Logic/WebresourcesProcessor.cs#L97-L104",
+          "version": "repo-lines-v1:sha256:2394f9e930efe2a91fed930d0e6b1110777900485ac0174a60b19bc5fe97c48d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdjNDNhOTg1YTYwNThkNjY3NDRlNzIwMzdkOWY2OTJjNWQ1MjgzOWI3MjY2MjYwOWIxNzBjOTA3MThkM2VkZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTVkY2YwODRjOTRlZDM3NTAyYzQ5Yzk2YmE4OTk4NTRmNzEwZTBjOTQ5MWNlZDJhOGFlZmU3MDY2ZDI1YTEyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJjZjlmNzg1NjJmZWQ3YzRmNjUyMDE5ZWUxODIwOWZiMzUyN2E5MTlhYmNkMzJjN2EyZmVmODcwMDY4ZWI2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGM2ZGI4YjY1OTBlYmEyZjg0N2QwNzM3Njk5Njk0NWY5MzIwZWI4M2NhZDA4MjJmMTcxNmMwOWUyMGY4OGRmNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_347d6a2cdcd54600889e2f9bb86ec2aa",
+      "statement": "The focused push suite exercises DLL and package imports, migration of steps and Custom APIs including removed types, managed-identity linking, web-resource solution membership, and data-provider event mapping.",
+      "evidence": [
+        {
+          "resource": "repo://tests/dgt.power.push.tests/Logic/AssemblyProcessorMigrationTests.cs#L202-L293",
+          "version": "repo-lines-v1:sha256:50ce3a27baf43c31b9e65c84f8af391338712846ab94a4046ea68fff42732ad7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyMjcxZjk4M2E2NDlmMTU4ZDNhODk2OGE4YzdlNTk1ZGJiMWM0OTM0YWQxYzgwNDU1ODUzNWUwMDMxY2Y5NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZWJkNWE4OTY1MjE4NTQ5M2ZjMTZjMjRkNDFjMGFkYzhjZjJjMzc5NDNhYWQ3MDBhODNhZTY0ZDgxYTZiMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkNTYxODNhM2ZhOGQzNWY2ZjI4ODVjOTRkZGNhNGI1NWU0YmU0ZjQxOTYyZmJlODE5MDIzYzM4YjAxOTc3ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.push.tests/Logic/AssemblyProcessorMigrationTests.cs#L40-L148",
+          "version": "repo-lines-v1:sha256:87a05eeb299afe3341341dff4e008969a35e11bbcc79adc5b897206773d55cb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4MWRhOTEyZDVjOTQzZDlhMjA5ZGQ4OWFiOGQ0OTg0Yzk4Nzk2NTZmNGRiODNkZjQ5M2Q3ZDFkMmM3ODI4OTVlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxMzE2MzZiZDZiOTdlZDdiN2ZkNGU0NjIxOGEzNzJmNjczZjcwYjkwOGFjODE2NzhmYzBhNzcwOTU1ZDNkODI2In0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.push.tests/Logic/DataProviderRegistrationTests.cs#L9-L32",
+          "version": "repo-lines-v1:sha256:e4b5f3327bdde6ff440f1edbe67cb9d9063e3121d380adc0a3df70eb69ec81df:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2ZjI1YWJiMjVlZmYwZGM1MGIzOGI3NTQ1YzM4NzA0NTVlMzA5MThiMTJhODE2ZmIzNTVlYzU5ODU4MDI1NTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzYzNjZTg3YWFlNTRlMzRlZWU5MDVjMDdmNGRkZTQwNDBmZmYyNDIzYTYzNmIwZWVmOTZiZTJhMmI2MTMzYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.push.tests/Logic/ManagedIdentityRegistrationTests.cs#L52-L112",
+          "version": "repo-lines-v1:sha256:55074c1f7c9b4c93c8966fe815e77b7bfa1a829cd6b6bd19ab8ecd26987241bb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlZDNjNDA3ZTBhNGNjYjlhYmFlNjg2ZDRlZTlmNzExZTc5ZDEyZWMwYzljNGI3MjI0ZTJlNjA1NGE5NzkzMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MTQwM2VmOGVhMTY3YWMyNDk2N2I1ZTNlMzUyYmVjNTEwNWQxNGE5NTk1MzI1YzkxMjhhMWIzZWNiYTM5YzYifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.push.tests/Logic/WebresourcesProcessorTests.cs#L49-L185",
+          "version": "repo-lines-v1:sha256:2c07c08b85f5a89335c949f868eefe497f26e26676b3609b51c8015aa9add1e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYWZhMWM1MWYwM2E5MjZlODA1NWJjNmE5ZmUwZmEyMzliZTkwOWU1ZDgwYzRhMTg0MjMxYzgyYmFiZGM4YmVhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTFkOTRlZmZjMDk1NDEzYjg1MzcyNzA0ZmM0N2VkMTc1OTIxMzRkZTdjNDZhM2Y0MTA2MTRmNzlmZmFjZDViIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.push.tests/PushTest.cs#L14-L49",
+          "version": "repo-lines-v1:sha256:7c5ce3a86ed8597243e2eb57fab5a684d7c567d15a772deaa75cdf1e0e9ed6c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4MzVhMjcxMTUyOTRmMmIyZjVjMWEyZmI1NzljNzI4NjkyNGI5YzIxYTNkOGYzOTIwNzc5OTU4Y2VmZjBjYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MDg5NWFjYjQ3MmFkZjFhZmY5N2I3NGFjMThjMGYyZDczZjhiNWFjMjY3NGI2MjhkZDU5ZWZlM2Y1YjliMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxOWNhMTIwMmZkZGRiOTRhZmE5ZmFmYWNlYzhiMjhlZWM1MDhlNWM1MjJjZGFiZTU5NDlhNzgxYjM1M2UyYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:76bf836920467835a92b6f7822dd76b55aa0ae90f943853c424b467281914017",
+  "claims": [
+    {
+      "id": "claim_29d10641ea1044f2a73affa86cf7fd2b",
+      "statement": "Configuration dispatch is versioned: a missing numeric version defaults to V1, numeric version 2 requires the exact `dotnet` or `typescript` discriminator, and V2 dispatches to exactly the corresponding generator while V1 can run independently enabled .NET and TypeScript passes.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L34-L46",
+          "version": "repo-lines-v1:sha256:b2b67fccc24b5e4e9d3322c48a59656709917d64b50c8aa9767420908e30fd70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjOTQyZWFmZWQxZmQwNGJhYzA0ZmViNjNjZjE5NTNjM2Q3ZjE4MWQ4MzQzNWRmYTVhMGY1Mjg2ZjM1ZDQyYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZjYyYmNmOTc4YTg3N2NiMzJlMmZhYzY5MGEyNzA3NWUyZmU4MDVkY2NjYzczM2I5YWNmMzA5YTY5NDI0MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwYTE1MDgxNjRmMGNiOGI1MmMwOGRjMzEzNmY4MWQ0NDAyNTRhNTgyN2VmNjgzMjk1NzQ1ODkwNjc1MWY1NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MDg4M2RjYzQ1NWNiNGUwODk3NDkxNzMwZmVhYmQzOWM3MTRhYTRmYTUzZTc4MzA1YThkN2ViMWQyZjYxZmYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L66-L97",
+          "version": "repo-lines-v1:sha256:6b6d08deb8b819244d5557d58d4f52dbc3d57cc7e48283e7f75f31e5e1ad1abe:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwZGNjNjNkNWI4NjJjNjkxNzMzZGQ0MzBlZmM5MGNiYWI2NjVmY2RkYmU2OTViOTU0ZTJmNTlkMjc0MDhlNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNDBhODEzOTc5MzkwMDBjOTQwNGM2NjY4OWQ0Njc4YTlmYTA2NjVkMjBkOGNjMzVlMzA4Y2JkOWI1ZGU4MzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhNDY1MmZlY2RjMjNmODVlNDQ5ODYzOTA3MjhlMmY0N2U5NWNkOTFlODA1YTc1NDRmZjFjMDFiM2YyZTY0OTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/CodeGenerationCommand.cs#L47-L75",
+          "version": "repo-lines-v1:sha256:3cc72d56d2abeb4aa13bb9957eb93d0ecb995aade723677164cca19a5b8413a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MjAzOGM3YmJmMzFhNGNlNThhMTNlMGNjOTAzNTIyNDBlNTdmOGNkYzM5ZmI5YWRjOGFlZjc0ZjViNWQ3OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNGFmZTUzZTYyYjAwOTQzMDNkNzRkY2ZmN2ZjM2IyODMwMGUwYzYwNDkwZmRjNTJjMWIyZjE5OGQxOGI1NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1NDIxMTlhZWFjMGRjZTAxNWRlZDgxZmE2Zjc3M2I0ZTlmNzBlZDY4NmExZDBjYTBmYTc2ODBhMTcxZGU5NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2e268bb4336d4b459f0c7d074b7cb098",
+      "statement": "A missing code-generation config file throws `FileNotFoundException`, while unsupported versions and invalid V2 discriminators throw `InvalidOperationException`; parsing permits trailing commas and case-insensitive property names.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L17-L22",
+          "version": "repo-lines-v1:sha256:ced1c3f1f95dd738409f743d9ad5059645b47e0e7f0cbfeffe8945eac996de97:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjUyYjM5OTMxNDk1YzFkYjkzNWZkOGI4NTE2MzBlMjhlMTYwMjYxYzgzY2M0MDA2YmFlNWM5ZDRkN2FlNDE0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ5ZTEyNTQ2NDI1NTc2ZDNkZWFlOGM5YjlkYmYxMjhkNWQ2ZGRhZjVkN2ZlODU3OTM0OTI3ZGVmZmEzYjlkZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDYxMmQwMDZjZWNkYjE5OWU5M2VhOGVmOTkzMjZlMzVlN2FlMjJhMzkwMzEyMzA5ZTgwNzQ2MjAzODA3NjczZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWUwMWY5MDU3YzA5ZmM5ZTQ4NWU3NWY5YjE1YTJiOTM5OGRhOWU5M2ZiZTEzNDFiYTk5MWVhYTljYzEzMTliMiJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L45-L46",
+          "version": "repo-lines-v1:sha256:cd947fb767de6938b88c98b04c818d65a72fc4dafc6e982f76b95423fc1054e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDBlOTllMjJkNjE1MmU4NmRjNzcwMDRhNTljOGM3MDJlMjE3OGFiNTI3ZjJhNWY3ZjZkYzUxMzYzY2E0ZTRjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZThmNjJiY2Y5NzhhODc3Y2IzMmUyZmFjNjkwYTI3MDc1ZTJmZTgwNWRjY2NjNzMzYjlhY2YzMDlhNjk0MjQxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWJkZjA3NDllOWRiYTQ4YWQ2ZWVkM2ZkOTYyYTg5ZDJmZTY4NGM0ODRlNGE2MWU1ODgwN2EwNzlhYjY0ZmNhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzgwODgzZGNjNDU1Y2I0ZTA4OTc0OTE3MzBmZWFiZDM5YzcxNGFhNGZhNTNlNzgzMDVhOGQ3ZWIxZDJmNjFmZiJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L53-L63",
+          "version": "repo-lines-v1:sha256:fa1d23d020fe91354b35ccc18030a1961ece5981f43a411aa96c1ef6f95750a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZTU0YjhkNTM2MGZmNzI1MDc4Y2Q2YTg3Y2U2NmIzM2EwODEwODU5Y2JkMjgxY2RkZGM0OGYxYjU2MjFjMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzBlYzIxZWRiMjdhMDNmZTlhNWU1MDhkNTUyMDc5YjNmMGU4OTIwNzg5ODI4MDRlODRjYmQwZGY3OTM3MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ODFkMDMzMDI5YmZmYjgyOTM2M2IzMWE1MjM0ZjUxZDQxZWVkZmE0YTI4NzI5YzJhNmI5MWVjNGQ4Y2JhNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MGUyOWVkODBkMzA0NzQ1YWFkZGVjZjk3OTczZGJjODg5NzQ1MzFiYTMzNTRmOWM5NGY4NGY4NTUxMjMxZDgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L66-L83",
+          "version": "repo-lines-v1:sha256:27a63b11918dcb6bb9dae36905178d4f519db333183c8f188bedcc7b98e1d4cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwZGNjNjNkNWI4NjJjNjkxNzMzZGQ0MzBlZmM5MGNiYWI2NjVmY2RkYmU2OTViOTU0ZTJmNTlkMjc0MDhlNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2RlZjgwODVhZTc0YWI2MzZkNjQ1OWY1YzZkNWZiZmIwZGIyNjRmMWIwZDc1YmFjNTE5YzliM2Y2NzE3YWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhNDY1MmZlY2RjMjNmODVlNDQ5ODYzOTA3MjhlMmY0N2U5NWNkOTFlODA1YTc1NDRmZjFjMDFiM2YyZTY0OTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiZjliZTNhOWUwNzE2ZGIyYTUzMzM0ODc5ZDE0ZWFlNDZjZDMyZWNkZjk5ODhkYjdkMzY5NTgzMjMwZmM4YTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3d248f95a1d4c508128e331a69cb76b",
+      "statement": "V1 remains a migration path: the loader warns that it will be removed in a future major version, the .NET mapping translates legacy settings to the nested V2-shaped configuration, and the legacy TypeScript route retains its Full-or-Light strategy selection.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfig.cs#L154-L227",
+          "version": "repo-lines-v1:sha256:f19a1545fa16139737a7f2b783e1e573a65939abd7c25cbab0ff3ff96343fb5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NGYwNDI1NjNmNzFkMDgwZTMwZjg0M2MxNDQwZjNiZmQ3MmI0NmFkZjM5MDJkYTlkYTkyMzA2YjNmYzJjNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjNjI3ODI5MjIzOTVlNzJiYzViZTU3MWM0ODY5MzExYmM0MGIyY2VlYjU0MzFmZmNiZmQxOGQ1MDNmY2VjODgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L88-L97",
+          "version": "repo-lines-v1:sha256:6fc16d9cc88a836129358503807fcc18e97ff03aaae0868d766902c319aabfad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNDg2N2YwZGI4YmUwOWZmZjAzNmExNDJjNzM3NDNhY2UxNDc3NzhiNDQ1YWMwNTIxMjFmZjZlMWY4ZmE4MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNDBhODEzOTc5MzkwMDBjOTQwNGM2NjY4OWQ0Njc4YTlmYTA2NjVkMjBkOGNjMzVlMzA4Y2JkOWI1ZGU4MzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyMmM2OTU2YzQ1MjdlYjA5MmMyMjVhMzBjNGMzNWJmZTRlZjAxMDI0NWM5MWRiNDkyNTM0OGJhODBkOWQ2N2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/TypeScriptGenerator.cs#L23-L35",
+          "version": "repo-lines-v1:sha256:ea19a054962b791570dfedd02cad0c5a32fd46f0fa44b5ff1280a94dd22692ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDQwYWY3MTk2ODQ1NTJhOWRkYzZlOWI0NGYwMTc2OTM3NjdkOGE3ZjI4ZWQ1M2IxMmZmMmU1YzYxOWM3MzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MWExYzhlMzBmODk4N2Q2ZjcyYjRkZjYyZGY2YTllNjNiZDE5ODA0NTQ4ZDcyODhkNjllMzM2NmY4NjMxZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZjIxY2ZmMjdjN2U3OWI1MDIyNzA4ODQxMjQwMzk5NzFmZGQwNjUyNDkzNGZhZDJmNTE4MWRlOGQ0ODRiMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7b468a78451b4da99ee99c251ade1cf1",
+      "statement": "V2 schemas define additive entity selection by names, solutions, and wildcard mask, but schema enforcement is not performed by the runtime config factory; schemas are therefore a compatibility/tooling contract rather than a command validation step.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/codegeneration/v2/dotnet.schema.json#L13-L24",
+          "version": "repo-lines-v1:sha256:352f5138510a72f843ab091ff50b2173e3ddef9ae42a3009ccdd5878863301cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjODc4OGYwNGU1ZTk4MTNjY2E0MGI5ZDg0OTkwNGY1MzBhYWRkNWUxMGFkNzE3OTVmMTA1MjNmN2I0MjI3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMmU4ZDI0ODYyNGJlYTczMWMzN2M3NjNkY2NkYjM2MzQyZjk0MzMyZTdiNGNjMTEzNzA4Yjk2Y2JkYTU0MTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwMzY2ODE3NzE4MzQwY2I1MmEzZWY3NWMzMmZmOTA2M2JiMDQ5ZDA0MDI2MmM3MDc3ODQ3Nzc3NmJhMTliMGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0MzZhMjExNzA0NzhlZDg4NWQ2MjljOThjYjA0OWQ2MDczZTA1YmI5OTI3Y2I3YTQzZWMxZjg0ZDQ1NjA2ZjUifQ"
+        },
+        {
+          "resource": "repo://schemas/codegeneration/v2/typescript.schema.json#L13-L24",
+          "version": "repo-lines-v1:sha256:e9c93705db4917f095fe03c10bb689595e74433f403e0b5c6277499c1a38ef80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjODc4OGYwNGU1ZTk4MTNjY2E0MGI5ZDg0OTkwNGY1MzBhYWRkNWUxMGFkNzE3OTVmMTA1MjNmN2I0MjI3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMmU4ZDI0ODYyNGJlYTczMWMzN2M3NjNkY2NkYjM2MzQyZjk0MzMyZTdiNGNjMTEzNzA4Yjk2Y2JkYTU0MTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlODIzYmE1MDUyZTI2YTBlN2I5YmUzZjM3NzZiZjIxNjJhYzJlNmNlNzg5OWViNTkwMjljZWZkOGFiMWI3MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4YTZlOGQ1ZjY1YWVhOGQ5YzUyNDkyMjU1NDNkZTNmNmZiZmU3MjM5ZTM0NDZjNzY2MzIyMTVjZjlhZDExMTgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L24-L46",
+          "version": "repo-lines-v1:sha256:1491d2243e9414be36352627e7839540aa428bf7d7b751698ae8d6ddb72c49d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZjYyYmNmOTc4YTg3N2NiMzJlMmZhYzY5MGEyNzA3NWUyZmU4MDVkY2NjYzczM2I5YWNmMzA5YTY5NDI0MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkNWQ1NDhiMDE0NzVmOTk0ZTc5Y2U4ZGYwYTg5ZDA1NDcyNGU0Njc4M2QyZDJhZWEzZDNjMWY3MjE3NTY2OGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MDg4M2RjYzQ1NWNiNGUwODk3NDkxNzMwZmVhYmQzOWM3MTRhYTRmYTUzZTc4MzA1YThkN2ViMWQyZjYxZmYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/CodeGenerationConfigFactory.cs#L66-L85",
+          "version": "repo-lines-v1:sha256:4d3a364fc772061374b8c827ea8bf9c6e0d5cc315629aea0bccaf8b2a67583e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwZGNjNjNkNWI4NjJjNjkxNzMzZGQ0MzBlZmM5MGNiYWI2NjVmY2RkYmU2OTViOTU0ZTJmNTlkMjc0MDhlNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYjQ4MWNhZjM4ZTQyMDQzZDY1ODUwMWQ4OGVlNjJiOTVjNWI0YjVjNjNkZDQxNWQxMzNkZTdjZjdiNzViNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhNDY1MmZlY2RjMjNmODVlNDQ5ODYzOTA3MjhlMmY0N2U5NWNkOTFlODA1YTc1NDRmZjFjMDFiM2YyZTY0OTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5ZGM2ODA5YTM1YjQ4MDYxNjI5OWQzMGYxM2NiNjM2ZmFhY2RmZThhMTI4ZjdiMmYzZjYwMzBjYmQ0YjA1OGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1927579b40634ba0a6cbfa248ec092dd",
+      "statement": "Before generator dispatch, metadata scope expansion mutates the configuration entity set by combining explicit names with published metadata matching the wildcard mask and entity components from each configured solution.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/CodeGenerationCommand.cs#L47-L62",
+          "version": "repo-lines-v1:sha256:b37f8205f9cc02f9aec3cef11c4e7eab306c45e53bc8bc049158ab67b8c19cf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MjAzOGM3YmJmMzFhNGNlNThhMTNlMGNjOTAzNTIyNDBlNTdmOGNkYzM5ZmI5YWRjOGFlZjc0ZjViNWQ3OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1NDIxMTlhZWFjMGRjZTAxNWRlZDgxZmE2Zjc3M2I0ZTlmNzBlZDY4NmExZDBjYTBmYTc2ODBhMTcxZGU5NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjMDAzNjhiYzMyOGYzN2QwMDNlMDVhYzJlMmUyMWI5ZjhhOGJmNmM3ZjBiZjIyMWY1YzRlYzViZTM0ZTNkOGQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Services/MetadataService.cs#L316-L377",
+          "version": "repo-lines-v1:sha256:3ea2c7242622b35bb874d55ba4c69465b29ac888c5c1719e4cdc710663ee2fbe:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NTRiNTI2MGVkOWRhZDBlZmNlZjRjZTgwMzE0ZmM4Y2M2YWY2MWQ3YTk4NWI3MDI3YmE0NTBjNWY5MmMyNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxZmY0NTEzMTBlZmU5MDU2M2UxOGY5ZTBjYzU5YmE4MWZkY2RiY2JiYmU2NzBiMTE0ZWQzYjM0MGEyOGM0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViZGFkNzE5OWI0OWQ2ZWEzZjk4ZjY5NjYzNGYzMjVjZjVhZDNlMDg0ZDJmYTQzNWI3MzU3YmVjMWZiNjA5ODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e5246913369844ccbe2ad77b37ab6772",
+      "statement": "Entity metadata retrieval is cached by lower-cased logical name and filter flags in non-removable cache entries and retrieves metadata as if published.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Services/MetadataService.cs#L44-L61",
+          "version": "repo-lines-v1:sha256:08fbb5d624211cbd647bc5a25290ac1a0e962ec876dcafad298dca796aef97bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNzc1YzcyMzcxMzAzMzNlOWYzYjE3OWVjYWY3YzFmYzFkMWZhMGVmMGMwNTlmMDJlMTk5YWMwMzUzMjA4ZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyNDJjZGU5ZmU3MTM3MDUwNGFiMzQ0NmYzYmVlZTFkYzNhOGRmNmMyNzIxNDMzYjc5MjdmMjAxMjNlNGZmNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2ZTRiMmU2OWI5NjgwZDhlOWJlMDE4NDJlOTNjZmNjMGJjMzVhMDQ1YmQwM2ZmOGY3NzczOTBjM2RhOTQyZTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88f048e39a414c7b9b790e7fab0aed0d",
+      "statement": "Requested operations are resolved as Custom APIs, then classic actions, with remaining names represented only as SDK-message constants; message-name retrieval merges built-in defaults, deduplicates names, and warns when a requested message is absent from the environment.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Services/MetadataService.cs#L379-L410",
+          "version": "repo-lines-v1:sha256:e9c8aee51d5007df6df17388bb67284cbe6e7e5dba120c5ac29031378e7c9db1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4N2E4MmJiZWIyMWE5ZWJkN2QyNDUwMzk5Y2FjY2NlNzI2NjBiODZlMmNkN2FlMTFmNTJmNjY2YWU5MmJlYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhY2YyMTk0MzIxZmY4Y2ZhOGJjMjE5ZDdlYzY0NjJmNzc5MDA4Y2FkNzg1OTJhYTM4ODc4OWFiZjgyZjJjNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMTdmMDcyODU1OWM3Y2ZkYjdlYzU3OGI5NWEzZmQ0OWNlMDQ3OGE2MDc4NzNhYWYxMmJkNDZmMWE0MmFiZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Services/MetadataService.cs#L420-L471",
+          "version": "repo-lines-v1:sha256:9b18ef869586658f55830dbb859868983bc21e0f4feaeaf40b96f57f380f1a8d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkZDQ1MGViZDY3OGQwMGRiZTZhODkzMDVmOTg5NDRhNGRhOTAwYWFkZjI4NTExMTEyOTQ3MWRiMTY1NDI2ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhY2YyMTk0MzIxZmY4Y2ZhOGJjMjE5ZDdlYzY0NjJmNzc5MDA4Y2FkNzg1OTJhYTM4ODc4OWFiZjgyZjJjNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2Yzc5ODYxNWI0OTU5NTRhM2JjNGE4NjMxNjhlY2EyM2U4Njg1NjdmMGUwMGE1MzA5NmQ5NWEwZGMxZjFmZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzMmI3YmIyMDgwODU2NDAxMjZiMTM2OThmMGM4Nzk1MDYyMzgyZjVmNTFmMzM0NDRjODFlNGEwNzQ0MjYzNWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_74185abeb7584314a939150944bdd0cb",
+      "statement": "Generated target directories are generator-owned: .NET generation deletes existing C# files (and enabled metadata XML files), while TypeScript generation deletes all files and subdirectories in its output directory before rendering new artifacts.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs#L176-L208",
+          "version": "repo-lines-v1:sha256:e26cf3b3b94fc44ccbeec13d2b5d01f6ffc55b634f1474f28325b494f6e10559:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYTkzMDBiN2ExNmJlN2EzMDgyOTI1NmVlMTQ2ZDViYWYwOWRkODI0ODZlYjRkNTk4YjM3MjQzMGY3MjA4ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs#L34-L52",
+          "version": "repo-lines-v1:sha256:47d020e570ee47b4d85cf8265e0f34a8b3ac51bd805b69acbd574e1e67e98f0a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYTBiMDZmYjU2NTllNzliOTBiZTM5MmJhZDE3MzVmYjNmZWRmMjRiNWEwN2JmYWQwMjljOTM2MGMyMDA0ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MGVhYTY2ZTVlMzFjNjE1ODAyN2Q3NjQwYzdkYTRhMjNjNDhiNDM1NGQ1MWM1ZDk1YzExMDdkNDBhYTU2Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMTIyODhlODUwYjVhNWUxNzExODQ3ZDY0YWY0MWI4MTY3YWM0ZGNmZDUyNWU0ZTQ1ZjJjNTA3NTRmNGIwZWUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/Strategy/TypescriptGenerationStrategyBase.cs#L70-L98",
+          "version": "repo-lines-v1:sha256:0bb22e9b301c7e464b323405c2e99cb4832b5bba92e6d7ad2a7fd0ab893072ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNzc1ZjlhYTMzYzU2MjI1ZDIzNGIxYzJlMjI2YmM5ZDUxOTNlZGE2ZjFlNTMzNDQ1ZDMyNTlhYjBhZjVjZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlZmZmNTRkYzU2YjJiZTk1NDZjNDUxNTllYTE2MDMwZDE3MmY3ZWVkNTBlNDA4MzNkMzljNjA2ODBlNWRiNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkM2NmMzdhZDA4NzMwMmEyMWEwMTQwNTJjNjY4YzZjNjNiNjAwZjU5ZjhhMzM0YzIzNTY4YmIwMWVhM2Q0ODQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_714617e3c5e74ec3bdb88444884e193a",
+      "statement": "V2 TypeScript is Light mode and renders entities, forms, option sets, SDK-message declarations, and opt-in parameterized Custom API wrappers; it orders entity generation and attribute selection to support stable artifacts.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Base/TypeScriptCodeGenerationConfig.cs#L6-L14",
+          "version": "repo-lines-v1:sha256:e0ceb2ed784587cb901bd762cc7c52825ba1b75c0750084e85be7c91660f8b15:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk3NzU2Nzc4MjU0YWQyZWRhYzg4OGIzOGZmNDQ0NTYxYTlkMjViOWQ0OTI1OTBmNjljNjI1YmIzN2ExMzRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmIwNGY4YzJmOWJhMWI5OWQwM2ExN2FlNzMyNWIyY2UyZjc1MGU3MzlmNGM4NjA2Mzc0YTA3OGVhMmZkZTM4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/Strategy/TypescriptLightGenerationStrategy.cs#L325-L333",
+          "version": "repo-lines-v1:sha256:431f7e9d3bf98029f42d7007c30571ff93876967df3f176ea8338391c26da6c1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI1OGVlMzAzNDU0Zjk2MDk3MjMxMjc4MjcyZGI5OGY5ZTFlNDQ4NmNhMTI0MzMxZGQ3NTkxZDE1ODhkYjM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTg5MDAwNjZlNmEzMjZiMTllMTk0ZmQ1YmMyZWFlNDhlNzAyM2Y1NjcxZDgzYzU3MDVjMDViNGVlZTU5N2U3YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M4ZGI3ODFlYzJlNmNmZWUwMDhkNWNjYjk1ZTk1OTFmMDA0MmI3MDI5YmFmYTQyMDAzNDFhZGQ3NWU4OTZmNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA1MmFjYTAxNTg1MWEzYWI2NzdmYjViYTA5ZTk5Mzg1YmFiMWQxNWRmNWJiYjk1OGZjZDE5ZTExMDU3ZmY3YSJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/Strategy/TypescriptLightGenerationStrategy.cs#L352-L378",
+          "version": "repo-lines-v1:sha256:c51ec2eef5319ca495bac230c3b46be046e692f2126122b81c27c4bd492f896f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNGEyNTczNjY1ZjkwMDgxZmI4ODc5MjEzOGE4ZWE0Yzg3MGU4NWVkNzYwNDMxOGJmZDdkZTMwODJjMTg0YTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYjJlNjNhNjFhZThlNDNiYzM1Y2IxOGZhMThjMDdiYzFjZWY5YjNmOWFiMWFkYzIxYWE1MDFjZjlkMTBhY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MjEyZDI5NmJiOTU2OTczNzZkMzEyOTcyMzExNjc3ZDg5YzA4ZmM4NmFlNDNkMDE1Nzk0ZmFhYmE5MjM3NjQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/Strategy/TypescriptLightGenerationStrategy.cs#L499-L540",
+          "version": "repo-lines-v1:sha256:a0d72bf276e3f47f193ae578c035289f2791931b3780d0f6b2c673b8e2f814dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMzNkMzRlMzNjODVkY2VkMTUwNTU4OTk3MmU3NTVlMWEzNzRiNDY1MjkzNTkzNTkzNjc3Y2Q2YmMyNWRjMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxYzZhZmIyYWQ5ODNhNDQ3OTNkMDk2M2YxNWZiYzFiNTYzZTBiMTFjNDRiNDhhYTExZDI4MzgzZmFhZmY5YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZTVkNWNkZDlkMTQyOWRkY2M5NDAwNWZiODViYTNlOWZjYjk3YjFmNWRmYzdiZjZiNDgwMGFjYjdiZThhYmEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/Strategy/TypescriptLightGenerationStrategy.cs#L667-L674",
+          "version": "repo-lines-v1:sha256:e7dbe2a8c7afb27d44e8bdc33a0fed4ffeb123beee5a55381ef7c732ae6e447c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDlkNjk3ZjIxYjJiNjk3OTI2NDMwNTk0MmJhOGQ3NzI4MWExMWViZTBlOWEzZTViNWUyMmNlZmI3Mzc4ZDM4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODVhNDc4YjM1Y2U5NWIxYTAyN2Q5ODY2YmFiZDk5ZWMwOTNlNzc5NGY2NmVmMzYxYjVlZGE4YzUzYmQ5NzBiNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODVhZmI4YTQ1YWY2MTU1MzI3MTQxYjJlNTE1M2QzZjEyZDUzYWVmOTg2MjRkNmViYWMyMmU0Mzg4NTViNTM4YiJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/TypeScriptGenerator.cs#L16-L20",
+          "version": "repo-lines-v1:sha256:ee27160da7287f6be6ece2dd9307c8c9a4c8811d39946f005b73d1eb12e057b7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI1OGVlMzAzNDU0Zjk2MDk3MjMxMjc4MjcyZGI5OGY5ZTFlNDQ4NmNhMTI0MzMxZGQ3NTkxZDE1ODhkYjM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTAyZmNlMTEyYzA2ZDQyNmU2NjY1NzFmNDI1ZGU2MDVkMWFiNDYyY2ExMjY1YWRjMGZiMmMxMjIzMWUwNmY5ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzdiYmZhMTZmYmI3ZjA5YzM3YWU5YWM4YjdhM2EwMzgyYTNkMzBjNjVjYTFhNzRjODhlOGVhN2EwZTgzY2Q0ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7b341fcdf7a46a7a1793be224c19e6a",
+      "statement": "The code-generation tests protect output compatibility with template parsing, strict TypeScript declaration compilation, serial/parallel artifact hashing, and generation of a Jest fixture whose consumer tests are run through the root `test:tsl-jest` script.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L70-L74",
+          "version": "repo-lines-v1:sha256:bd95eddbc5582519da3bc51f2446fe6c40c32a81db42708243b4bb95bab11810:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTA4ZjFiMzE4ODdjZTRlYTY2ZTQ4MjcyN2IxNjkxZTEwNGYyNWZlMTNhZmJiNWNkNzNiMjQ2MTEyNGQzOTNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE3MWE3YThhYzc2ZTY0OTQ1MjIzZGJlNTNlY2EzYjIwNGNjN2E2NzcwZDIzZjFlYTMwM2FhOWNmYTZlMTk2NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VjOWQ3N2RiNDAwODY0YjVhYzVjY2NkY2FlMzA2OTgxOWU4YTU3ODE3NWU4ZDg1MmYyMjliM2QxYjgyZWM4NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTJmODFlZmY4ZjVkODJiOTg1MmY2MGNhYzQ4YTk0MDI0ZjcxNWE5OWViMmZiOTMwZWM4MmNiMTRjYjg1NTVlYSJ9"
+        },
+        {
+          "resource": "repo://tests/dgt.power.codegeneration.tests/TslDeterminismTests.cs#L36-L66",
+          "version": "repo-lines-v1:sha256:486a86c609ade2bab7a1ed5fcdfa583abd490043e810b0135dfaaed2e633449f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYjI4ZmUyN2I0YTllZDQwM2U4OWVlODU3YjAyZThhN2ZhNDg2MGVlYzE2NmM4NzY2ODZhOGMwYzdkYWRjZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0N2E4OWQ3MzlhMDFkZGQyY2RkNzM4ZGZhZTQ3MWRjNmUxMmUxOWZhMjEwY2E0YWY3MzdjZTA3OTYyOGRlZGEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.codegeneration.tests/TslJestFixtureGenerator.cs#L35-L64",
+          "version": "repo-lines-v1:sha256:31df18e7fb8166749a356e0824a9bb64166cd747f31bcc6e5db942d99d247f48:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYjI4ZmUyN2I0YTllZDQwM2U4OWVlODU3YjAyZThhN2ZhNDg2MGVlYzE2NmM4NzY2ODZhOGMwYzdkYWRjZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzNjViMGIxMTlhNjgwMzVmNDk4NGZlNDNmOTk0MGI0NjMwMDhjZTcwMTJiNmI1NTRjYzc2M2IwZDNhNTRjOTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.codegeneration.tests/TslTemplateCompileGateTests.cs#L12-L47",
+          "version": "repo-lines-v1:sha256:8b9c325b43b3b072b4c1ea80a937649b75192391a16792a92120dded85c73a23:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlNjJiMTIwZTM0OWY1NmNhMzg0M2U0ZTE1YTZkMThiNWRhMDEyYjE4N2RiMzUxZTNlNzlmNDE3NmJlZTdhMTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxM2ZmMzQxYzhjMzNhOTljNThmYTQ1YjcwYjE5ODk2YzIyY2FmMTZhNTI4NTkxOGZjZDM2N2Q2MDIxZDQ1ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.codegeneration.tests/TslTypeScriptCompileGateTests.cs#L35-L85",
+          "version": "repo-lines-v1:sha256:9f20f93710ed142cac2a65dcfcca88520124c2ef3ce23338fb9cb1097c5fdbef:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYjI4ZmUyN2I0YTllZDQwM2U4OWVlODU3YjAyZThhN2ZhNDg2MGVlYzE2NmM4NzY2ODZhOGMwYzdkYWRjZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3YjVlNTkwYjEyMDBkNTIzNTQzMTY5NmY1ZTE3M2RlMzFmMmI2YzU0MGIzNmU1OTUxMzRlZjA2YmJlYWMzODIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

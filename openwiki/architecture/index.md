@@ -1,5 +1,5 @@
 # Files
 
-- [Dataverse connection and identity management](dataverse-access.md) - Connection selection, encrypted local identities, MSAL authentication, and non-interactive safety for dgtp commands.
-- [Dataverse models and transfer contracts](dataverse-contracts.md) - Ownership boundaries for early-bound Dataverse entities, manual model extensions, and JSON DTO interchange contracts.
-- [DigitallPower CLI runtime and command surface](overview.md) - How the dgtp executable composes services, resolves configuration, registers commands, and maps failures to exit codes.
+- [Dataverse connection and identity management](dataverse-access.md) - How dgtp resolves a Dataverse connection, persists local identities, and authenticates through connection strings, MSAL, or Azure DevOps workload identity federation. Covers verification, non-interactive behavior, operational commands, and failure semantics.
+- [Dataverse models and transfer contracts](dataverse-contracts.md) - Defines the boundary between generated early-bound Dataverse entities and persisted JSON DTO artifacts, including mapping, compatibility, and reconciliation obligations.
+- [DigitallPower CLI runtime and command surface](overview.md) - How the dgtp global tool starts, resolves layered configuration, composes services, exposes its shared command model, and handles execution failures.

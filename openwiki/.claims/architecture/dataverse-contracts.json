@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d2208b31a11b82c094e1e8d17de8860f62308aa9483a0b66ff71f645bacdc08c",
+  "claims": [
+    {
+      "id": "claim_61c29091d5e54c0eb5e8d70137cbf6ce",
+      "statement": "The common project separates generated `dgt.power.dataverse` early-bound entities and `DataContext` from the smaller `dgt.power.dto` transfer objects; export and import modules both reference that common project.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/DTO/Queue.cs#L9-L56",
+          "version": "repo-lines-v1:sha256:3112110d96e514f839193cac14660fcf1194decd4824f8cb83f957d6f286c18a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwMDIwYjNiOTRkZTQ2OTQ5NjY3MGIwZTg4ZWM2NjU5NjUxZmUwMmExZThmZjk4MzBiMTc3ZDJhNzc5YzVjNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkOGNkNjVhNzAzMWQ2MTMzNWEzNDBlNjgyZDE2ZmQ3MTM5NzU2NmM0Y2EwY2NkMzZjM2Q0NTM3OWYxOTI4MzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwMmEwOTZiY2ZiNTU3YzRmMTQ2MmU1Y2U3YjBmZGExZDM5ZjQzMjZjYTkzMDI3MGU2MjJkYjNiNTY0MDBkNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/DotNet/Queue.cs#L13-L25",
+          "version": "repo-lines-v1:sha256:b1ee214464cb469b9a654ef79123db5180acfa4fb73ad2c7bfe0eb4d9cfbece7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ODFkY2ZiMmFiYjM2Y2QzZmVlZTIzYTY0OWE4YjdkODg0ZmMwMjQ3Mjg0ZTkwMGYxMjNhNWJkODNmODFkODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMGRkNjk3MDFkODhmYWY0OGYyMGJlNzk1NDE3NTdlODhmMjJiMTY1NGM2YTIyNjUxNWVmMDBmMDNhZmNjZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMDI1MTcwODBlYjE2OGJmZDEyNmVkYmE3MmJlN2M3ZWQ5YTA5MjYzOTc2ZGQ3ZjM2NTU0MDQ1YjQxYWFlMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2OWZlYWYwZmVhNTVhODBmYWMxMWYyYTdmOWM1OWU2N2FmM2VkNTcwMzVhN2M1YWU2NWIxZDk3ZWI0ODg3ZTgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.export/dgt.power.export.csproj#L18-L20",
+          "version": "repo-lines-v1:sha256:59d2bdb5a348576ba28a16bd67f4c22a54458583ab74c1ac43663640a57179e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg0MTQ4ZDIyYTU4MmUxZjVjN2FiZTVkYTc3NDMzZTBiODQ2M2ZiY2YzZDJhOTIzZTljOWQ4OWMxOWJlZGZkYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiMjA3YTRhMjhjODFhMTk4Mjg1MmM1YTFkNTIyYjkzMjRhZjE3NjM4MjRlZTQzOTdlYTY3YzI3YTk5MDdjOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTIyZjljMmQyZTUzNzdmNTc0OWM0OGMwZmFhODEwMTBjMjgyYzFmZDEwYzIzY2I5MzU4ZjhkY2JhMGI0NjRiYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzk3NjRiNDA0ZGUwMjJjY2FmYTg3NWVkMjE4MGQxMGNjMDg4YmY4NzcyMWM0YzQ2ZTlmOGJjY2Q2M2ZmNmEyZSJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/dgt.power.import.csproj#L24-L26",
+          "version": "repo-lines-v1:sha256:bc30084b3594632f40f0b64d5f0cb9fcee926918ca0535662be5eb82635ae8ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2NiZWJmYjQ2ZjEyOTkxYWU0ODhlZWRiMzQxNDAyOWFiMWY5ODA3Y2RjMDllZjA2ZjNkMTBhYzk2YjI4NmJlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RkYzE1OWJiNTk3NDk4ZjUyMmU3OTM1YzgxMjE3YmVlMjc5NzI4NmUwM2Q2ZGVhZDZhZTFkNTI2MjVlN2U2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmNjODI4MmU4ZTVlZTVhNzA4MDRmMWNiYWY4M2FkMWQ2YjFhZmIxMGFiOGUzNzM5NDFjNzhhY2EwNjc2YTYwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODBiZGM1OTdlNjlkMWU0NzgwNDllODE1ZDA1ODYxNmYyODE3OWIyYzFlOTRlODlmZjJlZDNhZjI3NGI5ZTBhMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6739d86f4b341a9b7af0fad118fd7bf",
+      "statement": "Early-bound Dataverse code is generator-owned output: the entity classes carry `GeneratedCode(\"dgtp\", \"2026\")`, and the .NET generator deletes existing target `DotNet` C# files before generating context and entity files from retrieved Dataverse metadata.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/DotNet/Queue.cs#L15-L25",
+          "version": "repo-lines-v1:sha256:bdfd0119afb9b58749a70db48e066c7a8eb4a1694377bb2ed67c84e534f0cd1f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwMDFiMzliYjhmYmRkNzBhZWY4MjUzZjQ5YzNkMzU0OWVkODNlNDBlOTY4MDg2NjAzM2Y1NjgyNTA3NTY0NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMGRkNjk3MDFkODhmYWY0OGYyMGJlNzk1NDE3NTdlODhmMjJiMTY1NGM2YTIyNjUxNWVmMDBmMDNhZmNjZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4M2I0NDc2NzI0MDY4ZThmYzM3NWUwMGFiMzA0OWZhZTU0ZmVjMDc1NDQzOWYwNGIwNTY3ZTEwODQwMGUxM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2OWZlYWYwZmVhNTVhODBmYWMxMWYyYTdmOWM1OWU2N2FmM2VkNTcwMzVhN2M1YWU2NWIxZDk3ZWI0ODg3ZTgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs#L121-L173",
+          "version": "repo-lines-v1:sha256:5050848638dc973d9c918043ed9ad5b6e570be6dd58782beef22afaf3d1ecb52:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5YThjZTEwMzcyNDE3MjRiMzFmNTAyYWQ5MGIxMmU5NjU0Y2I0OGRlNDVhNWMzZDEzYjM4NWJkN2NkNDNhNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0Nzg5NDZkNjhhZTRjODU0YzYyMmY1NmE4NWZlYjMwN2ZjZWU5MjkwNjFlYTcwYzJkY2UyYjU1M2Y0OTE3ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0NWU0YWI0ZDVkMDgwYTk3YmQwNDcyNWQwMjQzYjgzNjc2MDY2NmM4NDQ0NWI2NjFiNWFmNDNkODcyZTYxN2MifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.codegeneration/Generators/DotNetGenerator.cs#L34-L52",
+          "version": "repo-lines-v1:sha256:47d020e570ee47b4d85cf8265e0f34a8b3ac51bd805b69acbd574e1e67e98f0a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYTBiMDZmYjU2NTllNzliOTBiZTM5MmJhZDE3MzVmYjNmZWRmMjRiNWEwN2JmYWQwMjljOTM2MGMyMDA0ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MGVhYTY2ZTVlMzFjNjE1ODAyN2Q3NjQwYzdkYTRhMjNjNDhiNDM1NGQ1MWM1ZDk1YzExMDdkNDBhYTU2Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMTIyODhlODUwYjVhNWUxNzExODQ3ZDY0YWY0MWI4MTY3YWM0ZGNmZDUyNWU0ZTQ1ZjJjNTA3NTRmNGIwZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78f46dde07e249f2a6b7f43b470c8e17",
+      "statement": "A partial extension is the explicit escape hatch for metadata absent from generated entities: `RoutingRuleItem.MsdynRouteto.cs` adds Customer Service-specific `msdyn_routeto` and the polymorphic lookup type to the generated partial class.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Extensions/Dataverse/RoutingRuleItem.MsdynRouteto.cs#L10-L67",
+          "version": "repo-lines-v1:sha256:db25d5b7d69698cee24e848e9f457cd56471e851e19247bfa217ca7ba329f760:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1MWM3MGY1MGNjZTkxNjU5MWM1ZDQ0OTViZjAxZGM4YjFkMjQxZDYxODQyNzEyNTlkYzE4ZTg4MjgwMTZlYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3511a89203d64aaa9cdb594eabfee2c0",
+      "statement": "Transfer JSON compatibility is artifact-specific: DTOs pin JSON property names, queue artifacts require a `queues` wrapper property and use typed enum fields, while calendar DTOs use differently cased property names.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/DTO/Calendar.cs#L8-L25",
+          "version": "repo-lines-v1:sha256:8fbfd7e0616a6b0acfa1e6ce1225537aa5ee329e506ce6e150d0016709087d78:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0OGRkZGUzMGM3ZjQxZjU0NGEzYzVjOTBhMjM5MWIxNjc3N2MxMjRmZTJmYjE1ZTFhMGE2NTI4OGQ2OTNkNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkOWU3NTc3M2MzOTM4YzExZTIyYWNmOTY3YzVkZWY1Y2ZiZGU4MTZmNmEzY2IzMTA1ODM2ZTk2ZTA4MzNmODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwOWMxOGEyYTdkMzI3NmM5NTA4OWQyZGRlNTdhN2M2OTc0NjUyZTIyYzEyNWUzMmQ3MDhlN2U5MjgxNDZkZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/DTO/Queue.cs#L11-L56",
+          "version": "repo-lines-v1:sha256:b75c30fcadcee4fef5296917ff1cf4d699e68d8bb46f79b768c80c83838fa413:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiMzJlYmEzYzllMDk2NThlZmMzODI0ZWU0Mzk5ODVmMjllMDVhMjNlMGE1OTM1ZGYxMzRiYTU0NDBkZjg0N2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkOGNkNjVhNzAzMWQ2MTMzNWEzNDBlNjgyZDE2ZmQ3MTM5NzU2NmM0Y2EwY2NkMzZjM2Q0NTM3OWYxOTI4MzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwOWMxOGEyYTdkMzI3NmM5NTA4OWQyZGRlNTdhN2M2OTc0NjUyZTIyYzEyNWUzMmQ3MDhlN2U5MjgxNDZkZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/DTO/Queues.cs#L8-L12",
+          "version": "repo-lines-v1:sha256:1c5add104be45e99e7d624ed61c9bb6bed18c6d802007ee24b08dc3acbbf5971:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTY2NWJiY2NhNGQyZDdiYTc1MTJjYWFmZWJlMmVlZDE1ZGMzODM4ZGM4YTYyNzVlYzVmM2Q3YWE4MmEwMGU3YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGJmOWUyZTRiZGY2MDFmZmVjYTM2NjZkNzQyYjJiZDgzZTY3OGI4NzhiMjM4YzFlNzA3ZTA5ZTUwMzg3Y2UwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTA5YzE4YTJhN2QzMjc2Yzk1MDg5ZDJkZGU1N2E3YzY5NzQ2NTJlMjJjMTI1ZTMyZDcwOGU3ZTkyODE0NmRkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_61da23a36b0f4ad28b395de5d8655c73",
+      "statement": "Export and import use camel-case string enum conversion; import additionally accepts trailing commas and caches successfully parsed configurations for one hour, making persisted artifact names and enum members compatibility-sensitive.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/ConfigResolver.cs#L13-L19",
+          "version": "repo-lines-v1:sha256:a2efe5488845ad25d4cc79a040a45621da9abede73440603322e6588f3cf5456:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGNmYTlmNTE4N2QyMGNkM2M5MWRkYWM0NmRiZmM0ZmE0NTQ2YWUzNGM3ZDEzYTU0ZmNhNDE4MzQ1ZmVlMTZlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ5ZTEyNTQ2NDI1NTc2ZDNkZWFlOGM5YjlkYmYxMjhkNWQ2ZGRhZjVkN2ZlODU3OTM0OTI3ZGVmZmEzYjlkZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgwNDRiZDFkOGMyNjUxYjM5OTVmMGQxMzE0NDU4ZDExZTM0ZjcyMzVmODk0ZmRjZTQyNTM2OGQ3ZWM0MWRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzY2YzZlMDg2ZjkxMjA2MTlmYmI5MTQ5ZDNlY2E3MTI5M2UyM2RiZWI1NWQ2YWI5MDBhMzMxYTBhMjU2Yjc0YSJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/ConfigResolver.cs#L47-L65",
+          "version": "repo-lines-v1:sha256:08f4fc34605e0a210b69fda80bfab4d1c4145944f9d228d44e2452f71e0c0f01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMDBmNmNmNDFhODhlOGMzMDRiNjIyMDBiZGQ5MjgyYzUwMmY4YTJkNjZhNmEwYzFlNmNlZDg2ZDg5MDVhODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhY2YyMTk0MzIxZmY4Y2ZhOGJjMjE5ZDdlYzY0NjJmNzc5MDA4Y2FkNzg1OTJhYTM4ODc4OWFiZjgyZjJjNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.export/Base/BaseExport.cs#L23-L34",
+          "version": "repo-lines-v1:sha256:5f92794dc0c6b5442b867e3dab80a7529326857355e4ef55c488a249ed79fb2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMjdkNmYwOTA0ZjJiMGQzMDE0NTBlN2ZiZmUxZTdhMWUwOWMxMjkxMzM4MjYwYWVhN2FiZmJmZjc4OTJiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZjZiNTY3OWMwZGFlNzVkNmRjOTI3ZjYzN2Q2MGMxZGJlOWVkZjA0NjU1MzgzMzkwZjZkNDIzYTJkNDhmM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzZDc0MmVlZGEzYzE3MDM0MTQwM2M3ZGFlZTgwNDdhMzBjOWYwNWU4MTViNDllZjJlZDJlZGM3MGE0ZjI1ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlODYzN2JlNDkzNTY1MzA2YTQ0YTI5ZmEwOWUyNzI1ZDIwNGZmZTJiNjgxMjZiNTM0MDY3ZDFkZDRmMzZmNTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c27053eae244460da0d1159b183ad6b6",
+      "statement": "Queue export filters angle-bracket system-looking names, pages results in batches of 5,000, maps selected queue fields to a `Queues` DTO wrapper, and defaults its output filename to `queue.json`.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.export/Logic/QueueExport.cs#L32-L107",
+          "version": "repo-lines-v1:sha256:32118a6a390c054c9d37696390f1ef6f77ee4230eae83a3f1fc580c6c8b79c8c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMDcxZjdjNzJhZGYwMzQ2OGIzYzQyMTFlMzJkMTVmMTNhZDFkOWU0ZTBmZjQ2YmM4OTMxZjllNTlhNTUyYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Y2RlYjM0MTI3NzgyMWI2OTA4Y2ZiZTllNGU2YTQzZjU3MWVmMzk5ZDJlZGQ0MWZlOWJkMzdlOGQ4OTcxOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyN2FjMjMwNGE1NWI1MzA0ZjA5OWM0MmQ3MTFiNWU2YmMxNmRiZjMwN2JlYjA2ZDRmYTcyZGJhMzk4N2E3NGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4ZWY4YTI1ZTU4Y2I4NDBlNjc0ZGVkMTYwN2YzMjFjMmY4OGQ5ZmQwYTAyZGM3MWIzYzQyNjYyMjljZGY4YjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_427447ea5a344bff902ad79c8f6b3574",
+      "statement": "Queue import is partial reconciliation rather than full synchronization: it fails as not configured for unreadable or empty input, resolves artifact `owner` before `--assignee`, creates or updates queues by ID, does not delete unmatched queues, and intentionally excludes email-delivery methods from its unchanged comparison.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.import/Base/BaseImport.cs#L19-L28",
+          "version": "repo-lines-v1:sha256:d826fbf424bb93eb3f21b7b0012f3d146a51ac38c40635bfaf190c34d4e906ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkZTBlOWNkMWRhMzYzOWMwNmFlZmVlMmVhNzQyMzZiNDY2MTI0YjQzZWE1MTU0MGMyOWI0NWQ5ODg4NmNhZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZTM3Yzg5NmVlYmFlMzg4ODU5MmUwOTgxMmI2Y2ExYmUxNjUyMzZjZWM1ZDEyNmI4NTZiZjY5ZjdlM2RiNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/QueueImport.cs#L104-L150",
+          "version": "repo-lines-v1:sha256:7d9ed8651726da75384acbc9d208bcb7363b66ca7aedbc58d79c8b96a2702aa0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMmE5ZDIwZTQ3YWFkMTM3YjI4YjhjNDA1OTM0OGJhZWM5ZmZlZjI4NTgzMWY3NTY5MTExMWNlMGU5ZjdiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhY2YyMTk0MzIxZmY4Y2ZhOGJjMjE5ZDdlYzY0NjJmNzc5MDA4Y2FkNzg1OTJhYTM4ODc4OWFiZjgyZjJjNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2ZmMxNWFhMTVjYjc4NmY1MjVlNzA4ZjM0OWNiZjBjYTNlZjg4YjQ3ZWRkZTk0ZDEzOWU3MjlhZjliMWU0ZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjZGZlMWY2MDQ1ODc3M2UxYzFlMDM2ZDQ4MWI4Y2M4MWNiYmQ2ZDA4YTFkNDExOTgwMjkzODU4YTc5Mjg1MmYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/QueueImport.cs#L228-L250",
+          "version": "repo-lines-v1:sha256:833aa1cac767dbacb1e485a8251301a88b8531653fd52550d3c954e0b6180985:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0OTFmOTliN2QxMzAwZDQ1NzI3MzFhNmEwY2JiODJjZjUyODIzY2Y1NDQ1YWExY2JhYTU1OTA3YzNhNGYxOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNzc1MzdlODI0MjEyMTI2OGQ1YjgwODIxMmM1MTMxOTgwMTIwYzQ3ZTZlMzlmM2QxOTM5NzBkZDc5MjAzOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMmMxYzBiMGE5MjM3YjNkZDU4MmI4OWZkZjE3ZTgyODQxNjhlZWYyMWVjNjZjZTRhNTMxYTA3NWQ0ZWI3ZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/QueueImport.cs#L31-L84",
+          "version": "repo-lines-v1:sha256:10ffc0c14cf8c2d28761d2ad5c63d3c1ca722bc7378c1bc17774d85ca0e4892f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNzM3MGIwOWUzZGVlMzZiMGVjY2MyODc5YzgxYWMxZDc3MGNmZTc0YTE1ZjYxMGZkNjA0ZDA4Y2M2MmNhNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZDhiNTNkYmM0Njc4YTk5MDFkOTE0ZTZiOTM0MDljOGY1M2ZmZDQ0MDlmNjZiYjUzZmYxNjJkYWUxNjQ1NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjNjUyYjYyZTY1OWFmYTA4NjRiNGQyNDc3OTZhNTI2ZmM0ZDE3MDk4OTcxY2YwNzMxOGYxOWEzNzNkZjYyMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMmUwMzY4OTQ3NzhlYmRjOGE2NmFmMTZlYjI4ZWVkZDFlNTFiZDY2ZDdhNzE3ODY3OGQxZmRlY2Y5NGMwYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_46967167aeb741b397d441b9998774ea",
+      "statement": "Queue ownership assignment is not transactional with creation: after a successful create, a failed alternative-owner assignment makes the command fail while the created queue remains; this behavior is covered by the import test.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/QueueImport.cs#L69-L82",
+          "version": "repo-lines-v1:sha256:3020a1384f096972d84d54169d80e8bffc5102be7853cc78f67182b2876f8baf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0YjBmOWRmYjViMDIzYWIyYTk3ZmQ2OWIwZTc0Yjg5ZjkyM2NhZGQ0MzcxYWJlMzcyYzE1MzA1ZTZlYTY5NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlNTE1OGM3YmQwNmQwNmM5Y2ZiMWZmYTA3MGE5ZmQ1YWYwYjU3MDVhNTU0NjRjM2RlZWZkN2JmMzcyMTU1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNTVjMDIxNmI0ZTRkMzc2ZGQ2NDA2Yzk1NjM5ZjBlNTMyYjE0NjQwZjc3MTZiYzQ5M2Y1YzI4ZDE4NDIxNzUifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.import.tests/QueueImportTests.cs#L39-L68",
+          "version": "repo-lines-v1:sha256:881d44891f775b879e3be53cc910d3b960a5a1bee8231fb2a3f02e8c47f09a0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MmQ2MWY0ODg0NDQxYTFiZjZmOTJmMGE1MDUzOGUxNDk3ZDY3ZjNiMDI2NjUyZTg3MTI2ZWViOWM0NzhjNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1Y2NlMTdkYWZjYjBhZWEyNTljNmYyOGEzYmI0NTA0M2FlZGM0YjVhNDQ5ZGE1MmVmNmVlMzU0OTcxMDI3ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NTk2Mzc2M2JhZWFhNWI3YjA1NzA0ZDM4MTYyNDA5NjFhOGI4ODMxYTUxY2ZjMmM0YjY5YzQ0NmQ2YWZmY2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5bd06a0de2e546ea979461fa71298a6d",
+      "statement": "Calendar transfer preserves nested calendar-rule structures but has artifact-specific limits: export marks weekly recurring structures as `IsVaryByDay`, and import processes calendars in descending type order while skipping updates of existing `IsVaryByDay` calendars.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.export/Logic/CalendarExport.cs#L48-L119",
+          "version": "repo-lines-v1:sha256:f46a37381df65b5ac2e4118157550e6834c930aaaabc802ceccb842b031a277a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzYzE5YTU3ZDk1MTMwZGM0Mzc3ZjQwZTM5ZGRlZDQ3NzJmYTJmYzIwN2MwZmQzZGJkOGRkNTk3M2I1NjhkZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2Y2E2ZTVjZTg1NTgzYjkzMWY4ODk2YzE4NDBlMzE3NzE5YWE4NGQ4ZmJiOTcyZjQyNDEzMzNjMGJhZWYzNTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwOWRkMGIxYzBhZTc3NDY1MjQwY2NlMDM5N2QzODk1NmVjZTM3YjE2MjlmZTNmM2FiMzc3NWVhN2E2ZGQ5NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZTZmNmE5YmRhNmYxNmYyOTFlMTI1ZTdmYTE1MWIxMGE1Mjc0YmUxMjMwOTlmOTg0OTllMmMzOTMwMmExY2EifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/CalendarImport.cs#L46-L75",
+          "version": "repo-lines-v1:sha256:85c35aca0801a156c10e627a1783c28132d3f4b32bea7c2a28244c6449010761:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMTIxM2M5MWRiNjZjMGQ0Y2E2ZDFhMzQ3MjFkMGMzMGI0YjhkODM5NjdkMDNjMWIwMjM5NjM4YjYzZDEyNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxZDVlNWVjZWI0M2U4ZjM2ZGM5NWM2NTgxODM0ZWRhMzc0ODJiMDkzZDc2NGU4ZTM1M2Q1YjUzZDE3ODY3MDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNTVjMDIxNmI0ZTRkMzc2ZGQ2NDA2Yzk1NjM5ZjBlNTMyYjE0NjQwZjc3MTZiYzQ5M2Y1YzI4ZDE4NDIxNzUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/CalendarImport.cs#L80-L141",
+          "version": "repo-lines-v1:sha256:021bf784768f1efce185f2f5fd02c938d2f72fcad9a772c14be85811e1952bf2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3Y2FmNGQzY2Q5YTUyN2RmMmQ5MTdkN2VjNWRhZjhkMTQyYTIxN2U2MWU2YjZiY2Q3MjViYzk2MjBlYmZjN2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlN2QzMTRlZmQzMWNjNzQzNWY1YTBhNDFlOWY4MDU2MDU0OTMxYTQ4YmM2NTZmMmM2MmU3NWEwMDE3MGNjZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlN2FjODBjYzY0OWMyOWM5ZTA5OWRlZTdjZGQ0NzI5ZjI3ZTdlOTQ5YmM0NTQwZjI0Njg0MThlMTJiMjgwMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlMjdlMGFlNjNmODgzM2FkOGQ1NzM0NGE4MDcxY2NkNGZkMGYwZGFiMjA5NDZlZDNlMGIxODUyYzEyMjc5OWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c5087d0abf1f4f0581404467e97fb802",
+      "statement": "Artifact reconciliation rules vary by artifact: document-template import disables target templates absent from the artifact and matches them by name plus document type, while routing-rule import fails when the referenced target rule does not exist.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/DocumentTemplateImport.cs#L54-L85",
+          "version": "repo-lines-v1:sha256:6a8dbbd02c24e5e8ddae504f48a5644b3a6eb20654aeb79b5f25fbdd3494663b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZjcwNmZhZmM1ZWJmNThkNTgxZThjNGU2NmY5OTg3ZGM1MzYzOWYxNDZmYzM4MWI5MjQ3ZTNkN2FlMWFkYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZDhiNTNkYmM0Njc4YTk5MDFkOTE0ZTZiOTM0MDljOGY1M2ZmZDQ0MDlmNjZiYjUzZmYxNjJkYWUxNjQ1NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxZDVlNWVjZWI0M2U4ZjM2ZGM5NWM2NTgxODM0ZWRhMzc0ODJiMDkzZDc2NGU4ZTM1M2Q1YjUzZDE3ODY3MDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MjFlNDljODE0OTg1MmM2OWY3MDczZTRjYjllNzhjNjE0ZDY5MTQ0NDcyNjA4NGE4YjY0MzEyMmJmMmZlYTAifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.import/Logic/RoutingRuleConfigImport.cs#L57-L69",
+          "version": "repo-lines-v1:sha256:b77351c611996f6e5f4101c0d92d633f741553edf656f61078714e77b0b70085:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4OTYxODhjZTg4NDgyNTNjMzYxN2VmMTUxMDY0YmI3OTVjMDdhMDQ2M2QyYzNkNTVkOTQ0MmIyN2IzYThiYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlN2FjODBjYzY0OWMyOWM5ZTA5OWRlZTdjZGQ0NzI5ZjI3ZTdlOTQ5YmM0NTQwZjI0Njg0MThlMTJiMjgwMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5ZTYxMmJiN2EwZGE3MTgzMDEwZmIzNmE3MjgxNzdmNDg4MGNhNTQ2Zjg4YzE0Yjk0NzViNmIwMTQyMjU1MmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88f503dc92474b97bc92b54e8c3f42ad",
+      "statement": "The CLI exposes separate `export` and `import` command branches for supported artifact types, including queue, calendar, document-template, routing-rule, SLA, bulk-delete, and user-role workflows.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L132-L146",
+          "version": "repo-lines-v1:sha256:25312dde2a9b4e1a198e4145a3c45ef631ad3c788759902d0be52fcd71a12ee0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkNDhiZTA0YTliYjg1YjkyZTVkMTYwNzdkYmUwYTU2NGE4ODYwNDAxNTAxOWFkNjdkZDQ1ZjE1ZjNkNDgzNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDkyZmJhOWFiZmVkN2U0YzliODlkOWEyMmI1YmJhMjM2MWE1MGRhMDJmZGIwNjU4ZjhmM2EwNjQxYzZiYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhMzg3MzdiZTgwNzI4OTBmNWE0MDAxYzk4MjQwZDVhYWZkYmY0ZTBkYWIwNTkzM2Y0YzQzMGY4ZTA0OGFiNmEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L48-L70",
+          "version": "repo-lines-v1:sha256:f2d585c9a0d5ce7f5ada9827d8b43003ed539dcc45105c72424e7934e23648f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwOWFlNzZiNjkwM2FiNzUyZTAxNWQyMjNhODIxYjIzZDZmZTgxZTc0NDFjZmZhMjM1ZjFmOTdiN2M1ODRiM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyZDUyMzAzY2Y3ZWNiYjU5NWM5MzU2OGI5YTE4MDVmNzQyZTA4MDVhOWUzN2ViMzg5MjI0MDNjMjJkZWU0ODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzYjdhNzM4MmQzODczNWZiYzE2YTYxYzE5MzIxYWY0M2EwNWVlYmMxODcwNGE4MDRmMDBjNDgwNzY4MzQ3ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6bd30dcca2944640a854f8a309fc2e6a",
+      "statement": "Focused transfer tests cover queue export filtering and default naming, queue import input/create/update/assignment-failure paths, and calendar nested-rule create/update paths.",
+      "evidence": [
+        {
+          "resource": "repo://tests/dgt.power.export.tests/QueueExportTest.cs#L71-L89",
+          "version": "repo-lines-v1:sha256:4a6271852936e1d028f5bd2c62a5c4722682b86f939ecf241f0f8933565906ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmNTdlODFlMDQ1MzBjMGI5ZDQzNTVhODYxYjJhNmJkM2NmNzU0Mjk2MmIzMGE1ZDk5NDNhMzkyNDNhMzI5YzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.import.tests/CalendarImportTests.cs#L37-L122",
+          "version": "repo-lines-v1:sha256:dc72a9a56c92db911b505a9333bf19b7ed8d368f3c0c42e2bfffb06adde76d82:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1NTcyMDI2NjNjYTY4ZTBjOGM2ZGEyZDc1ZWM1MTA3YjdhNTcwNTZiYzdjOWZiNWEwZjM5MTA1ZWM1MDVlMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.import.tests/QueueImportTests.cs#L20-L218",
+          "version": "repo-lines-v1:sha256:2af6d04ee9306bb872ebc671fed9c22a03ed5768701fa0a2f3dc820d397ec2d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2MDZhMDk5ZjA5NmEwMWY1NmYxNDA1NzY1M2FlYjg1MmFmY2NjMWFmMzVjZGQwNjk3NWJhYjE5MGM5NmZiYWJjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNjZhZTUzZjQ2NDY4MzJkYmQ0NzI2ZTEzMDUxNGE0YjhhOTA1ZTJjOGM1ZjM4YjdmMmZhOTc5M2JjYTYwZjUxIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

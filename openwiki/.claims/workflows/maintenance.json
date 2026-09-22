@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:bc9f27117f1987228c16616744a2a1195858ae2a8f11d9e110c6576fd4c0d073",
+  "claims": [
+    {
+      "id": "claim_6d2ab13fd91c47a7a71f1fb6d627767b",
+      "statement": "The `maintenance` command branch registers ten operational commands: bulk deletion, metadata and solution maintenance, workflow-state config generation and reconciliation, PowerFx filtering, SDK step state enforcement, and carrier reporting.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L72-L110",
+          "version": "repo-lines-v1:sha256:fd1f532761bd94ada1e8c8f6c687405bce536199ab673e4b9087c7b56312d3f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzk0NjMyOTkwMGZjMTE1YTkwMDZkZGE0NTQ4NzFjMDZkMmU0YTdiYTI1MTFiOGFmNDk4NjUxZmRlYzQ2ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNDYyYmQ4NWVhMzUyMjgyMmE5YWQzZWIyNDA5OWIwMzJhMWI2MjdiZWNmZDdjNTgzMWU5OTI3ZDRiYWM0MGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YjQzYzhjZGUzNGE2MTc2ZmEyNTU1MDJjZmY4YTJlZTk0M2ViNTllMGYyYzlhNzAwYTVhNDc0NTdmZDM3NjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyODVhZDAyZThiNjQ0ZmJiNGIwZWE4MTcxMjYzODFlNjU0ZTJhYzJjYmU1MDIyMzI4YzE5Njk4NDU0MmFiZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_140f137b3d66402a97e37dc079c98361",
+      "statement": "Maintenance commands based on `PowerLogic<TConfig>` map a true result to process exit code 0 and false to 1, and `--non-interactive` sets `DGTP_NON_INTERACTIVE=true` for the command lifetime.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/PowerLogic.cs#L27-L44",
+          "version": "repo-lines-v1:sha256:96cd58672ded1cec2c400d20bff2a3761e7b126a7aef4f9e0a72689f11fb3ef7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZGI0NjM0ZTYzMzczMGJkOWViNmNhZTk5NmU5ZjIzYzdmMDNkMmZiM2ZlOGIxZGZjODNiMTQ2OWU3ZTAzNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YWFlZTEyNDI2OWFhZTY1ODNkMmZkY2U1Y2UyNWRlZjVkNDllMWJiNGU3NzdkNWE2OTcxMmFmNWVjMmQ2YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NTcwOTNjMzcwNmJkNjlkYTZmZTk0ZmNhNjAyNjY5N2NiYTYyNDcwMjc3ZjY3M2Y3M2E0MGY1NTkzNGY2NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_79f8e02ad87c468d9fcbb09dff2c65cb",
+      "statement": "`bulkdelete` converts supplied FetchXML to a query, submits an asynchronous `BulkDeleteRequest`, then polls the async operation after each configured `pollrate`; only a Succeeded status returns success, while canceled and failed statuses are terminal failures.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/BulkDeleteUtil.cs#L35-L59",
+          "version": "repo-lines-v1:sha256:f0724918f341f2afc5b560562dd3b1f001afc60595f3104702dd7ba1d52ac1f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0ZjE2ZWE1MDUwYzAyYmJmOTVlZTg0YjU0ZmQ3ODRhNTc3Y2Q1YWZhMmQ1ZTQ3N2YxYzVjNmI3ZTAxNmNhZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4ODZlZDllYzA1YmRkY2QxOTEzMjcyYmU5NjYzYTNlYWQ3ZTI5NWExM2JkODgzYTMxZThjMDhlNmI3NzRjOGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmYzBiZWIzYzMwYmU3YWU0NGZiOGVlYzNjNjM0MGE4NGE1Yzk2NmE0ZDE4ZTBjN2UwNjI4ZDI4OGJmNTM2M2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwZjZlNjNiMWQ5OWRkOGFkZTY3MDZhNjgxZTc4MWNhOGE5OWE3ZjhhZDkyNjYxNTgwZTU0MGVhYTc1YTBiMzUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/BulkDeleteUtil.cs#L62-L105",
+          "version": "repo-lines-v1:sha256:963462b845bfa572ac8f486f9fad44836ab68aef52df215e89b80c0c67e9d979:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlMjBhMWJlMGM3YzE4Yzc0MGY2NzU1YjczZDVjYzc3MmY4OTUzZTQ2MTFhOGM5NTZjNDBmOTJmMjRiZDdhMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMTU3ZDA4NGU0M2I4NTlmMDRmYTg0MzY2ZWFiZmM1NTAyZDg2YjFkZjE1NmE0ZDU0Y2Y4YjI0ZTRjZDI5OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmZDIyMTdiNDlmOTE3MzJlYTFhOGU1YWM0OWRiMWRhZTQ5ZDZiNTcyYzIyYzI1ZWQ5ZTZkYmU2MDkxMWVmZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhMmFlMmQ4ZGQ5N2MzODZiOGRiMWM0ODNkMDg2NTU3Mjg1ZWI3Mjk4MGViYTBjODQzYmQ5MTQyM2VmMThmMDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58f08fc8412b404fb907d957061fb27d",
+      "statement": "`bulkdelete` skips blank inline input and catches FetchXML conversion errors before bulk-job submission, but it has no dry-run or rollback behavior for a submitted deletion job.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/BulkDeleteUtil.cs#L109-L124",
+          "version": "repo-lines-v1:sha256:b0dd9c9b071038a13599bbfcad47904c51df739ef9da44b07283dc5630f76fcc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1Y2UyNTgyNThiMDczOTAyMjlkOTI3MDM5ZjRkYzYyODBkMzIyYjE4M2VlM2ZlODZlMjI0NWFkNDJhMGQ2ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhMmFlMmQ4ZGQ5N2MzODZiOGRiMWM0ODNkMDg2NTU3Mjg1ZWI3Mjk4MGViYTBjODQzYmQ5MTQyM2VmMThmMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/BulkDeleteUtil.cs#L39-L44",
+          "version": "repo-lines-v1:sha256:4071601406dcf0132a364355414e9e1efc017fe47a44f632d783a011cf08f7e4:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWU5N2FkZDRhNDAwYTdhZWRiNWUyZThiOGQzMzE0NzUxZDBhNGI0NGU0ZGQ1ZjEwMDZlMDRhNGE5MWQ2M2NlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2QzMzQ1NmQ3NWMyOTdmMDhkZmEzNDY0OTQ3YTg3YmI3OWU0MDFhZTc2MGVjMGQwM2UxMTc5NWU0MmU1MDViNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGQyZmYzYTBmYjAxZjZkZTgwMGQzNDgxNTU2YzU5N2EzNTM0YmQ2NzRiM2VlMGE4MGIwOWUxZjY3YzEyNmNkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzQ4NGFmOWYwNDdmMmEyYWE0MWI3ODMyZGVlYTViOWI2NDQ3ZjBmZmM2ZmFkYWY5YWQ0NjE3ZTU2NjNlOTBlZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3b2be6f52e53492bb2019022d22f14ef",
+      "statement": "`autonumber` reads a list of entity, field, and format entries and retrieves published attribute metadata; it sends an `UpdateAttributeRequest` only when the current AutoNumberFormat differs from the configured format.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/maintenance/autonumber/schema.json#L3-L34",
+          "version": "repo-lines-v1:sha256:0c736889577fe309c1054cd33c6f8af3bc14b236030758808353c4f07d03cf04:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlODExNzdmNGYzNGJmN2RiOTQ0MmMxZmVjYjgzOThmYmMwNWI1ZjFmYzk1ZDBlOTRiZTJhNDgyYzYxODdjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OWY2NThkNzI5ZDI1YTJjZWEwNzc4NzNmM2E0OGZiMzM1NDE4MmMxNmM4ZGQxODJjYzg3YjZhOGJhMDAxMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/AutoNumberFormatAction.cs#L30-L45",
+          "version": "repo-lines-v1:sha256:12f755488e840c357b1b376e6c1536839e31f21a61ecf7dcae919177544f3f06:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4ZDRkN2Y5ZmRkMGY1OGQxYjNiYWM2NDQ5NDQzZTY4NmI0MmU0NjZjMmVkODY0YjM3YzQ2ZGY4NDJmMWViNzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1NDEyZTljNGI4NDQwNmY1NjU0ZDc4MmNhYmVkNjJlZjEyZjIyNGU5MGViNjZhMjBhODE2ZWM5YTE4OTVjNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlNmZmYzM5YzgyMDhhNjQwZjcxZWY1YmUzZmMwZGVlZTMxZmMxYzUzNDk2YjdjMDdlMmJjYzUzYjMwZDMwZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzN2U3M2Q4NTM5N2YxYWUzMTRjNjgyMTE4ZTczMmFlMmQyODZiNTE4MTBmYjk5YjQ3NWM0MzRkOWEwM2FhOGEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/AutoNumberFormatAction.cs#L51-L86",
+          "version": "repo-lines-v1:sha256:4a6e9141d9502c8c78b41dcf2ec03759edee1413b47ddea95d8634cb8674c4be:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjc4YzVlNDk3ZDFlYjJlZTg0ZjRlMzg0YTZmNDlmNDQxNzBlZDk5YTRhODgwMTA0NmUwNzdhNmMxZDQ3MmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMmNkYzMzYThiZjJhNzc3YTZmN2MwNzA2ODg2ZDNlZmJmOWM4ZGI1YWUyMjBkMjIxN2RjY2FiZTUzZDdlNjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlN2FjODBjYzY0OWMyOWM5ZTA5OWRlZTdjZGQ0NzI5ZjI3ZTdlOTQ5YmM0NTQwZjI0Njg0MThlMTJiMjgwMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_21da915593bd4e0eb42d29ab597fb872",
+      "statement": "`protectfields` considers unmanaged calculated attributes only, skips base-currency money fields and `bpf_duration`, and sets eligible customizable attributes to non-customizable with `UpdateAttributeRequest`.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/ProtectCalculatedFields.cs#L39-L70",
+          "version": "repo-lines-v1:sha256:d29ad7b2efec5340b5b718d404435fb5a3b05cf5778e662ee0c145432439b3c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhYTU1OWFkYmI0NmZhYmRkMjFhOWEyMzRjNDAwMzcwZjFmNTcyZTEyZjM5MTUxMjMyODg0OTlhMjRiZWRhYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkYjMzOWMxN2Q0Y2M1NGU3MGM0ZmNmZWNiNjExYmI5ZTdkMzYzZjI1YjE4ZTA5MjNhMWQzMDZjYzk1OTI0ZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjYzU3NTBhZDhlNjlkMjQ1ZTE4MTk4OGQ4NjI0MzdjOThjZmFhZjA5NjdjYmE5ODZiNzhmMmU3MmY3M2MzM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmZTY0Y2I0ZDE1NzA1OTViMjk2YTUyMDRlOTI5OTQwMGFjZWU2MDQwMjcyMDA0MmQyOGI4ZmQzYzI0MGY3YjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9a6f9632655f43969d1f275fa2b4161c",
+      "statement": "`solution-version` requires an existing solution with a parseable version and persistently increments major, minor, build, or revision components, with revision selected by default.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/IncrementSolutionVersion.cs#L27-L88",
+          "version": "repo-lines-v1:sha256:948d0e03440a370f82d1ba9972851b7bba084f9629f25faceef13d3d98737b7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMWFiM2IwZWU1YjdkNDk1OTBkYjM1YzNmNzI0OGNlMzY1OGMxZjNjYTkzMGFmM2NhM2ViMDAyYWQzODg2YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNmM0YjI3MjQ1NDBkNTgzMDQ2NTY2Yjg0MGUwNDFkZTUwNjM5NTZmOGUzYjQ2ZjUzNzI4NDAzZWIyNGYwYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljOTI1Njg2NGIzYzY2NTY4OGRmNGJhZmMzODVkMjhjZjVhM2EyYzJmNGExZDExNDQ3ZmM5ZTQxMWRhYTM4MDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Model/Settings/IncrementSolutionVersionSettings.cs#L12-L34",
+          "version": "repo-lines-v1:sha256:537373230cb305c937160d317b30b43a6bfb166030a1a4f33b8d34f99235bf21:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGVhNWE4MjIwNWI1MjFhMWE2ZjRkM2Q4YWM2YWJjZjAwNTUyMGFhNjJiZDZjODFmZWQ5NDhmZTdmOWM0MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjMwNDY5NTBlNDhkNjk3MTZkYzdkZmY5MDRmM2Y3YmU2ZGE5YmRlMjI5YWIxMmQ5ZDk1NmFjYTlhYWRiYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNWJhNGUzZDM3YWRlZDJlNDQ4NWIxM2U5OGFkNzM5Y2U4ODM5YzcxNmVjZjlhYmI1Yjc0NjljZjI5M2EwZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2a597b2db2b49a6905a5b8dc9d6e731",
+      "statement": "`removeredundantcomponents` identifies target-solution components whose object IDs occur in any specified source solution and removes them unless `--dryrun` is set; entity removal is excluded by default and enabled only by the experimental `--includeEntities` option.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/RemoveRedundantComponents.cs#L50-L113",
+          "version": "repo-lines-v1:sha256:245a29e23354bf46440b1ff380b7431c75db66da0425df45c6c891835cd57f40:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMTIxM2M5MWRiNjZjMGQ0Y2E2ZDFhMzQ3MjFkMGMzMGI0YjhkODM5NjdkMDNjMWIwMjM5NjM4YjYzZDEyNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4OTAwMDY2ZTZhMzI2YjE5ZTE5NGZkNWJjMmVhZTQ4ZTcwMjNmNTY3MWQ4M2M1NzA1YzA1YjRlZWU1OTdlN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NzhkZDRhZGYwOTE4NmIzZDkzNDNkNWIyZWU0NTFlZjFmZTUyNTM4NzY0ZDkwNDA0ZGUyYWI3NWViNjE1ZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkNWQyNjYzNzU2NTI5ZmZiNTlkNmNjM2YwYjUzZDEwODdlMDU3NmNjOWQ2YzNkN2NiODFmNzY3ZGU4OTM5NjQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Model/Settings/RemoveRedundantComponentsVerb.cs#L13-L29",
+          "version": "repo-lines-v1:sha256:713e78df8285140319f2243abd0ef7a661b8c9dbcf58948ba7ee7f7e231be165:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5NzdmM2JkMzA4MDYyYTIwY2VlNzYwYzE0ZmY5YTZiMTI4MTY2MTJhMGFjMTgyMGEzMjJiNjU5Nzc5MWM4OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlOTg5YTkyYmM4MjJlNDkzZDMwZGQ1ZTRjZDIxOThiN2E5ZGUxMzdkOWU5M2JjOTNhYjMzYTU2NDVlZjE4NDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiN2ZlNTdmYjYyOTFkMzRhYzQ0NGZiOTJmOTU0YjBjN2M1NDMzMmU5Nzk2MjY3OTZmMzI4NDNiYmVkYTEzNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_03e95e1fef1e4b92be28f549660dfea5",
+      "statement": "Workflow-state configuration supports solution and publisher filters, per-category entries, and default owner/impersonation; flow entries are keyed by display name, actions and business-process flows by unique name, and business rules by primary table and name.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/maintenance/workflow/schema.json#L6-L119",
+          "version": "repo-lines-v1:sha256:e44c205bdb5dfda3517b07653027fc128e39b561331c84c243e53192d0d00468:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NWY4NTE4MzkyNDVhMDQzNjRjMTUzYTZiZDlmMzYzMTYyNTA3ZmI5MzQ4MmFlZGYzOWJjYjVjZjFiYjdiZDUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlNDY3N2JjM2RjNTEzZGJhNGNjZTVmNTNkZTRjZWMyOTE2Yjc1OGViNWY5MjE0YWMzZGFkZTMzOGVjYTM5MzZhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxMWM1ZjYzNmY0ZjM3MzFhMzQxNjFlNWM5MDMwOGIzZjk3ZThmOGNhMDkwMjRjNjg4NDc5ZmNjMzhhNDQxMzY1In0"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/UpdateWorkflowState.cs#L179-L225",
+          "version": "repo-lines-v1:sha256:f74488b03904df35a79b1219761e93ffa45959c6b0d931f3f3cb5f05c0889ef3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxZTBlZWVlZmZhMWYwMWFlMDk4OTA2OTQ2YjZmNmRiNTY0YmQ5N2ZhNzc0NmQ4ZTI2MTNkZjMyZmFhNzc1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNmQ0ZjM0ZjlhNzg2M2Q4ZjZhY2QyZTIwZTQyODUzNWJmZTRlODZmMjY4MzFkMDMzY2VhY2YzYmNjODkwNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTU1ODQ4YmRkMTlmZjI0MGZlNjE1NzNiODQxMjVkYmQ4YTAwZGNhMzczZmRkZWU0ZmQwNWY1ZjYxNDJlYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5ODhlODJiNDdkYTY4YmU4NDA4NTk0NmVkNzYzMmY3MzkyZGMwMjhkOGQ0MGYzMjQ1NDU5ZjIxZTljY2UwZGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_193f639de6b34183a54f1f9b292859e0",
+      "statement": "Workflow discovery concurrently loads direct definition workflows and business rules implied by included table subcomponents, resolves table logical names through metadata, and deduplicates the combined workflows by WorkflowId.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/WorkflowStateManager.cs#L111-L150",
+          "version": "repo-lines-v1:sha256:f3c1c9b6ee60c32c1d69a58fd0a24bd945cc86937d546437bbf0f680e1bfcfc8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxODY2OTJmNWM1YTJkMTA1NTA2MzFiNzIyNGQ4OTJiMGUwYjQ4MWYxZTMyYzQ2YTEwOGY0NmQ1NWZjM2Y3MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNmViYzU4Mzc4YjE4N2NhNGZlYjA4M2U0YjJiZmYzNDQ0MDIwODUwZDZiZDA1MzJlYzdlMGM4NjE3NTcwYjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjMzQ3OGI3NDA0OTk2NjQzNWE4ZWRiMTA0NWJlZTcxYWJiMzYzYWY4ODk2YjgwZDFlZDBlNDMzMmFhNzJhZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4ZTQ4YTJiZDI1ZDNlMTRmYTMxZTYzZjk1MWUzZmZkMzZjYmEzZWEyZDI4ODk4YWZhNjg3ZmEzYzkwNGM1ZjkifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/WorkflowStateManager.cs#L197-L256",
+          "version": "repo-lines-v1:sha256:c5e305977e388b7d31fd5483c84520d0c12edb96ed1df629e523fa9a61112fc3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyNGQ1YWY5MjcwZWMyZjAwNGVhMjg4ZWZlM2ZjNGNhODYwOGNjMmQ5YzIzY2I5YTMzYmM1NWY0OTYzMTE2N2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1ZGNmMDg0Yzk0ZWQzNzUwMmM0OWM5NmJhODk5ODU0ZjcxMGUwYzk0OTFjZWQyYThhZWZlNzA2NmQyNWExMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxYmJiZWJmOTFiODlkZDgzZTY4ZjU1Yzk5MzQ4YzkyODVkNjM0OWMxM2EyMjVlYjBhNTZjYWFhMDJkN2I4MzQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/WorkflowStateManager.cs#L22-L51",
+          "version": "repo-lines-v1:sha256:958e2c6c36de810b0a10425639c9cf4aa3db9b37a9172a3b0110eb9a5c0eda26:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5OGZlN2Y3ZDE2ODg2OGUzZWYwMTNjY2JhNDZiZjYzNzk3MTI2ZDQyMTE1NmVjYWYzNzViNDRlZjAxMWZhYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNGI2OGJhYTI4NTU5OGU5NGVjZDA5ZTk1NDliNDhkNTcwZTVhNTE4NzFlODlmZjNjNDc2ZWUyODUyY2ZlYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkN2FlMTI4M2E2ZDkyM2YxYzc2MGQ0MzZkMWJkNGIxODEyMzI5NTI4ZTUwZDQxNTQzOTFkMWQyZTY3NzIxZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlZWZmMDA1ZTIxOTYxNTNmYjUzMWYwN2JhNTZmYTdiMDkzNjY1M2I5YTY1MGQ3OGJlNWYzMDk3ZjVjMDNmNTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae3f61ff10d542dfa7798842d980a565",
+      "statement": "When workflow ownership must change, reconciliation drafts an active workflow before assignment; state updates can temporarily impersonate a configured user and restore the prior CallerId in a finally block.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/UpdateWorkflowState.cs#L249-L268",
+          "version": "repo-lines-v1:sha256:0d16a3abdd64e03ac21c0d06f5a5629101384b4f6852d8eed1034eb58afe722c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmYjBjZDc3MGE3YzU0YTgwMWE5NzNlZjc0YjcyNzNjNzUzMDJjMjdiYTZjNDM0ZGViODMyZTEyN2Q3ZDAwYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjNGU5MGJkNjVmMGEyNjJkOWNlZWY0MzFiNDcwOGNlZmU0ZDE2MTRjMjU0YjY1YzZmOWVmZTBhMzVmNjNhNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5NTNjYjAyMDZhYTdlODI3NTA4YTI3YTg2Y2NhOWRmMjlmOGNkMDIxOTQ2NGFkMzU5NTU4YzYxNjVkZTgxNGQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/UpdateWorkflowState.cs#L291-L341",
+          "version": "repo-lines-v1:sha256:bf682dd6d7a79a8bd803371d64a4107f33896e1ab2ef1a660a8b126716074605:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkM2RkOWYwM2E5YjU1OTljZDliMmU4ZTdiMTU0ZDI5YzgxOTg0MGVmZDMzZGFmMzkzYjA2YWNjYmI3Nzk3NmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YWFkNTBhYjZhNzdlOGZmZmQ4MjYxMWRiMTE4OWY3Mjk2ZDE4ZWQ3ZmI5YjUyMWFlNTEyYzk2NTlkZTg4ZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhYzMzY2VlNGYyOTczOTA5N2FiOGRhZGJjZDZiYjViY2ExN2U3ZTkxNjYzMTY0N2RkYzdlN2UzNGQxNjg1YjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1459f29f3cca485a9c7df29e4ce751cc",
+      "statement": "Workflow reconciliation retries only workflows that failed in the previous round while failures decrease, to accommodate child-flow ordering; invalid workflow data is treated as completed, while other per-workflow exceptions remain failures and cause an unsuccessful result when progress stops.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/UpdateWorkflowState.cs#L112-L165",
+          "version": "repo-lines-v1:sha256:944861cf41765317d208252261823e142dc00d962a5824c3a46c13d1cc5e8401:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZDllYjgxMGRkNWJmMTcxYjY0ZDViNTJjN2VkZjQzOTU4MDRiZmU0NWUxMTIwMjY3Y2U2OTczM2I3YzdmMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOGRlZjZkMDhiMzk2MmY5YTgwYmNhZDE3YzRmOGIxN2JjZDQ2OWQxODFiMGUxNjM3MDM0NzllZTU4Njg2ODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzYzlmMzZiNDY1ZTcyNGYzOWZkYjdiMDhlMDdmZjIxZWNjNzgyNzc3Y2ViNTJkOGVkYmNiZDAyYzlkZGYzZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjMTZiMzhmNTU2NjIwYmQxNGJlNTYyMzU0NDBkYmM5N2QwZjcwYWNjZmQyYTNlODBjMDc2NWFkOWQ2Y2Q5ZmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_856237ed5eba4dfe940ce393ae8a55e8",
+      "statement": "`createworkflowstate` creates a local workflow configuration, refusing to replace an existing output unless `--overwrite` is supplied; without `--detailed`, it records only disabled workflows or workflows whose owner differs from the discovered default owner.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/CreateWorkflowStateConfig.cs#L85-L166",
+          "version": "repo-lines-v1:sha256:0c242b7e53d68d392c1767877f27caf2f483b6acea3b12781088098ef8fc7ca5:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljOWM3MGNmNWI5MTU1OTEyOWFhODhhYjMwZTlkZmI3YTNlNzZiM2RiYWUwYjBjODQyNGMyMDU1ODk0ZjVjNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiYjkyYzkzMDBjMmRkNDlhZGM2ZTM4ZGU5ODUwNWE1OWQyNTMzZDJlZjhiMjNhNWQ5MDk5M2Y3YzQyMzE5NDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZjI1ZjgwYWFlOGQ0YTI4Yzg0NTIxOTUzNjZmMDI5YmU1MDViNjBmOGE5MTdiNGM0MzMxNzYzYzJhNGQ1MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyY2RmZmE0ZGIzZDBiZTczMzlhN2M2MzAxMjQ4ZTA4Yzk4NmYxYmM4MThiNzZiN2UwYWY1NTlkNzgyM2VkZGUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/CreateWorkflowStateConfigSettings.cs#L13-L39",
+          "version": "repo-lines-v1:sha256:479d0e46f8fc9a3de80c65a6a572a6f26c4fa1eb7320d4250be468916f5ec9b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMWMyZTA3ZmNkZTg5MTk0ZmExZmYxNGYxMzkwOTYzZGUwMzA2N2Y0OTAwZjgxMzYzNzMwMTQ0NmJkZjk1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkZmRjNjhiNTg2YTllNDc0ZDM5Njg4NDJkZjk5OTY4Zjk5NTc3YjZmNDkyMjhhZDFmYzAwZThiM2Q1MGZlZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0M2Y1ZmM3MjljMzllNDc3MTkzYzA1NDRmZjNjMGZkZTIzNDg0NTFjODc4MjU4NmYxZjk4ZDZmYmM3OWMxYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e46150392cc4471ade1db0f1686adde",
+      "statement": "`filterfxplugins` requires exactly one PowerFx-linked plugin step for each configured name and message, sorts and joins configured filter attributes, and updates the step filtering attributes; its schema restricts messages to Create, Update, and Delete.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/maintenance/powerfxplugin/schema.json#L3-L43",
+          "version": "repo-lines-v1:sha256:a95ff6f5ea91ce5084ab06139c870d808b9d8a511271e0384add627b5fa095b7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlODExNzdmNGYzNGJmN2RiOTQ0MmMxZmVjYjgzOThmYmMwNWI1ZjFmYzk1ZDBlOTRiZTJhNDgyYzYxODdjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OWY2NThkNzI5ZDI1YTJjZWEwNzc4NzNmM2E0OGZiMzM1NDE4MmMxNmM4ZGQxODJjYzg3YjZhOGJhMDAxMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/FilterPowerFxPluginSteps.cs#L36-L70",
+          "version": "repo-lines-v1:sha256:6005973766fb1b4c80abbba779c5de05e7d6626e0e786c788ec8c4b11d42bd80:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNDI4YzRmNGVlNjVhNTFiMzBkMThkYTgwMjFlZjEyYzhiZjUwOWFjN2E2ZjFjNWJiMDE5YzE0NTBhZmUxZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNmM0YjI3MjQ1NDBkNTgzMDQ2NTY2Yjg0MGUwNDFkZTUwNjM5NTZmOGUzYjQ2ZjUzNzI4NDAzZWIyNGYwYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0ZmQxZTYwMWQwOWYyNzkzOTYzYWRmM2ExYjFlZTg5MjU0NWRiZWRkYjI3NjY0N2IwM2YyZjZkN2I4MjQ2NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmYmQwMDkzMTRiYzI3MDg0MTY3MzRhMDJhZTVmZjM5YTFlNDhhMDUwYmU5MWY0M2IyZmFhOTIwMDJjNjJiZmMifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/FilterPowerFxPluginSteps.cs#L74-L96",
+          "version": "repo-lines-v1:sha256:655488d4417546ec39a800f341351d6676cafa8a72e28b6cf13eee74edf98992:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZWM2ZjdlYzg1YWQ0YzA3NmQ1NWM1YzUwOGIyNzQxMWFhMjFiNjM1YjAyZDRmZmQ4OWMyZTEzYjhhMDFjNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmYmQwMDkzMTRiYzI3MDg0MTY3MzRhMDJhZTVmZjM5YTFlNDhhMDUwYmU5MWY0M2IyZmFhOTIwMDJjNjJiZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_25eed154a426462c9d0dd5d80ec3f841",
+      "statement": "`ensuresdksteps` selects SDK message-processing steps linked to solutions by a `Like` match on solution unique name, and changes only mismatched enabled/disabled states; `--dry-run` suppresses those update requests.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/EnsureSdkStepStatus.cs#L45-L90",
+          "version": "repo-lines-v1:sha256:e68fc28178e7fa9ce90130ce64eb5d26e47bda06b3a604f3f1c2d03107e1e19b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4NTUwY2JiNzVmN2MzOTU0NTk2ZGNjOTA4NTBkOTU1MjEyMDBjOWRiMTZhMjdjYjEwOGQyNDcwYmNhNDkxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4OTAwMDY2ZTZhMzI2YjE5ZTE5NGZkNWJjMmVhZTQ4ZTcwMjNmNTY3MWQ4M2M1NzA1YzA1YjRlZWU1OTdlN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0YTAwNWZkN2M1NTU3Y2ZiZjdlNjM3OWE4YjMzZDJlMDViYTliYWM3ZjE3ZWY4ZmNkYTU5YTJjZjgxM2QzNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiZjYwZDExMWY4NWQ3YWU3YmYzMTc4MmNlNDQzODUwNDg0N2VkNzc5NzMzMTY1M2E3MDM5ZjAyM2NjOWNlYWYifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/EnsureSdkStepStatus.cs#L93-L118",
+          "version": "repo-lines-v1:sha256:805616127f9c79b34492074b0bf3225a271959f5def8bc0df2aa11564692b26b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNjkwNWU5OTgyNmYxYTdlNmNlOTQ2NmQyOGUwZmIzNjhiODYzYzE4MjI2ZjViY2VmZWQ2ZTNjNmM2MWJjN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMTQ0NGE0ZDU0M2EwZmI3MTUxMmI3NTU5OGQ5NTQ2NzNiZWNmN2EyMjUwYTllNzBmNzk3NTY3ODIxYmJiMTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MGVhYTY2ZTVlMzFjNjE1ODAyN2Q3NjQwYzdkYTRhMjNjNDhiNDM1NGQ1MWM1ZDk1YzExMDdkNDBhYTU2Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/EnsureSdkStepStatusSettings.cs#L13-L26",
+          "version": "repo-lines-v1:sha256:b0291e1033cba602503c2d2323061f26260482a830486e47d9d9f8273e44f957:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMDlhMDc0YzRiNGQ3NDU0ZDIwYTFmMmU4MzYwYzJjZmNkODRmNWU4MWMyNTc1OTM2Y2Y0MWIyNDJmZDNmYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZjQ4YWE2YjgzMDZjNzJjMzI3YmFlNTE4OTIyMzA5ZDU0ODk0NzYyNGRlYzUwOThkMWMyZWRlYmYzYTdjMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjNDgyZTI1YWEzOTZmZTMzZTk1NzNkYmJiOTlkYmYzZjVmOGJkNjczNDA4Yjc2ZTQwNWU4NGFmMjdkNWM3ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_da396bb356954712bb0ccd32bf1bb402",
+      "statement": "`carrierinfo` validates that either the current `dgt_carrier` or legacy `ec4u_carrier` entity exists, reads active carrier records, excludes invalid or unresolved solution references, and exports ordered carrier information to JSON.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/ExportCarrierInfo.cs#L160-L187",
+          "version": "repo-lines-v1:sha256:d27488e4c1e57f2411e6bdca47cb36f907c04c3af30f635819f7d7e7146064bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxMWEzNTUzMmJiZTM5OWRiMTI5YzlkNTJiZjRmMWMzMTUzOTZiMDJhNGE3ZWJiODZkMmM2YzQ5MWQ1ZjY5MzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5YTdkMWM0YWU2YTIwMDU5Mjc3NTI3ZjQ5ZWVjNjcyNzE3ZTEwZDBmNzhiZWM4ZGFmYWVmNmZkZDBjZWI2N2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzYmE3YmQwYWUyM2M1YWMyZTZiNTFjM2JhYjZlMGQxODZmOTljNmU1MzZlOGFlZWZmZWE1ODZhMDQ0YjgzZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/ExportCarrierInfo.cs#L34-L50",
+          "version": "repo-lines-v1:sha256:fe1ea472ee3d6e827188de10320fb6b7e22f9bcc12bdd7c42d5f26fbc32f2259:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzMDBmOWJkYzQ2YTEyOGI1OGZjZTQ4NzI0YjdlYTI3MTg5ZmQwOTM0NjBiNTc1NzVmZjljMjU0MzJhYTdhNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1YjlmOWVjZDkwNDFjMWVhYjRiZDZkZmJkM2VkYjFmYzk4N2JmZjM1YzgxNGIxMTVmMmRmNmZmODhhNzFhNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3YzMwYWE3MWUyNzZmODg0MGZhMWRmYmMxN2Q4OGU1YzA2ZGI3NTQ5MTViZWIzOTU1ZDhiY2E1ZWU0NTk0ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkNWNlOTAzNTM4YzY0MjFlN2ZlMWE2MTQwNWJjZGNhZjg0ZWY1OWUyNTJjNWNhMTk2NTQzNjEyY2E5NTM2ODMifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.maintenance/Logic/ExportCarrierInfo.cs#L61-L117",
+          "version": "repo-lines-v1:sha256:8dfa0a164acb944fc5baceaa1e5b8334adb81796c50f7f22b32578827d61df93:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNjE5NzU4NzEwNTMxYjc5ZjU1ODAxNDJmYjI3Mzc5Y2U2NmNhNTdkNDZiOGM2YmMxNGExMzI3NmYzYWQ3M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNmM0YjI3MjQ1NDBkNTgzMDQ2NTY2Yjg0MGUwNDFkZTUwNjM5NTZmOGUzYjQ2ZjUzNzI4NDAzZWIyNGYwYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlMmI3NDUzNGE2ZjQxODIwYTQyMGMzODM1MTUwMTVkZjAwZTRhMmU5MzI3MDUyNmNlNGRmOTRhM2YxNDc2MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhYTIzZDJjOGZiNzRmZDFkNzQ4NWM2MDY2Nzk4ZTM4YzhhZThmYjQwODc1YzA3MTMwMDBiZGYwMTQ1MTAwODQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_56f21800b68c437c89cd4aaadbe2f7da",
+      "statement": "The focused maintenance test project covers bulk-delete success/failure paths, auto-number configuration behavior, calculated-field selection, solution-version increments, workflow state across flows/actions/business rules, and carrier-report validation and ordering.",
+      "evidence": [
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/AutoNumberFormatActionTests.cs#L22-L56",
+          "version": "repo-lines-v1:sha256:a588e445c5c1f63ba0d2fb8c8a3a89a74b157b6da825db0a35818e9e4cf8ad61:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlOWUzODQzZWExYzFhNTgxMTAwMDg3MWNhZTk2YjMzMDA5YjIzNWMzMGM2NGZkOTZhMTAxZWYxMzQwYzhlOTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1N2MwZmVmMDM2OWNmMDQyMzZiMjc0Y2M2ZDliYjM3YTBhNTgwMTNjOWRhNzQ0YTE4MzA1MjgxYzM4NDUwYmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/BulkDeleteUtilTests.cs#L24-L81",
+          "version": "repo-lines-v1:sha256:37b1e0922f2f8d8be9159efd5c3c3335a3b753ad15e16c181d311e26728e29eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0OTg4YzBiMTViYzQzZDQ3YTkzN2M3NTJlZDdkOGViYzU3MTdkNzFlM2UzN2JiNzVjNzliM2I2YTEyOGU1YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/ExportCarrierInfoTests.cs#L29-L148",
+          "version": "repo-lines-v1:sha256:784ae46ea5e7675452247641869a087274117c2aca07a45f8e3dc3bc4ee4b916:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjNTdjMGZlZjAzNjljZjA0MjM2YjI3NGNjNmQ5YmIzN2EwYTU4MDEzYzlkYTc0NGExODMwNTI4MWMzODQ1MGJmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/IncrementSolutionVersionTests.cs#L14-L184",
+          "version": "repo-lines-v1:sha256:55ff8395a6c8e10e509df10d0566ce2857e529316dcec496db978bae8e9e55a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YjZkMWNhZTIxN2YwM2EzODVkZjU5MTE2MmE5OTkyMWQ5NTQyZTdkMTg1N2RlYjI0NDI1OTM3MmViNTFhNTRhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/ProtectCalculatedFieldsTest.cs#L96-L102",
+          "version": "repo-lines-v1:sha256:3bcbb358c9ced8ff83a961f0c4be41e16c980037b68fd2e051678b75596da897:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTkyZThmNDI1YjEwZDM3ZWI0NzJlMzA2YTI4YmJjYWNjYTMxMjgyYWMzZjEyNjkzNmNjOGNiNDQ2ZDU3YTY3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmIxOGJhMzk1OTVhZWYyMTNjNjgzMGRhYWI3NTJhMDJhMzZiZDYwMDYwZGIyZTdiYmY4NThiNjJhMzY0MWFkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDEwYjM2YWE3NGE1OWJjZjRhODgxODU4MzdmNjU4YWZhZjM2NDZlZmYyYmIxNmMzOTI4ZDBlOTMzNWU5NDVkMiJ9"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/UpdateWorkflowStateActionTests.cs#L15-L115",
+          "version": "repo-lines-v1:sha256:530a84ba8edc1873665a1eb738e9a96e718e86b5aace0c7b4a5b3a76197d5bba:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYmYyYjg4ZTJjMThlZWI0ZDk2NjNmNzc3YzY0ZTliZTE5YzllNzQ5YTQwZDhhNmFkY2M4MzYwMDk0MGRhYzA2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4MGY2YjFjNDRhMDgyNjZiOGY2ZjdlZWU4ZTRkZjdlNDkxZmRlN2E0ZTRkNjhjMzc3YzY1OTBkNjAzMzEyYjU0In0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/UpdateWorkflowStateBusinessRuleTests.cs#L19-L152",
+          "version": "repo-lines-v1:sha256:fba807ae06abd0aabde00cd8976e2bc130d0bff15d8f90858694d3a8a2f89dd5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiOWQ3OTFlN2I0NjU4ZTc3YTJiZjdiM2Y2Yzg5MGEwM2IzNDJjNWNjMGNlOTllOTEyMGNlMGM5NTk2MTFiYzVhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MzkzNTMzODRlNjc0MWVmZTU1NmQxM2UzYTc1Mzg2YjJhODkwNTZmZTExOTAwYWJiM2FhNmU5M2ZkOTc3NGIyIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.maintenance.tests/UpdateWorkflowStateFlowTests.cs#L15-L118",
+          "version": "repo-lines-v1:sha256:507924efb85b6de081d006391a73227d0b21e3b3cd84333b9f4525b3db19e8ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MGJiNWRhMDc2NjljNzI3M2RkYTViN2RlYmRjMWNlNGQ1ZDI5MDhjYmVjZTQ0MzQ2MmIwMDBkZWVkMTY0ZmMxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYzY2NmYzMTViNWRkYTM1OWM3NTEzNmRmZjYzMjYxMjA1MDNhNTViNjk5YTZmZTM2ZTdiMjYyYzhiN2M2YTc0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

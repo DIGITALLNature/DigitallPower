@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1f1cf8941e8daae0a4431f5247565c32492233f171ff6ecc288cddd010ba5bf8",
+  "claims": [
+    {
+      "id": "claim_4977dddf551e4769be5d3e413252653a",
+      "statement": "The `analyze` branch registers the six solution-analysis commands `entityallassets`, `noactivelayer`, `redundantcomponents`, `redundantpatches`, `activelayer`, and `toplayer`; their shared settings provide inline input, patch inclusion, report switches, and a config path defaulting to `config.json`.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/CommandTree.cs#L112-L130",
+          "version": "repo-lines-v1:sha256:09f0baf7fd691a8f9d097dd342340f4098e2ce95e396d6b7d68f07ae99be8b02:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjYjYyOGU2YTU0ZDUxNzJjNWM1N2ViMjFjYmVlOTdlMjhmOTZmYzBmMTJhYjdiMGM1MzgyZTc4NzI0NmRjODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMzVkZTNlMjEzY2FiZDFkNTA2Y2NhZTNiZjZjZDY0ZWZlZDViNWJhNTFiZGI4MDNjMGVlZWQ4NzY5NDA3NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5ZjM0MDI3MjJkNDUxMGYwMTRiNTgzMDRjMTQ4Nzg0NzMwOGU5NzYxNmUxZDA1MGU2MjE4MWQ1MTI4NDI4MDgifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/AnalyzeVerb.cs#L14-L27",
+          "version": "repo-lines-v1:sha256:34ffe2c72ab6c2dcb0b389cb40596090f299a6a6def913908c079af773795a62:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZTQ1Mjk1NGI0NGVhZDM4MWI5Nzg1MjU2MzRjODhlZTUzMmJiZGU2YWExYzdlNjUxY2MxNTU1YzRhMWRkMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZmViMjc2OTM3YjFkYWRjODY0ZmJlZDkwNGI5MzIyYjA2NmQzMzg3OTQ5MGY5ZmQ5YjYxNmY1OTFlMDE3N2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZGRhNTZmMzQwNDc4ZmYzZTY3ZDgwZDUxZjU4ZjgzYTFiYjY1ZGZiNDU5NTQwYTYxNDI5MzliZjk3NzUyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9b5bdc53e26f4c1fa2ad151cc3bf5e58",
+      "statement": "Solution analysis is read-oriented against Dataverse: analyzers retrieve solution, component, metadata, and layer state, while their durable outputs are optional local JSON and CSV files under `Analyze/`; the analyzer module contains no Dataverse mutation path.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L172-L208",
+          "version": "repo-lines-v1:sha256:e41c7bd0afc317e6ed9f9bda57a7f3ec130cbf5045a590844c868fb2e7ea266c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMWJkMDliYWE2MWVhNjY2NGFhYTM2NWIwMWU1YTlmMTQwODY4YWIwMTg1OGI1YjBlNThlNjQzMjQ5NzJjNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3ZWRmMmI5YTgwM2M5MjI2YWJiOTlkNzMxOThiZDlhNWMwMWNiYTBjZjExZWE5ZDg1OWQ4NjNkMTQwN2E4MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxMmVhOWJhZWU3ZTY1MDYyYmNjY2EzMjkxOTQzZjUyYjc0MjlmMDliODQ5MjAwZTY4YjgyYmE0MjhhNWI2ZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMTI3ZmI5MjRiYzgxYmJlYjhmMTIzNWQzZGFkNjlhMjc4OWJmMDhlNDdmNWE3OGM1N2UxMjdiMWMxYjY2ZDUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L220-L269",
+          "version": "repo-lines-v1:sha256:33e5b495e1eeffe2d032fa9fd5b241ab71b125fcb5fb8ff7150baea8c8afeb2c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMDNkNmM2YjNhOTk1OTA5NzM5YjNlYmY4MzdhZTVjMjJjMmJiMWE0ZDY5ZTRjODJiZmFkNjlhM2I4OGNlNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5YWM1NmM3NjczMTI3NDcyMTQ2YThmNTAzMmE1MDQzYTUyNjExZGQxZDJjZDc2Y2ViODkwMWI0ZDg2OWE1YzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1ZDAxNjc1NjljODIxNzllY2NmZGUxOTRkNmRlZjhhY2U5YTExNzM3NGUwMzgxMmYzMTRlMzIwYWZkNjk3ZjkifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L43-L145",
+          "version": "repo-lines-v1:sha256:0c56feb9a8b8a6d93edfd3e36d51b5e78e35864824991c26ff98b4ff541c7367:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5N2MyMjRhMmM0N2YyYmZjZjU3YjNiODliOTc3Y2IwNGY3YzMyYTk2NDcyZDZkMzY4ZDAzZWY0ZDRhZTZkNDIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2NDlkMWY1ZGUwY2UwYTk4ODg1YWRiNmVmZjk0NzNhODhkZmU5MzFlNjU5YmU3ODIxZmM0ZTE4Y2JkYjJhMjFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhZTJlNjkyMTQ4Y2UyZmFmNmNjMWZhNTI3ZjFkM2ExNDZmZDg5ZTFhZWY1Y2I0ZmNjZWZkNzI1NWY3Y2Q4YThlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiZGZiYzg0OTM0ZWU0ZmQ0ZmQwNmU2YTJiM2YzZDRkM2EzOTg2ZTdlNDg4OTFkNzRkMjI3OGU4MWFlYzY1MDA5In0"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/ActiveLayerAnalyze.cs#L45-L116",
+          "version": "repo-lines-v1:sha256:668b25459fba556043ce4981d28f0df5450069f35206ea4f93fc40414e28f8cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4YWVhYzMyZmFmNTk0MGEyZjg2ZjU2NjU5OTRhYTZjOWZjNGQ5NWI0YmZmMWQ2MjAwMjM3Y2U4ZTAzYTU5OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNmM0YjI3MjQ1NDBkNTgzMDQ2NTY2Yjg0MGUwNDFkZTUwNjM5NTZmOGUzYjQ2ZjUzNzI4NDAzZWIyNGYwYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmM2FkNGQ2MDhhYWNhYWFmZGQwNmY3N2YzNjFmODM4MTE1YzRkNmVhOWMwOGM2YjRkZjNmMTE3N2M3MWFmMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/EntityAllAssetsAnalyze.cs#L56-L231",
+          "version": "repo-lines-v1:sha256:3820c2c3e53c57f2741407baf578b5c6f29fef9896952923b48993798296e105:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmOGFlYWMzMmZhZjU5NDBhMmY4NmY1NjY1OTk0YWE2YzlmYzRkOTViNGJmZjFkNjIwMDIzN2NlOGUwM2E1OThiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmYmQ4YjUzZGJjNDY3OGE5OTAxZDkxNGU2YjkzNDA5YzhmNTNmZmQ0NDA5ZjY2YmI1M2ZmMTYyZGFlMTY0NTZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhMDg5NDhhMDFhNTNjNWFmNjUwYTM5YzZjNGZiNzEwOGRmZGM4NmRjNTdiYWJiZWQ4ZDExYjc4ZjBmZWFhMDliIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZmIzMmZjOTcyYzY2ZTNhMTE1ZWMwMWU1YWQ2NDM2ZTBjZTUyZjEwZDYxZDI0M2E0OGNiNTQ4NTY3MTE0ZDQ0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f9c65cf9389145de9ccde258666f385a",
+      "statement": "`BaseAnalyze` pages solution-component queries at the shared size of 5,000, carrying the Dataverse paging cookie until `MoreRecords` is false; it includes root-component, attribute, and workflow joins for component naming.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/PowerLogic.cs#L11-L25",
+          "version": "repo-lines-v1:sha256:176c84639b151d1a8fed51ce5374552c18098f08b172f76c5bc2344552a1bf9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyN2YxMjFlZWRhZmE1OGYxNjI0MWE4ZDY5NThmMjg4MmViMWUxYmFhZjE3MzUzMDRkMzA3ZDEzYjk3NDFjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzODlhNWMxMGY2MDkwMzkyOTU3NzNhZThlMjliODVjN2Q0MzZiMWJlNTdiNGM4YTc5MzdkMzQ0MTA0ZDc2OTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjOTMxZjBiNWMxNDg1M2MyNWY5Y2YwNGM2ZDhkZjk2YzI0ZDA3NGJkMzNkZjlhNTIwN2M4M2MxM2JmYjRmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjYTVlNjY0NWEzYzgxNjM4YjI0NzYwMDIyNDI5ODQ2ZjIwYjg4MTI5OTk0MDZiNWZhODI3MWI3YjdlYzJhOTQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L57-L145",
+          "version": "repo-lines-v1:sha256:5be3604eb8a890b63477f526ee313f815d982d86805fbbce59146e8671e40379:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhYWEzMTBlNWE3ZmVmZWZmZDY3ZTY4N2M3YWM1NmNmODI5Y2I2MDg1ZmIzNjdkNWFmYWU4ZWYxMDUwMzNhYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0OWQxZjVkZTBjZTBhOTg4ODVhZGI2ZWZmOTQ3M2E4OGRmZTkzMWU2NTliZTc4MjFmYzRlMThjYmRiMmEyMWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkOTM0NjJkY2JhYTYyYjA4M2QzY2Y0N2UzOGE1ZjhlMjFmOThmYTM3NDhlMDA5MDEwZDBkMjA1MGM0OTczNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_177a4042cb784107bf73783fcfcea869",
+      "statement": "Layer analysis looks up `msdyn_componentlayer` by component identifier and component type, orders layers descending by `msdyn_order`, and defines the effective non-active top layer by recursively skipping a first layer named `Active`.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L148-L208",
+          "version": "repo-lines-v1:sha256:46c93738c29a74f5f035d0af35a5fb2d67a8bc0386751fbd80e619836755416a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3ZWRmMmI5YTgwM2M5MjI2YWJiOTlkNzMxOThiZDlhNWMwMWNiYTBjZjExZWE5ZDg1OWQ4NjNkMTQwN2E4MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxYTUxMzJkYTBhMDYxOTMxYWI1MjAwNzFkNjgwMzliMzZmM2EwMTA4NDY3OTA5MjVmMmQzYzRkMmVlZTAwMzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMTI3ZmI5MjRiYzgxYmJlYjhmMTIzNWQzZGFkNjlhMjc4OWJmMDhlNDdmNWE3OGM1N2UxMjdiMWMxYjY2ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5d2384a5045b45bbb710b244ed24f9a9",
+      "statement": "The active-, no-active-, and top-layer analyzers respectively flag an `Active` highest layer, a non-`Active` highest layer, and an effective non-active top layer whose solution name does not start with the selected solution name; the latter two implementations do not validate the solution's managed status.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/ActiveLayerAnalyze.cs#L73-L114",
+          "version": "repo-lines-v1:sha256:0e2d6024582d44567d9342ab74ba6493b5ec7393ead701ef2a5ccbb082184931:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjJiZmFjNDFiMjg0OGE3N2MxNzdhZWI4NzgxZWJmY2I1ZDNiYmVlNGY2NjJlMjBiZjE5ZjdiYjdiMGRjMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyYThkYzQ5NWVhZTA2NGIyNjA3OTI2OTFkM2UyZGZjYmFlNjQ3ODgxNWQwNDFjMTY1MmM2Yzg0ZWFjN2E1YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YzAyZmM5MzhlMDIxYzdkYTUyMGUxZDlmMjljNmMzMGU2Mzc5OWYzMjI4YWVmNjUzYjkwODYzMjczMWYxMWQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/NoActiveLayerAnalyze.cs#L73-L103",
+          "version": "repo-lines-v1:sha256:a6264144c1077de8a80a7594354e956b49ef20846df0050d7ac35fe25901691e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YjlkMjdhNjAzOTIzMzEyN2NmODJmMzViOGFkNTkzYmExYmY0MTY0YTIxMzlhN2E2OTI1ZmViMDc2MTM1MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyYThkYzQ5NWVhZTA2NGIyNjA3OTI2OTFkM2UyZGZjYmFlNjQ3ODgxNWQwNDFjMTY1MmM2Yzg0ZWFjN2E1YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YzAyZmM5MzhlMDIxYzdkYTUyMGUxZDlmMjljNmMzMGU2Mzc5OWYzMjI4YWVmNjUzYjkwODYzMjczMWYxMWQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/TopLayerAnalyze.cs#L73-L103",
+          "version": "repo-lines-v1:sha256:656b0b5ce826e8ba87b0d799ca0a003630688516bfaa3409a8502c5abcc7ead1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YjlkMjdhNjAzOTIzMzEyN2NmODJmMzViOGFkNTkzYmExYmY0MTY0YTIxMzlhN2E2OTI1ZmViMDc2MTM1MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyYThkYzQ5NWVhZTA2NGIyNjA3OTI2OTFkM2UyZGZjYmFlNjQ3ODgxNWQwNDFjMTY1MmM2Yzg0ZWFjN2E1YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YzAyZmM5MzhlMDIxYzdkYTUyMGUxZDlmMjljNmMzMGU2Mzc5OWYzMjI4YWVmNjUzYjkwODYzMjczMWYxMWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_695e0c751ea541c0913ff38fd92710a3",
+      "statement": "`RedundantComponentsAnalyze` reports equal component type/object-ID matches in other visible, unmanaged, non-internal solutions and excludes origin-child patches unless `--note-patches` is set; `RedundantPatchAnalyze` requires a managed input solution and marks a child patch obsolete when none of its components has that patch as its effective top non-active layer.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/RedundantComponentsAnalyze.cs#L172-L263",
+          "version": "repo-lines-v1:sha256:145e3d8d1a668ad281c342194502d46fd094e41ba0a148305d69eef766ec4901:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4NGQ5NWM2NDgwZDdkMGNmMmEwNjA1MmE3YjE4NjA0MzcyMzNhNzZhN2ZkMDRiMmMwZjdlYmEwOTg3ZjcyNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0OWQxZjVkZTBjZTBhOTg4ODVhZGI2ZWZmOTQ3M2E4OGRmZTkzMWU2NTliZTc4MjFmYzRlMThjYmRiMmEyMWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0YWU0ZDVkYzQ0ZTU4MGI4OTc3OWM1NDdhYzRkYzJiZjI2YWEzMzE1MTNkMzg1MDQ4ZjQzNTBiNGMxMzMyMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/RedundantComponentsAnalyze.cs#L76-L150",
+          "version": "repo-lines-v1:sha256:85da1eaba40011f7c4d9f3f2861e31379c82f416b8e4c804b8088dd6bb123901:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YjlkMjdhNjAzOTIzMzEyN2NmODJmMzViOGFkNTkzYmExYmY0MTY0YTIxMzlhN2E2OTI1ZmViMDc2MTM1MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4OTAwMDY2ZTZhMzI2YjE5ZTE5NGZkNWJjMmVhZTQ4ZTcwMjNmNTY3MWQ4M2M1NzA1YzA1YjRlZWU1OTdlN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5MzRlZmIwNzZiNzY5ZjkwNzM3NjE2OGVjOTZhMjQ2ZjUwNzFjNzQ4OWRiMTZhNTBiM2Y4NmFlNGVjYmFkMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxNGIwOWU4ZmZkMjFjZjVjODk4ZGExYzgzMTVkMDkxYTM0NGQ5M2VlOWYyNmZkNWIwMzJmNTg2YTlmNDliZTMifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/RedundantPatchAnalyze.cs#L25-L132",
+          "version": "repo-lines-v1:sha256:d431a9b5ac4f25bf768dc83563d4dd9e01c70c01fd0d8dcac069642d75eed35a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZTk3YWRkNGE0MDBhN2FlZGI1ZTJlOGI4ZDMzMTQ3NTFkMGE0YjQ0ZTRkZDVmMTAwNmUwNGE0YTkxZDYzY2ViIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2YTZjNGIyNzI0NTQwZDU4MzA0NjU2NmI4NDBlMDQxZGU1MDYzOTU2ZjhlM2I0NmY1MzcyODQwM2ViMjRmMGI2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwYmIzYjhkYmU0NjRjYjNiZTRmYWJlODI4ZDVkMWVjZmQ4YmEyZjQxNDVhNjE4MGMzZTc0NDYxOTAzZDU3YTUxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NzYzN2JmNzkwMjAyMjM1YzUyMjFkZDAyZmM0YmU0NmMxNTU0MjE2ODA2NzMwMjNjZGEwOWRmZWIyZDFjODMyIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_3561238a040244dd9c4ab749a2998fcf",
+      "statement": "`entityallassets` deserializes a list of configurations with solution, strictness, whitelist, and blacklist fields, evaluates entity root-component behavior with regular expressions and `!` match inversion, and only turns an unapproved all-assets result into command failure when strict mode is enabled.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/Config/EntityAllAssets.cs#L13-L27",
+          "version": "repo-lines-v1:sha256:dff750d0144cdd174fc30de80563525ba90e96c8baeb886235efb1799767929b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNjMzZjkxNGNjNWZkMDY2M2E5ZDM4OGQyZWVhMDFjYjFiMzE4YzVjOTAwZTM0OTQ4ZmZiMmQ1NmYyYzM3YjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxYWJkN2JjNjI0YmViYThhMTQxNjUyNWNmZDdmZGMzNzZjMDhjNmMwNmE2MzBiZThkZTBhOTBhMTMxMGNmYTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5ZGY5N2I4MGIwOWVkYWUzZjk2NDdjZjUzMTEwZjYyMDE4OTlkYWI4YzZjMTU0OTNmMjRhOWFjMDQxMTY2MTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/EntityAllAssetsAnalyze.cs#L36-L46",
+          "version": "repo-lines-v1:sha256:f7984b7d307fa769e20e5ef1614bb412c11c0367960e9545b4890c71f8fd24d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkY2NkZmQ3YWYwNjljYmMxYzU4MTllNTc3Mzc1YzBiY2U4OGQwNzY3ODI2MTUxMGU4NWZmOTdjMDIwNmQ1MmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2Mjg0NTQ2YjI5YjViNzhjMTJjMTE0NjQ2NzRlMWViOTYyYmU1ZDk5MWU1Mjc2MWVlN2ZkYTg2MzJhYWYyNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyNjIyNzI0NjZiZmI3YTExMzEwOTdmNmRjYTJlODBkZThhNmExNGU4OTVkYzlkNjEzZDk4NWEyZWE5YzRjMmIifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/EntityAllAssetsAnalyze.cs#L76-L231",
+          "version": "repo-lines-v1:sha256:016c727ad08027b88647f95240f8237262498af78835bb93b4371ed3fd343aa9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3OGZmNThhZTZjYzhmNGE1YjYyYmQ2NmE4OTc4MjQ3YzMwZGVlYzIyYjNhMzQwZGRiODNiMzE0NjQ0MWUxNTc4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmYmQ4YjUzZGJjNDY3OGE5OTAxZDkxNGU2YjkzNDA5YzhmNTNmZmQ0NDA5ZjY2YmI1M2ZmMTYyZGFlMTY0NTZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0OWQxMzBlNmQwODg2ZTQyMzgzN2U2YTNjNWE3ZGZjZWE5OTZhNGU3NmRlNjJlYjUwNzRhZjI5Yzc4OTMzMmY3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZmIzMmZjOTcyYzY2ZTNhMTE1ZWMwMWU1YWQ2NDM2ZTBjZTUyZjEwZDYxZDI0M2E0OGNiNTQ4NTY3MTE0ZDQ0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_42830f25540a4c7299f99aca2f3a7cac",
+      "statement": "The analyzer schema describes one `EntityAllAssets` object, whereas the implementation deserializes a `List<EntityAllAssets>` and the test resources use an array root, so schema consumers must account for the array wrapper.",
+      "evidence": [
+        {
+          "resource": "repo://schemas/analyzer/schema.json#L1-L35",
+          "version": "repo-lines-v1:sha256:cd076e7aeafef887139b0dc78264eedf95f295e0b47354c184d5fb3755e89458:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZDI0NDU4MmI2ZmIwM2QyM2I4NDE1YWJlY2QzNDZiMGM5ZjQ2NmI2Zjc1MmIwNjgxODljZTdlOWEyZGMzNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Logic/EntityAllAssetsAnalyze.cs#L36-L46",
+          "version": "repo-lines-v1:sha256:f7984b7d307fa769e20e5ef1614bb412c11c0367960e9545b4890c71f8fd24d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkY2NkZmQ3YWYwNjljYmMxYzU4MTllNTc3Mzc1YzBiY2U4OGQwNzY3ODI2MTUxMGU4NWZmOTdjMDIwNmQ1MmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2Mjg0NTQ2YjI5YjViNzhjMTJjMTE0NjQ2NzRlMWViOTYyYmU1ZDk5MWU1Mjc2MWVlN2ZkYTg2MzJhYWYyNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyNjIyNzI0NjZiZmI3YTExMzEwOTdmNmRjYTJlODBkZThhNmExNGU4OTVkYzlkNjEzZDk4NWEyZWE5YzRjMmIifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/Resources/EntityAllAssetsAnalyze/approved.json#L1-L14",
+          "version": "repo-lines-v1:sha256:350555b4585be6ffdd2ba0089f068e02e0ecab1b87e11403a4def76bda089db9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MDU1ZWU1NjU0YjYwODZiMWExMzk5NTNiMDkzMWU4MWFmZjdkNTJiNThlOWYzNGQ5Y2Y4ZjMyMTViMmY0ODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmYWUwZDQyNDhmNzE0MmY3YjE3ZjgyNmNkN2E1MTkyODBlMzEyNTc3NjkwZTk1NzgzMGQyM2RjZjM1YTNmZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_93801c4272e7452a87e8997b46e49254",
+      "statement": "Optional analyzer reports are published as `<Name>-summary.json` and `<Name>-result.csv` using GUID-prefixed work files followed by replacement or move; the analyzer tests serialize execution because they share the relative `Analyze/` report directory, with coverage for layer report artifacts and entity-all-assets configuration outcomes but only missing-input coverage for redundant components and no redundant-patch test class.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.analyzer/Base/BaseAnalyze.cs#L220-L269",
+          "version": "repo-lines-v1:sha256:33e5b495e1eeffe2d032fa9fd5b241ab71b125fcb5fb8ff7150baea8c8afeb2c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMDNkNmM2YjNhOTk1OTA5NzM5YjNlYmY4MzdhZTVjMjJjMmJiMWE0ZDY5ZTRjODJiZmFkNjlhM2I4OGNlNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5YWM1NmM3NjczMTI3NDcyMTQ2YThmNTAzMmE1MDQzYTUyNjExZGQxZDJjZDc2Y2ViODkwMWI0ZDg2OWE1YzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1ZDAxNjc1NjljODIxNzllY2NmZGUxOTRkNmRlZjhhY2U5YTExNzM3NGUwMzgxMmYzMTRlMzIwYWZkNjk3ZjkifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/ActiveLayerAnalyzeTest.cs#L21-L163",
+          "version": "repo-lines-v1:sha256:58764dae85611a8a13825d25e35e9b33b19a0411438555f6e22b52fcbd8058ea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiY2MzMDAzMGUzYmJmZDMzMmQ2YWRmODMwMWE3Njk1MzI0ZjFiZjVjZjBkYTk0MGZmYjA2ZTFjNzI1NmZkNmJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4YjhlNTNiNDg2OGRiODg2YTkyMWY5MGZmNTlmYTg0YzI1Njc5NWJiY2MxNmY4N2RiN2I1MWNhMWRlNDFkYWFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/EntityAllAssetsAnalyzeTests.cs#L148-L192",
+          "version": "repo-lines-v1:sha256:6e140a67d5b76b431f6b45c19de7a2f7bc80a96da5ad3e910b34378b96b43174:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmMWFhYzBmNjUzZjI5YzNhMjk5NWQ1OTE3ZTVjZTYyMTExNWI0MTBiZTNmOTRlYTI3ZjExZWM4MGFiNjcxNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/NoActiveLayerAnalyzeTests.cs#L21-L163",
+          "version": "repo-lines-v1:sha256:493e1a4abb23f34fce64c20c1579c94c0ec9b2573cd8b3b3be9bc91ee4ec6ca1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiY2MzMDAzMGUzYmJmZDMzMmQ2YWRmODMwMWE3Njk1MzI0ZjFiZjVjZjBkYTk0MGZmYjA2ZTFjNzI1NmZkNmJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4YjhlNTNiNDg2OGRiODg2YTkyMWY5MGZmNTlmYTg0YzI1Njc5NWJiY2MxNmY4N2RiN2I1MWNhMWRlNDFkYWFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/RedundantComponentsAnalyzeTest.cs#L14-L130",
+          "version": "repo-lines-v1:sha256:15252d381c615e46f1f50fa04eae3eb3696b5dbd1d308d7d2bb213f7eeca8a22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiY2MzMDAzMGUzYmJmZDMzMmQ2YWRmODMwMWE3Njk1MzI0ZjFiZjVjZjBkYTk0MGZmYjA2ZTFjNzI1NmZkNmJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzNmE0YTJjMmZmYzhkYzkwNzhmOTc3NGE1MmFkZTUxMzQ4NjZiODJjYjE5ZjVmMWNjZTk4N2M4NWM4ZTkzYjRlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4YjhlNTNiNDg2OGRiODg2YTkyMWY5MGZmNTlmYTg0YzI1Njc5NWJiY2MxNmY4N2RiN2I1MWNhMWRlNDFkYWFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://tests/dgt.power.analyzer.tests/TopLayerAnalyzeTest.cs#L21-L190",
+          "version": "repo-lines-v1:sha256:0f4b33cbedb7558bef46f5d3b78c9b77011bac481c42a653eac093c75f2f625a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiY2MzMDAzMGUzYmJmZDMzMmQ2YWRmODMwMWE3Njk1MzI0ZjFiZjVjZjBkYTk0MGZmYjA2ZTFjNzI1NmZkNmJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4YjhlNTNiNDg2OGRiODg2YTkyMWY5MGZmNTlmYTg0YzI1Njc5NWJiY2MxNmY4N2RiN2I1MWNhMWRlNDFkYWFkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

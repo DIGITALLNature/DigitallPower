@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:85061e3de4e964b5b60eef77a4780bd6d8485542c0f7b36abaf3ba612fbe14a5",
+  "claims": [
+    {
+      "id": "claim_3e639cbfd54f41068c35c93b7a61479a",
+      "statement": "`XrmConnection` is registered as `IXrmConnection`, and the application's shared `IOrganizationService` is resolved by synchronously invoking `IXrmConnection.ConnectAsync`, making it the common connection boundary for commands that request that service.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power/Program.cs#L130-L151",
+          "version": "repo-lines-v1:sha256:b90bb070b50f3a96c5bdc6966576a70c319cdf059087a79e8f06377d638567f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZWFmNzMwOGIxMWVlYmViZDNkZDVmM2Q2N2I1NjRmZWRlMDNjZjQzNDUyYmY5N2M2MjIyYjNjMjRhMDVlNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MTAyMmE2Y2NiZTJlNDdiZDEyZjQ1NTBjMzZlOWUzYmFiYjc3ZmVhZTYwYjlkYjMzMzRhNWRmNWM1OTY0ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhNjQ1Y2UzMTIxYWY3YTk3OTQxY2JjNGUxNGE4NjQzZTMwYzU4NDU3ZTA5MTc3NWQ2ZDFiYTRlN2MwNWU5NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1MTkyMjc5ZmZhYTc4MDg0MjZiMzhiYWVkZTE5YTZkNTlkNDUzYzY5NDAxMTM5MTY2NzMwMjQzNTUxZWUwZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0e26f851fc2d4f5aa6256611f47d93ce",
+      "statement": "`ConnectAsync` gives a non-empty `xrm` configuration section precedence over a named `profile` and then the persisted current identity; it throws `MissingConnectionException` when none is available. Named profiles are loaded and made current in memory before connecting.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L15-L37",
+          "version": "repo-lines-v1:sha256:26b5b591865b60404125d244e99b2eb4867b5b4bf1d18385ff1a4bcc33f58f53:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2MTA4YjJhN2FiNDZiOGIyYmZhZWQ2N2QwODJkM2U5MmQxYjAyYTM4NmEzMzEzNmMzYTNkY2U4ZTM5MDNkY2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwYWM5ZGFiMzYyZGE5NzZhNWEwN2YzZTE5OTg3ZWRkNjc2MTJiZDFmYTMyMTRmODIxMjNkYjMyNjgxOGRhZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiOTE5YjM0OGMxMzVkNGExMTU5NDdkOGViNjc4ZDkzZGVlMzk4M2M5NzE2ZjIzN2Q2YzIxMjU2YzBlNjA4NGEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L86-L97",
+          "version": "repo-lines-v1:sha256:120c28d05996e423cd4b52ebed2bfac2a937f15b6f34f94049c1637e9591b53e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNGEyNWUyYzZkMTM1YzY3ZGE2NzZiOGZlM2ZlYzEzY2JiYjVlMWJkMWVhN2Y3NWUyMDM4OTIxMWZkZWIwMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3NGY1NzQ2M2VmMWM5MjQwMzIwMGNkYzI5OTFlNmFmN2U2YTQxYzExZjU0MGEzMjM5NmVmMGYxNmY0MGRlOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3OGM0Y2Y4YjVjY2I0OGJhOGI3ZWM0Nzk0MGZkODllOTg2ZDA5MDdmZDVlMGZmYmJjNTJlZDgyZTliYzY4YTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_318d63b9a96a44bdb1070c059706b966",
+      "statement": "For stored identities, `XrmConnection` selects `TokenConnector`, `AzurePipelinesConnector`, or `CrmConnector` by identity type, creates a service proxy, and probes it with `WhoAmI`; exceptions from those operations are wrapped in `FailedConnectionException`. The direct `xrm:connection` branch uses `CrmConnector` and wraps proxy-creation errors but does not invoke the probe.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L70-L84",
+          "version": "repo-lines-v1:sha256:6f11b11ec3fd14b5df873396dd05c6f2f08a60d6ce1f5817ae3eceb76ecf244f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNTYxNjU3ZjEyNTY1ZWUyNTY5MmM1MmExMTA1ZGFiMzUyODVmNmYxYWE5MGJjYTZlMGE0YThmY2QyMzQxZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhZDk4ZDJjMGQ4MTRmN2VlNTY1MWQzMDcwZGI4MDJmYzRkZWFhMjU0ZDMyOTEzYTk2YTNiNzhmYzM4MjA5ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzNjgxMmZjYmY4YjdkYjgzYjQ3YzYzMmI2ZmFhNDU4MmQ5ODUzOTE2OWViNDkxODYyZGNiY2RiZjU3ZWYyOTkifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L99-L136",
+          "version": "repo-lines-v1:sha256:2fd27fe6ff169cbd7a25f109720c712c6ac31f4de28e0e3d815e599997fb44e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhODRjZTYxZmE4NWNhOWFiM2EyZjJlN2FlZDRlODVjZjM0YjEyNDU0MTllYzJiMzFiMjhkOTQ0MWMxYTA0NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NGNlNmQxMzJkMWQwNzFmMzg0ZmRhMTY3MDllNjI5YWFlM2E2NjU2ZWJmYzhmNGFjODk1MTE4MzY2NWZmMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxYTUwNGI5NDBmMWY0NDM1OWNiZWQwODI4YzZkMDhkNzg1NWIwMDZjYjZjZDc2ZmU0ZjViNmUzYTY4MTJlYTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2dfcb7a4b88a42aba6fb84142c152f5c",
+      "statement": "Local identities are serialized to `identities.dat` in isolated storage and protected per user with Windows `ProtectedData` on Windows or ASP.NET Data Protection using `dgtp` and `dgtp-Identity` elsewhere; deserialization errors are displayed and yield an empty identity set.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/ProfileManager.cs#L108-L145",
+          "version": "repo-lines-v1:sha256:00007956d6cada73bd172e3f9be20ac612f870c14769a5e3d2e46379056f1636:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhYjE2ZGE2YTA1YmRlMWY2YjgyZWNjM2M3MzkyZDBiYjNkMGNmZGEwODMxYjI2MjI3MzI3OTMzZGVlZGZiMjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4NTQzMWU2N2IwZGFiYzE0ZWIwZTIwNDlmYThhMjc2YjU1ZWI1YmE1NzI4Mzg0ZjgxNTg5NTQ3YWM5MTUxMDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiZDY0NWYyZjdiYTNmYTg5NjAyZGVkN2VjZDdkNzQ3ZWM3ZjczYjNkY2NhNTUwMWNkMTJmODM4Yjc1Y2VhNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNmY1YjIyOTU5NzU1ZGUyN2RlNzg1ODhjZDIzYTNiNzI4MzNiMjRjZGQ5N2QxNDkyMzExYjMwODg3ZWQ1Y2MifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/ProfileManager.cs#L22-L61",
+          "version": "repo-lines-v1:sha256:217f5636787034156dc6c94c92f2b520673197eb505f37eb141fcf810c5842a2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyOWQ2MTJlYjU0OWQzODM5NjQ3OWJiOGVmZTRkMmQ4MmFjYzAwMDM0ZjUzOTgzN2JkNTZkNDY2ZmQ0ODk5YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2MjkxODMyZTY1YjM3YjQ2YjNlNzFjNjA5MDVlZmNkZTdkY2E2NzIxNjFmNDQ5NDg1OTE0MTM2OGJmM2NjMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmMDQ5NzFiMGQwOGVlODQwNDg3ZjNmYTI5MzZjZWFlNzJlYzIyMDFjM2IyMmQ4NzdkNDY5YmUyNDNhNGYzZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d079dbe4272843be95cc5b1a1afcb0cb",
+      "statement": "Identity names are case-normalized to uppercase; upsert makes the identity current, selecting an absent identity throws, and removing the current identity clears the current marker. Identity listing classifies token, federated, and plain identities distinctly.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/Identities.cs#L21-L64",
+          "version": "repo-lines-v1:sha256:0d25622452fb072362037138d881ebbaa885467363a3b64bd254b5c4fe80090e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMDBiNmMxYWE2ZWM4ZjNiNTBiNDQ2N2VlODAxNzZjZDdiNmI1NTZlZWFmNjVkYzY5NWQ2OWZjYzFlYTI4YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0YjBiOGM1NGVjMzIwYmM5MTI0YTYwYjdiYzRmYTRkY2NmMDI3YWIyN2VhNmUzOGMxZDQ5NjYyYzhiYzU1YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/ListConnectionCommand.cs#L13-L30",
+          "version": "repo-lines-v1:sha256:b007c00f5414c248c0ced5e8af2ddd813f4c7e220c1387c6b906d64db9a56d70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzODhjOTRjMmJkOTVmZGU3MDEwNTNmOWJkOGI0ODdkMzljZDM0ODI3YjAzMDRjNWVmNGYyZDMyNWMyNzA2OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzZDMwMjczYjIzNTExYmQzN2U5N2UyYjZjNDM0NWZjYzc5MDJiNDU5MjZkYTBjYWU5ZjBkNzJhZGE0YmM0MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3833356e503a4924a84f11443258be45",
+      "statement": "The persisted identity format supports token and Azure DevOps federated derived types; token identities persist MSAL cache/account data, federated identities persist tenant/client/service-connection identifiers, and legacy base fields are retained only to read existing profile files without behavioral effect.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzureDevOpsFederatedIdentity.cs#L6-L29",
+          "version": "repo-lines-v1:sha256:a31cad0d1bab4fff3173de6007da3c11389c86338a2e518ebac4e543db8d0acb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMjBlNGQ4ODNjOWUwMDFmN2EyZTZmNzdiOWM1NDA1NDJhNzkyZTE5ZGRmMTQzZTA0YjI3YWFjYmE1MzQ4NzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MDQ0YmQxZDhjMjY1MWIzOTk1ZjBkMTMxNDQ1OGQxMWUzNGY3MjM1Zjg5NGZkY2U0MjUzNjhkN2VjNDFkZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/Identity.cs#L8-L28",
+          "version": "repo-lines-v1:sha256:2a46481f219c5f96b05fdfa010f1074382b26b0871c3ec59cb8973d81555c6ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMzhlMjhiNWQ2YjBkZjQ0M2Y5YWVmODhmMTlkOTI4ZTg0ZjBkZDZiMzMwNzQ5ZWM1YTY3OGYxNzM1YjJlYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkMmFjNmI1Y2JiZGQ1NjYxOGU5ZTM5MjdiN2JlZGZmNDY4MGM1N2IyMjE1OTYxMzNjZmNmN2Q0YjQzZGJiODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MDQ0YmQxZDhjMjY1MWIzOTk1ZjBkMTMxNDQ1OGQxMWUzNGY3MjM1Zjg5NGZkY2U0MjUzNjhkN2VjNDFkZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/TokenIdentity.cs#L6-L10",
+          "version": "repo-lines-v1:sha256:273382a4c67ec2a15b9153f277eabd91f959031ecf9bba9e3a775ea1cc893240:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODYxODlhMTk4ODg3MGM4ZDYzMTEzNDZiMDRmYzE0MDUwNzgzMjAyNDU0NmJhZDhhNTFjMGMxMTUwNjQyMTYyMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgwNDRiZDFkOGMyNjUxYjM5OTVmMGQxMzE0NDU4ZDExZTM0ZjcyMzVmODk0ZmRjZTQyNTM2OGQ3ZWM0MWRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_26be739833e6413b950aeb32e480a03e",
+      "statement": "`connection create` validates mutually exclusive connection-string, MSAL URL, and federated input modes; it creates the corresponding identity, verifies it through `ConnectAsync` unless `--no-verify` is set, and saves only after verification, so a failed resolution or probe is not persisted.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/CreateConnectionCommand.cs#L26-L97",
+          "version": "repo-lines-v1:sha256:c5eceb4d9efdc99a5087706d3a5a0a14f7573ec28279e8fc86599fdb3de31467:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliZGE4NzY3MjgyMzg0NDk1NWZjMDZlMmVhMGNhMzYxYmMxNDU2ZmU0NmYxN2IyZTU5Y2M4YTI0Y2UzMjFmNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMDZhZTMzYTM2ZmJjNjg2YzMzMzEzNmMxMGI3YzQxZWQwYWU0MGE1ZThlYWI5MmI5M2ExM2E0MDA5OGQ1ZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMWQyZTQ4ZmI1YmI2ZjAzNTg3YWU1MmI5MzYzMzc1ZTZhMDYwMzkxNjYzMjRlZDQzMGJlNWJhYWFmMmM4MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/CreateConnectionSettings.cs#L21-L97",
+          "version": "repo-lines-v1:sha256:3430f4f0b7a3c7fb3b5fa23b70389a404747df4871cbd5ab33666ab9dbf4e000:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYzQ4NDM1Yjc3NzA5OWVmZjIzYzhjNjY4MGMwMjY5NGQxOGY1MjlkMjcwYWU3ZWNmYTgyMjY0YmYwMzhjNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMTIyNGJkYTk2YjAwOTJhZGYxNGQ0MjQ3ODJmOGNhY2Y2NDNhZjM3NzRkYmQ1YjEyNDA0ZjdhYTY1YzZhNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzNjNmOTVhMzAyZDQwM2YzNWM0YTkzZDE0OWQwYzExZjYzNzM1MGJkZmNhMWY0MmExMjg2MDhkOWQ5Zjg5YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.connection.tests/CreateConnectionCommandTests.cs#L97-L138",
+          "version": "repo-lines-v1:sha256:803fd8878a105cc09eea35a36741148af80b5950dc4198f6f45fe9191125ef93:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmOGQ0MWQxMzM2Zjc0MWZiNzQwNGU2MDFjZTY4M2M5OTZmNDNmMzRmODcyNWY5ZTgzOGE1NWE2ODVhOTg1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwOTA0MTZmZGVmNTE0OTk2ODNjYzJhMjFhODA2ZGUwMGU0MzM4ZWU3NTk0ZWI4MWY2OTE3MDI3MjI5N2RlNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98261b1aff4246c194b656fc02ef204c",
+      "statement": "A named Azure DevOps federated service connection is resolved at creation through the Azure DevOps REST API using required pipeline variables and access token; the resolver requires exactly one `powerplatform-spn` endpoint and returns only URL, tenant, client, and endpoint ID, otherwise raising `ServiceConnectionResolutionException`.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzureDevOpsServiceConnectionResolver.cs#L17-L23",
+          "version": "repo-lines-v1:sha256:63c268009ea6a3be60cb9ea0656e417330183c968708b9d023bc99ed76445167:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM0MDZiODkzYzRlYTliYTk1ZDliZmFmZjk5ZWFhOTYwMmEyNDBhMWM0NWM3MTgxMzI5ZTk5NmQ4YzJhMTJhYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgwNDRiZDFkOGMyNjUxYjM5OTVmMGQxMzE0NDU4ZDExZTM0ZjcyMzVmODk0ZmRjZTQyNTM2OGQ3ZWM0MWRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjk1MThjMDVmODMxOWRlZjUzZGMxY2M2YmQ4YTBjOGNmYTc1ODMyODdjYjgxZTE0OGE2NDM1MDQ0NWRiZTJlYyJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzureDevOpsServiceConnectionResolver.cs#L38-L129",
+          "version": "repo-lines-v1:sha256:48a4fc2321d590bd5b6a27896b0e7a3666eebce07f2523224b6061d142bd306b:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZTUwMDI5YzkxYmZmYjcxOGU1YzhhOTg2ODRiOTc5ZjA2MjFlNDI3Yjg0Y2UwOGI0NDVjM2RhOWFiNDdiMWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyZTAzMWY5MjlmMWIzZmIwNzJmMDcxNTU2MDYwZmJkMWU1ZDIxYTkxZjU3YWViOTkyYmE2MGRjZWM2ZWFmOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiNzYwNjY2ZTdhMzc5MGNmNmQxMTVmOTY2MTk5OTA5YTVhMDc3ZjFlMGNkZjA4YWU4YTJmYzZjYzY5NzJjYWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e0eb1c0e0c74acbbe09a67bda9f167f",
+      "statement": "MSAL token identities attempt silent acquisition before an interactive browser flow and persist cache/account updates; in non-interactive mode a UI-required silent failure throws `InteractiveLoginRequiredException` instead of opening a browser.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/TokenConnector.cs#L50-L86",
+          "version": "repo-lines-v1:sha256:27dfc76d11a8ee3a3cec5c01126e9b5724449caf3082a47041a31294d3cbad4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5MzkyOWU3YjNhZGE1Mzc0M2NlNDE0YzVjODE0ODUwODgwMTJmYzhkYzJkNjM1MWU5Nzk4ZjA5ODI4NDg0ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4ZmE5ZWM3YzY3MTE4NTU4Y2Q2ZjM0NDExODA2NWQzYzhjN2U4MmRhYzk2NmEwNDIxYTU2ZjI4ODdmYTBiZjkifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/TokenConnector.cs#L88-L132",
+          "version": "repo-lines-v1:sha256:50604cda271dc9433b79ae4fa4d02ecd903be5ceaf37e6f88eac88d1602f04c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwY2UyYTJjNWFkMzc1ZjliMTYwMjE3NTIwMWZiNjU5M2NmZTJiMDJjMzgxMDQ5YmI3MjAxNzI1N2RlNDc0NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4MzM2NjRlNzdjMGExMWQzMTc4ZTg4MGEwZDA5ZDZiZWUyMTk3ZDMwMTlmYzQ5YmYzNzZjYTBkYTkzYjQ2MzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxY2ViNzRiYzA1Nzg0ZmI3ZDI4ZjU1NzU2NWQyNGU3N2Q4ZDBkMDBiZWZhNDZlNWQ0YTk5YzA1ZTEwMzhhYTkifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L138-L155",
+          "version": "repo-lines-v1:sha256:9c3366c2dc228aa117e39c1cdf9ece3bd0884c20dc6cc8102436e3b2d6119d44:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NWM3Yzk3MjUwOTBjODY4MzdkY2VlYzdiYWU5Y2Y3NjdlYWVkZmEwNWQzN2YwYzFiNjRkZTdlYmJjZGJkMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_231586d7ba9b4424bca23495f3f9ade4",
+      "statement": "`connection status` performs silent-only authentication checks and returns 0 or 2, with federated failures reported as pipeline configuration problems; `connection refresh` opens interactive login only for token identities and is a successful no-op for connection-string and federated identities.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/XrmConnection.cs#L40-L68",
+          "version": "repo-lines-v1:sha256:9ad56867752b64f77ec0ab4e470d2a3b3610c5d709a894a4638083be05f04240:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3YWMyY2IxZDgyZGNhNDAzNzNjOGM2NzdkOWZhZTc4ZDhkOGVmN2Q2NDk4MGVmMWE4YTRlMmE4NjE4ZjMyMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhYzhkNzgyMDVhYTQ0MjRlZWRlNjVlNjEyMjA1YTBhZTQ1MzM5MjAyNTg1OWIwNmYyZWE3NDJlNDQ2MmJkNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4Mzc0YThjMjFmYTNiOTU4ODRjMmFlNDFkYmI3M2IwYWY5ZWFjMTAwMzU0ZTNjODAwYzk0Mjg2OTYyYmJlYjQifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/ConnectionRefreshCommand.cs#L13-L53",
+          "version": "repo-lines-v1:sha256:0d22df102d64f3efcf3e76211010683b44cb4c6664294e42cb14a0eb4eead64f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzZDMwMjczYjIzNTExYmQzN2U5N2UyYjZjNDM0NWZjYzc5MDJiNDU5MjZkYTBjYWU5ZjBkNzJhZGE0YmM0MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.connection/Commands/ConnectionStatusCommand.cs#L13-L45",
+          "version": "repo-lines-v1:sha256:ae6af452d994e2e4c6707e28a2daa25d3805ffd526c173ad614c1b62715987b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzZDMwMjczYjIzNTExYmQzN2U5N2UyYjZjNDM0NWZjYzc5MDJiNDU5MjZkYTBjYWU5ZjBkNzJhZGE0YmM0MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e1d22e122b0940f5aa3090a1c91d8ad2",
+      "statement": "Azure DevOps federation obtains a fresh token using `AzurePipelinesCredential` and the job access token, derives and overwrites the job-specific OIDC request URI from required Azure Pipelines variables, and has no interactive fallback; silent status failures return false for missing, unavailable, or authentication-failed credentials.",
+      "evidence": [
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzurePipelinesConnector.cs#L11-L18",
+          "version": "repo-lines-v1:sha256:c8808e2165a4c8ddad8ed778cffb040b5bc7d7a874eb693507349b6f48875e0a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ5MTY0ZmM2NmFiNmNiYWE5MTJiYzczYmI3NDlhYTZmZDBjYzc5Yjk2MDk2N2Q3OGE2NTI2OGVjNmFiMzRjNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgwNDRiZDFkOGMyNjUxYjM5OTVmMGQxMzE0NDU4ZDExZTM0ZjcyMzVmODk0ZmRjZTQyNTM2OGQ3ZWM0MWRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY4NTc0NzEyYjczYzMwMWEzNWQ0ZWFiMTI0Mzc4MmJkMzhmYmQ3ZDY4YTUwM2U2YTY0NGU5ZTIxMTMxNGVmNSJ9"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzurePipelinesConnector.cs#L111-L130",
+          "version": "repo-lines-v1:sha256:5f2922421057d2e98bbbe51632d9c776fe91bb77fa8379ae51e1983dbe93c22b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZmQwN2Q1ZTc4MDk1NTU5NDA3YzQ4ZGQxOWFiMzFkZDAzZGM4NzQ0NmQ3MjdlNjU4OGE2OTI2ZDY1MWU5NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzurePipelinesConnector.cs#L34-L54",
+          "version": "repo-lines-v1:sha256:d4d757116708a8dea25df87db45843c065c9cc36f58d4d884b512fe04d5c555a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxODViMzhkMjYwYmE2ZTgzMWM1YzMyNmQ3YjUwZDc2MjIwOTU2OGZmOTQ1NTk3MTAwN2UwOTYxODZhYWRkMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NDEwMWZlYWFlZTE1ZGJmNmQ2ZmQ1YTA5MGJmYjY0ZmFjYWQ4M2JiNjQ5ZGI3MjY0NjNhMTJmZmFhZjU5ZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1NDNlZTAwODc5ZjQ5ZDBiMmE2MDlhYzAzN2RmYjQxMzc1ZmRiZThiNDI4ZDczYWIzODk2NzJjNTRlNTkwODUifQ"
+        },
+        {
+          "resource": "repo://src/dgt.power.common/Logic/AzurePipelinesConnector.cs#L74-L109",
+          "version": "repo-lines-v1:sha256:476b244746ab30b9cd7b149f401ce54f95e8ded9bd210517304e63703a0e7d9b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMDI3NWYwYTQyYjZlNDQ3MWM4OWZkNjQxMDA2NmQ3OThhYjI0NDQwZTQ0NTEzZjZjNTFmOTQ5MWU4ZDRkY2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMTIzNzE5MmQ2N2U5MjRiZmExODU1NzY1NGJhOWUzNDUxMzJlNjU1YWRmMGEyZWI0Y2M3ZGNmY2U3ZGUwNDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YjJkZDhiMjdiZmUzZDY0Yjc5YTkxOGE5NTFhMjI4Mjc0MmIzMTE5NmEzODYwMzkxNjhiY2FlZmIwNDAzMzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_15ab87e9fcd242328d61c517bcdbde40",
+      "statement": "The deprecated `profile` branch shares the connection infrastructure but has a distinct legacy creation contract: positional connection string, `--msal`, and `--skipcheck`; its base settings carry `DeprecatedCommand(\"connection\")`.",
+      "evidence": [
+        {
+          "resource": "repo://src/modules/dgt.power.profile/Base/ProfileSettings.cs#L7-L10",
+          "version": "repo-lines-v1:sha256:2a265c2454ccef6ce69f62a648e0ea3455715270781bf0f22802d66736c52070:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmIzM2U0NjRiZTFlNGY3YjE0NmYwMDQwMDBhNjRjZmQxYjUxZmYyNTRjZDAzYTQwZWVjNjhjNjFiMzA5YjJiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzkxMWE0ODczNmEwM2UxZjg4OGM0Y2NjNzhhMTdjMDMxMDYxY2UyODFjYjMwNWY1MzMxYjAyZjQ2MmNmNDY5NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzAwOTUwY2YxYzM1ODJlMWYwMTY4YjYyZDYwNmUwODQzMzIwMDE2ZGQwNTNlMDQzODljNjFmY2ZmOWE3NzAxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.profile/Commands/CreateProfileCommand.cs#L14-L59",
+          "version": "repo-lines-v1:sha256:4e411b4aa6ae1d68442959a920061d47564f03d0854d0d476b64b66056b704d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZDJjN2NkN2E2MGFlY2NjZWFiMGMzYmRmMDhlYzJhZTlkMTNhN2M5YzA1ODI2NzRhZGE3YTdlOGEwN2Q0ZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNzI4MWZlYTgzMWU4ODU4MmYwZjMyODJjMzk1MWM5Y2YxYWE3MmU1YmRlZjk3ZGM3NDE4OTI2ZDY1NGIzN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmZDMyNzVlZmI1NjdiMGJhYmRmZGJlMWIwMzNkNDNlYWVhZGEwNTUxMDllMjVjZjRiMGExZTEzMGI2OWNhMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkN2VhNGI4NDRmYWVkYjQ5ZjdlMDg2ZTIxMzJjYjMxOTZhNmI4MzNiNjVmMGIwYWFmMGYzMDM3OTgyYWZhZmMifQ"
+        },
+        {
+          "resource": "repo://src/modules/dgt.power.profile/Commands/CreateProfileSettings.cs#L14-L32",
+          "version": "repo-lines-v1:sha256:7d64e5bad87f3721c05de358d528047965f31316df270df1653a5f0572dc48d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMWFhZmJkZjhkNTc4ZTZkNDM4NGE3YTg4NTA2YmYxODJiYjUyYzQxOGEzM2FhNjQzZjczNWQ3NDg2MGM5YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYTRhOGY4MzEyODRmYTY5NjQ2ZGRiYmU2OGVkMTlkMTNmM2E1NWFkNjBlYTQxYTI3YTY2N2M1NzBkNTY4YWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmZDMyNzVlZmI1NjdiMGJhYmRmZGJlMWIwMzNkNDNlYWVhZGEwNTUxMDllMjVjZjRiMGExZTEzMGI2OWNhMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/dgt.power.profile.tests/ProfileSettingsDeprecationTests.cs#L9-L26",
+          "version": "repo-lines-v1:sha256:dd00d59526543db240d2edcc150038c275236fa0cdd381855e18848dced3d926:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxZWJiZWYxYmVkODRhOTQ2NmNhYWI0NDdiZTNmNWQ4Y2EyZjYzNWQ4Y2U3MDhkODI1OGJmMTUyMGEzMjljOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-22T15:05:10.374Z"
+  }
+}

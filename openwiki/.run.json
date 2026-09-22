@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "runId": "51e9efd6-2cd3-4521-9f30-364c040660ba",
+  "mode": "update",
+  "phase": "planning",
+  "startedAt": "2026-09-22T15:25:25.628Z",
+  "language": "en",
+  "languageChanged": false,
+  "requiredRewritePages": [],
+  "initialPages": [
+    "/openwiki/architecture/dataverse-access.md",
+    "/openwiki/architecture/dataverse-contracts.md",
+    "/openwiki/architecture/overview.md",
+    "/openwiki/cli/completion-and-observability.md",
+    "/openwiki/quickstart.md",
+    "/openwiki/reference/build-and-test.md",
+    "/openwiki/workflows/code-generation.md",
+    "/openwiki/workflows/configuration-transfer.md",
+    "/openwiki/workflows/maintenance.md",
+    "/openwiki/workflows/push.md",
+    "/openwiki/workflows/solution-analysis.md"
+  ],
+  "sourceFingerprint": "sha256:04da2597019cfa1018578cab72f940095e5d9e67a20440b74e77aae4d2357898",
+  "targetGitHead": "b0ae63bd395335ea88617651a54bb3b3006c5deb",
+  "actor": {
+    "producerActor": "openwiki/0.5.2",
+    "metadataModel": "gpt-5.6-terra"
+  },
+  "previousLastUpdate": {
+    "updatedAt": "2026-09-22T15:24:46.621Z",
+    "command": "update",
+    "gitHead": "9a5a3a12bcddf704c3f6eae466159c5a97871514",
+    "model": "gpt-5.6-terra",
+    "status": "interrupted",
+    "language": "en"
+  },
+  "baseGitHead": "9a5a3a12bcddf704c3f6eae466159c5a97871514",
+  "wikiGoal": "A code wiki for this repository.",
+  "beforeContentSnapshot": "87e60b75e457be3f7ebe01451cf5fefadcab00467cbd3f6d3f5acd498e08c079",
+  "preparedWiki": {
+    "generatedProvenance": [
+      {
+        "page": "/openwiki/architecture/dataverse-access.md",
+        "bodyHash": "75d27641ab4758a06bc316fdc504a9e85f01d0d77e02fa404a8961848be9e71f",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/architecture/dataverse-contracts.md",
+        "bodyHash": "0c28ca02867b357de8cc4a07892c9f8e256503bf8adbfb4c68f33d727b36f39a",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/architecture/overview.md",
+        "bodyHash": "9735f41d873b3e40d56242c4f73ff38ccf6ee6be2f675b0ae1bc6ad400fac0c1",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/cli/completion-and-observability.md",
+        "bodyHash": "90cef431c9c18fc4a5fff11e9ae135d3d5fb0980697d191a4fe4d48630b7a484",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/quickstart.md",
+        "bodyHash": "034ad7c50f646caf3830ff4b5d4449c252cc6891b7a4abf9c086a975eca7463b",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/reference/build-and-test.md",
+        "bodyHash": "4243f4b082b05fc44aa2b406222c528b15593d962ec50ad8db1dccac8b236221",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/workflows/code-generation.md",
+        "bodyHash": "5986112aaaca2bde4f93cbbd0812d1214ca7fa9028ad07f5851f2f533cb72da1",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/workflows/configuration-transfer.md",
+        "bodyHash": "ff84b4eb2dd6543517cc8a1f76a43194310f65604dea219c7f791a46c44c2b55",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/workflows/maintenance.md",
+        "bodyHash": "5987fa896b39f2df0fe349838ce8de144ed79f24ac91bc9a6b95fcd64d2784f0",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/workflows/push.md",
+        "bodyHash": "360f9d197454daa55a8eb00a340e2a3d1bd417458eec8c7b37847254185d84d0",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      },
+      {
+        "page": "/openwiki/workflows/solution-analysis.md",
+        "bodyHash": "04a3c8b099292cc3c4269279279f2f445c2f3149bdd6367e03a14f8e85778596",
+        "generated": {
+          "by": "openwiki/0.5.2",
+          "at": "2026-09-22T15:05:10.374Z"
+        }
+      }
+    ]
+  }
+}
