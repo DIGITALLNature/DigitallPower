@@ -14,12 +14,12 @@ implementing `dgtp plugin push`, structured in four layers:
   target environment. Split out of `Planning/` (where these types originally lived, mixed in with pure
   decision logic) to keep the module's namespace layout self-explanatory: `Local` and `Remote` are both
   plain state/model namespaces, `Planning` is pure logic.
-- **`Planning/`** — typed deployment plans and planning logic. `PluginPushPlanner` contains pure
+- **`Planning/`** — typed deployment plans and planning logic. `PluginStateComparer` contains pure
   Local-vs.-Remote matching helpers, while `PluginDeploymentPlanner` loads the complete remote
-  snapshot, validates references, and returns the immutable plan consumed by rendering and execution
-  (not tuples - see
-  `PluginTypeReconciliationPlan`, `PluginStepReconciliationPlan`, `PluginStepImageReconciliationPlan`,
-  `OutdatedTypeMigration`).
+  snapshot, validates references, and returns the immutable plan consumed by rendering and execution.
+  Low-level comparison values use `Change`/`ChangeSet`; `Plan` is reserved for the complete executable
+  deployment graph. The files and namespaces are grouped under `Planning.Changes` and
+  `Planning.Deployment`.
 - **`Repositories/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
   `ISdkMessageProcessingStepRepository`, `ISdkMessageProcessingStepImageRepository`,
   `ICustomApiRepository`, `ISdkMessageRepository`), one per entity, CRUD only - no decision logic.
@@ -27,7 +27,7 @@ implementing `dgtp plugin push`, structured in four layers:
   `dgt.power.dataverse` generated-entities project these repositories depend on (`using
   dgt.power.dataverse;`) - "Dataverse" described *what they talk to*, not *what they are*.
 - **`Execution/`** — `PluginDeploymentPipeline` sequences plan/render/execute,
-  `PluginPushExecutor` applies top-level assembly/package operations, `PluginTypePlanExecutor` applies
+  `PluginPushExecutor` applies top-level assembly/package operations, `PluginTypeDeploymentExecutor` applies
   preplanned type/step/image/Custom API operations, and `OutdatedAssemblyMigrator` applies preplanned
   upgrade migrations.
 
@@ -115,10 +115,10 @@ Current unconditional behavior on every `Upgrade` (major/minor version change):
 
 Mechanics (unchanged since the first iteration):
 - Type matching (old outdated type → new replacement type) is done by `TypeName`, purely in the
-  Planning layer (`PluginPushPlanner.PlanOutdatedTypeMigration`), comparing the old `RemotePluginType`
+  Planning layer (`PluginStateComparer.CompareOutdatedTypes`), comparing the old `RemotePluginType`
   against the newly-declared `LocalPluginType` list - **not** against the newly-created remote types.
   This keeps the plan/report step correct even in `--dry-run`, before any Dataverse write happens.
-- The apply step receives the replacement type IDs produced by `PluginTypePlanExecutor`; it performs
+- The apply step receives the replacement type IDs produced by `PluginTypeDeploymentExecutor`; it performs
   no discovery or reconciliation queries.
 - `IPluginAssemblyRepository.ListOutdatedAsync(name, excludeId)` returns **all** previously-superseded
   assemblies with the same name (not just the immediately prior version) ordered by version descending -
@@ -128,7 +128,7 @@ Mechanics (unchanged since the first iteration):
 - Orphaned-step cascade deletion (when a type has no replacement) reuses the existing
   `IPluginTypeRepository.GetDependentStepIdsAsync` + `DeleteAsync` pattern already used for orphaned-type
   purging in the typed deployment plan - no new repository method was needed for that path.
-- `PluginPushExecutor` applies `OutdatedAssemblyDeploymentPlan` only after replacement types exist.
+- `PluginPushExecutor` applies `OutdatedAssemblyDeployment` only after replacement types exist.
 
 ## Testing Notes / Fake Service Gotchas
 

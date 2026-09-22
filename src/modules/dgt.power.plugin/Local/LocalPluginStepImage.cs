@@ -6,7 +6,7 @@ namespace dgt.power.plugin.Local;
 /// <summary>
 /// Declarative pre/post image for a <see cref="LocalPluginStep"/>, parsed from a
 /// <c>PluginRegistrationAttribute</c>. Contains no Dataverse identifiers - those are resolved
-/// later when the step is reconciled against the target environment.
+/// later when the step is compared with the target environment.
 /// </summary>
 /// <param name="ImageType">SdkMessageProcessingStepImage.Options.ImageType value (PreImage/PostImage).</param>
 /// <param name="Name">Image name (e.g. "PreImage"/"PostImage").</param>

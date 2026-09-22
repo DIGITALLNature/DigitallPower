@@ -4,6 +4,7 @@
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Output;
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Planning.Deployment;
 
 namespace dgt.power.plugin.Execution;
 

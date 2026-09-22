@@ -8,10 +8,10 @@ The webresource V2 branch separates planning from presentation and execution:
   starts a separate execution phase using `WebResourceExecutionReporter`.
 
 The plugin module already has the equivalent decision data, but it is hierarchical:
-`AssemblyPlan`/`PackagePlan` contain plugin type reconciliation, which contains step and image
-reconciliation, plus custom API links and outdated-assembly migration.
+`AssemblyChange`/`PackageChange` feed the deployment plan, which contains type, step, image,
+Custom API, and outdated-assembly operations.
 
-The implementation keeps `PluginPushPlanner` as the pure matching helper and uses
+The implementation keeps `PluginStateComparer` as the pure matching helper and uses
 `PluginDeploymentPlanner` as the aggregate source of truth. The renderer builds a tree in this order:
 target (assembly or package) → assembly → plugin type → step → image, with custom API
 link/unlink and obsolete type/step/image deletion as action-labelled leaves. It should render
@@ -36,7 +36,7 @@ Important behavior differences from webresources:
 - Managed-identity linking, Custom API resolution, and outdated-assembly
   migration are actions that should be represented explicitly in the plan if they can occur;
   solution membership is intentionally not rendered.
-- Execution no longer emits the legacy action list from `PluginTypePlanExecutor`; the plan tree is
+- Execution no longer emits the legacy action list from `PluginTypeDeploymentExecutor`; the plan tree is
   the action report for both dry-run and normal execution.
 
 Planning now validates step message resolution and Custom API existence before rendering or

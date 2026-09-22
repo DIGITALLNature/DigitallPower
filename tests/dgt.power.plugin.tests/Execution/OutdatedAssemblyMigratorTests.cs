@@ -39,10 +39,10 @@ public class OutdatedAssemblyMigratorTests
                     newAssemblyId,
                     replacementTypes))
                 .Types
-                .Where(type => type.Type.Existing is not null)
+                .Where(type => type.Change.Existing is not null)
                 .ToDictionary(
-                    type => type.Type.Local.TypeName,
-                    type => type.Type.Existing!.Id);
+                    type => type.Change.Local.TypeName,
+                    type => type.Change.Existing!.Id);
             await migrator.ApplyAsync(plan, replacementTypeIds);
         }
     }

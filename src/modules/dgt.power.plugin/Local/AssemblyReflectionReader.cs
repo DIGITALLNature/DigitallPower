@@ -15,7 +15,7 @@ namespace dgt.power.plugin.Local;
 /// Parses a local plugin assembly (.dll) into a <see cref="LocalAssembly"/> via
 /// <see cref="MetadataLoadContext"/> reflection-only loading. Purely local: never touches
 /// Dataverse. Message/message-filter resolution for declared steps happens later, in the
-/// Dataverse layer, when the step is reconciled against the target environment.
+/// Dataverse layer, when the step is compared with the target environment.
 /// </summary>
 /// <remarks>
 /// Registration attributes are detected purely by type name/namespace via reflection metadata

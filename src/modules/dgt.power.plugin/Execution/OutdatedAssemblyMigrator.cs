@@ -1,7 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning;
+using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
 
 namespace dgt.power.plugin.Execution;
@@ -13,7 +13,7 @@ public sealed class OutdatedAssemblyMigrator(
     ICustomApiRepository customApiRepository)
 {
     public Task ApplyAsync(
-        OutdatedAssemblyDeploymentPlan plan,
+        OutdatedAssemblyDeployment plan,
         IReadOnlyDictionary<string, Guid> replacementTypeIds,
         CancellationToken cancellationToken = default)
     {
@@ -24,7 +24,7 @@ public sealed class OutdatedAssemblyMigrator(
     }
 
     private async Task ApplyCoreAsync(
-        OutdatedAssemblyDeploymentPlan plan,
+        OutdatedAssemblyDeployment plan,
         IReadOnlyDictionary<string, Guid> replacementTypeIds,
         CancellationToken cancellationToken)
     {

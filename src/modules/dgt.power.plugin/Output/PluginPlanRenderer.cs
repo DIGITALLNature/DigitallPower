@@ -1,7 +1,8 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning;
+using dgt.power.plugin.Planning.Changes;
+using dgt.power.plugin.Planning.Deployment;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Output;
@@ -34,7 +35,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     {
         var name = plan.DataverseName;
         var tree = new Tree(
-            $"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(plan.PackageAction.Action.ToString())}");
+            $"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(plan.Change.Action.ToString())}");
         foreach (var assembly in plan.Assemblies)
         {
             var node = tree.AddNode(AssemblyLabel(assembly));
@@ -59,7 +60,19 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
 
     private static string AssemblyLabel(AssemblyDeploymentPlan plan) =>
         $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(plan.Assembly.Local.Name)}[/] " +
-        ActionMarkup(plan.Assembly.Action.ToString());
+        AssemblyActionMarkup(plan.Assembly);
+
+    private static string AssemblyActionMarkup(AssemblyChange change) => change switch
+    {
+        CreateAssemblyChange => ActionMarkup("Create"),
+        UpdateAssemblyChange => ActionMarkup("Update"),
+        UpgradeAssemblyChange => ActionMarkup("Upgrade"),
+        PackageOwnedAssemblyChange => "[grey]Managed by package[/]",
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(change),
+            change.GetType(),
+            "Unknown assembly change type.")
+    };
 
     private static void AddAssemblyChildren(IHasTreeNodes parent, AssemblyDeploymentPlan plan)
     {
@@ -106,23 +119,23 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         AddSolutionNode(parent, plan.Solution);
     }
 
-    private static void AddPluginTypes(IHasTreeNodes parent, PluginTypeDeploymentPlan plan)
+    private static void AddPluginTypes(IHasTreeNodes parent, PluginTypeDeployment plan)
     {
         foreach (var type in plan.Types)
         {
             var typeNode = parent.AddNode(
-                $"{Markup.Escape(type.Type.Local.TypeName)} {ActionMarkup(type.Type.Action.ToString())}");
+                $"{Markup.Escape(type.Change.Local.TypeName)} {ActionMarkup(type.Change.Action.ToString())}");
             foreach (var step in type.Steps)
             {
                 var stepNode = typeNode.AddNode(
-                    $"{Markup.Escape(step.Step.Local.Name)} {ActionMarkup(step.Step.Action.ToString())}");
-                foreach (var image in step.Images.Plans)
+                    $"{Markup.Escape(step.Change.Local.Name)} {ActionMarkup(step.Change.Action.ToString())}");
+                foreach (var image in step.Images.Changes)
                 {
                     stepNode.AddNode(
                         $"{Markup.Escape(image.Local.Name)} {ActionMarkup(image.Action.ToString())}");
                 }
 
-                foreach (var image in step.Images.Purge)
+                foreach (var image in step.Images.Deletions)
                 {
                     stepNode.AddNode($"{Markup.Escape(image.Name)} {ActionMarkup("Delete")}");
                 }
@@ -133,7 +146,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
                 }
             }
 
-            foreach (var step in type.DeleteSteps)
+            foreach (var step in type.StepDeletions)
             {
                 typeNode.AddNode($"{Markup.Escape(step.Step.Name)} {ActionMarkup("Delete")}");
             }
@@ -155,7 +168,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             }
         }
 
-        foreach (var type in plan.Delete)
+        foreach (var type in plan.Deletions)
         {
             var typeNode = parent.AddNode(
                 $"{Markup.Escape(type.Type.TypeName)} {ActionMarkup("Delete")}");
@@ -166,7 +179,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         }
     }
 
-    private static void AddSolutionNode(IHasTreeNodes parent, SolutionLinkPlan? solution)
+    private static void AddSolutionNode(IHasTreeNodes parent, SolutionLink? solution)
     {
         if (solution is not null)
         {
@@ -180,7 +193,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         "Create" or "Link" or "Migrate" => $"[green]{action}[/]",
         "Update" => "[blue]Update[/]",
         "Unchanged" => "[grey]Unchanged[/]",
-        "OwnedByPackage" => "[grey]Managed by package[/]",
         "Delete" or "Unlink" or "Purge" => $"[red]{action}[/]",
         _ => $"[yellow]{Markup.Escape(action)}[/]"
     };

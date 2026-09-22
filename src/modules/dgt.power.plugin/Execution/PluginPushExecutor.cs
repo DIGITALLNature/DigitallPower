@@ -2,6 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Planning.Changes;
+using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
 
 namespace dgt.power.plugin.Execution;
@@ -11,7 +13,7 @@ public sealed class PluginPushExecutor(
     IPluginPackageRepository packageRepository,
     ISolutionComponentRepository solutionRepository,
     IManagedIdentityRepository managedIdentityRepository,
-    PluginTypePlanExecutor typeExecutor,
+    PluginTypeDeploymentExecutor typeExecutor,
     OutdatedAssemblyMigrator outdatedAssemblyMigrator)
 {
     public Task<Guid> ExecuteAsync(
@@ -82,22 +84,22 @@ public sealed class PluginPushExecutor(
         }
         else
         {
-            switch (plan.Action)
+            switch (plan)
             {
-                case AssemblyAction.OwnedByPackage:
-                    assemblyId = plan.Existing!.Id;
+                case PackageOwnedAssemblyChange packageOwned:
+                    assemblyId = packageOwned.Remote.Id;
                     break;
 
-                case AssemblyAction.Update:
-                    assemblyId = plan.Existing!.Id;
+                case UpdateAssemblyChange update:
+                    assemblyId = update.Remote.Id;
                     await assemblyRepository.UpdateContentAsync(
                         assemblyId,
-                        plan.Local.Content,
+                        update.Local.Content,
                         cancellationToken);
                     break;
 
-                case AssemblyAction.Create:
-                case AssemblyAction.Upgrade:
+                case CreateAssemblyChange:
+                case UpgradeAssemblyChange:
                     assemblyId = await assemblyRepository.CreateAsync(
                         plan.Local.Name,
                         plan.Local.Content,
@@ -107,7 +109,7 @@ public sealed class PluginPushExecutor(
                 default:
                     throw new ArgumentOutOfRangeException(
                         nameof(deployment),
-                        plan.Action,
+                        plan.GetType(),
                         "Unknown assembly deployment action.");
             }
         }
@@ -171,7 +173,7 @@ public sealed class PluginPushExecutor(
         PackageDeploymentPlan deployment,
         CancellationToken cancellationToken)
     {
-        var plan = deployment.PackageAction;
+        var plan = deployment.Change;
         Guid packageId;
         if (plan.Action == PackageAction.Update)
         {

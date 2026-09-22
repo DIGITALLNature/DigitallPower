@@ -55,7 +55,7 @@ public class PluginPushExecutorTests
                 packageRepository,
                 solutionRepository,
                 new ManagedIdentityRepository(service),
-                new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
                 new OutdatedAssemblyMigrator(
                     assemblyRepository,
                     typeRepository,
@@ -101,7 +101,7 @@ public class PluginPushExecutorTests
                 packageRepository,
                 solutionRepository,
                 new ManagedIdentityRepository(service),
-                new PluginTypePlanExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
                 new OutdatedAssemblyMigrator(
                     assemblyRepository,
                     typeRepository,

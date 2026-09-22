@@ -2,19 +2,31 @@
 
 ## Decision
 
-`plugin push` uses one typed deployment plan for both visualization and execution:
+`plugin push` uses one typed deployment plan for both visualization and execution. Low-level
+local/remote comparisons are represented as `Change` and `ChangeSet` values; the term `Plan` is
+reserved for the complete executable deployment graph.
+
+The comparison helper is named `PluginStateComparer`. Its collection results are named
+`PluginTypeChangeSet`, `PluginStepChangeSet`, and `PluginStepImageChangeSet`; individual decisions
+are `*Change` records. These files live in `Planning/Changes/`. Executable-plan records live in
+`Planning/Deployment/`. Their namespaces follow the directory structure:
+`dgt.power.plugin.Planning.Changes` and `dgt.power.plugin.Planning.Deployment`.
+
+Assembly package ownership is represented by the `PackageOwnedAssemblyChange` subtype rather than
+an `OwnedByPackage` member on `AssemblyAction`. Package ownership describes who controls the
+assembly lifecycle; it is not an executable action.
 
 1. `PluginDeploymentPlanner` loads the remote snapshot, validates SDK messages and Custom APIs,
    and creates an `AssemblyDeploymentPlan` or `PackageDeploymentPlan`.
 2. `PluginPlanRenderer` renders the plan's hierarchy.
-3. `PluginPushExecutor` applies the same plan without repeating reconciliation decisions.
+3. `PluginPushExecutor` applies the same plan without recalculating changes.
 
 `PluginDeploymentPipeline` owns this sequence and stops after rendering for dry runs.
 
 ## Plan contents
 
-The aggregate plan retains the concrete assembly/package action, nested plugin type and step
-reconciliation plans, image changes, Custom API link changes, solution and managed-identity
+The aggregate plan retains the concrete assembly/package change, nested plugin type and step
+change sets, image changes, Custom API link changes, solution and managed-identity
 operations, and complete outdated-assembly migration data. Newly created record IDs are passed
 down during execution rather than represented by `Guid.Empty` during planning.
 

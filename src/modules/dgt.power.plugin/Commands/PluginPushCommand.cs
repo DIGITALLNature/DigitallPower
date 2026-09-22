@@ -92,7 +92,7 @@ public class PluginPushCommand(
             packageRepository,
             solutionRepository,
             managedIdentityRepository,
-            new PluginTypePlanExecutor(
+            new PluginTypeDeploymentExecutor(
                 typeRepository,
                 stepRepository,
                 imageRepository,

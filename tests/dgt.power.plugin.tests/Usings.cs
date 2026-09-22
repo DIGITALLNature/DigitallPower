@@ -4,3 +4,5 @@
 global using TUnit.Assertions;
 global using TUnit.Assertions.Extensions;
 global using TUnit.Core;
+global using dgt.power.plugin.Planning.Changes;
+global using dgt.power.plugin.Planning.Deployment;
