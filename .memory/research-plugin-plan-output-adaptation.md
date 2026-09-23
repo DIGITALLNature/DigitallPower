@@ -17,7 +17,7 @@ target (assembly or package) → assembly → plugin type → step → image, wi
 link/unlink and obsolete type/step/image deletion as action-labelled leaves. It should render
 before writes, and the executor should return after rendering when `DryRun` is set. Package
 targets need one root per package and assembly; standalone assemblies can use the assembly root.
-`PluginDeploymentPipeline` renders and then executes one plan per target.
+`PluginPushCommand` renders and then executes one plan per target.
 
 Plugin types are direct children of their assembly; there is no separate "plugin types plan"
 grouping node. No-op plugin type and step actions use the shared `Unchanged` terminology.

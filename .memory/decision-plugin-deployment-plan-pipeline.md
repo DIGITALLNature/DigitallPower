@@ -21,7 +21,15 @@ assembly lifecycle; it is not an executable action.
 2. `PluginPlanRenderer` renders the plan's hierarchy.
 3. `PluginPushExecutor` applies the same plan without recalculating changes.
 
-`PluginDeploymentPipeline` owns this sequence and stops after rendering for dry runs.
+`PluginPushCommand` owns this sequence and stops after rendering for dry runs. No deployment
+pipeline wrapper is used: the command is the terminal UI and orchestration boundary.
+
+Terminal output has explicit phase labels: `Plan` precedes planning and tree rendering, while
+`Execution` appears only immediately before a non-dry-run apply. The command does not use a
+cross-phase spinner, so these labels remain the visible phase boundary. It scopes live spinners to
+the work that precedes stable output: `Processing <file>...` ends before the plan tree is rendered,
+and `Applying <file>...` ends before execution returns. This prevents Spectre's live display from
+moving phase labels or the plan tree.
 
 ## Plan contents
 

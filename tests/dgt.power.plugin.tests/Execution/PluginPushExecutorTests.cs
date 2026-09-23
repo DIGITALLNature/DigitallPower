@@ -11,6 +11,7 @@ using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console;
 using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Execution;
@@ -19,9 +20,44 @@ public class PluginPushExecutorTests
 {
     private const string ClientId = "12345678-1234-1234-1234-123456789abc";
 
+    private sealed class DeploymentTestHarness(
+        PluginDeploymentPlanner planner,
+        PluginPlanRenderer renderer,
+        PluginPushExecutor executor,
+        TestConsole console)
+    {
+        public async Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options)
+        {
+            console.MarkupLine("[bold blue]Plan[/]");
+            var plan = await planner.BuildAssemblyAsync(assembly, options);
+            renderer.Render(plan);
+            if (options.DryRun)
+            {
+                return Guid.Empty;
+            }
+
+            console.MarkupLine("[bold green]Execution[/]");
+            return await executor.ExecuteAsync(plan);
+        }
+
+        public async Task<Guid> ProcessPackageAsync(LocalPluginPackage package, PluginPushOptions options)
+        {
+            console.MarkupLine("[bold blue]Plan[/]");
+            var plan = await planner.BuildPackageAsync(package, options);
+            renderer.Render(plan);
+            if (options.DryRun)
+            {
+                return Guid.Empty;
+            }
+
+            console.MarkupLine("[bold green]Execution[/]");
+            return await executor.ExecuteAsync(plan);
+        }
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (FakeOrganizationServiceAsync Service, PluginDeploymentPipeline Executor, TestConsole Console) CreateExecutorWithConsole()
+    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -47,7 +83,7 @@ public class PluginPushExecutorTests
             CustomApis = customApiRepository,
             Solutions = solutionRepository
         });
-        var executor = new PluginDeploymentPipeline(
+        var executor = new DeploymentTestHarness(
             planner,
             new PluginPlanRenderer(console),
             new PluginPushExecutor(
@@ -60,14 +96,15 @@ public class PluginPushExecutorTests
                     assemblyRepository,
                     typeRepository,
                     stepRepository,
-                    customApiRepository)));
+                    customApiRepository)),
+            console);
 
         return (service, executor, console);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
-    private static (FakeOrganizationServiceAsync Service, PluginDeploymentPipeline Executor) CreateExecutor()
+    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -93,7 +130,7 @@ public class PluginPushExecutorTests
             CustomApis = customApiRepository,
             Solutions = solutionRepository
         });
-        var executor = new PluginDeploymentPipeline(
+        var executor = new DeploymentTestHarness(
             planner,
             new PluginPlanRenderer(console),
             new PluginPushExecutor(
@@ -106,7 +143,8 @@ public class PluginPushExecutorTests
                     assemblyRepository,
                     typeRepository,
                     stepRepository,
-                    customApiRepository)));
+                    customApiRepository)),
+            console);
 
         return (service, executor);
     }
@@ -157,6 +195,36 @@ public class PluginPushExecutorTests
         await Assert.That(console.Output).Contains("MyPlugins Create");
         await Assert.That(console.Output).Contains("MyPlugin Create");
         await Assert.That(console.Output).Contains(Spectre.Console.Emoji.Known.PuzzlePiece);
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_DryRun_RendersPlanWithoutExecutionPhase()
+    {
+        var (_, executor, console) = CreateExecutorWithConsole();
+
+        await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions(null, DryRun: true));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("Plan");
+            await Assert.That(console.Output).DoesNotContain("Execution");
+        }
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_ExecutesAfterRenderingPlan()
+    {
+        var (_, executor, console) = CreateExecutorWithConsole();
+
+        await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions(null, DryRun: false));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("Plan");
+            await Assert.That(console.Output).Contains("Execution");
+            await Assert.That(console.Output.IndexOf("Plan", StringComparison.Ordinal))
+                .IsLessThan(console.Output.IndexOf("Execution", StringComparison.Ordinal));
+        }
     }
 
     [Test]

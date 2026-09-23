@@ -559,7 +559,8 @@ Before any writes, plugin push renders a complete deployment tree for the packag
 including plugin types, steps, images, Custom API links, solution/identity links, and outdated
 assembly migrations. `--dry-run` stops after planning and rendering this tree; missing Custom APIs
 and unresolved step messages fail during planning before Dataverse changes can occur. Normal
-execution consumes this same immutable plan without recalculating changes.
+execution consumes this same immutable plan without recalculating changes. Terminal output labels
+the `Plan` and `Execution` phases; dry runs render only the plan.
 Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
 that lookup does not alter the planned actions.
 

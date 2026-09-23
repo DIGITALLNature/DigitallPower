@@ -26,10 +26,10 @@ implementing `dgtp plugin push`, structured in four layers:
   Renamed from `Dataverse/` because that name collided conceptually with the separate
   `dgt.power.dataverse` generated-entities project these repositories depend on (`using
   dgt.power.dataverse;`) - "Dataverse" described *what they talk to*, not *what they are*.
-- **`Execution/`** — `PluginDeploymentPipeline` sequences plan/render/execute,
-  `PluginPushExecutor` applies top-level assembly/package operations, `PluginTypeDeploymentExecutor` applies
-  preplanned type/step/image/Custom API operations, and `OutdatedAssemblyMigrator` applies preplanned
-  upgrade migrations.
+- **`Execution/`** — `PluginPushExecutor` applies top-level assembly/package operations,
+  `PluginTypeDeploymentExecutor` applies preplanned type/step/image/Custom API operations, and
+  `OutdatedAssemblyMigrator` applies preplanned upgrade migrations. `PluginPushCommand` owns
+  plan/render/execute sequencing and terminal output.
 
 `PluginPushCommand` constructs every repo/executor/migrator via `new` (module-local DI convention - see
 `decision-resource-oriented-cli-redesign.md`), casting `Connection` to `(IOrganizationServiceAsync2)`

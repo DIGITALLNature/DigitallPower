@@ -11,6 +11,7 @@ using dgt.power.plugin.Execution;
 using dgt.power.plugin.Output;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
+using dgt.power.plugin.Planning.Deployment;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -66,15 +67,40 @@ public class PluginPushCommand(
             return Tracer.End(this, false);
         }
 
+        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix);
+
+        var hadFailure = false;
+        foreach (var target in targets)
+        {
+            try
+            {
+                if (!await ProcessTargetAsync(target, options, cancellationToken))
+                {
+                    hadFailure = true;
+                }
+            }
+            catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not AbstractPowerException)
+            {
+                hadFailure = true;
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed processing '{0}': {1}[/]", target, e.Message);
+            }
+        }
+
+        return Tracer.End(this, !hadFailure);
+    }
+
+    private async Task<bool> ProcessTargetAsync(
+        string target,
+        PluginPushOptions options,
+        CancellationToken cancellationToken)
+    {
         var service = (IOrganizationServiceAsync2)Connection;
         var assemblyRepository = new PluginAssemblyRepository(service);
         var packageRepository = new PluginPackageRepository(service);
         var solutionRepository = new SolutionComponentRepository(service);
-        var managedIdentityRepository = new ManagedIdentityRepository(service);
         var typeRepository = new PluginTypeRepository(service);
         var stepRepository = new SdkMessageProcessingStepRepository(service);
         var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var messageRepository = new SdkMessageRepository(service);
         var customApiRepository = new CustomApiRepository(service);
         var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
         {
@@ -83,7 +109,7 @@ public class PluginPushCommand(
             Types = typeRepository,
             Steps = stepRepository,
             Images = imageRepository,
-            Messages = messageRepository,
+            Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
             Solutions = solutionRepository
         });
@@ -91,7 +117,7 @@ public class PluginPushCommand(
             assemblyRepository,
             packageRepository,
             solutionRepository,
-            managedIdentityRepository,
+            new ManagedIdentityRepository(service),
             new PluginTypeDeploymentExecutor(
                 typeRepository,
                 stepRepository,
@@ -103,46 +129,77 @@ public class PluginPushCommand(
                 stepRepository,
                 customApiRepository));
         var renderer = new PluginPlanRenderer(Console);
-        var pipeline = new PluginDeploymentPipeline(planner, renderer, executor);
 
-        var assemblyReader = new AssemblyReflectionReader(Console);
-        var packageReader = new PluginPackageReader(Console);
-        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix);
+        if (target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+        {
+            var package = new PluginPackageReader(Console).Read(target);
+            if (package is null)
+            {
+                Console.MarkupLine("[red]Failed to read package - aborting[/]");
+                return false;
+            }
 
-        var hadFailure = await Console.Status()
+            await BuildRenderAndExecuteAsync(
+                Path.GetFileName(target),
+                async () => await planner.BuildPackageAsync(package, options, cancellationToken),
+                renderer,
+                executor,
+                options,
+                cancellationToken);
+            return true;
+        }
+
+        var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
+            .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PluginPushCommand).Assembly.Location)!, "*.dll"))
+            .ToList();
+        using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+
+        var assembly = new AssemblyReflectionReader(Console).Read(target, loadContext);
+        if (assembly is null)
+        {
+            Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
+            return false;
+        }
+
+        if (assembly.Kind == LocalAssemblyKind.None)
+        {
+            return true;
+        }
+
+        await BuildRenderAndExecuteAsync(
+            Path.GetFileName(target),
+            async () => await planner.BuildAssemblyAsync(assembly, options, cancellationToken),
+            renderer,
+            executor,
+            options,
+            cancellationToken);
+        return true;
+    }
+
+    private async Task BuildRenderAndExecuteAsync(
+        string targetName,
+        Func<Task<PluginDeploymentPlan>> buildPlan,
+        PluginPlanRenderer renderer,
+        PluginPushExecutor executor,
+        PluginPushOptions options,
+        CancellationToken cancellationToken)
+    {
+        Console.MarkupLine("[bold blue]Plan[/]");
+        var plan = await Console.Status()
             .Spinner(Spinner.Known.Dots)
             .SpinnerStyle(Style.Parse("green bold"))
-            .StartAsync("Connect to XRM...", async ctx =>
-            {
-                var failed = false;
-                foreach (var target in targets)
-                {
-                    try
-                    {
-                        ctx.Status(string.Format(CultureInfo.InvariantCulture, "Processing {0}", Path.GetFileName(target)));
-                        if (!await ProcessTargetAsync(
-                                target,
-                                pipeline,
-                                assemblyReader,
-                                packageReader,
-                                options,
-                                cancellationToken))
-                        {
-                            failed = true;
-                        }
-                    }
-                    catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not AbstractPowerException)
-                    {
-                        failed = true;
-                        Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed processing '{0}': {1}[/]", target, e.Message);
-                    }
-                }
+            .StartAsync($"Processing {targetName}...", _ => buildPlan());
+        renderer.Render(plan);
+        if (options.DryRun)
+        {
+            return;
+        }
 
-                ctx.Status("Finishing");
-                return failed;
-            });
-
-        return Tracer.End(this, !hadFailure);
+        Console.MarkupLine("[bold green]Execution[/]");
+        await Console.Status()
+            .Spinner(Spinner.Known.Dots)
+            .SpinnerStyle(Style.Parse("green bold"))
+            .StartAsync($"Applying {targetName}...", _ => executor.ExecuteAsync(plan, cancellationToken));
     }
 
     private IReadOnlyList<string>? ResolveTargets(string target)
@@ -172,45 +229,4 @@ public class PluginPushCommand(
         return null;
     }
 
-    private async Task<bool> ProcessTargetAsync(
-        string target,
-        PluginDeploymentPipeline pipeline,
-        AssemblyReflectionReader assemblyReader,
-        PluginPackageReader packageReader,
-        PluginPushOptions options,
-        CancellationToken cancellationToken)
-    {
-        if (target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
-        {
-            var package = packageReader.Read(target);
-            if (package is null)
-            {
-                Console.MarkupLine("[red]Failed to read package - aborting[/]");
-                return false;
-            }
-
-            await pipeline.ProcessPackageAsync(package, options, cancellationToken);
-            return true;
-        }
-
-        var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
-            .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PluginPushCommand).Assembly.Location)!, "*.dll"))
-            .ToList();
-        using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
-
-        var assembly = assemblyReader.Read(target, loadContext);
-        if (assembly is null)
-        {
-            Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
-            return false;
-        }
-
-        if (assembly.Kind == LocalAssemblyKind.None)
-        {
-            return true;
-        }
-
-        await pipeline.ProcessAssemblyAsync(assembly, options, cancellationToken);
-        return true;
-    }
 }
