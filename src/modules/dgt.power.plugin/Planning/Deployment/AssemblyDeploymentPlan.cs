@@ -10,4 +10,5 @@ public sealed record AssemblyDeploymentPlan(
     PluginTypeDeployment? PluginTypes,
     OutdatedAssemblyDeployment OutdatedAssemblies,
     bool LinkManagedIdentity,
+    SolutionMembershipPlan? SolutionMembership,
     SolutionLink? Solution) : PluginDeploymentPlan;

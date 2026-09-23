@@ -21,6 +21,14 @@ or executable action. The renderer therefore omits a status label for package-ow
 reader first loads DLL/package bytes. Remote hashes are populated by their repositories. Comparison
 properties therefore compare hash strings and do not decode or hash payloads repeatedly.
 
+`--solution` is separate from the declarative deployment tree. The planner detects missing
+membership for packages, standalone assemblies, and declared plugin steps and stores non-rendered
+`SolutionLink` metadata plus a `SolutionMembershipPlan` scope. The renderer lists missing memberships
+below the tree for both normal and dry-run output, or confirms that all managed components are
+already present when there are none. Execution adds them after their component exists and reports
+only memberships actually added. Plugin types, images, Custom APIs, and managed identities are
+intentionally excluded.
+
 1. `PluginDeploymentPlanner` loads the remote snapshot, validates SDK messages and Custom APIs,
    and creates an `AssemblyDeploymentPlan` or `PackageDeploymentPlan`.
 2. `PluginPlanRenderer` renders the plan's hierarchy.

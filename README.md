@@ -548,7 +548,7 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 | Option | Behavior |
 |--------|----------|
-| `--solution` | Adds newly created assemblies/packages/steps/images to the given solution |
+| `--solution` | Ensures package, standalone assembly, and declared plugin step membership in the given solution |
 | `--publisher-prefix` | Publisher customization prefix for plugin packages; required when the target includes a `.nupkg` |
 | `--dry-run` | Reports what would be created/updated/deleted without writing to Dataverse |
 
@@ -563,6 +563,10 @@ execution consumes this same immutable plan without recalculating changes. Termi
 the `Plan` and `Execution` phases; dry runs render only the plan. Execution reports each completed
 create, update, delete, link, unlink, and migration operation, or `No changes applied` when no
 Dataverse writes were required.
+When `--solution` is set, missing package, standalone assembly, and declared step memberships are
+listed below the deployment tree, including in dry-run output. Plugin types, images, Custom APIs,
+and managed identities are not added implicitly. When every managed component is already present,
+the same section confirms that no membership additions are needed.
 Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
 that lookup does not alter the planned actions.
 

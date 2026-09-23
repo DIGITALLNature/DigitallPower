@@ -3,6 +3,7 @@
 
 using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
+using dgt.power.plugin.Repositories;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Output;
@@ -17,10 +18,12 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         {
             case AssemblyDeploymentPlan assembly:
                 console.Write(BuildAssemblyTree(assembly));
+                RenderSolutionMembership(assembly.SolutionMembership, CollectSolutionLinks(assembly));
                 break;
 
             case PackageDeploymentPlan package:
                 console.Write(BuildPackageTree(package));
+                RenderSolutionMembership(package.SolutionMembership, CollectSolutionLinks(package));
                 break;
 
             default:
@@ -47,7 +50,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             tree.AddNode($"Managed identity {ActionMarkup("Link")}");
         }
 
-        AddSolutionNode(tree, plan.Solution);
         return tree;
     }
 
@@ -159,7 +161,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             parent.AddNode($"Managed identity {ActionMarkup("Link")}");
         }
 
-        AddSolutionNode(parent, plan.Solution);
     }
 
     private static void AddPluginTypes(IHasTreeNodes parent, PluginTypeDeployment plan)
@@ -222,14 +223,80 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         }
     }
 
-    private static void AddSolutionNode(IHasTreeNodes parent, SolutionLink? solution)
+    private void RenderSolutionMembership(
+        SolutionMembershipPlan? membershipPlan,
+        IEnumerable<SolutionLink> links)
     {
-        if (solution is not null)
+        if (membershipPlan is null)
         {
-            parent.AddNode(
-                $"Solution {Markup.Escape(solution.SolutionUniqueName)} {ActionMarkup("Link")}");
+            return;
+        }
+
+        var memberships = links
+            .DistinctBy(link => (link.ComponentType, link.ComponentName, link.SolutionUniqueName))
+            .ToList();
+
+        console.MarkupLine(
+            $"[bold]Solution membership: {Markup.Escape(membershipPlan.SolutionUniqueName)}[/]");
+        if (memberships.Count == 0)
+        {
+            console.MarkupLine($"  [green]{Emoji.Known.CheckMark}[/] All managed components are already present");
+            return;
+        }
+
+        foreach (var membership in memberships)
+        {
+            console.MarkupLine(
+                $"  [green]{Emoji.Known.Plus}[/] {ComponentLabel(membership.ComponentType)} {Markup.Escape(membership.ComponentName)}");
         }
     }
+
+    private static IEnumerable<SolutionLink> CollectSolutionLinks(AssemblyDeploymentPlan plan)
+    {
+        if (plan.Solution is not null)
+        {
+            yield return plan.Solution;
+        }
+
+        if (plan.PluginTypes is null)
+        {
+            yield break;
+        }
+
+        foreach (var type in plan.PluginTypes.Types)
+        {
+            foreach (var step in type.Steps)
+            {
+                if (step.Solution is not null)
+                {
+                    yield return step.Solution;
+                }
+            }
+        }
+    }
+
+    private static IEnumerable<SolutionLink> CollectSolutionLinks(PackageDeploymentPlan plan)
+    {
+        if (plan.Solution is not null)
+        {
+            yield return plan.Solution;
+        }
+
+        foreach (var assembly in plan.Assemblies)
+        {
+            foreach (var link in CollectSolutionLinks(assembly))
+            {
+                yield return link;
+            }
+        }
+    }
+
+    private static string ComponentLabel(int componentType) => componentType switch
+    {
+        IPluginAssemblyRepository.ComponentType => "Assembly",
+        ISdkMessageProcessingStepRepository.ComponentType => "Step",
+        _ => "Package"
+    };
 
     private static string ActionMarkup(string action) => action switch
     {

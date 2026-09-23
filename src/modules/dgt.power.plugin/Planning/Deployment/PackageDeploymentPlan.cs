@@ -12,4 +12,5 @@ public sealed record PackageDeploymentPlan(
     PackageComparison Comparison,
     IReadOnlyList<AssemblyDeploymentPlan> Assemblies,
     bool LinkManagedIdentity,
+    SolutionMembershipPlan? SolutionMembership,
     SolutionLink? Solution) : PluginDeploymentPlan;

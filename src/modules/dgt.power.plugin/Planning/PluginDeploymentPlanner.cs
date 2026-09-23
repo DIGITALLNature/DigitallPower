@@ -13,6 +13,8 @@ namespace dgt.power.plugin.Planning;
 
 public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositories)
 {
+    private readonly Dictionary<(string Solution, int ComponentType), IReadOnlySet<Guid>> _solutionComponentIds = [];
+
     public Task<AssemblyDeploymentPlan> BuildAssemblyAsync(
         LocalAssembly assembly,
         PluginPushOptions options,
@@ -77,14 +79,19 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         var linkManagedIdentity = package.Assemblies.Any(
             assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId));
         SolutionLink? solution = null;
-        if (packageComparison.RequiresCreate && !string.IsNullOrWhiteSpace(options.Solution))
+        if (!string.IsNullOrWhiteSpace(options.Solution))
         {
             var componentType = await repositories.Solutions.GetComponentTypeAsync(
                 PluginPackage.EntityLogicalName,
                 cancellationToken);
             if (componentType is not null)
             {
-                solution = new SolutionLink(componentType.Value, options.Solution);
+                solution = await PlanSolutionLinkAsync(
+                    componentType.Value,
+                    packageComparison.Remote?.Id,
+                    packageName,
+                    options.Solution,
+                    cancellationToken);
             }
         }
 
@@ -94,6 +101,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             packageComparison,
             assemblies,
             linkManagedIdentity,
+            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
             solution);
     }
 
@@ -117,6 +125,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             pluginTypes = await BuildPluginTypesAsync(
                 remoteAssemblyId,
                 assembly.PluginTypes,
+                options.Solution,
                 cancellationToken);
 
             if (assemblyComparison.RequiresUpgrade)
@@ -132,37 +141,39 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         var linkManagedIdentity =
             !skipStandaloneDeployment &&
             !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId);
-        SolutionLink? solution = null;
-        if (!packageOwned &&
-            (assemblyComparison.RequiresCreate || assemblyComparison.RequiresUpgrade) &&
-            !string.IsNullOrWhiteSpace(options.Solution))
-        {
-            solution = new SolutionLink(
+        var solution = packageOwned
+            ? null
+            : await PlanSolutionLinkAsync(
                 IPluginAssemblyRepository.ComponentType,
-                options.Solution);
-        }
+                assemblyComparison.Remote?.Id,
+                assembly.Name,
+                options.Solution,
+                cancellationToken);
 
         return new AssemblyDeploymentPlan(
             assemblyComparison,
             pluginTypes,
             outdated,
             linkManagedIdentity,
+            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
             solution);
     }
 
     public Task<PluginTypeDeployment> BuildPluginTypesAsync(
         Guid? assemblyId,
         IReadOnlyList<LocalPluginType> localTypes,
+        string? solutionUniqueName = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(localTypes);
 
-        return BuildPluginTypesCoreAsync(assemblyId, localTypes, cancellationToken);
+        return BuildPluginTypesCoreAsync(assemblyId, localTypes, solutionUniqueName, cancellationToken);
     }
 
     private async Task<PluginTypeDeployment> BuildPluginTypesCoreAsync(
         Guid? assemblyId,
         IReadOnlyList<LocalPluginType> localTypes,
+        string? solutionUniqueName,
         CancellationToken cancellationToken)
     {
         var remoteTypes = assemblyId is { } existingAssemblyId
@@ -217,7 +228,13 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                             remote.ImageType == image.ImageType) &&
                             images.Comparisons.All(comparison => comparison.Local != image))
                         .ToList();
-                    steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages));
+                    var solution = await PlanSolutionLinkAsync(
+                        ISdkMessageProcessingStepRepository.ComponentType,
+                        stepComparison.Remote?.Id,
+                        stepComparison.Local.Name,
+                        solutionUniqueName,
+                        cancellationToken);
+                    steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages, solution));
                 }
 
                 foreach (var step in stepComparisonSet.Deletions)
@@ -270,6 +287,38 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             unlink,
             link,
             unchanged);
+    }
+
+    private async Task<SolutionLink?> PlanSolutionLinkAsync(
+        int componentType,
+        Guid? existingComponentId,
+        string componentName,
+        string? solutionUniqueName,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(solutionUniqueName))
+        {
+            return null;
+        }
+
+        if (existingComponentId is null)
+        {
+            return new SolutionLink(componentType, componentName, solutionUniqueName);
+        }
+
+        var key = (solutionUniqueName, componentType);
+        if (!_solutionComponentIds.TryGetValue(key, out var componentIds))
+        {
+            componentIds = await repositories.Solutions.ListComponentIdsAsync(
+                solutionUniqueName,
+                componentType,
+                cancellationToken);
+            _solutionComponentIds.Add(key, componentIds);
+        }
+
+        return componentIds.Contains(existingComponentId.Value)
+            ? null
+            : new SolutionLink(componentType, componentName, solutionUniqueName);
     }
 
     public Task<OutdatedAssemblyDeployment> BuildOutdatedAssembliesAsync(

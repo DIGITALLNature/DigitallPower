@@ -120,7 +120,11 @@ public sealed class PluginPushExecutor(
                 assemblyId,
                 solution.SolutionUniqueName,
                 cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Linked, "solution", solution.SolutionUniqueName);
+            Report(
+                reportProgress,
+                PluginDeploymentOperation.Linked,
+                "assembly",
+                $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
         }
 
         return assemblyId;
@@ -209,7 +213,11 @@ public sealed class PluginPushExecutor(
                 packageId,
                 solution.SolutionUniqueName,
                 cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Linked, "solution", solution.SolutionUniqueName);
+            Report(
+                reportProgress,
+                PluginDeploymentOperation.Linked,
+                "package",
+                $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
         }
 
         return packageId;

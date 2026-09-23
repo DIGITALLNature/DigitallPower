@@ -122,7 +122,8 @@ public class PluginPushCommand(
                 typeRepository,
                 stepRepository,
                 imageRepository,
-                customApiRepository),
+                customApiRepository,
+                solutionRepository),
             new OutdatedAssemblyMigrator(
                 assemblyRepository,
                 typeRepository,

@@ -11,4 +11,5 @@ public sealed record PluginStepDeployment(
     PluginStepComparison Comparison,
     ResolvedSdkMessage? Message,
     PluginStepImageComparisonSet Images,
-    IReadOnlyList<LocalPluginStepImage> UnchangedImages);
+    IReadOnlyList<LocalPluginStepImage> UnchangedImages,
+    SolutionLink? Solution);

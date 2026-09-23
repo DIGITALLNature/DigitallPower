@@ -38,7 +38,7 @@ public class PluginTypeDeploymentExecutorTests
                 Kind = LocalAssemblyKind.Plugin,
                 PluginTypes = localTypes
             };
-            var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes);
+            var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes, options.Solution);
             var deployment = new AssemblyDeploymentPlan(
                 new AssemblyComparison(
                     localAssembly,
@@ -46,6 +46,9 @@ public class PluginTypeDeploymentExecutorTests
                 typePlan,
                 new OutdatedAssemblyDeployment([]),
                 LinkManagedIdentity: false,
+                SolutionMembership: string.IsNullOrWhiteSpace(options.Solution)
+                    ? null
+                    : new SolutionMembershipPlan(options.Solution),
                 Solution: null);
             renderer.Render(deployment);
             if (!options.DryRun)
@@ -58,6 +61,7 @@ public class PluginTypeDeploymentExecutorTests
     private static (FakeOrganizationServiceAsync Service, PluginTypeTestPipeline Executor, TestConsole Console) CreateExecutorWithConsole()
     {
         var service = new FakeOrganizationServiceAsync();
+        service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
@@ -66,6 +70,7 @@ public class PluginTypeDeploymentExecutorTests
         var stepRepository = new SdkMessageProcessingStepRepository(service);
         var imageRepository = new SdkMessageProcessingStepImageRepository(service);
         var customApiRepository = new CustomApiRepository(service);
+        var solutionRepository = new SolutionComponentRepository(service);
         var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
         {
             Assemblies = new PluginAssemblyRepository(service),
@@ -75,11 +80,16 @@ public class PluginTypeDeploymentExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
-            Solutions = new SolutionComponentRepository(service)
+            Solutions = solutionRepository
         });
         var executor = new PluginTypeTestPipeline(
             planner,
-            new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+            new PluginTypeDeploymentExecutor(
+                typeRepository,
+                stepRepository,
+                imageRepository,
+                customApiRepository,
+                solutionRepository),
             new PluginPlanRenderer(console));
 
         return (service, executor, console);
@@ -90,6 +100,7 @@ public class PluginTypeDeploymentExecutorTests
     private static (FakeOrganizationServiceAsync Service, PluginTypeTestPipeline Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
+        service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
@@ -98,6 +109,7 @@ public class PluginTypeDeploymentExecutorTests
         var stepRepository = new SdkMessageProcessingStepRepository(service);
         var imageRepository = new SdkMessageProcessingStepImageRepository(service);
         var customApiRepository = new CustomApiRepository(service);
+        var solutionRepository = new SolutionComponentRepository(service);
         var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
         {
             Assemblies = new PluginAssemblyRepository(service),
@@ -107,11 +119,16 @@ public class PluginTypeDeploymentExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
-            Solutions = new SolutionComponentRepository(service)
+            Solutions = solutionRepository
         });
         var executor = new PluginTypeTestPipeline(
             planner,
-            new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository),
+            new PluginTypeDeploymentExecutor(
+                typeRepository,
+                stepRepository,
+                imageRepository,
+                customApiRepository,
+                solutionRepository),
             new PluginPlanRenderer(console));
 
         return (service, executor);
@@ -159,6 +176,26 @@ public class PluginTypeDeploymentExecutorTests
         var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(steps.Count).IsEqualTo(1);
         await Assert.That(steps[0].ToEntity<SdkMessageProcessingStep>().Name).IsEqualTo("step");
+    }
+
+    [Test]
+    public async Task ApplyAsync_NewStepWithSolution_ListsAndAddsSolutionMembership()
+    {
+        var (service, executor, console) = CreateExecutorWithConsole();
+        service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
+        SeedMessage(service, "Create", "account");
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()]);
+
+        await executor.ApplyAsync(
+            Guid.NewGuid(),
+            [localType],
+            new PluginPushOptions("TestSolution", DryRun: false));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(console.Output).Contains("Solution membership: TestSolution");
+            await Assert.That(console.Output).Contains("Step step");
+        }
     }
 
     [Test]

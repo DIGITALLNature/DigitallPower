@@ -5,6 +5,7 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
+using Microsoft.Xrm.Sdk;
 namespace dgt.power.plugin.tests.Repositories;
 
 public class SolutionComponentRepositoryTests
@@ -52,6 +53,41 @@ public class SolutionComponentRepositoryTests
         var repository = new SolutionComponentRepository(service);
 
         await repository.AddToSolutionAsync(91, Guid.NewGuid(), "TestSolution");
+    }
+
+    [Test]
+    public async Task ListComponentIdsAsync_ReturnsComponentsInSpecifiedSolutionAndType()
+    {
+        var service = CreateService();
+        var solutionId = Guid.NewGuid();
+        service.Create(new Solution(solutionId) { UniqueName = "TestSolution" });
+        var expectedComponentId = Guid.NewGuid();
+        service.Create(CreateSolutionComponent(
+            solutionId,
+            expectedComponentId,
+            IPluginAssemblyRepository.ComponentType));
+        service.Create(CreateSolutionComponent(
+            solutionId,
+            Guid.NewGuid(),
+            ISdkMessageProcessingStepRepository.ComponentType));
+        var repository = new SolutionComponentRepository(service);
+
+        var componentIds = await repository.ListComponentIdsAsync(
+            "TestSolution",
+            IPluginAssemblyRepository.ComponentType);
+
+        await Assert.That(componentIds).IsEquivalentTo([expectedComponentId]);
+    }
+
+    private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)
+    {
+        var component = new SolutionComponent(Guid.NewGuid());
+        component.Attributes[SolutionComponent.LogicalNames.ObjectId] = componentId;
+        component.Attributes[SolutionComponent.LogicalNames.SolutionId] =
+            new EntityReference(Solution.EntityLogicalName, solutionId);
+        component.Attributes[SolutionComponent.LogicalNames.ComponentType] =
+            new OptionSetValue(componentType);
+        return component;
     }
 
 }

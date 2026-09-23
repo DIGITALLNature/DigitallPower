@@ -11,7 +11,8 @@ public sealed class PluginTypeDeploymentExecutor(
     IPluginTypeRepository typeRepository,
     ISdkMessageProcessingStepRepository stepRepository,
     ISdkMessageProcessingStepImageRepository imageRepository,
-    ICustomApiRepository customApiRepository)
+    ICustomApiRepository customApiRepository,
+    ISolutionComponentRepository solutionRepository)
 {
     public Task<IReadOnlyDictionary<string, Guid>> ApplyAsync(
         PluginTypeDeployment plan,
@@ -51,6 +52,19 @@ public sealed class PluginTypeDeploymentExecutor(
             {
                 var stepId = await ApplyStepAsync(step, typeId, reportProgress, cancellationToken);
                 await ApplyImagesAsync(step, stepId, reportProgress, cancellationToken);
+                if (step.Solution is { } solution)
+                {
+                    await solutionRepository.AddToSolutionAsync(
+                        solution.ComponentType,
+                        stepId,
+                        solution.SolutionUniqueName,
+                        cancellationToken);
+                    Report(
+                        reportProgress,
+                        PluginDeploymentOperation.Linked,
+                        "step",
+                        $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
+                }
             }
 
             foreach (var step in item.StepDeletions)
