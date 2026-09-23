@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
 
@@ -110,7 +109,7 @@ public sealed class PluginTypeDeploymentExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        if (!deployment.Comparison.RequiresCreate && !deployment.Comparison.RequiresUpdate)
+        if (deployment.Comparison is { RequiresCreate: false, RequiresUpdate: false })
         {
             return deployment.Comparison.Remote!.Id;
         }

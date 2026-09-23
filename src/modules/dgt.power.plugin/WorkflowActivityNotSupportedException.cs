@@ -11,7 +11,6 @@ namespace dgt.power.plugin;
 /// that is not supported by <c>plugin push</c> - callers should migrate to a Custom API instead
 /// (the supported replacement for invokable-action scenarios); the legacy <c>push</c> command
 /// still registers workflow activities as-is in the meantime.
-/// Exit code: <see cref="dgt.power.common.Commands.ExitCode.NotSupported"/> (3).
 /// </summary>
 [Serializable]
 // ReSharper disable once ConvertToPrimaryConstructor

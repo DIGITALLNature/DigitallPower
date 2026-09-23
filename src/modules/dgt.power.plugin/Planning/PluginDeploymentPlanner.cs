@@ -6,7 +6,6 @@ using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
-using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 
 namespace dgt.power.plugin.Planning;

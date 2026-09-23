@@ -28,8 +28,7 @@ public class OutdatedAssemblyMigratorTests
             var plan = await planner.BuildOutdatedAssembliesAsync(
                 assemblyName,
                 replacementTypes,
-                newAssemblyId,
-                default);
+                newAssemblyId);
             if (options.DryRun)
             {
                 return;

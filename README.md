@@ -597,7 +597,7 @@ towards it unconditionally, the same way it already purges orphaned steps/types 
 
 **Differences from the legacy `push` command:**
 - **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error
-  (exit code `NotSupported`) if the assembly contains any; replace them with a Custom API and use `push` in
+  if the assembly contains any; replace them with a Custom API and use `push` in
   the meantime if you still need to register them as-is.
 - **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
   customizations.

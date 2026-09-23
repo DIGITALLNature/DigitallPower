@@ -3,8 +3,6 @@
 
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
-// ReSharper disable NonAccessedField.Global
-
 namespace dgt.registration;
 
 [AttributeUsage(AttributeTargets.Class)]
@@ -16,11 +14,11 @@ public sealed class PluginRegistrationAttribute(string messageName, int mode, in
 
     public int Stage => stage;
 
-    public string? PrimaryEntityName;
+    public string? PrimaryEntityName { get; set; }
 
     public string? SecondaryEntityName { get; set; }
 
-    public int ExecutionOrder;
+    public int ExecutionOrder { get; set; }
 
     public string? Configuration { get; set; }
 

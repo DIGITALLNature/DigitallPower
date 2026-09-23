@@ -27,7 +27,6 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.Completion;
-using dgt.power.plugin;
 using dgt.power.push.Logic;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.Configuration;
@@ -177,12 +176,6 @@ app.Configure(config =>
         {
             AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{interactiveEx.Message}[/]");
             return (int)ExitCode.AuthRequired;
-        }
-
-        if ((inner ?? exception) is WorkflowActivityNotSupportedException notSupportedEx)
-        {
-            AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{notSupportedEx.Message}[/]");
-            return (int)ExitCode.NotSupported;
         }
 
 #if RELEASE

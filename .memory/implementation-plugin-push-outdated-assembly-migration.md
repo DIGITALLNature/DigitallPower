@@ -34,8 +34,7 @@ implementing `dgtp plugin push`, structured in four layers:
 `PluginPushCommand` constructs every repo/executor/migrator via `new` (module-local DI convention - see
 `decision-resource-oriented-cli-redesign.md`), casting `Connection` to `(IOrganizationServiceAsync2)`
 once. Per-target processing catches generic exceptions but excludes `AbstractPowerException` subtypes
-from the catch filter so they propagate to `Program.cs`'s global exception handler for correct exit
-codes (e.g. `WorkflowActivityNotSupportedException` → `NotSupported`).
+from the catch filter so they propagate to `Program.cs`'s global exception handler.
 
 ## Declaratively-Registered vs. Plain `IPlugin` Types
 
@@ -80,7 +79,7 @@ module was intentionally left untouched.
 
 Registering workflow activities (`CodeActivity`) only works on Windows due to Workflow Foundation DLL
 dependencies, and code activities are effectively deprecated in Dataverse in favor of Custom APIs.
-`plugin push` fails fast with `WorkflowActivityNotSupportedException` (exit code `NotSupported`) the
+`plugin push` fails fast with `WorkflowActivityNotSupportedException` the
 moment a `CodeActivity` is detected in the assembly, instead of silently skipping or attempting
 registration. The legacy `push` command still supports them as-is.
 

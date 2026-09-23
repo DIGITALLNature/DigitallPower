@@ -235,7 +235,7 @@ public class PluginPushExecutorTests
         await Assert.That(id).IsEqualTo(Guid.Empty);
         await Assert.That(console.Output).Contains("MyPlugins Create");
         await Assert.That(console.Output).Contains("MyPlugin Create");
-        await Assert.That(console.Output).Contains(Spectre.Console.Emoji.Known.PuzzlePiece);
+        await Assert.That(console.Output).Contains(Emoji.Known.PuzzlePiece);
     }
 
     [Test]
@@ -397,12 +397,17 @@ public class PluginPushExecutorTests
         var solutionId = Guid.NewGuid();
         var assemblyId = Guid.NewGuid();
         service.Create(new Solution(solutionId) { UniqueName = "TestSolution" });
-        var existingMembership = new SolutionComponent(Guid.NewGuid());
-        existingMembership.Attributes[SolutionComponent.LogicalNames.ObjectId] = assemblyId;
-        existingMembership.Attributes[SolutionComponent.LogicalNames.SolutionId] =
-            new EntityReference(Solution.EntityLogicalName, solutionId);
-        existingMembership.Attributes[SolutionComponent.LogicalNames.ComponentType] =
-            new OptionSetValue(IPluginAssemblyRepository.ComponentType);
+        var existingMembership = new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = assemblyId,
+                [SolutionComponent.LogicalNames.SolutionId] =
+                    new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] =
+                    new OptionSetValue(IPluginAssemblyRepository.ComponentType)
+            }
+        };
         service.Create(existingMembership);
         service.Create(new PluginAssembly(assemblyId)
         {
@@ -554,9 +559,9 @@ public class PluginPushExecutorTests
         var remotePackage = new PluginPackage(packageId)
         {
             Name = "new_MyPackage",
-            Version = "1.0.0"
+            Version = "1.0.0",
+            Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() }
         };
-        remotePackage.Attributes[PluginPackage.LogicalNames.Package] = Guid.NewGuid();
         service.Create(remotePackage);
         var package = new LocalPluginPackage(
             Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)),
@@ -592,9 +597,9 @@ public class PluginPushExecutorTests
         var remotePackage = new PluginPackage(packageId)
         {
             Name = "new_MyPackage",
-            Version = "1.0.0"
+            Version = "1.0.0",
+            Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() }
         };
-        remotePackage.Attributes[PluginPackage.LogicalNames.Package] = Guid.NewGuid();
         service.Create(remotePackage);
         var package = new LocalPluginPackage(
             Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)),

@@ -46,9 +46,9 @@ public class PluginPackageRepositoryTests
         var package = new PluginPackage(id)
         {
             Name = "new_MyPackage",
-            Version = "1.0.0"
+            Version = "1.0.0",
+            Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() }
         };
-        package.Attributes[PluginPackage.LogicalNames.Package] = Guid.NewGuid();
         service.Create(package);
 
         var result = await repository.FindByNameAsync("new_MyPackage");

@@ -81,13 +81,17 @@ public class SolutionComponentRepositoryTests
 
     private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)
     {
-        var component = new SolutionComponent(Guid.NewGuid());
-        component.Attributes[SolutionComponent.LogicalNames.ObjectId] = componentId;
-        component.Attributes[SolutionComponent.LogicalNames.SolutionId] =
-            new EntityReference(Solution.EntityLogicalName, solutionId);
-        component.Attributes[SolutionComponent.LogicalNames.ComponentType] =
-            new OptionSetValue(componentType);
-        return component;
+        return new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = componentId,
+                [SolutionComponent.LogicalNames.SolutionId] =
+                    new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] =
+                    new OptionSetValue(componentType)
+            }
+        };
     }
 
 }
