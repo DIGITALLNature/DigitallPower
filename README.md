@@ -40,7 +40,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [analyze](#analyze--solution-analysis)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
-  - [plugin push](#plugin-push--deploy-plugin-assembliespackages)
+  - [plugin](#plugin--manage-plugin-assembliespackages)
   - [push](#push--deploy-artifacts)
 - [CI/CD Integration](#-cicd-integration)
   - [Client Secret service connection](#client-secret-service-connection)
@@ -543,11 +543,17 @@ language setting* (`usersettings.uilanguageid`), not any per-request parameter. 
 from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
 → Personalization Settings → Language) to match the `language` configured for code generation.
 
-### `plugin push` — Deploy plugin assemblies/packages
+### `plugin` — Manage plugin assemblies/packages
 
-Resource-oriented replacement for the plugin part of the legacy `push` command (see below). Registers a
+Commands for deploying Dataverse plugin assemblies and packages.
+
+#### `push` — Deploy plugin assemblies/packages
+
+Resource-oriented replacement for the plugin part of the legacy `push` command. Registers a
 single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg` found directly in a
 directory (mixed content in one directory is supported; each file is processed independently).
+
+##### Usage
 
 ```bash
 dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
@@ -555,50 +561,63 @@ dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --publisher-prefix contoso -
 dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 ```
 
-| Option | Behavior |
-|--------|----------|
-| `--solution` | Ensures package, standalone assembly, and declared plugin step membership in the given solution |
-| `--publisher-prefix` | Publisher customization prefix for plugin packages; required when the target includes a `.nupkg` |
-| `--dry-run` | Reports what would be created/updated/deleted without writing to Dataverse |
+##### Options
 
-Reconciles plugin types, steps, step images and Custom API links declared via the
-`Digitall.Plugins.Registration` attributes (see the `push` section below for the attribute list), and links
-`ManagedIdentityRegistrationAttribute`-decorated assemblies to a managed identity, same as `push`.
-Before any writes, plugin push renders a complete deployment tree for the package or assembly,
-including plugin types, steps, images, Custom API links, solution/identity links, and outdated
-assembly migrations. `--dry-run` stops after planning and rendering this tree; missing Custom APIs
-and unresolved step messages fail during planning before Dataverse changes can occur. Normal
-execution consumes this same immutable plan without recalculating changes. Terminal output labels
-the `Plan` and `Execution` phases; dry runs render only the plan. Execution reports each completed
-create, update, delete, link, unlink, and migration operation, or `No changes applied` when no
-Dataverse writes were required.
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--solution` | No | Ensures package, standalone assembly, and declared plugin step membership in the given solution |
+| `--publisher-prefix` | For `.nupkg` targets | Publisher customization prefix for plugin packages |
+| `--dry-run` | No | Previews the deployment and solution membership plan without writing to Dataverse |
+
+##### Supported registration attributes
+
+| Attribute | Behavior |
+|-----------|----------|
+| `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
+| `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
+| `CustomDataProviderRegistrationAttribute` | Registers data-provider steps for virtual entities |
+| `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
+
+Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
+
+##### Managed identity
+
+When an assembly has `ManagedIdentityRegistrationAttribute`, `plugin push` finds or creates the
+managed identity for its client ID and links it to the assembly. For a package, the first bundled
+assembly with this attribute also determines the package identity. If no tenant ID is declared, the
+environment tenant is used.
+
+##### Planning and execution
+
+Before any writes, the command renders a deployment tree for plugin types, steps, images, Custom
+API links, and assembly upgrades. It then shows completed operations, or reports that no changes
+are required.
+`--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
+messages fail before Dataverse changes occur.
+
+##### Solution membership
+
 When `--solution` is set, missing package, standalone assembly, and declared step memberships are
 listed below the deployment tree, including in dry-run output. Plugin types, images, Custom APIs,
 and managed identities are not added implicitly. When every managed component is already present,
 the same section confirms that no membership additions are needed.
-Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
-that lookup does not alter the planned actions.
 
-Internally, local and remote state comparisons produce typed `Comparison`/`ComparisonSet` values.
-The deployment planner combines them into the single high-level `PluginDeploymentPlan`.
+##### Updates and upgrades
+
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
-require `--publisher-prefix`. Existing packages are updated only when the `.nupkg` content differs;
-package version differences alone do not cause an update. The comparison uses SHA-256 hashes of the
-local package and the Dataverse package file column.
+require `--publisher-prefix`. Existing packages and same-version standalone assemblies are updated
+only when their content differs. Package version differences alone do not cause an update. For
+standalone assemblies, a major or minor version difference is handled as an upgrade; build/revision
+changes update the existing assembly when the DLL content differs.
 
-**Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
-currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded
-assembly(ies) with the same name are then always fully reconciled away, with no opt-out flag - registration
-attributes are the declarative source of truth for the desired Dataverse state, so `plugin push` reconciles
-towards it unconditionally, the same way it already purges orphaned steps/types on the current assembly:
-- Custom API links and plugin steps are migrated to the same-named replacement type on the new assembly.
-- The outdated assembly, its plugin types, and any steps left without a replacement are then deleted.
-- Use `--dry-run` to preview exactly what would be migrated/deleted before it happens.
+When a local assembly's major or minor version differs, the command creates a
+replacement, migrates matching Custom API and plugin step references, then removes superseded
+assemblies and their remaining registrations. This is unconditional; use `--dry-run` to preview it.
 
-**Differences from the legacy `push` command:**
+##### Differences from legacy `push`
+
 - **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error
-  if the assembly contains any; replace them with a Custom API and use `push` in
-  the meantime if you still need to register them as-is.
+  if the assembly contains any; replace them with a Custom API.
 - **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
   customizations.
 - **Declared Custom APIs must exist** - a missing Custom API is reported as an error instead of silently
