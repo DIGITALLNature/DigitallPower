@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.tests.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Output;
@@ -35,9 +36,18 @@ public class PluginPushExecutorTests
             {
                 return Guid.Empty;
             }
-
             console.MarkupLine("[bold green]Execution[/]");
-            return await executor.ExecuteAsync(plan);
+            var completedOperationCount = 0;
+            var id = await executor.ExecuteAsync(plan, progress =>
+            {
+                completedOperationCount++;
+                console.MarkupLine(
+                    $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+            });
+            console.MarkupLine(completedOperationCount == 0
+                ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
+                : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+            return id;
         }
 
         public async Task<Guid> ProcessPackageAsync(LocalPluginPackage package, PluginPushOptions options)
@@ -49,19 +59,35 @@ public class PluginPushExecutorTests
             {
                 return Guid.Empty;
             }
-
             console.MarkupLine("[bold green]Execution[/]");
-            return await executor.ExecuteAsync(plan);
+            var completedOperationCount = 0;
+            var id = await executor.ExecuteAsync(plan, progress =>
+            {
+                completedOperationCount++;
+                console.MarkupLine(
+                    $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+            });
+            console.MarkupLine(completedOperationCount == 0
+                ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
+                : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+            return id;
         }
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor, TestConsole Console) CreateExecutorWithConsole()
+    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor, TestConsole Console) CreateExecutorWithConsole(
+        IReadOnlyDictionary<Guid, byte[]>? packageFiles = null)
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
+        if (packageFiles is not null)
+        {
+            service.AddRequests(new InitializePackageFileDownloadExecutor(packageFiles));
+            service.AddRequests(new DownloadPackageFileBlockExecutor(packageFiles));
+        }
+
         service.AddDefaultRequests();
 
         var console = new TestConsole();
@@ -222,6 +248,8 @@ public class PluginPushExecutorTests
         {
             await Assert.That(console.Output).Contains("Plan");
             await Assert.That(console.Output).Contains("Execution");
+            await Assert.That(console.Output).Contains("Created assembly MyPlugins");
+            await Assert.That(console.Output).Contains("Deployment completed");
             await Assert.That(console.Output.IndexOf("Plan", StringComparison.Ordinal))
                 .IsLessThan(console.Output.IndexOf("Execution", StringComparison.Ordinal));
         }
@@ -366,6 +394,7 @@ public class PluginPushExecutorTests
             await Assert.That(console.Output).DoesNotContain("└── MyPlugin");
             await Assert.That(console.Output).DoesNotContain("Managed identity");
             await Assert.That(console.Output).DoesNotContain("Checked");
+            await Assert.That(console.Output).Contains("No changes applied");
         }
     }
 
@@ -408,6 +437,37 @@ public class PluginPushExecutorTests
         var updated = service.Retrieve(PluginPackage.EntityLogicalName, packageId, new ColumnSet(true)).ToEntity<PluginPackage>();
         await Assert.That(updated.Content).IsEqualTo("newcontent");
         await Assert.That(updated.Version).IsEqualTo("1.0.0"); // version never changes
+    }
+
+    [Test]
+    public async Task ProcessPackageAsync_IdenticalContent_DoesNotUpdatePackage()
+    {
+        var packageId = Guid.NewGuid();
+        var packageFile = "pkgcontent"u8.ToArray();
+        var (service, executor, console) = CreateExecutorWithConsole(
+            new Dictionary<Guid, byte[]> { [packageId] = packageFile });
+        var remotePackage = new PluginPackage(packageId)
+        {
+            Name = "new_MyPackage",
+            Version = "1.0.0"
+        };
+        remotePackage.Attributes[PluginPackage.LogicalNames.Package] = Guid.NewGuid();
+        service.Create(remotePackage);
+        var package = new LocalPluginPackage(
+            new LocalPackage("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)),
+            []);
+
+        var id = await executor.ProcessPackageAsync(
+            package,
+            new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(id).IsEqualTo(packageId);
+            await Assert.That(console.Output).Contains("MyPackage Unchanged");
+            await Assert.That(console.Output).Contains("No changes applied");
+            await Assert.That(console.Output).DoesNotContain("Updated package");
+        }
     }
 
     [Test]

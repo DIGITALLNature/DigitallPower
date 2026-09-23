@@ -4,11 +4,15 @@
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
 using dgt.power.plugin.Remote;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Planning;
 
 public class PluginStateComparerTests
 {
+    private static string PackageHash(string base64Content) =>
+        Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(base64Content)));
+
     private static LocalAssembly Assembly(string version) => new()
     {
         Name = "MyPlugins",
@@ -79,15 +83,41 @@ public class PluginStateComparerTests
     [Arguments("1.0.0", "1.0.0")]
     [Arguments("1.0.0", "2.0.0")]
     [Arguments("1.0.0", "1.0.0-beta.1")]
-    public async Task ComparePackage_RemoteMatchRegardlessOfVersion_ReturnsUpdate(string localVersion, string remoteVersion)
+    public async Task ComparePackage_IdenticalContentRegardlessOfVersion_ReturnsUnchanged(
+        string localVersion,
+        string remoteVersion)
     {
-        var local = new LocalPackage("MyPackage", localVersion, "base64");
-        var remote = new RemotePackage(Guid.NewGuid());
+        var local = new LocalPackage("MyPackage", localVersion, "YmFzZTY0");
+        var remote = new RemotePackage(Guid.NewGuid(), PackageHash(local.Content));
 
         var change = PluginStateComparer.ComparePackage(local, remote);
 
-        _ = remoteVersion; // version is intentionally irrelevant to the decision - see ComparePackage docs.
+        _ = remoteVersion; // Dataverse package versions are immutable and do not affect deployment.
+        await Assert.That(change.Action).IsEqualTo(PackageAction.Unchanged);
+        await Assert.That(change.Existing).IsEqualTo(remote);
+    }
+
+    [Test]
+    public async Task ComparePackage_DifferentContent_ReturnsUpdate()
+    {
+        var local = new LocalPackage("MyPackage", "1.0.0", "bmV3LWNvbnRlbnQ=");
+        var remote = new RemotePackage(Guid.NewGuid(), PackageHash("b2xkLWNvbnRlbnQ="));
+
+        var change = PluginStateComparer.ComparePackage(local, remote);
+
         await Assert.That(change.Action).IsEqualTo(PackageAction.Update);
+        await Assert.That(change.Existing).IsEqualTo(remote);
+    }
+
+    [Test]
+    public async Task ComparePackage_MatchingFileHash_ReturnsUnchanged()
+    {
+        var local = new LocalPackage("MyPackage", "1.0.0", "YmFzZTY0");
+        var remote = new RemotePackage(Guid.NewGuid(), PackageHash(local.Content));
+
+        var change = PluginStateComparer.ComparePackage(local, remote);
+
+        await Assert.That(change.Action).IsEqualTo(PackageAction.Unchanged);
         await Assert.That(change.Existing).IsEqualTo(remote);
     }
 

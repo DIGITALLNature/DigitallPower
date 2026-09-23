@@ -31,6 +31,13 @@ the work that precedes stable output: `Processing <file>...` ends before the pla
 and `Applying <file>...` ends before execution returns. This prevents Spectre's live display from
 moving phase labels or the plan tree.
 
+`PluginPushExecutor`, `PluginTypeDeploymentExecutor`, and `OutdatedAssemblyMigrator` accept an
+optional typed `Action<PluginDeploymentProgress>` callback. They invoke it only after a successful
+Dataverse write. `PluginPushCommand` renders completed-operation lines and reports `No changes
+applied` when the callback received no events. It renders callback events immediately while the
+`Applying deployment plan...` spinner is active so partial successes remain visible if a later
+operation fails. Executors do not reference terminal output types.
+
 ## Plan contents
 
 The aggregate plan retains the concrete assembly/package change, nested plugin type and step

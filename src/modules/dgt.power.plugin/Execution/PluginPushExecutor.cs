@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning;
 using dgt.power.plugin.Planning.Changes;
 using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
@@ -18,6 +17,7 @@ public sealed class PluginPushExecutor(
 {
     public Task<Guid> ExecuteAsync(
         PluginDeploymentPlan plan,
+        Action<PluginDeploymentProgress>? reportProgress = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(plan);
@@ -26,8 +26,9 @@ public sealed class PluginPushExecutor(
             AssemblyDeploymentPlan assembly => ExecuteAssemblyAsync(
                 assembly,
                 resolvedPackageAssemblyId: null,
+                reportProgress,
                 cancellationToken),
-            PackageDeploymentPlan package => ExecutePackageAsync(package, cancellationToken),
+            PackageDeploymentPlan package => ExecutePackageAsync(package, reportProgress, cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(plan), plan.GetType(), "Unknown plugin deployment plan type.")
         };
     }
@@ -35,11 +36,13 @@ public sealed class PluginPushExecutor(
     private async Task<Guid> ExecuteAssemblyAsync(
         AssemblyDeploymentPlan plan,
         Guid? resolvedPackageAssemblyId,
+        Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
         var assemblyId = await ApplyAssemblyAsync(
             plan,
             resolvedPackageAssemblyId,
+            reportProgress,
             cancellationToken);
         if (plan.PluginTypes is null)
         {
@@ -49,6 +52,7 @@ public sealed class PluginPushExecutor(
         var typeIds = await typeExecutor.ApplyAsync(
             plan.PluginTypes,
             assemblyId,
+            reportProgress,
             cancellationToken);
 
         if (plan.LinkManagedIdentity)
@@ -62,11 +66,13 @@ public sealed class PluginPushExecutor(
                 assemblyId,
                 managedIdentityId,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Linked, "managed identity", local.ManagedIdentityClientId!);
         }
 
         await outdatedAssemblyMigrator.ApplyAsync(
             plan.OutdatedAssemblies,
             typeIds,
+            reportProgress,
             cancellationToken);
         return assemblyId;
     }
@@ -74,6 +80,7 @@ public sealed class PluginPushExecutor(
     private async Task<Guid> ApplyAssemblyAsync(
         AssemblyDeploymentPlan deployment,
         Guid? resolvedPackageAssemblyId,
+        Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
         var plan = deployment.Assembly;
@@ -96,14 +103,23 @@ public sealed class PluginPushExecutor(
                         assemblyId,
                         update.Local.Content,
                         cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Updated, "assembly", update.Local.Name);
                     break;
 
-                case CreateAssemblyChange:
-                case UpgradeAssemblyChange:
+                case CreateAssemblyChange create:
                     assemblyId = await assemblyRepository.CreateAsync(
-                        plan.Local.Name,
-                        plan.Local.Content,
+                        create.Local.Name,
+                        create.Local.Content,
                         cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Created, "assembly", create.Local.Name);
+                    break;
+
+                case UpgradeAssemblyChange upgrade:
+                    assemblyId = await assemblyRepository.CreateAsync(
+                        upgrade.Local.Name,
+                        upgrade.Local.Content,
+                        cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Created, "assembly", upgrade.Local.Name);
                     break;
 
                 default:
@@ -121,6 +137,7 @@ public sealed class PluginPushExecutor(
                 assemblyId,
                 solution.SolutionUniqueName,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Linked, "solution", solution.SolutionUniqueName);
         }
 
         return assemblyId;
@@ -128,9 +145,10 @@ public sealed class PluginPushExecutor(
 
     private async Task<Guid> ExecutePackageAsync(
         PackageDeploymentPlan deployment,
+        Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        var packageId = await ApplyPackageAsync(deployment, cancellationToken);
+        var packageId = await ApplyPackageAsync(deployment, reportProgress, cancellationToken);
 
         foreach (var assembly in deployment.Assemblies)
         {
@@ -149,6 +167,7 @@ public sealed class PluginPushExecutor(
             await ExecuteAssemblyAsync(
                 assembly,
                 packageAssemblyId,
+                reportProgress,
                 cancellationToken);
         }
 
@@ -164,6 +183,7 @@ public sealed class PluginPushExecutor(
                 packageId,
                 managedIdentityId,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Linked, "managed identity", source.ManagedIdentityClientId!);
         }
 
         return packageId;
@@ -171,17 +191,23 @@ public sealed class PluginPushExecutor(
 
     private async Task<Guid> ApplyPackageAsync(
         PackageDeploymentPlan deployment,
+        Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
         var plan = deployment.Change;
         Guid packageId;
-        if (plan.Action == PackageAction.Update)
+        if (plan.Action == PackageAction.Unchanged)
+        {
+            packageId = plan.Existing!.Id;
+        }
+        else if (plan.Action == PackageAction.Update)
         {
             packageId = plan.Existing!.Id;
             await packageRepository.UpdateContentAsync(
                 packageId,
                 plan.Local.Content,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Updated, "package", deployment.DataverseName);
         }
         else
         {
@@ -190,6 +216,7 @@ public sealed class PluginPushExecutor(
                 plan.Local.Version,
                 plan.Local.Content,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Created, "package", deployment.DataverseName);
         }
 
         if (deployment.Solution is { } solution)
@@ -199,8 +226,16 @@ public sealed class PluginPushExecutor(
                 packageId,
                 solution.SolutionUniqueName,
                 cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Linked, "solution", solution.SolutionUniqueName);
         }
 
         return packageId;
     }
+
+    private static void Report(
+        Action<PluginDeploymentProgress>? reportProgress,
+        PluginDeploymentOperation operation,
+        string resource,
+        string name) =>
+        reportProgress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
 }

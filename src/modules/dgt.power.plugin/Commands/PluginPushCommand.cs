@@ -196,10 +196,24 @@ public class PluginPushCommand(
         }
 
         Console.MarkupLine("[bold green]Execution[/]");
+        var completedOperationCount = 0;
+        void ReportCompletedOperation(PluginDeploymentProgress progress)
+        {
+            completedOperationCount++;
+            Console.MarkupLine(
+                $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+        }
+
         await Console.Status()
             .Spinner(Spinner.Known.Dots)
             .SpinnerStyle(Style.Parse("green bold"))
-            .StartAsync($"Applying {targetName}...", _ => executor.ExecuteAsync(plan, cancellationToken));
+            .StartAsync(
+                "Applying deployment plan...",
+                _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
+
+        Console.MarkupLine(completedOperationCount == 0
+            ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
+            : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
     private IReadOnlyList<string>? ResolveTargets(string target)

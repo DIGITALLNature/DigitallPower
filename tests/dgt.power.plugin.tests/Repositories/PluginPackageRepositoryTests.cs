@@ -4,15 +4,23 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Repositories;
 
 public class PluginPackageRepositoryTests
 {
-    private static FakeOrganizationServiceAsync CreateService()
+    private static FakeOrganizationServiceAsync CreateService(IReadOnlyDictionary<Guid, byte[]>? packageFiles = null)
     {
         var service = new FakeOrganizationServiceAsync();
+        if (packageFiles is not null)
+        {
+            service.AddRequests(new InitializePackageFileDownloadExecutor(packageFiles));
+            service.AddRequests(new DownloadPackageFileBlockExecutor(packageFiles));
+        }
+
         service.AddDefaultRequests();
         return service;
     }
@@ -31,15 +39,23 @@ public class PluginPackageRepositoryTests
     [Test]
     public async Task FindByNameAsync_MatchesExactName()
     {
-        var service = CreateService();
-        var repository = new PluginPackageRepository(service);
         var id = Guid.NewGuid();
-        service.Create(new PluginPackage(id) { Name = "new_MyPackage", Version = "1.0.0" });
+        var packageFile = "package-file"u8.ToArray();
+        var service = CreateService(new Dictionary<Guid, byte[]> { [id] = packageFile });
+        var repository = new PluginPackageRepository(service);
+        var package = new PluginPackage(id)
+        {
+            Name = "new_MyPackage",
+            Version = "1.0.0"
+        };
+        package.Attributes[PluginPackage.LogicalNames.Package] = Guid.NewGuid();
+        service.Create(package);
 
         var result = await repository.FindByNameAsync("new_MyPackage");
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.Id).IsEqualTo(id);
+        await Assert.That(result.PackageHash).IsEqualTo(Convert.ToHexString(SHA256.HashData(packageFile)));
     }
 
     [Test]

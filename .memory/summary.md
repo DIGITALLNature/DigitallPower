@@ -78,6 +78,7 @@ src/
 | Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Az/pac-style `<resource> <verb>` commands (`dgtp plugin push`) built from scratch alongside the legacy `push` command instead of refactoring it in place; module-local repos/executors are constructed via `new`, not registered in the global DI container |
 | `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` and `Remote` state / `Planning.Changes` comparison models / `Planning.Deployment` executable plan models / `Repositories` / `Execution` / `Output` / `Commands` / `Base` |
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
+| Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 
 ## TSL Template Engine (codegeneration)
@@ -176,6 +177,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
+| `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |

@@ -560,14 +560,18 @@ including plugin types, steps, images, Custom API links, solution/identity links
 assembly migrations. `--dry-run` stops after planning and rendering this tree; missing Custom APIs
 and unresolved step messages fail during planning before Dataverse changes can occur. Normal
 execution consumes this same immutable plan without recalculating changes. Terminal output labels
-the `Plan` and `Execution` phases; dry runs render only the plan.
+the `Plan` and `Execution` phases; dry runs render only the plan. Execution reports each completed
+create, update, delete, link, unlink, and migration operation, or `No changes applied` when no
+Dataverse writes were required.
 Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
 that lookup does not alter the planned actions.
 
 Internally, local and remote state comparisons produce typed `Change`/`ChangeSet` values. The
 deployment planner combines those values into the single high-level `PluginDeploymentPlan`.
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
-require `--publisher-prefix`.
+require `--publisher-prefix`. Existing packages are updated only when the `.nupkg` content differs;
+package version differences alone do not cause an update. The comparison uses SHA-256 hashes of the
+local package and the Dataverse package file column.
 
 **Outdated assembly migration on upgrade:** When a local assembly's major/minor version differs from the
 currently registered one, a new `pluginassembly` record is created side-by-side. Any previously-superseded

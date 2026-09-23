@@ -4,6 +4,7 @@
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning.Changes;
 using dgt.power.plugin.Remote;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.Planning;
 
@@ -44,16 +45,22 @@ public static class PluginStateComparer
     /// <summary>
     /// Decides the <see cref="PackageAction"/> for a local package given the (already looked up)
     /// remote package with the same name, if any. Package version is never compared - Dataverse
-    /// plugin packages cannot have their version changed after creation, so an existing package is
-    /// always updated in place regardless of the local version.
+    /// plugin packages cannot have their version changed after creation, so only content determines
+    /// whether an existing package is updated.
     /// </summary>
     public static PackageChange ComparePackage(LocalPackage local, RemotePackage? remote)
     {
         ArgumentNullException.ThrowIfNull(local);
 
-        return remote is null
-            ? new PackageChange(local, PackageAction.Create, null)
-            : new PackageChange(local, PackageAction.Update, remote);
+        if (remote is null)
+        {
+            return new PackageChange(local, PackageAction.Create, null);
+        }
+
+        var action = PackageHashesEqual(local.Content, remote.PackageHash)
+            ? PackageAction.Unchanged
+            : PackageAction.Update;
+        return new PackageChange(local, action, remote);
     }
 
     /// <summary>
@@ -215,5 +222,17 @@ public static class PluginStateComparer
         }
 
         return left.OrderBy(a => a, StringComparer.Ordinal).SequenceEqual(right.OrderBy(a => a, StringComparer.Ordinal));
+    }
+
+    private static bool PackageHashesEqual(string localContent, string? remotePackageHash)
+    {
+        if (remotePackageHash is null)
+        {
+            return false;
+        }
+
+        var localBytes = Convert.FromBase64String(localContent);
+        var localPackageHash = Convert.ToHexString(SHA256.HashData(localBytes));
+        return string.Equals(localPackageHash, remotePackageHash, StringComparison.OrdinalIgnoreCase);
     }
 }

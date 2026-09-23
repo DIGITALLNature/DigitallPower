@@ -7,7 +7,8 @@ namespace dgt.power.plugin.Planning.Changes;
 /// Decision for how a local plugin package should be deployed to a Dataverse environment.
 /// Dataverse plugin packages cannot have their version changed after creation, so - unlike plugin
 /// assemblies - there is no Upgrade action: a package either does not exist yet (Create), or it
-/// does and its content is replaced in place (Update), regardless of version differences.
+/// does and its content is replaced in place (Update) when it differs, regardless of version
+/// differences.
 /// </summary>
 public enum PackageAction
 {
@@ -15,5 +16,8 @@ public enum PackageAction
     Create,
 
     /// <summary>A matching package exists; its content is replaced in place.</summary>
-    Update
+    Update,
+
+    /// <summary>A matching package already contains identical content.</summary>
+    Unchanged
 }
