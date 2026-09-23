@@ -40,6 +40,7 @@ public class CommandTreeTests
     // (Model building already covers the whole tree above; this additionally guards against
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
+    [Arguments("connection")]
     [Arguments("profile")]
     [Arguments("export")]
     [Arguments("maintenance")]

@@ -1,3 +1,10 @@
+# [2.3.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.1-beta.2...v2.3.0-beta.1) (2026-09-22)
+
+
+### Features
+
+* **connection:** add Azure DevOps Workload Identity Federation auth ([#184](https://github.com/DIGITALLNature/DigitallPower/issues/184)) ([969a5e6](https://github.com/DIGITALLNature/DigitallPower/commit/969a5e681c9c0383dab8bf4875f94eda6ac15120))
+
 ## [2.2.1-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.1-beta.1...v2.2.1-beta.2) (2026-09-17)
 
 

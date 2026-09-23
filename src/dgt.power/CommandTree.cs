@@ -40,38 +40,13 @@ internal static class CommandTree
         config.AddBranch<ConnectionSettings>("connection", connection =>
         {
             connection.SetDescription("Manages connections to Dataverse environments");
-            connection.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
-            connection.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
-                .WithExample("connection", "create", "<Name>", "--url", "<Url>")
-                .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
-            connection.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
-            connection.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
-                .WithExample("connection", "delete", "<Name>")
-                .WithExample("connection", "delete", "--all")
-                .WithExample("connection", "delete", "--all", "--yes");
-            connection.AddCommand<ConnectionStatusCommand>("status")
-                .WithDescription(
-                    "Checks whether the current MSAL token is still valid without opening a browser. " +
-                    "Exit code 0 = token valid, 2 = interactive login required. " +
-                    "Intended as a pre-flight check for coding agents.");
-            connection.AddCommand<ConnectionRefreshCommand>("refresh")
-                .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
+            RegisterConnectionCommands(connection);
         });
 
         config.AddBranch<ProfileSettings>("profile", profile =>
         {
             profile.SetDescription("[[Deprecated]] Use 'connection' instead");
-            profile.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
-            profile.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
-                .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
-            profile.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
-            profile.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
-            profile.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
-            profile.AddCommand<AuthCheckCommand>("auth-check")
-                .WithDescription(
-                    "Checks whether the current MSAL token is still valid without opening a browser. " +
-                    "Exit code 0 = token valid, 2 = interactive login required. " +
-                    "Intended as a pre-flight check for coding agents.");
+            RegisterProfileCommands(profile);
         });
 
         config.AddBranch<ExportVerb>("export", export =>
@@ -208,5 +183,38 @@ internal static class CommandTree
                 .WithExample("complete", "install-shell", "--shell", "zsh")
                 .WithExample("complete", "install-shell", "--dry-run");
         });
+    }
+
+    private static void RegisterConnectionCommands(IConfigurator<ConnectionSettings> branch)
+    {
+        branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
+        branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
+            .WithExample("connection", "create", "<Name>", "--url", "<Url>")
+            .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
+        branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
+        branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
+            .WithExample("connection", "delete", "<Name>")
+            .WithExample("connection", "delete", "--all")
+            .WithExample("connection", "delete", "--all", "--yes");
+        branch.AddCommand<ConnectionStatusCommand>("status")
+            .WithDescription(
+                "Checks whether the current MSAL token is still valid without opening a browser. " +
+                "Exit code 0 = token valid, 2 = interactive login required. " +
+                "Intended as a pre-flight check for coding agents.");
+        branch.AddCommand<ConnectionRefreshCommand>("refresh")
+            .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
+    }
+
+    private static void RegisterProfileCommands(IConfigurator<ProfileSettings> branch)
+    {
+        branch.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
+        branch.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
+            .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
+        branch.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
+        branch.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
+        branch.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
+        branch.AddCommand<AuthCheckCommand>("auth-check")
+            .WithDescription("Checks whether the current MSAL token is still valid without opening a browser. " +
+                "Exit code 0 = token valid, 2 = interactive login required.");
     }
 }

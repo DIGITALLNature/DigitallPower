@@ -52,7 +52,7 @@ var defaultConfiguration = new Dictionary<string, string?>
 // Nothing must be written to stdout here except the completion candidates.
 if (DotnetSuggestHandler.IsSuggestMode(args))
 {
-    return await DotnetSuggestHandler.HandleAsync(args, RegisterCommands);
+    return await DotnetSuggestHandler.HandleAsync(args, CommandTree.Register);
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -164,7 +164,7 @@ app.Configure(config =>
     var versionCheckInterceptor = serviceProvider.GetRequiredService<VersionCheckInterceptor>();
     var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
     config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
-    RegisterCommands(config);
+    CommandTree.Register(config);
 
     config.SetExceptionHandler((exception, _) =>
     {
@@ -216,9 +216,3 @@ finally
     TaskScheduler.UnobservedTaskException -= unobservedTaskExceptionHandler;
     FlushAndDisposeTelemetryProvider();
 }
-
-// ── Command registration ──────────────────────────────────────────────────────
-// Single source of truth for the dgtp command tree, shared by the normal app
-// path and the dotnet-suggest capture path. See CommandTree.cs.
-// ─────────────────────────────────────────────────────────────────────────────
-void RegisterCommands(IConfigurator config) => CommandTree.Register(config);

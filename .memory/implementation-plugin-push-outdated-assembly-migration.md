@@ -144,10 +144,9 @@ Mechanics (unchanged since the first iteration):
   from the fake `MetadataCache` when run via `dotnet test` with parallel execution; this is pre-existing
   test-harness flakiness (`Digitall.Dataverse.Testing` internals), not a regression - rerun to confirm.
 - On this environment, `dotnet test` (and even `rtk`-wrapped test runs) can spuriously report
-  "Zero tests ran" with no build errors, or fail to start the exe with "Access denied" due to a
-  lingering file lock. Building explicitly (`dotnet build <project>`) then running the produced
-  `.exe` directly from its `bin/Debug/net10.0` folder (retrying once after a short pause on access-denied)
-  reliably surfaces the real pass/fail result.
+  "Zero tests ran" with no build errors, or fail to start the test `.exe` with "Access denied" due
+  to Windows Defender. Build explicitly (`dotnet build <project>`) and run the produced test DLL
+  through `dotnet exec <path-to-test.dll>` to reliably surface the real pass/fail result.
 
 ## Status
 
