@@ -8,7 +8,7 @@ read-only `package` file column (with `package_name` providing its name). `FindB
 finds the package ID and file-column presence by name, then downloads `package` using
 `InitializeFileBlocksDownloadRequest` and `DownloadBlockRequest`. It hashes the downloaded blocks
 incrementally with SHA-256 and exposes that hash in `RemotePackage`.
-`PluginStateComparer.ComparePackage` returns:
+`PackageComparison` represents:
 
 - `Create` when no matching package exists.
 - `Update` when the remote file hash differs from the local `.nupkg` SHA-256 hash.

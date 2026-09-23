@@ -7,7 +7,7 @@ namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin CRUD access to <c>pluginassembly</c> records. Contains no Create/Update/Upgrade decision
-/// logic - see <see cref="dgt.power.plugin.Planning.PluginStateComparer"/> for that.
+/// logic - see <see cref="dgt.power.plugin.Planning.PluginDeploymentPlanner"/> for that.
 /// </summary>
 public interface IPluginAssemblyRepository
 {

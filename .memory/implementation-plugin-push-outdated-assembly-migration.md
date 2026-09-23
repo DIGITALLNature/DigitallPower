@@ -14,11 +14,11 @@ implementing `dgtp plugin push`, structured in four layers:
   target environment. Split out of `Planning/` (where these types originally lived, mixed in with pure
   decision logic) to keep the module's namespace layout self-explanatory: `Local` and `Remote` are both
   plain state/model namespaces, `Planning` is pure logic.
-- **`Planning/`** — typed deployment plans and planning logic. `PluginStateComparer` contains pure
+- **`Planning/`** — typed deployment plans and planning logic. `PluginRegistrationComparer` contains pure
   Local-vs.-Remote matching helpers, while `PluginDeploymentPlanner` loads the complete remote
   snapshot, validates references, and returns the immutable plan consumed by rendering and execution.
-  Low-level comparison values use `Change`/`ChangeSet`; `Plan` is reserved for the complete executable
-  deployment graph. The files and namespaces are grouped under `Planning.Changes` and
+  Low-level comparison values use `Comparison`/`ComparisonSet`; `Plan` is reserved for the complete
+  executable deployment graph. The files and namespaces are grouped under `Planning.Comparison` and
   `Planning.Deployment`.
 - **`Repositories/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
   `ISdkMessageProcessingStepRepository`, `ISdkMessageProcessingStepImageRepository`,
@@ -115,7 +115,7 @@ Current unconditional behavior on every `Upgrade` (major/minor version change):
 
 Mechanics (unchanged since the first iteration):
 - Type matching (old outdated type → new replacement type) is done by `TypeName`, purely in the
-  Planning layer (`PluginStateComparer.CompareOutdatedTypes`), comparing the old `RemotePluginType`
+  Planning layer (`PluginRegistrationComparer.CompareOutdatedTypes`), comparing the old `RemotePluginType`
   against the newly-declared `LocalPluginType` list - **not** against the newly-created remote types.
   This keeps the plan/report step correct even in `--dry-run`, before any Dataverse write happens.
 - The apply step receives the replacement type IDs produced by `PluginTypeDeploymentExecutor`; it performs

@@ -3,18 +3,23 @@
 ## Decision
 
 `plugin push` uses one typed deployment plan for both visualization and execution. Low-level
-local/remote comparisons are represented as `Change` and `ChangeSet` values; the term `Plan` is
+local/remote state is represented as `Comparison` and `ComparisonSet` values; the term `Plan` is
 reserved for the complete executable deployment graph.
 
-The comparison helper is named `PluginStateComparer`. Its collection results are named
-`PluginTypeChangeSet`, `PluginStepChangeSet`, and `PluginStepImageChangeSet`; individual decisions
-are `*Change` records. These files live in `Planning/Changes/`. Executable-plan records live in
-`Planning/Deployment/`. Their namespaces follow the directory structure:
-`dgt.power.plugin.Planning.Changes` and `dgt.power.plugin.Planning.Deployment`.
+The comparison helper is named `PluginRegistrationComparer`. Its collection results are named
+`PluginTypeComparisonSet`, `PluginStepComparisonSet`, and `PluginStepImageComparisonSet`; individual
+items are `*Comparison` records. A comparison captures remote state and whether a mutation is
+required; no-change is represented by no required mutation, not by a fake change. These files live
+in `Planning/Comparison/`. Executable-plan records live in `Planning/Deployment/`. Their namespaces
+follow the directory structure: `dgt.power.plugin.Planning.Comparison` and
+`dgt.power.plugin.Planning.Deployment`.
 
-Assembly package ownership is represented by the `PackageOwnedAssemblyChange` subtype rather than
-an `OwnedByPackage` member on `AssemblyAction`. Package ownership describes who controls the
-assembly lifecycle; it is not an executable action.
+Assembly package ownership is comparison state (`AssemblyComparison.IsPackageOwned`), not a change
+or executable action. The renderer therefore omits a status label for package-owned assemblies.
+
+`LocalAssembly.ContentHash` and `LocalPackage.PackageHash` are immutable values populated when the
+reader first loads DLL/package bytes. Remote hashes are populated by their repositories. Comparison
+properties therefore compare hash strings and do not decode or hash payloads repeatedly.
 
 1. `PluginDeploymentPlanner` loads the remote snapshot, validates SDK messages and Custom APIs,
    and creates an `AssemblyDeploymentPlan` or `PackageDeploymentPlan`.

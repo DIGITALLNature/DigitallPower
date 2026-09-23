@@ -566,8 +566,8 @@ Dataverse writes were required.
 Package uploads may require a post-upload lookup to resolve Dataverse-generated assembly IDs, but
 that lookup does not alter the planned actions.
 
-Internally, local and remote state comparisons produce typed `Change`/`ChangeSet` values. The
-deployment planner combines those values into the single high-level `PluginDeploymentPlan`.
+Internally, local and remote state comparisons produce typed `Comparison`/`ComparisonSet` values.
+The deployment planner combines them into the single high-level `PluginDeploymentPlan`.
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
 require `--publisher-prefix`. Existing packages are updated only when the `.nupkg` content differs;
 package version differences alone do not cause an update. The comparison uses SHA-256 hashes of the

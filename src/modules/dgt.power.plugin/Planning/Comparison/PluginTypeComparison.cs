@@ -4,7 +4,9 @@
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Remote;
 
-namespace dgt.power.plugin.Planning.Changes;
+namespace dgt.power.plugin.Planning.Comparison;
 
-public sealed record PackageOwnedAssemblyChange(LocalAssembly Local, RemoteAssembly Remote)
-    : AssemblyChange(Local, Remote);
+public sealed record PluginTypeComparison(LocalPluginType Local, RemotePluginType? Remote)
+{
+    public bool RequiresCreate => Remote is null;
+}

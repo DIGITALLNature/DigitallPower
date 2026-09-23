@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using dgt.power.common.Extensions;
 using NuGet.Packaging;
 using Spectre.Console;
@@ -24,7 +25,8 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
     {
         try
         {
-            var content = Convert.ToBase64String(File.ReadAllBytes(packageFile));
+            var packageBytes = File.ReadAllBytes(packageFile);
+            var content = Convert.ToBase64String(packageBytes);
             using var inputStream = new FileStream(packageFile, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var reader = new PackageArchiveReader(inputStream);
             var nuspec = reader.NuspecReader;
@@ -32,7 +34,8 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
             return new LocalPackage(
                 nuspec.GetId(),
                 nuspec.GetVersion().OriginalVersion ?? nuspec.GetVersion().ToFullString(),
-                content);
+                content,
+                Convert.ToHexString(SHA256.HashData(packageBytes)));
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {

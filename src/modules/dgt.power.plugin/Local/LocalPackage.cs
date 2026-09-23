@@ -13,4 +13,4 @@ namespace dgt.power.plugin.Local;
 /// between Update/Upgrade; it is only used for display and for the initial Create.
 /// </param>
 /// <param name="Content">Base64-encoded package content.</param>
-public sealed record LocalPackage(string Name, string Version, string Content);
+public sealed record LocalPackage(string Name, string Version, string Content, string PackageHash);

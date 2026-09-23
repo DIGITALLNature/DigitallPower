@@ -15,6 +15,8 @@ public sealed record LocalAssembly
 
     public required string Content { get; init; }
 
+    public required string ContentHash { get; init; }
+
     public LocalAssemblyKind Kind { get; init; } = LocalAssemblyKind.None;
 
     public IReadOnlyList<LocalPluginType> PluginTypes { get; init; } = [];

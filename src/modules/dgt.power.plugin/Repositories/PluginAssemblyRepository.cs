@@ -6,6 +6,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using dgt.power.plugin.Remote;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -20,7 +21,8 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             ColumnSet = new ColumnSet(
                 PluginAssembly.LogicalNames.PluginAssemblyId,
                 PluginAssembly.LogicalNames.Version,
-                PluginAssembly.LogicalNames.PackageId),
+                PluginAssembly.LogicalNames.PackageId,
+                PluginAssembly.LogicalNames.Content),
             Criteria = new FilterExpression
             {
                 Conditions =
@@ -42,7 +44,10 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             return null;
         }
 
-        return new RemoteAssembly(entity.Id, Version.Parse(entity.Version!), entity.PackageId?.Id);
+        var contentHash = entity.PackageId is not null || entity.Content is null
+            ? null
+            : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
+        return new RemoteAssembly(entity.Id, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash);
     }
 
     public async Task<IReadOnlyList<RemoteAssembly>> ListOutdatedAsync(string name, Guid excludeId, CancellationToken cancellationToken = default)

@@ -10,4 +10,5 @@ namespace dgt.power.plugin.Remote;
 /// <param name="Id">Plugin assembly record id.</param>
 /// <param name="Version">Currently registered version.</param>
 /// <param name="PackageId">Owning plugin package id, when the assembly belongs to a package.</param>
-public sealed record RemoteAssembly(Guid Id, Version Version, Guid? PackageId);
+/// <param name="ContentHash">SHA-256 hash of the registered assembly content, when retrieved.</param>
+public sealed record RemoteAssembly(Guid Id, Version Version, Guid? PackageId, string? ContentHash = null);

@@ -1,7 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning.Changes;
+using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
 
@@ -33,19 +33,19 @@ public sealed class PluginTypeDeploymentExecutor(
         var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
         foreach (var item in plan.Types)
         {
-            var typeId = item.Change.Action == PluginTypeAction.Create
+            var typeId = item.Comparison.RequiresCreate
                 ? await typeRepository.CreateAsync(
                     assemblyId,
-                    item.Change.Local.TypeName,
-                    item.Change.Local.Name,
+                    item.Comparison.Local.TypeName,
+                    item.Comparison.Local.Name,
                     cancellationToken)
-                : item.Change.Existing!.Id;
-            if (item.Change.Action == PluginTypeAction.Create)
+                : item.Comparison.Remote!.Id;
+            if (item.Comparison.RequiresCreate)
             {
-                Report(reportProgress, PluginDeploymentOperation.Created, "plugin type", item.Change.Local.TypeName);
+                Report(reportProgress, PluginDeploymentOperation.Created, "plugin type", item.Comparison.Local.TypeName);
             }
 
-            typeIds.Add(item.Change.Local.TypeName, typeId);
+            typeIds.Add(item.Comparison.Local.TypeName, typeId);
 
             foreach (var step in item.Steps)
             {
@@ -96,14 +96,14 @@ public sealed class PluginTypeDeploymentExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        if (deployment.Change.Action == PluginStepAction.Unchanged)
+        if (!deployment.Comparison.RequiresCreate && !deployment.Comparison.RequiresUpdate)
         {
-            return deployment.Change.Existing!.Id;
+            return deployment.Comparison.Remote!.Id;
         }
 
         var message = deployment.Message
             ?? throw new InvalidOperationException("A create or update step operation requires a resolved SDK message.");
-        var local = deployment.Change.Local;
+        var local = deployment.Comparison.Local;
         var data = new PluginStepData(
             local.Name,
             pluginTypeId,
@@ -115,16 +115,16 @@ public sealed class PluginTypeDeploymentExecutor(
             local.FilterAttributes,
             local.Configuration);
 
-        if (deployment.Change.Action == PluginStepAction.Create)
+        if (deployment.Comparison.RequiresCreate)
         {
             var stepId = await stepRepository.CreateAsync(data, cancellationToken);
             Report(reportProgress, PluginDeploymentOperation.Created, "step", local.Name);
             return stepId;
         }
 
-        await stepRepository.UpdateAsync(deployment.Change.Existing!.Id, data, cancellationToken);
+        await stepRepository.UpdateAsync(deployment.Comparison.Remote!.Id, data, cancellationToken);
         Report(reportProgress, PluginDeploymentOperation.Updated, "step", local.Name);
-        return deployment.Change.Existing.Id;
+        return deployment.Comparison.Remote.Id;
     }
 
     private async Task ApplyImagesAsync(
@@ -133,9 +133,9 @@ public sealed class PluginTypeDeploymentExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        foreach (var image in deployment.Images.Changes)
+        foreach (var image in deployment.Images.Comparisons)
         {
-            if (image.Action == PluginStepImageAction.Create)
+            if (image.RequiresCreate)
             {
                 var local = image.Local;
                 await imageRepository.CreateAsync(
@@ -149,10 +149,10 @@ public sealed class PluginTypeDeploymentExecutor(
                     cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Created, "step image", local.Name);
             }
-            else
+            else if (image.RequiresUpdate)
             {
                 await imageRepository.UpdateAsync(
-                    image.Existing!.Id,
+                    image.Remote!.Id,
                     image.Local.Attributes,
                     cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Updated, "step image", image.Local.Name);

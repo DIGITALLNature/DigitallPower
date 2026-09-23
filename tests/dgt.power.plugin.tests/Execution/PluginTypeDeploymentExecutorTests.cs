@@ -13,6 +13,7 @@ using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console.Testing;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Execution;
 
@@ -32,13 +33,14 @@ public class PluginTypeDeploymentExecutorTests
             {
                 Name = "TestAssembly",
                 Version = new Version(1, 0),
-                Content = "base64",
+                Content = "YmFzZTY0",
+                ContentHash = Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())),
                 Kind = LocalAssemblyKind.Plugin,
                 PluginTypes = localTypes
             };
             var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes);
             var deployment = new AssemblyDeploymentPlan(
-                new UpdateAssemblyChange(
+                new AssemblyComparison(
                     localAssembly,
                     new RemoteAssembly(assemblyId, localAssembly.Version, null)),
                 typePlan,

@@ -1,7 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning.Changes;
+using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Repositories;
 
@@ -57,7 +57,7 @@ public sealed class PluginPushExecutor(
 
         if (plan.LinkManagedIdentity)
         {
-            var local = plan.Assembly.Local;
+            var local = plan.Comparison.Local;
             var managedIdentityId = await managedIdentityRepository.EnsureAsync(
                 local.ManagedIdentityClientId!,
                 local.ManagedIdentityTenantId,
@@ -83,7 +83,7 @@ public sealed class PluginPushExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        var plan = deployment.Assembly;
+        var comparison = deployment.Comparison;
         Guid assemblyId;
         if (resolvedPackageAssemblyId is { } packageAssemblyId)
         {
@@ -91,42 +91,25 @@ public sealed class PluginPushExecutor(
         }
         else
         {
-            switch (plan)
+            if (comparison.RequiresCreate || comparison.RequiresUpgrade)
             {
-                case PackageOwnedAssemblyChange packageOwned:
-                    assemblyId = packageOwned.Remote.Id;
-                    break;
-
-                case UpdateAssemblyChange update:
-                    assemblyId = update.Remote.Id;
+                assemblyId = await assemblyRepository.CreateAsync(
+                    comparison.Local.Name,
+                    comparison.Local.Content,
+                    cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Created, "assembly", comparison.Local.Name);
+            }
+            else
+            {
+                assemblyId = comparison.Remote!.Id;
+                if (comparison.RequiresUpdate)
+                {
                     await assemblyRepository.UpdateContentAsync(
                         assemblyId,
-                        update.Local.Content,
+                        comparison.Local.Content,
                         cancellationToken);
-                    Report(reportProgress, PluginDeploymentOperation.Updated, "assembly", update.Local.Name);
-                    break;
-
-                case CreateAssemblyChange create:
-                    assemblyId = await assemblyRepository.CreateAsync(
-                        create.Local.Name,
-                        create.Local.Content,
-                        cancellationToken);
-                    Report(reportProgress, PluginDeploymentOperation.Created, "assembly", create.Local.Name);
-                    break;
-
-                case UpgradeAssemblyChange upgrade:
-                    assemblyId = await assemblyRepository.CreateAsync(
-                        upgrade.Local.Name,
-                        upgrade.Local.Content,
-                        cancellationToken);
-                    Report(reportProgress, PluginDeploymentOperation.Created, "assembly", upgrade.Local.Name);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(deployment),
-                        plan.GetType(),
-                        "Unknown assembly deployment action.");
+                    Report(reportProgress, PluginDeploymentOperation.Updated, "assembly", comparison.Local.Name);
+                }
             }
         }
 
@@ -153,12 +136,12 @@ public sealed class PluginPushExecutor(
         foreach (var assembly in deployment.Assemblies)
         {
             var remoteAssembly = await assemblyRepository.FindByNameAsync(
-                assembly.Assembly.Local.Name,
+                assembly.Comparison.Local.Name,
                 cancellationToken);
             if (remoteAssembly?.PackageId is { } ownerPackageId && ownerPackageId != packageId)
             {
                 throw new InvalidOperationException(
-                    $"Assembly '{assembly.Assembly.Local.Name}' belongs to another plugin package.");
+                    $"Assembly '{assembly.Comparison.Local.Name}' belongs to another plugin package.");
             }
 
             var packageAssemblyId = remoteAssembly?.PackageId == packageId
@@ -194,29 +177,29 @@ public sealed class PluginPushExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
-        var plan = deployment.Change;
+        var comparison = deployment.Comparison;
         Guid packageId;
-        if (plan.Action == PackageAction.Unchanged)
+        if (comparison.RequiresCreate)
         {
-            packageId = plan.Existing!.Id;
+            packageId = await packageRepository.CreateAsync(
+                deployment.DataverseName,
+                comparison.Local.Version,
+                comparison.Local.Content,
+                cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Created, "package", deployment.DataverseName);
         }
-        else if (plan.Action == PackageAction.Update)
+        else if (comparison.RequiresUpdate)
         {
-            packageId = plan.Existing!.Id;
+            packageId = comparison.Remote!.Id;
             await packageRepository.UpdateContentAsync(
                 packageId,
-                plan.Local.Content,
+                comparison.Local.Content,
                 cancellationToken);
             Report(reportProgress, PluginDeploymentOperation.Updated, "package", deployment.DataverseName);
         }
         else
         {
-            packageId = await packageRepository.CreateAsync(
-                deployment.DataverseName,
-                plan.Local.Version,
-                plan.Local.Content,
-                cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Created, "package", deployment.DataverseName);
+            packageId = comparison.Remote!.Id;
         }
 
         if (deployment.Solution is { } solution)

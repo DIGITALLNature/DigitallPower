@@ -1,4 +1,4 @@
-﻿# Plugin push plan output adaptation
+# Plugin push plan output adaptation
 
 The webresource V2 branch separates planning from presentation and execution:
 
@@ -8,10 +8,10 @@ The webresource V2 branch separates planning from presentation and execution:
   starts a separate execution phase using `WebResourceExecutionReporter`.
 
 The plugin module already has the equivalent decision data, but it is hierarchical:
-`AssemblyChange`/`PackageChange` feed the deployment plan, which contains type, step, image,
+`AssemblyComparison`/`PackageComparison` feed the deployment plan, which contains type, step, image,
 Custom API, and outdated-assembly operations.
 
-The implementation keeps `PluginStateComparer` as the pure matching helper and uses
+The implementation keeps `PluginRegistrationComparer` as the pure matching helper and uses
 `PluginDeploymentPlanner` as the aggregate source of truth. The renderer builds a tree in this order:
 target (assembly or package) → assembly → plugin type → step → image, with custom API
 link/unlink and obsolete type/step/image deletion as action-labelled leaves. It should render

@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using System.Reflection;
+using System.Security.Cryptography;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
@@ -60,11 +61,13 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 kind |= LocalAssemblyKind.DeclarativePlugin;
             }
 
+            var contentBytes = File.ReadAllBytes(dllFile);
             return new LocalAssembly
             {
                 Name = assembly.GetName().Name!,
                 Version = assembly.GetName().Version!,
-                Content = Convert.ToBase64String(File.ReadAllBytes(dllFile)),
+                Content = Convert.ToBase64String(contentBytes),
+                ContentHash = Convert.ToHexString(SHA256.HashData(contentBytes)),
                 Kind = kind,
                 PluginTypes = localPluginTypes,
                 ManagedIdentityClientId = managedIdentityClientId,

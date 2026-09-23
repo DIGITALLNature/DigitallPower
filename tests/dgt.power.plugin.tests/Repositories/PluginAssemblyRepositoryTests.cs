@@ -5,6 +5,7 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
+using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Repositories;
 
@@ -38,6 +39,7 @@ public class PluginAssemblyRepositoryTests
         {
             Name = "MyPlugins",
             Version = "1.2.3.4",
+            Content = "YmFzZTY0",
             SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
@@ -48,6 +50,8 @@ public class PluginAssemblyRepositoryTests
         await Assert.That(result!.Id).IsEqualTo(id);
         await Assert.That(result.Version).IsEqualTo(Version.Parse("1.2.3.4"));
         await Assert.That(result.PackageId).IsNull();
+        await Assert.That(result.ContentHash)
+            .IsEqualTo(Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())));
     }
 
     [Test]

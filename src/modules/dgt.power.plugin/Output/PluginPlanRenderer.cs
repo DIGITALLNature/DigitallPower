@@ -1,7 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Planning.Changes;
+using dgt.power.plugin.Planning.Comparison;
 using dgt.power.plugin.Planning.Deployment;
 using Spectre.Console;
 
@@ -35,7 +35,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     {
         var name = plan.DataverseName;
         var tree = new Tree(
-            $"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(plan.Change.Action.ToString())}");
+            $"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(PackageStatus(plan.Comparison))}");
         foreach (var assembly in plan.Assemblies)
         {
             var node = tree.AddNode(AssemblyLabel(assembly));
@@ -59,20 +59,63 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     }
 
     private static string AssemblyLabel(AssemblyDeploymentPlan plan) =>
-        $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(plan.Assembly.Local.Name)}[/] " +
-        AssemblyActionMarkup(plan.Assembly);
+        $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(plan.Comparison.Local.Name)}[/]" +
+        AssemblyStatusMarkup(plan.Comparison);
 
-    private static string AssemblyActionMarkup(AssemblyChange change) => change switch
+    private static string AssemblyStatusMarkup(AssemblyComparison comparison)
     {
-        CreateAssemblyChange => ActionMarkup("Create"),
-        UpdateAssemblyChange => ActionMarkup("Update"),
-        UpgradeAssemblyChange => ActionMarkup("Upgrade"),
-        PackageOwnedAssemblyChange => "[grey]Managed by package[/]",
-        _ => throw new ArgumentOutOfRangeException(
-            nameof(change),
-            change.GetType(),
-            "Unknown assembly change type.")
-    };
+        if (comparison.IsPackageOwned)
+        {
+            return string.Empty;
+        }
+
+        return $" {ActionMarkup(AssemblyStatus(comparison))}";
+    }
+
+    private static string AssemblyStatus(AssemblyComparison comparison)
+    {
+        if (comparison.RequiresCreate)
+        {
+            return "Create";
+        }
+
+        if (comparison.RequiresUpgrade)
+        {
+            return "Upgrade";
+        }
+
+        return comparison.RequiresUpdate ? "Update" : "Unchanged";
+    }
+
+    private static string PackageStatus(PackageComparison comparison)
+    {
+        if (comparison.RequiresCreate)
+        {
+            return "Create";
+        }
+
+        return comparison.RequiresUpdate ? "Update" : "Unchanged";
+    }
+
+    private static string StepStatus(PluginStepComparison comparison)
+    {
+        if (comparison.RequiresCreate)
+        {
+            return "Create";
+        }
+
+        return comparison.RequiresUpdate ? "Update" : "Unchanged";
+    }
+
+    private static string ImageStatus(PluginStepImageComparison comparison)
+    {
+        if (comparison.RequiresCreate)
+        {
+            return "Create";
+        }
+
+        return comparison.RequiresUpdate ? "Update" : "Unchanged";
+    }
 
     private static void AddAssemblyChildren(IHasTreeNodes parent, AssemblyDeploymentPlan plan)
     {
@@ -124,15 +167,15 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         foreach (var type in plan.Types)
         {
             var typeNode = parent.AddNode(
-                $"{Markup.Escape(type.Change.Local.TypeName)} {ActionMarkup(type.Change.Action.ToString())}");
+                $"{Markup.Escape(type.Comparison.Local.TypeName)} {ActionMarkup(type.Comparison.RequiresCreate ? "Create" : "Unchanged")}");
             foreach (var step in type.Steps)
             {
                 var stepNode = typeNode.AddNode(
-                    $"{Markup.Escape(step.Change.Local.Name)} {ActionMarkup(step.Change.Action.ToString())}");
-                foreach (var image in step.Images.Changes)
+                    $"{Markup.Escape(step.Comparison.Local.Name)} {ActionMarkup(StepStatus(step.Comparison))}");
+                foreach (var image in step.Images.Comparisons)
                 {
                     stepNode.AddNode(
-                        $"{Markup.Escape(image.Local.Name)} {ActionMarkup(image.Action.ToString())}");
+                        $"{Markup.Escape(image.Local.Name)} {ActionMarkup(ImageStatus(image))}");
                 }
 
                 foreach (var image in step.Images.Deletions)

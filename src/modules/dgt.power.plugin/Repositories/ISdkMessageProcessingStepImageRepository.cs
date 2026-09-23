@@ -7,7 +7,7 @@ namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin CRUD access to <c>sdkmessageprocessingstepimage</c> records. Contains no Create/Update
-/// decision logic - see <see cref="dgt.power.plugin.Planning.PluginStateComparer"/> for that.
+/// decision logic - see <see cref="dgt.power.plugin.Planning.PluginRegistrationComparer"/> for that.
 /// </summary>
 public interface ISdkMessageProcessingStepImageRepository
 {

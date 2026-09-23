@@ -8,26 +8,30 @@ using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Planning;
 
-public class PluginStateComparerTests
+public class PluginComparisonTests
 {
-    private static string PackageHash(string base64Content) =>
+    private static string ContentHash(string base64Content) =>
         Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(base64Content)));
 
-    private static LocalAssembly Assembly(string version) => new()
+    private static LocalPackage Package(string name, string version, string content) =>
+        new(name, version, content, ContentHash(content));
+
+    private static LocalAssembly Assembly(string version, string content = "YmFzZTY0") => new()
     {
         Name = "MyPlugins",
         Version = Version.Parse(version),
-        Content = "base64",
+        Content = content,
+        ContentHash = ContentHash(content),
         Kind = LocalAssemblyKind.Plugin
     };
 
     [Test]
     public async Task CompareAssembly_NoRemoteMatch_ReturnsCreate()
     {
-        var change = PluginStateComparer.CompareAssembly(Assembly("1.0.0.0"), remote: null);
+        var comparison = new AssemblyComparison(Assembly("1.0.0.0"), Remote: null);
 
-        await Assert.That(change is CreateAssemblyChange).IsTrue();
-        await Assert.That(change.Existing).IsNull();
+        await Assert.That(comparison.RequiresCreate).IsTrue();
+        await Assert.That(comparison.Remote).IsNull();
     }
 
     [Test]
@@ -38,10 +42,11 @@ public class PluginStateComparerTests
     {
         var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse(remoteVersion), PackageId: null);
 
-        var change = PluginStateComparer.CompareAssembly(Assembly(localVersion), remote);
+        var comparison = new AssemblyComparison(Assembly(localVersion), remote);
 
-        await Assert.That(change is UpdateAssemblyChange).IsTrue();
-        await Assert.That(change.Existing).IsEqualTo(remote);
+        await Assert.That(comparison.RequiresUpgrade).IsFalse();
+        await Assert.That(comparison.RequiresUpdate).IsTrue();
+        await Assert.That(comparison.Remote).IsEqualTo(remote);
     }
 
     [Test]
@@ -52,9 +57,9 @@ public class PluginStateComparerTests
     {
         var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse(remoteVersion), PackageId: null);
 
-        var change = PluginStateComparer.CompareAssembly(Assembly(localVersion), remote);
+        var comparison = new AssemblyComparison(Assembly(localVersion), remote);
 
-        await Assert.That(change is UpgradeAssemblyChange).IsTrue();
+        await Assert.That(comparison.RequiresUpgrade).IsTrue();
     }
 
     [Test]
@@ -62,21 +67,21 @@ public class PluginStateComparerTests
     {
         var remote = new RemoteAssembly(Guid.NewGuid(), Version.Parse("9.9.9.9"), Guid.NewGuid());
 
-        var change = PluginStateComparer.CompareAssembly(Assembly("1.0.0.0"), remote);
+        var comparison = new AssemblyComparison(Assembly("1.0.0.0"), remote);
 
-        await Assert.That(change is PackageOwnedAssemblyChange).IsTrue();
-        await Assert.That(change.Existing).IsEqualTo(remote);
+        await Assert.That(comparison.IsPackageOwned).IsTrue();
+        await Assert.That(comparison.Remote).IsEqualTo(remote);
     }
 
     [Test]
     public async Task ComparePackage_NoRemoteMatch_ReturnsCreate()
     {
-        var local = new LocalPackage("MyPackage", "1.0.0", "base64");
+        var local = Package("MyPackage", "1.0.0", "YmFzZTY0");
 
-        var change = PluginStateComparer.ComparePackage(local, remote: null);
+        var comparison = new PackageComparison(local, Remote: null);
 
-        await Assert.That(change.Action).IsEqualTo(PackageAction.Create);
-        await Assert.That(change.Existing).IsNull();
+        await Assert.That(comparison.RequiresCreate).IsTrue();
+        await Assert.That(comparison.Remote).IsNull();
     }
 
     [Test]
@@ -87,38 +92,58 @@ public class PluginStateComparerTests
         string localVersion,
         string remoteVersion)
     {
-        var local = new LocalPackage("MyPackage", localVersion, "YmFzZTY0");
-        var remote = new RemotePackage(Guid.NewGuid(), PackageHash(local.Content));
+        var local = Package("MyPackage", localVersion, "YmFzZTY0");
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content));
 
-        var change = PluginStateComparer.ComparePackage(local, remote);
+        var comparison = new PackageComparison(local, remote);
 
         _ = remoteVersion; // Dataverse package versions are immutable and do not affect deployment.
-        await Assert.That(change.Action).IsEqualTo(PackageAction.Unchanged);
-        await Assert.That(change.Existing).IsEqualTo(remote);
+        await Assert.That(comparison.RequiresUpdate).IsFalse();
+        await Assert.That(comparison.Remote).IsEqualTo(remote);
     }
 
     [Test]
     public async Task ComparePackage_DifferentContent_ReturnsUpdate()
     {
-        var local = new LocalPackage("MyPackage", "1.0.0", "bmV3LWNvbnRlbnQ=");
-        var remote = new RemotePackage(Guid.NewGuid(), PackageHash("b2xkLWNvbnRlbnQ="));
+        var local = Package("MyPackage", "1.0.0", "bmV3LWNvbnRlbnQ=");
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash("b2xkLWNvbnRlbnQ="));
 
-        var change = PluginStateComparer.ComparePackage(local, remote);
+        var comparison = new PackageComparison(local, remote);
 
-        await Assert.That(change.Action).IsEqualTo(PackageAction.Update);
-        await Assert.That(change.Existing).IsEqualTo(remote);
+        await Assert.That(comparison.RequiresUpdate).IsTrue();
+        await Assert.That(comparison.Remote).IsEqualTo(remote);
     }
 
     [Test]
     public async Task ComparePackage_MatchingFileHash_ReturnsUnchanged()
     {
-        var local = new LocalPackage("MyPackage", "1.0.0", "YmFzZTY0");
-        var remote = new RemotePackage(Guid.NewGuid(), PackageHash(local.Content));
+        var local = Package("MyPackage", "1.0.0", "YmFzZTY0");
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content));
 
-        var change = PluginStateComparer.ComparePackage(local, remote);
+        var comparison = new PackageComparison(local, remote);
 
-        await Assert.That(change.Action).IsEqualTo(PackageAction.Unchanged);
-        await Assert.That(change.Existing).IsEqualTo(remote);
+        await Assert.That(comparison.RequiresUpdate).IsFalse();
+        await Assert.That(comparison.Remote).IsEqualTo(remote);
+    }
+
+    [Test]
+    public async Task CompareAssembly_IdenticalContentAndVersion_RequiresNoUpdate()
+    {
+        var local = Assembly("1.0.0.0");
+        var remote = new RemoteAssembly(
+            Guid.NewGuid(),
+            local.Version,
+            PackageId: null,
+            ContentHash: ContentHash(local.Content));
+
+        var comparison = new AssemblyComparison(local, remote);
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(comparison.RequiresCreate).IsFalse();
+            await Assert.That(comparison.RequiresUpgrade).IsFalse();
+            await Assert.That(comparison.RequiresUpdate).IsFalse();
+        }
     }
 
     private static LocalPluginType PluginType(string typeName, params LocalPluginStep[] steps) =>
@@ -142,11 +167,11 @@ public class PluginStateComparerTests
     {
         var local = PluginType("MyPlugin");
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginTypes([local], []);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginTypes([local], []);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginTypeAction.Create);
-        await Assert.That(changes[0].Existing).IsNull();
+        await Assert.That(changes[0].RequiresCreate).IsTrue();
+        await Assert.That(changes[0].Remote).IsNull();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -156,11 +181,11 @@ public class PluginStateComparerTests
         var local = PluginType("MyPlugin");
         var remote = new RemotePluginType(Guid.NewGuid(), "MyPlugin");
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginTypes([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginTypes([local], [remote]);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginTypeAction.Unchanged);
-        await Assert.That(changes[0].Existing).IsEqualTo(remote);
+        await Assert.That(changes[0].RequiresCreate).IsFalse();
+        await Assert.That(changes[0].Remote).IsEqualTo(remote);
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -169,7 +194,7 @@ public class PluginStateComparerTests
     {
         var remote = new RemotePluginType(Guid.NewGuid(), "Orphaned");
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginTypes([], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginTypes([], [remote]);
 
         await Assert.That(changes).IsEmpty();
         await Assert.That(deletions).IsEquivalentTo([remote]);
@@ -180,10 +205,10 @@ public class PluginStateComparerTests
     {
         var local = Step();
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], []);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], []);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Create);
+        await Assert.That(changes[0].RequiresCreate).IsTrue();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -193,11 +218,11 @@ public class PluginStateComparerTests
         var local = Step(name: "step", filterAttributes: ["a", "b"]);
         var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", ["b", "a"], 1, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Unchanged);
-        await Assert.That(changes[0].Existing).IsEqualTo(remote);
+        await Assert.That(changes[0].RequiresUpdate).IsFalse();
+        await Assert.That(changes[0].Remote).IsEqualTo(remote);
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -207,9 +232,9 @@ public class PluginStateComparerTests
         var local = Step(name: "step", filterAttributes: []);
         var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", null, 1, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Unchanged);
+        await Assert.That(changes[0].RequiresUpdate).IsFalse();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -223,11 +248,11 @@ public class PluginStateComparerTests
         var local = Step(name: localName, executionOrder: localOrder, configuration: localConfig);
         var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", "none", null, remoteOrder, remoteConfig);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Update);
-        await Assert.That(changes[0].Existing).IsEqualTo(remote);
+        await Assert.That(changes[0].RequiresUpdate).IsTrue();
+        await Assert.That(changes[0].Remote).IsEqualTo(remote);
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -237,10 +262,10 @@ public class PluginStateComparerTests
         var local = Step(primaryEntityName: "none");
         var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, string.Empty, "none", null, local.ExecutionOrder, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Unchanged);
+        await Assert.That(changes[0].RequiresUpdate).IsFalse();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -251,9 +276,9 @@ public class PluginStateComparerTests
         var remote = new RemotePluginStep(
             Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Unchanged);
+        await Assert.That(changes[0].RequiresUpdate).IsFalse();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -264,9 +289,9 @@ public class PluginStateComparerTests
         var remote = new RemotePluginStep(
             Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepAction.Create);
+        await Assert.That(changes[0].RequiresCreate).IsTrue();
         await Assert.That(deletions).IsEquivalentTo([remote]);
     }
 
@@ -275,7 +300,7 @@ public class PluginStateComparerTests
     {
         var remote = new RemotePluginStep(Guid.NewGuid(), "orphaned", 0, "Create", 40, "account", "none", null, 1, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginSteps([], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([], [remote]);
 
         await Assert.That(changes).IsEmpty();
         await Assert.That(deletions).IsEquivalentTo([remote]);
@@ -286,10 +311,10 @@ public class PluginStateComparerTests
     {
         var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginStepImages([local], []);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginStepImages([local], []);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepImageAction.Create);
+        await Assert.That(changes[0].RequiresCreate).IsTrue();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -299,7 +324,7 @@ public class PluginStateComparerTests
         var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["a", "b"]);
         var remote = new RemotePluginStepImage(Guid.NewGuid(), "PreImage", 0, ["b", "a"]);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginStepImages([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginStepImages([local], [remote]);
 
         await Assert.That(changes).IsEmpty();
         await Assert.That(deletions).IsEmpty();
@@ -311,7 +336,7 @@ public class PluginStateComparerTests
         var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", []);
         var remote = new RemotePluginStepImage(Guid.NewGuid(), "PreImage", 0, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginStepImages([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginStepImages([local], [remote]);
 
         await Assert.That(changes).IsEmpty();
         await Assert.That(deletions).IsEmpty();
@@ -323,10 +348,10 @@ public class PluginStateComparerTests
         var local = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["a"]);
         var remote = new RemotePluginStepImage(Guid.NewGuid(), "PreImage", 0, ["a", "b"]);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginStepImages([local], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginStepImages([local], [remote]);
 
         await Assert.That(changes).Count().IsEqualTo(1);
-        await Assert.That(changes[0].Action).IsEqualTo(PluginStepImageAction.Update);
+        await Assert.That(changes[0].RequiresUpdate).IsTrue();
         await Assert.That(deletions).IsEmpty();
     }
 
@@ -335,7 +360,7 @@ public class PluginStateComparerTests
     {
         var remote = new RemotePluginStepImage(Guid.NewGuid(), "orphaned", 1, null);
 
-        var (changes, deletions) = PluginStateComparer.ComparePluginStepImages([], [remote]);
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginStepImages([], [remote]);
 
         await Assert.That(changes).IsEmpty();
         await Assert.That(deletions).IsEquivalentTo([remote]);
@@ -347,7 +372,7 @@ public class PluginStateComparerTests
         var outdated = new RemotePluginType(Guid.NewGuid(), "MyPlugin");
         var replacement = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, []);
 
-        var migrations = PluginStateComparer.CompareOutdatedTypes([outdated], [replacement]);
+        var migrations = PluginRegistrationComparer.CompareOutdatedTypes([outdated], [replacement]);
 
         await Assert.That(migrations).Count().IsEqualTo(1);
         await Assert.That(migrations[0].OldTypeId).IsEqualTo(outdated.Id);
@@ -360,7 +385,7 @@ public class PluginStateComparerTests
     {
         var outdated = new RemotePluginType(Guid.NewGuid(), "RemovedPlugin");
 
-        var migrations = PluginStateComparer.CompareOutdatedTypes([outdated], []);
+        var migrations = PluginRegistrationComparer.CompareOutdatedTypes([outdated], []);
 
         await Assert.That(migrations).Count().IsEqualTo(1);
         await Assert.That(migrations[0].HasReplacement).IsFalse();
