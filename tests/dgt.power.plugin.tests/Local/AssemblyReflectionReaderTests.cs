@@ -5,6 +5,8 @@ using dgt.power.plugin.Local;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 using dgt.registration;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace dgt.power.plugin.tests.Local;
 
@@ -42,7 +44,7 @@ public class AssemblyReflectionReaderTests
     [Test]
     public async Task BuildPluginType_TypeWithoutRegistrationAttribute_PrintsHint()
     {
-        var console = new TestConsole();
+        using var console = new TestConsole();
         var reader = new AssemblyReflectionReader(console);
 
         reader.BuildPluginType(typeof(PlainPlugin));
@@ -51,15 +53,35 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "The test console is owned by the reader for the duration of the test.")]
     public async Task BuildPluginType_ExplicitExecutionOrder_PreservesMetadataValue()
     {
-        var reader = new AssemblyReflectionReader(new TestConsole());
+        using var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
 
         var result = reader.BuildPluginType(typeof(ExplicitOrderPlugin));
 
         await Assert.That(result.Steps[0].ExecutionOrder).IsEqualTo(25);
+    }
+
+    [Test]
+    public async Task Read_ExternalRegistrationDependency_DiscoversRegistrationWithoutResolverPath()
+    {
+        using var console = new TestConsole();
+        var resolverPaths = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
+            .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(AssemblyReflectionReader).Assembly.Location)!, "*.dll"));
+        using var metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(resolverPaths));
+
+        var result = new AssemblyReflectionReader(console).Read(
+            typeof(AssemblyReflectionReaderTests).Assembly.Location,
+            metadataLoadContext);
+
+        var pluginType = result!.PluginTypes.Single(type => type.TypeName == typeof(ExplicitOrderPlugin).FullName);
+        using (Assert.Multiple())
+        {
+            await Assert.That(pluginType.HasRegistrationAttribute).IsTrue();
+            await Assert.That(pluginType.Steps).Count().IsEqualTo(1);
+            await Assert.That(pluginType.Steps[0].ExecutionOrder).IsEqualTo(25);
+        }
     }
 
     [Test]

@@ -150,8 +150,10 @@ public class PluginPushCommand(
             return true;
         }
 
+        var targetDirectory = Path.GetDirectoryName(Path.GetFullPath(target))!;
         var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
             .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PluginPushCommand).Assembly.Location)!, "*.dll"))
+            .Concat(Directory.GetFiles(targetDirectory, "*.dll"))
             .ToList();
         using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
 
