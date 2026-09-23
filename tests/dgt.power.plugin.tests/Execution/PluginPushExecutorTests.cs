@@ -499,7 +499,7 @@ public class PluginPushExecutorTests
 
         using (Assert.Multiple())
         {
-            await Assert.That(console.Output).Contains(Spectre.Console.Emoji.Known.PuzzlePiece);
+            await Assert.That(console.Output).Contains(Emoji.Known.PuzzlePiece);
             await Assert.That(console.Output).DoesNotContain("Managed by package");
             await Assert.That(console.Output).DoesNotContain("└── MyPlugin");
             await Assert.That(console.Output).DoesNotContain("Managed identity");

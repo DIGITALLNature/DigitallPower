@@ -14,10 +14,12 @@ public sealed class PluginRegistrationAttribute(string messageName, int mode, in
 
     public int Stage => stage;
 
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string? PrimaryEntityName { get; set; }
 
     public string? SecondaryEntityName { get; set; }
 
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public int ExecutionOrder { get; set; }
 
     public string? Configuration { get; set; }

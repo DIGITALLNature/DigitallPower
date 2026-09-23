@@ -4,7 +4,6 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System.Security.Cryptography;
 
