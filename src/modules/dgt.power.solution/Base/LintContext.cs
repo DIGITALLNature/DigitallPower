@@ -20,10 +20,14 @@ public class LintContext
         SolutionNames = solutionNames;
     }
 
-    public static async Task<LintContext> CreateAsync(IOrganizationServiceAsync2 connection, IReadOnlyList<string> solutionNames, CancellationToken cancellationToken)
+    public static Task<LintContext> CreateAsync(IOrganizationServiceAsync2 connection, IReadOnlyList<string> solutionNames, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(connection);
+        return CreateCoreAsync(connection, solutionNames, cancellationToken);
+    }
 
+    private static async Task<LintContext> CreateCoreAsync(IOrganizationServiceAsync2 connection, IReadOnlyList<string> solutionNames, CancellationToken cancellationToken)
+    {
         var context = new LintContext(connection, solutionNames);
 
         var entities = ((RetrieveAllEntitiesResponse)await connection.ExecuteAsync(new RetrieveAllEntitiesRequest

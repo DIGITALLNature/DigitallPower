@@ -48,7 +48,13 @@ public sealed class SolutionLintCommand(
             return Tracer.End(this, false);
         }
 
-        var findings = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
+        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
+
+        if (missingSolutionNames.Count > 0)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Solution(s) not found: {0}[/]", string.Join(", ", missingSolutionNames));
+            return Tracer.End(this, false);
+        }
 
         if (args.UpdateBaseline)
         {
@@ -90,7 +96,7 @@ public sealed class SolutionLintCommand(
         return Tracer.End(this, failingFindings.Count == 0);
     }
 
-    private static async Task<List<LintFinding>> EvaluateRulesAsync(
+    private static async Task<(List<LintFinding> Findings, IReadOnlyList<string> MissingSolutionNames)> EvaluateRulesAsync(
         IAnsiConsole console,
         IOrganizationServiceAsync2 connection,
         LintConfig config,
@@ -106,6 +112,16 @@ public sealed class SolutionLintCommand(
             {
                 context = await LintContext.CreateAsync(connection, solutionNames, cancellationToken);
             });
+
+        var foundSolutionNames = context!.SolutionUniqueNamesById.Values;
+        var missingSolutionNames = solutionNames
+            .Where(requested => !foundSolutionNames.Contains(requested, StringComparer.OrdinalIgnoreCase))
+            .ToList();
+
+        if (missingSolutionNames.Count > 0)
+        {
+            return ([], missingSolutionNames);
+        }
 
         var findings = new List<LintFinding>();
 
@@ -125,7 +141,7 @@ public sealed class SolutionLintCommand(
             findings.AddRange(await rule.EvaluateAsync(context!, ruleConfig, cancellationToken));
         }
 
-        return findings;
+        return (findings, []);
     }
 
     private static async Task WriteJsonReportAsync(string reportPath, List<LintFinding> findings, IReadOnlySet<string> baselinedKeys, CancellationToken cancellationToken)
@@ -154,7 +170,7 @@ public sealed class SolutionLintCommand(
         await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }), cancellationToken);
     }
 
-    private void PrintConsoleReport(IReadOnlyList<LintFinding> findings, IReadOnlySet<string> baselinedKeys)
+    private void PrintConsoleReport(List<LintFinding> findings, IReadOnlySet<string> baselinedKeys)
     {
         if (findings.Count == 0)
         {

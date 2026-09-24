@@ -7,7 +7,7 @@ namespace dgt.power.solution.Base;
 
 public class LintConfig
 {
-    public int Version { get; set; } = 1;
+    public int Version { get; init; } = 1;
 
     // Get-only so the OrdinalIgnoreCase comparer always survives - without [JsonObjectCreationHandling(Populate)]
     // System.Text.Json silently skips read-only properties instead of populating the existing instance.

@@ -40,7 +40,7 @@ public static class EntityComponentMembershipResolver
             var explicitSubcomponentsByType = solutionComponents.Values
                 .Where(candidate => candidate.RootSolutionComponentId == entityComponent.Id)
                 .GroupBy(static candidate => candidate.ComponentType?.Value ?? -1)
-                .ToDictionary(group => group.Key, IReadOnlyList<SolutionComponent> (group) => [.. group]);
+                .ToDictionary(group => group.Key, group => (IReadOnlyList<SolutionComponent>)[.. group]);
 
             var key = BuildKey(solutionUniqueName, entityLogicalName);
             memberships[key] = new EntityComponentMembership
