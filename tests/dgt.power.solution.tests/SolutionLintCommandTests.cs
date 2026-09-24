@@ -16,7 +16,6 @@ public class SolutionLintCommandTests : LintTestsBase<SolutionLintCommand>
 
     protected override CommandTestContext<SolutionLintCommand, SolutionLintSettings> GetContext() =>
         GetBuilder()
-            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithMetaData(BuildEntityMetadata())
             .WithData(PrepareData)

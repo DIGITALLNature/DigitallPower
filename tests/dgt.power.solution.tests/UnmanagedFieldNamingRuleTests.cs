@@ -152,7 +152,6 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
     private CommandTestContext<SolutionLintCommand, SolutionLintSettings> CreateContext(EntityMetadata entityMetadata, int rootComponentBehavior = SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
     {
         return GetBuilder()
-            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithMetaData(entityMetadata)
             .WithData(service => PrepareData(service, rootComponentBehavior))

@@ -45,7 +45,6 @@ public class TableRootComponentBehaviorRuleTests : LintTestsBase<SolutionLintCom
     private CommandTestContext<SolutionLintCommand, SolutionLintSettings> CreateContext()
     {
         return GetBuilder()
-            .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithMetaData(BuildEntities())
             .WithData(PrepareData)
