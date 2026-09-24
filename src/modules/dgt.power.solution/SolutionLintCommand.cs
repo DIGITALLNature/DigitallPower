@@ -36,6 +36,12 @@ public sealed class SolutionLintCommand(
             return Tracer.End(this, false);
         }
 
+        if (!TryParseFailOnThreshold(args.FailOn, out var threshold))
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Invalid --fail-on value '{0}'. Expected None, Info, Warning or Error.[/]", args.FailOn);
+            return Tracer.End(this, false);
+        }
+
         if (!ConfigResolver.TryGetConfigFile<LintConfig>(args.Config, out var config))
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unable to read lint config from {0}[/]", args.Config);
@@ -48,7 +54,34 @@ public sealed class SolutionLintCommand(
             return Tracer.End(this, false);
         }
 
-        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], ParseRuleIds(args.Rules), cancellationToken);
+        var knownRuleIds = LintRuleCatalog.All.Select(static rule => rule.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var unknownConfiguredRuleIds = config.Rules.Keys.Where(ruleId => !knownRuleIds.Contains(ruleId)).ToList();
+        if (unknownConfiguredRuleIds.Count > 0)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in {0}: {1}[/]", args.Config, string.Join(", ", unknownConfiguredRuleIds));
+            return Tracer.End(this, false);
+        }
+
+        var invalidOptionRuleIds = config.Rules
+            .Where(static entry => entry.Value.Options.ValueKind is not (JsonValueKind.Object or JsonValueKind.Undefined))
+            .Select(static entry => entry.Key)
+            .ToList();
+        if (invalidOptionRuleIds.Count > 0)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Rule(s) with invalid 'options' (expected a JSON object) in {0}: {1}[/]", args.Config, string.Join(", ", invalidOptionRuleIds));
+            return Tracer.End(this, false);
+        }
+
+        var requestedRuleIds = ParseRuleIds(args.Rules);
+        var unknownRequestedRuleIds = requestedRuleIds.Where(ruleId => !knownRuleIds.Contains(ruleId)).ToList();
+        if (unknownRequestedRuleIds.Count > 0)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in --rules: {0}[/]", string.Join(", ", unknownRequestedRuleIds));
+            return Tracer.End(this, false);
+        }
+
+        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], requestedRuleIds, cancellationToken);
 
         if (missingSolutionNames.Count > 0)
         {
@@ -83,7 +116,6 @@ public sealed class SolutionLintCommand(
 
         PrintConsoleReport(findings, baselinedKeys);
 
-        var threshold = ParseSeverity(args.FailOn);
         if (threshold is null)
         {
             return Tracer.End(this, true);
@@ -215,15 +247,23 @@ public sealed class SolutionLintCommand(
             .ToList();
     }
 
-    /// <summary>Returns null for "None" (gate disabled), falls back to Error for empty/unrecognized values.</summary>
-    private static LintSeverity? ParseSeverity(string value)
+    /// <summary>Returns false for unrecognized values. Out param is null for "None" (gate disabled).</summary>
+    private static bool TryParseFailOnThreshold(string value, out LintSeverity? threshold)
     {
         if (string.Equals(value, "None", StringComparison.OrdinalIgnoreCase))
         {
-            return null;
+            threshold = null;
+            return true;
         }
 
-        return Enum.TryParse<LintSeverity>(value, true, out var severity) ? severity : LintSeverity.Error;
+        if (Enum.TryParse<LintSeverity>(value, true, out var severity))
+        {
+            threshold = severity;
+            return true;
+        }
+
+        threshold = null;
+        return false;
     }
 }
 

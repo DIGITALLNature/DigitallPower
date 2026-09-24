@@ -162,6 +162,88 @@ public class SolutionLintCommandTests : LintTestsBase<SolutionLintCommand>
         await Assert.That(report).Contains("\"Baselined\": true");
     }
 
+    [Test]
+    public async Task Execute_WithUnknownRuleIdInConfig_Fails()
+    {
+        var configPath = TempPath("lint.config.json");
+        var config = new LintConfig
+        {
+            Version = 1,
+            Rules =
+            {
+                ["naming.does-not-exist"] = new LintRuleConfigEntry { Enabled = true }
+            }
+        };
+        File.WriteAllText(configPath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+
+        var result = GetContext().Execute(new SolutionLintSettings
+        {
+            Solution = SolutionName,
+            Config = configPath,
+            FailOn = "None"
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task Execute_WithInvalidOptionsShapeInConfig_Fails()
+    {
+        // "options" must be a JSON object (per-rule shape) - an array here is a typo/misconfiguration.
+        var configPath = TempPath("lint.config.json");
+        await File.WriteAllTextAsync(configPath, """
+            {
+              "version": 1,
+              "rules": {
+                "naming.unmanaged-field-logicalname": {
+                  "enabled": true,
+                  "options": ["dgt_"]
+                }
+              }
+            }
+            """);
+
+        var result = GetContext().Execute(new SolutionLintSettings
+        {
+            Solution = SolutionName,
+            Config = configPath,
+            FailOn = "None"
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task Execute_WithUnknownRuleIdInRulesOption_Fails()
+    {
+        var configPath = WriteConfig();
+
+        var result = GetContext().Execute(new SolutionLintSettings
+        {
+            Solution = SolutionName,
+            Config = configPath,
+            Rules = "naming.does-not-exist",
+            FailOn = "None"
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task Execute_WithInvalidFailOnValue_Fails()
+    {
+        var configPath = WriteConfig();
+
+        var result = GetContext().Execute(new SolutionLintSettings
+        {
+            Solution = SolutionName,
+            Config = configPath,
+            FailOn = "Warnng"
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
     private static EntityMetadata BuildEntityMetadata()
     {
         var violatingField = new StringAttributeMetadata { MetadataId = Guid.NewGuid(), LogicalName = "unknown_field_txt", FormatName = StringFormatName.Text };
