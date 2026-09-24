@@ -62,15 +62,14 @@ distinction at the assembly level does not currently drive any different behavio
 ## No Package Dependency on the Registration Attributes
 
 `dgt.power.plugin` has **no `PackageReference` on the registration attributes package**
-(`Digitall.Plugins.Registration`, formerly `dgt.registration`). `AssemblyReflectionReader` loads the
+(`Digitall.Plugins.Registration`). `AssemblyReflectionReader` loads the
 target `.dll` into a `System.Reflection.MetadataLoadContext` (reflection-only context), so the types it
 sees are never assignable to (or comparable with) any locally referenced attribute type anyway -
 detection is purely by attribute type `Name`/`Namespace` string matching via `CustomAttributeData`.
-`Local/RegistrationAttributeNames.cs` centralizes these well-known names/namespaces (including
-historical aliases: `D365.Extension.Registration`, `DGT.Registrations`, `dgt.registration`,
-`Digitall.APower.Registration`, `Digitall.Plugins.Registration`) as `const`/`static readonly` fields, so
-there is exactly one place to update if an attribute is ever renamed again - no assembly reference, no
-version bump required. The legacy `dgt.power.push` module still has its own independent
+`Local/RegistrationAttributeNames.cs` recognizes only the supported
+`Digitall.Plugins.Registration` namespace. This v3 boundary deliberately drops historical aliases;
+users maintaining old registrations should use dgtp v2 or upgrade their registration package. The
+legacy `dgt.power.push` module still has its own independent
 `PackageReference` on the registration package because it actually instantiates
 `WorkflowRegistrationAttribute` at runtime for code-activity support (a real type dependency); that
 module was intentionally left untouched.

@@ -4,7 +4,7 @@
 using dgt.power.plugin.Local;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
-using dgt.registration;
+using Digitall.Plugins.Registration;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -19,6 +19,12 @@ public class AssemblyReflectionReaderTests
 
     [PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
     private sealed class ExplicitOrderPlugin : IPlugin
+    {
+        public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
+    }
+
+    [dgt.registration.LegacyPluginRegistration]
+    private sealed class LegacyRegistrationPlugin : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
     }
@@ -61,6 +67,22 @@ public class AssemblyReflectionReaderTests
         var result = reader.BuildPluginType(typeof(ExplicitOrderPlugin));
 
         await Assert.That(result.Steps[0].ExecutionOrder).IsEqualTo(25);
+    }
+
+    [Test]
+    public async Task BuildPluginType_LegacyRegistrationNamespace_IsIgnored()
+    {
+        using var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
+
+        var result = reader.BuildPluginType(typeof(LegacyRegistrationPlugin));
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(result.HasRegistrationAttribute).IsFalse();
+            await Assert.That(result.Steps).IsEmpty();
+            await Assert.That(console.Output).Contains("has no registration attribute");
+        }
     }
 
     [Test]

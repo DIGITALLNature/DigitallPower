@@ -571,6 +571,10 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 ##### Supported registration attributes
 
+> **v3 requirement:** `plugin push` supports `Digitall.Plugins.Registration` 2.0.0 or later.
+> Assemblies using legacy registration namespaces are not discovered. Use dgtp v2 to maintain
+> those plugins, or upgrade their registration package before deploying with v3.
+
 | Attribute | Behavior |
 |-----------|----------|
 | `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |

@@ -4,7 +4,7 @@
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 
-namespace dgt.registration;
+namespace Digitall.Plugins.Registration;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class PluginRegistrationAttribute(string messageName, int mode, int stage) : Attribute

@@ -79,6 +79,7 @@ src/
 | `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` and `Remote` state / `Planning.Comparison` state models / `Planning.Deployment` executable plan models / `Repositories` / `Execution` / `Output` / `Commands` / `Base` |
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
 | Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
+| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` supports only `Digitall.Plugins.Registration` 2.0.0+; historical namespaces remain legacy `push`/dgtp v2 concerns |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
 
@@ -179,6 +180,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
+| `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command drops historical registration namespaces in favor of `Digitall.Plugins.Registration` 2.0.0+ |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |

@@ -117,7 +117,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
             foreach (var customAttribute in customAttributes)
             {
-                if (!RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace))
+                if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace))
                 {
                     continue;
                 }
@@ -182,7 +182,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace) ||
+            if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) ||
                 customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
             {
                 continue;
@@ -242,7 +242,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var assemblyAttributes = CustomAttributeData.GetCustomAttributes(assembly);
         foreach (var attr in assemblyAttributes)
         {
-            if (!RegistrationAttributeNames.KnownNamespaces.Contains(attr.AttributeType.Namespace) ||
+            if (!IsSupportedRegistrationNamespace(attr.AttributeType.Namespace) ||
                 attr.AttributeType.Name != RegistrationAttributeNames.ManagedIdentityRegistration)
             {
                 continue;
@@ -311,9 +311,15 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>
-            RegistrationAttributeNames.KnownNamespaces.Contains(customAttribute.AttributeType.Namespace) &&
+            IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) &&
             RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
     }
+
+    private static bool IsSupportedRegistrationNamespace(string? attributeNamespace) =>
+        string.Equals(
+            attributeNamespace,
+            RegistrationAttributeNames.Namespace,
+            StringComparison.Ordinal);
 
     private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {
