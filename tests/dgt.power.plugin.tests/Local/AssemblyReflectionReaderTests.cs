@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Local;
+using dgt.registration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 using Digitall.Plugins.Registration;
@@ -23,7 +24,7 @@ public class AssemblyReflectionReaderTests
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
     }
 
-    [dgt.registration.LegacyPluginRegistration]
+    [LegacyPluginRegistration]
     private sealed class LegacyRegistrationPlugin : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();

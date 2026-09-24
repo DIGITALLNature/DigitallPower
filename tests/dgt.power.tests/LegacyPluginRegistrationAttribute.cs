@@ -7,6 +7,4 @@
 namespace dgt.registration;
 
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class LegacyPluginRegistrationAttribute : Attribute
-{
-}
+public sealed class LegacyPluginRegistrationAttribute : Attribute;
