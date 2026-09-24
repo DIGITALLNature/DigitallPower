@@ -49,6 +49,7 @@ public class JScriptSourceMapRuleTests : LintTestsBase<SolutionLintCommand>
     {
         return GetBuilder()
             .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithData(PrepareData)
             .Build();
     }

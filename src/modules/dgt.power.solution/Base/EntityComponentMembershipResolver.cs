@@ -9,6 +9,20 @@ namespace dgt.power.solution.Base;
 /// <summary>Resolves per-(solution, entity) effective component membership from the raw solutioncomponent rows.</summary>
 public static class EntityComponentMembershipResolver
 {
+    /// <summary>Distinct entity MetadataIds referenced by Entity-type solutioncomponent rows, so callers can fetch metadata scoped to just these entities.</summary>
+    public static IReadOnlyCollection<Guid> GetReferencedEntityMetadataIds(IReadOnlyDictionary<Guid, SolutionComponent> solutionComponents)
+    {
+        ArgumentNullException.ThrowIfNull(solutionComponents);
+
+        return solutionComponents.Values
+            .Where(IsEntityComponent)
+            .Select(static component => component.ObjectId)
+            .Where(static id => id.HasValue)
+            .Select(static id => id!.Value)
+            .Distinct()
+            .ToList();
+    }
+
     public static IReadOnlyDictionary<string, EntityComponentMembership> Resolve(
         IReadOnlyDictionary<Guid, SolutionComponent> solutionComponents,
         IReadOnlyDictionary<Guid, string> solutionUniqueNamesById,

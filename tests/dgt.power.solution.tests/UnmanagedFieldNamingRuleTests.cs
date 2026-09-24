@@ -153,6 +153,7 @@ public class UnmanagedFieldNamingRuleTests : LintTestsBase<SolutionLintCommand>
     {
         return GetBuilder()
             .WithFakeMessageExecutor(new RetrieveAllEntitiesExecutor())
+            .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithMetaData(entityMetadata)
             .WithData(service => PrepareData(service, rootComponentBehavior))
             .Build();

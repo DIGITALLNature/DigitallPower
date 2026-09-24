@@ -30,10 +30,14 @@ public class LintContext
     {
         var context = new LintContext(connection, solutionNames);
 
-        var entities = ((RetrieveAllEntitiesResponse)await connection.ExecuteAsync(new RetrieveAllEntitiesRequest
-        {
-            EntityFilters = EntityFilters.Entity | EntityFilters.Attributes
-        }, cancellationToken)).EntityMetadata;
+        var (components, solutionNamesById) = await context.BuildSolutionComponentEntriesAsync(cancellationToken);
+        context.SolutionUniqueNamesById = solutionNamesById;
+
+        // Metadata is fetched per referenced entity (by MetadataId) rather than for the whole org, so a
+        // run scoped to a small solution (or one that only exercises non-entity rules, e.g. web resources)
+        // does not pay for downloading every table's attributes.
+        var referencedEntityMetadataIds = EntityComponentMembershipResolver.GetReferencedEntityMetadataIds(components);
+        var entities = await context.RetrieveEntityMetadataAsync(referencedEntityMetadataIds, cancellationToken);
 
         context.EntityMetadata = entities.ToDictionary(x => x.LogicalName, StringComparer.OrdinalIgnoreCase);
         context.AttributeMetadataById = entities
@@ -42,14 +46,29 @@ public class LintContext
             .GroupBy(static attribute => attribute.MetadataId!.Value)
             .ToDictionary(group => group.Key, group => group.First(), EqualityComparer<Guid>.Default);
 
-        var (components, solutionNamesById) = await context.BuildSolutionComponentEntriesAsync(cancellationToken);
-        context.SolutionUniqueNamesById = solutionNamesById;
         context.EntityMemberships = EntityComponentMembershipResolver.Resolve(components, solutionNamesById, context.EntityMetadata, context.AttributeMetadataById);
 
         context.WebResourceComponents = await context.BuildWebResourceComponentsAsync(cancellationToken);
         context.WebResourcesById = await context.BuildWebResourcesByIdAsync(context.WebResourceComponents, cancellationToken);
 
         return context;
+    }
+
+    private async Task<List<EntityMetadata>> RetrieveEntityMetadataAsync(IReadOnlyCollection<Guid> entityMetadataIds, CancellationToken cancellationToken)
+    {
+        var entities = new List<EntityMetadata>(entityMetadataIds.Count);
+        foreach (var metadataId in entityMetadataIds)
+        {
+            var response = (RetrieveEntityResponse)await Connection.ExecuteAsync(new RetrieveEntityRequest
+            {
+                MetadataId = metadataId,
+                EntityFilters = EntityFilters.Entity | EntityFilters.Attributes
+            }, cancellationToken);
+
+            entities.Add(response.EntityMetadata);
+        }
+
+        return entities;
     }
 
     private IOrganizationServiceAsync2 Connection { get; }
