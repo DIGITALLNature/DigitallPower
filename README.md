@@ -721,7 +721,8 @@ assembly is unsupported: `plugin push` fails before writing and requires manual 
 
 Pushes webresources from a directory or a single file. Directory targets are scanned recursively
 and require an explicit publisher prefix. A solution is used for membership and obsolete-resource
-scope; it does not determine the publisher prefix.
+scope; it does not determine the publisher prefix. Created and updated webresources are published
+together in one request after deployment.
 
 ```bash
 # Push all supported files below ./webresources
@@ -766,17 +767,24 @@ The command first renders the local deployment hierarchy and the resulting Datav
 each resource:
 
 ```text
-WebResource deployment plan
+./webresources
 ├── app
 │   └── main.js → contoso_/scripts/main.js Update
 └── pages
-    └── index.html → contoso_/pages/home.html Keep
+    └── index.html → contoso_/pages/home.html Unchanged
+
+Solution membership: ContosoCore
+  + WebResource contoso_/scripts/main.js
+
+Obsolete webresources
+  − WebResource contoso_/obsolete.js
 ```
 
 The tree shows local directory structure; mapping files may intentionally produce a different
 Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
-checkmarks for completed operations. With `--dry-run`, the tree is rendered and execution stops
-after the plan. Obsolete deletion requires a directory target and `--solution`.
+checkmarks for completed operations. With `--dry-run`, the tree, missing solution memberships,
+and any obsolete resources to delete are rendered, then execution stops. Obsolete deletion
+requires a directory target and `--solution`.
 
 ### `push` — Deploy legacy artifacts
 

@@ -94,13 +94,22 @@ public sealed class WebResourceRepository(IOrganizationServiceAsync2 service) : 
     public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         service.DeleteAsync(WebResource.EntityLogicalName, id, cancellationToken);
 
-    public async Task PublishAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task PublishAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(ids);
+        return ids.Count == 0
+            ? Task.CompletedTask
+            : PublishCoreAsync(ids, cancellationToken);
+    }
+
+    private async Task PublishCoreAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken)
+    {
+        var webResources = string.Concat(ids.Select(id => $"<webresource>{id}</webresource>"));
         await service.ExecuteAsync(
             new Microsoft.Crm.Sdk.Messages.PublishXmlRequest
             {
                 ParameterXml =
-                    $"<importexportxml><webresources><webresource>{id}</webresource></webresources></importexportxml>"
+                    $"<importexportxml><webresources>{webResources}</webresources></importexportxml>"
             },
             cancellationToken);
     }

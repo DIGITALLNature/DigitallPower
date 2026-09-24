@@ -1,10 +1,8 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.webresource.Local;
 using dgt.power.webresource.Output;
 using dgt.power.webresource.Planning;
-using dgt.power.webresource.Remote;
 using dgt.power.webresource.Repositories;
 
 namespace dgt.power.webresource.Execution;
@@ -12,61 +10,49 @@ namespace dgt.power.webresource.Execution;
 public sealed class WebResourcePushExecutor(
     IWebResourceRepository webResourceRepository,
     ISolutionRepository solutionRepository,
-    WebResourcePlanRenderer planRenderer,
     WebResourceExecutionReporter executionReporter)
 {
-    public Task ExecuteAsync(
-        IReadOnlyList<LocalWebResource> local,
-        WebResourcePushOptions options,
+    public Task<int> ExecuteAsync(
+        WebResourcePushPlan plan,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(local);
-        ArgumentNullException.ThrowIfNull(options);
-        return ExecuteCoreAsync(local, options, cancellationToken);
+        ArgumentNullException.ThrowIfNull(plan);
+        return ExecuteCoreAsync(plan, cancellationToken);
     }
 
-    private async Task ExecuteCoreAsync(
-        IReadOnlyList<LocalWebResource> local,
-        WebResourcePushOptions options,
-        CancellationToken cancellationToken)
+    private async Task<int> ExecuteCoreAsync(WebResourcePushPlan plan, CancellationToken cancellationToken)
     {
-        var remote = await webResourceRepository.FindByNamesAsync(
-            local.Select(resource => resource.Name).ToArray(),
-            cancellationToken);
-        IReadOnlyList<RemoteSolutionWebResource>? solutionResources = null;
-        if (options.Solution is not null)
+        var completedOperationCount = 0;
+        var changedResources = new List<(WebResourcePlanItem Item, Guid Id)>();
+
+        foreach (var item in plan.Resources.Where(item => item.Action != WebResourceAction.Unchanged))
         {
-            solutionResources = await solutionRepository.ListWebResourcesAsync(
-                options.Solution,
-                cancellationToken);
+            var id = await ApplyResourceAsync(item, cancellationToken);
+            changedResources.Add((item, id));
+            completedOperationCount++;
         }
 
-        var plan = WebResourcePushPlanner.Plan(
-            local,
-            remote,
-            solutionResources,
-            options.DeleteObsolete);
-        var solutionIds = solutionResources?.Select(resource => resource.Id).ToHashSet() ?? [];
-
-        planRenderer.Render(plan);
-        if (options.DryRun)
+        foreach (var (item, id) in changedResources.Where(resource => resource.Item.AddToSolution))
         {
-            return;
+            await AddToSolutionAsync(id, item.Local.Name, plan.SolutionUniqueName!, cancellationToken);
+            completedOperationCount++;
         }
 
-        executionReporter.ReportSeparator();
-
-        foreach (var item in plan.Resources.Where(item => item.Action != WebResourceAction.Keep))
+        foreach (var item in plan.Resources.Where(item => item.Action == WebResourceAction.Unchanged && item.AddToSolution))
         {
-            await ApplyResourceAsync(item, options, solutionIds, cancellationToken);
+            await AddToSolutionAsync(item.Remote!.Id, item.Local.Name, plan.SolutionUniqueName!, cancellationToken);
+            completedOperationCount++;
         }
 
-        foreach (var item in plan.Resources.Where(item => item.Action == WebResourceAction.Keep))
+        if (changedResources.Count > 0)
         {
-            if (options.Solution is not null && item.Remote is not null && !solutionIds.Contains(item.Remote.Id))
-            {
-                await AddToSolutionAsync(item.Remote.Id, item.Local.Name, options, solutionIds, cancellationToken);
-            }
+            var ids = changedResources.Select(resource => resource.Id).ToArray();
+            await executionReporter.RunAsync(
+                "Publishing WebResources",
+                $"{ids.Length} resource(s)",
+                () => webResourceRepository.PublishAsync(ids, cancellationToken));
+            executionReporter.ReportPublished(ids.Length);
+            completedOperationCount++;
         }
 
         foreach (var obsolete in plan.Obsolete)
@@ -76,13 +62,14 @@ public sealed class WebResourcePushExecutor(
                 obsolete.Name,
                 () => webResourceRepository.DeleteAsync(obsolete.Id, cancellationToken));
             executionReporter.ReportCompleted("Deleted", obsolete.Name);
+            completedOperationCount++;
         }
+
+        return completedOperationCount;
     }
 
-    private async Task ApplyResourceAsync(
+    private async Task<Guid> ApplyResourceAsync(
         WebResourcePlanItem item,
-        WebResourcePushOptions options,
-        HashSet<Guid> solutionIds,
         CancellationToken cancellationToken)
     {
         Guid id;
@@ -105,38 +92,19 @@ public sealed class WebResourcePushExecutor(
             executionReporter.ReportCompleted("Updated", item.Local.Name);
         }
 
-        if (options.Solution is not null)
-        {
-            await AddToSolutionAsync(id, item.Local.Name, options, solutionIds, cancellationToken);
-        }
-
-        if (options.Publish && (item.Action == WebResourceAction.Create || item.Action == WebResourceAction.Update))
-        {
-            await executionReporter.RunAsync(
-                "Publishing WebResource",
-                item.Local.Name,
-                () => webResourceRepository.PublishAsync(id, cancellationToken));
-            executionReporter.ReportCompleted("Published", item.Local.Name);
-        }
+        return id;
     }
 
     private async Task AddToSolutionAsync(
         Guid id,
         string resourceName,
-        WebResourcePushOptions options,
-        HashSet<Guid> solutionIds,
+        string solutionUniqueName,
         CancellationToken cancellationToken)
     {
-        if (options.Solution is null || solutionIds.Contains(id))
-        {
-            return;
-        }
-
         await executionReporter.RunAsync(
             "Adding WebResource to solution",
             resourceName,
-            () => solutionRepository.AddWebResourceAsync(id, options.Solution, cancellationToken));
-        executionReporter.ReportAddedToSolution(resourceName, options.Solution);
-        solutionIds.Add(id);
+            () => solutionRepository.AddWebResourceAsync(id, solutionUniqueName, cancellationToken));
+        executionReporter.ReportAddedToSolution(resourceName, solutionUniqueName);
     }
 }

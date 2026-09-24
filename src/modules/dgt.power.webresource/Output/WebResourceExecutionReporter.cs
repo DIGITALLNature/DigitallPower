@@ -8,12 +8,6 @@ namespace dgt.power.webresource.Output;
 
 public sealed class WebResourceExecutionReporter(IAnsiConsole console)
 {
-    public void ReportSeparator()
-    {
-        console.WriteLine();
-        console.Write(new Rule("[bold]Applying changes[/]"));
-    }
-
     public Task RunAsync(string operation, string resourceName, Func<Task> action)
     {
         return console.Status()
@@ -40,5 +34,13 @@ public sealed class WebResourceExecutionReporter(IAnsiConsole console)
             "[green]✔[/] Added WebResource [green]{0}[/] to solution [green]{1}[/]",
             resourceName,
             solutionName);
+    }
+
+    public void ReportPublished(int count)
+    {
+        console.MarkupLine(
+            CultureInfo.InvariantCulture,
+            "[green]✔[/] Published [green]{0}[/] WebResource(s)",
+            count);
     }
 }

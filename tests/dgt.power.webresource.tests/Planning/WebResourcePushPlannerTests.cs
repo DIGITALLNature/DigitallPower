@@ -11,7 +11,7 @@ namespace dgt.power.webresource.tests.Planning;
 public class WebResourcePushPlannerTests
 {
     [Test]
-    public async Task Plan_ClassifiesCreateUpdateAndKeep()
+    public async Task Plan_ClassifiesCreateUpdateAndUnchanged()
     {
         var local = new[]
         {
@@ -33,7 +33,7 @@ public class WebResourcePushPlannerTests
         await Assert.That(plan.Resources.Single(item => item.Local.Name == "contoso_/changed.js").Action)
             .IsEqualTo(WebResourceAction.Update);
         await Assert.That(plan.Resources.Single(item => item.Local.Name == "contoso_/same.js").Action)
-            .IsEqualTo(WebResourceAction.Keep);
+            .IsEqualTo(WebResourceAction.Unchanged);
     }
 
     [Test]
@@ -65,6 +65,56 @@ public class WebResourcePushPlannerTests
             [new RemoteWebResource(Guid.NewGuid(), 3, "contoso_/managed.js", "old", true)]);
 
         await Assert.That(action).Throws<ManagedWebResourceException>();
+    }
+
+    [Test]
+    public async Task Plan_AllowsUnchangedManagedResource()
+    {
+        var local = CreateLocal("contoso_/managed.js", "same");
+        var remote = new RemoteWebResource(
+            Guid.NewGuid(),
+            3,
+            "contoso_/managed.js",
+            local.Content,
+            true);
+
+        var plan = WebResourcePushPlanner.Plan([local], [remote]);
+
+        await Assert.That(plan.Resources[0].Action).IsEqualTo(WebResourceAction.Unchanged);
+    }
+
+    [Test]
+    public async Task Plan_MatchesRemoteNamesCaseInsensitively()
+    {
+        var local = CreateLocal("contoso_/app/main.js", "same");
+        var remote = new RemoteWebResource(
+            Guid.NewGuid(),
+            3,
+            "CONTOSO_/APP/MAIN.JS",
+            local.Content,
+            false);
+
+        var plan = WebResourcePushPlanner.Plan([local], [remote]);
+
+        await Assert.That(plan.Resources[0].Action).IsEqualTo(WebResourceAction.Unchanged);
+    }
+
+    [Test]
+    public async Task Plan_RecordsMissingSolutionMembership()
+    {
+        var existingId = Guid.NewGuid();
+        var existing = CreateLocal("contoso_/existing.js", "same");
+        var created = CreateLocal("contoso_/new.js", "new");
+        var remote = new RemoteWebResource(existingId, 3, existing.Name, existing.Content, false);
+
+        var plan = WebResourcePushPlanner.Plan(
+            [existing, created],
+            [remote],
+            [],
+            solutionUniqueName: "ContosoCore");
+
+        await Assert.That(plan.SolutionUniqueName).IsEqualTo("ContosoCore");
+        await Assert.That(plan.Resources.All(resource => resource.AddToSolution)).IsTrue();
     }
 
     private static LocalWebResource CreateLocal(string name, string content) =>

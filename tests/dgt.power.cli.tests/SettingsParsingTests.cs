@@ -52,7 +52,6 @@ public class SettingsParsingTests
             "--solution", "samplesolution",
             "--publisher-prefix", "sample",
             "--mapping-file", "mappings.json",
-            "--publish",
             "--delete-obsolete",
             "--dry-run");
 
@@ -63,7 +62,6 @@ public class SettingsParsingTests
         await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
         await Assert.That(settings.MappingFile).IsEqualTo("mappings.json");
         await Assert.That(settings.Name).IsNull();
-        await Assert.That(settings.Publish).IsTrue();
         await Assert.That(settings.DeleteObsolete).IsTrue();
         await Assert.That(settings.DryRun).IsTrue();
     }

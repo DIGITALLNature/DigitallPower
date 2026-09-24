@@ -9,8 +9,10 @@ namespace dgt.power.webresource.Planning;
 public sealed record WebResourcePlanItem(
     LocalWebResource Local,
     WebResourceAction Action,
-    RemoteWebResource? Remote);
+    RemoteWebResource? Remote,
+    bool AddToSolution);
 
 public sealed record WebResourcePushPlan(
     IReadOnlyList<WebResourcePlanItem> Resources,
-    IReadOnlyList<RemoteSolutionWebResource> Obsolete);
+    IReadOnlyList<RemoteSolutionWebResource> Obsolete,
+    string? SolutionUniqueName);

@@ -13,12 +13,16 @@ public static class WebResourcePushPlanner
         IReadOnlyList<LocalWebResource> local,
         IReadOnlyList<RemoteWebResource> remote,
         IReadOnlyList<RemoteSolutionWebResource>? solutionResources = null,
-        bool deleteObsolete = false)
+        bool deleteObsolete = false,
+        string? solutionUniqueName = null)
     {
         ArgumentNullException.ThrowIfNull(local);
         ArgumentNullException.ThrowIfNull(remote);
 
-        var remoteByKey = remote.ToDictionary(resource => Key(resource.Name, resource.Type));
+        var remoteByKey = remote.ToDictionary(
+            resource => Key(resource.Name, resource.Type),
+            StringComparer.OrdinalIgnoreCase);
+        var solutionIds = solutionResources?.Select(resource => resource.Id).ToHashSet() ?? [];
         var items = new List<WebResourcePlanItem>(local.Count);
         foreach (var localResource in local)
         {
@@ -26,17 +30,18 @@ public static class WebResourcePushPlanner
             var action = WebResourceAction.Create;
             if (remoteResource is not null)
             {
-                if (remoteResource.IsManaged)
+                action = string.Equals(remoteResource.Content, localResource.Content, StringComparison.Ordinal)
+                    ? WebResourceAction.Unchanged
+                    : WebResourceAction.Update;
+                if (action == WebResourceAction.Update && remoteResource.IsManaged)
                 {
                     throw new ManagedWebResourceException(localResource.Name);
                 }
-
-                action = string.Equals(remoteResource.Content, localResource.Content, StringComparison.Ordinal)
-                    ? WebResourceAction.Keep
-                    : WebResourceAction.Update;
             }
 
-            items.Add(new WebResourcePlanItem(localResource, action, remoteResource));
+            var addToSolution = !string.IsNullOrWhiteSpace(solutionUniqueName) &&
+                                (remoteResource is null || !solutionIds.Contains(remoteResource.Id));
+            items.Add(new WebResourcePlanItem(localResource, action, remoteResource, addToSolution));
         }
 
         var obsolete = deleteObsolete
@@ -50,7 +55,7 @@ public static class WebResourcePushPlanner
                 .ToList()
             : [];
 
-        return new WebResourcePushPlan(items, obsolete);
+        return new WebResourcePushPlan(items, obsolete, solutionUniqueName);
     }
 
     private static string Key(string name, int type) => $"{type}:{name}";
