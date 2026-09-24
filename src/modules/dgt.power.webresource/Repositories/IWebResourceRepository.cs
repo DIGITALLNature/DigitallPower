@@ -18,5 +18,5 @@ public interface IWebResourceRepository
 
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task PublishAsync(Guid id, CancellationToken cancellationToken = default);
+    Task PublishAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
 }

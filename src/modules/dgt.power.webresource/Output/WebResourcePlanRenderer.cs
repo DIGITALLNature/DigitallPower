@@ -8,11 +8,12 @@ namespace dgt.power.webresource.Output;
 
 public sealed class WebResourcePlanRenderer(IAnsiConsole console)
 {
-    public void Render(WebResourcePushPlan plan)
+    public void Render(WebResourcePushPlan plan, string targetDirectory)
     {
         ArgumentNullException.ThrowIfNull(plan);
+        ArgumentException.ThrowIfNullOrWhiteSpace(targetDirectory);
 
-        var tree = new Tree("[bold]WebResource deployment plan[/]");
+        var tree = new Tree($"[bold]{Markup.Escape(targetDirectory)}[/]");
         var directoryNodes = new Dictionary<string, IHasTreeNodes>(StringComparer.OrdinalIgnoreCase)
         {
             [string.Empty] = tree
@@ -41,7 +42,7 @@ public sealed class WebResourcePlanRenderer(IAnsiConsole console)
             {
                 WebResourceAction.Create => "[green]Create[/]",
                 WebResourceAction.Update => "[blue]Update[/]",
-                _ => "[grey]Keep[/]"
+                _ => "[grey]Unchanged[/]"
             };
             parent.AddNode(
                 $"{Markup.Escape(pathParts[^1])} [grey]→[/] " +
@@ -50,15 +51,45 @@ public sealed class WebResourcePlanRenderer(IAnsiConsole console)
 
         console.Write(tree);
 
-        if (plan.Obsolete.Count == 0)
+        if (!string.IsNullOrWhiteSpace(plan.SolutionUniqueName))
         {
+            RenderSolutionMembership(plan);
+        }
+
+        if (plan.Obsolete.Count > 0)
+        {
+            RenderObsoleteResources(plan);
+        }
+    }
+
+    private void RenderSolutionMembership(WebResourcePushPlan plan)
+    {
+        var missingMembership = plan.Resources
+            .Where(resource => resource.AddToSolution)
+            .OrderBy(resource => resource.Local.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        console.MarkupLine(
+            $"[bold]Solution membership: {Markup.Escape(plan.SolutionUniqueName!)}[/]");
+        if (missingMembership.Count == 0)
+        {
+            console.MarkupLine($"  [green]{Emoji.Known.CheckMark}[/] All managed components are already present");
             return;
         }
 
-        console.Write(new Rule("[red]Obsolete webresources[/]"));
+        foreach (var resource in missingMembership)
+        {
+            console.MarkupLine(
+                $"  [green]{Emoji.Known.Plus}[/] WebResource {Markup.Escape(resource.Local.Name)}");
+        }
+    }
+
+    private void RenderObsoleteResources(WebResourcePushPlan plan)
+    {
+        console.MarkupLine("[bold red]Obsolete webresources[/]");
         foreach (var obsolete in plan.Obsolete.OrderBy(resource => resource.Name, StringComparer.OrdinalIgnoreCase))
         {
-            console.MarkupLine($"Delete: [red]{Markup.Escape(obsolete.Name)}[/]");
+            console.MarkupLine(
+                $"  [red]{Emoji.Known.Minus}[/] WebResource {Markup.Escape(obsolete.Name)}");
         }
     }
 }

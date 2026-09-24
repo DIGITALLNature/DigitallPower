@@ -7,5 +7,5 @@ public enum WebResourceAction
 {
     Create,
     Update,
-    Keep
+    Unchanged
 }

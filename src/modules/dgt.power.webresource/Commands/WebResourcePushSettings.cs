@@ -30,10 +30,6 @@ public class WebResourcePushSettings : WebResourceSettings
     [Description("Dataverse logical name; required when Target is a single file")]
     public string? Name { get; set; }
 
-    [CommandOption("--publish")]
-    [Description("Publish created and updated webresources")]
-    public bool Publish { get; set; }
-
     [CommandOption("--delete-obsolete")]
     [Description("Delete unmanaged webresources in the solution that are absent from the target directory")]
     public bool DeleteObsolete { get; set; }
