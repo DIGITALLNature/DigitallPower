@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Collections.Concurrent;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -13,6 +14,11 @@ namespace dgt.power.solution.Base;
 public class LintContext
 {
     private const int PageSize = 5000;
+
+    // Bounds how many RetrieveEntityRequest calls run at once - high enough to cut latency for
+    // solutions spanning many tables, low enough to stay well under Dataverse's per-user
+    // concurrent-request service protection limit.
+    private const int MaxConcurrentEntityMetadataRequests = 8;
 
     private LintContext(IOrganizationServiceAsync2 connection, IReadOnlyList<string> solutionNames)
     {
@@ -56,19 +62,23 @@ public class LintContext
 
     private async Task<List<EntityMetadata>> RetrieveEntityMetadataAsync(IReadOnlyCollection<Guid> entityMetadataIds, CancellationToken cancellationToken)
     {
-        var entities = new List<EntityMetadata>(entityMetadataIds.Count);
-        foreach (var metadataId in entityMetadataIds)
-        {
-            var response = (RetrieveEntityResponse)await Connection.ExecuteAsync(new RetrieveEntityRequest
+        var entities = new ConcurrentBag<EntityMetadata>();
+
+        await Parallel.ForEachAsync(
+            entityMetadataIds,
+            new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrentEntityMetadataRequests, CancellationToken = cancellationToken },
+            async (metadataId, ct) =>
             {
-                MetadataId = metadataId,
-                EntityFilters = EntityFilters.Entity | EntityFilters.Attributes
-            }, cancellationToken);
+                var response = (RetrieveEntityResponse)await Connection.ExecuteAsync(new RetrieveEntityRequest
+                {
+                    MetadataId = metadataId,
+                    EntityFilters = EntityFilters.Entity | EntityFilters.Attributes
+                }, ct);
 
-            entities.Add(response.EntityMetadata);
-        }
+                entities.Add(response.EntityMetadata);
+            });
 
-        return entities;
+        return [.. entities];
     }
 
     private IOrganizationServiceAsync2 Connection { get; }
