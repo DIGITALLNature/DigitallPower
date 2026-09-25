@@ -20,12 +20,14 @@ public sealed class CopyComponentsContext
     private const int PageSize = 5000;
     private const int MaxConcurrentEntityMetadataRequests = 8;
 
+    private static readonly IReadOnlyDictionary<(int, Guid), bool> EmptyLookup = new Dictionary<(int, Guid), bool>();
+
     private CopyComponentsContext(IReadOnlyList<SolutionComponent> components)
     {
         Components = components;
     }
 
-    public IReadOnlyList<SolutionComponent> Components { get; }
+    private IReadOnlyList<SolutionComponent> Components { get; }
 
     public static Task<CopyComponentsContext> CreateAsync(IOrganizationServiceAsync2 connection, IReadOnlyCollection<Guid> sourceSolutionIds, CancellationToken cancellationToken)
     {
@@ -49,6 +51,17 @@ public sealed class CopyComponentsContext
 
     private async Task<IReadOnlyList<ComponentCopyDecision>> BuildDecisionsCoreAsync(IOrganizationServiceAsync2 connection, bool bestPractices, CancellationToken cancellationToken)
     {
+        // solutioncomponentdefinition is a small, cheap lookup needed for the plan's type names in both
+        // modes. Everything else below (entity/attribute metadata, backing-table, and layer lookups) only
+        // exists to support best-practice filtering, so raw mode skips it entirely - it neither needs nor
+        // should pay for those queries (and shouldn't fail because one of them errors out).
+        var definitionsByType = await RetrieveComponentDefinitionsAsync(connection, cancellationToken);
+
+        if (!bestPractices)
+        {
+            return BuildAllDecisions(bestPractices: false, EmptyLookup, EmptyLookup, definitionsByType);
+        }
+
         var entityObjectIds = Components
             .Where(static component => component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && component.ObjectId.HasValue)
             .Select(static component => component.ObjectId!.Value)
@@ -65,8 +78,6 @@ public sealed class CopyComponentsContext
             .GroupBy(static attribute => attribute.MetadataId!.Value)
             .ToDictionary(group => group.Key, group => group.First());
 
-        var definitionsByType = await RetrieveComponentDefinitionsAsync(connection, cancellationToken);
-
         var managedStateResolver = new ComponentManagedStateResolver(connection);
         var managedByComponent = await managedStateResolver.ResolveAsync(Components, entityMetadataByMetadataId, attributeMetadataById, definitionsByType, cancellationToken);
 
@@ -81,11 +92,18 @@ public sealed class CopyComponentsContext
         var activeLayerResolver = new ComponentActiveLayerResolver(connection);
         var hasActiveLayerByComponent = await activeLayerResolver.ResolveAsync(activeLayerCandidates, definitionsByType, cancellationToken);
 
-        return Components
+        return BuildAllDecisions(bestPractices: true, managedByComponent, hasActiveLayerByComponent, definitionsByType);
+    }
+
+    private IReadOnlyList<ComponentCopyDecision> BuildAllDecisions(
+        bool bestPractices,
+        IReadOnlyDictionary<(int, Guid), bool> managedByComponent,
+        IReadOnlyDictionary<(int, Guid), bool> hasActiveLayerByComponent,
+        IReadOnlyDictionary<int, SolutionComponentDefinitionInfo> definitionsByType) =>
+        Components
             .Where(static component => component.ComponentType?.Value != null && component.ObjectId.HasValue)
             .Select(component => BuildDecision(component, bestPractices, managedByComponent, hasActiveLayerByComponent, definitionsByType))
             .ToList();
-    }
 
     private static ComponentCopyDecision BuildDecision(
         SolutionComponent component,
@@ -102,6 +120,9 @@ public sealed class CopyComponentsContext
         if (componentType == SolutionComponent.Options.ComponentType.Entity)
         {
             var isManaged = managedByComponent.GetValueOrDefault(key);
+            // AddSolutionComponentRequest.DoNotIncludeSubcomponents is a plain bool, so it can only ever
+            // distinguish complete (IncludeSubcomponents) from non-complete - a source's own
+            // IncludeAsShellOnly cannot be preserved as such; it collapses into non-complete here too.
             var doNotIncludeSubcomponents = bestPractices
                 ? isManaged
                 : component.RootComponentBehavior?.Value != SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents;
@@ -109,7 +130,7 @@ public sealed class CopyComponentsContext
             string reason;
             if (!bestPractices)
             {
-                reason = "Raw mode - mirrors the source solution's own root component behavior";
+                reason = "Raw mode - preserves complete vs. non-complete table behavior (shell-only sources are treated as non-complete)";
             }
             else if (isManaged)
             {

@@ -382,35 +382,35 @@ public class DotNetEntityViewModelBuilder
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 public class DotNetAttributeModel
 {
-    public string Name { get; set; } = "";
-    public string LogicalName { get; set; } = "";
-    public string CSharpType { get; set; } = "";
-    public bool IsValidForRead { get; set; }
-    public bool HasSetter { get; set; }
-    public bool IsPartyList { get; set; }
-    public bool IsPrimaryId { get; set; }
-    public string Summary { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string LogicalName { get; init; } = "";
+    public string CSharpType { get; init; } = "";
+    public bool IsValidForRead { get; init; }
+    public bool HasSetter { get; init; }
+    public bool IsPartyList { get; init; }
+    public bool IsPrimaryId { get; init; }
+    public string Summary { get; init; } = "";
 }
 
 public class DotNetNavigationPropertyModel
 {
-    public string Name { get; set; } = "";
-    public string SchemaName { get; set; } = "";
-    public string ReferencingEntitySchemaName { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string SchemaName { get; init; } = "";
+    public string ReferencingEntitySchemaName { get; init; } = "";
 }
 
 public class DotNetOptionFieldModel
 {
-    public string Name { get; set; } = "";
-    public string AttributeType { get; set; } = "";
-    public IReadOnlyList<DotNetOptionModel> Options { get; set; } = [];
-    public string StructLabel { get; set; } = "";
-    public string FalseLabel { get; set; } = "";
-    public string TrueLabel { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string AttributeType { get; init; } = "";
+    public IReadOnlyList<DotNetOptionModel> Options { get; init; } = [];
+    public string StructLabel { get; init; } = "";
+    public string FalseLabel { get; init; } = "";
+    public string TrueLabel { get; init; } = "";
 }
 
 public class DotNetOptionModel
 {
-    public string Label { get; set; } = "";
-    public int? Value { get; set; }
+    public string Label { get; init; } = "";
+    public int? Value { get; init; }
 }

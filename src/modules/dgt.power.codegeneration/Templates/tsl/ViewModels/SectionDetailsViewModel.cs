@@ -10,7 +10,7 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 public record SectionDetailsViewModel
 {
     public SortedSet<string> ControlNames { get; init; }
-    public string SectionName { get; set; }
+    public string SectionName { get; init; }
 
 
     public SectionDetailsViewModel(KeyValuePair<string, SectionDetail> keyValuePair)

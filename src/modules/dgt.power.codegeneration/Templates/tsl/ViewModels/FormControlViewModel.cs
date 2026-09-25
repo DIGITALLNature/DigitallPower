@@ -9,15 +9,15 @@ namespace dgt.power.codegeneration.Templates.tsl.ViewModels;
 
 public class FormControlViewModel
 {
-    public string AttributeName { get; set; }
+    public string AttributeName { get; init; }
     public string ControlName { get; set; }
 
-    public string MockXrmControlType { get; set; }
+    public string MockXrmControlType { get; init; }
 
     public string DefinitelyTypedControlType { get; set; }
 
-    public bool IsVisible { get; set; }
-    public bool IsDisabled { get; set; }
+    public bool IsVisible { get; init; }
+    public bool IsDisabled { get; init; }
 
     public FormControlViewModel(FormXmlControlData formData) {
         ArgumentNullException.ThrowIfNull(formData);

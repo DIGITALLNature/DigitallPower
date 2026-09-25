@@ -66,7 +66,7 @@ var appConsole = AnsiConsole.Console;
 var registrations = new ServiceCollection();
 registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetCoreV3("https://api.nuget.org/v3/index.json")
-    .GetResource<PackageMetadataResource>()
+    .GetResource<PackageMetadataResource>()! // nuget.org's v3 feed always supports this resource
 );
 registrations.AddSingleton<VersionCheckInterceptor>();
 

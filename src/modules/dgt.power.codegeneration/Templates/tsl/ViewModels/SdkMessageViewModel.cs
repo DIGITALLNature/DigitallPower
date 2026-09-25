@@ -12,7 +12,7 @@ public record SdkMessageViewModel
         Message = sdkm.Message;
     }
 
-    public string Message { get; set; }
+    public string Message { get; init; }
 
-    public string Name { get; set; }
+    public string Name { get; init; }
 }

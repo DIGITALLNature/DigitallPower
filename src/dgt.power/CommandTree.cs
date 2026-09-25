@@ -146,7 +146,7 @@ internal static class CommandTree
 
         config.AddBranch<SolutionSettings>("solution", solution =>
         {
-            solution.SetDescription("Commands that act on a single Dataverse solution");
+            solution.SetDescription("Commands that act on one or more Dataverse solutions");
             solution.AddCommand<SolutionVersionCommand>("version")
                 .WithDescription("Increments the solution version by given flag")
                 .WithExample("solution", "version", "sample_solution", "--minor");

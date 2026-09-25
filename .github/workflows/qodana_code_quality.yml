@@ -29,6 +29,7 @@ jobs:
         with:
           pr-mode: false
           use-caches: true
+          upload-result: true
           args: --baseline baseline.sarif.json
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}

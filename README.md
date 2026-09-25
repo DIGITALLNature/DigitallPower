@@ -38,7 +38,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
-  - [solution](#solution--single-solution-operations)
+  - [solution](#solution--solution-scoped-operations)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [push](#push--deploy-artifacts)
@@ -60,7 +60,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
-| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, and copy solution components between solutions (`solution copy-components`) |
+| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Push** | Push web resources and plugin assemblies directly into a target solution |
@@ -266,9 +266,9 @@ All export commands accept `--filedir <path>` to control the output directory.
 dgtp export bulkdeletes --filedir ./out/bulkdeletes
 ```
 
-### `solution` — single-solution operations
+### `solution` — solution-scoped operations
 
-The `solution` branch is designed for commands that act on a single Dataverse solution. Today it hosts `version`, incrementing a solution's version number, and `lint`, a solution-quality check that is configured in JSON and executed against the live Dataverse metadata for the selected solution.
+The `solution` branch hosts commands that act on Dataverse solutions: `version` and `lint` each act on a single solution, while `copy-components` copies components from one or more source solutions into a target.
 
 | Command | Description |
 |---------|-------------|
@@ -340,7 +340,7 @@ Copies the `solutioncomponent` rows of one or more source solutions into an unma
 |--------|-------------|
 | `-s, --source <Sol1,Sol2>` | Comma-separated unique names of the solutions to copy components from (required) |
 | `--dry-run` | Print the planned changes without adding any component to the target solution |
-| `--raw` | Disable best-practice normalization: mirror each source component's own root component behavior and skip the managed-active-layer filter |
+| `--raw` | Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter |
 
 By default (best-practice mode, no `--raw`), the command avoids two common causes of solution bloat:
 

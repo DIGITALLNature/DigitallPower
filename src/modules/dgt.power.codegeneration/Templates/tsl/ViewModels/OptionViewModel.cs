@@ -14,5 +14,5 @@ public record OptionViewModel
 
     public IReadOnlyList<Option> Options { get; init; }
 
-    public string Name { get; set; }
+    public string Name { get; init; }
 }
