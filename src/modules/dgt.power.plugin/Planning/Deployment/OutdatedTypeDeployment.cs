@@ -8,5 +8,5 @@ namespace dgt.power.plugin.Planning.Deployment;
 public sealed record OutdatedTypeDeployment(
     OutdatedTypeMigration Migration,
     IReadOnlyList<Guid> CustomApiIds,
-    IReadOnlyList<Guid> MigrateStepIds,
+    IReadOnlyList<MigratedPluginStep> MigrateSteps,
     IReadOnlyList<Guid> DeleteStepIds);

@@ -8,7 +8,21 @@ namespace dgt.power.plugin.Remote;
 /// looked up by name. Intentionally does not carry the full entity - only what planning needs.
 /// </summary>
 /// <param name="Id">Plugin assembly record id.</param>
+/// <param name="Name">Assembly name.</param>
 /// <param name="Version">Currently registered version.</param>
 /// <param name="PackageId">Owning plugin package id, when the assembly belongs to a package.</param>
 /// <param name="ContentHash">SHA-256 hash of the registered assembly content, when retrieved.</param>
-public sealed record RemoteAssembly(Guid Id, Version Version, Guid? PackageId, string? ContentHash = null);
+public sealed record RemoteAssembly(
+    Guid Id,
+    string Name,
+    Version Version,
+    Guid? PackageId,
+    string? ContentHash = null)
+{
+    public RemoteAssembly(Guid id, Version version, Guid? PackageId, string? ContentHash = null)
+        : this(id, string.Empty, version, PackageId, ContentHash)
+    {
+    }
+
+    public string Identity => $"{Name} v{Version}";
+}

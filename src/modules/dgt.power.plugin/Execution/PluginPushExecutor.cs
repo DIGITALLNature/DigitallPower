@@ -96,7 +96,7 @@ public sealed class PluginPushExecutor(
                     comparison.Local.Name,
                     comparison.Local.Content,
                     cancellationToken);
-                Report(reportProgress, PluginDeploymentOperation.Created, "assembly", comparison.Local.Name);
+                Report(reportProgress, PluginDeploymentOperation.Created, "assembly", comparison.Local.Identity);
             }
             else
             {
@@ -107,7 +107,7 @@ public sealed class PluginPushExecutor(
                         assemblyId,
                         comparison.Local.Content,
                         cancellationToken);
-                    Report(reportProgress, PluginDeploymentOperation.Updated, "assembly", comparison.Local.Name);
+                    Report(reportProgress, PluginDeploymentOperation.Updated, "assembly", comparison.Local.Identity);
                 }
             }
         }
@@ -123,7 +123,7 @@ public sealed class PluginPushExecutor(
                 reportProgress,
                 PluginDeploymentOperation.Linked,
                 "assembly",
-                $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
+                $"{comparison.Local.Identity} to solution {solution.SolutionUniqueName}");
         }
 
         return assemblyId;
@@ -138,8 +138,9 @@ public sealed class PluginPushExecutor(
 
         foreach (var assembly in deployment.Assemblies)
         {
-            var remoteAssembly = await assemblyRepository.FindByNameAsync(
+            var remoteAssembly = await assemblyRepository.FindForDeploymentAsync(
                 assembly.Comparison.Local.Name,
+                assembly.Comparison.Local.Version,
                 cancellationToken);
             if (remoteAssembly?.PackageId is { } ownerPackageId && ownerPackageId != packageId)
             {

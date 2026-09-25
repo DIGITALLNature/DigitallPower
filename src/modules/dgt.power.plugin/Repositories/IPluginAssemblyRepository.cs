@@ -15,9 +15,18 @@ public interface IPluginAssemblyRepository
     public const int ComponentType = 91;
 
     /// <summary>
-    /// Finds the most recently registered sandboxed plugin assembly with the given name, if any.
+    /// Finds the sandboxed plugin assembly with the highest semantic version for the given name, if any.
     /// </summary>
     Task<RemoteAssembly?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Finds the existing assembly in the target major/minor version train, falling back to the
+    /// highest semantic version with the same name when that train has not yet been registered.
+    /// </summary>
+    Task<RemoteAssembly?> FindForDeploymentAsync(
+        string name,
+        Version targetVersion,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists every other sandboxed plugin assembly registered under the given name - i.e. the

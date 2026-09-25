@@ -374,7 +374,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         return false;
     }
 
-    private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
+    private static Type[] GetLoadableTypes(Assembly assembly)
     {
         try
         {
@@ -382,7 +382,11 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
         catch (ReflectionTypeLoadException e)
         {
-            return e.Types.Where(t => t != null)!;
+            var loaderError = e.LoaderExceptions.FirstOrDefault()?.Message;
+            throw new AssemblyException(
+                $"Unable to load all CLR types from '{assembly.GetName().Name}'. " +
+                $"Plugin deployment was aborted to prevent reconciliation from incomplete metadata. {loaderError}",
+                e);
         }
     }
 }

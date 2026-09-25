@@ -39,18 +39,15 @@ public static class LocalPluginStepValidator
 
     private static void ValidateImage(string typeName, LocalPluginStep step, LocalPluginStepImage image)
     {
-        var isPreOperationStage = IsPreOperationStage(step.Stage);
-
         if (step.MessageName == "Create" &&
-            image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PreImage &&
-            isPreOperationStage)
+            image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PreImage)
         {
             throw new InvalidPluginStepException(
                 $"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a pre-image is not " +
-                "available for a 'Create' message on a pre-validation/pre-operation stage (the record does not " +
-                "exist yet).");
+                "available for a 'Create' message (the record does not exist yet).");
         }
 
+        var isPreOperationStage = IsPreOperationStage(step.Stage);
         var isMutationMessage = step.MessageName is "Create" or "Update" or "Delete";
         if (isMutationMessage &&
             image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&

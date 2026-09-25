@@ -93,6 +93,61 @@ public class PluginAssemblyRepositoryTests
     }
 
     [Test]
+    public async Task FindByNameAsync_MultipleAssemblies_ReturnsHighestSemanticVersion()
+    {
+        var service = CreateService();
+        var repository = new PluginAssemblyRepository(service);
+        var versionNineId = Guid.NewGuid();
+        var versionTenId = Guid.NewGuid();
+        service.Create(new PluginAssembly(versionNineId)
+        {
+            Name = "MyPlugins",
+            Version = "9.9.9.9",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginAssembly(versionTenId)
+        {
+            Name = "MyPlugins",
+            Version = "10.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+
+        var result = await repository.FindByNameAsync("MyPlugins");
+
+        await Assert.That(result!.Id).IsEqualTo(versionTenId);
+        await Assert.That(result.Version).IsEqualTo(Version.Parse("10.0.0.0"));
+    }
+
+    [Test]
+    public async Task FindForDeploymentAsync_MatchingVersionTrainExists_ReturnsMatchingAssembly()
+    {
+        var service = CreateService();
+        var repository = new PluginAssemblyRepository(service);
+        var versionTwoId = Guid.NewGuid();
+        var versionThreeId = Guid.NewGuid();
+        service.Create(new PluginAssembly(versionTwoId)
+        {
+            Name = "MyPlugins",
+            Version = "2.1.1.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginAssembly(versionThreeId)
+        {
+            Name = "MyPlugins",
+            Version = "3.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+
+        var result = await repository.FindForDeploymentAsync("MyPlugins", Version.Parse("2.1.2.0"));
+
+        await Assert.That(result!.Id).IsEqualTo(versionTwoId);
+    }
+
+    [Test]
     public async Task CreateAsync_CreatesSandboxedDatabaseAssembly()
     {
         var service = CreateService();

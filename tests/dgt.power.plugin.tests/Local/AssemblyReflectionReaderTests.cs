@@ -108,6 +108,20 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
+    public async Task Read_MissingDependency_ReturnsNoAssembly()
+    {
+        using var console = new TestConsole();
+        var resolverPaths = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll");
+        using var metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(resolverPaths));
+
+        var result = new AssemblyReflectionReader(console).Read(
+            typeof(AssemblyReflectionReaderTests).Assembly.Location,
+            metadataLoadContext);
+
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
     [Arguments(0, "Retrieve")]
     [Arguments(1, "RetrieveMultiple")]
     [Arguments(2, "Create")]

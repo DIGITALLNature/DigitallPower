@@ -9,4 +9,6 @@ public sealed record PluginTypeDeploymentItem(
     PluginTypeComparison Comparison,
     IReadOnlyList<PluginStepDeployment> Steps,
     IReadOnlyList<PluginStepDeletion> StepDeletions,
-    PluginCustomApiDeployment CustomApi);
+    PluginCustomApiDeployment CustomApi,
+    IReadOnlyList<Guid> MigratedCustomApiIds,
+    IReadOnlyList<MigratedPluginStep> MigratedSteps);

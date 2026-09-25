@@ -598,6 +598,9 @@ API links, and assembly upgrades. It then shows completed operations, or reports
 are required.
 `--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
 messages fail before Dataverse changes occur.
+For assembly upgrades, the tree represents the effective replacement-assembly state, including
+steps and images migrated from the superseded assembly. A separate message then states whether
+the outdated assembly will be deleted or retained.
 
 ##### Solution membership
 
@@ -613,10 +616,14 @@ require `--publisher-prefix`. Existing packages and same-version standalone asse
 only when their content differs. Package version differences alone do not cause an update. For
 standalone assemblies, a major or minor version difference is handled as an upgrade; build/revision
 changes update the existing assembly when the DLL content differs.
+When stale standalone assemblies with the same name exist, the command selects the highest
+semantic assembly version.
 
 When a local assembly's major or minor version differs, the command creates a
 replacement, migrates matching Custom API and plugin step references, then removes superseded
-assemblies and their remaining registrations. This is unconditional; use `--dry-run` to preview it.
+assemblies and their remaining registrations. If an outdated assembly contains plugin types with
+undeclared step registrations, it is retained instead and the deployment plan explains why it
+cannot be deleted automatically. Use `--dry-run` to preview either outcome.
 
 ##### Differences from legacy `push`
 

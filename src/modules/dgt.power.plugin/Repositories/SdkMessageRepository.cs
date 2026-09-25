@@ -43,7 +43,12 @@ public sealed class SdkMessageRepository(IOrganizationServiceAsync2 service) : I
             }
         };
 
-        if (!IsNone(secondaryEntityName))
+        if (IsNone(secondaryEntityName))
+        {
+            query.Criteria.Conditions.Add(
+                new ConditionExpression(SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode, ConditionOperator.Null));
+        }
+        else
         {
             query.Criteria.Conditions.Add(
                 new ConditionExpression(SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode, ConditionOperator.Equal, secondaryEntityName));

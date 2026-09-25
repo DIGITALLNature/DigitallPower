@@ -18,11 +18,17 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         {
             case AssemblyDeploymentPlan assembly:
                 console.Write(BuildAssemblyTree(assembly));
+                RenderOutdatedAssemblyLifecycle(assembly.OutdatedAssemblies);
                 RenderSolutionMembership(assembly.SolutionMembership, CollectSolutionLinks(assembly));
                 break;
 
             case PackageDeploymentPlan package:
                 console.Write(BuildPackageTree(package));
+                foreach (var assemblyPlan in package.Assemblies)
+                {
+                    RenderOutdatedAssemblyLifecycle(assemblyPlan.OutdatedAssemblies);
+                }
+
                 RenderSolutionMembership(package.SolutionMembership, CollectSolutionLinks(package));
                 break;
 
@@ -60,9 +66,13 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         return tree;
     }
 
-    private static string AssemblyLabel(AssemblyDeploymentPlan plan) =>
-        $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(plan.Comparison.Local.Name)}[/]" +
-        AssemblyStatusMarkup(plan.Comparison);
+    private static string AssemblyLabel(AssemblyDeploymentPlan plan)
+    {
+        var comparison = plan.Comparison;
+        var version = comparison.IsPackageOwned ? string.Empty : $" v{comparison.Local.Version}";
+        return $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(comparison.Local.Name)}[/]{version}" +
+               AssemblyStatusMarkup(comparison);
+    }
 
     private static string AssemblyStatusMarkup(AssemblyComparison comparison)
     {
@@ -126,36 +136,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             AddPluginTypes(parent, plan.PluginTypes);
         }
 
-        if (plan.OutdatedAssemblies.Assemblies.Count > 0)
-        {
-            var outdatedRoot = parent.AddNode($"Outdated assemblies {ActionMarkup("Plan")}");
-            foreach (var assembly in plan.OutdatedAssemblies.Assemblies)
-            {
-                var assemblyNode = outdatedRoot.AddNode(
-                    $"{assembly.Assembly.Id} {ActionMarkup("Purge")}");
-                foreach (var type in assembly.Types)
-                {
-                    var typeNode = assemblyNode.AddNode(
-                        $"{Markup.Escape(type.Migration.TypeName)} " +
-                        ActionMarkup(type.Migration.HasReplacement ? "Migrate" : "Delete"));
-                    foreach (var customApiId in type.CustomApiIds)
-                    {
-                        typeNode.AddNode($"Custom API {customApiId} {ActionMarkup("Migrate")}");
-                    }
-
-                    foreach (var stepId in type.MigrateStepIds)
-                    {
-                        typeNode.AddNode($"Step {stepId} {ActionMarkup("Migrate")}");
-                    }
-
-                    foreach (var stepId in type.DeleteStepIds)
-                    {
-                        typeNode.AddNode($"Step {stepId} {ActionMarkup("Delete")}");
-                    }
-                }
-            }
-        }
-
         if (plan.LinkManagedIdentity)
         {
             parent.AddNode($"Managed identity {ActionMarkup("Link")}");
@@ -210,6 +190,21 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
                 typeNode.AddNode(
                     $"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Unchanged")}");
             }
+
+            foreach (var customApiId in type.MigratedCustomApiIds)
+            {
+                typeNode.AddNode($"Custom API {customApiId} {ActionMarkup("Migrate")}");
+            }
+
+            foreach (var step in type.MigratedSteps)
+            {
+                var stepNode = typeNode.AddNode(
+                    $"{Markup.Escape(step.Step.Name)} {ActionMarkup("Migrate")}");
+                foreach (var image in step.Images)
+                {
+                    stepNode.AddNode($"{Markup.Escape(image.Name)} {ActionMarkup("Migrate")}");
+                }
+            }
         }
 
         foreach (var type in plan.Deletions)
@@ -248,6 +243,24 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         {
             console.MarkupLine(
                 $"  [green]{Emoji.Known.Plus}[/] {ComponentLabel(membership.ComponentType)} {Markup.Escape(membership.ComponentName)}");
+        }
+    }
+
+    private void RenderOutdatedAssemblyLifecycle(OutdatedAssemblyDeployment outdatedAssemblies)
+    {
+        foreach (var assembly in outdatedAssemblies.Assemblies)
+        {
+            if (assembly.CanDelete)
+            {
+                console.MarkupLine(
+                    $"[red]{Emoji.Known.Minus} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} will be deleted[/]");
+                continue;
+            }
+
+            var pluginTypeLabel = assembly.RetainedPluginTypeCount == 1 ? "plugin type" : "plugin types";
+            console.MarkupLine(
+                $"[yellow]{Emoji.Known.Warning} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} cannot be deleted automatically because it contains " +
+                $"{assembly.RetainedPluginTypeCount} {pluginTypeLabel} with undeclared step registrations[/]");
         }
     }
 

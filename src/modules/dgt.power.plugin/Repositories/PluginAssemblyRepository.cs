@@ -15,11 +15,41 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
 {
     public async Task<RemoteAssembly?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
     {
+        var assemblies = await ListByNameCoreAsync(name, cancellationToken);
+        return assemblies.OrderByDescending(assembly => assembly.Version).FirstOrDefault();
+    }
+
+    public Task<RemoteAssembly?> FindForDeploymentAsync(
+        string name,
+        Version targetVersion,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(targetVersion);
+        return FindForDeploymentCoreAsync(name, targetVersion, cancellationToken);
+    }
+
+    private async Task<RemoteAssembly?> FindForDeploymentCoreAsync(
+        string name,
+        Version targetVersion,
+        CancellationToken cancellationToken)
+    {
+        var assemblies = await ListByNameCoreAsync(name, cancellationToken);
+        return assemblies.FirstOrDefault(assembly =>
+                   assembly.Version.Major == targetVersion.Major &&
+                   assembly.Version.Minor == targetVersion.Minor)
+               ?? assemblies.OrderByDescending(assembly => assembly.Version).FirstOrDefault();
+    }
+
+    private async Task<IReadOnlyList<RemoteAssembly>> ListByNameCoreAsync(
+        string name,
+        CancellationToken cancellationToken)
+    {
         var query = new QueryExpression(PluginAssembly.EntityLogicalName)
         {
             NoLock = true,
             ColumnSet = new ColumnSet(
                 PluginAssembly.LogicalNames.PluginAssemblyId,
+                PluginAssembly.LogicalNames.Name,
                 PluginAssembly.LogicalNames.Version,
                 PluginAssembly.LogicalNames.PackageId,
                 PluginAssembly.LogicalNames.Content),
@@ -33,21 +63,25 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
                     new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal,
                         PluginAssembly.Options.IsolationMode.Sandbox)
                 }
-            },
-            Orders = { new OrderExpression(PluginAssembly.LogicalNames.Version, OrderType.Descending) }
+            }
         };
 
         var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        var entity = result.Entities.FirstOrDefault()?.ToEntity<PluginAssembly>();
-        if (entity is null)
-        {
-            return null;
-        }
-
-        var contentHash = entity.PackageId is not null || entity.Content is null
-            ? null
-            : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
-        return new RemoteAssembly(entity.Id, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash);
+        return result.Entities
+            .Select(entity => entity.ToEntity<PluginAssembly>())
+            .Select(entity =>
+            {
+                var contentHash = entity.PackageId is not null || entity.Content is null
+                    ? null
+                    : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
+                return new RemoteAssembly(
+                    entity.Id,
+                    entity.Name!,
+                    Version.Parse(entity.Version!),
+                    entity.PackageId?.Id,
+                    contentHash);
+            })
+            .ToList();
     }
 
     public async Task<IReadOnlyList<RemoteAssembly>> ListOutdatedAsync(string name, Guid excludeId, CancellationToken cancellationToken = default)
@@ -57,6 +91,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             NoLock = true,
             ColumnSet = new ColumnSet(
                 PluginAssembly.LogicalNames.PluginAssemblyId,
+                PluginAssembly.LogicalNames.Name,
                 PluginAssembly.LogicalNames.Version,
                 PluginAssembly.LogicalNames.PackageId),
             Criteria = new FilterExpression
@@ -78,7 +113,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         var result = await service.RetrieveMultipleAsync(query, cancellationToken);
         return result.Entities
             .Select(e => e.ToEntity<PluginAssembly>())
-            .Select(entity => new RemoteAssembly(entity.Id, Version.Parse(entity.Version!), entity.PackageId?.Id))
+            .Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id))
             .ToList();
     }
 

@@ -156,7 +156,7 @@ internal static class CommandTree
                 .WithAlias("register")
                 .WithDescription("Registers a plugin assembly (.dll) or package (.nupkg), or all such files in a directory")
                 .WithExample("plugin", "push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution")
-                .WithExample("plugin", "push", "c:/TargetDir/plugin.nupkg", "--solution", "samplesolution")
+                .WithExample("plugin", "push", "c:/TargetDir/plugin.nupkg", "--publisher-prefix", "contoso", "--solution", "samplesolution")
                 .WithExample("plugin", "push", "c:/TargetDir", "--solution", "samplesolution");
         });
 

@@ -46,13 +46,13 @@ public sealed class OutdatedAssemblyMigrator(
                         Report(reportProgress, PluginDeploymentOperation.Migrated, "Custom API", customApiId.ToString());
                     }
 
-                    foreach (var stepId in type.MigrateStepIds)
+                    foreach (var step in type.MigrateSteps)
                     {
                         await stepRepository.ReassignPluginTypeAsync(
-                            stepId,
+                            step.Step.Id,
                             replacementTypeId,
                             cancellationToken);
-                        Report(reportProgress, PluginDeploymentOperation.Migrated, "step", stepId.ToString());
+                        Report(reportProgress, PluginDeploymentOperation.Migrated, "step", step.Step.Name);
                     }
                 }
 
@@ -66,8 +66,15 @@ public sealed class OutdatedAssemblyMigrator(
                 Report(reportProgress, PluginDeploymentOperation.Deleted, "plugin type", type.Migration.TypeName);
             }
 
-            await assemblyRepository.DeleteAsync(assembly.Assembly.Id, cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Deleted, "assembly", assembly.Assembly.Id.ToString());
+            if (assembly.CanDelete)
+            {
+                await assemblyRepository.DeleteAsync(assembly.Assembly.Id, cancellationToken);
+                Report(
+                    reportProgress,
+                    PluginDeploymentOperation.Deleted,
+                    "assembly",
+                    assembly.Assembly.Identity);
+            }
         }
     }
 

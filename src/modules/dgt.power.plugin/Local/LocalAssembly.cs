@@ -13,6 +13,8 @@ public sealed record LocalAssembly
 
     public required Version Version { get; init; }
 
+    public string Identity => $"{Name} v{Version}";
+
     public required string Content { get; init; }
 
     public required string ContentHash { get; init; }
