@@ -109,6 +109,38 @@ public sealed class PluginTypeDeploymentExecutor(
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
+        if (deployment.MigrationSource is { } migration)
+        {
+            var migratedLocal = deployment.Comparison.Local;
+            if (deployment.Comparison.RequiresUpdate)
+            {
+                var migratedMessage = deployment.Message
+                    ?? throw new InvalidOperationException("An updated step requires a resolved SDK message.");
+                await stepRepository.UpdateAsync(
+                    migration.Step.Id,
+                    new PluginStepData(
+                        migratedLocal.Name,
+                        pluginTypeId,
+                        migratedMessage.MessageId,
+                        migratedMessage.MessageFilterId,
+                        migratedLocal.Stage,
+                        migratedLocal.Mode,
+                        migratedLocal.ExecutionOrder,
+                        migratedLocal.FilterAttributes),
+                    cancellationToken);
+            }
+            else
+            {
+                await stepRepository.ReassignPluginTypeAsync(
+                    migration.Step.Id,
+                    pluginTypeId,
+                    cancellationToken);
+            }
+
+            Report(reportProgress, PluginDeploymentOperation.Migrated, "step", migratedLocal.Name);
+            return migration.Step.Id;
+        }
+
         if (deployment.Comparison is { RequiresCreate: false, RequiresUpdate: false })
         {
             return deployment.Comparison.Remote!.Id;

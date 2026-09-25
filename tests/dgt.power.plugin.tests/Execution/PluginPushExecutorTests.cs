@@ -339,14 +339,40 @@ public class PluginPushExecutorTests
         });
         var assembly = Assembly(version: "2.0.0.0") with
         {
-            PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
+            PluginTypes =
+            [
+                new LocalPluginType(
+                    "MyPlugin",
+                    "MyPlugin",
+                    string.Empty,
+                    true,
+                    [
+                        new LocalPluginStep(
+                            "Legacy step",
+                            SdkMessageProcessingStep.Options.Mode.Synchronous,
+                            "Create",
+                            SdkMessageProcessingStep.Options.Stage.PostOperation,
+                            "none",
+                            "none",
+                            null,
+                            1,
+                            [
+                                new LocalPluginStepImage(
+                                    SdkMessageProcessingStepImage.Options.ImageType.PreImage,
+                                    "Legacy image",
+                                    "LegacyImage",
+                                    "Target",
+                                    null)
+                            ])
+                    ])
+            ]
         };
 
         await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
 
         await Assert.That(console.Output).Contains("MyPlugin Create");
         await Assert.That(console.Output).Contains("Legacy step Migrate");
-        await Assert.That(console.Output).Contains("Legacy image Migrate");
+        await Assert.That(console.Output).Contains("Legacy image Unchanged");
         await Assert.That(console.Output).Contains("Outdated assembly MyPlugins v1.0.0.0 will be deleted");
     }
 
@@ -496,49 +522,6 @@ public class PluginPushExecutorTests
         var all = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(all.Entities.Count).IsEqualTo(1);
         await Assert.That(all.Entities[0].Id).IsEqualTo(id);
-    }
-
-    [Test]
-    public async Task ProcessAssemblyAsync_UpgradeWithUndeclaredPluginType_RetainsOutdatedAssemblyAndReportsReason()
-    {
-        var (service, executor, console) = CreateExecutorWithConsole();
-        var oldAssemblyId = Guid.NewGuid();
-        var undeclaredTypeId = Guid.NewGuid();
-        var undeclaredStepId = Guid.NewGuid();
-        service.Create(new PluginAssembly(oldAssemblyId)
-        {
-            Name = "MyPlugins",
-            Version = "1.0.0.0",
-            Content = "b2xk",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
-        });
-        service.Create(new PluginType(undeclaredTypeId)
-        {
-            TypeName = "Contoso.UndeclaredPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, oldAssemblyId)
-        });
-        service.Create(new SdkMessageProcessingStep(undeclaredStepId)
-        {
-            Name = "Undeclared step",
-            EventHandler = new EntityReference(PluginType.EntityLogicalName, undeclaredTypeId)
-        });
-        var assembly = Assembly(version: "2.0.0.0") with
-        {
-            PluginTypes = [new LocalPluginType(
-                "Contoso.UndeclaredPlugin",
-                "Contoso.UndeclaredPlugin",
-                string.Empty,
-                false,
-                [])]
-        };
-
-        await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: false));
-
-        await Assert.That(service.Retrieve(PluginAssembly.EntityLogicalName, oldAssemblyId, new ColumnSet(true))).IsNotNull();
-        await Assert.That(service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, undeclaredStepId, new ColumnSet(true))).IsNotNull();
-        await Assert.That(console.Output).Contains("Outdated assembly MyPlugins v1.0.0.0 cannot be deleted automatically because");
-        await Assert.That(console.Output).Contains("1 plugin type with undeclared step registrations");
     }
 
     [Test]

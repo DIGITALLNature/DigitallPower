@@ -48,7 +48,7 @@ public sealed class PluginPushExecutor(
             return assemblyId;
         }
 
-        var typeIds = await typeExecutor.ApplyAsync(
+        await typeExecutor.ApplyAsync(
             plan.PluginTypes,
             assemblyId,
             reportProgress,
@@ -70,7 +70,6 @@ public sealed class PluginPushExecutor(
 
         await outdatedAssemblyMigrator.ApplyAsync(
             plan.OutdatedAssemblies,
-            typeIds,
             reportProgress,
             cancellationToken);
         return assemblyId;

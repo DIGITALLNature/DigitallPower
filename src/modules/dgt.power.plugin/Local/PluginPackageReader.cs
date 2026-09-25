@@ -1,8 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using dgt.power.common.Extensions;
 using NuGet.Packaging;
@@ -76,11 +74,7 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
                 fileStream.CopyTo(tempFile);
             }
 
-            var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
-                .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PluginPackageReader).Assembly.Location)!, "*.dll"))
-                .Concat(Directory.GetFiles(tempPath, "*.dll"))
-                .ToList();
-            using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+            using var loadContext = MetadataLoadContextFactory.Create(tempPath);
 
             foreach (var dll in Directory.GetFiles(tempPath, "*.dll"))
             {

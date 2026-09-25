@@ -185,7 +185,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
-| `research-plugin-step-secure-configuration.md` | research | Unsecure step configuration is declarative; secure configuration is a separate environment-secret record that cross-train replacement must preserve by reassigning matching steps |
+| `research-plugin-step-secure-configuration.md` | research | Both step configuration fields are environment-provisioned state; cross-train replacement preserves matching step associations by reassignment |
+| `research-metadata-load-context-resolver.md` | research | Metadata resolver deduplicates DLL filenames and prioritizes runtime, target, then module paths |
 | `research-sdk-message-filter-secondary-entity.md` | research | Entity-scoped SDK message filters require a null secondary-entity predicate for `none`/empty declarations |
 | `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command drops historical registration namespaces in favor of `Digitall.Plugins.Registration` 2.0.0+ |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |

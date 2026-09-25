@@ -152,7 +152,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             foreach (var step in type.Steps)
             {
                 var stepNode = typeNode.AddNode(
-                    $"{Markup.Escape(step.Comparison.Local.Name)} {ActionMarkup(StepStatus(step.Comparison))}");
+                    $"{Markup.Escape(step.Comparison.Local.Name)} {ActionMarkup(step.MigrationSource is null ? StepStatus(step.Comparison) : "Migrate")}");
                 foreach (var image in step.Images.Comparisons)
                 {
                     stepNode.AddNode(
@@ -191,20 +191,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
                     $"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Unchanged")}");
             }
 
-            foreach (var customApiId in type.MigratedCustomApiIds)
-            {
-                typeNode.AddNode($"Custom API {customApiId} {ActionMarkup("Migrate")}");
-            }
-
-            foreach (var step in type.MigratedSteps)
-            {
-                var stepNode = typeNode.AddNode(
-                    $"{Markup.Escape(step.Step.Name)} {ActionMarkup("Migrate")}");
-                foreach (var image in step.Images)
-                {
-                    stepNode.AddNode($"{Markup.Escape(image.Name)} {ActionMarkup("Migrate")}");
-                }
-            }
         }
 
         foreach (var type in plan.Deletions)
@@ -250,17 +236,8 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     {
         foreach (var assembly in outdatedAssemblies.Assemblies)
         {
-            if (assembly.CanDelete)
-            {
-                console.MarkupLine(
-                    $"[red]{Emoji.Known.Minus} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} will be deleted[/]");
-                continue;
-            }
-
-            var pluginTypeLabel = assembly.RetainedPluginTypeCount == 1 ? "plugin type" : "plugin types";
             console.MarkupLine(
-                $"[yellow]{Emoji.Known.Warning} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} cannot be deleted automatically because it contains " +
-                $"{assembly.RetainedPluginTypeCount} {pluginTypeLabel} with undeclared step registrations[/]");
+                $"[red]{Emoji.Known.Minus} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} will be deleted[/]");
         }
     }
 

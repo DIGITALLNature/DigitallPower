@@ -12,4 +12,5 @@ public sealed record PluginStepDeployment(
     ResolvedSdkMessage? Message,
     PluginStepImageComparisonSet Images,
     IReadOnlyList<LocalPluginStepImage> UnchangedImages,
-    SolutionLink? Solution);
+    SolutionLink? Solution,
+    MigratedPluginStep? MigrationSource = null);

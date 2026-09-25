@@ -29,6 +29,14 @@ public interface IPluginAssemblyRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Lists standalone sandboxed assemblies with the given name. Package-owned assemblies are
+    /// excluded because they follow the package lifecycle.
+    /// </summary>
+    Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(
+        string name,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Lists every other sandboxed plugin assembly registered under the given name - i.e. the
     /// versions superseded by an Upgrade - excluding <paramref name="excludeId"/> (the just
     /// created/updated assembly).

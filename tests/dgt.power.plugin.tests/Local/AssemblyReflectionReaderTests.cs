@@ -13,10 +13,7 @@ namespace dgt.power.plugin.tests.Local;
 
 public class AssemblyReflectionReaderTests
 {
-    private sealed class PlainPlugin : IPlugin
-    {
-        public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
-    }
+    private sealed class PlainPlugin;
 
     [PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
     private sealed class ExplicitOrderPlugin : IPlugin
@@ -25,10 +22,7 @@ public class AssemblyReflectionReaderTests
     }
 
     [LegacyPluginRegistration]
-    private sealed class LegacyRegistrationPlugin : IPlugin
-    {
-        public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
-    }
+    private sealed class LegacyRegistrationPlugin;
 
     [Test]
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
@@ -49,14 +43,12 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
-    public async Task BuildPluginType_TypeWithoutRegistrationAttribute_PrintsHint()
+    public async Task EnsureAllPluginTypesDeclared_UndeclaredPluginType_Throws()
     {
-        using var console = new TestConsole();
-        var reader = new AssemblyReflectionReader(console);
+        var pluginType = new LocalPluginType("Contoso.Plugin", "Contoso.Plugin", string.Empty, false, []);
 
-        reader.BuildPluginType(typeof(PlainPlugin));
-
-        await Assert.That(console.Output).Contains(nameof(PlainPlugin));
+        await Assert.That(() => AssemblyReflectionReader.EnsureAllPluginTypesDeclared([pluginType]))
+            .ThrowsExactly<AssemblyException>();
     }
 
     [Test]
@@ -82,7 +74,6 @@ public class AssemblyReflectionReaderTests
         {
             await Assert.That(result.HasRegistrationAttribute).IsFalse();
             await Assert.That(result.Steps).IsEmpty();
-            await Assert.That(console.Output).Contains("has no registration attribute");
         }
     }
 
@@ -90,9 +81,8 @@ public class AssemblyReflectionReaderTests
     public async Task Read_ExternalRegistrationDependency_DiscoversRegistrationWithoutResolverPath()
     {
         using var console = new TestConsole();
-        var resolverPaths = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
-            .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(AssemblyReflectionReader).Assembly.Location)!, "*.dll"));
-        using var metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(resolverPaths));
+        using var metadataLoadContext = MetadataLoadContextFactory.Create(
+            Path.GetDirectoryName(typeof(AssemblyReflectionReaderTests).Assembly.Location)!);
 
         var result = new AssemblyReflectionReader(console).Read(
             typeof(AssemblyReflectionReaderTests).Assembly.Location,

@@ -137,4 +137,20 @@ public class SdkMessageRepositoryTests
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.MessageFilterId).IsEqualTo(nullSecondaryFilterId);
     }
+
+    [Test]
+    public async Task ResolveAsync_SecondaryEntityUnspecified_MatchesNoneSecondaryEntity()
+    {
+        var service = CreateService();
+        var messageId = Guid.NewGuid();
+        var filterId = Guid.NewGuid();
+        service.Create(new SdkMessage(messageId) { Name = "Create" });
+        service.Create(Filter(filterId, messageId, "account", "none"));
+        var repository = new SdkMessageRepository(service);
+
+        var result = await repository.ResolveAsync("Create", "account", "none");
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!.MessageFilterId).IsEqualTo(filterId);
+    }
 }

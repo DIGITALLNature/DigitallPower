@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using dgt.power.common.Extensions;
@@ -45,6 +44,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var (managedIdentityClientId, managedIdentityTenantId) = ParseAssemblyLevelAttributes(assembly);
 
             var localPluginTypes = pluginTypes.Select(BuildPluginType).ToList();
+            EnsureAllPluginTypesDeclared(localPluginTypes);
             foreach (var pluginType in localPluginTypes)
             {
                 LocalPluginStepValidator.Validate(pluginType);
@@ -139,14 +139,20 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
             steps.AddRange(BuildRegistrationSteps(pluginType));
         }
-        else
-        {
-            console.MarkupLine(CultureInfo.InvariantCulture,
-                "[yellow]Hint:[/] plugin type [bold]{0}[/] has no registration attribute - its steps (if any) must be managed manually. Did you forget to add one?",
-                Markup.Escape(pluginType.FullName!));
-        }
-
         return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, hasRegistrationAttribute, steps);
+    }
+
+    internal static void EnsureAllPluginTypesDeclared(IReadOnlyList<LocalPluginType> pluginTypes)
+    {
+        ArgumentNullException.ThrowIfNull(pluginTypes);
+
+        var undeclaredPluginType = pluginTypes.FirstOrDefault(type => !type.HasRegistrationAttribute);
+        if (undeclaredPluginType is not null)
+        {
+            throw new AssemblyException(
+                $"Plugin type '{undeclaredPluginType.TypeName}' has no supported registration attribute. " +
+                "plugin push requires fully declarative plugin registrations.");
+        }
     }
 
     private static LocalPluginStep? BuildDataProviderStep(Type pluginType, CustomAttributeData customAttribute)

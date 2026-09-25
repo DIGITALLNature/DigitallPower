@@ -2,8 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using dgt.power.common;
 using dgt.power.common.Exceptions;
 using dgt.power.plugin.Repositories;
@@ -151,11 +149,7 @@ public class PluginPushCommand(
         }
 
         var targetDirectory = Path.GetDirectoryName(Path.GetFullPath(target))!;
-        var env = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
-            .Concat(Directory.GetFiles(Path.GetDirectoryName(typeof(PluginPushCommand).Assembly.Location)!, "*.dll"))
-            .Concat(Directory.GetFiles(targetDirectory, "*.dll"))
-            .ToList();
-        using var loadContext = new MetadataLoadContext(new PathAssemblyResolver(env));
+        using var loadContext = MetadataLoadContextFactory.Create(targetDirectory);
 
         var assembly = new AssemblyReflectionReader(Console).Read(target, loadContext);
         if (assembly is null)

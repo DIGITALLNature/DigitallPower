@@ -14,19 +14,16 @@ public sealed class OutdatedAssemblyMigrator(
 {
     public Task ApplyAsync(
         OutdatedAssemblyDeployment plan,
-        IReadOnlyDictionary<string, Guid> replacementTypeIds,
         Action<PluginDeploymentProgress>? reportProgress = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        ArgumentNullException.ThrowIfNull(replacementTypeIds);
 
-        return ApplyCoreAsync(plan, replacementTypeIds, reportProgress, cancellationToken);
+        return ApplyCoreAsync(plan, reportProgress, cancellationToken);
     }
 
     private async Task ApplyCoreAsync(
         OutdatedAssemblyDeployment plan,
-        IReadOnlyDictionary<string, Guid> replacementTypeIds,
         Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
@@ -34,26 +31,10 @@ public sealed class OutdatedAssemblyMigrator(
         {
             foreach (var type in assembly.Types)
             {
-                if (type.Migration.HasReplacement &&
-                    replacementTypeIds.TryGetValue(type.Migration.TypeName, out var replacementTypeId))
+                foreach (var customApiId in type.UnlinkCustomApiIds)
                 {
-                    foreach (var customApiId in type.CustomApiIds)
-                    {
-                        await customApiRepository.LinkPluginTypeAsync(
-                            customApiId,
-                            replacementTypeId,
-                            cancellationToken);
-                        Report(reportProgress, PluginDeploymentOperation.Migrated, "Custom API", customApiId.ToString());
-                    }
-
-                    foreach (var step in type.MigrateSteps)
-                    {
-                        await stepRepository.ReassignPluginTypeAsync(
-                            step.Step.Id,
-                            replacementTypeId,
-                            cancellationToken);
-                        Report(reportProgress, PluginDeploymentOperation.Migrated, "step", step.Step.Name);
-                    }
+                    await customApiRepository.UnlinkPluginTypeAsync(customApiId, cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Unlinked, "Custom API", customApiId.ToString());
                 }
 
                 foreach (var stepId in type.DeleteStepIds)
@@ -66,15 +47,12 @@ public sealed class OutdatedAssemblyMigrator(
                 Report(reportProgress, PluginDeploymentOperation.Deleted, "plugin type", type.Migration.TypeName);
             }
 
-            if (assembly.CanDelete)
-            {
-                await assemblyRepository.DeleteAsync(assembly.Assembly.Id, cancellationToken);
-                Report(
-                    reportProgress,
-                    PluginDeploymentOperation.Deleted,
-                    "assembly",
-                    assembly.Assembly.Identity);
-            }
+            await assemblyRepository.DeleteAsync(assembly.Assembly.Id, cancellationToken);
+            Report(
+                reportProgress,
+                PluginDeploymentOperation.Deleted,
+                "assembly",
+                assembly.Assembly.Identity);
         }
     }
 

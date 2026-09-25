@@ -30,10 +30,26 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         PluginPushOptions options,
         CancellationToken cancellationToken)
     {
-        var remote = await repositories.Assemblies.FindForDeploymentAsync(
+        var standaloneAssemblies = await repositories.Assemblies.ListStandaloneByNameAsync(
             assembly.Name,
-            assembly.Version,
             cancellationToken);
+        if (standaloneAssemblies.Count > 1)
+        {
+            throw new InvalidOperationException(
+                $"Standalone deployment of '{assembly.Name}' is unsupported because {standaloneAssemblies.Count} " +
+                $"same-name {nameof(assembly)} version trains exist: {string.Join(", ", standaloneAssemblies.Select(candidate => candidate.Identity))}. " +
+                $"Remove the extra standalone {nameof(assembly)} records before pushing.");
+        }
+
+        var remote = standaloneAssemblies.SingleOrDefault();
+        if (remote is null)
+        {
+            remote = await repositories.Assemblies.FindForDeploymentAsync(
+                assembly.Name,
+                assembly.Version,
+                cancellationToken);
+        }
+
         var assemblyComparison = new AssemblyComparison(assembly, remote);
         return await BuildAssemblyCoreAsync(
             assembly,
@@ -173,6 +189,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(localTypes);
+        AssemblyReflectionReader.EnsureAllPluginTypesDeclared(localTypes);
 
         return BuildPluginTypesCoreAsync(assemblyId, localTypes, solutionUniqueName, cancellationToken);
     }
@@ -186,13 +203,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         var remoteTypes = assemblyId is { } existingAssemblyId
             ? await repositories.Types.ListByAssemblyAsync(existingAssemblyId, cancellationToken)
             : [];
-        var ignoredTypeNames = localTypes
-            .Where(type => !type.HasRegistrationAttribute)
-            .Select(type => type.TypeName)
-            .ToHashSet(StringComparer.Ordinal);
-        var registeredTypes = localTypes.Where(type => type.HasRegistrationAttribute).ToList();
-        var managedRemoteTypes = remoteTypes.Where(type => !ignoredTypeNames.Contains(type.TypeName)).ToList();
-        var comparisonSet = PluginRegistrationComparer.ComparePluginTypes(registeredTypes, managedRemoteTypes);
+        var comparisonSet = PluginRegistrationComparer.ComparePluginTypes(localTypes, remoteTypes);
         var typeItems = new List<PluginTypeDeploymentItem>();
 
         foreach (var typeComparison in comparisonSet.Comparisons)
@@ -251,7 +262,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             }
 
             var customApi = await BuildCustomApiAsync(typeComparison, cancellationToken);
-            typeItems.Add(new PluginTypeDeploymentItem(typeComparison, steps, deleteSteps, customApi, [], []));
+            typeItems.Add(new PluginTypeDeploymentItem(typeComparison, steps, deleteSteps, customApi));
         }
 
         var deleteTypes = new List<PluginTypeDeletion>();
@@ -358,13 +369,6 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             return new OutdatedAssemblyDeployment([]);
         }
 
-        var registeredReplacements = replacementTypes
-            .Where(type => type.HasRegistrationAttribute)
-            .ToList();
-        var undeclaredTypeNames = replacementTypes
-            .Where(type => !type.HasRegistrationAttribute)
-            .Select(type => type.TypeName)
-            .ToHashSet(StringComparer.Ordinal);
         var assemblyPlans = new List<OutdatedAssemblyDeploymentItem>();
 
         foreach (var outdated in outdatedAssemblies)
@@ -372,9 +376,8 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             var outdatedTypes = await repositories.Types.ListByAssemblyAsync(outdated.Id, cancellationToken);
             var migrations = PluginRegistrationComparer.CompareOutdatedTypes(
                 outdatedTypes,
-                registeredReplacements);
+                replacementTypes);
             var typeDeployments = new List<OutdatedTypeDeployment>();
-            var retainedPluginTypeCount = 0;
 
             foreach (var migration in migrations)
             {
@@ -387,46 +390,42 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 var linkedApis = await repositories.CustomApis.ListLinkedToPluginTypeAsync(
                     migration.OldTypeId,
                     cancellationToken);
-                if (!migration.HasReplacement &&
-                    undeclaredTypeNames.Contains(migration.TypeName) &&
-                    dependentStepIds.Count > 0)
-                {
-                    retainedPluginTypeCount++;
-                    continue;
-                }
-
-                var replacement = registeredReplacements.Find(
+                var replacement = replacementTypes.FirstOrDefault(
                     type => type.TypeName == migration.TypeName);
 
                 IReadOnlyList<MigratedPluginStep> migrateSteps = [];
-                IReadOnlyList<Guid> deleteStepIds;
-                if (replacement is null)
-                {
-                    deleteStepIds = dependentStepIds;
-                }
-                else
+                Guid? desiredCustomApiId = null;
+                if (replacement is not null)
                 {
                     var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(replacement.Steps, oldSteps);
-                    migrateSteps = await Task.WhenAll(stepComparisonSet.Deletions.Select(async step =>
+                    migrateSteps = await Task.WhenAll(stepComparisonSet.Comparisons
+                        .Where(comparison => comparison.Remote is not null)
+                        .Select(async comparison =>
                         new MigratedPluginStep(
-                            step,
-                            await repositories.Images.ListByStepAsync(step.Id, cancellationToken))));
-                    deleteStepIds = dependentStepIds
-                        .Where(id => !migrateSteps.Select(step => step.Step.Id).Contains(id))
-                        .ToList();
+                            comparison.Remote!,
+                            await repositories.Images.ListByStepAsync(comparison.Remote!.Id, cancellationToken))));
+
+                    if (!string.IsNullOrEmpty(replacement.CustomApi))
+                    {
+                        desiredCustomApiId = await repositories.CustomApis.FindIdByUniqueNameAsync(
+                            replacement.CustomApi,
+                            cancellationToken);
+                    }
                 }
 
+                var deleteStepIds = dependentStepIds
+                    .Where(id => !migrateSteps.Select(step => step.Step.Id).Contains(id))
+                    .ToList();
                 typeDeployments.Add(new OutdatedTypeDeployment(
                     migration,
-                    linkedApis,
+                    linkedApis.Where(id => id != desiredCustomApiId).ToList(),
                     migrateSteps,
                     deleteStepIds));
             }
 
             assemblyPlans.Add(new OutdatedAssemblyDeploymentItem(
                 outdated,
-                typeDeployments,
-                retainedPluginTypeCount));
+                typeDeployments));
         }
 
         return new OutdatedAssemblyDeployment(assemblyPlans);
@@ -449,10 +448,43 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 return type;
             }
 
+            var steps = type.Steps.Select(step =>
+            {
+                var migration = migrations
+                    .SelectMany(item => item.MigrateSteps)
+                    .FirstOrDefault(candidate =>
+                        !PluginRegistrationComparer.ComparePluginSteps(
+                            [step.Comparison.Local],
+                            [candidate.Step]).Comparisons[0].RequiresCreate);
+                if (migration is null)
+                {
+                    return step;
+                }
+
+                var comparison = PluginRegistrationComparer.ComparePluginSteps(
+                    [step.Comparison.Local],
+                    [migration.Step]).Comparisons[0];
+                var images = PluginRegistrationComparer.ComparePluginStepImages(
+                    step.Comparison.Local.Images,
+                    migration.Images);
+                var unchangedImages = step.Comparison.Local.Images
+                    .Where(image => migration.Images.Any(remote =>
+                        remote.Name == image.Name &&
+                        remote.ImageType == image.ImageType) &&
+                        images.Comparisons.All(imageComparison => imageComparison.Local != image))
+                    .ToList();
+                return step with
+                {
+                    Comparison = comparison,
+                    Images = images,
+                    UnchangedImages = unchangedImages,
+                    MigrationSource = migration
+                };
+            }).ToList();
+
             return type with
             {
-                MigratedCustomApiIds = migrations.SelectMany(migration => migration.CustomApiIds).ToList(),
-                MigratedSteps = migrations.SelectMany(migration => migration.MigrateSteps).ToList()
+                Steps = steps
             };
         }).ToList();
         return new PluginTypeDeployment(types, deployment.Deletions);

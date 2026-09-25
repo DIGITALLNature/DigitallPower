@@ -84,6 +84,14 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             .ToList();
     }
 
+    public async Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(
+        string name,
+        CancellationToken cancellationToken = default)
+    {
+        var assemblies = await ListByNameCoreAsync(name, cancellationToken);
+        return assemblies.Where(assembly => assembly.PackageId is null).ToList();
+    }
+
     public async Task<IReadOnlyList<RemoteAssembly>> ListOutdatedAsync(string name, Guid excludeId, CancellationToken cancellationToken = default)
     {
         var query = new QueryExpression(PluginAssembly.EntityLogicalName)

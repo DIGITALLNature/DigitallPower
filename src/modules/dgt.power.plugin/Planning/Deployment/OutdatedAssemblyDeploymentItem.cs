@@ -7,8 +7,4 @@ namespace dgt.power.plugin.Planning.Deployment;
 
 public sealed record OutdatedAssemblyDeploymentItem(
     RemoteAssembly Assembly,
-    IReadOnlyList<OutdatedTypeDeployment> Types,
-    int RetainedPluginTypeCount)
-{
-    public bool CanDelete => RetainedPluginTypeCount == 0;
-}
+    IReadOnlyList<OutdatedTypeDeployment> Types);

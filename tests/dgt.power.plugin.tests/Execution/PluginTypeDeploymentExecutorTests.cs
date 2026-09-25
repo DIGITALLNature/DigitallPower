@@ -300,29 +300,16 @@ public class PluginTypeDeploymentExecutorTests
     }
 
     [Test]
-    public async Task ApplyAsync_UnregisteredType_IsIgnoredAndPreservesExistingRegistration()
+    public async Task ApplyAsync_UndeclaredType_Throws()
     {
-        var (service, executor, console) = CreateExecutorWithConsole();
+        var (_, executor, _) = CreateExecutorWithConsole();
         var assemblyId = Guid.NewGuid();
-        var typeId = Guid.NewGuid();
-        service.Create(new PluginType(typeId)
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
-        });
 
-        await executor.ApplyAsync(
-            assemblyId,
-            [new LocalPluginType("MyPlugin", "MyPlugin", "new_api", false, [])],
-            new PluginPushOptions(null, DryRun: false));
-
-        var existing = service.Retrieve(PluginType.EntityLogicalName, typeId, new ColumnSet(true)).ToEntity<PluginType>();
-        using (Assert.Multiple())
-        {
-            await Assert.That(existing.Id).IsEqualTo(typeId);
-            await Assert.That(console.Output).DoesNotContain("Create PluginType");
-            await Assert.That(console.Output).DoesNotContain("Link Custom API");
-        }
+        await Assert.That(async () => await executor.ApplyAsync(
+                assemblyId,
+                [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, false, [])],
+                new PluginPushOptions(null, DryRun: false)))
+            .ThrowsExactly<AssemblyException>();
     }
 
     [Test]

@@ -583,6 +583,8 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 | `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
+Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
+with manually maintained plugin registrations must use the legacy `push` command.
 
 ##### Step configuration
 
@@ -608,7 +610,7 @@ are required.
 messages fail before Dataverse changes occur.
 For assembly upgrades, the tree represents the effective replacement-assembly state, including
 steps and images migrated from the superseded assembly. A separate message then states whether
-the outdated assembly will be deleted or retained.
+the outdated assembly will be deleted.
 
 ##### Solution membership
 
@@ -621,17 +623,15 @@ the same section confirms that no membership additions are needed.
 
 Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
 require `--publisher-prefix`. Existing packages and same-version standalone assemblies are updated
-only when their content differs. Package version differences alone do not cause an update. For
-standalone assemblies, a major or minor version difference is handled as an upgrade; build/revision
-changes update the existing assembly when the DLL content differs.
-When stale standalone assemblies with the same name exist, the command selects the highest
-semantic assembly version.
+only when their content differs. Package version differences alone do not cause an update. A
+standalone assembly is updated in place when its major/minor version matches the single existing
+same-name standalone assembly; build/revision changes in either direction are in-place updates.
 
 When a local assembly's major or minor version differs, the command creates a
-replacement, migrates matching Custom API and plugin step references, then removes superseded
-assemblies and their remaining registrations. If an outdated assembly contains plugin types with
-undeclared step registrations, it is retained instead and the deployment plan explains why it
-cannot be deleted automatically. Use `--dry-run` to preview either outcome.
+replacement, migrates matching declared plugin steps to preserve their environment configuration,
+then removes the superseded assembly and registrations. More than one same-name standalone
+assembly is unsupported: `plugin push` fails before writing and requires manual cleanup. Use
+`--dry-run` to preview the supported update or replacement outcome.
 
 ##### Differences from legacy `push`
 
@@ -641,10 +641,9 @@ cannot be deleted automatically. Use `--dry-run` to preview either outcome.
   customizations.
 - **Declared Custom APIs must exist** - a missing Custom API is reported as an error instead of silently
   unlinking an existing handler.
-- **Hint for plugin classes without a registration attribute** - a plain `IPlugin` implementation with no
+- **Fully declarative registrations required** - a concrete `IPlugin` implementation with no
   `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
-  detected and reported with a hint, but is ignored by reconciliation so manually managed registrations are
-  not created, changed, or removed.
+  rejected. Use legacy `push` for manually maintained registrations.
 
 ### `push` — Deploy artifacts
 
