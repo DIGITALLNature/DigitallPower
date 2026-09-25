@@ -60,7 +60,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
-| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
+| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Push** | Push web resources and plugin assemblies directly into a target solution |
@@ -274,6 +274,7 @@ The `solution` branch is designed for commands that act on a single Dataverse so
 |---------|-------------|
 | `solution version <Solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version (default: `--revision`) |
 | `solution lint <Solution> -c ./lint.config.json` | Run the enabled lint rules against the given solution |
+| `solution copy-components <Target> --source <Sol1,Sol2>` | Copy solution components from one or more source solutions into an unmanaged target solution |
 
 ```bash
 dgtp solution version sample_solution --minor
@@ -329,6 +330,33 @@ dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.
 
 # CI: only NEW findings (not in the baseline) fail the build
 dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.sarif.json --fail-on Error
+```
+
+#### `copy-components` — copy solution components between solutions
+
+Copies the `solutioncomponent` rows of one or more source solutions into an unmanaged target solution, using the same `AddSolutionComponentRequest` Dataverse SDK message a maker's "Add existing" action uses under the hood.
+
+| Option | Description |
+|--------|-------------|
+| `-s, --source <Sol1,Sol2>` | Comma-separated unique names of the solutions to copy components from (required) |
+| `--dry-run` | Print the planned changes without adding any component to the target solution |
+| `--raw` | Disable best-practice normalization: mirror each source component's own root component behavior and skip the managed-active-layer filter |
+
+By default (best-practice mode, no `--raw`), the command avoids two common causes of solution bloat:
+
+- **Managed tables are never copied completely.** An unmanaged (first-party) table is always added with `RootComponentBehavior = IncludeSubcomponents` (complete); a managed (e.g. ISV-owned) table is added as a skeleton (`DoNotIncludeSubcomponents`) - only its own delta, not the whole table.
+- **A managed component (attribute, form, view, workflow, ...) is only copied if it has its own active customization layer** (its top `msdyn_componentlayer` row is the synthetic `Active` layer). A managed component with no active layer is redundant - the managed baseline the target environment already has installed provides it - and is skipped.
+- **`AddRequiredComponents` is always `false`.** This is what keeps model-driven apps (and everything else) from silently pulling in every table/form/view Dataverse considers a "dependency" - only the components explicitly present in the source solution(s) are ever added.
+
+```bash
+# Preview what would be copied, without changing the target solution
+dgtp solution copy-components target_solution --source dev_solution --dry-run
+
+# Copy with best-practice filtering (default)
+dgtp solution copy-components target_solution --source dev_solution_a,dev_solution_b
+
+# Mirror every source component as-is (no managed/active-layer filtering)
+dgtp solution copy-components target_solution --source dev_solution --raw
 ```
 
 ### `import` — Import Dataverse artifacts

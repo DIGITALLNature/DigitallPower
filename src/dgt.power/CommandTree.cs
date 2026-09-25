@@ -156,6 +156,11 @@ internal static class CommandTree
                 .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--fail-on", "Warning")
                 .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--update-baseline")
                 .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--sarif-output", "lint.sarif.json");
+            solution.AddCommand<CopyComponentsCommand>("copy-components")
+                .WithDescription("Copies solution components from one or more source solutions into an unmanaged target solution")
+                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution")
+                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution_a,source_solution_b", "--dry-run")
+                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution", "--raw");
         });
 
         config.AddCommand<CodeGenerationCommand>("codegeneration")
