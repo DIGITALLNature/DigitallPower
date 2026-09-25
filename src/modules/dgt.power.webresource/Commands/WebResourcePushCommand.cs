@@ -74,7 +74,7 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
                     webResourceRepository,
                     solutionRepository,
                     new WebResourceExecutionReporter(Console))
-                .ExecuteAsync(plan, cancellationToken);
+                .ExecuteAsync(plan, settings.PublishMode, cancellationToken);
             Console.MarkupLine(completedOperationCount == 0
                 ? "[green]✔[/] No changes applied"
                 : "[green]✔[/] Deployment completed");

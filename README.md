@@ -758,12 +758,18 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
 - Secure configuration is stored in the `SdkMessageProcessingStepSecureConfig` entity.
 
-### `webresource` — Deploy webresources
+### `webresource` — Manage webresources
+
+Commands for deploying Dataverse webresources.
+
+#### `push` — Deploy webresources
 
 Pushes webresources from a directory or a single file. Directory targets are scanned recursively
 and require an explicit publisher prefix. A solution is used for membership and obsolete-resource
 scope; it does not determine the publisher prefix. Created and updated webresources are published
-together in one request after deployment.
+together in one request after deployment by default.
+
+##### Usage
 
 ```bash
 # Push all supported files below ./webresources
@@ -777,7 +783,19 @@ dgtp webresource push ./webresources/app/main.js \
   --solution ContosoCore
 ```
 
-#### Mapping file
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--solution` | No | Ensures resource membership in the solution and scopes `--delete-obsolete` |
+| `--publisher-prefix` | Directory targets | Prefix used to derive unmapped Dataverse logical names |
+| `--mapping-file` | No | JSON file mapping directory-relative paths to logical names |
+| `--name` | Single-file targets | Explicit Dataverse logical name |
+| `--delete-obsolete` | No | Deletes unmanaged resources in the selected solution that are absent from a directory target |
+| `--dry-run` | No | Renders the complete plan without Dataverse writes |
+| `--publish-mode` | No | `batch` (default) publishes all changed resources together; `single` publishes each resource separately |
+
+##### Mapping file
 
 Use `--mapping-file` when the local build layout does not match the desired Dataverse names:
 
@@ -803,6 +821,8 @@ complete Dataverse webresource logical names:
 
 Mappings override the default `publisherPrefix_/relative/path` naming convention. The schema is
 available at [`schemas/webresource/schema.json`](schemas/webresource/schema.json).
+
+##### Planning and execution
 
 The command first renders the local deployment hierarchy and the resulting Dataverse name for
 each resource:

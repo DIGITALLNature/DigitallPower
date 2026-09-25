@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using dgt.power.webresource.Base;
+using dgt.power.webresource.Execution;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -37,6 +38,10 @@ public class WebResourcePushSettings : WebResourceSettings
     [CommandOption("--dry-run")]
     [Description("Report planned changes without writing to Dataverse")]
     public bool DryRun { get; set; }
+
+    [CommandOption("--publish-mode <Mode>")]
+    [Description("Publish changed resources in one batch or individually; default: Batch")]
+    public WebResourcePublishMode PublishMode { get; set; } = WebResourcePublishMode.Batch;
 
     public override ValidationResult Validate()
     {
