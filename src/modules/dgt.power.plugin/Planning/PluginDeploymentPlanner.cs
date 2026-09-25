@@ -164,14 +164,19 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         var linkManagedIdentity =
             !skipStandaloneDeployment &&
             !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId);
-        var solution = packageOwned
-            ? null
-            : await PlanSolutionLinkAsync(
+        SolutionLink? solution = null;
+        if (!packageOwned)
+        {
+            var existingComponentId = assemblyComparison.RequiresUpgrade
+                ? null
+                : assemblyComparison.Remote?.Id;
+            solution = await PlanSolutionLinkAsync(
                 IPluginAssemblyRepository.ComponentType,
-                assemblyComparison.Remote?.Id,
+                existingComponentId,
                 assembly.Name,
                 options.Solution,
                 cancellationToken);
+        }
 
         return new AssemblyDeploymentPlan(
             assemblyComparison,

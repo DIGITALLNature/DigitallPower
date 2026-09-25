@@ -120,7 +120,7 @@ public sealed class PluginPushExecutor(
                 cancellationToken);
             Report(
                 reportProgress,
-                PluginDeploymentOperation.Linked,
+                PluginDeploymentOperation.Added,
                 "assembly",
                 $"{comparison.Local.Identity} to solution {solution.SolutionUniqueName}");
         }
@@ -214,7 +214,7 @@ public sealed class PluginPushExecutor(
                 cancellationToken);
             Report(
                 reportProgress,
-                PluginDeploymentOperation.Linked,
+                PluginDeploymentOperation.Added,
                 "package",
                 $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
         }

@@ -458,7 +458,7 @@ public class PluginPushExecutorTests
         {
             await Assert.That(console.Output).Contains("Solution membership: TestSolution");
             await Assert.That(console.Output).Contains("Assembly MyPlugins");
-            await Assert.That(console.Output).Contains("Linked assembly MyPlugins v1.0.0.0 to solution TestSolution");
+            await Assert.That(console.Output).Contains("Added assembly MyPlugins v1.0.0.0 to solution TestSolution");
         }
     }
 
@@ -498,7 +498,7 @@ public class PluginPushExecutorTests
         {
             await Assert.That(console.Output).Contains("Solution membership: TestSolution");
             await Assert.That(console.Output).Contains("All managed components are already present");
-            await Assert.That(console.Output).DoesNotContain("Linked assembly MyPlugins v1.0.0.0 to solution TestSolution");
+            await Assert.That(console.Output).DoesNotContain("Added assembly MyPlugins v1.0.0.0 to solution TestSolution");
             await Assert.That(console.Output).Contains("No changes applied");
         }
     }
@@ -522,6 +522,40 @@ public class PluginPushExecutorTests
         var all = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(all.Entities.Count).IsEqualTo(1);
         await Assert.That(all.Entities[0].Id).IsEqualTo(id);
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_Replacement_AddsNewAssemblyToSolutionWhenSourceIsMember()
+    {
+        var (service, executor, console) = CreateExecutorWithConsole();
+        var solutionId = Guid.NewGuid();
+        var sourceAssemblyId = Guid.NewGuid();
+        service.Create(new Solution(solutionId) { UniqueName = "TestSolution" });
+        service.Create(new PluginAssembly(sourceAssemblyId)
+        {
+            Name = "MyPlugins",
+            Version = "1.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = sourceAssemblyId,
+                [SolutionComponent.LogicalNames.SolutionId] =
+                    new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] =
+                    new OptionSetValue(IPluginAssemblyRepository.ComponentType)
+            }
+        });
+
+        await executor.ProcessAssemblyAsync(
+            Assembly(version: "2.0.0.0"),
+            new PluginPushOptions("TestSolution", DryRun: false));
+
+        await Assert.That(console.Output)
+            .Contains("Added assembly MyPlugins v2.0.0.0 to solution TestSolution");
     }
 
     [Test]
@@ -691,7 +725,7 @@ public class PluginPushExecutorTests
         {
             await Assert.That(console.Output).Contains("Solution membership: TestSolution");
             await Assert.That(console.Output).Contains("Package new_MyPackage");
-            await Assert.That(console.Output).Contains("Linked package new_MyPackage to solution TestSolution");
+            await Assert.That(console.Output).Contains("Added package new_MyPackage to solution TestSolution");
         }
     }
 

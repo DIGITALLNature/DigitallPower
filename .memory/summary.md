@@ -183,6 +183,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
 | `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
+| `decision-plugin-confirmation-precedence.md` | decision | Optional per-target plugin push confirmation is overridden by dry-run and non-interactive/CI execution modes |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
 | `research-plugin-step-secure-configuration.md` | research | Both step configuration fields are environment-provisioned state; cross-train replacement preserves matching step associations by reassignment |

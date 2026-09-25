@@ -257,7 +257,8 @@ public class SettingsParsingTests
             "c:/TargetDir/plugin.dll",
             "--solution", "samplesolution",
             "--publisher-prefix", "sample",
-            "--dry-run");
+            "--dry-run",
+            "--confirm");
 
         var settings = (PluginPushSettings)result.Settings!;
 
@@ -265,6 +266,7 @@ public class SettingsParsingTests
         await Assert.That(settings.Solution).IsEqualTo("samplesolution");
         await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
         await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Confirm).IsTrue();
     }
 
     [Test]
@@ -277,6 +279,7 @@ public class SettingsParsingTests
         await Assert.That(settings.Solution).IsNull();
         await Assert.That(settings.PublisherPrefix).IsNull();
         await Assert.That(settings.DryRun).IsFalse();
+        await Assert.That(settings.Confirm).IsFalse();
     }
 
     [Test]

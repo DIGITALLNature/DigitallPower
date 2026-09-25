@@ -28,4 +28,8 @@ public class PluginPushSettings : PluginSettings
     [CommandOption("--dry-run")]
     [Description("Only report what would be created/updated/deleted; do not write anything to Dataverse")]
     public bool DryRun { get; set; }
+
+    [CommandOption("--confirm")]
+    [Description("Prompt for confirmation after rendering each target plan")]
+    public bool Confirm { get; set; }
 }

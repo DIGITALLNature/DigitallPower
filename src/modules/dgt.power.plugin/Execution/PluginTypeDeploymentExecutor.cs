@@ -60,7 +60,7 @@ public sealed class PluginTypeDeploymentExecutor(
                         cancellationToken);
                     Report(
                         reportProgress,
-                        PluginDeploymentOperation.Linked,
+                        PluginDeploymentOperation.Added,
                         "step",
                         $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
                 }

@@ -7,4 +7,11 @@ namespace dgt.power.plugin.Execution;
 /// <param name="Solution">Unique name of the solution new/updated components are added to; <see langword="null"/> to skip.</param>
 /// <param name="DryRun">When <see langword="true"/>, only reports what would happen - no Dataverse writes are performed.</param>
 /// <param name="PublisherPrefix">Publisher customization prefix used to name plugin packages.</param>
-public sealed record PluginPushOptions(string? Solution, bool DryRun, string? PublisherPrefix = null);
+/// <param name="Confirm">When <see langword="true"/>, prompt before deploying each rendered target plan.</param>
+/// <param name="NonInteractive">When <see langword="true"/>, suppress confirmation prompts.</param>
+public sealed record PluginPushOptions(
+    string? Solution,
+    bool DryRun,
+    string? PublisherPrefix = null,
+    bool Confirm = false,
+    bool NonInteractive = false);

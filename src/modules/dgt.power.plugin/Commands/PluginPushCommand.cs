@@ -65,7 +65,12 @@ public class PluginPushCommand(
             return Tracer.End(this, false);
         }
 
-        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix);
+        var options = new PluginPushOptions(
+            settings.Solution,
+            settings.DryRun,
+            settings.PublisherPrefix,
+            settings.Confirm,
+            settings.NonInteractive);
 
         var hadFailure = false;
         foreach (var target in targets)
@@ -189,6 +194,17 @@ public class PluginPushCommand(
         renderer.Render(plan);
         if (options.DryRun)
         {
+            return;
+        }
+
+        if (PluginPushConfirmation.ShouldPrompt(
+                options.Confirm,
+                options.NonInteractive,
+                ExecutionEnvironment.IsCiAgent) &&
+            plan.HasChanges() &&
+            !PluginPushConfirmation.Confirm(Console, targetName))
+        {
+            Console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
         }
 

@@ -568,6 +568,7 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 | `--solution` | No | Ensures package, standalone assembly, and declared plugin step membership in the given solution |
 | `--publisher-prefix` | For `.nupkg` targets | Publisher customization prefix for plugin packages |
 | `--dry-run` | No | Previews the deployment and solution membership plan without writing to Dataverse |
+| `--confirm` | No | Prompts before executing each rendered target plan; ignored by dry-run, non-interactive, and CI execution |
 
 ##### Supported registration attributes
 
@@ -608,6 +609,8 @@ API links, and assembly upgrades. It then shows completed operations, or reports
 are required.
 `--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
 messages fail before Dataverse changes occur.
+`--confirm` prompts after each target plan in interactive sessions; declining leaves that target
+unchanged. Non-interactive and CI execution suppress the prompt.
 For assembly upgrades, the tree represents the effective replacement-assembly state, including
 steps and images migrated from the superseded assembly. A separate message then states whether
 the outdated assembly will be deleted.
