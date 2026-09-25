@@ -11,7 +11,10 @@ Its deployment-plan pipeline should follow the `plugin push` contract more close
 - A complete plan must include solution membership additions and obsolete deletions. These
   operations must be visible to `--dry-run`, not only reported after a real write. Created and
   updated resources are collected and published in one request during execution, but publishing is
-  intentionally not a plan-rendered operation.
+  intentionally not a plan-rendered operation. `--publish-mode batch` is the default; `single`
+  publishes each changed resource separately for comparison or timeout troubleshooting. The
+  completed publish line reports each request duration in seconds; single mode also reports the
+  summed publish duration.
 - Terminal output should have distinct `Plan` and `Execution` phases and explicitly report a
   no-change deployment.
 - The webresource plan renderer follows the plugin renderer’s terminal conventions: the tree root

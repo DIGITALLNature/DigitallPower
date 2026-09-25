@@ -16,6 +16,7 @@ using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
 using dgt.power.solution.Base;
+using dgt.power.webresource.Execution;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
@@ -52,6 +53,7 @@ public class SettingsParsingTests
             "--solution", "samplesolution",
             "--publisher-prefix", "sample",
             "--mapping-file", "mappings.json",
+            "--publish-mode", "single",
             "--delete-obsolete",
             "--dry-run");
 
@@ -62,6 +64,7 @@ public class SettingsParsingTests
         await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
         await Assert.That(settings.MappingFile).IsEqualTo("mappings.json");
         await Assert.That(settings.Name).IsNull();
+        await Assert.That(settings.PublishMode).IsEqualTo(WebResourcePublishMode.Single);
         await Assert.That(settings.DeleteObsolete).IsTrue();
         await Assert.That(settings.DryRun).IsTrue();
     }

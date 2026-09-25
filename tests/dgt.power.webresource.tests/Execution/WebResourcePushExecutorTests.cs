@@ -38,7 +38,7 @@ public class WebResourcePushExecutorTests
             [],
             "ContosoCore");
 
-        var operationCount = await executor.ExecuteAsync(plan);
+        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Batch);
 
         await Assert.That(operationCount).IsEqualTo(4);
         await Assert.That(repository.Created).IsEquivalentTo([local.Name]);
@@ -46,6 +46,7 @@ public class WebResourcePushExecutorTests
         await Assert.That(repository.PublishBatches).Count().IsEqualTo(1);
         await Assert.That(repository.PublishBatches[0]).IsEquivalentTo([repository.CreatedId, updatedId]);
         await Assert.That(solutionRepository.Added).IsEquivalentTo([(repository.CreatedId, "ContosoCore")]);
+        await Assert.That(console.Output).Contains("Published 2 WebResource(s) in");
     }
 
     [Test]
@@ -68,12 +69,52 @@ public class WebResourcePushExecutorTests
             [],
             null);
 
-        var operationCount = await executor.ExecuteAsync(plan);
+        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Batch);
 
         await Assert.That(operationCount).IsZero();
         await Assert.That(repository.Created).IsEmpty();
         await Assert.That(repository.PublishBatches).IsEmpty();
         await Assert.That(solutionRepository.Added).IsEmpty();
+    }
+
+    [Test]
+    public async Task ExecuteAsync_PublishesEachChangedResourceInSingleMode()
+    {
+        var repository = new RecordingWebResourceRepository();
+        var solutionRepository = new RecordingSolutionRepository();
+        using var console = new TestConsole();
+        var executor = new WebResourcePushExecutor(
+            repository,
+            solutionRepository,
+            new WebResourceExecutionReporter(console));
+        var first = CreateLocal("contoso_/first.js");
+        var second = CreateLocal("contoso_/second.js");
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        var plan = new WebResourcePushPlan(
+            [
+                new WebResourcePlanItem(
+                    first,
+                    WebResourceAction.Update,
+                    new RemoteWebResource(firstId, first.Type, first.Name, "old", false),
+                    false),
+                new WebResourcePlanItem(
+                    second,
+                    WebResourceAction.Update,
+                    new RemoteWebResource(secondId, second.Type, second.Name, "old", false),
+                    false)
+            ],
+            [],
+            null);
+
+        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Single);
+
+        await Assert.That(operationCount).IsEqualTo(4);
+        await Assert.That(repository.PublishBatches).Count().IsEqualTo(2);
+        await Assert.That(repository.PublishBatches[0]).Count().IsEqualTo(1);
+        await Assert.That(repository.PublishBatches[1]).Count().IsEqualTo(1);
+        await Assert.That(repository.PublishBatches.SelectMany(batch => batch)).IsEquivalentTo([firstId, secondId]);
+        await Assert.That(console.Output).Contains("Total publish time for 2 WebResource(s)");
     }
 
     private static LocalWebResource CreateLocal(string name) =>

@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using dgt.power.webresource.Output;
 using dgt.power.webresource.Planning;
 using dgt.power.webresource.Repositories;
@@ -14,13 +15,17 @@ public sealed class WebResourcePushExecutor(
 {
     public Task<int> ExecuteAsync(
         WebResourcePushPlan plan,
+        WebResourcePublishMode publishMode,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        return ExecuteCoreAsync(plan, cancellationToken);
+        return ExecuteCoreAsync(plan, publishMode, cancellationToken);
     }
 
-    private async Task<int> ExecuteCoreAsync(WebResourcePushPlan plan, CancellationToken cancellationToken)
+    private async Task<int> ExecuteCoreAsync(
+        WebResourcePushPlan plan,
+        WebResourcePublishMode publishMode,
+        CancellationToken cancellationToken)
     {
         var completedOperationCount = 0;
         var changedResources = new List<(WebResourcePlanItem Item, Guid Id)>();
@@ -47,12 +52,7 @@ public sealed class WebResourcePushExecutor(
         if (changedResources.Count > 0)
         {
             var ids = changedResources.Select(resource => resource.Id).ToArray();
-            await executionReporter.RunAsync(
-                "Publishing WebResources",
-                $"{ids.Length} resource(s)",
-                () => webResourceRepository.PublishAsync(ids, cancellationToken));
-            executionReporter.ReportPublished(ids.Length);
-            completedOperationCount++;
+            completedOperationCount += await PublishAsync(ids, publishMode, cancellationToken);
         }
 
         foreach (var obsolete in plan.Obsolete)
@@ -66,6 +66,49 @@ public sealed class WebResourcePushExecutor(
         }
 
         return completedOperationCount;
+    }
+
+    private async Task<int> PublishAsync(
+        IReadOnlyList<Guid> ids,
+        WebResourcePublishMode publishMode,
+        CancellationToken cancellationToken)
+    {
+        switch (publishMode)
+        {
+            case WebResourcePublishMode.Batch:
+                await PublishBatchAsync(ids, cancellationToken);
+                return 1;
+
+            case WebResourcePublishMode.Single:
+                var totalElapsed = TimeSpan.Zero;
+                foreach (var id in ids)
+                {
+                    totalElapsed += await PublishBatchAsync([id], cancellationToken);
+                }
+
+                executionReporter.ReportPublishTotal(ids.Count, totalElapsed);
+                return ids.Count;
+
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(publishMode),
+                    publishMode,
+                    "Unknown webresource publish mode.");
+        }
+    }
+
+    private async Task<TimeSpan> PublishBatchAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken cancellationToken)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        await executionReporter.RunAsync(
+            ids.Count == 1 ? "Publishing WebResource" : "Publishing WebResources",
+            $"{ids.Count} resource(s)",
+            () => webResourceRepository.PublishAsync(ids, cancellationToken));
+        stopwatch.Stop();
+        executionReporter.ReportPublished(ids.Count, stopwatch.Elapsed);
+        return stopwatch.Elapsed;
     }
 
     private async Task<Guid> ApplyResourceAsync(
