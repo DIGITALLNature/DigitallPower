@@ -183,7 +183,7 @@ public class AssemblyReflectionReaderTests
     [Test]
     public async Task GetStepName_WithExecutionOrder_IncludesOrderInName()
     {
-        var step = new LocalPluginStep("", 0, "Create", 40, "account", "none", null, 5, null, []);
+        var step = new LocalPluginStep("", 0, "Create", 40, "account", "none", null, 5, []);
 
         var result = AssemblyReflectionReader.GetStepName(step, "MyPlugin");
 
@@ -193,7 +193,7 @@ public class AssemblyReflectionReaderTests
     [Test]
     public async Task GetStepName_WithoutExecutionOrder_OmitsOrderFromName()
     {
-        var step = new LocalPluginStep("", 1, "Delete", 20, "none", "none", null, null, null, []);
+        var step = new LocalPluginStep("", 1, "Delete", 20, "none", "none", null, null, []);
 
         var result = AssemblyReflectionReader.GetStepName(step, "MyPlugin");
 

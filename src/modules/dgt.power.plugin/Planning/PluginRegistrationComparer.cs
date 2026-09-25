@@ -154,7 +154,6 @@ public static class PluginRegistrationComparer
     private static bool StepContentDiffers(LocalPluginStep local, RemotePluginStep remote) =>
         remote.Name != local.Name
         || remote.ExecutionOrder != local.ExecutionOrder
-        || remote.Configuration != local.Configuration
         || !AttributesEqual(local.FilterAttributes, remote.FilterAttributes);
 
     private static string NormalizeEntityName(string entityName) =>

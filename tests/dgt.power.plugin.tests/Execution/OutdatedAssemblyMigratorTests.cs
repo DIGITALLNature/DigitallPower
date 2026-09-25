@@ -198,7 +198,7 @@ public class OutdatedAssemblyMigratorTests
                     SdkMessageProcessingStep.Options.Mode.Synchronous,
                     "Create",
                     SdkMessageProcessingStep.Options.Stage.PostOperation,
-                    "none", "none", null, null, null, [])])
+                    "none", "none", null, null, [])])
         };
 
         await migrator.MigrateAsync("MyPlugins", newAssemblyId, replacementTypes, new PluginPushOptions(null, DryRun: false));

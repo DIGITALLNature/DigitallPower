@@ -169,7 +169,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             "none",
             null,
             1,
-            null,
             []);
 
         return step with { Name = GetStepName(step, pluginType.FullName!) };
@@ -194,7 +193,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var mode = GetValue<int>(customAttribute, "mode");
             var stage = GetValue<int>(customAttribute, "stage");
             var executionOrder = GetValue<int?>(customAttribute, "ExecutionOrder") ?? 100;
-            var configuration = GetValue<string>(customAttribute, "Configuration");
 
             var images = new List<LocalPluginStepImage>();
             if (GetValue<bool>(customAttribute, "PreEntityImage"))
@@ -226,7 +224,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 secondaryEntityName,
                 GetArrayValues(customAttribute, "FilterAttributes"),
                 executionOrder,
-                configuration,
                 images);
 
             steps.Add(step with { Name = GetStepName(step, pluginType.FullName!) });

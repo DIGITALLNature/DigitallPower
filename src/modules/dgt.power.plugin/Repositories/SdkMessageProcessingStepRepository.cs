@@ -24,7 +24,6 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
                 SdkMessageProcessingStep.LogicalNames.Stage,
                 SdkMessageProcessingStep.LogicalNames.Rank,
                 SdkMessageProcessingStep.LogicalNames.FilteringAttributes,
-                SdkMessageProcessingStep.LogicalNames.Configuration,
                 SdkMessageProcessingStep.LogicalNames.SdkMessageId,
                 SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId),
             Criteria = new FilterExpression
@@ -69,7 +68,7 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
 
         return new RemotePluginStep(
             step.Id, step.Name!, step.Mode!.Value, messageName, step.Stage!.Value, primaryEntityName, secondaryEntityName,
-            filterAttributes, step.Rank, step.Configuration);
+            filterAttributes, step.Rank);
     }
 
     public Task<Guid> CreateAsync(PluginStepData data, CancellationToken cancellationToken = default)
@@ -121,8 +120,7 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             Mode = new OptionSetValue(data.Mode),
             Rank = data.ExecutionOrder ?? 1,
             AsyncAutoDelete = data.Mode == SdkMessageProcessingStep.Options.Mode.Asynchronous,
-            FilteringAttributesField = data.FilterAttributes is { Count: > 0 } ? string.Join(",", data.FilterAttributes) : null,
-            Configuration = data.Configuration
+            FilteringAttributesField = data.FilterAttributes is { Count: > 0 } ? string.Join(",", data.FilterAttributes) : null
         };
 
         if (data.MessageFilterId is { } messageFilterId)

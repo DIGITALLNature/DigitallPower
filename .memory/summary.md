@@ -181,9 +181,11 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, requires package component definitions for requested solution membership, and rejects all Create pre-images |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
-| `decision-plugin-upgrade-retention-policy.md` | decision | Upgrade declared registrations while retaining and reporting undeclared Dataverse dependencies; no destructive override initially |
+| `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
+| `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
+| `research-plugin-step-secure-configuration.md` | research | Unsecure step configuration is declarative; secure configuration is a separate environment-secret record that cross-train replacement must preserve by reassigning matching steps |
 | `research-sdk-message-filter-secondary-entity.md` | research | Entity-scoped SDK message filters require a null secondary-entity predicate for `none`/empty declarations |
 | `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command drops historical registration namespaces in favor of `Digitall.Plugins.Registration` 2.0.0+ |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |

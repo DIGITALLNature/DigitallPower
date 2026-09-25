@@ -155,7 +155,7 @@ public class PluginTypeDeploymentExecutorTests
         string name = "step", string messageName = "Create", string primaryEntityName = "account",
         int? executionOrder = 1, IReadOnlyList<LocalPluginStepImage>? images = null) =>
         new(name, SdkMessageProcessingStep.Options.Mode.Synchronous, messageName,
-            SdkMessageProcessingStep.Options.Stage.PostOperation, primaryEntityName, "none", null, executionOrder, null,
+            SdkMessageProcessingStep.Options.Stage.PostOperation, primaryEntityName, "none", null, executionOrder,
             images ?? []);
 
     [Test]

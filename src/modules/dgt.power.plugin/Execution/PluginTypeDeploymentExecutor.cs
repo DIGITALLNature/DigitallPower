@@ -125,8 +125,7 @@ public sealed class PluginTypeDeploymentExecutor(
             local.Stage,
             local.Mode,
             local.ExecutionOrder,
-            local.FilterAttributes,
-            local.Configuration);
+            local.FilterAttributes);
 
         if (deployment.Comparison.RequiresCreate)
         {

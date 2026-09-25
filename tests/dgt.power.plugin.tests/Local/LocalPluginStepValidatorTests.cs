@@ -26,7 +26,6 @@ public class LocalPluginStepValidatorTests
                     "none",
                     null,
                     null,
-                    null,
                     [
                         new LocalPluginStepImage(
                             SdkMessageProcessingStepImage.Options.ImageType.PreImage,

@@ -18,5 +18,4 @@ public sealed record LocalPluginStep(
     string SecondaryEntityName,
     IReadOnlyList<string>? FilterAttributes,
     int? ExecutionOrder,
-    string? Configuration,
     IReadOnlyList<LocalPluginStepImage> Images);

@@ -158,9 +158,8 @@ public class PluginComparisonTests
         int stage = 40,
         string primaryEntityName = "account",
         IReadOnlyList<string>? filterAttributes = null,
-        int? executionOrder = 1,
-        string? configuration = null) =>
-        new(name, mode, messageName, stage, primaryEntityName, "none", filterAttributes, executionOrder, configuration, []);
+        int? executionOrder = 1) =>
+        new(name, mode, messageName, stage, primaryEntityName, "none", filterAttributes, executionOrder, []);
 
     [Test]
     public async Task ComparePluginTypes_NoRemoteMatch_ReturnsCreate()
@@ -216,7 +215,7 @@ public class PluginComparisonTests
     public async Task ComparePluginSteps_RemoteMatchNoContentDiff_ReturnsUnchanged()
     {
         var local = Step(name: "step", filterAttributes: ["a", "b"]);
-        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", ["b", "a"], 1, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", ["b", "a"], 1);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -230,7 +229,7 @@ public class PluginComparisonTests
     public async Task ComparePluginSteps_EmptyAndNullFilterAttributesAreEquivalent()
     {
         var local = Step(name: "step", filterAttributes: []);
-        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", null, 1, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "step", 0, "Create", 40, "account", "none", null, 1);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -239,14 +238,13 @@ public class PluginComparisonTests
     }
 
     [Test]
-    [Arguments("step", "renamed", 1, 1, null, null)]
-    [Arguments("step", "step", 1, 2, null, null)]
-    [Arguments("step", "step", 1, 1, "old", "new")]
+    [Arguments("step", "renamed", 1, 1)]
+    [Arguments("step", "step", 1, 2)]
     public async Task ComparePluginSteps_RemoteMatchWithContentDiff_ReturnsUpdate(
-        string localName, string remoteName, int localOrder, int remoteOrder, string? localConfig, string? remoteConfig)
+        string localName, string remoteName, int localOrder, int remoteOrder)
     {
-        var local = Step(name: localName, executionOrder: localOrder, configuration: localConfig);
-        var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", "none", null, remoteOrder, remoteConfig);
+        var local = Step(name: localName, executionOrder: localOrder);
+        var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", "none", null, remoteOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -260,7 +258,7 @@ public class PluginComparisonTests
     public async Task ComparePluginSteps_MatchTreatsEmptyAndNoneEntityNamesAsEqual()
     {
         var local = Step(primaryEntityName: "none");
-        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, string.Empty, "none", null, local.ExecutionOrder, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, string.Empty, "none", null, local.ExecutionOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -274,7 +272,7 @@ public class PluginComparisonTests
     {
         var local = Step(messageName: "create");
         var remote = new RemotePluginStep(
-            Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder, null);
+            Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -287,7 +285,7 @@ public class PluginComparisonTests
     {
         var local = Step() with { SecondaryEntityName = "contact" };
         var remote = new RemotePluginStep(
-            Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder, null);
+            Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -298,7 +296,7 @@ public class PluginComparisonTests
     [Test]
     public async Task ComparePluginSteps_RemoteNoLocalMatch_ReturnsDeletion()
     {
-        var remote = new RemotePluginStep(Guid.NewGuid(), "orphaned", 0, "Create", 40, "account", "none", null, 1, null);
+        var remote = new RemotePluginStep(Guid.NewGuid(), "orphaned", 0, "Create", 40, "account", "none", null, 1);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([], [remote]);
 

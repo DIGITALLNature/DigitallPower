@@ -14,5 +14,4 @@ public sealed record PluginStepData(
     int Stage,
     int Mode,
     int? ExecutionOrder,
-    IReadOnlyList<string>? FilterAttributes,
-    string? Configuration);
+    IReadOnlyList<string>? FilterAttributes);

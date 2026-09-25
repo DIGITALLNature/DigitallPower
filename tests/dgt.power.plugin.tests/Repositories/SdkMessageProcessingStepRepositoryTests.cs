@@ -100,7 +100,7 @@ public class SdkMessageProcessingStepRepositoryTests
         var data = new PluginStepData(
             "step", pluginTypeId, messageId, filterId,
             SdkMessageProcessingStep.Options.Stage.PostOperation, SdkMessageProcessingStep.Options.Mode.Asynchronous,
-            10, ["name"], "config");
+            10, ["name"]);
 
         var id = await repository.CreateAsync(data);
 
@@ -112,7 +112,7 @@ public class SdkMessageProcessingStepRepositoryTests
         await Assert.That(created.Rank).IsEqualTo(10);
         await Assert.That(created.AsyncAutoDelete).IsTrue();
         await Assert.That(created.FilteringAttributesField).IsEqualTo("name");
-        await Assert.That(created.Configuration).IsEqualTo("config");
+        await Assert.That(created.Configuration).IsNull();
     }
 
     [Test]
@@ -123,7 +123,7 @@ public class SdkMessageProcessingStepRepositoryTests
         var data = new PluginStepData(
             "step", Guid.NewGuid(), Guid.NewGuid(), null,
             SdkMessageProcessingStep.Options.Stage.PostOperation, SdkMessageProcessingStep.Options.Mode.Synchronous,
-            null, null, null);
+            null, null);
 
         var id = await repository.CreateAsync(data);
 
@@ -139,18 +139,18 @@ public class SdkMessageProcessingStepRepositoryTests
         var service = CreateService();
         var repository = new SdkMessageProcessingStepRepository(service);
         var id = Guid.NewGuid();
-        service.Create(new SdkMessageProcessingStep(id) { Name = "old" });
+        service.Create(new SdkMessageProcessingStep(id) { Name = "old", Configuration = "existing" });
         var data = new PluginStepData(
             "new", Guid.NewGuid(), Guid.NewGuid(), null,
             SdkMessageProcessingStep.Options.Stage.PostOperation, SdkMessageProcessingStep.Options.Mode.Synchronous,
-            3, ["a", "b"], "cfg");
+            3, ["a", "b"]);
 
         await repository.UpdateAsync(id, data);
 
         var updated = service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, id, new ColumnSet(true)).ToEntity<SdkMessageProcessingStep>();
         await Assert.That(updated.Name).IsEqualTo("new");
         await Assert.That(updated.FilteringAttributesField).IsEqualTo("a,b");
-        await Assert.That(updated.Configuration).IsEqualTo("cfg");
+        await Assert.That(updated.Configuration).IsEqualTo("existing");
     }
 
     [Test]

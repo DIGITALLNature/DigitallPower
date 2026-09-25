@@ -15,5 +15,4 @@ public sealed record RemotePluginStep(
     string PrimaryEntityName,
     string SecondaryEntityName,
     IReadOnlyList<string>? FilterAttributes,
-    int? ExecutionOrder,
-    string? Configuration);
+    int? ExecutionOrder);

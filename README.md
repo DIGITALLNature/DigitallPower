@@ -584,6 +584,14 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 
+##### Step configuration
+
+`plugin push` does not read, write, or reconcile unsecure or secure plugin-step configuration.
+Existing configuration is preserved when a matching step is updated. New steps have no
+configuration until it is provisioned by the target environment's deployment pipeline. Keep
+configuration values in CI/CD secret or environment-variable providers, not registration
+attributes or source-controlled configuration files.
+
 ##### Managed identity
 
 When an assembly has `ManagedIdentityRegistrationAttribute`, `plugin push` finds or creates the
