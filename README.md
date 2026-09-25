@@ -41,6 +41,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [solution](#solution--single-solution-operations)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
+  - [plugin](#plugin--manage-plugin-assembliespackages)
   - [push](#push--deploy-artifacts)
 - [CI/CD Integration](#-cicd-integration)
   - [Client Secret service connection](#client-secret-service-connection)
@@ -63,7 +64,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Push** | Push web resources and plugin assemblies directly into a target solution |
+| **Push** | Push plugin assemblies/packages with `plugin push` and web resources with `push` |
 
 ## 🚀 Installation
 
@@ -607,6 +608,111 @@ language setting* (`usersettings.uilanguageid`), not any per-request parameter. 
 from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
 → Personalization Settings → Language) to match the `language` configured for code generation.
 
+### `plugin` — Manage plugin assemblies/packages
+
+Commands for deploying Dataverse plugin assemblies and packages.
+
+#### `push` — Deploy plugin assemblies/packages
+
+Resource-oriented replacement for the plugin part of the legacy `push` command. Registers a
+single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg` found directly in a
+directory (mixed content in one directory is supported; each file is processed independently).
+
+##### Usage
+
+```bash
+dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
+dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --publisher-prefix contoso --solution mysolution
+dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
+```
+
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--solution` | No | Ensures package, standalone assembly, and declared plugin step membership in the given solution |
+| `--publisher-prefix` | For `.nupkg` targets | Publisher customization prefix for plugin packages |
+| `--dry-run` | No | Previews the deployment and solution membership plan without writing to Dataverse |
+| `--confirm` | No | Prompts before executing each rendered target plan; ignored by dry-run, non-interactive, and CI execution |
+
+##### Supported registration attributes
+
+> **v3 requirement:** `plugin push` supports `Digitall.Plugins.Registration` 2.0.0 or later.
+> Assemblies using legacy registration namespaces are not discovered. Use dgtp v2 to maintain
+> those plugins, or upgrade their registration package before deploying with v3.
+
+| Attribute | Behavior |
+|-----------|----------|
+| `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
+| `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
+| `CustomDataProviderRegistrationAttribute` | Registers data-provider steps for virtual entities |
+| `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
+
+Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
+Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
+with manually maintained plugin registrations must use the legacy `push` command.
+
+##### Step configuration
+
+`plugin push` does not read, write, or reconcile unsecure or secure plugin-step configuration.
+Existing configuration is preserved when a matching step is updated. New steps have no
+configuration until it is provisioned by the target environment's deployment pipeline. Keep
+configuration values in CI/CD secret or environment-variable providers, not registration
+attributes or source-controlled configuration files.
+
+##### Managed identity
+
+When an assembly has `ManagedIdentityRegistrationAttribute`, `plugin push` finds or creates the
+managed identity for its client ID and links it to the assembly. For a package, the first bundled
+assembly with this attribute also determines the package identity. If no tenant ID is declared, the
+environment tenant is used.
+
+##### Planning and execution
+
+Before any writes, the command renders a deployment tree for plugin types, steps, images, Custom
+API links, and assembly upgrades. It then shows completed operations, or reports that no changes
+are required.
+`--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
+messages fail before Dataverse changes occur.
+`--confirm` prompts after each target plan in interactive sessions; declining leaves that target
+unchanged. Non-interactive and CI execution suppress the prompt.
+For assembly upgrades, the tree represents the effective replacement-assembly state, including
+steps and images migrated from the superseded assembly. A separate message then states whether
+the outdated assembly will be deleted.
+
+##### Solution membership
+
+When `--solution` is set, missing package, standalone assembly, and declared step memberships are
+listed below the deployment tree, including in dry-run output. Plugin types, images, Custom APIs,
+and managed identities are not added implicitly. When every managed component is already present,
+the same section confirms that no membership additions are needed.
+
+##### Updates and upgrades
+
+Plugin packages are named using the explicit `<publisher-prefix>_<package-name>` value; DLL-only targets do not
+require `--publisher-prefix`. Existing packages and same-version standalone assemblies are updated
+only when their content differs. Package version differences alone do not cause an update. A
+standalone assembly is updated in place when its major/minor version matches the single existing
+same-name standalone assembly; build/revision changes in either direction are in-place updates.
+
+When a local assembly's major or minor version differs, the command creates a
+replacement, migrates matching declared plugin steps to preserve their environment configuration,
+then removes the superseded assembly and registrations. More than one same-name standalone
+assembly is unsupported: `plugin push` fails before writing and requires manual cleanup. Use
+`--dry-run` to preview the supported update or replacement outcome.
+
+##### Differences from legacy `push`
+
+- **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error
+  if the assembly contains any; replace them with a Custom API.
+- **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
+  customizations.
+- **Declared Custom APIs must exist** - a missing Custom API is reported as an error instead of silently
+  unlinking an existing handler.
+- **Fully declarative registrations required** - a concrete `IPlugin` implementation with no
+  `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
+  rejected. Use legacy `push` for manually maintained registrations.
+
 ### `push` — Deploy artifacts
 
 Pushes a plugin assembly or web resource into a target solution.
@@ -815,7 +921,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, connection management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
@@ -836,6 +942,7 @@ DigitallPower/
 │       ├── dgt.power.export/          # `export` commands
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
+│       ├── dgt.power.plugin/          # `plugin` commands (resource-oriented replacement for `push`, plugin-only)
 │       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
 │       ├── dgt.power.push/            # `push` command
 │       └── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)

@@ -30,8 +30,9 @@ src/
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`; webresource half still pending)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
-    ├── dgt.power.push/         Plugin assembly + webresource deployment
+    ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`); being superseded module-by-module by resource-oriented commands (`plugin push`, planned `webresource push`)
     └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
 ```
 
@@ -85,6 +86,11 @@ src/
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
+| Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Az/pac-style `<resource> <verb>` commands (`dgtp plugin push`) built from scratch alongside the legacy `push` command instead of refactoring it in place; module-local repos/executors are constructed via `new`, not registered in the global DI container |
+| `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` and `Remote` state / `Planning.Comparison` state models / `Planning.Deployment` executable plan models / `Repositories` / `Execution` / `Output` / `Commands` / `Base` |
+| Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
+| Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
+| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` supports only `Digitall.Plugins.Registration` 2.0.0+; historical namespaces remain legacy `push`/dgtp v2 concerns |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
 | Resource-oriented CLI restructuring | `decision-resource-oriented-cli-restructuring.md` | `dgtp <resource> <verb> <target>` shape (mirrors colleague's `dgt.power.plugin`); `dgt.power.solution` is the current module name for the ported linter surface; `analyze`/`maintenance` remain out of scope for this Phase 1; single-solution positional arg replaces `--solutions` list; Sarif.Sdk replaces hand-rolled SARIF POCOs |
@@ -158,7 +164,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 - **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
-- **`Assembly` model** (push module) has mutable-GetHashCode pattern. Not yet refactored.
+- **`Assembly` model** (legacy `push` module) has mutable-GetHashCode pattern. Not yet refactored. The new `dgt.power.plugin` module uses immutable records (`LocalAssembly`, `RemoteAssembly`) instead and does not share this issue.
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
@@ -178,10 +184,25 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-code-quality-patterns.md` | guide | Anti-patterns with canonical fixes (DI downcasts, GetHashCode, covariant arrays) |
 | `guide-connection-command-test-pattern.md` | guide | Connection command tests: reuse the same `ProfileManager` instance, save after seeding, and use `TokenIdentity` plus fake `IXrmConnection` for MSAL branches |
 | `guide-qodana-telemetry-and-doc-analyzer-fixes.md` | guide | Patterns for analyzer-safe telemetry provider disposal, XML docs for inaccessible types, regex naming cleanup, and test-hygiene warnings |
+| `guide-review-feedback-triage.md` | guide | Assess automated review comments against current HEAD and trace plugin deployment claims through parsing, planning, execution, and tests |
 | `implementation-centralized-ci-environment-detection.md` | implementation | ExecutionEnvironment in common; reused by telemetry + codegen |
 | `implementation-tsl-p1-p2-completion.md` | implementation | TSL hardening: diagnostics, options factory, compile gates, test suites |
 | `implementation-registration-attributes.md` | implementation | Push module: all evaluated registration attributes, behavior, and limitations |
-| `implementation-assembly-version-upgrade-migration.md` | implementation | Push module: migrate Steps/CustomAPIs on assembly major/minor version upgrade |
+| `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
+| `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
+| `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, requires package component definitions for requested solution membership, and rejects all Create pre-images |
+| `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
+| `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
+| `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
+| `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
+| `decision-plugin-confirmation-precedence.md` | decision | Optional per-target plugin push confirmation is overridden by dry-run and non-interactive/CI execution modes |
+| `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
+| `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
+| `research-plugin-step-secure-configuration.md` | research | Both step configuration fields are environment-provisioned state; cross-train replacement preserves matching step associations by reassignment |
+| `research-metadata-load-context-resolver.md` | research | Metadata resolver deduplicates DLL filenames and prioritizes runtime, target, then module paths |
+| `research-sdk-message-filter-secondary-entity.md` | research | Entity-scoped SDK message filters require a null secondary-entity predicate for `none`/empty declarations |
+| `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command drops historical registration namespaces in favor of `Digitall.Plugins.Registration` 2.0.0+ |
+| `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |

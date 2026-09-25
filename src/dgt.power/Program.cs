@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Monitor.OpenTelemetry.Exporter;
@@ -12,8 +13,8 @@ using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
-using dgt.power.common;
 using dgt.power.Commands.Complete;
+using dgt.power.common;
 using dgt.power.common.Commands;
 #pragma warning disable IDE0005 // Used in #if RELEASE block
 #pragma warning disable S1128
@@ -53,6 +54,8 @@ if (DotnetSuggestHandler.IsSuggestMode(args))
     return await DotnetSuggestHandler.HandleAsync(args, CommandTree.Register);
 }
 // ─────────────────────────────────────────────────────────────────────────────
+
+Console.OutputEncoding = Encoding.UTF8;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -161,7 +164,6 @@ app.Configure(config =>
     var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
     config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
     CommandTree.Register(config);
-    config.Settings.ApplicationVersion = DgtpActivitySource.GetVersion();
 
     config.SetExceptionHandler((exception, _) =>
     {

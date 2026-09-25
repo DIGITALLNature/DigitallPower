@@ -12,6 +12,7 @@ using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
+using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
 using dgt.power.solution.Base;
@@ -283,6 +284,38 @@ public class SettingsParsingTests
         await Assert.That(settings.NoMigrateCustomApis).IsTrue();
         await Assert.That(settings.DeleteObsolete).IsFalse();
         await Assert.That(settings.Config).IsEqualTo("webresources.json");
+    }
+
+    [Test]
+    public async Task PluginPushSettings_ParsesPositionalArgumentAndOptions()
+    {
+        var result = Parse<PluginPushSettings>(
+            "c:/TargetDir/plugin.dll",
+            "--solution", "samplesolution",
+            "--publisher-prefix", "sample",
+            "--dry-run",
+            "--confirm");
+
+        var settings = (PluginPushSettings)result.Settings!;
+
+        await Assert.That(settings.Target).IsEqualTo("c:/TargetDir/plugin.dll");
+        await Assert.That(settings.Solution).IsEqualTo("samplesolution");
+        await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Confirm).IsTrue();
+    }
+
+    [Test]
+    public async Task PluginPushSettings_Defaults()
+    {
+        var result = Parse<PluginPushSettings>("c:/TargetDir/plugin.dll");
+
+        var settings = (PluginPushSettings)result.Settings!;
+
+        await Assert.That(settings.Solution).IsNull();
+        await Assert.That(settings.PublisherPrefix).IsNull();
+        await Assert.That(settings.DryRun).IsFalse();
+        await Assert.That(settings.Confirm).IsFalse();
     }
 
     [Test]
