@@ -2,14 +2,13 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ComponentModel;
-using dgt.power.common;
 using Spectre.Console.Cli;
 
-namespace dgt.power.maintenance.Model.Settings;
+namespace dgt.power.solution.Base;
 
-public class IncrementSolutionVersionSettings : BaseProgramSettings
+public class SolutionVersionSettings : SolutionSettings
 {
-    [CommandArgument(1, "<Solution>")]
+    [CommandArgument(0, "<Solution>")]
     [Description("The unique name of the solution to increment version")]
     public string Solution { get; set; } = string.Empty;
 
