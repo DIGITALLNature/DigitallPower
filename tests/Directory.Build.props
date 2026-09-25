@@ -4,8 +4,10 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)dgt.tests.snk</AssemblyOriginatorKeyFile>
     <StaticAnalysisCodeType>Test</StaticAnalysisCodeType>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup Condition="'$(MSBuildProjectName)' != 'dgt.power.tests'">
-    <PackageReference Include="TUnit" Version="1.51.0" />
+    <PackageReference Include="TUnit" Version="1.68.4" />
+    <PackageReference Include="JetBrains.dotCover.Framework" Version="1.0.2" />
   </ItemGroup>
 </Project>

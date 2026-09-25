@@ -38,6 +38,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
+  - [solution](#solution--single-solution-operations)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [push](#push--deploy-artifacts)
@@ -59,6 +60,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
+| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Push** | Push web resources and plugin assemblies directly into a target solution |
@@ -264,6 +266,71 @@ All export commands accept `--filedir <path>` to control the output directory.
 dgtp export bulkdeletes --filedir ./out/bulkdeletes
 ```
 
+### `solution` — single-solution operations
+
+The `solution` branch is designed for commands that act on a single Dataverse solution. Today it hosts `version`, incrementing a solution's version number, and `lint`, a solution-quality check that is configured in JSON and executed against the live Dataverse metadata for the selected solution.
+
+| Command | Description |
+|---------|-------------|
+| `solution version <Solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version (default: `--revision`) |
+| `solution lint <Solution> -c ./lint.config.json` | Run the enabled lint rules against the given solution |
+
+```bash
+dgtp solution version sample_solution --minor
+```
+
+`lint` options:
+
+| Option | Description |
+|--------|-------------|
+| `--rules <id1,id2>` | Restrict this run to a subset of rule ids (intersected with the enabled rules from config) |
+| `--fail-on <None\|Info\|Warning\|Error>` | Minimum severity that fails the command (exit code 1). Default `Error`. `None` disables the gate - the command always exits 0, useful for report-only runs |
+| `--report <path>` | Write all findings as JSON (each entry includes a `Baselined` flag) |
+| `--sarif-output <path>` | Write all findings as a SARIF 2.1.0 log (suppressed results are marked via SARIF `suppressions`) |
+| `--baseline <path>` | Path to a SARIF baseline file. Findings whose `RuleId + Solution + ComponentType + ComponentLogicalName/Id` match a baseline entry are excluded from the `--fail-on` gate (they still show up in the console/report/SARIF output, flagged as baselined) |
+| `--update-baseline` | Overwrite `--baseline` with the findings from this run instead of gating on them. Requires `--baseline`. Always exits 0 |
+
+Example configuration:
+
+```json
+{
+  "version": 1,
+  "rules": {
+    "naming.unmanaged-field-logicalname": {
+      "enabled": true,
+      "severity": "Error",
+      "options": {
+        "publisherPrefixes": ["dgt_"]
+      }
+    },
+    "completeness.table-root-component-behavior": {
+      "enabled": true,
+      "severity": "Error"
+    },
+    "webresource.jscript-sourcemap": {
+      "enabled": true,
+      "severity": "Warning"
+    }
+  }
+}
+```
+
+Built-in rules:
+
+- **`naming.unmanaged-field-logicalname`** validates unmanaged custom field logical names against the [DIGITALL Nature naming convention](https://digitallnature.github.io/customizing/naming-conventions/): `prfx_fieldname[_type-suffix]`, where the suffix is derived from the attribute's Dataverse type (e.g. `_id` for Lookup, `_set` for Choice, `_cur` for Currency, `_dt`/`_rf`/`_cf`/`_fx` for rollup/calculated/formula modifiers, etc. - see the linked page for the full table). `publisherPrefixes` accepts one or more allowed prefixes (trailing underscore optional) and defaults to `["dgt_"]`. Fields whose logical name contains no underscore at all (e.g. Dataverse-provisioned defaults like `name`, `createdon`, or an auto-created `statecode` on a new custom table) are never flagged, since those are outside of what an unmanaged customization can control.
+- **`completeness.table-root-component-behavior`** validates each table's `RootComponentBehavior` against whether the table itself is managed (e.g. ISV-owned), not whether the linted solution is managed - this linter only ever targets unmanaged solutions. An **unmanaged** table must always be added completely (`IncludeSubcomponents` / "Include Entity Metadata and All Assets"); a **managed** table must never be added completely - only its actual delta may be listed explicitly (`DoNotIncludeSubcomponents`) or referenced as a shell (`IncludeAsShellOnly`). No options.
+- **`webresource.jscript-sourcemap`** (default severity: `Warning`) flags JScript web resources (`webresourcetype = Script (JScript)`) whose content still contains a source map reference (e.g. `//# sourceMappingURL=...`) - a sign the file was added to the solution unminified (a development build artifact rather than production output). No options.
+
+**Baseline workflow** (accepting existing findings so only *new* violations fail the pipeline):
+
+```bash
+# One-time: snapshot the current findings as the accepted baseline
+dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.sarif.json --update-baseline
+
+# CI: only NEW findings (not in the baseline) fail the build
+dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.sarif.json --fail-on Error
+```
+
 ### `import` — Import Dataverse artifacts
 
 Counterpart to `export`. Reads the previously exported JSON files and applies them to the currently selected environment.
@@ -312,7 +379,6 @@ Day-to-day administrative actions against a live environment.
 | `maintenance autonumber` | Set auto-number formats for columns from a JSON config |
 | `maintenance protectfields` | Prevent all calculated fields from receiving an active layer |
 | `maintenance carrierinfo` | Export carrier solutions metadata to JSON |
-| `maintenance solution-version <solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version |
 | `maintenance createworkflowstate` | Generate a workflow-state configuration file |
 | `maintenance workflowstate` | Apply a workflow-state configuration |
 | `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
@@ -320,7 +386,6 @@ Day-to-day administrative actions against a live environment.
 | `maintenance ensuresdksteps` | Enable/disable SDK steps within a solution |
 
 ```bash
-dgtp maintenance solution-version sample_solution --minor
 dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>"
 ```
 
@@ -772,7 +837,8 @@ DigitallPower/
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
-│       └── dgt.power.push/            # `push` command
+│       ├── dgt.power.push/            # `push` command
+│       └── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files

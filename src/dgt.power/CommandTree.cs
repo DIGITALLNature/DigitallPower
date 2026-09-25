@@ -15,6 +15,8 @@ using dgt.power.maintenance.Logic;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using dgt.power.solution;
+using dgt.power.solution.Base;
 using Spectre.Console.Cli;
 
 namespace dgt.power;
@@ -88,9 +90,6 @@ internal static class CommandTree
                         "Exports all active carriers from an environment to a json file. To see what an carrier is check " +
                         "[link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
                     .WithExample("maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json");
-                maintenance.AddCommand<IncrementSolutionVersion>("solution-version")
-                    .WithDescription("Increments the solution version by given flag")
-                    .WithExample("maintenance", "solution-version", "sample_solution", "--minor");
                 maintenance.AddCommand<CreateWorkflowStateConfig>("createworkflowstate")
                     .WithDescription("Creates a workflowstate configuration file")
                     .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--solutions", "solution1,solution2")
@@ -143,6 +142,20 @@ internal static class CommandTree
             import.AddCommand<CalendarImport>("calendar");
             import.AddCommand<SlaConfigImport>("slaconfigs");
             import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
+        });
+
+        config.AddBranch<SolutionSettings>("solution", solution =>
+        {
+            solution.SetDescription("Commands that act on a single Dataverse solution");
+            solution.AddCommand<SolutionVersionCommand>("version")
+                .WithDescription("Increments the solution version by given flag")
+                .WithExample("solution", "version", "sample_solution", "--minor");
+            solution.AddCommand<SolutionLintCommand>("lint")
+                .WithDescription("Runs the configured linter rule set against the selected solution")
+                .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json")
+                .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--fail-on", "Warning")
+                .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--update-baseline")
+                .WithExample("solution", "lint", "sample_solution", "-c", "lint.config.json", "--baseline", "lint-baseline.sarif.json", "--sarif-output", "lint.sarif.json");
         });
 
         config.AddCommand<CodeGenerationCommand>("codegeneration")

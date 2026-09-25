@@ -31,7 +31,8 @@ src/
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
-    └── dgt.power.push/         Plugin assembly + webresource deployment
+    ├── dgt.power.push/         Plugin assembly + webresource deployment
+    └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
 ```
 
 ## Key Conventions
@@ -60,6 +61,16 @@ src/
 - All custom exceptions have standard constructor overloads (CA1032)
 - Public methods validate args with `ArgumentNullException.ThrowIfNull`
 
+### CLI command tree registration (known duplication caveat)
+- `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the tree exercised by
+  `tests/dgt.power.cli.tests` (`CommandTreeTests`, `SettingsParsingTests`) - it is testable without
+  bootstrapping DI/telemetry/NuGet.
+- The **actual runtime** command tree is a separate, hand-maintained local function
+  (`RegisterCommands`) inside `src/dgt.power/Program.cs`'s top-level statements. The two have
+  already drifted apart (e.g. `Program.cs` registers a `connection` branch that `CommandTree.cs`
+  does not). When changing any branch/command, update **both** files - `CommandTreeTests`/
+  `SettingsParsingTests` passing does not guarantee the shipped CLI matches.
+
 ## Key Decisions
 
 | Decision | File | Summary |
@@ -76,6 +87,7 @@ src/
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
+| Resource-oriented CLI restructuring | `decision-resource-oriented-cli-restructuring.md` | `dgtp <resource> <verb> <target>` shape (mirrors colleague's `dgt.power.plugin`); `dgt.power.solution` is the current module name for the ported linter surface; `analyze`/`maintenance` remain out of scope for this Phase 1; single-solution positional arg replaces `--solutions` list; Sarif.Sdk replaces hand-rolled SARIF POCOs |
 
 ## TSL Template Engine (codegeneration)
 
@@ -178,8 +190,13 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-form-language-localization.md` | research | Metadata `Label` LCID resolution vs. OOB record data (`systemform.name`) being session-UI-language dependent, not per-request; `FormViewModel.LanguageCode` gap fix; known limitation + warning for form name/config.Forms matching |
 | `implementation-v2-codegeneration-config-shape.md` | implementation | Final nested V2 config shape: shared `entities` scope, `optionSets`, and target-specific `output` blocks |
 | `implementation-v2-schema-allows-dollar-schema.md` | implementation | V2 schemas now allow top-level `$schema` for editor compatibility under `additionalProperties: false` |
+| `implementation-linter-module-phase-1.md` | implementation | Phase 1 `dgt.power.linter` scaffold: `ILintRule`/`LintRuleCatalog`/`LintContext`/`LintRunCommand`, first rule `naming.unmanaged-field-logicalname` |
+| `guide-linter-rule-implementation-pitfalls.md` | guide | `EntityFilters.Entity` excludes `Attributes` (always-empty cache trap); never paper over a broken cache with a doomed-to-fail fallback call; lint rule tests must assert on findings, not just the command's exit code |
 | `decision-error-telemetry-anonymization.md` | decision | Crash reporting via OTel exception events; anonymization scope (GUIDs, home-dir paths, org/tenant URLs) and known limitations |
 | `decision-generic-command-deprecation.md` | decision | `[DeprecatedCommand]` attribute + `DeprecationInterceptor`: how to deprecate any command/branch, and why argv-position detection was replaced |
 | `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`/`CreateProfileCommand`: why `Save()` must run after connectivity check, not before; test pattern with Transient `IProfileManager` |
 | `implementation-175-ts-mock-form-improvements.md` | implementation | Issue #175 plan: factory function, relaxed server mock types, no-$select fix, type re-exports, SubGrid helper, languageId option |
 | `decision-azure-devops-workload-identity-federation.md` | decision | WIF/OIDC connections via `AzurePipelinesCredential`; CLI surface, architecture, why not `pac`/hand-rolled OIDC, CI REST-lookup pattern, self-constructed `SYSTEM_OIDCREQUESTURI` (no task dependency, verified live), Managed Identity out-of-scope split |
+| `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
+| `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
+| `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |

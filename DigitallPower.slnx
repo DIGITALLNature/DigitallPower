@@ -8,6 +8,7 @@
     <Project Path="src/modules/dgt.power.maintenance/dgt.power.maintenance.csproj" />
     <Project Path="src/modules/dgt.power.profile/dgt.power.profile.csproj" />
     <Project Path="src/modules/dgt.power.push/dgt.power.push.csproj" />
+    <Project Path="src/modules/dgt.power.solution/dgt.power.solution.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/dgt.power.analyzer.tests/dgt.power.analyzer.tests.csproj" />
@@ -18,6 +19,7 @@
     <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />
     <Project Path="tests/dgt.power.profile.tests/dgt.power.profile.tests.csproj" />
     <Project Path="tests/dgt.power.push.tests/dgt.power.push.tests.csproj" />
+    <Project Path="tests/dgt.power.solution.tests/dgt.power.solution.tests.csproj" />
     <Project Path="tests/dgt.power.cli.tests/dgt.power.cli.tests.csproj" />
     <Project Path="tests/dgt.power.tests/dgt.power.tests.csproj" />
   </Folder>
