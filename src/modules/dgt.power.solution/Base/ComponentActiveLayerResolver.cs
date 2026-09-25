@@ -18,6 +18,7 @@ namespace dgt.power.solution.Base;
 public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 connection)
 {
     private const string ActiveLayerName = "Active";
+    private const int PageSize = 5000;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
         IReadOnlyCollection<SolutionComponent> components,
@@ -65,10 +66,21 @@ public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 conn
             query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname, ConditionOperator.Equal, group.Key);
             query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynComponentid, ConditionOperator.In, componentIds.Cast<object>().ToArray());
             query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
+            query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
 
-            var layers = (await connection.RetrieveMultipleAsync(query, cancellationToken)).Entities
-                .Select(static entity => entity.ToEntity<MsdynComponentlayer>())
-                .ToList();
+            var layers = new List<MsdynComponentlayer>();
+            bool moreRecords;
+            do
+            {
+                var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
+                layers.AddRange(page.Entities.Select(static entity => entity.ToEntity<MsdynComponentlayer>()));
+                moreRecords = page.MoreRecords;
+                if (moreRecords)
+                {
+                    query.PageInfo.PageNumber++;
+                    query.PageInfo.PagingCookie = page.PagingCookie;
+                }
+            } while (moreRecords);
 
             var topLayerByComponentId = layers
                 .Where(static layer => layer.MsdynComponentid != null)

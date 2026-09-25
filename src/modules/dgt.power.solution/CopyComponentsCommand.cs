@@ -115,7 +115,7 @@ public class CopyComponentsCommand(
     {
         Console.MarkupLine(bestPractices
             ? "Best-practice mode: managed tables/components are added as skeleton/delta only, unmanaged ones completely"
-            : "[yellow]--raw: mirroring source components as-is (no managed/active-layer filtering)[/]");
+            : "[yellow]--raw: tables keep only their complete/non-complete distinction (shell-only sources become non-complete); other components are copied as-is, no managed/active-layer filtering[/]");
 
         var table = new Table();
         table.AddColumn("Type");

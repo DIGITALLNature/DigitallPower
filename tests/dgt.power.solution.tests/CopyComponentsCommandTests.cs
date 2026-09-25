@@ -2,14 +2,9 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
-using dgt.power.tests;
 using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
-using Digitall.Dataverse.Testing;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.solution.tests;
 
@@ -18,13 +13,13 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
     private const string TargetSolutionName = "target_solution";
     private const string SourceSolutionName = "source_solution";
 
-    private static readonly Guid UnmanagedEntityMetadataId = Guid.NewGuid();
-    private static readonly Guid ManagedEntityMetadataId = Guid.NewGuid();
-    private static readonly Guid ActiveAttributeMetadataId = Guid.NewGuid();
-    private static readonly Guid InactiveAttributeMetadataId = Guid.NewGuid();
-    private static readonly Guid ManagedActiveWorkflowId = Guid.NewGuid();
-    private static readonly Guid ManagedInactiveWorkflowId = Guid.NewGuid();
-    private static readonly Guid UnmanagedWorkflowId = Guid.NewGuid();
+    private static readonly Guid s_unmanagedEntityMetadataId = Guid.NewGuid();
+    private static readonly Guid s_managedEntityMetadataId = Guid.NewGuid();
+    private static readonly Guid s_activeAttributeMetadataId = Guid.NewGuid();
+    private static readonly Guid s_inactiveAttributeMetadataId = Guid.NewGuid();
+    private static readonly Guid s_managedActiveWorkflowId = Guid.NewGuid();
+    private static readonly Guid s_managedInactiveWorkflowId = Guid.NewGuid();
+    private static readonly Guid s_unmanagedWorkflowId = Guid.NewGuid();
 
     [Test]
     public async Task ShouldFailWhenTargetSolutionNotFound() => await CreateBuilder()
@@ -67,19 +62,19 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var byObjectId = addedComponents.ToDictionary(request => request.ComponentId);
 
         // Unmanaged table: added completely.
-        await Assert.That(byObjectId[UnmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
+        await Assert.That(byObjectId[s_unmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
         // Managed table: added as skeleton only.
-        await Assert.That(byObjectId[ManagedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
+        await Assert.That(byObjectId[s_managedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
         // Managed attribute with an active layer: included.
-        await Assert.That(byObjectId.ContainsKey(ActiveAttributeMetadataId)).IsTrue();
+        await Assert.That(byObjectId.ContainsKey(s_activeAttributeMetadataId)).IsTrue();
         // Managed attribute without an active layer: excluded (redundant vs. the managed baseline).
-        await Assert.That(byObjectId.ContainsKey(InactiveAttributeMetadataId)).IsFalse();
+        await Assert.That(byObjectId.ContainsKey(s_inactiveAttributeMetadataId)).IsFalse();
         // Unmanaged standalone (workflow) component: included.
-        await Assert.That(byObjectId.ContainsKey(UnmanagedWorkflowId)).IsTrue();
+        await Assert.That(byObjectId.ContainsKey(s_unmanagedWorkflowId)).IsTrue();
         // Managed standalone component with an active layer: included.
-        await Assert.That(byObjectId.ContainsKey(ManagedActiveWorkflowId)).IsTrue();
+        await Assert.That(byObjectId.ContainsKey(s_managedActiveWorkflowId)).IsTrue();
         // Managed standalone component without an active layer: excluded.
-        await Assert.That(byObjectId.ContainsKey(ManagedInactiveWorkflowId)).IsFalse();
+        await Assert.That(byObjectId.ContainsKey(s_managedInactiveWorkflowId)).IsFalse();
 
         await Assert.That(addedComponents.TrueForAll(request => !request.AddRequiredComponents)).IsTrue();
         await Assert.That(addedComponents.TrueForAll(request => request.SolutionUniqueName == TargetSolutionName)).IsTrue();
@@ -106,8 +101,72 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         await Assert.That(addedComponents.Count).IsEqualTo(7);
 
         var byObjectId = addedComponents.ToDictionary(request => request.ComponentId);
-        await Assert.That(byObjectId[UnmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
-        await Assert.That(byObjectId[ManagedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
+        await Assert.That(byObjectId[s_unmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
+        await Assert.That(byObjectId[s_managedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
+    }
+
+    [Test]
+    public async Task ShouldDedupeComponentAcrossSourcesAndKeepMostCompleteRootComponentBehavior()
+    {
+        const string sourceSolutionNameB = "source_solution_b";
+        var sharedObjectId = Guid.NewGuid();
+
+        var entityMetadata = new EntityMetadata { LogicalName = "dgt_shared", MetadataId = sharedObjectId };
+        entityMetadata.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);
+
+        var addedComponents = new List<AddSolutionComponentRequest>();
+        var context = new CommandTestContextBuilder<CopyComponentsCommand, CopyComponentsSettings>()
+            .WithFakeMessageExecutor(new RetrieveEntityExecutor())
+            .WithMetaData(entityMetadata)
+            .WithData(_ => PrepareMultiSourceData(sharedObjectId, sourceSolutionNameB))
+            .WithExecutionMock<AddSolutionComponentRequest>(request =>
+            {
+                addedComponents.Add((AddSolutionComponentRequest)request);
+                return new AddSolutionComponentResponse();
+            })
+            .Build();
+
+        await context
+            .Execute(new CopyComponentsSettings { Target = TargetSolutionName, Source = $"{SourceSolutionName},{sourceSolutionNameB}", Raw = true })
+            .Succeed();
+
+        // Same component (componenttype+objectid) present in both sources with conflicting
+        // RootComponentBehavior must be added exactly once, using the most complete behavior seen.
+        await Assert.That(addedComponents.Count).IsEqualTo(1);
+        await Assert.That(addedComponents[0].DoNotIncludeSubcomponents).IsFalse();
+    }
+
+    private static IEnumerable<Entity> PrepareMultiSourceData(Guid sharedObjectId, string sourceSolutionNameB)
+    {
+        var target = new Solution(Guid.NewGuid()) { UniqueName = TargetSolutionName, [Solution.LogicalNames.IsManaged] = false };
+        var sourceA = new Solution(Guid.NewGuid()) { UniqueName = SourceSolutionName, [Solution.LogicalNames.IsManaged] = false };
+        var sourceB = new Solution(Guid.NewGuid()) { UniqueName = sourceSolutionNameB, [Solution.LogicalNames.IsManaged] = false };
+
+        var definition = new SolutionComponentDefinition(Guid.NewGuid())
+        {
+            ["solutioncomponenttype"] = SolutionComponent.Options.ComponentType.Entity,
+            ["name"] = "Entity"
+        };
+
+        // Less complete behavior, present in source A.
+        var componentInSourceA = new SolutionComponent(Guid.NewGuid())
+        {
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
+            [SolutionComponent.LogicalNames.ObjectId] = sharedObjectId,
+            [SolutionComponent.LogicalNames.SolutionId] = sourceA.ToEntityReference(),
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
+        };
+
+        // Most complete behavior, present in source B - this is the one that must win the dedupe.
+        var componentInSourceB = new SolutionComponent(Guid.NewGuid())
+        {
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
+            [SolutionComponent.LogicalNames.ObjectId] = sharedObjectId,
+            [SolutionComponent.LogicalNames.SolutionId] = sourceB.ToEntityReference(),
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
+        };
+
+        return [target, sourceA, sourceB, definition, componentInSourceA, componentInSourceB];
     }
 
     [Test]
@@ -134,21 +193,21 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         return new CommandTestContextBuilder<CopyComponentsCommand, CopyComponentsSettings>()
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
             .WithMetaData(BuildEntityMetadata())
-            .WithData(service => PrepareData(service, targetIsManaged));
+            .WithData(_ => PrepareData(targetIsManaged));
     }
 
     private static EntityMetadata[] BuildEntityMetadata()
     {
-        var activeAttribute = new AttributeMetadata { LogicalName = "dgt_active", MetadataId = ActiveAttributeMetadataId };
+        var activeAttribute = new AttributeMetadata { LogicalName = "dgt_active", MetadataId = s_activeAttributeMetadataId };
         activeAttribute.SetSealedPropertyValue(nameof(AttributeMetadata.IsManaged), true);
 
-        var inactiveAttribute = new AttributeMetadata { LogicalName = "dgt_inactive", MetadataId = InactiveAttributeMetadataId };
+        var inactiveAttribute = new AttributeMetadata { LogicalName = "dgt_inactive", MetadataId = s_inactiveAttributeMetadataId };
         inactiveAttribute.SetSealedPropertyValue(nameof(AttributeMetadata.IsManaged), true);
 
-        var unmanagedEntity = new EntityMetadata { LogicalName = "dgt_unmanaged", MetadataId = UnmanagedEntityMetadataId };
+        var unmanagedEntity = new EntityMetadata { LogicalName = "dgt_unmanaged", MetadataId = s_unmanagedEntityMetadataId };
         unmanagedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);
 
-        var managedEntity = new EntityMetadata { LogicalName = "isv_managed", MetadataId = ManagedEntityMetadataId };
+        var managedEntity = new EntityMetadata { LogicalName = "isv_managed", MetadataId = s_managedEntityMetadataId };
         managedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), true);
         managedEntity.SetAttributeCollection([activeAttribute, inactiveAttribute]);
 
@@ -162,7 +221,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         return [unmanagedEntity, managedEntity, workflowEntity];
     }
 
-    private static IEnumerable<Entity> PrepareData(FakeOrganizationServiceAsync service, bool targetIsManaged)
+    private static IEnumerable<Entity> PrepareData(bool targetIsManaged)
     {
         var target = new Solution(Guid.NewGuid()) { UniqueName = TargetSolutionName, [Solution.LogicalNames.IsManaged] = targetIsManaged };
         var source = new Solution(Guid.NewGuid()) { UniqueName = SourceSolutionName, [Solution.LogicalNames.IsManaged] = false };
@@ -190,7 +249,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var unmanagedEntityComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
-            [SolutionComponent.LogicalNames.ObjectId] = UnmanagedEntityMetadataId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_unmanagedEntityMetadataId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
             [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
         };
@@ -198,7 +257,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var managedEntityComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
-            [SolutionComponent.LogicalNames.ObjectId] = ManagedEntityMetadataId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_managedEntityMetadataId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
             [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
         };
@@ -206,7 +265,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var activeAttributeComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
-            [SolutionComponent.LogicalNames.ObjectId] = ActiveAttributeMetadataId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_activeAttributeMetadataId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
             [SolutionComponent.LogicalNames.RootSolutionComponentId] = managedEntityComponent.Id
         };
@@ -214,7 +273,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var inactiveAttributeComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Attribute),
-            [SolutionComponent.LogicalNames.ObjectId] = InactiveAttributeMetadataId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_inactiveAttributeMetadataId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
             [SolutionComponent.LogicalNames.RootSolutionComponentId] = managedEntityComponent.Id
         };
@@ -222,29 +281,29 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         var managedActiveWorkflowComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Workflow),
-            [SolutionComponent.LogicalNames.ObjectId] = ManagedActiveWorkflowId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_managedActiveWorkflowId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference()
         };
 
         var managedInactiveWorkflowComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Workflow),
-            [SolutionComponent.LogicalNames.ObjectId] = ManagedInactiveWorkflowId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_managedInactiveWorkflowId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference()
         };
 
         var unmanagedWorkflowComponent = new SolutionComponent(Guid.NewGuid())
         {
             [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Workflow),
-            [SolutionComponent.LogicalNames.ObjectId] = UnmanagedWorkflowId,
+            [SolutionComponent.LogicalNames.ObjectId] = s_unmanagedWorkflowId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference()
         };
 
         var workflowRecords = new[]
         {
-            new Entity("workflow", ManagedActiveWorkflowId) { ["ismanaged"] = true },
-            new Entity("workflow", ManagedInactiveWorkflowId) { ["ismanaged"] = true },
-            new Entity("workflow", UnmanagedWorkflowId) { ["ismanaged"] = false }
+            new Entity("workflow", s_managedActiveWorkflowId) { ["ismanaged"] = true },
+            new Entity("workflow", s_managedInactiveWorkflowId) { ["ismanaged"] = true },
+            new Entity("workflow", s_unmanagedWorkflowId) { ["ismanaged"] = false }
         };
 
         var activeLayers = new[]
@@ -252,14 +311,14 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
             new MsdynComponentlayer(Guid.NewGuid())
             {
                 [MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname] = "Attribute",
-                [MsdynComponentlayer.LogicalNames.MsdynComponentid] = $"{ActiveAttributeMetadataId:B}",
+                [MsdynComponentlayer.LogicalNames.MsdynComponentid] = $"{s_activeAttributeMetadataId:B}",
                 [MsdynComponentlayer.LogicalNames.MsdynSolutionname] = "Active",
                 [MsdynComponentlayer.LogicalNames.MsdynOrder] = 1
             },
             new MsdynComponentlayer(Guid.NewGuid())
             {
                 [MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname] = "Workflow",
-                [MsdynComponentlayer.LogicalNames.MsdynComponentid] = $"{ManagedActiveWorkflowId:B}",
+                [MsdynComponentlayer.LogicalNames.MsdynComponentid] = $"{s_managedActiveWorkflowId:B}",
                 [MsdynComponentlayer.LogicalNames.MsdynSolutionname] = "Active",
                 [MsdynComponentlayer.LogicalNames.MsdynOrder] = 1
             }

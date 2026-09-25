@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -22,6 +23,7 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
 {
     // Bounds concurrent RetrieveEntityRequest calls while resolving distinct backing tables.
     private const int MaxConcurrentEntityMetadataRequests = 8;
+    private const int PageSize = 5000;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
         IReadOnlyCollection<SolutionComponent> components,
@@ -122,11 +124,25 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
             ColumnSet = new ColumnSet(backingEntity.PrimaryIdAttribute, "ismanaged")
         };
         query.Criteria.AddCondition(backingEntity.PrimaryIdAttribute, ConditionOperator.In, objectIds.Cast<object>().ToArray());
+        query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
 
-        var rows = (await connection.RetrieveMultipleAsync(query, cancellationToken)).Entities;
+        var rows = new List<Entity>();
+        bool moreRecords;
+        do
+        {
+            var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
+            rows.AddRange(page.Entities);
+            moreRecords = page.MoreRecords;
+            if (moreRecords)
+            {
+                query.PageInfo.PageNumber++;
+                query.PageInfo.PagingCookie = page.PagingCookie;
+            }
+        } while (moreRecords);
+
         var managedById = rows.ToDictionary(static entity => entity.Id, static entity => entity.GetAttributeValue<bool>("ismanaged"));
 
         // A record referenced by a solutioncomponent row but missing from the query result (e.g. already deleted) fails open too.
-        return objectIds.ToDictionary(id => id, id => managedById.GetValueOrDefault(id));
+        return objectIds.ToDictionary(id => id, managedById.GetValueOrDefault);
     }
 }

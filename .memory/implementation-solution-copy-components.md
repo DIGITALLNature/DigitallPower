@@ -82,7 +82,7 @@ tests/dgt.power.solution.tests/CopyComponentsCommandTests.cs
 ## Gotcha: `SolutionComponent.ComponentType`/`RootComponentBehavior` are `OptionSetValue?`, not `int?`
 
 `OptionSetValue` is a *class* (reference type) - the `?` is a nullable-*reference* annotation, not
-`System.Nullable<T>`. Consequences that cost a full failed build to discover:
+`System.Nullable<T>`. Consequences:
 
 - `component.ComponentType.HasValue` does **not** compile (`HasValue` is `Nullable<T>`-only).
   Use `component.ComponentType != null` or `component.ComponentType?.Value != null`.
