@@ -1,3 +1,15 @@
+# [3.0.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.3.0-beta.1...v3.0.0-beta.1) (2026-09-25)
+
+
+* feat(solution)!: add solution lint and version commands ([0715578](https://github.com/DIGITALLNature/DigitallPower/commit/0715578ae13d738e9ff616edd7e95fbcf93bef59))
+
+
+### BREAKING CHANGES
+
+* dgtp maintenance solution-version has been removed and
+replaced by dgtp solution version (identical options/flags, new command
+path). Update scripts or CI pipelines that invoke the old command path.
+
 # [2.3.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.2.1-beta.2...v2.3.0-beta.1) (2026-09-22)
 
 
