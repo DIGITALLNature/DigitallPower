@@ -300,9 +300,10 @@ public class CompletionEngineTests
         public bool IsDefaultCommand => false;
         public bool IsHidden => isHidden;
         public IReadOnlyList<ICommandParameter> Parameters { get; } =
-            (options ?? []).Cast<ICommandParameter>()
-            .Concat(positionalArgs ?? [])
-            .ToList();
+        [
+            .. (options ?? []).Cast<ICommandParameter>(),
+            .. positionalArgs ?? []
+        ];
         public ICommandInfo? Parent => null;
         public IReadOnlyList<string[]> Examples => [];
         public IReadOnlyList<ICommandInfo> Commands { get; } = children ?? [];

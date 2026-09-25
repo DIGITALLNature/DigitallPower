@@ -32,7 +32,7 @@ src/
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.push/         Plugin assembly + webresource deployment
-    └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
+    └── dgt.power.solution/     `dgtp solution version|lint|copy-components` - single/multi-solution operations: version increment (formerly `maintenance solution-version`), configuration-driven Dataverse quality gates (formerly dgt.power.linter), and copying solution components between solutions with managed/active-layer-aware filtering
 ```
 
 ## Key Conventions
@@ -162,6 +162,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
+- **`SolutionComponent.ComponentType`/`RootComponentBehavior` are `OptionSetValue?` (a nullable-annotated reference type), not `int?`.** `.HasValue` does not compile on them, and `component.ComponentType is not { } type` binds `type` as `OptionSetValue`, not the underlying int — always chain through `.Value` first (`component.ComponentType?.Value is not { } type`). See `implementation-solution-copy-components.md` for the full write-up; this applies to any future code touching `solutioncomponent` rows.
 
 ## Memory Files Index
 
@@ -199,4 +200,5 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-azure-devops-workload-identity-federation.md` | decision | WIF/OIDC connections via `AzurePipelinesCredential`; CLI surface, architecture, why not `pac`/hand-rolled OIDC, CI REST-lookup pattern, self-constructed `SYSTEM_OIDCREQUESTURI` (no task dependency, verified live), Managed Identity out-of-scope split |
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
 | `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
+| `implementation-solution-copy-components.md` | implementation | `dgtp solution copy-components`: CLI shape, why `AddRequiredComponents` is always `false` (no app-specific code path needed), unified managed/active-layer inclusion rule across all componenttypes, generic managed-state resolution via `solutioncomponentdefinition.primaryentityname`, and the `OptionSetValue?` vs `int?` gotcha on `SolutionComponent.ComponentType`/`RootComponentBehavior` |
 | `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |

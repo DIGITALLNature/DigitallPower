@@ -16,7 +16,7 @@ public class OptionMetadataViewModel
         Label = optionMetadata.Label;
     }
 
-    public Label Label { get; set; }
+    public Label Label { get; init; }
 
-    public int Value { get; set; }
+    public int Value { get; init; }
 }
