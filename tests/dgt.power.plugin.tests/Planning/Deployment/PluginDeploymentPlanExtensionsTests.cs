@@ -2,8 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Local;
-using dgt.power.plugin.Planning.Comparison;
-using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Remote;
 
 namespace dgt.power.plugin.tests.Planning.Deployment;

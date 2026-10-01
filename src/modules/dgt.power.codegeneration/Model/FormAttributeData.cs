@@ -8,7 +8,7 @@ public class FormAttributeData : IComparable<FormAttributeData>
 {
     public required string DataFieldName { get; init; }
 
-    public required bool IsOptionalAttribute { get; set; }
+    public required bool IsOptionalAttribute { get; init; }
 
     public int CompareTo(FormAttributeData? otherAttribute)
     {

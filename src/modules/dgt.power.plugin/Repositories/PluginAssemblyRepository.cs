@@ -13,12 +13,6 @@ namespace dgt.power.plugin.Repositories;
 /// <inheritdoc cref="IPluginAssemblyRepository" />
 public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service) : IPluginAssemblyRepository
 {
-    public async Task<RemoteAssembly?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
-    {
-        var assemblies = await ListByNameCoreAsync(name, cancellationToken);
-        return assemblies.OrderByDescending(assembly => assembly.Version).FirstOrDefault();
-    }
-
     public Task<RemoteAssembly?> FindForDeploymentAsync(
         string name,
         Version targetVersion,

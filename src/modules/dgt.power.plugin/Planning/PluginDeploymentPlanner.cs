@@ -41,14 +41,10 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 $"Remove the extra standalone {nameof(assembly)} records before pushing.");
         }
 
-        var remote = standaloneAssemblies.SingleOrDefault();
-        if (remote is null)
-        {
-            remote = await repositories.Assemblies.FindForDeploymentAsync(
-                assembly.Name,
-                assembly.Version,
-                cancellationToken);
-        }
+        var remote = standaloneAssemblies.SingleOrDefault() ?? await repositories.Assemblies.FindForDeploymentAsync(
+            assembly.Name,
+            assembly.Version,
+            cancellationToken);
 
         var assemblyComparison = new AssemblyComparison(assembly, remote);
         return await BuildAssemblyCoreAsync(
@@ -260,10 +256,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                     steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages, solution));
                 }
 
-                foreach (var step in stepComparisonSet.Deletions)
-                {
-                    deleteSteps.Add(new PluginStepDeletion(step));
-                }
+                deleteSteps.AddRange(stepComparisonSet.Deletions.Select(step => new PluginStepDeletion(step)));
             }
 
             var customApi = await BuildCustomApiAsync(typeComparison, cancellationToken);
@@ -492,6 +485,6 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 Steps = steps
             };
         }).ToList();
-        return new PluginTypeDeployment(types, deployment.Deletions);
+        return deployment with { Types = types };
     }
 }

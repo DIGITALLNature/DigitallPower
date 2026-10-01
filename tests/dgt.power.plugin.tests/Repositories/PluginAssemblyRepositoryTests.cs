@@ -5,7 +5,6 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
-using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Repositories;
 
@@ -16,108 +15,6 @@ public class PluginAssemblyRepositoryTests
         var service = new FakeOrganizationServiceAsync();
         service.AddDefaultRequests();
         return service;
-    }
-
-    [Test]
-    public async Task FindByNameAsync_NoMatch_ReturnsNull()
-    {
-        var service = CreateService();
-        var repository = new PluginAssemblyRepository(service);
-
-        var result = await repository.FindByNameAsync("MyPlugins");
-
-        await Assert.That(result).IsNull();
-    }
-
-    [Test]
-    public async Task FindByNameAsync_SandboxedMatch_ReturnsRemoteAssembly()
-    {
-        var service = CreateService();
-        var repository = new PluginAssemblyRepository(service);
-        var id = Guid.NewGuid();
-        service.Create(new PluginAssembly(id)
-        {
-            Name = "MyPlugins",
-            Version = "1.2.3.4",
-            Content = "YmFzZTY0",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
-        });
-
-        var result = await repository.FindByNameAsync("MyPlugins");
-
-        await Assert.That(result).IsNotNull();
-        await Assert.That(result!.Id).IsEqualTo(id);
-        await Assert.That(result.Version).IsEqualTo(Version.Parse("1.2.3.4"));
-        await Assert.That(result.PackageId).IsNull();
-        await Assert.That(result.ContentHash)
-            .IsEqualTo(Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())));
-    }
-
-    [Test]
-    public async Task FindByNameAsync_IgnoresNonSandboxedAssembly()
-    {
-        var service = CreateService();
-        var repository = new PluginAssemblyRepository(service);
-        service.Create(new PluginAssembly(Guid.NewGuid())
-        {
-            Name = "MyPlugins",
-            Version = "1.2.3.4",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.None)
-        });
-
-        var result = await repository.FindByNameAsync("MyPlugins");
-
-        await Assert.That(result).IsNull();
-    }
-
-    [Test]
-    public async Task FindByNameAsync_AssemblyOwnedByPackage_ReturnsPackageId()
-    {
-        var service = CreateService();
-        var repository = new PluginAssemblyRepository(service);
-        var packageId = Guid.NewGuid();
-        service.Create(new PluginAssembly(Guid.NewGuid())
-        {
-            Name = "MyPlugins",
-            Version = "1.2.3.4",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox),
-            PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
-        });
-
-        var result = await repository.FindByNameAsync("MyPlugins");
-
-        await Assert.That(result!.PackageId).IsEqualTo(packageId);
-    }
-
-    [Test]
-    public async Task FindByNameAsync_MultipleAssemblies_ReturnsHighestSemanticVersion()
-    {
-        var service = CreateService();
-        var repository = new PluginAssemblyRepository(service);
-        var versionNineId = Guid.NewGuid();
-        var versionTenId = Guid.NewGuid();
-        service.Create(new PluginAssembly(versionNineId)
-        {
-            Name = "MyPlugins",
-            Version = "9.9.9.9",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
-        });
-        service.Create(new PluginAssembly(versionTenId)
-        {
-            Name = "MyPlugins",
-            Version = "10.0.0.0",
-            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
-            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
-        });
-
-        var result = await repository.FindByNameAsync("MyPlugins");
-
-        await Assert.That(result!.Id).IsEqualTo(versionTenId);
-        await Assert.That(result.Version).IsEqualTo(Version.Parse("10.0.0.0"));
     }
 
     [Test]
