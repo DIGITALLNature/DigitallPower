@@ -9,34 +9,28 @@ namespace dgt.power.plugin.tests.Local;
 public class LocalPluginStepValidatorTests
 {
     [Test]
+    [Arguments("create")]
+    [Arguments("CREATE")]
+    public async Task Validate_CreatePostOperationPreImageMessageIsCaseInsensitive(string messageName)
+    {
+        var pluginType = new LocalPluginType("Contoso.CreatePlugin", "Contoso.CreatePlugin", string.Empty, true, [
+            new LocalPluginStep("Create step", SdkMessageProcessingStep.Options.Mode.Synchronous, messageName, SdkMessageProcessingStep.Options.Stage.PostOperation, "account", "none", null, null, [
+                new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "preImage", "Target", null)
+            ])
+        ]);
+
+        await Assert.That(() => LocalPluginStepValidator.Validate(pluginType)).ThrowsExactly<InvalidPluginStepException>();
+    }
+
+    [Test]
     public async Task Validate_CreatePostOperationPreImage_Throws()
     {
-        var pluginType = new LocalPluginType(
-            "Contoso.CreatePlugin",
-            "Contoso.CreatePlugin",
-            string.Empty,
-            true,
-            [
-                new LocalPluginStep(
-                    "Create step",
-                    SdkMessageProcessingStep.Options.Mode.Synchronous,
-                    "Create",
-                    SdkMessageProcessingStep.Options.Stage.PostOperation,
-                    "account",
-                    "none",
-                    null,
-                    null,
-                    [
-                        new LocalPluginStepImage(
-                            SdkMessageProcessingStepImage.Options.ImageType.PreImage,
-                            "PreImage",
-                            "preImage",
-                            "Target",
-                            null)
-                    ])
-            ]);
+        var pluginType = new LocalPluginType("Contoso.CreatePlugin", "Contoso.CreatePlugin", string.Empty, true, [
+            new LocalPluginStep("Create step", SdkMessageProcessingStep.Options.Mode.Synchronous, "Create", SdkMessageProcessingStep.Options.Stage.PostOperation, "account", "none", null, null, [
+                new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "preImage", "Target", null)
+            ])
+        ]);
 
-        await Assert.That(() => LocalPluginStepValidator.Validate(pluginType))
-            .ThrowsExactly<InvalidPluginStepException>();
+        await Assert.That(() => LocalPluginStepValidator.Validate(pluginType)).ThrowsExactly<InvalidPluginStepException>();
     }
 }

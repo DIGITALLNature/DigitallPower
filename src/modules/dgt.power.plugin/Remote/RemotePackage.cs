@@ -9,4 +9,5 @@ namespace dgt.power.plugin.Remote;
 /// </summary>
 /// <param name="Id">Plugin package record id.</param>
 /// <param name="PackageHash">SHA-256 hash of the package file stored in Dataverse.</param>
-public sealed record RemotePackage(Guid Id, string? PackageHash);
+/// <param name="ManagedIdentityId">Linked managed identity id, if one is assigned.</param>
+public sealed record RemotePackage(Guid Id, string? PackageHash, Guid? ManagedIdentityId = null);

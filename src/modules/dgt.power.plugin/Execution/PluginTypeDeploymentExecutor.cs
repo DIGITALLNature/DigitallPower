@@ -13,10 +13,7 @@ public sealed class PluginTypeDeploymentExecutor(
     ICustomApiRepository customApiRepository,
     ISolutionComponentRepository solutionRepository)
 {
-    public Task<IReadOnlyDictionary<string, Guid>> ApplyAsync(
-        PluginTypeDeployment plan,
-        Guid assemblyId,
-        Action<PluginDeploymentProgress>? reportProgress = null,
+    public Task<IReadOnlyDictionary<string, Guid>> ApplyAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(plan);
@@ -24,21 +21,14 @@ public sealed class PluginTypeDeploymentExecutor(
         return ApplyCoreAsync(plan, assemblyId, reportProgress, cancellationToken);
     }
 
-    private async Task<IReadOnlyDictionary<string, Guid>> ApplyCoreAsync(
-        PluginTypeDeployment plan,
-        Guid assemblyId,
-        Action<PluginDeploymentProgress>? reportProgress,
+    private async Task<IReadOnlyDictionary<string, Guid>> ApplyCoreAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
     {
         var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
         foreach (var item in plan.Types)
         {
             var typeId = item.Comparison.RequiresCreate
-                ? await typeRepository.CreateAsync(
-                    assemblyId,
-                    item.Comparison.Local.TypeName,
-                    item.Comparison.Local.Name,
-                    cancellationToken)
+                ? await typeRepository.CreateAsync(assemblyId, item.Comparison.Local.TypeName, item.Comparison.Local.Name, cancellationToken)
                 : item.Comparison.Remote!.Id;
             if (item.Comparison.RequiresCreate)
             {
@@ -53,16 +43,8 @@ public sealed class PluginTypeDeploymentExecutor(
                 await ApplyImagesAsync(step, stepId, reportProgress, cancellationToken);
                 if (step.Solution is { } solution)
                 {
-                    await solutionRepository.AddToSolutionAsync(
-                        solution.ComponentType,
-                        stepId,
-                        solution.SolutionUniqueName,
-                        cancellationToken);
-                    Report(
-                        reportProgress,
-                        PluginDeploymentOperation.Added,
-                        "step",
-                        $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
+                    await solutionRepository.AddToSolutionAsync(solution.ComponentType, stepId, solution.SolutionUniqueName, cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Added, "step", $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
                 }
             }
 
@@ -80,16 +62,19 @@ public sealed class PluginTypeDeploymentExecutor(
 
             if (item.CustomApi.Link)
             {
-                await customApiRepository.LinkPluginTypeAsync(
-                    item.CustomApi.DesiredId!.Value,
-                    typeId,
-                    cancellationToken);
+                await customApiRepository.LinkPluginTypeAsync(item.CustomApi.DesiredId!.Value, typeId, cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Linked, "Custom API", item.CustomApi.UniqueName);
             }
         }
 
         foreach (var deletion in plan.Deletions)
         {
+            foreach (var customApiId in deletion.LinkedCustomApiIds)
+            {
+                await customApiRepository.UnlinkPluginTypeAsync(customApiId, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Unlinked, "Custom API", customApiId.ToString());
+            }
+
             foreach (var stepId in deletion.DependentStepIds)
             {
                 await stepRepository.DeleteAsync(stepId, cancellationToken);
@@ -103,38 +88,21 @@ public sealed class PluginTypeDeploymentExecutor(
         return typeIds;
     }
 
-    private async Task<Guid> ApplyStepAsync(
-        PluginStepDeployment deployment,
-        Guid pluginTypeId,
-        Action<PluginDeploymentProgress>? reportProgress,
-        CancellationToken cancellationToken)
+    private async Task<Guid> ApplyStepAsync(PluginStepDeployment deployment, Guid pluginTypeId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
     {
         if (deployment.MigrationSource is { } migration)
         {
             var migratedLocal = deployment.Comparison.Local;
             if (deployment.Comparison.RequiresUpdate)
             {
-                var migratedMessage = deployment.Message
-                    ?? throw new InvalidOperationException("An updated step requires a resolved SDK message.");
-                await stepRepository.UpdateAsync(
-                    migration.Step.Id,
-                    new PluginStepData(
-                        migratedLocal.Name,
-                        pluginTypeId,
-                        migratedMessage.MessageId,
-                        migratedMessage.MessageFilterId,
-                        migratedLocal.Stage,
-                        migratedLocal.Mode,
-                        migratedLocal.ExecutionOrder,
-                        migratedLocal.FilterAttributes),
-                    cancellationToken);
+                var migratedMessage = deployment.Message ?? throw new InvalidOperationException("An updated step requires a resolved SDK message.");
+                await stepRepository.UpdateAsync(migration.Step.Id,
+                    new PluginStepData(migratedLocal.Name, pluginTypeId, migratedMessage.MessageId, migratedMessage.MessageFilterId, migratedLocal.Stage, migratedLocal.Mode,
+                        migratedLocal.ExecutionOrder, migratedLocal.FilterAttributes), cancellationToken);
             }
             else
             {
-                await stepRepository.ReassignPluginTypeAsync(
-                    migration.Step.Id,
-                    pluginTypeId,
-                    cancellationToken);
+                await stepRepository.ReassignPluginTypeAsync(migration.Step.Id, pluginTypeId, cancellationToken);
             }
 
             Report(reportProgress, PluginDeploymentOperation.Migrated, "step", migratedLocal.Name);
@@ -146,18 +114,9 @@ public sealed class PluginTypeDeploymentExecutor(
             return deployment.Comparison.Remote!.Id;
         }
 
-        var message = deployment.Message
-            ?? throw new InvalidOperationException("A create or update step operation requires a resolved SDK message.");
+        var message = deployment.Message ?? throw new InvalidOperationException("A create or update step operation requires a resolved SDK message.");
         var local = deployment.Comparison.Local;
-        var data = new PluginStepData(
-            local.Name,
-            pluginTypeId,
-            message.MessageId,
-            message.MessageFilterId,
-            local.Stage,
-            local.Mode,
-            local.ExecutionOrder,
-            local.FilterAttributes);
+        var data = new PluginStepData(local.Name, pluginTypeId, message.MessageId, message.MessageFilterId, local.Stage, local.Mode, local.ExecutionOrder, local.FilterAttributes);
 
         if (deployment.Comparison.RequiresCreate)
         {
@@ -171,34 +130,19 @@ public sealed class PluginTypeDeploymentExecutor(
         return deployment.Comparison.Remote.Id;
     }
 
-    private async Task ApplyImagesAsync(
-        PluginStepDeployment deployment,
-        Guid stepId,
-        Action<PluginDeploymentProgress>? reportProgress,
-        CancellationToken cancellationToken)
+    private async Task ApplyImagesAsync(PluginStepDeployment deployment, Guid stepId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
     {
         foreach (var image in deployment.Images.Comparisons)
         {
             if (image.RequiresCreate)
             {
                 var local = image.Local;
-                await imageRepository.CreateAsync(
-                    new PluginStepImageData(
-                        stepId,
-                        local.Name,
-                        local.EntityAlias,
-                        local.ImageType,
-                        local.MessagePropertyName,
-                        local.Attributes),
-                    cancellationToken);
+                await imageRepository.CreateAsync(new PluginStepImageData(stepId, local.Name, local.EntityAlias, local.ImageType, local.MessagePropertyName, local.Attributes), cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Created, "step image", local.Name);
             }
             else if (image.RequiresUpdate)
             {
-                await imageRepository.UpdateAsync(
-                    image.Remote!.Id,
-                    image.Local.Attributes,
-                    cancellationToken);
+                await imageRepository.UpdateAsync(image.Remote!.Id, image.Local.Attributes, cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Updated, "step image", image.Local.Name);
             }
         }
@@ -210,10 +154,6 @@ public sealed class PluginTypeDeploymentExecutor(
         }
     }
 
-    private static void Report(
-        Action<PluginDeploymentProgress>? reportProgress,
-        PluginDeploymentOperation operation,
-        string resource,
-        string name) =>
+    private static void Report(Action<PluginDeploymentProgress>? reportProgress, PluginDeploymentOperation operation, string resource, string name) =>
         reportProgress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
 }

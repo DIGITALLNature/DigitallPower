@@ -685,7 +685,8 @@ the outdated assembly will be deleted.
 When `--solution` is set, missing package, standalone assembly, and declared step memberships are
 listed below the deployment tree, including in dry-run output. Plugin types, images, Custom APIs,
 and managed identities are not added implicitly. When every managed component is already present,
-the same section confirms that no membership additions are needed.
+the same section confirms that no membership additions are needed. An unknown solution fails
+planning with `MissingSolutionException` before any Dataverse writes occur.
 
 ##### Updates and upgrades
 

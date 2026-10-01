@@ -19,15 +19,9 @@ namespace dgt.power.plugin.tests.Execution;
 
 public class PluginTypeDeploymentExecutorTests
 {
-    private sealed class PluginTypeTestPipeline(
-        PluginDeploymentPlanner planner,
-        PluginTypeDeploymentExecutor executor,
-        PluginPlanRenderer renderer)
+    private sealed class PluginTypeTestPipeline(PluginDeploymentPlanner planner, PluginTypeDeploymentExecutor executor, PluginPlanRenderer renderer)
     {
-        public async Task ApplyAsync(
-            Guid assemblyId,
-            IReadOnlyList<LocalPluginType> localTypes,
-            PluginPushOptions options)
+        public async Task ApplyAsync(Guid assemblyId, IReadOnlyList<LocalPluginType> localTypes, PluginPushOptions options)
         {
             var localAssembly = new LocalAssembly
             {
@@ -39,16 +33,8 @@ public class PluginTypeDeploymentExecutorTests
                 PluginTypes = localTypes
             };
             var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes, options.Solution);
-            var deployment = new AssemblyDeploymentPlan(
-                new AssemblyComparison(
-                    localAssembly,
-                    new RemoteAssembly(assemblyId, localAssembly.Version, null)),
-                typePlan,
-                new OutdatedAssemblyDeployment([]),
-                LinkManagedIdentity: false,
-                SolutionMembership: string.IsNullOrWhiteSpace(options.Solution)
-                    ? null
-                    : new SolutionMembershipPlan(options.Solution),
+            var deployment = new AssemblyDeploymentPlan(new AssemblyComparison(localAssembly, new RemoteAssembly(assemblyId, localAssembly.Version, null)), typePlan,
+                new OutdatedAssemblyDeployment([]), LinkManagedIdentity: false, SolutionMembership: string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
                 Solution: null);
             renderer.Render(deployment);
             if (!options.DryRun)
@@ -64,6 +50,7 @@ public class PluginTypeDeploymentExecutorTests
         service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
+        service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
         var typeRepository = new PluginTypeRepository(service);
@@ -80,29 +67,23 @@ public class PluginTypeDeploymentExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository
         });
-        var executor = new PluginTypeTestPipeline(
-            planner,
-            new PluginTypeDeploymentExecutor(
-                typeRepository,
-                stepRepository,
-                imageRepository,
-                customApiRepository,
-                solutionRepository),
+        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
             new PluginPlanRenderer(console));
 
         return (service, executor, console);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
     private static (FakeOrganizationServiceAsync Service, PluginTypeTestPipeline Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
+        service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
         var typeRepository = new PluginTypeRepository(service);
@@ -119,16 +100,10 @@ public class PluginTypeDeploymentExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository
         });
-        var executor = new PluginTypeTestPipeline(
-            planner,
-            new PluginTypeDeploymentExecutor(
-                typeRepository,
-                stepRepository,
-                imageRepository,
-                customApiRepository,
-                solutionRepository),
+        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
             new PluginPlanRenderer(console));
 
         return (service, executor);
@@ -143,20 +118,16 @@ public class PluginTypeDeploymentExecutorTests
         {
             service.Create(new SdkMessageFilter(Guid.NewGuid())
             {
-                SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
-                Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryEntityName }
+                SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId), Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = primaryEntityName }
             });
         }
 
         return messageId;
     }
 
-    private static LocalPluginStep Step(
-        string name = "step", string messageName = "Create", string primaryEntityName = "account",
-        int? executionOrder = 1, IReadOnlyList<LocalPluginStepImage>? images = null) =>
-        new(name, SdkMessageProcessingStep.Options.Mode.Synchronous, messageName,
-            SdkMessageProcessingStep.Options.Stage.PostOperation, primaryEntityName, "none", null, executionOrder,
-            images ?? []);
+    private static LocalPluginStep Step(string name = "step", string messageName = "Create", string primaryEntityName = "account", int? executionOrder = 1,
+        IReadOnlyList<LocalPluginStepImage>? images = null) =>
+        new(name, SdkMessageProcessingStep.Options.Mode.Synchronous, messageName, SdkMessageProcessingStep.Options.Stage.PostOperation, primaryEntityName, "none", null, executionOrder, images ?? []);
 
     [Test]
     public async Task ApplyAsync_NewTypeWithStep_CreatesTypeAndStep()
@@ -186,10 +157,7 @@ public class PluginTypeDeploymentExecutorTests
         SeedMessage(service, "Create", "account");
         var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()]);
 
-        await executor.ApplyAsync(
-            Guid.NewGuid(),
-            [localType],
-            new PluginPushOptions("TestSolution", DryRun: false));
+        await executor.ApplyAsync(Guid.NewGuid(), [localType], new PluginPushOptions("TestSolution", DryRun: false));
 
         using (Assert.Multiple())
         {
@@ -204,8 +172,7 @@ public class PluginTypeDeploymentExecutorTests
         var (_, executor) = CreateExecutor();
         var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step(messageName: "DoesNotExist")]);
 
-        await Assert.That(() => executor.ApplyAsync(Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: false)))
-            .Throws<UnresolvedPluginStepMessageException>();
+        await Assert.That(() => executor.ApplyAsync(Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: false))).Throws<UnresolvedPluginStepMessageException>();
     }
 
     [Test]
@@ -214,9 +181,7 @@ public class PluginTypeDeploymentExecutorTests
         var (_, executor) = CreateExecutor();
         var localType = new LocalPluginType("MyPlugin", "MyPlugin", "missing_api", true, []);
 
-        await Assert.That(() => executor.ApplyAsync(
-                Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: false)))
-            .Throws<MissingCustomApiException>();
+        await Assert.That(() => executor.ApplyAsync(Guid.NewGuid(), [localType], new PluginPushOptions(null, DryRun: false))).Throws<MissingCustomApiException>();
     }
 
     [Test]
@@ -238,8 +203,7 @@ public class PluginTypeDeploymentExecutorTests
         var (service, executor, console) = CreateExecutorWithConsole();
         SeedMessage(service, "Update", "account");
         var image = new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "PreImage", "Target", null);
-        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true,
-            [Step(messageName: "Update", images: [image])]);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step(messageName: "Update", images: [image])]);
 
         // Even for a brand-new (never-before-registered) assembly/type, dry-run must still preview
         // every step/image declared on it - not just the type itself - since it can't rely on a real
@@ -268,17 +232,12 @@ public class PluginTypeDeploymentExecutorTests
         var filterId = Guid.NewGuid();
         var filter = new SdkMessageFilter(filterId)
         {
-            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
-            Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account" }
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId), Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account" }
         };
         service.Create(filter);
         var assemblyId = Guid.NewGuid();
         var typeId = Guid.NewGuid();
-        service.Create(new PluginType(typeId)
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
-        });
+        service.Create(new PluginType(typeId) { TypeName = "MyPlugin", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId) });
         service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
         {
             Name = "step",
@@ -290,10 +249,7 @@ public class PluginTypeDeploymentExecutorTests
             SdkMessageFilterId = new EntityReference(SdkMessageFilter.EntityLogicalName, filterId)
         });
 
-        await executor.ApplyAsync(
-            assemblyId,
-            [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()])],
-            new PluginPushOptions(null, DryRun: true));
+        await executor.ApplyAsync(assemblyId, [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step()])], new PluginPushOptions(null, DryRun: true));
 
         await Assert.That(console.Output).DoesNotContain("Checked 1 plugin type(s)");
         await Assert.That(console.Output).DoesNotContain("Steps:");
@@ -305,10 +261,7 @@ public class PluginTypeDeploymentExecutorTests
         var (_, executor, _) = CreateExecutorWithConsole();
         var assemblyId = Guid.NewGuid();
 
-        await Assert.That(async () => await executor.ApplyAsync(
-                assemblyId,
-                [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, false, [])],
-                new PluginPushOptions(null, DryRun: false)))
+        await Assert.That(async () => await executor.ApplyAsync(assemblyId, [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, false, [])], new PluginPushOptions(null, DryRun: false)))
             .ThrowsExactly<AssemblyException>();
     }
 
@@ -319,11 +272,7 @@ public class PluginTypeDeploymentExecutorTests
         var messageId = SeedMessage(service, "Create", "account");
         var assemblyId = Guid.NewGuid();
         var typeId = Guid.NewGuid();
-        service.Create(new PluginType(typeId)
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
-        });
+        service.Create(new PluginType(typeId) { TypeName = "MyPlugin", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId) });
         service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
         {
             Name = "step",
@@ -348,17 +297,9 @@ public class PluginTypeDeploymentExecutorTests
         var (service, executor) = CreateExecutor();
         var assemblyId = Guid.NewGuid();
         var orphanTypeId = Guid.NewGuid();
-        service.Create(new PluginType(orphanTypeId)
-        {
-            TypeName = "Orphaned",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
-        });
+        service.Create(new PluginType(orphanTypeId) { TypeName = "Orphaned", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId) });
         var orphanStepId = Guid.NewGuid();
-        service.Create(new SdkMessageProcessingStep(orphanStepId)
-        {
-            Name = "orphan-step",
-            EventHandler = new EntityReference(PluginType.EntityLogicalName, orphanTypeId)
-        });
+        service.Create(new SdkMessageProcessingStep(orphanStepId) { Name = "orphan-step", EventHandler = new EntityReference(PluginType.EntityLogicalName, orphanTypeId) });
 
         await executor.ApplyAsync(assemblyId, [], new PluginPushOptions(null, DryRun: false));
 
@@ -366,6 +307,27 @@ public class PluginTypeDeploymentExecutorTests
         await Assert.That(remainingTypes.Count).IsEqualTo(0);
         var remainingSteps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(remainingSteps.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ApplyAsync_OrphanedType_UnlinksCustomApiBeforeDeletingType()
+    {
+        var (service, executor) = CreateExecutor();
+        var assemblyId = Guid.NewGuid();
+        var typeId = Guid.NewGuid();
+        var customApiId = Guid.NewGuid();
+        service.Create(new PluginType(typeId) { TypeName = "Orphaned", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId) });
+        service.Create(new CustomAPI(customApiId) { UniqueName = "new_OrphanedApi", PluginTypeId = new EntityReference(PluginType.EntityLogicalName, typeId) });
+
+        await executor.ApplyAsync(assemblyId, [], new PluginPushOptions(null, DryRun: false));
+
+        var customApi = service.Retrieve(CustomAPI.EntityLogicalName, customApiId, new ColumnSet(true)).ToEntity<CustomAPI>();
+        var remainingTypes = service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
+        using (Assert.Multiple())
+        {
+            await Assert.That(customApi.PluginTypeId).IsNull();
+            await Assert.That(remainingTypes).IsEmpty();
+        }
     }
 
     [Test]
@@ -395,29 +357,13 @@ public class PluginTypeDeploymentExecutorTests
         var assemblyId = Guid.NewGuid();
         var typeId = Guid.NewGuid();
         var customApiId = Guid.NewGuid();
-        service.Create(new PluginType(typeId)
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId)
-        });
-        service.Create(new CustomAPI(customApiId)
-        {
-            UniqueName = "new_MyApi",
-            PluginTypeId = new EntityReference(PluginType.EntityLogicalName, typeId)
-        });
-        service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
-        {
-            Name = "CustomApi 'new_MyApi' implementation",
-            EventHandler = new EntityReference(PluginType.EntityLogicalName, typeId)
-        });
+        service.Create(new PluginType(typeId) { TypeName = "MyPlugin", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId) });
+        service.Create(new CustomAPI(customApiId) { UniqueName = "new_MyApi", PluginTypeId = new EntityReference(PluginType.EntityLogicalName, typeId) });
+        service.Create(new SdkMessageProcessingStep(Guid.NewGuid()) { Name = "CustomApi 'new_MyApi' implementation", EventHandler = new EntityReference(PluginType.EntityLogicalName, typeId) });
 
-        await executor.ApplyAsync(
-            assemblyId,
-            [new LocalPluginType("MyPlugin", "MyPlugin", "new_MyApi", true, [])],
-            new PluginPushOptions(null, DryRun: false));
+        await executor.ApplyAsync(assemblyId, [new LocalPluginType("MyPlugin", "MyPlugin", "new_MyApi", true, [])], new PluginPushOptions(null, DryRun: false));
 
-        var steps = service.RetrieveMultiple(
-            new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
+        var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(steps).Count().IsEqualTo(1);
     }
 
@@ -428,8 +374,7 @@ public class PluginTypeDeploymentExecutorTests
         SeedMessage(service, "Update", "account");
         var assemblyId = Guid.NewGuid();
         var image = new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "PreImage", "Target", null);
-        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true,
-            [Step(messageName: "Update", images: [image])]);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step(messageName: "Update", images: [image])]);
 
         await executor.ApplyAsync(assemblyId, [localType], new PluginPushOptions(null, DryRun: false));
 

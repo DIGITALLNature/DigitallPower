@@ -21,11 +21,8 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
         var query = new QueryExpression(PluginPackage.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package),
-            Criteria = new FilterExpression
-            {
-                Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.Equal, name) }
-            },
+            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package, PluginPackage.LogicalNames.Managedidentityid),
+            Criteria = new FilterExpression { Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.Equal, name) } },
             Orders = { new OrderExpression(PluginPackage.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
@@ -37,10 +34,8 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
         }
 
         var package = entity.ToEntity<PluginPackage>();
-        var packageHash = package.Package is null
-            ? null
-            : await DownloadPackageHashAsync(entity.Id, cancellationToken);
-        return new RemotePackage(entity.Id, packageHash);
+        var packageHash = package.Package is null ? null : await DownloadPackageHashAsync(entity.Id, cancellationToken);
+        return new RemotePackage(entity.Id, packageHash, package.Managedidentityid?.Id);
     }
 
     public async Task<Guid> CreateAsync(string name, string version, string content, CancellationToken cancellationToken = default)
@@ -59,32 +54,20 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
     {
         var initializeRequest = new InitializeFileBlocksDownloadRequest
         {
-            Target = new EntityReference(PluginPackage.EntityLogicalName, packageId),
-            FileAttributeName = PluginPackage.LogicalNames.Package
+            Target = new EntityReference(PluginPackage.EntityLogicalName, packageId), FileAttributeName = PluginPackage.LogicalNames.Package
         };
-        var initializeResponse = (InitializeFileBlocksDownloadResponse)await service.ExecuteAsync(
-            initializeRequest,
-            cancellationToken);
+        var initializeResponse = (InitializeFileBlocksDownloadResponse)await service.ExecuteAsync(initializeRequest, cancellationToken);
 
         using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         var remainingBytes = initializeResponse.FileSizeInBytes;
         var offset = 0L;
-        var blockSize = initializeResponse.IsChunkingSupported
-            ? Math.Min(DownloadBlockSize, remainingBytes)
-            : remainingBytes;
+        var blockSize = initializeResponse.IsChunkingSupported ? Math.Min(DownloadBlockSize, remainingBytes) : remainingBytes;
 
         while (remainingBytes > 0)
         {
             var blockLength = Math.Min(blockSize, remainingBytes);
-            var downloadRequest = new DownloadBlockRequest
-            {
-                BlockLength = blockLength,
-                FileContinuationToken = initializeResponse.FileContinuationToken,
-                Offset = offset
-            };
-            var downloadResponse = (DownloadBlockResponse)await service.ExecuteAsync(
-                downloadRequest,
-                cancellationToken);
+            var downloadRequest = new DownloadBlockRequest { BlockLength = blockLength, FileContinuationToken = initializeResponse.FileContinuationToken, Offset = offset };
+            var downloadResponse = (DownloadBlockResponse)await service.ExecuteAsync(downloadRequest, cancellationToken);
             if (downloadResponse.Data.Length == 0)
             {
                 throw new InvalidOperationException("Dataverse returned an empty package file block.");

@@ -47,6 +47,19 @@ public class ManagedIdentityRepositoryTests
     }
 
     [Test]
+    public async Task FindIdByClientIdAsync_ExistingIdentity_ReturnsItsId()
+    {
+        var service = CreateService();
+        var expectedId = Guid.NewGuid();
+        service.Create(new ManagedIdentity(expectedId) { ApplicationId = Guid.Parse(ClientId) });
+        var repository = new ManagedIdentityRepository(service);
+
+        var id = await repository.FindIdByClientIdAsync(ClientId);
+
+        await Assert.That(id).IsEqualTo(expectedId);
+    }
+
+    [Test]
     public async Task LinkToAssemblyAsync_SetsManagedIdentityId()
     {
         var service = CreateService();

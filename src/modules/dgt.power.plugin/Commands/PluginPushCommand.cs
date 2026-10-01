@@ -3,7 +3,7 @@
 
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.common.Exceptions;
+using dgt.power.common.Extensions;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Output;
@@ -17,11 +17,7 @@ using Spectre.Console;
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PluginPushCommand(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
-    IAnsiConsole console)
+public class PluginPushCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
     : PowerLogic<PluginPushSettings>(tracer, connection, configResolver, console)
 {
     protected override Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
@@ -38,10 +34,7 @@ public class PluginPushCommand(
         {
             Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
             {
-                Header = new PanelHeader("DRY RUN"),
-                Border = BoxBorder.Rounded,
-                BorderStyle = new Style(Color.Yellow),
-                Padding = new Padding(1, 0, 1, 0)
+                Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
             });
         }
 
@@ -53,24 +46,17 @@ public class PluginPushCommand(
 
         if (targets.Count == 0)
         {
-            Console.MarkupLine(CultureInfo.InvariantCulture,
-                "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
             return Tracer.End(this, true);
         }
 
-        if (targets.Any(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) &&
-            string.IsNullOrWhiteSpace(settings.PublisherPrefix))
+        if (targets.Any(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
         {
             Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
             return Tracer.End(this, false);
         }
 
-        var options = new PluginPushOptions(
-            settings.Solution,
-            settings.DryRun,
-            settings.PublisherPrefix,
-            settings.Confirm,
-            settings.NonInteractive);
+        var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix, settings.Confirm, settings.NonInteractive);
 
         var hadFailure = false;
         foreach (var target in targets)
@@ -82,20 +68,19 @@ public class PluginPushCommand(
                     hadFailure = true;
                 }
             }
-            catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not AbstractPowerException)
+            catch (Exception e) when (ShouldContinueAfterTargetFailure(e))
             {
                 hadFailure = true;
-                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed processing '{0}': {1}[/]", target, e.Message);
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed processing '{0}': {1}[/]", target, e.RootMessage());
             }
         }
 
         return Tracer.End(this, !hadFailure);
     }
 
-    private async Task<bool> ProcessTargetAsync(
-        string target,
-        PluginPushOptions options,
-        CancellationToken cancellationToken)
+    internal static bool ShouldContinueAfterTargetFailure(Exception exception) => exception is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException;
+
+    private async Task<bool> ProcessTargetAsync(string target, PluginPushOptions options, CancellationToken cancellationToken)
     {
         var service = (IOrganizationServiceAsync2)Connection;
         var assemblyRepository = new PluginAssemblyRepository(service);
@@ -114,24 +99,12 @@ public class PluginPushCommand(
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository
         });
-        var executor = new PluginPushExecutor(
-            assemblyRepository,
-            packageRepository,
-            solutionRepository,
-            new ManagedIdentityRepository(service),
-            new PluginTypeDeploymentExecutor(
-                typeRepository,
-                stepRepository,
-                imageRepository,
-                customApiRepository,
-                solutionRepository),
-            new OutdatedAssemblyMigrator(
-                assemblyRepository,
-                typeRepository,
-                stepRepository,
-                customApiRepository));
+        var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
+            new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
+            new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository));
         var renderer = new PluginPlanRenderer(Console);
 
         if (target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
@@ -143,12 +116,7 @@ public class PluginPushCommand(
                 return false;
             }
 
-            await BuildRenderAndExecuteAsync(
-                Path.GetFileName(target),
-                async () => await planner.BuildPackageAsync(package, options, cancellationToken),
-                renderer,
-                executor,
-                options,
+            await BuildRenderAndExecuteAsync(Path.GetFileName(target), async () => await planner.BuildPackageAsync(package, options, cancellationToken), renderer, executor, options,
                 cancellationToken);
             return true;
         }
@@ -168,41 +136,22 @@ public class PluginPushCommand(
             return true;
         }
 
-        await BuildRenderAndExecuteAsync(
-            Path.GetFileName(target),
-            async () => await planner.BuildAssemblyAsync(assembly, options, cancellationToken),
-            renderer,
-            executor,
-            options,
-            cancellationToken);
+        await BuildRenderAndExecuteAsync(Path.GetFileName(target), async () => await planner.BuildAssemblyAsync(assembly, options, cancellationToken), renderer, executor, options, cancellationToken);
         return true;
     }
 
-    private async Task BuildRenderAndExecuteAsync(
-        string targetName,
-        Func<Task<PluginDeploymentPlan>> buildPlan,
-        PluginPlanRenderer renderer,
-        PluginPushExecutor executor,
-        PluginPushOptions options,
+    private async Task BuildRenderAndExecuteAsync(string targetName, Func<Task<PluginDeploymentPlan>> buildPlan, PluginPlanRenderer renderer, PluginPushExecutor executor, PluginPushOptions options,
         CancellationToken cancellationToken)
     {
         Console.MarkupLine("[bold blue]Plan[/]");
-        var plan = await Console.Status()
-            .Spinner(Spinner.Known.Dots)
-            .SpinnerStyle(Style.Parse("green bold"))
-            .StartAsync($"Processing {targetName}...", _ => buildPlan());
+        var plan = await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold")).StartAsync($"Processing {targetName}...", _ => buildPlan());
         renderer.Render(plan);
         if (options.DryRun)
         {
             return;
         }
 
-        if (PluginPushConfirmation.ShouldPrompt(
-                options.Confirm,
-                options.NonInteractive,
-                ExecutionEnvironment.IsCiAgent) &&
-            plan.HasChanges() &&
-            !PluginPushConfirmation.Confirm(Console, targetName))
+        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(Console, targetName))
         {
             Console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
@@ -210,34 +159,26 @@ public class PluginPushCommand(
 
         Console.MarkupLine("[bold green]Execution[/]");
         var completedOperationCount = 0;
+
         void ReportCompletedOperation(PluginDeploymentProgress progress)
         {
             completedOperationCount++;
-            Console.MarkupLine(
-                $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
         }
 
-        await Console.Status()
-            .Spinner(Spinner.Known.Dots)
-            .SpinnerStyle(Style.Parse("green bold"))
-            .StartAsync(
-                "Applying deployment plan...",
-                _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
+        await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold"))
+            .StartAsync("Applying deployment plan...", _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
 
-        Console.MarkupLine(completedOperationCount == 0
-            ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
-            : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+        Console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
     private IReadOnlyList<string>? ResolveTargets(string target)
     {
         if (File.Exists(target))
         {
-            if (!target.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) &&
-                !target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+            if (!target.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
             {
-                Console.MarkupLine(CultureInfo.InvariantCulture,
-                    "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
                 return null;
             }
 
@@ -246,7 +187,8 @@ public class PluginPushCommand(
 
         if (Directory.Exists(target))
         {
-            return [
+            return
+            [
                 .. Directory.EnumerateFiles(target, "*.dll", SearchOption.TopDirectoryOnly),
                 .. Directory.EnumerateFiles(target, "*.nupkg", SearchOption.TopDirectoryOnly)
             ];
@@ -255,5 +197,4 @@ public class PluginPushCommand(
         Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);
         return null;
     }
-
 }

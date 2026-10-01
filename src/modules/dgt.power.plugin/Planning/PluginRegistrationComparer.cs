@@ -21,8 +21,7 @@ public static class PluginRegistrationComparer
     /// when the type record itself requires no write.
     /// Remote types with no local match are returned separately for purging.
     /// </summary>
-    public static PluginTypeComparisonSet ComparePluginTypes(
-        IReadOnlyList<LocalPluginType> local, IReadOnlyList<RemotePluginType> remote)
+    public static PluginTypeComparisonSet ComparePluginTypes(IReadOnlyList<LocalPluginType> local, IReadOnlyList<RemotePluginType> remote)
     {
         ArgumentNullException.ThrowIfNull(local);
         ArgumentNullException.ThrowIfNull(remote);
@@ -32,7 +31,7 @@ public static class PluginRegistrationComparer
 
         foreach (var localType in local)
         {
-            var match = remote.FirstOrDefault(r => r.TypeName == localType.TypeName);
+            var match = remote.FirstOrDefault(r => !matchedRemoteIds.Contains(r.Id) && string.Equals(r.TypeName, localType.TypeName, StringComparison.Ordinal));
             if (match is null)
             {
                 comparisons.Add(new PluginTypeComparison(localType, null));
@@ -49,13 +48,12 @@ public static class PluginRegistrationComparer
 
     /// <summary>
     /// Matches local plugin steps against the steps already registered under the owning plugin
-    /// type. Matching mirrors the legacy equality (message name, mode, stage and primary entity
-    /// name, treating an unset/"none" primary entity as equal). The comparison flags content
+    /// type. Matching uses message name (case-insensitive), mode, stage, and primary and secondary
+    /// entity names, treating unset/"none" values as equal. The comparison flags content
     /// differences requiring an update. Remote steps with no local match are returned separately
     /// for deletion.
     /// </summary>
-    public static PluginStepComparisonSet ComparePluginSteps(
-        IReadOnlyList<LocalPluginStep> local, IReadOnlyList<RemotePluginStep> remote)
+    public static PluginStepComparisonSet ComparePluginSteps(IReadOnlyList<LocalPluginStep> local, IReadOnlyList<RemotePluginStep> remote)
     {
         ArgumentNullException.ThrowIfNull(local);
         ArgumentNullException.ThrowIfNull(remote);
@@ -65,7 +63,7 @@ public static class PluginRegistrationComparer
 
         foreach (var localStep in local)
         {
-            var match = remote.FirstOrDefault(r => StepKeysMatch(localStep, r));
+            var match = remote.FirstOrDefault(r => !matchedRemoteIds.Contains(r.Id) && StepKeysMatch(localStep, r));
             if (match is null)
             {
                 comparisons.Add(new PluginStepComparison(localStep, null, RequiresUpdate: false));
@@ -73,10 +71,7 @@ public static class PluginRegistrationComparer
             }
 
             matchedRemoteIds.Add(match.Id);
-            comparisons.Add(new PluginStepComparison(
-                localStep,
-                match,
-                RequiresUpdate: StepContentDiffers(localStep, match)));
+            comparisons.Add(new PluginStepComparison(localStep, match, RequiresUpdate: StepContentDiffers(localStep, match)));
         }
 
         var deletions = remote.Where(r => !matchedRemoteIds.Contains(r.Id)).ToList();
@@ -88,8 +83,7 @@ public static class PluginRegistrationComparer
     /// step, keyed by name and image type. The comparison flags matched images whose attributes
     /// differ. Remote images with no local match are returned separately as deletions.
     /// </summary>
-    public static PluginStepImageComparisonSet ComparePluginStepImages(
-        IReadOnlyList<LocalPluginStepImage> local, IReadOnlyList<RemotePluginStepImage> remote)
+    public static PluginStepImageComparisonSet ComparePluginStepImages(IReadOnlyList<LocalPluginStepImage> local, IReadOnlyList<RemotePluginStepImage> remote)
     {
         ArgumentNullException.ThrowIfNull(local);
         ArgumentNullException.ThrowIfNull(remote);
@@ -99,7 +93,7 @@ public static class PluginRegistrationComparer
 
         foreach (var localImage in local)
         {
-            var match = remote.FirstOrDefault(r => r.Name == localImage.Name && r.ImageType == localImage.ImageType);
+            var match = remote.FirstOrDefault(r => !matchedRemoteIds.Contains(r.Id) && r.Name == localImage.Name && r.ImageType == localImage.ImageType);
             if (match is null)
             {
                 comparisons.Add(new PluginStepImageComparison(localImage, null, RequiresUpdate: false));
@@ -122,42 +116,30 @@ public static class PluginRegistrationComparer
     /// declared for its replacement, by <see cref="LocalPluginType.TypeName"/>/<see cref="RemotePluginType.TypeName"/>
     /// equality - purely a name lookup, no Dataverse access involved.
     /// </summary>
-    public static IReadOnlyList<OutdatedTypeMigration> CompareOutdatedTypes(
-        IReadOnlyList<RemotePluginType> outdatedTypes, IReadOnlyList<LocalPluginType> replacementTypes)
+    public static IReadOnlyList<OutdatedTypeMigration> CompareOutdatedTypes(IReadOnlyList<RemotePluginType> outdatedTypes, IReadOnlyList<LocalPluginType> replacementTypes)
     {
         ArgumentNullException.ThrowIfNull(outdatedTypes);
         ArgumentNullException.ThrowIfNull(replacementTypes);
 
         var replacementTypeNames = replacementTypes.Select(t => t.TypeName).ToHashSet();
-        return outdatedTypes
-            .Select(old => new OutdatedTypeMigration(old.Id, old.TypeName, replacementTypeNames.Contains(old.TypeName)))
-            .ToList();
+        return outdatedTypes.Select(old => new OutdatedTypeMigration(old.Id, old.TypeName, replacementTypeNames.Contains(old.TypeName))).ToList();
     }
 
     private static bool StepKeysMatch(LocalPluginStep local, RemotePluginStep remote)
     {
-        if (!string.Equals(local.MessageName, remote.MessageName, StringComparison.OrdinalIgnoreCase) ||
-            local.Mode != remote.Mode ||
-            local.Stage != remote.Stage)
+        if (!string.Equals(local.MessageName, remote.MessageName, StringComparison.OrdinalIgnoreCase) || local.Mode != remote.Mode || local.Stage != remote.Stage)
         {
             return false;
         }
 
-        return string.Equals(
-                   NormalizeEntityName(local.PrimaryEntityName), NormalizeEntityName(remote.PrimaryEntityName),
-                   StringComparison.OrdinalIgnoreCase)
-            && string.Equals(
-                   NormalizeEntityName(local.SecondaryEntityName), NormalizeEntityName(remote.SecondaryEntityName),
-                   StringComparison.OrdinalIgnoreCase);
+        return string.Equals(NormalizeEntityName(local.PrimaryEntityName), NormalizeEntityName(remote.PrimaryEntityName), StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(NormalizeEntityName(local.SecondaryEntityName), NormalizeEntityName(remote.SecondaryEntityName), StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool StepContentDiffers(LocalPluginStep local, RemotePluginStep remote) =>
-        remote.Name != local.Name
-        || remote.ExecutionOrder != local.ExecutionOrder
-        || !AttributesEqual(local.FilterAttributes, remote.FilterAttributes);
+        remote.Name != local.Name || remote.ExecutionOrder != local.ExecutionOrder || !AttributesEqual(local.FilterAttributes, remote.FilterAttributes);
 
-    private static string NormalizeEntityName(string entityName) =>
-        string.IsNullOrEmpty(entityName) ? "none" : entityName;
+    private static string NormalizeEntityName(string entityName) => string.IsNullOrEmpty(entityName) ? "none" : entityName;
 
     private static bool AttributesEqual(IReadOnlyList<string>? left, IReadOnlyList<string>? right)
     {
@@ -171,5 +153,4 @@ public static class PluginRegistrationComparer
 
         return left.OrderBy(a => a, StringComparer.Ordinal).SequenceEqual(right.OrderBy(a => a, StringComparer.Ordinal));
     }
-
 }

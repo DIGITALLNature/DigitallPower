@@ -12,6 +12,27 @@ namespace dgt.power.plugin.tests.Local;
 public class PluginPackageReaderTests
 {
     [Test]
+    public async Task SelectAssemblyFiles_ChoosesNearestCompatibleTargetFramework()
+    {
+        var selected = PluginPackageReader.SelectAssemblyFiles(["lib/net8.0/Plugin.dll", "lib/net10.0/Plugin.dll"]);
+
+        await Assert.That(selected).IsEquivalentTo(["lib/net10.0/Plugin.dll"]);
+    }
+
+    [Test]
+    public async Task SelectAssemblyFiles_DuplicateBasenamesInSelectedFramework_Throws()
+    {
+        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles(["lib/net10.0/Plugin.dll", "lib/net10.0/Other/Plugin.dll"])).ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task SelectAssemblyFiles_NoCompatibleFramework_Throws()
+    {
+        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles(["lib/unknown/Plugin.dll"]))
+        .ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
     public async Task Read_PackageWithNonPluginDependencyDll_OnlyReturnsTheAssemblyContainingPlugins()
     {
         var pluginDllPath = typeof(SamplePlugin).Assembly.Location;
@@ -43,8 +64,7 @@ public class PluginPackageReaderTests
     }
 
     [Test]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "The test console is owned by the package reader for the duration of the test.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "The test console is owned by the package reader for the duration of the test.")]
     public async Task Read_ReadOnlyPackage_Succeeds()
     {
         var nupkgPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.nupkg");
@@ -66,21 +86,12 @@ public class PluginPackageReaderTests
 
     private static void CreatePackage(string nupkgPath, params string[] dllPaths)
     {
-        var builder = new PackageBuilder
-        {
-            Id = "test.package",
-            Version = NuGetVersion.Parse("1.0.0"),
-            Description = "Test package for PluginPackageReaderTests"
-        };
+        var builder = new PackageBuilder { Id = "test.package", Version = NuGetVersion.Parse("1.0.0"), Description = "Test package for PluginPackageReaderTests" };
         builder.Authors.Add("test");
 
         foreach (var dllPath in dllPaths)
         {
-            builder.Files.Add(new PhysicalPackageFile
-            {
-                SourcePath = dllPath,
-                TargetPath = $"lib/net10.0/{Path.GetFileName(dllPath)}"
-            });
+            builder.Files.Add(new PhysicalPackageFile { SourcePath = dllPath, TargetPath = $"lib/net10.0/{Path.GetFileName(dllPath)}" });
         }
 
         using var stream = File.Create(nupkgPath);

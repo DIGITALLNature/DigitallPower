@@ -10,20 +10,19 @@ namespace dgt.power.plugin.tests.Planning;
 
 public class PluginComparisonTests
 {
-    private static string ContentHash(string base64Content) =>
-        Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(base64Content)));
+    private static string ContentHash(string base64Content) => Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(base64Content)));
 
-    private static LocalPackage Package(string name, string version, string content) =>
-        new(name, version, content, ContentHash(content));
+    private static LocalPackage Package(string name, string version, string content) => new(name, version, content, ContentHash(content));
 
-    private static LocalAssembly Assembly(string version, string content = "YmFzZTY0") => new()
-    {
-        Name = "MyPlugins",
-        Version = Version.Parse(version),
-        Content = content,
-        ContentHash = ContentHash(content),
-        Kind = LocalAssemblyKind.Plugin
-    };
+    private static LocalAssembly Assembly(string version, string content = "YmFzZTY0") =>
+        new()
+        {
+            Name = "MyPlugins",
+            Version = Version.Parse(version),
+            Content = content,
+            ContentHash = ContentHash(content),
+            Kind = LocalAssemblyKind.Plugin
+        };
 
     [Test]
     public async Task CompareAssembly_NoRemoteMatch_ReturnsCreate()
@@ -88,9 +87,7 @@ public class PluginComparisonTests
     [Arguments("1.0.0", "1.0.0")]
     [Arguments("1.0.0", "2.0.0")]
     [Arguments("1.0.0", "1.0.0-beta.1")]
-    public async Task ComparePackage_IdenticalContentRegardlessOfVersion_ReturnsUnchanged(
-        string localVersion,
-        string remoteVersion)
+    public async Task ComparePackage_IdenticalContentRegardlessOfVersion_ReturnsUnchanged(string localVersion, string remoteVersion)
     {
         var local = Package("MyPackage", localVersion, "YmFzZTY0");
         var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content));
@@ -130,11 +127,7 @@ public class PluginComparisonTests
     public async Task CompareAssembly_IdenticalContentAndVersion_RequiresNoUpdate()
     {
         var local = Assembly("1.0.0.0");
-        var remote = new RemoteAssembly(
-            Guid.NewGuid(),
-            local.Version,
-            PackageId: null,
-            ContentHash: ContentHash(local.Content));
+        var remote = new RemoteAssembly(Guid.NewGuid(), local.Version, PackageId: null, ContentHash: ContentHash(local.Content));
 
         var comparison = new AssemblyComparison(local, remote);
 
@@ -146,19 +139,11 @@ public class PluginComparisonTests
         }
     }
 
-    private static LocalPluginType PluginType(string typeName, params LocalPluginStep[] steps) =>
-        new(typeName, typeName, CustomApi: string.Empty, HasRegistrationAttribute: true, steps);
+    private static LocalPluginType PluginType(string typeName, params LocalPluginStep[] steps) => new(typeName, typeName, CustomApi: string.Empty, HasRegistrationAttribute: true, steps);
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Major Code Smell", "S107", Justification = "Test fixture factory parameters map directly to LocalPluginStep fields.")]
-    private static LocalPluginStep Step(
-        string name = "MyPlugin|account|Synchronous|PostOperation|Create",
-        string messageName = "Create",
-        int mode = 0,
-        int stage = 40,
-        string primaryEntityName = "account",
-        IReadOnlyList<string>? filterAttributes = null,
-        int? executionOrder = 1) =>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S107", Justification = "Test fixture factory parameters map directly to LocalPluginStep fields.")]
+    private static LocalPluginStep Step(string name = "MyPlugin|account|Synchronous|PostOperation|Create", string messageName = "Create", int mode = 0, int stage = 40,
+        string primaryEntityName = "account", IReadOnlyList<string>? filterAttributes = null, int? executionOrder = 1) =>
         new(name, mode, messageName, stage, primaryEntityName, "none", filterAttributes, executionOrder, []);
 
     [Test]
@@ -226,6 +211,23 @@ public class PluginComparisonTests
     }
 
     [Test]
+    public async Task ComparePluginSteps_UsesEachRemoteStepAtMostOnce()
+    {
+        var localSteps = new[] { Step(name: "step-rank-0", executionOrder: 0), Step(name: "step-rank-2", executionOrder: 2) };
+        var remote = new RemotePluginStep(Guid.NewGuid(), "existing", 0, "Create", 40, "account", "none", null, 1);
+
+        var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps(localSteps, [remote]);
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(changes).Count().IsEqualTo(2);
+            await Assert.That(changes.Count(change => change.RequiresCreate)).IsEqualTo(1);
+            await Assert.That(changes.Count(change => change.Remote is not null)).IsEqualTo(1);
+            await Assert.That(deletions).IsEmpty();
+        }
+    }
+
+    [Test]
     public async Task ComparePluginSteps_EmptyAndNullFilterAttributesAreEquivalent()
     {
         var local = Step(name: "step", filterAttributes: []);
@@ -240,8 +242,7 @@ public class PluginComparisonTests
     [Test]
     [Arguments("step", "renamed", 1, 1)]
     [Arguments("step", "step", 1, 2)]
-    public async Task ComparePluginSteps_RemoteMatchWithContentDiff_ReturnsUpdate(
-        string localName, string remoteName, int localOrder, int remoteOrder)
+    public async Task ComparePluginSteps_RemoteMatchWithContentDiff_ReturnsUpdate(string localName, string remoteName, int localOrder, int remoteOrder)
     {
         var local = Step(name: localName, executionOrder: localOrder);
         var remote = new RemotePluginStep(Guid.NewGuid(), remoteName, 0, "Create", 40, "account", "none", null, remoteOrder);
@@ -271,8 +272,7 @@ public class PluginComparisonTests
     public async Task ComparePluginSteps_MatchIsCaseInsensitiveForMessageName()
     {
         var local = Step(messageName: "create");
-        var remote = new RemotePluginStep(
-            Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder);
+        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, "Create", local.Stage, "account", "none", null, local.ExecutionOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 
@@ -284,8 +284,7 @@ public class PluginComparisonTests
     public async Task ComparePluginSteps_DifferentSecondaryEntityNamesDoNotMatch()
     {
         var local = Step() with { SecondaryEntityName = "contact" };
-        var remote = new RemotePluginStep(
-            Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder);
+        var remote = new RemotePluginStep(Guid.NewGuid(), local.Name, local.Mode, local.MessageName, local.Stage, "account", "none", null, local.ExecutionOrder);
 
         var (changes, deletions) = PluginRegistrationComparer.ComparePluginSteps([local], [remote]);
 

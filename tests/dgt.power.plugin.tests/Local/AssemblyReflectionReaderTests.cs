@@ -25,8 +25,7 @@ public class AssemblyReflectionReaderTests
     private sealed class LegacyRegistrationPlugin;
 
     [Test]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "The test console remains in scope for output assertions.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "The test console remains in scope for output assertions.")]
     public async Task BuildPluginType_TypeWithoutRegistrationAttribute_HasRegistrationAttributeIsFalseAndHasNoSteps()
     {
         var console = new TestConsole();
@@ -47,8 +46,7 @@ public class AssemblyReflectionReaderTests
     {
         var pluginType = new LocalPluginType("Contoso.Plugin", "Contoso.Plugin", string.Empty, false, []);
 
-        await Assert.That(() => AssemblyReflectionReader.EnsureAllPluginTypesDeclared([pluginType]))
-            .ThrowsExactly<AssemblyException>();
+        await Assert.That(() => AssemblyReflectionReader.EnsureAllPluginTypesDeclared([pluginType])).ThrowsExactly<AssemblyException>();
     }
 
     [Test]
@@ -60,6 +58,14 @@ public class AssemblyReflectionReaderTests
         var result = reader.BuildPluginType(typeof(ExplicitOrderPlugin));
 
         await Assert.That(result.Steps[0].ExecutionOrder).IsEqualTo(25);
+    }
+
+    [Test]
+    [Arguments("invalid", "clientId")]
+    [Arguments("invalid", "TenantId")]
+    public async Task ValidateGuidAttribute_InvalidValue_Throws(string value, string attributeName)
+    {
+        await Assert.That(() => AssemblyReflectionReader.ValidateGuidAttribute(value, attributeName)).ThrowsExactly<AssemblyException>();
     }
 
     [Test]
@@ -81,12 +87,9 @@ public class AssemblyReflectionReaderTests
     public async Task Read_ExternalRegistrationDependency_DiscoversRegistrationWithoutResolverPath()
     {
         using var console = new TestConsole();
-        using var metadataLoadContext = MetadataLoadContextFactory.Create(
-            Path.GetDirectoryName(typeof(AssemblyReflectionReaderTests).Assembly.Location)!);
+        using var metadataLoadContext = MetadataLoadContextFactory.Create(Path.GetDirectoryName(typeof(AssemblyReflectionReaderTests).Assembly.Location)!);
 
-        var result = new AssemblyReflectionReader(console).Read(
-            typeof(AssemblyReflectionReaderTests).Assembly.Location,
-            metadataLoadContext);
+        var result = new AssemblyReflectionReader(console).Read(typeof(AssemblyReflectionReaderTests).Assembly.Location, metadataLoadContext);
 
         var pluginType = result!.PluginTypes.Single(type => type.TypeName == typeof(ExplicitOrderPlugin).FullName);
         using (Assert.Multiple())
@@ -104,9 +107,7 @@ public class AssemblyReflectionReaderTests
         var resolverPaths = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll");
         using var metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(resolverPaths));
 
-        var result = new AssemblyReflectionReader(console).Read(
-            typeof(AssemblyReflectionReaderTests).Assembly.Location,
-            metadataLoadContext);
+        var result = new AssemblyReflectionReader(console).Read(typeof(AssemblyReflectionReaderTests).Assembly.Location, metadataLoadContext);
 
         await Assert.That(result).IsNull();
     }
@@ -127,8 +128,7 @@ public class AssemblyReflectionReaderTests
     [Test]
     public async Task MapDataProviderEventToMessage_ThrowsForUnknownEvent()
     {
-        await Assert.That(() => AssemblyReflectionReader.MapDataProviderEventToMessage(99))
-            .ThrowsExactly<AssemblyException>();
+        await Assert.That(() => AssemblyReflectionReader.MapDataProviderEventToMessage(99)).ThrowsExactly<AssemblyException>();
     }
 
     [Test]

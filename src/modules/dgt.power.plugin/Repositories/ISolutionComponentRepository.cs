@@ -14,13 +14,12 @@ public interface ISolutionComponentRepository
     /// </summary>
     Task<int?> GetComponentTypeAsync(string entityLogicalName, CancellationToken cancellationToken = default);
 
-    /// <summary>Lists component IDs of the specified type already present in a solution.</summary>
-    Task<IReadOnlySet<Guid>> ListComponentIdsAsync(
-        string solutionUniqueName,
-        int componentType,
-        CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Lists component IDs of the specified type already present in a solution.
+    /// </summary>
+    /// <exception cref="MissingSolutionException">The requested solution does not exist.</exception>
+    Task<IReadOnlySet<Guid>> ListComponentIdsAsync(string solutionUniqueName, int componentType, CancellationToken cancellationToken = default);
 
     /// <summary>Adds a component to a solution.</summary>
     Task AddToSolutionAsync(int componentType, Guid componentId, string solutionUniqueName, CancellationToken cancellationToken = default);
-
 }

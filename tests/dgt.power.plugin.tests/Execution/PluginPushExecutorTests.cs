@@ -22,11 +22,7 @@ public class PluginPushExecutorTests
 {
     private const string ClientId = "12345678-1234-1234-1234-123456789abc";
 
-    private sealed class DeploymentTestHarness(
-        PluginDeploymentPlanner planner,
-        PluginPlanRenderer renderer,
-        PluginPushExecutor executor,
-        TestConsole console)
+    private sealed class DeploymentTestHarness(PluginDeploymentPlanner planner, PluginPlanRenderer renderer, PluginPushExecutor executor, TestConsole console)
     {
         public async Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options)
         {
@@ -37,17 +33,15 @@ public class PluginPushExecutorTests
             {
                 return Guid.Empty;
             }
+
             console.MarkupLine("[bold green]Execution[/]");
             var completedOperationCount = 0;
             var id = await executor.ExecuteAsync(plan, progress =>
             {
                 completedOperationCount++;
-                console.MarkupLine(
-                    $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+                console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
             });
-            console.MarkupLine(completedOperationCount == 0
-                ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
-                : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+            console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
             return id;
         }
 
@@ -60,25 +54,21 @@ public class PluginPushExecutorTests
             {
                 return Guid.Empty;
             }
+
             console.MarkupLine("[bold green]Execution[/]");
             var completedOperationCount = 0;
             var id = await executor.ExecuteAsync(plan, progress =>
             {
                 completedOperationCount++;
-                console.MarkupLine(
-                    $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+                console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
             });
-            console.MarkupLine(completedOperationCount == 0
-                ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
-                : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+            console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
             return id;
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
-    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor, TestConsole Console) CreateExecutorWithConsole(
-        IReadOnlyDictionary<Guid, byte[]>? packageFiles = null)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor and returned for assertions.")]
+    private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor, TestConsole Console) CreateExecutorWithConsole(IReadOnlyDictionary<Guid, byte[]>? packageFiles = null)
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
@@ -90,6 +80,7 @@ public class PluginPushExecutorTests
         }
 
         service.AddDefaultRequests();
+        service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
         var assemblyRepository = new PluginAssemblyRepository(service);
@@ -108,40 +99,25 @@ public class PluginPushExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository
         });
-        var executor = new DeploymentTestHarness(
-            planner,
-            new PluginPlanRenderer(console),
-            new PluginPushExecutor(
-                assemblyRepository,
-                packageRepository,
-                solutionRepository,
-                new ManagedIdentityRepository(service),
-                new PluginTypeDeploymentExecutor(
-                    typeRepository,
-                    stepRepository,
-                    imageRepository,
-                    customApiRepository,
-                    solutionRepository),
-                new OutdatedAssemblyMigrator(
-                    assemblyRepository,
-                    typeRepository,
-                    stepRepository,
-                    customApiRepository)),
-            console);
+        var executor = new DeploymentTestHarness(planner, new PluginPlanRenderer(console),
+            new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
+                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
+                new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository)), console);
 
         return (service, executor, console);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "TestConsole ownership is transferred to the executor.")]
     private static (FakeOrganizationServiceAsync Service, DeploymentTestHarness Executor) CreateExecutor()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new AddSolutionComponentExecutor());
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
+        service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
         var assemblyRepository = new PluginAssemblyRepository(service);
@@ -160,45 +136,29 @@ public class PluginPushExecutorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository
         });
-        var executor = new DeploymentTestHarness(
-            planner,
-            new PluginPlanRenderer(console),
-            new PluginPushExecutor(
-                assemblyRepository,
-                packageRepository,
-                solutionRepository,
-                new ManagedIdentityRepository(service),
-                new PluginTypeDeploymentExecutor(
-                    typeRepository,
-                    stepRepository,
-                    imageRepository,
-                    customApiRepository,
-                    solutionRepository),
-                new OutdatedAssemblyMigrator(
-                    assemblyRepository,
-                    typeRepository,
-                    stepRepository,
-                    customApiRepository)),
-            console);
+        var executor = new DeploymentTestHarness(planner, new PluginPlanRenderer(console),
+            new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
+                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
+                new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository)), console);
 
         return (service, executor);
     }
 
-    private static LocalAssembly Assembly(string name = "MyPlugins", string version = "1.0.0.0",
-        string? managedIdentityClientId = null) => new()
-    {
-        Name = name,
-        Version = Version.Parse(version),
-        Content = "YmFzZTY0",
-        ContentHash = Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())),
-        Kind = LocalAssemblyKind.Plugin,
-        ManagedIdentityClientId = managedIdentityClientId
-    };
+    private static LocalAssembly Assembly(string name = "MyPlugins", string version = "1.0.0.0", string? managedIdentityClientId = null) =>
+        new()
+        {
+            Name = name,
+            Version = Version.Parse(version),
+            Content = "YmFzZTY0",
+            ContentHash = Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())),
+            Kind = LocalAssemblyKind.Plugin,
+            ManagedIdentityClientId = managedIdentityClientId
+        };
 
-    private static LocalPackage Package(string name, string version, string content) =>
-        new(name, version, content, Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(content))));
+    private static LocalPackage Package(string name, string version, string content) => new(name, version, content, Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(content))));
 
     [Test]
     public async Task ProcessAssemblyAsync_NoRemote_CreatesNewAssembly()
@@ -265,8 +225,7 @@ public class PluginPushExecutorTests
             await Assert.That(console.Output).Contains("Execution");
             await Assert.That(console.Output).Contains("Created assembly MyPlugins v1.0.0.0");
             await Assert.That(console.Output).Contains("Deployment completed");
-            await Assert.That(console.Output.IndexOf("Plan", StringComparison.Ordinal))
-                .IsLessThan(console.Output.IndexOf("Execution", StringComparison.Ordinal));
+            await Assert.That(console.Output.IndexOf("Plan", StringComparison.Ordinal)).IsLessThan(console.Output.IndexOf("Execution", StringComparison.Ordinal));
         }
     }
 
@@ -282,15 +241,8 @@ public class PluginPushExecutorTests
             SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
-        service.Create(new PluginType(Guid.NewGuid())
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, existingAssemblyId)
-        });
-        var assembly = Assembly(version: "2.0.0.0") with
-        {
-            PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
-        };
+        service.Create(new PluginType(Guid.NewGuid()) { TypeName = "MyPlugin", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, existingAssemblyId) });
+        var assembly = Assembly(version: "2.0.0.0") with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
 
         await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
 
@@ -317,11 +269,7 @@ public class PluginPushExecutorTests
             SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
-        service.Create(new PluginType(oldTypeId)
-        {
-            TypeName = "MyPlugin",
-            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, oldAssemblyId)
-        });
+        service.Create(new PluginType(oldTypeId) { TypeName = "MyPlugin", PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, oldAssemblyId) });
         service.Create(new SdkMessage(messageId) { Name = "Create" });
         service.Create(new SdkMessageProcessingStep(oldStepId)
         {
@@ -341,30 +289,11 @@ public class PluginPushExecutorTests
         {
             PluginTypes =
             [
-                new LocalPluginType(
-                    "MyPlugin",
-                    "MyPlugin",
-                    string.Empty,
-                    true,
-                    [
-                        new LocalPluginStep(
-                            "Legacy step",
-                            SdkMessageProcessingStep.Options.Mode.Synchronous,
-                            "Create",
-                            SdkMessageProcessingStep.Options.Stage.PostOperation,
-                            "none",
-                            "none",
-                            null,
-                            1,
-                            [
-                                new LocalPluginStepImage(
-                                    SdkMessageProcessingStepImage.Options.ImageType.PreImage,
-                                    "Legacy image",
-                                    "LegacyImage",
-                                    "Target",
-                                    null)
-                            ])
+                new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [
+                    new LocalPluginStep("Legacy step", SdkMessageProcessingStep.Options.Mode.Synchronous, "Create", SdkMessageProcessingStep.Options.Stage.PostOperation, "none", "none", null, 1, [
+                        new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "Legacy image", "LegacyImage", "Target", null)
                     ])
+                ])
             ]
         };
 
@@ -381,9 +310,7 @@ public class PluginPushExecutorTests
     {
         var (_, executor, console) = CreateExecutorWithConsole();
 
-        await executor.ProcessAssemblyAsync(
-            Assembly(),
-            new PluginPushOptions("TestSolution", DryRun: true));
+        await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions("TestSolution", DryRun: true));
 
         await Assert.That(console.Output).Contains("Solution membership: TestSolution");
         await Assert.That(console.Output).Contains("Assembly MyPlugins");
@@ -450,9 +377,7 @@ public class PluginPushExecutorTests
         });
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
-        await executor.ProcessAssemblyAsync(
-            Assembly(),
-            new PluginPushOptions("TestSolution", DryRun: false));
+        await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions("TestSolution", DryRun: false));
 
         using (Assert.Multiple())
         {
@@ -466,18 +391,15 @@ public class PluginPushExecutorTests
     public async Task ProcessAssemblyAsync_ExistingSolutionMembership_DoesNotListOrAddAssembly()
     {
         var (service, executor, console) = CreateExecutorWithConsole();
-        var solutionId = Guid.NewGuid();
+        var solutionId = service.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName) { ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId) }).Entities.Single().Id;
         var assemblyId = Guid.NewGuid();
-        service.Create(new Solution(solutionId) { UniqueName = "TestSolution" });
         var existingMembership = new SolutionComponent(Guid.NewGuid())
         {
             Attributes =
             {
                 [SolutionComponent.LogicalNames.ObjectId] = assemblyId,
-                [SolutionComponent.LogicalNames.SolutionId] =
-                    new EntityReference(Solution.EntityLogicalName, solutionId),
-                [SolutionComponent.LogicalNames.ComponentType] =
-                    new OptionSetValue(IPluginAssemblyRepository.ComponentType)
+                [SolutionComponent.LogicalNames.SolutionId] = new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(IPluginAssemblyRepository.ComponentType)
             }
         };
         service.Create(existingMembership);
@@ -490,9 +412,7 @@ public class PluginPushExecutorTests
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
 
-        await executor.ProcessAssemblyAsync(
-            Assembly(),
-            new PluginPushOptions("TestSolution", DryRun: false));
+        await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions("TestSolution", DryRun: false));
 
         using (Assert.Multiple())
         {
@@ -543,19 +463,14 @@ public class PluginPushExecutorTests
             Attributes =
             {
                 [SolutionComponent.LogicalNames.ObjectId] = sourceAssemblyId,
-                [SolutionComponent.LogicalNames.SolutionId] =
-                    new EntityReference(Solution.EntityLogicalName, solutionId),
-                [SolutionComponent.LogicalNames.ComponentType] =
-                    new OptionSetValue(IPluginAssemblyRepository.ComponentType)
+                [SolutionComponent.LogicalNames.SolutionId] = new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(IPluginAssemblyRepository.ComponentType)
             }
         });
 
-        await executor.ProcessAssemblyAsync(
-            Assembly(version: "2.0.0.0"),
-            new PluginPushOptions("TestSolution", DryRun: false));
+        await executor.ProcessAssemblyAsync(Assembly(version: "2.0.0.0"), new PluginPushOptions("TestSolution", DryRun: false));
 
-        await Assert.That(console.Output)
-            .Contains("Added assembly MyPlugins v2.0.0.0 to solution TestSolution");
+        await Assert.That(console.Output).Contains("Added assembly MyPlugins v2.0.0.0 to solution TestSolution");
     }
 
     [Test]
@@ -597,10 +512,7 @@ public class PluginPushExecutorTests
             PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
         });
 
-        var assembly = Assembly(managedIdentityClientId: ClientId) with
-        {
-            PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])]
-        };
+        var assembly = Assembly(managedIdentityClientId: ClientId) with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
         await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: false));
 
         using (Assert.Multiple())
@@ -629,12 +541,7 @@ public class PluginPushExecutorTests
     public async Task ProcessPackageAsync_NoRemote_CreatesPackageAndBundledAssemblies()
     {
         var (service, executor) = CreateExecutor();
-        service.Create(new SolutionComponentDefinition
-        {
-            Id = Guid.NewGuid(),
-            SolutionComponentType = 10119,
-            PrimaryEntityName = PluginPackage.EntityLogicalName
-        });
+        service.Create(new SolutionComponentDefinition { Id = Guid.NewGuid(), SolutionComponentType = 10119, PrimaryEntityName = PluginPackage.EntityLogicalName });
         var package = new LocalPluginPackage(Package("MyPackage", "1.0.0", "cGtnY29udGVudA=="), [Assembly()]);
 
         var id = await executor.ProcessPackageAsync(package, new PluginPushOptions("TestSolution", DryRun: false, PublisherPrefix: "new"));
@@ -666,22 +573,12 @@ public class PluginPushExecutorTests
     {
         var packageId = Guid.NewGuid();
         var packageFile = "pkgcontent"u8.ToArray();
-        var (service, executor, console) = CreateExecutorWithConsole(
-            new Dictionary<Guid, byte[]> { [packageId] = packageFile });
-        var remotePackage = new PluginPackage(packageId)
-        {
-            Name = "new_MyPackage",
-            Version = "1.0.0",
-            Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() }
-        };
+        var (service, executor, console) = CreateExecutorWithConsole(new Dictionary<Guid, byte[]> { [packageId] = packageFile });
+        var remotePackage = new PluginPackage(packageId) { Name = "new_MyPackage", Version = "1.0.0", Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() } };
         service.Create(remotePackage);
-        var package = new LocalPluginPackage(
-            Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)),
-            []);
+        var package = new LocalPluginPackage(Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)), []);
 
-        var id = await executor.ProcessPackageAsync(
-            package,
-            new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
+        var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
 
         using (Assert.Multiple())
         {
@@ -697,29 +594,14 @@ public class PluginPushExecutorTests
     {
         var packageId = Guid.NewGuid();
         var packageFile = "pkgcontent"u8.ToArray();
-        var (service, executor, console) = CreateExecutorWithConsole(
-            new Dictionary<Guid, byte[]> { [packageId] = packageFile });
+        var (service, executor, console) = CreateExecutorWithConsole(new Dictionary<Guid, byte[]> { [packageId] = packageFile });
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
-        service.Create(new SolutionComponentDefinition
-        {
-            Id = Guid.NewGuid(),
-            SolutionComponentType = 10119,
-            PrimaryEntityName = PluginPackage.EntityLogicalName
-        });
-        var remotePackage = new PluginPackage(packageId)
-        {
-            Name = "new_MyPackage",
-            Version = "1.0.0",
-            Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() }
-        };
+        service.Create(new SolutionComponentDefinition { Id = Guid.NewGuid(), SolutionComponentType = 10119, PrimaryEntityName = PluginPackage.EntityLogicalName });
+        var remotePackage = new PluginPackage(packageId) { Name = "new_MyPackage", Version = "1.0.0", Attributes = { [PluginPackage.LogicalNames.Package] = Guid.NewGuid() } };
         service.Create(remotePackage);
-        var package = new LocalPluginPackage(
-            Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)),
-            []);
+        var package = new LocalPluginPackage(Package("MyPackage", "2.0.0", Convert.ToBase64String(packageFile)), []);
 
-        await executor.ProcessPackageAsync(
-            package,
-            new PluginPushOptions("TestSolution", DryRun: false, PublisherPrefix: "new"));
+        await executor.ProcessPackageAsync(package, new PluginPushOptions("TestSolution", DryRun: false, PublisherPrefix: "new"));
 
         using (Assert.Multiple())
         {
@@ -733,8 +615,7 @@ public class PluginPushExecutorTests
     public async Task ProcessPackageAsync_OnlyFirstAssemblyWithManagedIdentity_LinksPackageIdentity()
     {
         var (service, executor) = CreateExecutor();
-        var package = new LocalPluginPackage(
-            Package("MyPackage", "1.0.0", "cGtnY29udGVudA=="),
+        var package = new LocalPluginPackage(Package("MyPackage", "1.0.0", "cGtnY29udGVudA=="),
             [Assembly("First", managedIdentityClientId: ClientId), Assembly("Second", managedIdentityClientId: ClientId)]);
 
         var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));

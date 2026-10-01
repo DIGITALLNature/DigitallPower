@@ -11,6 +11,18 @@ namespace dgt.power.plugin.Repositories;
 /// <inheritdoc cref="IManagedIdentityRepository" />
 public sealed class ManagedIdentityRepository(IOrganizationServiceAsync2 service) : IManagedIdentityRepository
 {
+    public async Task<Guid?> FindIdByClientIdAsync(string clientId, CancellationToken cancellationToken = default)
+    {
+        var applicationId = Guid.Parse(clientId);
+        var query = new QueryExpression(ManagedIdentity.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(false),
+            Criteria = new FilterExpression { Conditions = { new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId, ConditionOperator.Equal, applicationId) } }
+        };
+
+        return (await service.RetrieveMultipleAsync(query, cancellationToken)).Entities.FirstOrDefault()?.Id;
+    }
+
     public async Task<Guid> EnsureAsync(string clientId, string? tenantId, CancellationToken cancellationToken = default)
     {
         var applicationId = Guid.Parse(clientId);
@@ -18,10 +30,7 @@ public sealed class ManagedIdentityRepository(IOrganizationServiceAsync2 service
         var query = new QueryExpression(ManagedIdentity.EntityLogicalName)
         {
             ColumnSet = new ColumnSet(ManagedIdentity.LogicalNames.ApplicationId, ManagedIdentity.LogicalNames.TenantId),
-            Criteria = new FilterExpression
-            {
-                Conditions = { new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId, ConditionOperator.Equal, applicationId) }
-            }
+            Criteria = new FilterExpression { Conditions = { new ConditionExpression(ManagedIdentity.LogicalNames.ApplicationId, ConditionOperator.Equal, applicationId) } }
         };
 
         var existing = (await service.RetrieveMultipleAsync(query, cancellationToken)).Entities.FirstOrDefault();
@@ -46,14 +55,8 @@ public sealed class ManagedIdentityRepository(IOrganizationServiceAsync2 service
     }
 
     public async Task LinkToAssemblyAsync(Guid assemblyId, Guid managedIdentityId, CancellationToken cancellationToken = default) =>
-        await service.UpdateAsync(new PluginAssembly(assemblyId)
-        {
-            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
-        }, cancellationToken);
+        await service.UpdateAsync(new PluginAssembly(assemblyId) { ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId) }, cancellationToken);
 
     public async Task LinkToPackageAsync(Guid packageId, Guid managedIdentityId, CancellationToken cancellationToken = default) =>
-        await service.UpdateAsync(new PluginPackage(packageId)
-        {
-            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId)
-        }, cancellationToken);
+        await service.UpdateAsync(new PluginPackage(packageId) { Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, managedIdentityId) }, cancellationToken);
 }

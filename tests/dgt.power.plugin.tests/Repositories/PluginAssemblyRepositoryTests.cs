@@ -45,6 +45,70 @@ public class PluginAssemblyRepositoryTests
     }
 
     [Test]
+    public async Task FindForPackageDeploymentAsync_ReturnsAssemblyOwnedByExpectedPackage()
+    {
+        var service = CreateService();
+        var repository = new PluginAssemblyRepository(service);
+        var packageId = Guid.NewGuid();
+        var otherPackageAssemblyId = Guid.NewGuid();
+        var expectedAssemblyId = Guid.NewGuid();
+        service.Create(new PluginAssembly(Guid.NewGuid())
+        {
+            Name = "MyPlugins",
+            Version = "2.1.2.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginAssembly(otherPackageAssemblyId)
+        {
+            Name = "MyPlugins",
+            Version = "2.1.2.0",
+            PackageId = new EntityReference(PluginPackage.EntityLogicalName, Guid.NewGuid()),
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginAssembly(expectedAssemblyId)
+        {
+            Name = "MyPlugins",
+            Version = "2.1.2.0",
+            PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId),
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+
+        var result = await repository.FindForPackageDeploymentAsync("MyPlugins", Version.Parse("2.1.2.0"), packageId);
+
+        await Assert.That(result!.Id).IsEqualTo(expectedAssemblyId);
+    }
+
+    [Test]
+    public async Task FindForPackageDeploymentAsync_WithoutExistingPackageReturnsOnlyStandaloneAssembly()
+    {
+        var service = CreateService();
+        var repository = new PluginAssemblyRepository(service);
+        var standaloneId = Guid.NewGuid();
+        service.Create(new PluginAssembly(Guid.NewGuid())
+        {
+            Name = "MyPlugins",
+            Version = "2.1.2.0",
+            PackageId = new EntityReference(PluginPackage.EntityLogicalName, Guid.NewGuid()),
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+        service.Create(new PluginAssembly(standaloneId)
+        {
+            Name = "MyPlugins",
+            Version = "2.1.2.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+
+        var result = await repository.FindForPackageDeploymentAsync("MyPlugins", Version.Parse("2.1.2.0"), packageId: null);
+
+        await Assert.That(result!.Id).IsEqualTo(standaloneId);
+    }
+
+    [Test]
     public async Task CreateAsync_CreatesSandboxedDatabaseAssembly()
     {
         var service = CreateService();
@@ -84,8 +148,7 @@ public class PluginAssemblyRepositoryTests
 
         await repository.DeleteAsync(id);
 
-        await Assert.That(() => service.Retrieve(PluginAssembly.EntityLogicalName, id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true)))
-            .Throws<Exception>();
+        await Assert.That(() => service.Retrieve(PluginAssembly.EntityLogicalName, id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true))).Throws<Exception>();
     }
 
     [Test]

@@ -82,6 +82,10 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         {
             throw;
         }
+        catch (AssemblyException)
+        {
+            throw;
+        }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             console.MarkupLine(Markup.Escape(e.RootMessage()));
@@ -95,10 +99,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     /// </summary>
     private static void AssertNoWorkflowActivities(Assembly assembly)
     {
-        var workflowTypeNames = GetLoadableTypes(assembly)
-            .Where(IsCodeActivityBased)
-            .Select(t => t.FullName!)
-            .ToList();
+        var workflowTypeNames = GetLoadableTypes(assembly).Where(IsCodeActivityBased).Select(t => t.FullName!).ToList();
 
         if (workflowTypeNames.Count > 0)
         {
@@ -139,6 +140,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
             steps.AddRange(BuildRegistrationSteps(pluginType));
         }
+
         return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, hasRegistrationAttribute, steps);
     }
 
@@ -149,9 +151,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var undeclaredPluginType = pluginTypes.FirstOrDefault(type => !type.HasRegistrationAttribute);
         if (undeclaredPluginType is not null)
         {
-            throw new AssemblyException(
-                $"Plugin type '{undeclaredPluginType.TypeName}' has no supported registration attribute. " +
-                "plugin push requires fully declarative plugin registrations.");
+            throw new AssemblyException($"Plugin type '{undeclaredPluginType.TypeName}' has no supported registration attribute. " + "plugin push requires fully declarative plugin registrations.");
         }
     }
 
@@ -166,16 +166,8 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var eventValue = GetValue<int>(customAttribute, "eventRegistration");
         var messageName = MapDataProviderEventToMessage(eventValue);
 
-        var step = new LocalPluginStep(
-            string.Empty,
-            SdkMessageProcessingStep.Options.Mode.Synchronous,
-            messageName,
-            SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly,
-            entityName,
-            "none",
-            null,
-            1,
-            []);
+        var step = new LocalPluginStep(string.Empty, SdkMessageProcessingStep.Options.Mode.Synchronous, messageName, SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly, entityName,
+            "none", null, 1, []);
 
         return step with { Name = GetStepName(step, pluginType.FullName!) };
     }
@@ -187,8 +179,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) ||
-                customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
+            if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) || customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
             {
                 continue;
             }
@@ -203,34 +194,17 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var images = new List<LocalPluginStepImage>();
             if (GetValue<bool>(customAttribute, "PreEntityImage"))
             {
-                images.Add(new LocalPluginStepImage(
-                    SdkMessageProcessingStepImage.Options.ImageType.PreImage,
-                    "PreImage",
-                    "PreImage",
-                    GetMessagePropertyName(messageName),
+                images.Add(new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "PreImage", GetMessagePropertyName(messageName),
                     GetArrayValues(customAttribute, "PreEntityImageAttributes")));
             }
 
             if (GetValue<bool>(customAttribute, "PostEntityImage"))
             {
-                images.Add(new LocalPluginStepImage(
-                    SdkMessageProcessingStepImage.Options.ImageType.PostImage,
-                    "PostImage",
-                    "PostImage",
-                    GetMessagePropertyName(messageName),
+                images.Add(new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PostImage, "PostImage", "PostImage", GetMessagePropertyName(messageName),
                     GetArrayValues(customAttribute, "PostEntityImageAttributes")));
             }
 
-            var step = new LocalPluginStep(
-                string.Empty,
-                mode,
-                messageName,
-                stage,
-                primaryEntityName,
-                secondaryEntityName,
-                GetArrayValues(customAttribute, "FilterAttributes"),
-                executionOrder,
-                images);
+            var step = new LocalPluginStep(string.Empty, mode, messageName, stage, primaryEntityName, secondaryEntityName, GetArrayValues(customAttribute, "FilterAttributes"), executionOrder, images);
 
             steps.Add(step with { Name = GetStepName(step, pluginType.FullName!) });
         }
@@ -245,8 +219,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var assemblyAttributes = CustomAttributeData.GetCustomAttributes(assembly);
         foreach (var attr in assemblyAttributes)
         {
-            if (!IsSupportedRegistrationNamespace(attr.AttributeType.Namespace) ||
-                attr.AttributeType.Name != RegistrationAttributeNames.ManagedIdentityRegistration)
+            if (!IsSupportedRegistrationNamespace(attr.AttributeType.Namespace) || attr.AttributeType.Name != RegistrationAttributeNames.ManagedIdentityRegistration)
             {
                 continue;
             }
@@ -255,7 +228,17 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             tenantId = GetValue<string>(attr, "TenantId");
         }
 
+        ValidateGuidAttribute(clientId, "clientId");
+        ValidateGuidAttribute(tenantId, "TenantId");
         return (clientId, tenantId);
+    }
+
+    internal static void ValidateGuidAttribute(string? value, string attributeName)
+    {
+        if (!string.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out _))
+        {
+            throw new AssemblyException($"Managed identity attribute '{attributeName}' must contain a valid GUID, but '{value}' was provided.");
+        }
     }
 
     /// <summary>
@@ -269,60 +252,57 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             : $"{parentName}|{entity}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}";
     }
 
-    internal static string MapDataProviderEventToMessage(int eventValue) => eventValue switch
-    {
-        0 => "Retrieve",
-        1 => "RetrieveMultiple",
-        2 => "Create",
-        3 => "Update",
-        4 => "Delete",
-        _ => throw new AssemblyException($"Unknown DataProviderEvent value: {eventValue}")
-    };
+    internal static string MapDataProviderEventToMessage(int eventValue) =>
+        eventValue switch
+        {
+            0 => "Retrieve",
+            1 => "RetrieveMultiple",
+            2 => "Create",
+            3 => "Update",
+            4 => "Delete",
+            _ => throw new AssemblyException($"Unknown DataProviderEvent value: {eventValue}")
+        };
 
-    internal static string GetMessagePropertyName(string messageName) => messageName.ToLowerInvariant() switch
-    {
-        "update" or "delete" => "Target",
-        "setstate" or "setstatedynamicentity" => "EntityMoniker",
-        _ => "Id"
-    };
+    internal static string GetMessagePropertyName(string messageName) =>
+        messageName.ToLowerInvariant() switch
+        {
+            "update" or "delete" => "Target",
+            "setstate" or "setstatedynamicentity" => "EntityMoniker",
+            _ => "Id"
+        };
 
-    internal static string? Mode(int modeValue) => modeValue switch
-    {
-        0 => "Synchronous",
-        1 => "Asynchronous",
-        _ => null
-    };
+    internal static string? Mode(int modeValue) =>
+        modeValue switch
+        {
+            0 => "Synchronous",
+            1 => "Asynchronous",
+            _ => null
+        };
 
-    internal static string? Stage(int stageValue) => stageValue switch
-    {
-        10 => "PreValidation",
-        20 => "PreOperation",
-        30 => "MainOperation",
-        40 => "PostOperation",
-        _ => null
-    };
+    internal static string? Stage(int stageValue) =>
+        stageValue switch
+        {
+            10 => "PreValidation",
+            20 => "PreOperation",
+            30 => "MainOperation",
+            40 => "PostOperation",
+            _ => null
+        };
 
-    private static bool IsIPluginBased(Type declaredType) =>
-        declaredType.GetInterface(typeof(IPlugin).FullName!) != null && !declaredType.IsAbstract;
+    private static bool IsIPluginBased(Type declaredType) => declaredType.GetInterface(typeof(IPlugin).FullName!) != null && !declaredType.IsAbstract;
 
     // Detected by FullName only (no System.Activities/UiPath.Workflow dependency needed here) since
     // workflow activities are not modeled/supported by this module - see AssertNoWorkflowActivities.
-    private static bool IsCodeActivityBased(Type declaredType) =>
-        declaredType.GetBaseTypes().Any(t => t.FullName == "System.Activities.CodeActivity") && !declaredType.IsAbstract;
+    private static bool IsCodeActivityBased(Type declaredType) => declaredType.GetBaseTypes().Any(t => t.FullName == "System.Activities.CodeActivity") && !declaredType.IsAbstract;
 
     private static bool HasRegistrationAttribute(Type declaredType)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>
-            IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) &&
-            RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
+            IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) && RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
     }
 
-    private static bool IsSupportedRegistrationNamespace(string? attributeNamespace) =>
-        string.Equals(
-            attributeNamespace,
-            RegistrationAttributeNames.Namespace,
-            StringComparison.Ordinal);
+    private static bool IsSupportedRegistrationNamespace(string? attributeNamespace) => string.Equals(attributeNamespace, RegistrationAttributeNames.Namespace, StringComparison.Ordinal);
 
     private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {
@@ -349,8 +329,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
 
         var ctorPosition = customAttribute.Constructor.GetParameters().SingleOrDefault(c => c.Name == property)?.Position;
-        if (ctorPosition.HasValue &&
-            TryConvertValue<T>(customAttribute.ConstructorArguments[ctorPosition.Value].Value, out var ctorValue))
+        if (ctorPosition.HasValue && TryConvertValue<T>(customAttribute.ConstructorArguments[ctorPosition.Value].Value, out var ctorValue))
         {
             return ctorValue;
         }
@@ -387,9 +366,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         {
             var loaderError = e.LoaderExceptions.FirstOrDefault()?.Message;
             throw new AssemblyException(
-                $"Unable to load all CLR types from '{assembly.GetName().Name}'. " +
-                $"Plugin deployment was aborted to prevent reconciliation from incomplete metadata. {loaderError}",
-                e);
+                $"Unable to load all CLR types from '{assembly.GetName().Name}'. " + $"Plugin deployment was aborted to prevent reconciliation from incomplete metadata. {loaderError}", e);
         }
     }
 }

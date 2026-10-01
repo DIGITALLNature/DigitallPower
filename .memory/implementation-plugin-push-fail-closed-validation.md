@@ -8,6 +8,9 @@ Plugin package solution membership is similarly fail-closed: a package push with
 requires the environment to expose a `pluginpackage` solution component definition. Planning
 throws a clear error rather than silently omitting the requested membership.
 
+All requested solution memberships are validated during planning. If the solution unique name
+does not exist, planning raises `MissingSolutionException` before rendering or writing.
+
 Step validation rejects every `Create` pre-image, including post-operation registrations, because
 the record does not exist before a Create operation. The `plugin push` package help example
 includes its required `--publisher-prefix` option.

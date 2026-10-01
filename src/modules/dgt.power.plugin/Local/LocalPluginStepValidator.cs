@@ -31,44 +31,34 @@ public static class LocalPluginStepValidator
     {
         if (step.Mode == SdkMessageProcessingStep.Options.Mode.Asynchronous && IsPreOperationStage(step.Stage))
         {
-            throw new InvalidPluginStepException(
-                $"Step '{step.Name}' on '{typeName}' is invalid: asynchronous mode is not allowed on a " +
-                "pre-validation/pre-operation stage.");
+            throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: asynchronous mode is not allowed on a " + "pre-validation/pre-operation stage.");
         }
     }
 
     private static void ValidateImage(string typeName, LocalPluginStep step, LocalPluginStepImage image)
     {
-        if (step.MessageName == "Create" &&
-            image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PreImage)
+        if (string.Equals(step.MessageName, "Create", StringComparison.OrdinalIgnoreCase) && image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PreImage)
         {
-            throw new InvalidPluginStepException(
-                $"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a pre-image is not " +
-                "available for a 'Create' message (the record does not exist yet).");
+            throw new InvalidPluginStepException($"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a pre-image is not " +
+                                                 "available for a 'Create' message (the record does not exist yet).");
         }
 
         var isPreOperationStage = IsPreOperationStage(step.Stage);
-        var isMutationMessage = step.MessageName is "Create" or "Update" or "Delete";
-        if (isMutationMessage &&
-            image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&
-            isPreOperationStage)
+        var isMutationMessage = string.Equals(step.MessageName, "Create", StringComparison.OrdinalIgnoreCase) || string.Equals(step.MessageName, "Update", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(step.MessageName, "Delete", StringComparison.OrdinalIgnoreCase);
+        if (isMutationMessage && image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage && isPreOperationStage)
         {
-            throw new InvalidPluginStepException(
-                $"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a post-image is not " +
-                "available before the operation runs (pre-validation/pre-operation stage).");
+            throw new InvalidPluginStepException($"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a post-image is not " +
+                                                 "available before the operation runs (pre-validation/pre-operation stage).");
         }
 
-        if (step.MessageName == "Delete" &&
-            image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&
+        if (string.Equals(step.MessageName, "Delete", StringComparison.OrdinalIgnoreCase) && image.ImageType == SdkMessageProcessingStepImage.Options.ImageType.PostImage &&
             step.Stage == SdkMessageProcessingStep.Options.Stage.PostOperation)
         {
-            throw new InvalidPluginStepException(
-                $"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a post-image is not " +
-                "available for a 'Delete' message (the record no longer exists).");
+            throw new InvalidPluginStepException($"Image '{image.Name}' on step '{step.Name}' ('{typeName}') is invalid: a post-image is not " +
+                                                 "available for a 'Delete' message (the record no longer exists).");
         }
     }
 
-    private static bool IsPreOperationStage(int stage) =>
-        stage == SdkMessageProcessingStep.Options.Stage.PreValidation ||
-        stage == SdkMessageProcessingStep.Options.Stage.PreOperation;
+    private static bool IsPreOperationStage(int stage) => stage == SdkMessageProcessingStep.Options.Stage.PreValidation || stage == SdkMessageProcessingStep.Options.Stage.PreOperation;
 }

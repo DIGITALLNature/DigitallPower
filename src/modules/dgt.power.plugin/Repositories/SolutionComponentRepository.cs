@@ -17,41 +17,25 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
         {
             NoLock = true,
             ColumnSet = new ColumnSet(SolutionComponentDefinition.LogicalNames.SolutionComponentType),
-            Criteria = new FilterExpression
-            {
-                Conditions =
-                {
-                    new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName,
-                        ConditionOperator.Equal, entityLogicalName)
-                }
-            }
+            Criteria = new FilterExpression { Conditions = { new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, entityLogicalName) } }
         };
 
         var result = await service.RetrieveMultipleAsync(query, cancellationToken);
         return result.Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>().SolutionComponentType;
     }
 
-    public async Task<IReadOnlySet<Guid>> ListComponentIdsAsync(
-        string solutionUniqueName,
-        int componentType,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlySet<Guid>> ListComponentIdsAsync(string solutionUniqueName, int componentType, CancellationToken cancellationToken = default)
     {
         var solutionQuery = new QueryExpression(Solution.EntityLogicalName)
         {
             NoLock = true,
             ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId),
-            Criteria = new FilterExpression
-            {
-                Conditions =
-                {
-                    new ConditionExpression(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionUniqueName)
-                }
-            }
+            Criteria = new FilterExpression { Conditions = { new ConditionExpression(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionUniqueName) } }
         };
         var solution = (await service.RetrieveMultipleAsync(solutionQuery, cancellationToken)).Entities.FirstOrDefault();
         if (solution is null)
         {
-            return new HashSet<Guid>();
+            throw new MissingSolutionException(solutionUniqueName);
         }
 
         var componentQuery = new QueryExpression(SolutionComponent.EntityLogicalName)
@@ -68,23 +52,13 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
             }
         };
         var components = await service.RetrieveMultipleAsync(componentQuery, cancellationToken);
-        return components.Entities
-            .Select(entity => entity.ToEntity<SolutionComponent>().ObjectId)
-            .OfType<Guid>()
-            .ToHashSet();
+        return components.Entities.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
     }
 
     public async Task AddToSolutionAsync(int componentType, Guid componentId, string solutionUniqueName, CancellationToken cancellationToken = default)
     {
-        var request = new AddSolutionComponentRequest
-        {
-            AddRequiredComponents = false,
-            ComponentType = componentType,
-            ComponentId = componentId,
-            SolutionUniqueName = solutionUniqueName
-        };
+        var request = new AddSolutionComponentRequest { AddRequiredComponents = false, ComponentType = componentType, ComponentId = componentId, SolutionUniqueName = solutionUniqueName };
 
         await service.ExecuteAsync(request, cancellationToken);
     }
-
 }

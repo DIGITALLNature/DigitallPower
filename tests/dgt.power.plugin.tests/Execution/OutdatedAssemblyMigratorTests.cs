@@ -61,6 +61,7 @@ public class OutdatedAssemblyMigratorTests
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = new SolutionComponentRepository(service)
         });
         var migrator = new MigrationPipeline(

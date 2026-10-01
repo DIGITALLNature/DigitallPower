@@ -33,18 +33,14 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException(
-                    nameof(plan),
-                    plan.GetType(),
-                    "Unknown plugin deployment plan type.");
+                throw new ArgumentOutOfRangeException(nameof(plan), plan.GetType(), "Unknown plugin deployment plan type.");
         }
     }
 
     private static Tree BuildPackageTree(PackageDeploymentPlan plan)
     {
         var name = plan.DataverseName;
-        var tree = new Tree(
-            $"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(PackageStatus(plan.Comparison))}");
+        var tree = new Tree($"{Emoji.Known.Package} [bold]{Markup.Escape(name)}[/] {ActionMarkup(PackageStatus(plan.Comparison))}");
         foreach (var assembly in plan.Assemblies)
         {
             var node = tree.AddNode(AssemblyLabel(assembly));
@@ -70,8 +66,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     {
         var comparison = plan.Comparison;
         var version = comparison.IsPackageOwned ? string.Empty : $" v{comparison.Local.Version}";
-        return $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(comparison.Local.Name)}[/]{version}" +
-               AssemblyStatusMarkup(comparison);
+        return $"{Emoji.Known.PuzzlePiece} [bold]{Markup.Escape(comparison.Local.Name)}[/]{version}" + AssemblyStatusMarkup(comparison);
     }
 
     private static string AssemblyStatusMarkup(AssemblyComparison comparison)
@@ -140,23 +135,19 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         {
             parent.AddNode($"Managed identity {ActionMarkup("Link")}");
         }
-
     }
 
     private static void AddPluginTypes(IHasTreeNodes parent, PluginTypeDeployment plan)
     {
         foreach (var type in plan.Types)
         {
-            var typeNode = parent.AddNode(
-                $"{Markup.Escape(type.Comparison.Local.TypeName)} {ActionMarkup(type.Comparison.RequiresCreate ? "Create" : "Unchanged")}");
+            var typeNode = parent.AddNode($"{Markup.Escape(type.Comparison.Local.TypeName)} {ActionMarkup(type.Comparison.RequiresCreate ? "Create" : "Unchanged")}");
             foreach (var step in type.Steps)
             {
-                var stepNode = typeNode.AddNode(
-                    $"{Markup.Escape(step.Comparison.Local.Name)} {ActionMarkup(step.MigrationSource is null ? StepStatus(step.Comparison) : "Migrate")}");
+                var stepNode = typeNode.AddNode($"{Markup.Escape(step.Comparison.Local.Name)} {ActionMarkup(step.MigrationSource is null ? StepStatus(step.Comparison) : "Migrate")}");
                 foreach (var image in step.Images.Comparisons)
                 {
-                    stepNode.AddNode(
-                        $"{Markup.Escape(image.Local.Name)} {ActionMarkup(ImageStatus(image))}");
+                    stepNode.AddNode($"{Markup.Escape(image.Local.Name)} {ActionMarkup(ImageStatus(image))}");
                 }
 
                 foreach (var image in step.Images.Deletions)
@@ -182,43 +173,39 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
 
             if (type.CustomApi.Link)
             {
-                typeNode.AddNode(
-                    $"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Link")}");
+                typeNode.AddNode($"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Link")}");
             }
             else if (type.CustomApi.Unchanged)
             {
-                typeNode.AddNode(
-                    $"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Unchanged")}");
+                typeNode.AddNode($"Custom API {Markup.Escape(type.CustomApi.UniqueName)} {ActionMarkup("Unchanged")}");
             }
-
         }
 
         foreach (var type in plan.Deletions)
         {
-            var typeNode = parent.AddNode(
-                $"{Markup.Escape(type.Type.TypeName)} {ActionMarkup("Delete")}");
+            var typeNode = parent.AddNode($"{Markup.Escape(type.Type.TypeName)} {ActionMarkup("Delete")}");
             foreach (var stepId in type.DependentStepIds)
             {
                 typeNode.AddNode($"Step {stepId} {ActionMarkup("Delete")}");
             }
+
+            foreach (var customApiId in type.LinkedCustomApiIds)
+            {
+                typeNode.AddNode($"Custom API link {customApiId} {ActionMarkup("Unlink")}");
+            }
         }
     }
 
-    private void RenderSolutionMembership(
-        SolutionMembershipPlan? membershipPlan,
-        IEnumerable<SolutionLink> links)
+    private void RenderSolutionMembership(SolutionMembershipPlan? membershipPlan, IEnumerable<SolutionLink> links)
     {
         if (membershipPlan is null)
         {
             return;
         }
 
-        var memberships = links
-            .DistinctBy(link => (link.ComponentType, link.ComponentName, link.SolutionUniqueName))
-            .ToList();
+        var memberships = links.DistinctBy(link => (link.ComponentType, link.ComponentName, link.SolutionUniqueName)).ToList();
 
-        console.MarkupLine(
-            $"[bold]Solution membership: {Markup.Escape(membershipPlan.SolutionUniqueName)}[/]");
+        console.MarkupLine($"[bold]Solution membership: {Markup.Escape(membershipPlan.SolutionUniqueName)}[/]");
         if (memberships.Count == 0)
         {
             console.MarkupLine($"  [green]{Emoji.Known.CheckMark}[/] All managed components are already present");
@@ -227,8 +214,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
 
         foreach (var membership in memberships)
         {
-            console.MarkupLine(
-                $"  [green]{Emoji.Known.Plus}[/] {ComponentLabel(membership.ComponentType)} {Markup.Escape(membership.ComponentName)}");
+            console.MarkupLine($"  [green]{Emoji.Known.Plus}[/] {ComponentLabel(membership.ComponentType)} {Markup.Escape(membership.ComponentName)}");
         }
     }
 
@@ -236,8 +222,7 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
     {
         foreach (var assembly in outdatedAssemblies.Assemblies)
         {
-            console.MarkupLine(
-                $"[red]{Emoji.Known.Minus} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} will be deleted[/]");
+            console.MarkupLine($"[red]{Emoji.Known.Minus} Outdated assembly {Markup.Escape(assembly.Assembly.Identity)} will be deleted[/]");
         }
     }
 
@@ -281,19 +266,21 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         }
     }
 
-    private static string ComponentLabel(int componentType) => componentType switch
-    {
-        IPluginAssemblyRepository.ComponentType => "Assembly",
-        ISdkMessageProcessingStepRepository.ComponentType => "Step",
-        _ => "Package"
-    };
+    private static string ComponentLabel(int componentType) =>
+        componentType switch
+        {
+            IPluginAssemblyRepository.ComponentType => "Assembly",
+            ISdkMessageProcessingStepRepository.ComponentType => "Step",
+            _ => "Package"
+        };
 
-    private static string ActionMarkup(string action) => action switch
-    {
-        "Create" or "Link" or "Migrate" => $"[green]{action}[/]",
-        "Update" => "[blue]Update[/]",
-        "Unchanged" => "[grey]Unchanged[/]",
-        "Delete" or "Unlink" or "Purge" => $"[red]{action}[/]",
-        _ => $"[yellow]{Markup.Escape(action)}[/]"
-    };
+    private static string ActionMarkup(string action) =>
+        action switch
+        {
+            "Create" or "Link" or "Migrate" => $"[green]{action}[/]",
+            "Update" => "[blue]Update[/]",
+            "Unchanged" => "[grey]Unchanged[/]",
+            "Delete" or "Unlink" or "Purge" => $"[red]{action}[/]",
+            _ => $"[yellow]{Markup.Escape(action)}[/]"
+        };
 }

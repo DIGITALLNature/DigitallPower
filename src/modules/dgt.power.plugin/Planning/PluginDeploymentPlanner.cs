@@ -14,10 +14,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
 {
     private readonly Dictionary<(string Solution, int ComponentType), IReadOnlySet<Guid>> _solutionComponentIds = [];
 
-    public Task<AssemblyDeploymentPlan> BuildAssemblyAsync(
-        LocalAssembly assembly,
-        PluginPushOptions options,
-        CancellationToken cancellationToken = default)
+    public Task<AssemblyDeploymentPlan> BuildAssemblyAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(options);
@@ -25,40 +22,23 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         return BuildStandaloneAssemblyCoreAsync(assembly, options, cancellationToken);
     }
 
-    private async Task<AssemblyDeploymentPlan> BuildStandaloneAssemblyCoreAsync(
-        LocalAssembly assembly,
-        PluginPushOptions options,
-        CancellationToken cancellationToken)
+    private async Task<AssemblyDeploymentPlan> BuildStandaloneAssemblyCoreAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        var standaloneAssemblies = await repositories.Assemblies.ListStandaloneByNameAsync(
-            assembly.Name,
-            cancellationToken);
+        var standaloneAssemblies = await repositories.Assemblies.ListStandaloneByNameAsync(assembly.Name, cancellationToken);
         if (standaloneAssemblies.Count > 1)
         {
-            throw new InvalidOperationException(
-                $"Standalone deployment of '{assembly.Name}' is unsupported because {standaloneAssemblies.Count} " +
-                $"same-name {nameof(assembly)} version trains exist: {string.Join(", ", standaloneAssemblies.Select(candidate => candidate.Identity))}. " +
-                $"Remove the extra standalone {nameof(assembly)} records before pushing.");
+            throw new InvalidOperationException($"Standalone deployment of '{assembly.Name}' is unsupported because {standaloneAssemblies.Count} " +
+                                                $"same-name {nameof(assembly)} version trains exist: {string.Join(", ", standaloneAssemblies.Select(candidate => candidate.Identity))}. " +
+                                                $"Remove the extra standalone {nameof(assembly)} records before pushing.");
         }
 
-        var remote = standaloneAssemblies.SingleOrDefault() ?? await repositories.Assemblies.FindForDeploymentAsync(
-            assembly.Name,
-            assembly.Version,
-            cancellationToken);
+        var remote = standaloneAssemblies.SingleOrDefault() ?? await repositories.Assemblies.FindForDeploymentAsync(assembly.Name, assembly.Version, cancellationToken);
 
         var assemblyComparison = new AssemblyComparison(assembly, remote);
-        return await BuildAssemblyCoreAsync(
-            assembly,
-            assemblyComparison,
-            options,
-            packageOwned: false,
-            cancellationToken);
+        return await BuildAssemblyCoreAsync(assembly, assemblyComparison, options, packageOwned: false, cancellationToken);
     }
 
-    public Task<PackageDeploymentPlan> BuildPackageAsync(
-        LocalPluginPackage package,
-        PluginPushOptions options,
-        CancellationToken cancellationToken = default)
+    public Task<PackageDeploymentPlan> BuildPackageAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(options);
@@ -67,10 +47,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         return BuildPackageCoreAsync(package, options, cancellationToken);
     }
 
-    private async Task<PackageDeploymentPlan> BuildPackageCoreAsync(
-        LocalPluginPackage package,
-        PluginPushOptions options,
-        CancellationToken cancellationToken)
+    private async Task<PackageDeploymentPlan> BuildPackageCoreAsync(LocalPluginPackage package, PluginPushOptions options, CancellationToken cancellationToken)
     {
         var packageName = $"{options.PublisherPrefix}_{package.Package.Name}";
         var remote = await repositories.Packages.FindByNameAsync(packageName, cancellationToken);
@@ -79,114 +56,66 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
 
         foreach (var assembly in package.Assemblies)
         {
-            var remoteAssembly = await repositories.Assemblies.FindForDeploymentAsync(
-                assembly.Name,
-                assembly.Version,
-                cancellationToken);
+            var remoteAssembly = await repositories.Assemblies.FindForPackageDeploymentAsync(assembly.Name, assembly.Version, packageComparison.Remote?.Id, cancellationToken);
             var assemblyComparison = new AssemblyComparison(assembly, remoteAssembly);
-            var deployment = await BuildAssemblyCoreAsync(
-                assembly,
-                assemblyComparison,
-                options,
-                packageOwned: true,
-                cancellationToken);
+            var deployment = await BuildAssemblyCoreAsync(assembly, assemblyComparison, options, packageOwned: true, cancellationToken);
             assemblies.Add(deployment);
         }
 
-        var linkManagedIdentity = package.Assemblies.Any(
-            assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId));
+        var identityAssembly = package.Assemblies.FirstOrDefault(assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId));
+        var linkManagedIdentity = false;
+        if (identityAssembly?.ManagedIdentityClientId is { } clientId)
+        {
+            var desiredIdentityId = await repositories.ManagedIdentities.FindIdByClientIdAsync(clientId, cancellationToken);
+            linkManagedIdentity = desiredIdentityId is null || packageComparison.Remote?.ManagedIdentityId != desiredIdentityId;
+        }
+
         SolutionLink? solution = null;
         if (!string.IsNullOrWhiteSpace(options.Solution))
         {
-            var componentType = await repositories.Solutions.GetComponentTypeAsync(
-                PluginPackage.EntityLogicalName,
-                cancellationToken);
+            var componentType = await repositories.Solutions.GetComponentTypeAsync(PluginPackage.EntityLogicalName, cancellationToken);
             solution = componentType is { } packageComponentType
-                ? await PlanSolutionLinkAsync(
-                    packageComponentType,
-                    packageComparison.Remote?.Id,
-                    packageName,
-                    options.Solution,
-                    cancellationToken)
-                : throw new InvalidOperationException(
-                    $"The target environment does not define a solution component type for '{PluginPackage.EntityLogicalName}', " +
-                    $"so package '{packageName}' cannot be added to solution '{options.Solution}'.");
+                ? await PlanSolutionLinkAsync(packageComponentType, packageComparison.Remote?.Id, packageName, options.Solution, cancellationToken)
+                : throw new InvalidOperationException($"The target environment does not define a solution component type for '{PluginPackage.EntityLogicalName}', " +
+                                                      $"so package '{packageName}' cannot be added to solution '{options.Solution}'.");
         }
 
-        return new PackageDeploymentPlan(
-            package,
-            packageName,
-            packageComparison,
-            assemblies,
-            linkManagedIdentity,
-            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
-            solution);
+        return new PackageDeploymentPlan(package, packageName, packageComparison, assemblies, linkManagedIdentity,
+            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution), solution);
     }
 
-    private async Task<AssemblyDeploymentPlan> BuildAssemblyCoreAsync(
-        LocalAssembly assembly,
-        AssemblyComparison assemblyComparison,
-        PluginPushOptions options,
-        bool packageOwned,
+    private async Task<AssemblyDeploymentPlan> BuildAssemblyCoreAsync(LocalAssembly assembly, AssemblyComparison assemblyComparison, PluginPushOptions options, bool packageOwned,
         CancellationToken cancellationToken)
     {
-        var skipStandaloneDeployment =
-            assemblyComparison.IsPackageOwned && !packageOwned;
+        var skipStandaloneDeployment = assemblyComparison.IsPackageOwned && !packageOwned;
 
         PluginTypeDeployment? pluginTypes = null;
         var outdated = new OutdatedAssemblyDeployment([]);
         if (!skipStandaloneDeployment)
         {
-            var remoteAssemblyId = assemblyComparison.RequiresUpgrade
-                ? null
-                : assemblyComparison.Remote?.Id;
-            pluginTypes = await BuildPluginTypesAsync(
-                remoteAssemblyId,
-                assembly.PluginTypes,
-                options.Solution,
-                cancellationToken);
+            var remoteAssemblyId = assemblyComparison.RequiresUpgrade ? null : assemblyComparison.Remote?.Id;
+            pluginTypes = await BuildPluginTypesAsync(remoteAssemblyId, assembly.PluginTypes, options.Solution, cancellationToken);
 
             if (assemblyComparison.RequiresUpgrade)
             {
-                outdated = await BuildOutdatedAssembliesAsync(
-                    assembly.Name,
-                    assembly.PluginTypes,
-                    Guid.Empty,
-                    cancellationToken);
+                outdated = await BuildOutdatedAssembliesAsync(assembly.Name, assembly.PluginTypes, Guid.Empty, cancellationToken);
                 pluginTypes = AddMigrationState(pluginTypes, outdated);
             }
         }
 
-        var linkManagedIdentity =
-            !skipStandaloneDeployment &&
-            !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId);
+        var linkManagedIdentity = !skipStandaloneDeployment && !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId);
         SolutionLink? solution = null;
         if (!packageOwned)
         {
-            var existingComponentId = assemblyComparison.RequiresUpgrade
-                ? null
-                : assemblyComparison.Remote?.Id;
-            solution = await PlanSolutionLinkAsync(
-                IPluginAssemblyRepository.ComponentType,
-                existingComponentId,
-                assembly.Name,
-                options.Solution,
-                cancellationToken);
+            var existingComponentId = assemblyComparison.RequiresUpgrade ? null : assemblyComparison.Remote?.Id;
+            solution = await PlanSolutionLinkAsync(IPluginAssemblyRepository.ComponentType, existingComponentId, assembly.Name, options.Solution, cancellationToken);
         }
 
-        return new AssemblyDeploymentPlan(
-            assemblyComparison,
-            pluginTypes,
-            outdated,
-            linkManagedIdentity,
-            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
-            solution);
+        return new AssemblyDeploymentPlan(assemblyComparison, pluginTypes, outdated, linkManagedIdentity,
+            string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution), solution);
     }
 
-    public Task<PluginTypeDeployment> BuildPluginTypesAsync(
-        Guid? assemblyId,
-        IReadOnlyList<LocalPluginType> localTypes,
-        string? solutionUniqueName = null,
+    public Task<PluginTypeDeployment> BuildPluginTypesAsync(Guid? assemblyId, IReadOnlyList<LocalPluginType> localTypes, string? solutionUniqueName = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(localTypes);
@@ -195,15 +124,9 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         return BuildPluginTypesCoreAsync(assemblyId, localTypes, solutionUniqueName, cancellationToken);
     }
 
-    private async Task<PluginTypeDeployment> BuildPluginTypesCoreAsync(
-        Guid? assemblyId,
-        IReadOnlyList<LocalPluginType> localTypes,
-        string? solutionUniqueName,
-        CancellationToken cancellationToken)
+    private async Task<PluginTypeDeployment> BuildPluginTypesCoreAsync(Guid? assemblyId, IReadOnlyList<LocalPluginType> localTypes, string? solutionUniqueName, CancellationToken cancellationToken)
     {
-        var remoteTypes = assemblyId is { } existingAssemblyId
-            ? await repositories.Types.ListByAssemblyAsync(existingAssemblyId, cancellationToken)
-            : [];
+        var remoteTypes = assemblyId is { } existingAssemblyId ? await repositories.Types.ListByAssemblyAsync(existingAssemblyId, cancellationToken) : [];
         var comparisonSet = PluginRegistrationComparer.ComparePluginTypes(localTypes, remoteTypes);
         var typeItems = new List<PluginTypeDeploymentItem>();
 
@@ -214,44 +137,26 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
 
             if (string.IsNullOrEmpty(typeComparison.Local.CustomApi))
             {
-                var remoteSteps = typeComparison.Remote is { } existingType
-                    ? await repositories.Steps.ListByPluginTypeAsync(existingType.Id, cancellationToken)
-                    : [];
+                var remoteSteps = typeComparison.Remote is { } existingType ? await repositories.Steps.ListByPluginTypeAsync(existingType.Id, cancellationToken) : [];
                 var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(typeComparison.Local.Steps, remoteSteps);
                 foreach (var stepComparison in stepComparisonSet.Comparisons)
                 {
                     ResolvedSdkMessage? message = null;
                     if (stepComparison.RequiresCreate || stepComparison.RequiresUpdate)
                     {
-                        message = await repositories.Messages.ResolveAsync(
-                            stepComparison.Local.MessageName,
-                            stepComparison.Local.PrimaryEntityName,
-                            stepComparison.Local.SecondaryEntityName,
+                        message = await repositories.Messages.ResolveAsync(stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName, stepComparison.Local.SecondaryEntityName,
                             cancellationToken);
                         if (message is null)
                         {
-                            throw new UnresolvedPluginStepMessageException(
-                                stepComparison.Local.Name,
-                                stepComparison.Local.MessageName,
-                                stepComparison.Local.PrimaryEntityName);
+                            throw new UnresolvedPluginStepMessageException(stepComparison.Local.Name, stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName);
                         }
                     }
 
-                    var remoteImages = stepComparison.Remote is { } existingStep
-                        ? await repositories.Images.ListByStepAsync(existingStep.Id, cancellationToken)
-                        : [];
+                    var remoteImages = stepComparison.Remote is { } existingStep ? await repositories.Images.ListByStepAsync(existingStep.Id, cancellationToken) : [];
                     var images = PluginRegistrationComparer.ComparePluginStepImages(stepComparison.Local.Images, remoteImages);
-                    var unchangedImages = stepComparison.Local.Images
-                        .Where(image => remoteImages.Any(remote =>
-                            remote.Name == image.Name &&
-                            remote.ImageType == image.ImageType) &&
-                            images.Comparisons.All(comparison => comparison.Local != image))
-                        .ToList();
-                    var solution = await PlanSolutionLinkAsync(
-                        ISdkMessageProcessingStepRepository.ComponentType,
-                        stepComparison.Remote?.Id,
-                        stepComparison.Local.Name,
-                        solutionUniqueName,
+                    var unchangedImages = stepComparison.Local.Images.Where(image =>
+                        remoteImages.Any(remote => remote.Name == image.Name && remote.ImageType == image.ImageType) && images.Comparisons.All(comparison => comparison.Local != image)).ToList();
+                    var solution = await PlanSolutionLinkAsync(ISdkMessageProcessingStepRepository.ComponentType, stepComparison.Remote?.Id, stepComparison.Local.Name, solutionUniqueName,
                         cancellationToken);
                     steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages, solution));
                 }
@@ -267,101 +172,63 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         foreach (var type in comparisonSet.Deletions)
         {
             var dependentSteps = await repositories.Types.GetDependentStepIdsAsync(type.Id, cancellationToken);
-            deleteTypes.Add(new PluginTypeDeletion(type, dependentSteps));
+            var linkedCustomApis = await repositories.CustomApis.ListLinkedToPluginTypeAsync(type.Id, cancellationToken);
+            deleteTypes.Add(new PluginTypeDeletion(type, dependentSteps, linkedCustomApis));
         }
 
         return new PluginTypeDeployment(typeItems, deleteTypes);
     }
 
-    private async Task<PluginCustomApiDeployment> BuildCustomApiAsync(
-        PluginTypeComparison typeComparison,
-        CancellationToken cancellationToken)
+    private async Task<PluginCustomApiDeployment> BuildCustomApiAsync(PluginTypeComparison typeComparison, CancellationToken cancellationToken)
     {
         Guid? desiredId = null;
         if (!string.IsNullOrEmpty(typeComparison.Local.CustomApi))
         {
-            desiredId = await repositories.CustomApis.FindIdByUniqueNameAsync(
-                typeComparison.Local.CustomApi,
-                cancellationToken);
+            desiredId = await repositories.CustomApis.FindIdByUniqueNameAsync(typeComparison.Local.CustomApi, cancellationToken);
             if (desiredId is null)
             {
                 throw new MissingCustomApiException(typeComparison.Local.CustomApi);
             }
         }
 
-        var linked = typeComparison.Remote is { } existing
-            ? await repositories.CustomApis.ListLinkedToPluginTypeAsync(existing.Id, cancellationToken)
-            : [];
+        var linked = typeComparison.Remote is { } existing ? await repositories.CustomApis.ListLinkedToPluginTypeAsync(existing.Id, cancellationToken) : [];
         var unlink = linked.Where(id => id != desiredId).ToList();
 
         var link = desiredId is { } customApiId && !linked.Contains(customApiId);
         var unchanged = desiredId is not null && !link;
 
-        return new PluginCustomApiDeployment(
-            typeComparison.Local.CustomApi,
-            desiredId,
-            unlink,
-            link,
-            unchanged);
+        return new PluginCustomApiDeployment(typeComparison.Local.CustomApi, desiredId, unlink, link, unchanged);
     }
 
-    private async Task<SolutionLink?> PlanSolutionLinkAsync(
-        int componentType,
-        Guid? existingComponentId,
-        string componentName,
-        string? solutionUniqueName,
-        CancellationToken cancellationToken)
+    private async Task<SolutionLink?> PlanSolutionLinkAsync(int componentType, Guid? existingComponentId, string componentName, string? solutionUniqueName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(solutionUniqueName))
         {
             return null;
         }
 
-        if (existingComponentId is null)
-        {
-            return new SolutionLink(componentType, componentName, solutionUniqueName);
-        }
-
         var key = (solutionUniqueName, componentType);
         if (!_solutionComponentIds.TryGetValue(key, out var componentIds))
         {
-            componentIds = await repositories.Solutions.ListComponentIdsAsync(
-                solutionUniqueName,
-                componentType,
-                cancellationToken);
+            componentIds = await repositories.Solutions.ListComponentIdsAsync(solutionUniqueName, componentType, cancellationToken);
             _solutionComponentIds.Add(key, componentIds);
         }
 
-        return componentIds.Contains(existingComponentId.Value)
-            ? null
-            : new SolutionLink(componentType, componentName, solutionUniqueName);
+        return existingComponentId is { } componentId && componentIds.Contains(componentId) ? null : new SolutionLink(componentType, componentName, solutionUniqueName);
     }
 
-    public Task<OutdatedAssemblyDeployment> BuildOutdatedAssembliesAsync(
-        string assemblyName,
-        IReadOnlyList<LocalPluginType> replacementTypes,
-        Guid excludeAssemblyId,
+    public Task<OutdatedAssemblyDeployment> BuildOutdatedAssembliesAsync(string assemblyName, IReadOnlyList<LocalPluginType> replacementTypes, Guid excludeAssemblyId,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(replacementTypes);
 
-        return BuildOutdatedAssembliesCoreAsync(
-            assemblyName,
-            replacementTypes,
-            excludeAssemblyId,
-            cancellationToken);
+        return BuildOutdatedAssembliesCoreAsync(assemblyName, replacementTypes, excludeAssemblyId, cancellationToken);
     }
 
-    private async Task<OutdatedAssemblyDeployment> BuildOutdatedAssembliesCoreAsync(
-        string assemblyName,
-        IReadOnlyList<LocalPluginType> replacementTypes,
-        Guid excludeAssemblyId,
+    private async Task<OutdatedAssemblyDeployment> BuildOutdatedAssembliesCoreAsync(string assemblyName, IReadOnlyList<LocalPluginType> replacementTypes, Guid excludeAssemblyId,
         CancellationToken cancellationToken)
     {
-        var outdatedAssemblies = await repositories.Assemblies.ListOutdatedAsync(
-            assemblyName,
-            excludeAssemblyId,
-            cancellationToken);
+        var outdatedAssemblies = await repositories.Assemblies.ListOutdatedAsync(assemblyName, excludeAssemblyId, cancellationToken);
         if (outdatedAssemblies.Count == 0)
         {
             return new OutdatedAssemblyDeployment([]);
@@ -372,72 +239,44 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         foreach (var outdated in outdatedAssemblies)
         {
             var outdatedTypes = await repositories.Types.ListByAssemblyAsync(outdated.Id, cancellationToken);
-            var migrations = PluginRegistrationComparer.CompareOutdatedTypes(
-                outdatedTypes,
-                replacementTypes);
+            var migrations = PluginRegistrationComparer.CompareOutdatedTypes(outdatedTypes, replacementTypes);
             var typeDeployments = new List<OutdatedTypeDeployment>();
 
             foreach (var migration in migrations)
             {
-                var oldSteps = await repositories.Steps.ListByPluginTypeAsync(
-                    migration.OldTypeId,
-                    cancellationToken);
-                var dependentStepIds = await repositories.Types.GetDependentStepIdsAsync(
-                    migration.OldTypeId,
-                    cancellationToken);
-                var linkedApis = await repositories.CustomApis.ListLinkedToPluginTypeAsync(
-                    migration.OldTypeId,
-                    cancellationToken);
-                var replacement = replacementTypes.FirstOrDefault(
-                    type => type.TypeName == migration.TypeName);
+                var oldSteps = await repositories.Steps.ListByPluginTypeAsync(migration.OldTypeId, cancellationToken);
+                var dependentStepIds = await repositories.Types.GetDependentStepIdsAsync(migration.OldTypeId, cancellationToken);
+                var linkedApis = await repositories.CustomApis.ListLinkedToPluginTypeAsync(migration.OldTypeId, cancellationToken);
+                var replacement = replacementTypes.FirstOrDefault(type => type.TypeName == migration.TypeName);
 
                 IReadOnlyList<MigratedPluginStep> migrateSteps = [];
                 Guid? desiredCustomApiId = null;
                 if (replacement is not null)
                 {
                     var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(replacement.Steps, oldSteps);
-                    migrateSteps = await Task.WhenAll(stepComparisonSet.Comparisons
-                        .Where(comparison => comparison.Remote is not null)
-                        .Select(async comparison =>
-                        new MigratedPluginStep(
-                            comparison.Remote!,
-                            await repositories.Images.ListByStepAsync(comparison.Remote!.Id, cancellationToken))));
+                    migrateSteps = await Task.WhenAll(stepComparisonSet.Comparisons.Where(comparison => comparison.Remote is not null).Select(async comparison =>
+                        new MigratedPluginStep(comparison.Remote!, await repositories.Images.ListByStepAsync(comparison.Remote!.Id, cancellationToken))));
 
                     if (!string.IsNullOrEmpty(replacement.CustomApi))
                     {
-                        desiredCustomApiId = await repositories.CustomApis.FindIdByUniqueNameAsync(
-                            replacement.CustomApi,
-                            cancellationToken);
+                        desiredCustomApiId = await repositories.CustomApis.FindIdByUniqueNameAsync(replacement.CustomApi, cancellationToken);
                     }
                 }
 
-                var deleteStepIds = dependentStepIds
-                    .Where(id => !migrateSteps.Select(step => step.Step.Id).Contains(id))
-                    .ToList();
-                typeDeployments.Add(new OutdatedTypeDeployment(
-                    migration,
-                    linkedApis.Where(id => id != desiredCustomApiId).ToList(),
-                    migrateSteps,
-                    deleteStepIds));
+                var deleteStepIds = dependentStepIds.Where(id => !migrateSteps.Select(step => step.Step.Id).Contains(id)).ToList();
+                typeDeployments.Add(new OutdatedTypeDeployment(migration, linkedApis.Where(id => id != desiredCustomApiId).ToList(), migrateSteps, deleteStepIds));
             }
 
-            assemblyPlans.Add(new OutdatedAssemblyDeploymentItem(
-                outdated,
-                typeDeployments));
+            assemblyPlans.Add(new OutdatedAssemblyDeploymentItem(outdated, typeDeployments));
         }
 
         return new OutdatedAssemblyDeployment(assemblyPlans);
     }
 
-    private static PluginTypeDeployment AddMigrationState(
-        PluginTypeDeployment deployment,
-        OutdatedAssemblyDeployment outdatedAssemblies)
+    private static PluginTypeDeployment AddMigrationState(PluginTypeDeployment deployment, OutdatedAssemblyDeployment outdatedAssemblies)
     {
-        var migrationsByType = outdatedAssemblies.Assemblies
-            .SelectMany(assembly => assembly.Types)
-            .Where(type => type.Migration.HasReplacement)
-            .GroupBy(type => type.Migration.TypeName, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
+        var migrationsByType = outdatedAssemblies.Assemblies.SelectMany(assembly => assembly.Types).Where(type => type.Migration.HasReplacement)
+            .GroupBy(type => type.Migration.TypeName, StringComparer.Ordinal).ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
 
         var types = deployment.Types.Select(type =>
         {
@@ -446,44 +285,26 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 return type;
             }
 
+            var matchedStepIds = new HashSet<Guid>();
             var steps = type.Steps.Select(step =>
             {
-                var migration = migrations
-                    .SelectMany(item => item.MigrateSteps)
-                    .FirstOrDefault(candidate =>
-                        !PluginRegistrationComparer.ComparePluginSteps(
-                            [step.Comparison.Local],
-                            [candidate.Step]).Comparisons[0].RequiresCreate);
+                var migration = migrations.SelectMany(item => item.MigrateSteps).FirstOrDefault(candidate =>
+                    !matchedStepIds.Contains(candidate.Step.Id) && !PluginRegistrationComparer.ComparePluginSteps([step.Comparison.Local], [candidate.Step]).Comparisons[0].RequiresCreate);
                 if (migration is null)
                 {
                     return step;
                 }
 
-                var comparison = PluginRegistrationComparer.ComparePluginSteps(
-                    [step.Comparison.Local],
-                    [migration.Step]).Comparisons[0];
-                var images = PluginRegistrationComparer.ComparePluginStepImages(
-                    step.Comparison.Local.Images,
-                    migration.Images);
-                var unchangedImages = step.Comparison.Local.Images
-                    .Where(image => migration.Images.Any(remote =>
-                        remote.Name == image.Name &&
-                        remote.ImageType == image.ImageType) &&
-                        images.Comparisons.All(imageComparison => imageComparison.Local != image))
+                matchedStepIds.Add(migration.Step.Id);
+                var comparison = PluginRegistrationComparer.ComparePluginSteps([step.Comparison.Local], [migration.Step]).Comparisons[0];
+                var images = PluginRegistrationComparer.ComparePluginStepImages(step.Comparison.Local.Images, migration.Images);
+                var unchangedImages = step.Comparison.Local.Images.Where(image =>
+                        migration.Images.Any(remote => remote.Name == image.Name && remote.ImageType == image.ImageType) && images.Comparisons.All(imageComparison => imageComparison.Local != image))
                     .ToList();
-                return step with
-                {
-                    Comparison = comparison,
-                    Images = images,
-                    UnchangedImages = unchangedImages,
-                    MigrationSource = migration
-                };
+                return step with { Comparison = comparison, Images = images, UnchangedImages = unchangedImages, MigrationSource = migration };
             }).ToList();
 
-            return type with
-            {
-                Steps = steps
-            };
+            return type with { Steps = steps };
         }).ToList();
         return deployment with { Types = types };
     }

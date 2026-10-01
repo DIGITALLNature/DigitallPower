@@ -18,18 +18,19 @@ public interface IPluginAssemblyRepository
     /// Finds the existing assembly in the target major/minor version train, falling back to the
     /// highest semantic version with the same name when that train has not yet been registered.
     /// </summary>
-    Task<RemoteAssembly?> FindForDeploymentAsync(
-        string name,
-        Version targetVersion,
-        CancellationToken cancellationToken = default);
+    Task<RemoteAssembly?> FindForDeploymentAsync(string name, Version targetVersion, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Finds an assembly owned by the specified package. When packageId is null, only an
+    /// unowned standalone assembly can be returned.
+    /// </summary>
+    Task<RemoteAssembly?> FindForPackageDeploymentAsync(string name, Version targetVersion, Guid? packageId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists standalone sandboxed assemblies with the given name. Package-owned assemblies are
     /// excluded because they follow the package lifecycle.
     /// </summary>
-    Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(
-        string name,
-        CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(string name, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Lists every other sandboxed plugin assembly registered under the given name - i.e. the

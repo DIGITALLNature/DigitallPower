@@ -5,6 +5,4 @@ using dgt.power.plugin.Remote;
 
 namespace dgt.power.plugin.Planning.Deployment;
 
-public sealed record PluginTypeDeletion(
-    RemotePluginType Type,
-    IReadOnlyList<Guid> DependentStepIds);
+public sealed record PluginTypeDeletion(RemotePluginType Type, IReadOnlyList<Guid> DependentStepIds, IReadOnlyList<Guid> LinkedCustomApiIds);

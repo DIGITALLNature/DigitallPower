@@ -8,6 +8,9 @@ namespace dgt.power.plugin.Repositories;
 /// </summary>
 public interface IManagedIdentityRepository
 {
+    /// <summary>Finds an existing managed identity by application (client) id.</summary>
+    Task<Guid?> FindIdByClientIdAsync(string clientId, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Finds an existing managed identity by application (client) id, or creates a new one linked
     /// to the given tenant id (environment tenant is used when <paramref name="tenantId"/> is

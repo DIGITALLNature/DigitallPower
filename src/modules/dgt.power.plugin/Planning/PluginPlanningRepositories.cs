@@ -21,5 +21,7 @@ public sealed class PluginPlanningRepositories
 
     public required ICustomApiRepository CustomApis { get; init; }
 
+    public required IManagedIdentityRepository ManagedIdentities { get; init; }
+
     public required ISolutionComponentRepository Solutions { get; init; }
 }

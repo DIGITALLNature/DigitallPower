@@ -23,6 +23,7 @@ public class PluginDeploymentPlannerTests
             Images = new SdkMessageProcessingStepImageRepository(service),
             Messages = new SdkMessageRepository(service),
             CustomApis = new CustomApiRepository(service),
+            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = new SolutionComponentRepository(service)
         });
 
@@ -32,13 +33,9 @@ public class PluginDeploymentPlannerTests
         var service = new FakeOrganizationServiceAsync();
         service.AddDefaultRequests();
         var planner = CreatePlanner(service);
-        var package = new LocalPluginPackage(
-            new LocalPackage("Contoso.Plugins", "1.0.0", string.Empty, string.Empty),
-            []);
+        var package = new LocalPluginPackage(new LocalPackage("Contoso.Plugins", "1.0.0", string.Empty, string.Empty), []);
 
-        await Assert.That(async () => await planner.BuildPackageAsync(
-                package,
-                new PluginPushOptions("contoso_solution", DryRun: false, PublisherPrefix: "contoso")))
+        await Assert.That(async () => await planner.BuildPackageAsync(package, new PluginPushOptions("contoso_solution", DryRun: false, PublisherPrefix: "contoso")))
             .ThrowsExactly<InvalidOperationException>();
     }
 
@@ -61,17 +58,45 @@ public class PluginDeploymentPlannerTests
             SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
             IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
         });
-        var assembly = new LocalAssembly
-        {
-            Name = "Contoso.Plugins",
-            Version = Version.Parse("3.0.0.0"),
-            Content = "Y29udGVudA==",
-            ContentHash = "hash"
-        };
+        var assembly = new LocalAssembly { Name = "Contoso.Plugins", Version = Version.Parse("3.0.0.0"), Content = "Y29udGVudA==", ContentHash = "hash" };
 
-        await Assert.That(async () => await CreatePlanner(service).BuildAssemblyAsync(
-                assembly,
-                new PluginPushOptions(null, DryRun: false)))
-            .ThrowsExactly<InvalidOperationException>();
+        await Assert.That(async () => await CreatePlanner(service).BuildAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: false))).ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task BuildAssemblyAsync_MissingSolution_ThrowsDuringPlanning()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddDefaultRequests();
+        var assembly = new LocalAssembly { Name = "Contoso.Plugins", Version = Version.Parse("1.0.0.0"), Content = "Y29udGVudA==", ContentHash = "hash" };
+
+        await Assert.That(async () => await CreatePlanner(service).BuildAssemblyAsync(assembly, new PluginPushOptions("missing_solution", DryRun: true))).ThrowsExactly<MissingSolutionException>();
+    }
+
+    [Test]
+    public async Task BuildPackageAsync_ExistingManagedIdentityLink_IsNotPlannedAgain()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddDefaultRequests();
+        var packageId = Guid.NewGuid();
+        var identityId = Guid.NewGuid();
+        const string clientId = "12345678-1234-1234-1234-123456789abc";
+        service.Create(new PluginPackage(packageId) { Name = "contoso_Contoso.Plugins", Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, identityId) });
+        service.Create(new ManagedIdentity(identityId) { ApplicationId = Guid.Parse(clientId) });
+        var package = new LocalPluginPackage(new LocalPackage("Contoso.Plugins", "1.0.0", string.Empty, string.Empty), [
+            new LocalAssembly
+            {
+                Name = "Contoso.Plugins",
+                Version = Version.Parse("1.0.0.0"),
+                Content = "Y29udGVudA==",
+                ContentHash = "hash",
+                Kind = LocalAssemblyKind.Plugin,
+                ManagedIdentityClientId = clientId
+            }
+        ]);
+
+        var plan = await CreatePlanner(service).BuildPackageAsync(package, new PluginPushOptions(null, DryRun: true, PublisherPrefix: "contoso"));
+
+        await Assert.That(plan.LinkManagedIdentity).IsFalse();
     }
 }

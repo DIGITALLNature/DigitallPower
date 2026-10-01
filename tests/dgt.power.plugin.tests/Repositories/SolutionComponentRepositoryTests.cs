@@ -6,6 +6,7 @@ using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
+
 namespace dgt.power.plugin.tests.Repositories;
 
 public class SolutionComponentRepositoryTests
@@ -33,12 +34,7 @@ public class SolutionComponentRepositoryTests
     public async Task GetComponentTypeAsync_MatchingDefinition_ReturnsComponentType()
     {
         var service = CreateService();
-        service.Create(new SolutionComponentDefinition
-        {
-            Id = Guid.NewGuid(),
-            SolutionComponentType = 10119,
-            PrimaryEntityName = PluginPackage.EntityLogicalName
-        });
+        service.Create(new SolutionComponentDefinition { Id = Guid.NewGuid(), SolutionComponentType = 10119, PrimaryEntityName = PluginPackage.EntityLogicalName });
         var repository = new SolutionComponentRepository(service);
 
         var result = await repository.GetComponentTypeAsync(PluginPackage.EntityLogicalName);
@@ -62,21 +58,21 @@ public class SolutionComponentRepositoryTests
         var solutionId = Guid.NewGuid();
         service.Create(new Solution(solutionId) { UniqueName = "TestSolution" });
         var expectedComponentId = Guid.NewGuid();
-        service.Create(CreateSolutionComponent(
-            solutionId,
-            expectedComponentId,
-            IPluginAssemblyRepository.ComponentType));
-        service.Create(CreateSolutionComponent(
-            solutionId,
-            Guid.NewGuid(),
-            ISdkMessageProcessingStepRepository.ComponentType));
+        service.Create(CreateSolutionComponent(solutionId, expectedComponentId, IPluginAssemblyRepository.ComponentType));
+        service.Create(CreateSolutionComponent(solutionId, Guid.NewGuid(), ISdkMessageProcessingStepRepository.ComponentType));
         var repository = new SolutionComponentRepository(service);
 
-        var componentIds = await repository.ListComponentIdsAsync(
-            "TestSolution",
-            IPluginAssemblyRepository.ComponentType);
+        var componentIds = await repository.ListComponentIdsAsync("TestSolution", IPluginAssemblyRepository.ComponentType);
 
         await Assert.That(componentIds).IsEquivalentTo([expectedComponentId]);
+    }
+
+    [Test]
+    public async Task ListComponentIdsAsync_MissingSolution_Throws()
+    {
+        var repository = new SolutionComponentRepository(CreateService());
+
+        await Assert.That(async () => await repository.ListComponentIdsAsync("MissingSolution", IPluginAssemblyRepository.ComponentType)).ThrowsExactly<MissingSolutionException>();
     }
 
     private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)
@@ -86,12 +82,9 @@ public class SolutionComponentRepositoryTests
             Attributes =
             {
                 [SolutionComponent.LogicalNames.ObjectId] = componentId,
-                [SolutionComponent.LogicalNames.SolutionId] =
-                    new EntityReference(Solution.EntityLogicalName, solutionId),
-                [SolutionComponent.LogicalNames.ComponentType] =
-                    new OptionSetValue(componentType)
+                [SolutionComponent.LogicalNames.SolutionId] = new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(componentType)
             }
         };
     }
-
 }

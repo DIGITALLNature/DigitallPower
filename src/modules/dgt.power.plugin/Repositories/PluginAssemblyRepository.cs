@@ -13,74 +13,68 @@ namespace dgt.power.plugin.Repositories;
 /// <inheritdoc cref="IPluginAssemblyRepository" />
 public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service) : IPluginAssemblyRepository
 {
-    public Task<RemoteAssembly?> FindForDeploymentAsync(
-        string name,
-        Version targetVersion,
-        CancellationToken cancellationToken = default)
+    public Task<RemoteAssembly?> FindForDeploymentAsync(string name, Version targetVersion, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(targetVersion);
         return FindForDeploymentCoreAsync(name, targetVersion, cancellationToken);
     }
 
-    private async Task<RemoteAssembly?> FindForDeploymentCoreAsync(
-        string name,
-        Version targetVersion,
-        CancellationToken cancellationToken)
+    private async Task<RemoteAssembly?> FindForDeploymentCoreAsync(string name, Version targetVersion, CancellationToken cancellationToken)
     {
         var assemblies = await ListByNameCoreAsync(name, cancellationToken);
-        return assemblies.FirstOrDefault(assembly =>
-                   assembly.Version.Major == targetVersion.Major &&
-                   assembly.Version.Minor == targetVersion.Minor)
-               ?? assemblies.OrderByDescending(assembly => assembly.Version).FirstOrDefault();
+        return FindMatchingVersion(assemblies, targetVersion);
     }
 
-    private async Task<IReadOnlyList<RemoteAssembly>> ListByNameCoreAsync(
-        string name,
-        CancellationToken cancellationToken)
+    public Task<RemoteAssembly?> FindForPackageDeploymentAsync(string name, Version targetVersion, Guid? packageId, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(targetVersion);
+        return FindForPackageDeploymentCoreAsync(name, targetVersion, packageId, cancellationToken);
+    }
+
+    private async Task<RemoteAssembly?> FindForPackageDeploymentCoreAsync(string name, Version targetVersion, Guid? packageId, CancellationToken cancellationToken)
+    {
+        var assemblies = await ListByNameCoreAsync(name, cancellationToken);
+        var candidates = packageId is { } ownerId ? assemblies.Where(assembly => assembly.PackageId == ownerId) : assemblies.Where(assembly => assembly.PackageId is null);
+        return FindMatchingVersion(candidates, targetVersion);
+    }
+
+    private static RemoteAssembly? FindMatchingVersion(IEnumerable<RemoteAssembly> assemblies, Version targetVersion)
+    {
+        var candidates = assemblies.ToList();
+        return candidates.Find(assembly => assembly.Version.Major == targetVersion.Major && assembly.Version.Minor == targetVersion.Minor) ??
+               candidates.OrderByDescending(assembly => assembly.Version).FirstOrDefault();
+    }
+
+    private async Task<IReadOnlyList<RemoteAssembly>> ListByNameCoreAsync(string name, CancellationToken cancellationToken)
     {
         var query = new QueryExpression(PluginAssembly.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(
-                PluginAssembly.LogicalNames.PluginAssemblyId,
-                PluginAssembly.LogicalNames.Name,
-                PluginAssembly.LogicalNames.Version,
-                PluginAssembly.LogicalNames.PackageId,
-                PluginAssembly.LogicalNames.Content),
+            ColumnSet =
+                new ColumnSet(PluginAssembly.LogicalNames.PluginAssemblyId, PluginAssembly.LogicalNames.Name, PluginAssembly.LogicalNames.Version, PluginAssembly.LogicalNames.PackageId,
+                    PluginAssembly.LogicalNames.Content, PluginAssembly.LogicalNames.CreatedOn),
             Criteria = new FilterExpression
             {
                 Conditions =
                 {
                     new ConditionExpression(PluginAssembly.LogicalNames.Name, ConditionOperator.Equal, name),
-                    new ConditionExpression(PluginAssembly.LogicalNames.SourceType, ConditionOperator.In,
-                        PluginAssembly.Options.SourceType.Database, PluginAssembly.Options.SourceType.FileStore),
-                    new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal,
-                        PluginAssembly.Options.IsolationMode.Sandbox)
+                    new ConditionExpression(PluginAssembly.LogicalNames.SourceType, ConditionOperator.In, PluginAssembly.Options.SourceType.Database,
+                        PluginAssembly.Options.SourceType.FileStore),
+                    new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal, PluginAssembly.Options.IsolationMode.Sandbox)
                 }
-            }
+            },
+            Orders = { new OrderExpression(PluginAssembly.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
         var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities
-            .Select(entity => entity.ToEntity<PluginAssembly>())
-            .Select(entity =>
-            {
-                var contentHash = entity.PackageId is not null || entity.Content is null
-                    ? null
-                    : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
-                return new RemoteAssembly(
-                    entity.Id,
-                    entity.Name!,
-                    Version.Parse(entity.Version!),
-                    entity.PackageId?.Id,
-                    contentHash);
-            })
-            .ToList();
+        return result.Entities.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
+        {
+            var contentHash = entity.PackageId is not null || entity.Content is null ? null : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
+            return new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash);
+        }).ToList();
     }
 
-    public async Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(
-        string name,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<RemoteAssembly>> ListStandaloneByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var assemblies = await ListByNameCoreAsync(name, cancellationToken);
         return assemblies.Where(assembly => assembly.PackageId is null).ToList();
@@ -91,21 +85,16 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         var query = new QueryExpression(PluginAssembly.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(
-                PluginAssembly.LogicalNames.PluginAssemblyId,
-                PluginAssembly.LogicalNames.Name,
-                PluginAssembly.LogicalNames.Version,
-                PluginAssembly.LogicalNames.PackageId),
+            ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.PluginAssemblyId, PluginAssembly.LogicalNames.Name, PluginAssembly.LogicalNames.Version, PluginAssembly.LogicalNames.PackageId),
             Criteria = new FilterExpression
             {
                 Conditions =
                 {
                     new ConditionExpression(PluginAssembly.LogicalNames.Name, ConditionOperator.Equal, name),
                     new ConditionExpression(PluginAssembly.LogicalNames.PluginAssemblyId, ConditionOperator.NotEqual, excludeId),
-                    new ConditionExpression(PluginAssembly.LogicalNames.SourceType, ConditionOperator.In,
-                        PluginAssembly.Options.SourceType.Database, PluginAssembly.Options.SourceType.FileStore),
-                    new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal,
-                        PluginAssembly.Options.IsolationMode.Sandbox),
+                    new ConditionExpression(PluginAssembly.LogicalNames.SourceType, ConditionOperator.In, PluginAssembly.Options.SourceType.Database,
+                        PluginAssembly.Options.SourceType.FileStore),
+                    new ConditionExpression(PluginAssembly.LogicalNames.IsolationMode, ConditionOperator.Equal, PluginAssembly.Options.IsolationMode.Sandbox),
                     new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Null)
                 }
             },
@@ -113,10 +102,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         };
 
         var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities
-            .Select(e => e.ToEntity<PluginAssembly>())
-            .Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id))
-            .ToList();
+        return result.Entities.Select(e => e.ToEntity<PluginAssembly>()).Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id)).ToList();
     }
 
     public async Task<Guid> CreateAsync(string name, string content, CancellationToken cancellationToken = default)
@@ -138,6 +124,5 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         await service.UpdateAsync(assembly, cancellationToken);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
-        await service.DeleteAsync(PluginAssembly.EntityLogicalName, id, cancellationToken);
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) => await service.DeleteAsync(PluginAssembly.EntityLogicalName, id, cancellationToken);
 }
