@@ -47,6 +47,7 @@ create/update/keep, purges, custom API changes, and dry-run-only actions. Dry-ru
 assert zero Dataverse writes and the absence of aggregate count output.
 
 Custom API handler types are a special case: although they carry a registration attribute, their
-legacy `sdkmessageprocessingstep` implementation record is not a normal declarative step. Planning
-and reconciliation must skip step/image matching for types with a Custom API message name, so that
-the implementation record is preserved while the Custom API link is reconciled.
+`sdkmessageprocessingstep` implementation record (registered on the Custom API's own message) is
+not a declarative step. Planning excludes only that record from step reconciliation; any other
+remote step on the type is deleted so a type switching from `PluginRegistration` to
+`CustomApiRegistration` leaves no orphaned steps.

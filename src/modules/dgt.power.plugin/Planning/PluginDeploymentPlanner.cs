@@ -56,7 +56,9 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
 
         foreach (var assembly in package.Assemblies)
         {
-            var remoteAssembly = await repositories.Assemblies.FindForPackageDeploymentAsync(assembly.Name, assembly.Version, packageComparison.Remote?.Id, cancellationToken);
+            var remoteAssembly = packageComparison.Remote?.Id is { } packageId
+                ? await repositories.Assemblies.FindForPackageDeploymentAsync(assembly.Name, assembly.Version, packageId, cancellationToken)
+                : null;
             var assemblyComparison = new AssemblyComparison(assembly, remoteAssembly);
             var deployment = await BuildAssemblyCoreAsync(assembly, assemblyComparison, options, packageOwned: true, cancellationToken);
             assemblies.Add(deployment);
@@ -104,7 +106,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         }
 
         var linkManagedIdentity = false;
-        if (!skipStandaloneDeployment && assembly.ManagedIdentityClientId is { } clientId)
+        if (!skipStandaloneDeployment && !packageOwned && assembly.ManagedIdentityClientId is { } clientId)
         {
             var desiredIdentityId = await repositories.ManagedIdentities.FindIdByClientIdAsync(clientId, cancellationToken);
             linkManagedIdentity = desiredIdentityId is null || assemblyComparison.Remote?.ManagedIdentityId != desiredIdentityId;
@@ -141,9 +143,14 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             var steps = new List<PluginStepDeployment>();
             var deleteSteps = new List<PluginStepDeletion>();
 
-            if (string.IsNullOrEmpty(typeComparison.Local.CustomApi))
             {
                 var remoteSteps = typeComparison.Remote is { } existingType ? await repositories.Steps.ListByPluginTypeAsync(existingType.Id, cancellationToken) : [];
+                if (!string.IsNullOrEmpty(typeComparison.Local.CustomApi))
+                {
+                    // The Custom API implementation record is registered on the API's own message and is not a declarative step.
+                    remoteSteps = remoteSteps.Where(step => !string.Equals(step.MessageName, typeComparison.Local.CustomApi, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
                 var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(typeComparison.Local.Steps, remoteSteps);
                 foreach (var stepComparison in stepComparisonSet.Comparisons)
                 {
