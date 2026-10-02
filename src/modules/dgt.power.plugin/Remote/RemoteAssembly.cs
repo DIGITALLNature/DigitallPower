@@ -12,12 +12,14 @@ namespace dgt.power.plugin.Remote;
 /// <param name="Version">Currently registered version.</param>
 /// <param name="PackageId">Owning plugin package id, when the assembly belongs to a package.</param>
 /// <param name="ContentHash">SHA-256 hash of the registered assembly content, when retrieved.</param>
+/// <param name="ManagedIdentityId">Linked managed identity id, if one is assigned.</param>
 public sealed record RemoteAssembly(
     Guid Id,
     string Name,
     Version Version,
     Guid? PackageId,
-    string? ContentHash = null)
+    string? ContentHash = null,
+    Guid? ManagedIdentityId = null)
 {
     public RemoteAssembly(Guid id, Version version, Guid? PackageId, string? ContentHash = null)
         : this(id, string.Empty, version, PackageId, ContentHash)

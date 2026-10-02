@@ -121,10 +121,11 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             return true;
         }
 
-        var targetDirectory = Path.GetDirectoryName(Path.GetFullPath(target))!;
+        var fullTargetPath = Path.GetFullPath(target);
+        var targetDirectory = Path.GetDirectoryName(fullTargetPath)!;
         using var loadContext = MetadataLoadContextFactory.Create(targetDirectory);
 
-        var assembly = new AssemblyReflectionReader(Console).Read(target, loadContext);
+        var assembly = new AssemblyReflectionReader(Console).Read(fullTargetPath, loadContext);
         if (assembly is null)
         {
             Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
@@ -172,7 +173,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         Console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
-    private IReadOnlyList<string>? ResolveTargets(string target)
+    internal IReadOnlyList<string>? ResolveTargets(string target)
     {
         if (File.Exists(target))
         {
@@ -187,11 +188,9 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
 
         if (Directory.Exists(target))
         {
-            return
-            [
-                .. Directory.EnumerateFiles(target, "*.dll", SearchOption.TopDirectoryOnly),
-                .. Directory.EnumerateFiles(target, "*.nupkg", SearchOption.TopDirectoryOnly)
-            ];
+            return Directory.EnumerateFiles(target, "*", SearchOption.TopDirectoryOnly)
+                .Where(file => file.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);

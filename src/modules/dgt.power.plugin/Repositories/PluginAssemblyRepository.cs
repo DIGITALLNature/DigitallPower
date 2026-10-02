@@ -52,7 +52,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             NoLock = true,
             ColumnSet =
                 new ColumnSet(PluginAssembly.LogicalNames.PluginAssemblyId, PluginAssembly.LogicalNames.Name, PluginAssembly.LogicalNames.Version, PluginAssembly.LogicalNames.PackageId,
-                    PluginAssembly.LogicalNames.Content, PluginAssembly.LogicalNames.CreatedOn),
+                    PluginAssembly.LogicalNames.Content, PluginAssembly.LogicalNames.CreatedOn, PluginAssembly.LogicalNames.ManagedIdentityId),
             Criteria = new FilterExpression
             {
                 Conditions =
@@ -70,7 +70,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         return result.Entities.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
         {
             var contentHash = entity.PackageId is not null || entity.Content is null ? null : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
-            return new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash);
+            return new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash, entity.ManagedIdentityId?.Id);
         }).ToList();
     }
 

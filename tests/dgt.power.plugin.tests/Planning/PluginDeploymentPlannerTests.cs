@@ -5,6 +5,7 @@ using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
 using dgt.power.plugin.Repositories;
+using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
@@ -98,5 +99,109 @@ public class PluginDeploymentPlannerTests
         var plan = await CreatePlanner(service).BuildPackageAsync(package, new PluginPushOptions(null, DryRun: true, PublisherPrefix: "contoso"));
 
         await Assert.That(plan.LinkManagedIdentity).IsFalse();
+    }
+
+    [Test]
+    public async Task BuildAssemblyAsync_ExistingStandaloneManagedIdentityLink_IsNotPlannedAgain()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddDefaultRequests();
+        var assemblyId = Guid.NewGuid();
+        var identityId = Guid.NewGuid();
+        const string clientId = "12345678-1234-1234-1234-123456789abc";
+        service.Create(new PluginAssembly(assemblyId)
+        {
+            Name = "Contoso.Plugins",
+            Version = "1.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox),
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, identityId)
+        });
+        service.Create(new ManagedIdentity(identityId) { ApplicationId = Guid.Parse(clientId) });
+        var assembly = new LocalAssembly
+        {
+            Name = "Contoso.Plugins",
+            Version = Version.Parse("1.0.0.0"),
+            Content = "Y29udGVudA==",
+            ContentHash = "hash",
+            Kind = LocalAssemblyKind.Plugin,
+            ManagedIdentityClientId = clientId
+        };
+
+        var plan = await CreatePlanner(service).BuildAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
+
+        await Assert.That(plan.LinkManagedIdentity).IsFalse();
+    }
+
+    [Test]
+    public async Task BuildAssemblyAsync_UpgradeWithMigratedStepAlreadyInSolution_DoesNotPlanSolutionAddAgain()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
+        service.AddDefaultRequests();
+
+        const string solutionUniqueName = "contoso_solution";
+        var solutionId = Guid.NewGuid();
+        service.Create(new Solution(solutionId) { UniqueName = solutionUniqueName });
+
+        var messageId = Guid.NewGuid();
+        service.Create(new SdkMessage(messageId) { Name = "TestMessage" });
+
+        var oldAssemblyId = Guid.NewGuid();
+        service.Create(new PluginAssembly(oldAssemblyId)
+        {
+            Name = "MyPlugins",
+            Version = "1.0.0.0",
+            SourceType = new OptionSetValue(PluginAssembly.Options.SourceType.Database),
+            IsolationMode = new OptionSetValue(PluginAssembly.Options.IsolationMode.Sandbox)
+        });
+
+        var oldTypeId = Guid.NewGuid();
+        service.Create(new PluginType(oldTypeId)
+        {
+            TypeName = "MyPlugin",
+            PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, oldAssemblyId)
+        });
+
+        var oldStepId = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(oldStepId)
+        {
+            Name = "my-step",
+            EventHandler = new EntityReference(PluginType.EntityLogicalName, oldTypeId),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PostOperation),
+            SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, messageId),
+            Rank = 1
+        });
+
+        // The step is already a member of the target solution - a stale planner must not re-add it.
+        service.Create(new SolutionComponent(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SolutionComponent.LogicalNames.ObjectId] = oldStepId,
+                [SolutionComponent.LogicalNames.SolutionId] = new EntityReference(Solution.EntityLogicalName, solutionId),
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(ISdkMessageProcessingStepRepository.ComponentType)
+            }
+        });
+
+        var localStep = new LocalPluginStep("my-step", SdkMessageProcessingStep.Options.Mode.Synchronous, "TestMessage",
+            SdkMessageProcessingStep.Options.Stage.PostOperation, "none", "none", null, 1, []);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [localStep]);
+        var assembly = new LocalAssembly
+        {
+            Name = "MyPlugins",
+            Version = Version.Parse("2.0.0.0"),
+            Content = "Y29udGVudA==",
+            ContentHash = "hash",
+            Kind = LocalAssemblyKind.Plugin,
+            PluginTypes = [localType]
+        };
+
+        var plan = await CreatePlanner(service).BuildAssemblyAsync(assembly, new PluginPushOptions(solutionUniqueName, DryRun: true));
+
+        var step = plan.PluginTypes!.Types.Single().Steps.Single();
+        await Assert.That(step.MigrationSource).IsNotNull();
+        await Assert.That(step.Solution).IsNull();
     }
 }

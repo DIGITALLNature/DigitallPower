@@ -30,9 +30,9 @@ src/
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`; webresource half still pending)
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
-    ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`); being superseded module-by-module by resource-oriented commands (`plugin push`, planned `webresource push`)
+    ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`)
     └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
 ```
 

@@ -99,11 +99,17 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             if (assemblyComparison.RequiresUpgrade)
             {
                 outdated = await BuildOutdatedAssembliesAsync(assembly.Name, assembly.PluginTypes, Guid.Empty, cancellationToken);
-                pluginTypes = AddMigrationState(pluginTypes, outdated);
+                pluginTypes = await AddMigrationStateAsync(pluginTypes, outdated, options.Solution, cancellationToken);
             }
         }
 
-        var linkManagedIdentity = !skipStandaloneDeployment && !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId);
+        var linkManagedIdentity = false;
+        if (!skipStandaloneDeployment && assembly.ManagedIdentityClientId is { } clientId)
+        {
+            var desiredIdentityId = await repositories.ManagedIdentities.FindIdByClientIdAsync(clientId, cancellationToken);
+            linkManagedIdentity = desiredIdentityId is null || assemblyComparison.Remote?.ManagedIdentityId != desiredIdentityId;
+        }
+
         SolutionLink? solution = null;
         if (!packageOwned)
         {
@@ -273,26 +279,31 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
         return new OutdatedAssemblyDeployment(assemblyPlans);
     }
 
-    private static PluginTypeDeployment AddMigrationState(PluginTypeDeployment deployment, OutdatedAssemblyDeployment outdatedAssemblies)
+    private async Task<PluginTypeDeployment> AddMigrationStateAsync(PluginTypeDeployment deployment, OutdatedAssemblyDeployment outdatedAssemblies, string? solutionUniqueName,
+        CancellationToken cancellationToken)
     {
         var migrationsByType = outdatedAssemblies.Assemblies.SelectMany(assembly => assembly.Types).Where(type => type.Migration.HasReplacement)
             .GroupBy(type => type.Migration.TypeName, StringComparer.Ordinal).ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
 
-        var types = deployment.Types.Select(type =>
+        var types = new List<PluginTypeDeploymentItem>();
+        foreach (var type in deployment.Types)
         {
             if (!migrationsByType.TryGetValue(type.Comparison.Local.TypeName, out var migrations))
             {
-                return type;
+                types.Add(type);
+                continue;
             }
 
             var matchedStepIds = new HashSet<Guid>();
-            var steps = type.Steps.Select(step =>
+            var steps = new List<PluginStepDeployment>();
+            foreach (var step in type.Steps)
             {
                 var migration = migrations.SelectMany(item => item.MigrateSteps).FirstOrDefault(candidate =>
                     !matchedStepIds.Contains(candidate.Step.Id) && !PluginRegistrationComparer.ComparePluginSteps([step.Comparison.Local], [candidate.Step]).Comparisons[0].RequiresCreate);
                 if (migration is null)
                 {
-                    return step;
+                    steps.Add(step);
+                    continue;
                 }
 
                 matchedStepIds.Add(migration.Step.Id);
@@ -301,11 +312,16 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 var unchangedImages = step.Comparison.Local.Images.Where(image =>
                         migration.Images.Any(remote => remote.Name == image.Name && remote.ImageType == image.ImageType) && images.Comparisons.All(imageComparison => imageComparison.Local != image))
                     .ToList();
-                return step with { Comparison = comparison, Images = images, UnchangedImages = unchangedImages, MigrationSource = migration };
-            }).ToList();
 
-            return type with { Steps = steps };
-        }).ToList();
+                // The step retains the migrated remote id and its existing solution membership - re-plan
+                // the link using that id instead of the stale one computed while it still looked like a create.
+                var solution = await PlanSolutionLinkAsync(ISdkMessageProcessingStepRepository.ComponentType, migration.Step.Id, step.Comparison.Local.Name, solutionUniqueName, cancellationToken);
+                steps.Add(step with { Comparison = comparison, Images = images, UnchangedImages = unchangedImages, MigrationSource = migration, Solution = solution });
+            }
+
+            types.Add(type with { Steps = steps });
+        }
+
         return deployment with { Types = types };
     }
 }
