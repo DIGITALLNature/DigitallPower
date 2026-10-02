@@ -793,7 +793,7 @@ dgtp webresource push ./webresources/app/main.js \
 | `--name` | Single-file targets | Explicit Dataverse logical name |
 | `--delete-obsolete` | No | Deletes unmanaged resources in the selected solution that are absent from a directory target |
 | `--dry-run` | No | Renders the complete plan without Dataverse writes |
-| `--publish-mode` | No | `batch` (default) publishes all changed resources together; `single` publishes each resource separately |
+| `--confirm` | No | Prompts before applying a plan with changes; suppressed by `--non-interactive` and CI |
 
 ##### Mapping file
 
@@ -840,6 +840,10 @@ Solution membership: ContosoCore
 Obsolete webresources
   − WebResource contoso_/obsolete.js
 ```
+
+When `--confirm` is specified, the command asks before executing a plan that creates, updates,
+adds resources to a solution, or deletes obsolete resources. Declining leaves Dataverse unchanged.
+The prompt is skipped in CI and when `--non-interactive` is set; `--dry-run` never prompts.
 
 The tree shows local directory structure; mapping files may intentionally produce a different
 Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
