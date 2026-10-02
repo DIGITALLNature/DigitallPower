@@ -69,12 +69,23 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
                 return Tracer.End(this, true);
             }
 
+            if (WebResourcePushConfirmation.ShouldPrompt(
+                    settings.Confirm,
+                    settings.NonInteractive,
+                    ExecutionEnvironment.IsCiAgent) &&
+                WebResourcePushConfirmation.HasChanges(plan) &&
+                !WebResourcePushConfirmation.Confirm(Console, Path.GetFileName(Path.GetFullPath(settings.Target))))
+            {
+                Console.MarkupLine("[yellow]Deployment cancelled.[/]");
+                return Tracer.End(this, true);
+            }
+
             Console.MarkupLine("[bold green]Execution[/]");
             var completedOperationCount = await new WebResourcePushExecutor(
                     webResourceRepository,
                     solutionRepository,
                     new WebResourceExecutionReporter(Console))
-                .ExecuteAsync(plan, settings.PublishMode, cancellationToken);
+                .ExecuteAsync(plan, cancellationToken);
             Console.MarkupLine(completedOperationCount == 0
                 ? "[green]✔[/] No changes applied"
                 : "[green]✔[/] Deployment completed");

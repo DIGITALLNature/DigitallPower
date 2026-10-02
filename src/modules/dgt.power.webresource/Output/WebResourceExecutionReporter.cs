@@ -36,21 +36,11 @@ public sealed class WebResourceExecutionReporter(IAnsiConsole console)
             solutionName);
     }
 
-    public void ReportPublished(int count, TimeSpan elapsed)
+    public void ReportPublished(string resourceName)
     {
         console.MarkupLine(
             CultureInfo.InvariantCulture,
-            "[green]✔[/] Published [green]{0}[/] WebResource(s) in [green]{1:F2}s[/]",
-            count,
-            elapsed.TotalSeconds);
-    }
-
-    public void ReportPublishTotal(int count, TimeSpan elapsed)
-    {
-        console.MarkupLine(
-            CultureInfo.InvariantCulture,
-            "[green]✔[/] Total publish time for [green]{0}[/] WebResource(s): [green]{1:F2}s[/]",
-            count,
-            elapsed.TotalSeconds);
+            "[green]✔[/] Published WebResource: [green]{0}[/]",
+            resourceName);
     }
 }

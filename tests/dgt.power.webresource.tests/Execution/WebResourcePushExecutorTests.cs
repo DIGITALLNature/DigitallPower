@@ -14,10 +14,11 @@ namespace dgt.power.webresource.tests.Execution;
 public class WebResourcePushExecutorTests
 {
     [Test]
-    public async Task ExecuteAsync_BatchesCreatedAndUpdatedResourcesForPublishing()
+    public async Task ExecuteAsync_PublishesChangedResourcesIndividuallyAfterWritesAndMembership()
     {
-        var repository = new RecordingWebResourceRepository();
-        var solutionRepository = new RecordingSolutionRepository();
+        var operations = new List<string>();
+        var repository = new RecordingWebResourceRepository(operations);
+        var solutionRepository = new RecordingSolutionRepository(operations);
         using var console = new TestConsole();
         var executor = new WebResourcePushExecutor(
             repository,
@@ -38,22 +39,27 @@ public class WebResourcePushExecutorTests
             [],
             "ContosoCore");
 
-        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Batch);
+        var operationCount = await executor.ExecuteAsync(plan);
 
-        await Assert.That(operationCount).IsEqualTo(4);
+        await Assert.That(operationCount).IsEqualTo(5);
         await Assert.That(repository.Created).IsEquivalentTo([local.Name]);
         await Assert.That(repository.Updated).IsEquivalentTo([(updatedLocal.Name, updatedId)]);
-        await Assert.That(repository.PublishBatches).Count().IsEqualTo(1);
-        await Assert.That(repository.PublishBatches[0]).IsEquivalentTo([repository.CreatedId, updatedId]);
+        await Assert.That(repository.PublishBatches).Count().IsEqualTo(2);
+        await Assert.That(repository.PublishBatches.All(batch => batch.Count == 1)).IsTrue();
+        await Assert.That(repository.PublishBatches.SelectMany(batch => batch))
+            .IsEquivalentTo([repository.CreatedId, updatedId]);
         await Assert.That(solutionRepository.Added).IsEquivalentTo([(repository.CreatedId, "ContosoCore")]);
-        await Assert.That(console.Output).Contains("Published 2 WebResource(s) in");
+        await Assert.That(operations).IsEquivalentTo(["Create", "Update", "Add", "Publish", "Publish"]);
+        await Assert.That(console.Output).Contains($"Published WebResource: {local.Name}");
+        await Assert.That(console.Output).Contains($"Published WebResource: {updatedLocal.Name}");
     }
 
     [Test]
     public async Task ExecuteAsync_LeavesUnchangedResourceUntouched()
     {
-        var repository = new RecordingWebResourceRepository();
-        var solutionRepository = new RecordingSolutionRepository();
+        var operations = new List<string>();
+        var repository = new RecordingWebResourceRepository(operations);
+        var solutionRepository = new RecordingSolutionRepository(operations);
         using var console = new TestConsole();
         var executor = new WebResourcePushExecutor(
             repository,
@@ -69,7 +75,7 @@ public class WebResourcePushExecutorTests
             [],
             null);
 
-        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Batch);
+        var operationCount = await executor.ExecuteAsync(plan);
 
         await Assert.That(operationCount).IsZero();
         await Assert.That(repository.Created).IsEmpty();
@@ -77,50 +83,10 @@ public class WebResourcePushExecutorTests
         await Assert.That(solutionRepository.Added).IsEmpty();
     }
 
-    [Test]
-    public async Task ExecuteAsync_PublishesEachChangedResourceInSingleMode()
-    {
-        var repository = new RecordingWebResourceRepository();
-        var solutionRepository = new RecordingSolutionRepository();
-        using var console = new TestConsole();
-        var executor = new WebResourcePushExecutor(
-            repository,
-            solutionRepository,
-            new WebResourceExecutionReporter(console));
-        var first = CreateLocal("contoso_/first.js");
-        var second = CreateLocal("contoso_/second.js");
-        var firstId = Guid.NewGuid();
-        var secondId = Guid.NewGuid();
-        var plan = new WebResourcePushPlan(
-            [
-                new WebResourcePlanItem(
-                    first,
-                    WebResourceAction.Update,
-                    new RemoteWebResource(firstId, first.Type, first.Name, "old", false),
-                    false),
-                new WebResourcePlanItem(
-                    second,
-                    WebResourceAction.Update,
-                    new RemoteWebResource(secondId, second.Type, second.Name, "old", false),
-                    false)
-            ],
-            [],
-            null);
-
-        var operationCount = await executor.ExecuteAsync(plan, WebResourcePublishMode.Single);
-
-        await Assert.That(operationCount).IsEqualTo(4);
-        await Assert.That(repository.PublishBatches).Count().IsEqualTo(2);
-        await Assert.That(repository.PublishBatches[0]).Count().IsEqualTo(1);
-        await Assert.That(repository.PublishBatches[1]).Count().IsEqualTo(1);
-        await Assert.That(repository.PublishBatches.SelectMany(batch => batch)).IsEquivalentTo([firstId, secondId]);
-        await Assert.That(console.Output).Contains("Total publish time for 2 WebResource(s)");
-    }
-
     private static LocalWebResource CreateLocal(string name) =>
         new(3, name, Path.GetFileName(name), Convert.ToBase64String("content"u8.ToArray()), "hash", name);
 
-    private sealed class RecordingWebResourceRepository : IWebResourceRepository
+    private sealed class RecordingWebResourceRepository(List<string> operations) : IWebResourceRepository
     {
         public Guid CreatedId { get; } = Guid.NewGuid();
         public List<string> Created { get; } = [];
@@ -134,26 +100,33 @@ public class WebResourcePushExecutorTests
 
         public Task<Guid> CreateAsync(LocalWebResource resource, CancellationToken cancellationToken = default)
         {
+            operations.Add("Create");
             Created.Add(resource.Name);
             return Task.FromResult(CreatedId);
         }
 
         public Task UpdateAsync(LocalWebResource resource, Guid id, CancellationToken cancellationToken = default)
         {
+            operations.Add("Update");
             Updated.Add((resource.Name, id));
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            operations.Add("Delete");
+            return Task.CompletedTask;
+        }
 
         public Task PublishAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default)
         {
+            operations.Add("Publish");
             PublishBatches.Add(ids);
             return Task.CompletedTask;
         }
     }
 
-    private sealed class RecordingSolutionRepository : ISolutionRepository
+    private sealed class RecordingSolutionRepository(List<string> operations) : ISolutionRepository
     {
         public List<(Guid Id, string Solution)> Added { get; } = [];
 
@@ -167,6 +140,7 @@ public class WebResourcePushExecutorTests
             string solutionUniqueName,
             CancellationToken cancellationToken = default)
         {
+            operations.Add("Add");
             Added.Add((webresourceId, solutionUniqueName));
             return Task.CompletedTask;
         }

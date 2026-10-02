@@ -98,6 +98,7 @@ src/
 | Plugin plan output and progress | `research-plugin-plan-output-adaptation.md` | Solution membership is rendered below the plan; execution reports each completed operation, including partial progress |
 | Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
 | Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` supports only `Digitall.Plugins.Registration` 2.0.0+; historical namespaces remain legacy `push`/dgtp v2 concerns |
+| Webresource publish strategy | `research-webresource-push-v2-review.md` | Publish each changed resource separately after all individual creates/updates and membership changes; defer publish batching until deployment writes can be batched coherently |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
 | Resource-oriented CLI restructuring | `decision-resource-oriented-cli-restructuring.md` | `dgtp <resource> <verb> <target>` shape (mirrors colleague's `dgt.power.plugin`); `dgt.power.solution` is the current module name for the ported linter surface; `analyze`/`maintenance` remain out of scope for this Phase 1; single-solution positional arg replaces `--solutions` list; Sarif.Sdk replaces hand-rolled SARIF POCOs |
@@ -179,9 +180,9 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
 - **Webresource push plan contract:** the command should render a complete, case-insensitive plan
-  before execution. Solution membership and obsolete deletion are plan operations, created and
-  updated resources are published in one batch during execution, and an unchanged managed resource
-  is a valid no-op; see
+  before execution. Solution membership and obsolete deletion are plan operations, each changed
+  resource is published separately after individual writes, and an unchanged managed resource is a
+  valid no-op; see
   [`research-webresource-push-v2-review.md`](research-webresource-push-v2-review.md).
 - **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
   preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.
@@ -239,4 +240,4 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
 | `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
 | `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |
-| `research-webresource-push-v2-review.md` | research | Design and compatibility review of the resource-oriented webresource deployment command |
+| `research-webresource-push-v2-review.md` | research | Design and compatibility review of the resource-oriented webresource deployment command, including the decision to defer publish batching until create/update operations can be batched coherently |

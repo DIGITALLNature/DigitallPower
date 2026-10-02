@@ -9,14 +9,19 @@ Its deployment-plan pipeline should follow the `plugin push` contract more close
 - The command should build and render a complete typed plan before performing writes, and an
   executor should receive that plan rather than loading remote state and rebuilding it itself.
 - A complete plan must include solution membership additions and obsolete deletions. These
-  operations must be visible to `--dry-run`, not only reported after a real write. Created and
-  updated resources are collected and published in one request during execution, but publishing is
-  intentionally not a plan-rendered operation. `--publish-mode batch` is the default; `single`
-  publishes each changed resource separately for comparison or timeout troubleshooting. The
-  completed publish line reports each request duration in seconds; single mode also reports the
-  summed publish duration.
+  operations must be visible to `--dry-run`, not only reported after a real write. Publishing is
+  intentionally not a plan-rendered operation. For now, publish each changed resource in its own
+  request, after all create/update and solution-membership operations complete. Although one
+  batched publish was faster in a comparison on 17 resources (70–95 seconds versus 229 seconds
+  individually), keep publishing individual for now because create/update operations are also
+  individual. Defer publish batching until the full deployment can use batching coherently; do not
+  expose a publish-only batch-size option that could imply end-to-end batching. The temporary
+  stopwatch instrumentation used for that comparison was removed after the experiment.
 - Terminal output should have distinct `Plan` and `Execution` phases and explicitly report a
   no-change deployment.
+- Optional `--confirm` follows the plugin command's safety policy: prompt only when the plan has
+  changes, skip prompts for dry-run, CI, or `--non-interactive`, and leave Dataverse unchanged
+  when the user declines.
 - The webresource plan renderer follows the plugin renderer’s terminal conventions: the tree root
   is the target directory, and solution membership is a labelled section with the solution name,
   `+` links, or a green checkmark when all managed components are present. Obsolete webresources
