@@ -143,39 +143,37 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             var steps = new List<PluginStepDeployment>();
             var deleteSteps = new List<PluginStepDeletion>();
 
+            var remoteSteps = typeComparison.Remote is { } existingType ? await repositories.Steps.ListByPluginTypeAsync(existingType.Id, cancellationToken) : [];
+            if (!string.IsNullOrEmpty(typeComparison.Local.CustomApi))
             {
-                var remoteSteps = typeComparison.Remote is { } existingType ? await repositories.Steps.ListByPluginTypeAsync(existingType.Id, cancellationToken) : [];
-                if (!string.IsNullOrEmpty(typeComparison.Local.CustomApi))
-                {
-                    // The Custom API implementation record is registered on the API's own message and is not a declarative step.
-                    remoteSteps = remoteSteps.Where(step => !string.Equals(step.MessageName, typeComparison.Local.CustomApi, StringComparison.OrdinalIgnoreCase)).ToList();
-                }
-
-                var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(typeComparison.Local.Steps, remoteSteps);
-                foreach (var stepComparison in stepComparisonSet.Comparisons)
-                {
-                    ResolvedSdkMessage? message = null;
-                    if (stepComparison.RequiresCreate || stepComparison.RequiresUpdate)
-                    {
-                        message = await repositories.Messages.ResolveAsync(stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName, stepComparison.Local.SecondaryEntityName,
-                            cancellationToken);
-                        if (message is null)
-                        {
-                            throw new UnresolvedPluginStepMessageException(stepComparison.Local.Name, stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName);
-                        }
-                    }
-
-                    var remoteImages = stepComparison.Remote is { } existingStep ? await repositories.Images.ListByStepAsync(existingStep.Id, cancellationToken) : [];
-                    var images = PluginRegistrationComparer.ComparePluginStepImages(stepComparison.Local.Images, remoteImages);
-                    var unchangedImages = stepComparison.Local.Images.Where(image =>
-                        remoteImages.Any(remote => remote.Name == image.Name && remote.ImageType == image.ImageType) && images.Comparisons.All(comparison => comparison.Local != image)).ToList();
-                    var solution = await PlanSolutionLinkAsync(ISdkMessageProcessingStepRepository.ComponentType, stepComparison.Remote?.Id, stepComparison.Local.Name, solutionUniqueName,
-                        cancellationToken);
-                    steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages, solution));
-                }
-
-                deleteSteps.AddRange(stepComparisonSet.Deletions.Select(step => new PluginStepDeletion(step)));
+                // The Custom API implementation record is registered on the API's own message and is not a declarative step.
+                remoteSteps = remoteSteps.Where(step => !string.Equals(step.MessageName, typeComparison.Local.CustomApi, StringComparison.OrdinalIgnoreCase)).ToList();
             }
+
+            var stepComparisonSet = PluginRegistrationComparer.ComparePluginSteps(typeComparison.Local.Steps, remoteSteps);
+            foreach (var stepComparison in stepComparisonSet.Comparisons)
+            {
+                ResolvedSdkMessage? message = null;
+                if (stepComparison.RequiresCreate || stepComparison.RequiresUpdate)
+                {
+                    message = await repositories.Messages.ResolveAsync(stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName, stepComparison.Local.SecondaryEntityName,
+                        cancellationToken);
+                    if (message is null)
+                    {
+                        throw new UnresolvedPluginStepMessageException(stepComparison.Local.Name, stepComparison.Local.MessageName, stepComparison.Local.PrimaryEntityName);
+                    }
+                }
+
+                var remoteImages = stepComparison.Remote is { } existingStep ? await repositories.Images.ListByStepAsync(existingStep.Id, cancellationToken) : [];
+                var images = PluginRegistrationComparer.ComparePluginStepImages(stepComparison.Local.Images, remoteImages);
+                var unchangedImages = stepComparison.Local.Images.Where(image =>
+                    remoteImages.Any(remote => remote.Name == image.Name && remote.ImageType == image.ImageType) && images.Comparisons.All(comparison => comparison.Local != image)).ToList();
+                var solution = await PlanSolutionLinkAsync(ISdkMessageProcessingStepRepository.ComponentType, stepComparison.Remote?.Id, stepComparison.Local.Name, solutionUniqueName,
+                    cancellationToken);
+                steps.Add(new PluginStepDeployment(stepComparison, message, images, unchangedImages, solution));
+            }
+
+            deleteSteps.AddRange(stepComparisonSet.Deletions.Select(step => new PluginStepDeletion(step)));
 
             var customApi = await BuildCustomApiAsync(typeComparison, cancellationToken);
             typeItems.Add(new PluginTypeDeploymentItem(typeComparison, steps, deleteSteps, customApi));
@@ -323,7 +321,14 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
                 // The step retains the migrated remote id and its existing solution membership - re-plan
                 // the link using that id instead of the stale one computed while it still looked like a create.
                 var solution = await PlanSolutionLinkAsync(ISdkMessageProcessingStepRepository.ComponentType, migration.Step.Id, step.Comparison.Local.Name, solutionUniqueName, cancellationToken);
-                steps.Add(step with { Comparison = comparison, Images = images, UnchangedImages = unchangedImages, MigrationSource = migration, Solution = solution });
+                steps.Add(step with
+                {
+                    Comparison = comparison,
+                    Images = images,
+                    UnchangedImages = unchangedImages,
+                    MigrationSource = migration,
+                    Solution = solution
+                });
             }
 
             types.Add(type with { Steps = steps });
