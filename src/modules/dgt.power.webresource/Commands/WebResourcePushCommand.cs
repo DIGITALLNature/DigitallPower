@@ -81,14 +81,25 @@ public sealed class WebResourcePushCommand(ITracer tracer, Microsoft.Xrm.Sdk.IOr
             }
 
             Console.MarkupLine("[bold green]Execution[/]");
-            var completedOperationCount = await new WebResourcePushExecutor(
-                    webResourceRepository,
-                    solutionRepository,
-                    new WebResourceExecutionReporter(Console))
-                .ExecuteAsync(plan, cancellationToken);
+            var completedOperationCount = 0;
+            var executionReporter = new WebResourceExecutionReporter(Console);
+            var executor = new WebResourcePushExecutor(webResourceRepository, solutionRepository);
+
+            void ReportCompletedOperation(WebResourceDeploymentProgress progress)
+            {
+                completedOperationCount++;
+                executionReporter.ReportCompleted(progress);
+            }
+
+            await Console.Status()
+                .Spinner(Spinner.Known.Dots)
+                .SpinnerStyle(Style.Parse("green bold"))
+                .StartAsync(
+                    "Applying deployment plan...",
+                    _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
             Console.MarkupLine(completedOperationCount == 0
-                ? "[green]✔[/] No changes applied"
-                : "[green]✔[/] Deployment completed");
+                ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
+                : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
 
             return Tracer.End(this, true);
         }

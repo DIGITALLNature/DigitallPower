@@ -14,16 +14,24 @@ namespace dgt.power.webresource.tests.Execution;
 public class WebResourcePushExecutorTests
 {
     [Test]
+    public async Task ReportCompleted_RendersPluginStyleProgressLine()
+    {
+        using var console = new TestConsole();
+        var reporter = new WebResourceExecutionReporter(console);
+
+        reporter.ReportCompleted(new WebResourceDeploymentProgress("Created", "WebResource", "contoso_/main.js"));
+
+        await Assert.That(console.Output).Contains("✔ Created WebResource contoso_/main.js");
+    }
+
+    [Test]
     public async Task ExecuteAsync_PublishesChangedResourcesIndividuallyAfterWritesAndMembership()
     {
         var operations = new List<string>();
+        var progress = new List<WebResourceDeploymentProgress>();
         var repository = new RecordingWebResourceRepository(operations);
         var solutionRepository = new RecordingSolutionRepository(operations);
-        using var console = new TestConsole();
-        var executor = new WebResourcePushExecutor(
-            repository,
-            solutionRepository,
-            new WebResourceExecutionReporter(console));
+        var executor = new WebResourcePushExecutor(repository, solutionRepository);
         var local = CreateLocal("contoso_/main.js");
         var updatedLocal = CreateLocal("contoso_/updated.js");
         var updatedId = Guid.NewGuid();
@@ -39,7 +47,7 @@ public class WebResourcePushExecutorTests
             [],
             "ContosoCore");
 
-        var operationCount = await executor.ExecuteAsync(plan);
+        var operationCount = await executor.ExecuteAsync(plan, progress.Add);
 
         await Assert.That(operationCount).IsEqualTo(5);
         await Assert.That(repository.Created).IsEquivalentTo([local.Name]);
@@ -50,8 +58,14 @@ public class WebResourcePushExecutorTests
             .IsEquivalentTo([repository.CreatedId, updatedId]);
         await Assert.That(solutionRepository.Added).IsEquivalentTo([(repository.CreatedId, "ContosoCore")]);
         await Assert.That(operations).IsEquivalentTo(["Create", "Update", "Add", "Publish", "Publish"]);
-        await Assert.That(console.Output).Contains($"Published WebResource: {local.Name}");
-        await Assert.That(console.Output).Contains($"Published WebResource: {updatedLocal.Name}");
+        await Assert.That(progress.Select(item => (item.Operation, item.Resource, item.Name))).IsEquivalentTo(
+        [
+            ("Created", "WebResource", local.Name),
+            ("Updated", "WebResource", updatedLocal.Name),
+            ("Added", "WebResource", $"{local.Name} to solution ContosoCore"),
+            ("Published", "WebResource", local.Name),
+            ("Published", "WebResource", updatedLocal.Name)
+        ]);
     }
 
     [Test]
@@ -60,11 +74,7 @@ public class WebResourcePushExecutorTests
         var operations = new List<string>();
         var repository = new RecordingWebResourceRepository(operations);
         var solutionRepository = new RecordingSolutionRepository(operations);
-        using var console = new TestConsole();
-        var executor = new WebResourcePushExecutor(
-            repository,
-            solutionRepository,
-            new WebResourceExecutionReporter(console));
+        var executor = new WebResourcePushExecutor(repository, solutionRepository);
         var local = CreateLocal("contoso_/main.js");
         var plan = new WebResourcePushPlan(
             [new WebResourcePlanItem(

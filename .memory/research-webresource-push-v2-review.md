@@ -18,7 +18,10 @@ Its deployment-plan pipeline should follow the `plugin push` contract more close
   expose a publish-only batch-size option that could imply end-to-end batching. The temporary
   stopwatch instrumentation used for that comparison was removed after the experiment.
 - Terminal output should have distinct `Plan` and `Execution` phases and explicitly report a
-  no-change deployment.
+  no-change deployment. Execution follows the plugin module's presentation: one overall
+  "Applying deployment plan..." spinner, then a checkmarked line for each completed operation,
+  followed by a final deployment/no-change line. The executor reports progress only after each
+  Dataverse operation succeeds, preserving useful partial progress if a later operation fails.
 - Optional `--confirm` follows the plugin command's safety policy: prompt only when the plan has
   changes, skip prompts for dry-run, CI, or `--non-interactive`, and leave Dataverse unchanged
   when the user declines.

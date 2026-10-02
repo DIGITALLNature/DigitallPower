@@ -187,7 +187,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Webresource push plan contract:** the command should render a complete, case-insensitive plan
   before execution. Solution membership and obsolete deletion are plan operations, each changed
   resource is published separately after individual writes, and an unchanged managed resource is a
-  valid no-op; see
+  valid no-op. Execution uses one overall spinner and reports each successful operation through a
+  progress callback, matching plugin push; see
   [`research-webresource-push-v2-review.md`](research-webresource-push-v2-review.md).
 - **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
   preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.
@@ -246,4 +247,4 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
 | `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
 | `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |
-| `research-webresource-push-v2-review.md` | research | Design and compatibility review of the resource-oriented webresource deployment command, including the decision to defer publish batching until create/update operations can be batched coherently |
+| `research-webresource-push-v2-review.md` | research | Design and compatibility review of resource-oriented webresource deployment, including deferred publish batching and plugin-aligned execution progress |
