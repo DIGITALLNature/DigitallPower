@@ -42,7 +42,8 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
-  - [push](#push--deploy-artifacts)
+  - [webresource](#webresource--deploy-webresources)
+  - [push](#push--deploy-legacy-artifacts)
 - [CI/CD Integration](#-cicd-integration)
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
@@ -64,7 +65,9 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Push** | Push plugin assemblies/packages with `plugin push` and web resources with `push` |
+| **Plugin** | Deploy plugin assemblies and packages with `plugin push` |
+| **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
+| **Push** | Legacy combined command for webresources and plugin assemblies; dedicated resource commands are preferred |
 
 ## 🚀 Installation
 
@@ -714,7 +717,100 @@ assembly is unsupported: `plugin push` fails before writing and requires manual 
   `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
   rejected. Use legacy `push` for manually maintained registrations.
 
-### `push` — Deploy artifacts
+### `webresource` — Manage webresources
+
+Commands for deploying Dataverse webresources.
+
+#### `push` — Deploy webresources
+
+Pushes webresources from a directory or a single file. Directory targets are scanned recursively
+and require an explicit publisher prefix. A solution is used for membership and obsolete-resource
+scope; it does not determine the publisher prefix. Created and updated webresources are published
+together in one request after deployment by default.
+
+##### Usage
+
+```bash
+# Push all supported files below ./webresources
+dgtp webresource push ./webresources \
+  --publisher-prefix contoso \
+  --solution ContosoCore
+
+# Push one file with an explicit Dataverse logical name
+dgtp webresource push ./webresources/app/main.js \
+  --name contoso_/app/main.js \
+  --solution ContosoCore
+```
+
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--solution` | No | Ensures resource membership in the solution and scopes `--delete-obsolete` |
+| `--publisher-prefix` | Directory targets | Prefix used to derive unmapped Dataverse logical names |
+| `--mapping-file` | No | JSON file mapping directory-relative paths to logical names |
+| `--name` | Single-file targets | Explicit Dataverse logical name |
+| `--delete-obsolete` | No | Deletes unmanaged resources in the selected solution that are absent from a directory target |
+| `--dry-run` | No | Renders the complete plan without Dataverse writes |
+| `--confirm` | No | Prompts before applying a plan with changes; suppressed by `--non-interactive` and CI |
+
+##### Mapping file
+
+Use `--mapping-file` when the local build layout does not match the desired Dataverse names:
+
+```bash
+dgtp webresource push ./webresources \
+  --publisher-prefix contoso \
+  --mapping-file ./webresource-mappings.json \
+  --solution ContosoCore
+```
+
+The mapping file is JSON. Its keys are paths relative to the directory target, and its values are
+complete Dataverse webresource logical names:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/webresource/schema.json",
+  "mappings": {
+    "app/main.js": "contoso_/scripts/main.js",
+    "pages/index.html": "contoso_/pages/home.html"
+  }
+}
+```
+
+Mappings override the default `publisherPrefix_/relative/path` naming convention. The schema is
+available at [`schemas/webresource/schema.json`](schemas/webresource/schema.json).
+
+##### Planning and execution
+
+The command first renders the local deployment hierarchy and the resulting Dataverse name for
+each resource:
+
+```text
+./webresources
+├── app
+│   └── main.js → contoso_/scripts/main.js Update
+└── pages
+    └── index.html → contoso_/pages/home.html Unchanged
+
+Solution membership: ContosoCore
+  + WebResource contoso_/scripts/main.js
+
+Obsolete webresources
+  − WebResource contoso_/obsolete.js
+```
+
+When `--confirm` is specified, the command asks before executing a plan that creates, updates,
+adds resources to a solution, or deletes obsolete resources. Declining leaves Dataverse unchanged.
+The prompt is skipped in CI and when `--non-interactive` is set; `--dry-run` never prompts.
+
+The tree shows local directory structure; mapping files may intentionally produce a different
+Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
+checkmarks for completed operations. With `--dry-run`, the tree, missing solution memberships,
+and any obsolete resources to delete are rendered, then execution stops. Obsolete deletion
+requires a directory target and `--solution`.
+
+### `push` — Deploy legacy artifacts
 
 Pushes a plugin assembly or web resource into a target solution.
 
@@ -945,8 +1041,9 @@ DigitallPower/
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands (resource-oriented replacement for `push`, plugin-only)
 │       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
-│       ├── dgt.power.push/            # `push` command
-│       └── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
+│       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
+│       ├── dgt.power.push/            # legacy combined `push` command
+│       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files

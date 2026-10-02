@@ -9,7 +9,12 @@
 - **Framework:** .NET 10, C# latest, nullable enabled, implicit usings
 - **CLI Host:** `dgt.power` (entry point, Spectre.Console command tree)
 - **Common Layer:** `dgt.power.common` (shared abstractions, extensions, fixtures, `ExecutionEnvironment`)
-- **Modules:** `dgt.power.{analyzer, codegeneration, export, import, maintenance, profile, push}`
+- **Modules:** `dgt.power.{analyzer, codegeneration, export, import, maintenance, profile, push,
+  webresource}`.
+  Resource-oriented plugin and webresource modules are being introduced separately from the
+  legacy `push` module; the plugin target architecture is described on the feature branch and
+  the webresource extraction plan is in
+  [`implementation-webresource-module-plan.md`](implementation-webresource-module-plan.md).
 - **Models:** `dgt.power.dataverse` (generated Dataverse entity wrappers), `dgt.power.dto` (cross-module DTOs)
 - **Tests:** TUnit framework, one test project per module in `tests/`
 - **Static Analysis:** `Microsoft.Extensions.StaticAnalysis` + Qodana (`jetbrains/qodana-cdnet:2026.1-eap`)
@@ -33,7 +38,8 @@ src/
     ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`)
-    └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
+    ├── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
+    └── dgt.power.webresource/  Dedicated webresource deployment
 ```
 
 ## Key Conventions
@@ -92,6 +98,7 @@ src/
 | Plugin plan output and progress | `research-plugin-plan-output-adaptation.md` | Solution membership is rendered below the plan; execution reports each completed operation, including partial progress |
 | Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
 | Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` supports only `Digitall.Plugins.Registration` 2.0.0+; historical namespaces remain legacy `push`/dgtp v2 concerns |
+| Webresource publish strategy | `research-webresource-push-v2-review.md` | Publish each changed resource separately after all individual creates/updates and membership changes; defer publish batching until deployment writes can be batched coherently |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
 | Resource-oriented CLI restructuring | `decision-resource-oriented-cli-restructuring.md` | `dgtp <resource> <verb> <target>` shape (mirrors colleague's `dgt.power.plugin`); `dgt.power.solution` is the current module name for the ported linter surface; `analyze`/`maintenance` remain out of scope for this Phase 1; single-solution positional arg replaces `--solutions` list; Sarif.Sdk replaces hand-rolled SARIF POCOs |
@@ -157,6 +164,9 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 ### Key caveats
 - `DotnetSuggestHandler` must run as the FIRST statement in `Program.cs`, before any I/O, telemetry or network calls
+- `Program.cs` currently maintains an inline command registration function alongside `CommandTree`; new
+  commands must be added to both until registration is centralized, otherwise the CLI executable and
+  command-tree tests can diverge.
 - `AnsiConsoleOutput(TextWriter)` constructor — no static `.Create()` method
 - `IHelpProvider.Write(model, null)` receives `ICommandModel` (not `ICommandInfo`)
 - `ICommand<T>.ExecuteAsync(context, settings, ct)` is an explicit interface impl — tests must cast via `(ICommand<T>)command`
@@ -169,6 +179,14 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
 - **CA1716** (`dgt.power.export` namespace conflicts with `export` keyword) — accepted; renaming would be a massive breaking change.
+- **Webresource push plan contract:** the command should render a complete, case-insensitive plan
+  before execution. Solution membership and obsolete deletion are plan operations, each changed
+  resource is published separately after individual writes, and an unchanged managed resource is a
+  valid no-op. Execution uses one overall spinner and reports each successful operation through a
+  progress callback, matching plugin push; see
+  [`research-webresource-push-v2-review.md`](research-webresource-push-v2-review.md).
+- **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
+  preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.
 
 ## Memory Files Index
 
@@ -206,6 +224,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | Push module: only add webresource to solution when not already a member; single pre-fetch for both upsert + obsolete checks |
+| `implementation-webresource-module-plan.md` | implementation | Layered extraction and refactoring plan for `webresource push`, including legacy behavior decisions |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
 | `research-v2-typescript-config-design-gaps.md` | research | Current V2 TS caveats after redesign: no `TypingPath`, no per-entity filters, string-based `forms.filter` |
@@ -222,3 +241,4 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
 | `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
 | `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |
+| `research-webresource-push-v2-review.md` | research | Design and compatibility review of resource-oriented webresource deployment, including deferred publish batching and plugin-aligned execution progress |
