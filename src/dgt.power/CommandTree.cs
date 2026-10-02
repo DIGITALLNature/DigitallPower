@@ -12,9 +12,12 @@ using dgt.power.export.Logic;
 using dgt.power.import.Base;
 using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
+using dgt.power.plugin.Base;
+using dgt.power.plugin.Commands;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
 using dgt.power.push;
+using dgt.power.Telemetry;
 using dgt.power.solution;
 using dgt.power.solution.Base;
 using Spectre.Console.Cli;
@@ -34,6 +37,7 @@ internal static class CommandTree
     public static void Register(IConfigurator config)
     {
         config.Settings.ApplicationName = "dgtp";
+        config.Settings.ApplicationVersion = DgtpActivitySource.GetVersion();
 
         config.AddBranch<ConnectionSettings>("connection", connection =>
         {
@@ -142,6 +146,17 @@ internal static class CommandTree
             import.AddCommand<CalendarImport>("calendar");
             import.AddCommand<SlaConfigImport>("slaconfigs");
             import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
+        });
+
+        config.AddBranch<PluginSettings>("plugin", plugin =>
+        {
+            plugin.SetDescription("Manages Dataverse plugin assemblies and packages");
+            plugin.AddCommand<PluginPushCommand>("push")
+                .WithAlias("register")
+                .WithDescription("Registers a plugin assembly (.dll) or package (.nupkg), or all such files in a directory")
+                .WithExample("plugin", "push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution")
+                .WithExample("plugin", "push", "c:/TargetDir/plugin.nupkg", "--publisher-prefix", "contoso", "--solution", "samplesolution")
+                .WithExample("plugin", "push", "c:/TargetDir", "--solution", "samplesolution");
         });
 
         config.AddBranch<SolutionSettings>("solution", solution =>

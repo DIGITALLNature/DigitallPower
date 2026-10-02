@@ -174,7 +174,7 @@ public class SolutionLintCommandTests : LintTestsBase<SolutionLintCommand>
                 ["naming.does-not-exist"] = new LintRuleConfigEntry { Enabled = true }
             }
         };
-        File.WriteAllText(configPath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+        await File.WriteAllTextAsync(configPath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
 
         var result = GetContext().Execute(new SolutionLintSettings
         {

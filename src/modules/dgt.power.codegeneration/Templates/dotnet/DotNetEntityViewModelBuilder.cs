@@ -9,56 +9,43 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Templates.dotnet;
 
-public class DotNetEntityViewModelBuilder
+public class DotNetEntityViewModelBuilder(
+    EntityMetadata entity,
+    Func<string, EntityMetadata> retrieveEntityMetadata,
+    DotNetCodeGenerationConfig config,
+    int systemLanguage,
+    IAnsiConsole? console = null)
 {
-    private readonly EntityMetadata _entity;
-    private readonly DotNetCodeGenerationConfig _config;
-    private readonly int _systemLanguage;
-    private readonly Func<string, EntityMetadata> _retrieveEntityMetadata;
-    private readonly IAnsiConsole _console;
+    private readonly IAnsiConsole _console = console ?? AnsiConsole.Console;
     private readonly Dictionary<string, List<string>> _usedTokens = new();
-
-    public DotNetEntityViewModelBuilder(
-        EntityMetadata entity,
-        Func<string, EntityMetadata> retrieveEntityMetadata,
-        DotNetCodeGenerationConfig config,
-        int systemLanguage,
-        IAnsiConsole? console = null)
-    {
-        _entity = entity;
-        _retrieveEntityMetadata = retrieveEntityMetadata;
-        _config = config;
-        _systemLanguage = systemLanguage;
-        _console = console ?? AnsiConsole.Console;
-    }
 
     public Dictionary<string, object?> Build()
     {
-        var entitySchemaName = Formatter.CamelCase(_entity.SchemaName);
-        var isFramework = _config.Output.Target == DotNetTarget.Framework;
-        var editableReadOnlyProperties = _config.Output.EditableReadOnly;
+        var entitySchemaName = Formatter.CamelCase(entity.SchemaName);
+        var isFramework = config.Output.Target == DotNetTarget.Framework;
+        var editableReadOnlyProperties = config.Output.EditableReadOnly;
 
-        var keyAttribute = _entity.Attributes.Single(a => a.LogicalName == _entity.PrimaryIdAttribute);
+        var keyAttribute = entity.Attributes.Single(a => a.LogicalName == entity.PrimaryIdAttribute);
 
         var result = new Dictionary<string, object?>
         {
-            ["NameSpace"] = _config.Namespace,
+            ["NameSpace"] = config.Namespace,
             ["EntitySchemaName"] = entitySchemaName,
-            ["EntityLogicalName"] = _entity.LogicalName,
-            ["PrimaryIdAttribute"] = _entity.PrimaryIdAttribute,
-            ["PrimaryNameAttribute"] = _entity.PrimaryNameAttribute,
-            ["HasPrimaryNameAttribute"] = _entity.PrimaryNameAttribute != null,
-            ["ObjectTypeCode"] = _entity.ObjectTypeCode,
+            ["EntityLogicalName"] = entity.LogicalName,
+            ["PrimaryIdAttribute"] = entity.PrimaryIdAttribute,
+            ["PrimaryNameAttribute"] = entity.PrimaryNameAttribute,
+            ["HasPrimaryNameAttribute"] = entity.PrimaryNameAttribute != null,
+            ["ObjectTypeCode"] = entity.ObjectTypeCode,
             ["IsFramework"] = isFramework,
-            ["Virtual"] = _config.Output.Virtual ? "virtual " : "",
-            ["IncludeEntityTypeCode"] = _config.Output.Include.EntityTypeCode,
-            ["IncludeNavigationProperties"] = _config.Output.Include.NavigationProps,
-            ["IncludeOptions"] = _config.Output.Include.Options,
-            ["IncludeLogicalNames"] = _config.Output.Include.LogicalNames,
-            ["IncludeAlternateKeys"] = _config.Output.Include.AlternateKeys,
-            ["IncludeRelations"] = _config.Output.Include.Relations,
-            ["IncludeContext"] = _config.Output.Include.Context,
-            ["Summary"] = BuildSummary(GetLocalizedLabel(_entity.Description), 1),
+            ["Virtual"] = config.Output.Virtual ? "virtual " : "",
+            ["IncludeEntityTypeCode"] = config.Output.Include.EntityTypeCode,
+            ["IncludeNavigationProperties"] = config.Output.Include.NavigationProps,
+            ["IncludeOptions"] = config.Output.Include.Options,
+            ["IncludeLogicalNames"] = config.Output.Include.LogicalNames,
+            ["IncludeAlternateKeys"] = config.Output.Include.AlternateKeys,
+            ["IncludeRelations"] = config.Output.Include.Relations,
+            ["IncludeContext"] = config.Output.Include.Context,
+            ["Summary"] = BuildSummary(GetLocalizedLabel(entity.Description), 1),
             ["KeyAttributeSchemaName"] = PreventBadToken(Formatter.CamelCase(keyAttribute.SchemaName)),
             ["KeyAttributeIsValidForCreate"] = keyAttribute.IsValidForCreate.GetValueOrDefault(),
             ["Attributes"] = BuildAttributes(editableReadOnlyProperties, isFramework),
@@ -76,9 +63,9 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildAttributes(bool editableReadOnlyProperties, bool isFramework)
     {
-        return Filter(_entity.Attributes).Select(attr =>
+        return Filter(entity.Attributes).Select(attr =>
         {
-            var attrName = Unique(PreventBadToken(Formatter.CamelCase(attr.SchemaName)), "A" + _entity.LogicalName);
+            var attrName = Unique(PreventBadToken(Formatter.CamelCase(attr.SchemaName)), "A" + entity.LogicalName);
             return new DotNetAttributeModel
             {
                 Name = attrName,
@@ -95,13 +82,13 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildNavigationProperties()
     {
-        return _entity.OneToManyRelationships
-            .Where(attr => _config.Entities.Names.Contains(attr.ReferencingEntity))
+        return entity.OneToManyRelationships
+            .Where(attr => config.Entities.Names.Contains(attr.ReferencingEntity))
             .OrderBy(r => r.SchemaName)
             .Select(attr =>
             {
                 var attrName = Unique(PreventBadToken(Formatter.CamelCase(attr.SchemaName)),
-                    "N" + _entity.LogicalName);
+                    "N" + entity.LogicalName);
                 return new DotNetNavigationPropertyModel
                 {
                     Name = attrName,
@@ -113,9 +100,9 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildOptionFields()
     {
-        return FilterOptions(_entity.Attributes).Select(optionField =>
+        return FilterOptions(entity.Attributes).Select(optionField =>
         {
-            var name = Unique(Formatter.CamelCase(optionField.SchemaName), "O" + _entity.LogicalName);
+            var name = Unique(Formatter.CamelCase(optionField.SchemaName), "O" + entity.LogicalName);
             var attributeType = optionField.AttributeType switch
             {
                 AttributeTypeCode.Picklist => "Picklist",
@@ -166,19 +153,19 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildLogicalNameEntries()
     {
-        return Filter(_entity.Attributes).Select(object (attr) =>
+        return Filter(entity.Attributes).Select(object (attr) =>
         {
-            var name = Unique(Formatter.CamelCase(attr.SchemaName), "L" + _entity.LogicalName);
+            var name = Unique(Formatter.CamelCase(attr.SchemaName), "L" + entity.LogicalName);
             return new Dictionary<string, object> { ["Name"] = name, ["LogicalName"] = attr.LogicalName };
         }).ToArray();
     }
 
     private object[] BuildAlternateKeys()
     {
-        if (_entity.Keys == null || _entity.Keys.Length == 0)
+        if (entity.Keys == null || entity.Keys.Length == 0)
             return [];
 
-        return _entity.Keys
+        return entity.Keys
             .OrderBy(key => key.LogicalName)
             .Select(object (key) =>
             {
@@ -191,33 +178,33 @@ public class DotNetEntityViewModelBuilder
 
     private object[] BuildOneToManyRelationships()
     {
-        return _entity.OneToManyRelationships
+        return entity.OneToManyRelationships
             .OrderBy(r => r.SchemaName)
             .Select(object (attr) =>
             {
-                var name = Unique(Formatter.CamelCase(attr.SchemaName), "ROTM" + _entity.LogicalName);
+                var name = Unique(Formatter.CamelCase(attr.SchemaName), "ROTM" + entity.LogicalName);
                 return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
 
     private object[] BuildManyToOneRelationships()
     {
-        return _entity.ManyToOneRelationships
+        return entity.ManyToOneRelationships
             .OrderBy(r => r.SchemaName)
             .Select(object (attr) =>
             {
-                var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTO" + _entity.LogicalName);
+                var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTO" + entity.LogicalName);
                 return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
 
     private object[] BuildManyToManyRelationships()
     {
-        return _entity.ManyToManyRelationships
+        return entity.ManyToManyRelationships
             .OrderBy(r => r.SchemaName)
             .Select(object (attr) =>
             {
-                var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTM" + _entity.LogicalName);
+                var name = Unique(Formatter.CamelCase(attr.SchemaName), "RMTM" + entity.LogicalName);
                 return new Dictionary<string, object> { ["Name"] = name, ["SchemaName"] = attr.SchemaName };
             }).ToArray();
     }
@@ -226,7 +213,7 @@ public class DotNetEntityViewModelBuilder
     {
         if (!_usedTokens.ContainsKey(scope)) _usedTokens.Add(scope, new List<string>());
 
-        if (_usedTokens[scope].Contains(value) || value == Formatter.CamelCase(_entity.SchemaName))
+        if (_usedTokens[scope].Contains(value) || value == Formatter.CamelCase(entity.SchemaName))
         {
             _console.MarkupLine($"[red]Warning:[/] multiple entries for: {value} ({scope})");
             return Unique(value + "_", scope);
@@ -308,7 +295,7 @@ public class DotNetEntityViewModelBuilder
             .Where(IsReadableAttribute)
             .Where(IsSupportedOptionField)
             .OrderBy(a => a.LogicalName)
-            .Select(o => new OptionField(o, _config.Language == null, _systemLanguage));
+            .Select(o => new OptionField(o, config.Language == null, systemLanguage));
     }
 
     private static bool HasSetter(AttributeMetadata attribute, bool editableReadOnlyProperties)
@@ -346,7 +333,7 @@ public class DotNetEntityViewModelBuilder
 
     private string GetLocalizedLabel(Label? label)
     {
-        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, _config.Language == null, _systemLanguage);
+        return label == null ? string.Empty : Formatter.GetLocalizedLabel(label, config.Language == null, systemLanguage);
     }
 
     private static string PreventBadToken(string value)
@@ -375,42 +362,42 @@ public class DotNetEntityViewModelBuilder
 
     private string RetrieveSchemaName(string entityLogicalName)
     {
-        return _retrieveEntityMetadata.Invoke(entityLogicalName).SchemaName;
+        return retrieveEntityMetadata.Invoke(entityLogicalName).SchemaName;
     }
 }
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 public class DotNetAttributeModel
 {
-    public string Name { get; set; } = "";
-    public string LogicalName { get; set; } = "";
-    public string CSharpType { get; set; } = "";
-    public bool IsValidForRead { get; set; }
-    public bool HasSetter { get; set; }
-    public bool IsPartyList { get; set; }
-    public bool IsPrimaryId { get; set; }
-    public string Summary { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string LogicalName { get; init; } = "";
+    public string CSharpType { get; init; } = "";
+    public bool IsValidForRead { get; init; }
+    public bool HasSetter { get; init; }
+    public bool IsPartyList { get; init; }
+    public bool IsPrimaryId { get; init; }
+    public string Summary { get; init; } = "";
 }
 
 public class DotNetNavigationPropertyModel
 {
-    public string Name { get; set; } = "";
-    public string SchemaName { get; set; } = "";
-    public string ReferencingEntitySchemaName { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string SchemaName { get; init; } = "";
+    public string ReferencingEntitySchemaName { get; init; } = "";
 }
 
 public class DotNetOptionFieldModel
 {
-    public string Name { get; set; } = "";
-    public string AttributeType { get; set; } = "";
-    public IReadOnlyList<DotNetOptionModel> Options { get; set; } = [];
-    public string StructLabel { get; set; } = "";
-    public string FalseLabel { get; set; } = "";
-    public string TrueLabel { get; set; } = "";
+    public string Name { get; init; } = "";
+    public string AttributeType { get; init; } = "";
+    public IReadOnlyList<DotNetOptionModel> Options { get; init; } = [];
+    public string StructLabel { get; init; } = "";
+    public string FalseLabel { get; init; } = "";
+    public string TrueLabel { get; init; } = "";
 }
 
 public class DotNetOptionModel
 {
-    public string Label { get; set; } = "";
-    public int? Value { get; set; }
+    public string Label { get; init; } = "";
+    public int? Value { get; init; }
 }
