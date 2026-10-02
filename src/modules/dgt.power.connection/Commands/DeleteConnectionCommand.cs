@@ -11,7 +11,7 @@ public class DeleteConnectionCommand(
     IConnectionStore connectionStore,
     ISecretStore secretStore,
     IUserTokenCache userTokenCache,
-    ConnectionInvocationOptions invocationOptions,
+    ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
     : AsyncCommand<DeleteConnectionSettings>
 {
@@ -77,7 +77,7 @@ public class DeleteConnectionCommand(
         {
             await userTokenCache.RemoveAccountAsync(
                 record!,
-                invocationOptions.AllowUnencryptedStorage,
+                invocationContext.AllowUnencryptedStorage,
                 cancellationToken);
         }
 
@@ -116,7 +116,7 @@ public class DeleteConnectionCommand(
         {
             await userTokenCache.RemoveAccountAsync(
                 record,
-                invocationOptions.AllowUnencryptedStorage,
+                invocationContext.AllowUnencryptedStorage,
                 cancellationToken);
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.connection.tests;
 
-internal sealed class FakeXrmConnection : IXrmConnection
+internal sealed class FakeDataverseConnection : IDataverseConnection
 {
     public bool CheckAuthResult { get; init; } = true;
 

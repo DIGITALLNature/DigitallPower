@@ -29,7 +29,7 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
         _services.AddSingleton<IConnectionStore>(store);
         _services.AddSingleton<ISecretStore>(secretStore);
         _services.AddSingleton<IUserTokenCache>(userTokenCache);
-        _services.AddSingleton(ConnectionInvocationOptions.FromArguments([]));
+        _services.AddSingleton(new ConnectionInvocationContext());
         _serviceProvider = _services.BuildServiceProvider();
         ConnectionStore = store;
         SecretStore = secretStore;

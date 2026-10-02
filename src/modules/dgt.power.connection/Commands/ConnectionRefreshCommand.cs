@@ -12,20 +12,20 @@ namespace dgt.power.connection.Commands;
 
 public class ConnectionRefreshCommand(
     IConnectionStore connectionStore,
-    ConnectionInvocationOptions invocationOptions,
-    IXrmConnection xrmConnection,
+    ConnectionInvocationContext invocationContext,
+    IDataverseConnection dataverseConnection,
     IAnsiConsole console)
     : AsyncCommand<ConnectionSettings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
+        if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
             console.MarkupLine("[grey]AUTH_SKIP: An ad-hoc connection string is active; nothing is persisted or refreshed.[/]");
             return (int)ExitCode.Success;
         }
 
-        var name = invocationOptions.ConnectionName ?? connectionStore.Current;
+        var name = invocationContext.ConnectionName ?? connectionStore.Current;
         var definition = name is null ? null : connectionStore.Find(name);
         if (definition is not (InteractiveConnection or DeviceCodeConnection))
         {
@@ -36,7 +36,7 @@ public class ConnectionRefreshCommand(
         try
         {
             console.MarkupLine("[yellow]AUTH: Starting interactive authentication...[/]");
-            await xrmConnection.RefreshAuthAsync();
+            await dataverseConnection.RefreshAuthAsync();
             console.MarkupLine("[green]AUTH_OK: Authentication refreshed successfully.[/]");
             return (int)ExitCode.Success;
         }

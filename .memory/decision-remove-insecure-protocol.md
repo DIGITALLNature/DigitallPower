@@ -33,7 +33,7 @@ The options gave users false confidence that they were configuring something mea
 
 - `src/dgt.power.common/Logic/Identities.cs` — computed properties removed
 - `src/dgt.power.common/Logic/Identity.cs` — fields kept nullable + ignored on write
-- `src/dgt.power.common/Logic/XrmConnection.cs` — all `ServicePointManager` usage removed
+- `src/dgt.power.common/Logic/DataverseConnection.cs` — all `ServicePointManager` usage removed
 - `src/modules/dgt.power.profile/Commands/CreateProfileSettings.cs` — options removed
 - `src/modules/dgt.power.profile/Commands/CreateProfileCommand.cs` — no longer passes fields
 - `src/modules/dgt.power.profile/Commands/ListProfileCommand.cs` — columns removed

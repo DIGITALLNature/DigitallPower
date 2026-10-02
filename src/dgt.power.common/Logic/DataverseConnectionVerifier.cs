@@ -35,7 +35,7 @@ public sealed class DataverseConnectionVerifier(CredentialFactory credentialFact
         if (!service.IsReady)
         {
             throw new DataverseConnectionException(
-                $"XRM Connection Failed: {service.LastError}",
+                $"Dataverse connection failed: {service.LastError}",
                 service.LastException);
         }
 

@@ -8,11 +8,11 @@ namespace dgt.power.connection.tests;
 public class CreateConnectionSettingsTests
 {
     [Test]
-    public async Task UserConnectionRequiresTenant()
+    public async Task UserConnectionDoesNotRequireTenant()
     {
         var settings = new CreateConnectionSettings { Name = "dev", Url = "https://contoso.crm.dynamics.com" };
 
-        await Assert.That(settings.Validate().Successful).IsFalse();
+        await Assert.That(settings.Validate().Successful).IsTrue();
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class CreateConnectionSettingsTests
     }
 
     [Test]
-    public async Task UserConnectionAcceptsUrlAndTenant()
+    public async Task UserConnectionAcceptsOptionalTenant()
     {
         var settings = new CreateConnectionSettings
         {
@@ -42,7 +42,7 @@ public class CreateConnectionSettingsTests
     }
 
     [Test]
-    public async Task ClientSecretRequiresApplicationId()
+    public async Task ClientSecretRequiresClientId()
     {
         var settings = new CreateConnectionSettings
         {
@@ -56,14 +56,28 @@ public class CreateConnectionSettingsTests
     }
 
     [Test]
-    public async Task ClientSecretAcceptsApplicationId()
+    public async Task ClientSecretRequiresTenant()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod",
+            Url = "https://contoso.crm.dynamics.com",
+            ClientId = "client",
+            ClientSecret = true
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    public async Task ClientSecretAcceptsTenantAndClientId()
     {
         var settings = new CreateConnectionSettings
         {
             Name = "prod",
             Url = "https://contoso.crm.dynamics.com",
             TenantId = "tenant",
-            ApplicationId = "client",
+            ClientId = "client",
             ClientSecret = true
         };
 

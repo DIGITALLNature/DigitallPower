@@ -15,9 +15,9 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
     public async Task ReturnsSuccessWhenAuthenticationIsValid()
     {
         ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
-            new FakeXrmConnection { CheckAuthResult = true },
+            new FakeDataverseConnection { CheckAuthResult = true },
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
@@ -30,9 +30,9 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
     public async Task ReturnsAuthRequiredWhenAuthenticationIsInvalid()
     {
         ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
-            new FakeXrmConnection { CheckAuthResult = false },
+            new FakeDataverseConnection { CheckAuthResult = false },
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
@@ -53,9 +53,9 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
             ServiceConnectionId = "service-connection"
         });
         ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
-            new FakeXrmConnection { CheckAuthResult = false },
+            new FakeDataverseConnection { CheckAuthResult = false },
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);

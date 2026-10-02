@@ -7,7 +7,7 @@ namespace dgt.power.common.Connections;
 
 public sealed record DeviceCodeConnection : ConnectionDefinition
 {
-    public required string TenantId { get; init; }
+    public string? TenantId { get; init; }
 
     public JsonElement? AuthenticationRecord { get; init; }
 }

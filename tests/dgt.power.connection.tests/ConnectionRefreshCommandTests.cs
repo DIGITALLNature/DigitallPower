@@ -20,10 +20,10 @@ public class ConnectionRefreshCommandTests : ConnectionTestsBase<ConnectionRefre
             TenantId = "tenant",
             ClientId = "client"
         });
-        var fakeConnection = new FakeXrmConnection();
+        var fakeConnection = new FakeDataverseConnection();
         ICommand<ConnectionSettings> command = new ConnectionRefreshCommand(
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             fakeConnection,
             TestConsole);
 
@@ -41,10 +41,10 @@ public class ConnectionRefreshCommandTests : ConnectionTestsBase<ConnectionRefre
             Url = "https://contoso.crm.dynamics.com",
             TenantId = "tenant"
         });
-        var fakeConnection = new FakeXrmConnection();
+        var fakeConnection = new FakeDataverseConnection();
         ICommand<ConnectionSettings> command = new ConnectionRefreshCommand(
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             fakeConnection,
             TestConsole);
 

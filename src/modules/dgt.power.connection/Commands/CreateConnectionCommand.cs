@@ -14,7 +14,7 @@ public class CreateConnectionCommand(
     ISecretStore secretStore,
     CredentialFactory credentialFactory,
     IConnectionVerifier connectionVerifier,
-    ConnectionInvocationOptions invocationOptions,
+    ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
     : AsyncCommand<CreateConnectionSettings>
 {
@@ -47,7 +47,7 @@ public class CreateConnectionCommand(
                 await connectionVerifier.VerifyAsync(
                     settings.Name,
                     definition,
-                    invocationOptions.AllowUnencryptedStorage,
+                    invocationContext.AllowUnencryptedStorage,
                     cancellationToken);
             }
 
@@ -106,7 +106,7 @@ public class CreateConnectionCommand(
             {
                 Url = resolved?.Url ?? settings.Url!,
                 TenantId = resolved?.TenantId ?? settings.TenantId!,
-                ClientId = resolved?.ClientId ?? settings.ApplicationId!,
+                ClientId = resolved?.ClientId ?? settings.ClientId!,
                 ServiceConnectionId = resolved?.ServiceConnectionId ?? settings.ServiceConnectionId!,
                 ServiceConnectionName = settings.ServiceConnectionName
             };
@@ -118,7 +118,7 @@ public class CreateConnectionCommand(
             {
                 Url = settings.Url!,
                 TenantId = settings.TenantId!,
-                ClientId = settings.ApplicationId!
+                ClientId = settings.ClientId!
             };
         }
 
@@ -128,7 +128,7 @@ public class CreateConnectionCommand(
             {
                 Url = settings.Url!,
                 TenantId = settings.TenantId!,
-                ClientId = settings.ApplicationId!,
+                ClientId = settings.ClientId!,
                 Thumbprint = settings.CertificateThumbprint,
                 CertificatePath = settings.CertificatePath
             };
@@ -139,11 +139,11 @@ public class CreateConnectionCommand(
             var connection = new DeviceCodeConnection
             {
                 Url = settings.Url!,
-                TenantId = settings.TenantId!
+                TenantId = settings.TenantId
             };
             var record = await credentialFactory.AuthenticateAsync(
                 connection,
-                invocationOptions.AllowUnencryptedStorage,
+                invocationContext.AllowUnencryptedStorage,
                 cancellationToken);
             return connection with { AuthenticationRecord = record };
         }
@@ -151,11 +151,11 @@ public class CreateConnectionCommand(
         var interactiveConnection = new InteractiveConnection
         {
             Url = settings.Url!,
-            TenantId = settings.TenantId!
+            TenantId = settings.TenantId
         };
         var authenticationRecord = await credentialFactory.AuthenticateAsync(
             interactiveConnection,
-            invocationOptions.AllowUnencryptedStorage,
+            invocationContext.AllowUnencryptedStorage,
             cancellationToken);
         return interactiveConnection with { AuthenticationRecord = authenticationRecord };
     }

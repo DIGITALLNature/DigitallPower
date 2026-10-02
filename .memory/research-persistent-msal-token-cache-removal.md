@@ -19,10 +19,10 @@ platform settings:
   the unprotected backend immediately would address a different cache than the protected cache
   already in use.
 
-For logout, register the persistent helper against a public-client application's user token cache,
-locate `IAccount` by `AuthenticationRecord.HomeAccountId`, and call `RemoveAsync(account)`. Never
-clear the entire shared cache: multiple named connections may reference different users or share one
-account.
+When deleting the final stored connection for an account, register the persistent helper against a
+public-client application's user token cache, locate `IAccount` by
+`AuthenticationRecord.HomeAccountId`, and call `RemoveAsync(account)`. Never clear the entire
+shared cache: multiple named connections may reference different users or share one account.
 
 References: [Azure.Core 1.62.0 TokenCache.cs](https://github.com/Azure/azure-sdk-for-net/blob/Azure.Core_1.62.0/sdk/core/Azure.Core/src/Identity/TokenCache.cs),
 [Azure.Core 1.62.0 Constants.cs](https://github.com/Azure/azure-sdk-for-net/blob/Azure.Core_1.62.0/sdk/core/Azure.Core/src/Identity/Constants.cs),

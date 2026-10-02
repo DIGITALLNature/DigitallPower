@@ -45,13 +45,8 @@ if (DotnetSuggestHandler.IsSuggestMode(args))
 
 Console.OutputEncoding = Encoding.UTF8;
 
-var connectionInvocationOptions = ConnectionInvocationOptions.FromArguments(args);
+var connectionInvocationContext = new ConnectionInvocationContext();
 var appConsole = AnsiConsole.Console;
-if (connectionInvocationOptions.AllowUnencryptedStorage)
-{
-    appConsole.MarkupLine(
-        "[yellow]WARNING: DGTP_ALLOW_UNENCRYPTED_STORAGE is enabled. Secrets and token caches may be stored unencrypted.[/]");
-}
 var registrations = new ServiceCollection();
 var dgtpHome = new DgtpHome();
 var stateStore = new StateStore(dgtpHome);
@@ -117,16 +112,18 @@ EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = 
 AppDomain.CurrentDomain.UnhandledException += unhandledExceptionHandler;
 TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 
-registrations.AddSingleton<IXrmConnection, XrmConnection>();
+registrations.AddSingleton<IDataverseConnection, DataverseConnection>();
 registrations.AddSingleton(dgtpHome);
 registrations.AddSingleton(stateStore);
 registrations.AddSingleton(TimeProvider.System);
-registrations.AddSingleton(connectionInvocationOptions);
+registrations.AddSingleton(connectionInvocationContext);
+registrations.AddSingleton<StorageSecurityNotice>(_ => new StorageSecurityNotice(appConsole));
 registrations.AddSingleton<IConnectionStore, ConnectionStore>();
 registrations.AddSingleton<IUserTokenCache, PersistentUserTokenCache>();
-registrations.AddSingleton<ISecretStore>(_ => new SecretStore(
+registrations.AddSingleton<ISecretStore>(provider => new SecretStore(
     dgtpHome.SecretsDirectory,
-    connectionInvocationOptions.AllowUnencryptedStorage));
+    connectionInvocationContext.AllowUnencryptedStorage,
+    provider.GetRequiredService<StorageSecurityNotice>()));
 registrations.AddSingleton<CredentialFactory>();
 registrations.AddSingleton<IConnectionVerifier, DataverseConnectionVerifier>();
 registrations.AddSingleton<ObjectCache, MemoryCache>(_ => MemoryCache.Default);
@@ -145,7 +142,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().ConnectAsync().GetAwaiter().GetResult());
+registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().ConnectAsync().GetAwaiter().GetResult());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -156,7 +153,11 @@ app.Configure(config =>
 
     var versionCheckInterceptor = serviceProvider.GetRequiredService<VersionCheckInterceptor>();
     var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
-    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
+    config.SetInterceptor(new CompositeInterceptor(
+        new ConnectionSettingsInterceptor(connectionInvocationContext),
+        new TelemetryInterceptor(),
+        versionCheckInterceptor,
+        deprecationInterceptor));
     CommandTree.Register(config);
 
     config.SetExceptionHandler((exception, _) =>

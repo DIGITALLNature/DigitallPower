@@ -13,35 +13,39 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public sealed partial class XrmConnection(
+public sealed partial class DataverseConnection(
     IConnectionStore connectionStore,
     CredentialFactory credentialFactory,
-    ConnectionInvocationOptions invocationOptions,
+    ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
-    : IXrmConnection
+    : IDataverseConnection
 {
+    /// <inheritdoc />
     public async Task<IOrganizationServiceAsync2> ConnectAsync()
     {
-        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
+        if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
-            WriteAdHocConnectionNotice(invocationOptions.ConnectionString);
-            return await ConnectUsingAsync(new CrmConnector(invocationOptions.ConnectionString, console), "ad-hoc");
+            WriteAdHocConnectionNotice(invocationContext.ConnectionString);
+            return await ConnectUsingAsync(
+                new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
+                "ad-hoc");
         }
 
         var (name, definition) = ResolveConnection();
         var credential = credentialFactory.Create(
             name,
             definition,
-            invocationOptions.NonInteractive,
-            invocationOptions.AllowUnencryptedStorage);
+            invocationContext.NonInteractive,
+            invocationContext.AllowUnencryptedStorage);
         return await ConnectUsingAsync(
-            new CredentialConnector(definition.Url, credential, invocationOptions.NonInteractive),
+            new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
             name);
     }
 
+    /// <inheritdoc />
     public async Task<bool> CheckAuthAsync()
     {
-        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
+        if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
             return true;
         }
@@ -51,7 +55,7 @@ public sealed partial class XrmConnection(
             name,
             definition,
             nonInteractive: true,
-            allowUnencryptedStorage: invocationOptions.AllowUnencryptedStorage);
+            allowUnencryptedStorage: invocationContext.AllowUnencryptedStorage);
         var scope = new TokenRequestContext([CredentialConnector.GetScope(definition.Url)]);
 
         try
@@ -69,6 +73,7 @@ public sealed partial class XrmConnection(
         }
     }
 
+    /// <inheritdoc />
     public async Task RefreshAuthAsync()
     {
         var (name, definition) = ResolveConnection();
@@ -85,7 +90,7 @@ public sealed partial class XrmConnection(
         };
         var authenticationRecord = await credentialFactory.AuthenticateAsync(
             freshLoginDefinition,
-            invocationOptions.AllowUnencryptedStorage,
+            invocationContext.AllowUnencryptedStorage,
             CancellationToken.None);
         ConnectionDefinition updated = definition switch
         {
@@ -98,7 +103,7 @@ public sealed partial class XrmConnection(
 
     private (string Name, ConnectionDefinition Definition) ResolveConnection()
     {
-        var name = invocationOptions.ConnectionName ?? connectionStore.Current;
+        var name = invocationContext.ConnectionName ?? connectionStore.Current;
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new MissingConnectionException(
@@ -158,7 +163,7 @@ public sealed partial class XrmConnection(
             var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
             if (!service.IsReady)
             {
-                throw new DataverseConnectionException($"XRM Connection Failed: {service.LastError}", service.LastException);
+                throw new DataverseConnectionException($"Dataverse connection failed: {service.LastError}", service.LastException);
             }
 
             return Task.FromResult<IOrganizationServiceAsync2>(service);

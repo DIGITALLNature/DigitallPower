@@ -24,7 +24,7 @@ Certificate thumbprints refer to the CurrentUser certificate store.
 `--connection` / `DGTP_CONNECTION` select a named connection. `--connection-string` /
 `DGTP_CONNECTION_STRING` provide a non-persisted fallback and take precedence over a named
 connection. `--non-interactive` / `DGTP_NON_INTERACTIVE` prevent browser/device authentication.
-Unencrypted storage is opt-in via `DGTP_ALLOW_UNENCRYPTED_STORAGE` and emits a startup warning.
+Unencrypted storage is opt-in via `DGTP_ALLOW_UNENCRYPTED_STORAGE`; a warning is emitted only when an unencrypted backend is selected.
 
 `DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK` disables telemetry. TSL controls use the `DGTP_TSL_*`
 prefix; the former `dgtp.json` and `dgtp:*` configuration binding are removed.
@@ -41,10 +41,16 @@ validated as positive and does not apply to other commands.
 The `profile` branch and legacy profile services are removed. `connection` is the sole saved
 connection command branch.
 
-`connection logout <name>` removes only the matching account from Azure.Identity's shared
-persistent MSAL cache and retains the connection definition. Deleting one connection removes its
-cached account only when no remaining connection references the same home account ID; deleting all
-connections removes each unique referenced user account.
+Deleting one connection removes its cached account only when no remaining connection references
+the same home account ID; deleting all connections removes each unique referenced user account.
+
+User sign-in records allow an omitted tenant ID. Azure.Identity then authenticates to the user's
+home tenant; service-principal and explicit federation connections still require a tenant.
+The CLI uses the MSAL-aligned `--client-id` spelling and binds invocation options from parsed
+`BaseProgramSettings`, not by scanning raw command-line arguments.
+
+`IDataverseConnection` is the application-owned connection abstraction. External SDK terminology
+such as `Microsoft.Xrm.Sdk` remains unchanged.
 
 ## Design reference
 

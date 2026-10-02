@@ -68,7 +68,7 @@ public class CreateConnectionCommandTests
             Name = "prod",
             Url = "https://replacement.crm.dynamics.com",
             TenantId = "tenant",
-            ApplicationId = "client",
+            ClientId = "client",
             ClientSecret = true
         };
 
@@ -99,7 +99,7 @@ public class CreateConnectionCommandTests
             SecretStore,
             new CredentialFactory(SecretStore, TestConsole),
             verifier,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         return await command.ExecuteAsync(
@@ -129,7 +129,7 @@ public class CreateConnectionCommandTests
         Name = name,
         Url = "https://contoso.crm.dynamics.com",
         TenantId = "tenant",
-        ApplicationId = "client",
+        ClientId = "client",
         ServiceConnectionId = "service-connection",
         AzureDevOpsFederated = true,
         NoVerify = noVerify

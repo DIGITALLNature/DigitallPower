@@ -74,11 +74,11 @@ This lets an agent monitoring stdout identify the interactive refresh operation.
 
 ## Current implementation mapping
 
-- `BaseProgramSettings` exposes `--non-interactive`; `ConnectionInvocationOptions` resolves it with
+- `BaseProgramSettings` exposes `--non-interactive`; `ConnectionInvocationContext` resolves it with
   `DGTP_NON_INTERACTIVE`.
 - `CredentialFactory` constructs Azure.Identity user credentials with
   `DisableAutomaticAuthentication` when non-interactive mode is active.
-- `IXrmConnection` / `XrmConnection` implement silent `CheckAuthAsync` and persisted
+- `IDataverseConnection` / `DataverseConnection` implement silent `CheckAuthAsync` and persisted
   `RefreshAuthAsync`.
 - `ConnectionStatusCommand` returns `ExitCode.AuthRequired` (`2`) when login is required; the
   `connection` branch is the only connection command branch in v3.

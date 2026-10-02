@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
@@ -162,7 +163,7 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
             return null;
         }
 
-        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonRecord.GetRawText()));
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonRecord.GetRawText()));
         return AuthenticationRecord.Deserialize(stream);
     }
 

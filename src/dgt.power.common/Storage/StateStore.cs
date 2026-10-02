@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json;
+using IOFileAccess = System.IO.FileAccess;
 
 namespace dgt.power.common.Storage;
 
@@ -10,7 +11,7 @@ public sealed class StateStore(DgtpHome home)
     private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
     private static readonly TimeSpan s_lockTimeout = TimeSpan.FromSeconds(10);
     private readonly string _path = home.StatePath;
-    private readonly string _lockPath = System.IO.Path.Combine(home.Path, "state.lock");
+    private readonly string _lockPath = Path.Combine(home.Path, "state.lock");
 
     public string GetOrCreateTelemetryInstallId()
     {
@@ -63,7 +64,7 @@ public sealed class StateStore(DgtpHome home)
         var temporaryPath = $"{_path}.{Guid.NewGuid():N}.tmp";
         try
         {
-            using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, System.IO.FileAccess.Write, FileShare.None))
+            using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, IOFileAccess.Write, FileShare.None))
             {
                 JsonSerializer.Serialize(stream, state, s_jsonOptions);
                 stream.Flush(flushToDisk: true);
@@ -92,7 +93,7 @@ public sealed class StateStore(DgtpHome home)
         {
             try
             {
-                return new FileStream(_lockPath, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.None);
+                return new FileStream(_lockPath, FileMode.OpenOrCreate, IOFileAccess.ReadWrite, FileShare.None);
             }
             catch (IOException) when (DateTime.UtcNow < deadline)
             {

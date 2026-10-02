@@ -248,7 +248,7 @@ var client = new ServiceClient(url, async _ =>
 var options = new InteractiveBrowserCredentialOptions
 {
     ClientId = DataverseClientId,                  // 51f81489-12ee-4a9e-aaae-a2591f45987d (unchanged)
-    TenantId = connection.TenantId,                // required, see below
+    TenantId = connection.TenantId,                // optional for user sign-in
     RedirectUri = new Uri("http://localhost"),
     AuthenticationRecord = connection.AuthenticationRecord,
     DisableAutomaticAuthentication = context.NonInteractive,
@@ -260,10 +260,11 @@ var options = new InteractiveBrowserCredentialOptions
 };
 ```
 
-- **Tenant is required.** `connection create --url … --tenant …` accepts a tenant GUID or a
-  verified domain (e.g. `contoso.onmicrosoft.com`). An explicit tenant makes the login
-  deterministic, including for guest accounts. No `organizations` default and no tenant discovery.
-- `connection create --url … --tenant …` runs `AuthenticateAsync()` once and stores the returned
+- **Tenant is optional for user sign-in.** When omitted, Azure.Identity authenticates to the
+  account's home tenant; when supplied, `--tenant` accepts a tenant GUID or verified domain (for
+  example `contoso.onmicrosoft.com`) and lets users choose a tenant explicitly, including for guest
+  accounts. Service-principal and explicit Azure DevOps federated connections require a tenant.
+- `connection create --url … [--tenant …]` runs `AuthenticateAsync()` once and stores the returned
   `AuthenticationRecord` (username, home account ID, tenant, client ID; it contains no secrets) in
   `connections.json`.
 - Later runs pass the record, so Azure.Identity selects the correct account from the shared cache
@@ -277,6 +278,9 @@ var options = new InteractiveBrowserCredentialOptions
   `connection refresh` keep their current behaviour and contract.
 - `deviceCode` is new and useful for SSH sessions and dev containers without a browser.
 
+The CLI uses MSAL-aligned naming (`ClientId`/`--client-id` and `TenantId`/`--tenant`). Azure.Identity
+is the credential implementation behind the CLI, not the source of its user-facing terminology.
+
 ### Service principals
 
 - `clientSecret`: the secret is always stored in the secret store (§8). There is no option that
@@ -288,8 +292,8 @@ var options = new InteractiveBrowserCredentialOptions
 ### Ad-hoc connection strings (fallback, never persisted)
 
 For exotic scenarios that no typed connection covers, a raw Dataverse connection string can be
-supplied **for a single invocation**. It is passed unchanged to `ServiceClient` (existing
-`CrmConnector`) and is never written to disk.
+supplied **for a single invocation**. It is passed unchanged to `ServiceClient` (through the
+`DataverseConnectionStringConnector`) and is never written to disk.
 
 ```bash
 # interactive one-off
@@ -368,8 +372,8 @@ Do not silently fall back to plaintext. Instead:
 1. Fail with a clear message that lists alternatives: certificate, federated identity,
    `DGTP_CONNECTION_STRING`, or running a keyring.
 2. Allow explicit opt-in with `DGTP_ALLOW_UNENCRYPTED_STORAGE=true`. This writes the secret and
-   token cache to a `0600` file, maps to `UnsafeAllowUnencryptedStorage`, and prints a warning on
-   every use. The Azure CLI and `pac` behave the same way.
+   token cache to a `0600` file, maps to `UnsafeAllowUnencryptedStorage`, and prints a warning when
+   the unencrypted backend is first selected. The Azure CLI and `pac` behave the same way.
 
 ---
 
@@ -378,21 +382,20 @@ Do not silently fall back to plaintext. Instead:
 The `connection` branch keeps its verbs. Only the creation options grow:
 
 ```bash
-# user login (browser, default) / device code; --tenant is required
-dgtp connection create dev  --url https://contoso-dev.crm4.dynamics.com --tenant <id|domain> [--device-code]
+# user login (browser, default) / device code; --tenant is optional
+dgtp connection create dev  --url https://contoso-dev.crm4.dynamics.com [--tenant <id|domain>] [--device-code]
 
 # service principal, secret prompted securely and stored in the secret store
-dgtp connection create test --url … --tenant <id> --application-id <id> --client-secret
+dgtp connection create test --url … --tenant <id> --client-id <id> --client-secret
 
 # certificate
-dgtp connection create prod --url … --tenant <id> --application-id <id> --certificate-thumbprint <tp>
-dgtp connection create prod --url … --tenant <id> --application-id <id> --certificate-path cert.pfx
+dgtp connection create prod --url … --tenant <id> --client-id <id> --certificate-thumbprint <tp>
+dgtp connection create prod --url … --tenant <id> --client-id <id> --certificate-path cert.pfx
 
 # Azure DevOps WIF (unchanged)
 dgtp connection create pipe   --azure-devops-federated --service-connection-name <name>
 
 dgtp connection list | select | delete [--all] | status | refresh
-dgtp connection logout <name>                           # new: removes account from token cache
 ```
 
 - `--client-secret` without a value prompts with `IAnsiConsole.Prompt(new TextPrompt<string>(…).Secret())`.
@@ -510,7 +513,7 @@ src/dgt.power.common/
     ISecretStore.cs / SecretStore.cs
     CredentialFactory.cs         ConnectionDefinition -> TokenCredential
     DataverseConnector.cs        TokenCredential -> ServiceClient (replaces TokenConnector)
-    AdHocConnectionResolver.cs   --connection-string / env var -> CrmConnector (never persisted)
+    AdHocConnectionResolver.cs   --connection-string / env var -> DataverseConnectionStringConnector (never persisted)
     ConnectionStringHint.cs      AuthType -> suggested typed `connection create` command (error hint only)
 src/modules/dgt.power.connection/   commands rewritten against IConnectionStore / ISecretStore
 ```
@@ -521,8 +524,9 @@ Removed afterwards: `ProfileManager`, `IProfileManager`, `Identities`, `IIdentit
 `Program.cs`. `ProfileNamesProvider` reads `connections.json` directly. Completion no longer
 needs to decrypt anything.
 
-`IXrmConnection` keeps its public shape (`ConnectAsync`, `CheckAuthAsync`, `RefreshAuthAsync`), so
-the business-logic modules are not affected.
+`IDataverseConnection` exposes connection, authentication-check, and refresh operations. Its
+application-owned name follows the Dataverse terminology used by the CLI; external SDK types retain
+their vendor-defined names.
 
 ---
 
@@ -536,10 +540,10 @@ the business-logic modules are not affected.
 | `ConnectionStringHint` | each supported `AuthType` produces the right typed command, unsupported types point to `DGTP_CONNECTION_STRING`, secrets never in output |
 | Ad-hoc connection string | precedence (`--connection-string` > `DGTP_CONNECTION_STRING` > `--connection` > `DGTP_CONNECTION` > current), nothing written to disk, value redacted in output |
 | Environment / options | each `DGTP_*` variable read correctly; option beats env var; shared boolean parsing; `DGTP_TELEMETRY_OPTOUT` and `DO_NOT_TRACK` both disable telemetry; removed settings (`dgtp.json`, `dgtp:*`, `DGT_*`, `--profile`) produce a warning and are not applied |
-| `CredentialFactory` | correct credential type/options per connection, non-interactive → `DisableAutomaticAuthentication`, tenant required for user logins |
+| `CredentialFactory` | correct credential type/options per connection, non-interactive → `DisableAutomaticAuthentication`, optional tenant for user logins and required tenant/client ID for service principals |
 | Exit code contract | `AuthenticationRequiredException` → `InteractiveLoginRequiredException` → exit 2 |
 | Secret store | in-memory fake for unit tests; Windows DPAPI integration test; keyring-unavailable path |
-| CLI | `CommandTreeTests` / `SettingsParsingTests` for new options, `logout`, removed `profile` branch |
+| CLI | `CommandTreeTests` / `SettingsParsingTests` for new options and removed `profile` branch |
 
 Manual checklist: install 3.x → create interactive, client-secret, certificate and federated
 connections → close the shell → silent auth works → update to a fake 4.0 package → connections
@@ -574,15 +578,15 @@ Decided:
 | 3 | `profile` branch | Removed in 3.0 |
 | 4 | Client secrets | Only `--client-secret` (stored in the secret store); no env-var reference; CI uses WIF or `DGTP_CONNECTION_STRING` |
 | 5 | `azureCli` connection type | Later (§15) |
-| 6 | Tenant for user logins | `--tenant` is required (GUID or verified domain) |
+| 6 | Tenant for user logins | `--tenant` is optional; omitted tenant uses the user's home tenant |
 | 7 | Connection strings | Not persisted; ad-hoc via `--connection-string` / `DGTP_CONNECTION_STRING` only |
 | 8 | Configuration | `dgtp.json`, `dgtp:*` and `pollrate` removed; fixed `DGTP_*` variables (§10a) |
 
-To verify during implementation:
+Implementation verification:
 
-1. **MSAL extensions storage API:** usable directly for arbitrary secrets, or use the AES-GCM
-   fallback (§8)?
-2. **Global options in Spectre.Console.Cli:** shared base settings vs. stripping `args` (§7).
+1. **MSAL extensions storage API:** used directly for arbitrary secrets.
+2. **Global options in Spectre.Console.Cli:** parsed shared base settings are captured by a command
+   interceptor; raw argument scanning is not used.
 
 ---
 

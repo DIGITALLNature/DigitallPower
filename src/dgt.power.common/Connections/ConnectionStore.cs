@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json;
+using IOFileAccess = System.IO.FileAccess;
 using dgt.power.common.Storage;
 
 namespace dgt.power.common.Connections;
@@ -17,7 +18,7 @@ public sealed class ConnectionStore(DgtpHome home) : IConnectionStore
 
     private static readonly TimeSpan s_lockTimeout = TimeSpan.FromSeconds(10);
     private readonly string _path = home.ConnectionsPath;
-    private readonly string _lockPath = System.IO.Path.Combine(home.Path, "connections.lock");
+    private readonly string _lockPath = Path.Combine(home.Path, "connections.lock");
 
     public string? Current => ReadDocument().Current;
 
@@ -131,7 +132,7 @@ public sealed class ConnectionStore(DgtpHome home) : IConnectionStore
         var temporaryPath = $"{_path}.{Guid.NewGuid():N}.tmp";
         try
         {
-            using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, System.IO.FileAccess.Write, FileShare.None))
+            using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, IOFileAccess.Write, FileShare.None))
             {
                 JsonSerializer.Serialize(stream, document, s_jsonOptions);
                 stream.Flush(flushToDisk: true);
@@ -160,7 +161,7 @@ public sealed class ConnectionStore(DgtpHome home) : IConnectionStore
         {
             try
             {
-                return new FileStream(_lockPath, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.None);
+                return new FileStream(_lockPath, FileMode.OpenOrCreate, IOFileAccess.ReadWrite, FileShare.None);
             }
             catch (IOException) when (DateTime.UtcNow < deadline)
             {

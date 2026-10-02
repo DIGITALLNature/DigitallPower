@@ -4,6 +4,8 @@
 using System.Text.Json;
 using dgt.power.common.Storage;
 using Microsoft.Identity.Client.Extensions.Msal;
+using MsalStorage = Microsoft.Identity.Client.Extensions.Msal.Storage;
+using IOFileAccess = System.IO.FileAccess;
 
 namespace dgt.power.common.Connections;
 
@@ -14,16 +16,21 @@ public sealed class SecretStore : ISecretStore
 
     private readonly string _directory;
     private readonly string _lockPath;
-    private readonly Lazy<Microsoft.Identity.Client.Extensions.Msal.Storage> _storage;
+    private readonly Lazy<MsalStorage> _storage;
+    private readonly StorageSecurityNotice? _storageSecurityNotice;
 
-    public SecretStore(string directory, bool allowUnencryptedStorage = false)
+    public SecretStore(
+        string directory,
+        bool allowUnencryptedStorage = false,
+        StorageSecurityNotice? storageSecurityNotice = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(directory);
         _directory = directory;
         Directory.CreateDirectory(directory);
         DgtpHome.RestrictDirectoryPermissions(directory);
-        _lockPath = System.IO.Path.Combine(directory, "secrets.lock");
-        _storage = new Lazy<Microsoft.Identity.Client.Extensions.Msal.Storage>(
+        _lockPath = Path.Combine(directory, "secrets.lock");
+        _storageSecurityNotice = storageSecurityNotice;
+        _storage = new Lazy<MsalStorage>(
             () => CreateStorage(allowUnencryptedStorage),
             LazyThreadSafetyMode.ExecutionAndPublication);
     }
@@ -92,15 +99,15 @@ public sealed class SecretStore : ISecretStore
         }
 
         storage.WriteData(JsonSerializer.SerializeToUtf8Bytes(values, s_jsonOptions));
-        if (OperatingSystem.IsLinux() && File.Exists(System.IO.Path.Combine(_directory, StorageFileName)))
+        if (OperatingSystem.IsLinux() && File.Exists(Path.Combine(_directory, StorageFileName)))
         {
             File.SetUnixFileMode(
-                System.IO.Path.Combine(_directory, StorageFileName),
+                Path.Combine(_directory, StorageFileName),
                 UnixFileMode.UserRead | UnixFileMode.UserWrite);
         }
     }
 
-    private Microsoft.Identity.Client.Extensions.Msal.Storage CreateStorage(bool allowUnencryptedStorage)
+    private MsalStorage CreateStorage(bool allowUnencryptedStorage)
     {
         var builder = new StorageCreationPropertiesBuilder(StorageFileName, _directory)
             .WithMacKeyChain("dgtp", "secrets")
@@ -111,12 +118,18 @@ public sealed class SecretStore : ISecretStore
                 new KeyValuePair<string, string>("application", "dgtp"),
                 new KeyValuePair<string, string>("version", "1"));
 
-        if (OperatingSystem.IsLinux() && allowUnencryptedStorage)
+        var usesUnencryptedFile = OperatingSystem.IsLinux() && allowUnencryptedStorage;
+        if (usesUnencryptedFile)
         {
             builder.WithLinuxUnprotectedFile();
         }
 
-        var storage = Microsoft.Identity.Client.Extensions.Msal.Storage.Create(builder.Build());
+        var storage = MsalStorage.Create(builder.Build());
+        if (usesUnencryptedFile)
+        {
+            _storageSecurityNotice?.WarnIfUnencryptedStorageIsUsed();
+        }
+
         return storage;
     }
 
@@ -130,7 +143,7 @@ public sealed class SecretStore : ISecretStore
                 var fileLock = new FileStream(
                     _lockPath,
                     FileMode.OpenOrCreate,
-                    System.IO.FileAccess.ReadWrite,
+                    IOFileAccess.ReadWrite,
                     FileShare.None);
                 if (OperatingSystem.IsLinux())
                 {

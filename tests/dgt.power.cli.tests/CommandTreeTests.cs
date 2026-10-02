@@ -96,14 +96,4 @@ public class CommandTreeTests
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }
 
-    [Test]
-    public async Task ConnectionLogout_HelpInvocation_Succeeds()
-    {
-        var tester = new CommandAppTester();
-        tester.Configure(CommandTree.Register);
-
-        var result = tester.Run("connection", "logout", "--help");
-
-        await Assert.That(result.ExitCode).IsEqualTo(0);
-    }
 }

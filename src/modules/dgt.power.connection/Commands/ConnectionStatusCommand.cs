@@ -11,23 +11,23 @@ using Spectre.Console.Cli;
 namespace dgt.power.connection.Commands;
 
 public class ConnectionStatusCommand(
-    IXrmConnection xrmConnection,
+    IDataverseConnection dataverseConnection,
     IConnectionStore connectionStore,
-    ConnectionInvocationOptions invocationOptions,
+    ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
     : AsyncCommand<ConnectionSettings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
+        if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
             console.MarkupLine("[grey]AUTH_SKIP: An ad-hoc connection string is active; no stored token to check.[/]");
             return (int)ExitCode.Success;
         }
 
-        var name = invocationOptions.ConnectionName ?? connectionStore.Current;
+        var name = invocationContext.ConnectionName ?? connectionStore.Current;
         var isFederated = name is not null && connectionStore.Find(name) is AzureDevOpsFederatedConnection;
-        var isValid = await xrmConnection.CheckAuthAsync();
+        var isValid = await dataverseConnection.CheckAuthAsync();
 
         if (isValid)
         {

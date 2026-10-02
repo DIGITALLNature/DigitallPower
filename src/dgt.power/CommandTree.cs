@@ -221,9 +221,9 @@ internal static class CommandTree
     {
         branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
         branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
-            .WithExample("connection", "create", "dev", "--url", "<Url>", "--tenant", "<Tenant>")
-            .WithExample("connection", "create", "test", "--url", "<Url>", "--tenant", "<Tenant>", "--application-id", "<ClientId>", "--client-secret")
-            .WithExample("connection", "create", "prod", "--url", "<Url>", "--tenant", "<Tenant>", "--application-id", "<ClientId>", "--certificate-thumbprint", "<Thumbprint>");
+            .WithExample("connection", "create", "dev", "--url", "<Url>")
+            .WithExample("connection", "create", "test", "--url", "<Url>", "--tenant", "<Tenant>", "--client-id", "<ClientId>", "--client-secret")
+            .WithExample("connection", "create", "prod", "--url", "<Url>", "--tenant", "<Tenant>", "--client-id", "<ClientId>", "--certificate-thumbprint", "<Thumbprint>");
         branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
         branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
             .WithExample("connection", "delete", "<Name>")
@@ -236,8 +236,6 @@ internal static class CommandTree
                 "Intended as a pre-flight check for coding agents.");
         branch.AddCommand<ConnectionRefreshCommand>("refresh")
             .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
-        branch.AddCommand<ConnectionLogoutCommand>("logout")
-            .WithDescription("Removes a user connection's account from the persistent token cache.");
     }
 
 }

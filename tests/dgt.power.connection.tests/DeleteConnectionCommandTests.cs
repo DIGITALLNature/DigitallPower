@@ -24,7 +24,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
             ConnectionStore,
             SecretStore,
             UserTokenCache,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(
@@ -54,7 +54,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
             ConnectionStore,
             SecretStore,
             UserTokenCache,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(
@@ -86,7 +86,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
             ConnectionStore,
             SecretStore,
             UserTokenCache,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(
@@ -112,7 +112,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
             ConnectionStore,
             SecretStore,
             UserTokenCache,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(

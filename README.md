@@ -173,7 +173,7 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
-| `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` `logout` |
+| `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -183,6 +183,8 @@ The former global `dgtp.json` configuration and `dgtp:*` environment-variable bi
 
 Saved connections and application state use a stable per-user data directory instead of assembly-scoped isolated storage. Set `DGTP_HOME` to override its location. Connections are stored in `connections.json`; client secrets and PFX passwords are stored separately using the platform's protected storage (DPAPI on Windows, Keychain on macOS, and Secret Service on Linux). No 2.x connections are migrated automatically.
 
+For interactive and device-code sign-in, `--tenant` is optional: if omitted, authentication targets the user's home tenant. Service-principal and explicitly configured Azure DevOps federated connections require a tenant ID.
+
 Global connection/authentication environment variables:
 
 | Variable | Purpose |
@@ -190,7 +192,7 @@ Global connection/authentication environment variables:
 | `DGTP_CONNECTION` | Name of the connection to use (overrides the saved current selection) |
 | `DGTP_CONNECTION_STRING` | One-off connection string; never persisted |
 | `DGTP_NON_INTERACTIVE` | Disable interactive authentication when set to a truthy value |
-| `DGTP_ALLOW_UNENCRYPTED_STORAGE` | Explicitly allow unencrypted token/secret storage when a Linux keyring is unavailable; prints a warning |
+| `DGTP_ALLOW_UNENCRYPTED_STORAGE` | Explicitly allow unencrypted token/secret storage when a Linux keyring is unavailable; warns when that backend is selected |
 
 `--connection` and `--connection-string` override their corresponding environment variables. A command-line `--connection-string` or `DGTP_CONNECTION_STRING` takes precedence over the named connection.
 
@@ -209,20 +211,19 @@ dgtp <branch> <command> [arguments] [options]
 | Command | Description |
 |---------|-------------|
 | `connection list` | List configured connections |
-| `connection create <name> --url <url> --tenant <tenant>` | Create an interactive user connection; tenant is required |
-| `connection create <name> --url <url> --tenant <tenant> --device-code` | Create a user connection using device-code authentication |
-| `connection create <name> --url <url> --tenant <tenant> --application-id <id> --client-secret` | Create a service-principal connection and securely prompt for its secret |
-| `connection create <name> --url <url> --tenant <tenant> --application-id <id> --certificate-thumbprint <thumbprint>` | Create a service-principal connection using a certificate in the CurrentUser store |
-| `connection create <name> --url <url> --tenant <tenant> --application-id <id> --certificate-path <path>` | Create a service-principal connection using a PFX file (prompts for its password) |
-| `connection create <name> --azure-devops-federated --service-connection-name <name>` | Create a connection using Azure DevOps Workload Identity Federation (OIDC), resolving the URL/tenant/application/service-connection IDs automatically from the service connection name — no client secret required or stored |
-| `connection create <name> --url <url> --azure-devops-federated --tenant <tenantId> --application-id <appId> --service-connection-id <id>` | Same as above, with the tenant/application/service-connection IDs passed explicitly instead of resolved by name |
+| `connection create <name> --url <url>` | Create an interactive user connection; `--tenant` is optional |
+| `connection create <name> --url <url> --device-code` | Create a user connection using device-code authentication; `--tenant` is optional |
+| `connection create <name> --url <url> --tenant <tenant> --client-id <id> --client-secret` | Create a service-principal connection and securely prompt for its secret |
+| `connection create <name> --url <url> --tenant <tenant> --client-id <id> --certificate-thumbprint <thumbprint>` | Create a service-principal connection using a certificate in the CurrentUser store |
+| `connection create <name> --url <url> --tenant <tenant> --client-id <id> --certificate-path <path>` | Create a service-principal connection using a PFX file (prompts for its password) |
+| `connection create <name> --azure-devops-federated --service-connection-name <name>` | Create a connection using Azure DevOps Workload Identity Federation (OIDC), resolving the URL/tenant/client/service-connection IDs automatically from the service connection name — no client secret required or stored |
+| `connection create <name> --url <url> --azure-devops-federated --tenant <tenantId> --client-id <clientId> --service-connection-id <id>` | Same as above, with the tenant/client/service-connection IDs passed explicitly instead of resolved by name |
 | `connection create ... --no-verify` | Skip the post-create connectivity check |
 | `connection select <name>` | Set the active connection |
 | `connection delete <name>` | Delete a specific connection; its cached user account is removed only if no other connection refers to it |
 | `connection delete --all` | Delete all connections and their unique cached user accounts |
 | `connection status` | Check whether the current user connection can acquire a token without opening a browser (exit 0 = valid, 2 = login required) |
 | `connection refresh` | Force an interactive login for the selected user connection and save its authentication record |
-| `connection logout <name>` | Remove the user account for a connection from the shared persistent token cache without deleting the connection |
 
 Example:
 
@@ -1019,7 +1020,7 @@ variables on every pipeline job without any extra configuration.
 > exist more than once within a project. If the lookup finds more than one match, dgtp fails with
 > an error listing the candidate IDs — switch to the explicit option below to disambiguate.
 
-#### Advanced: explicit `--tenant` / `--application-id` / `--service-connection-id` / `--url`
+#### Advanced: explicit `--tenant` / `--client-id` / `--service-connection-id` / `--url`
 
 Bypass the REST lookup entirely by passing all four values yourself. Useful when the build
 identity can't be granted Reader access, the service connection name is ambiguous, or the agent's
@@ -1032,7 +1033,7 @@ steps:
       --url https://contoso.crm4.dynamics.com
       --azure-devops-federated
       --tenant <tenantId>
-      --application-id <applicationId>
+      --client-id <clientId>
       --service-connection-id <serviceConnectionId>
       --no-verify
     env:
@@ -1076,8 +1077,8 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                                ▼
                   ┌──────────────────────────┐
                   │     dgt.power.common     │
-                  │  (Xrm connection, file   │
-                  │   access, tracer,        │
+                  │  (Dataverse connection,  │
+                  │   file access, tracer,   │
                   │   connection management, │
                   │   shared base commands)  │
                   └──────────────────────────┘
@@ -1092,8 +1093,8 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 Key design principles:
 
 - **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, typed connection storage and credential construction, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
-- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, base commands, tracing and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IDataverseConnection.ConnectAsync()`.
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
 

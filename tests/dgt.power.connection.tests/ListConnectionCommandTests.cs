@@ -23,7 +23,7 @@ public class ListConnectionCommandTests : ConnectionTestsBase<ListConnectionComm
         ConnectionStore.Upsert("Test", definition, makeCurrent: false);
         ICommand<ConnectionSettings> command = new ListConnectionCommand(
             ConnectionStore,
-            ConnectionInvocationOptions.FromArguments([]),
+            new ConnectionInvocationContext(),
             TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);

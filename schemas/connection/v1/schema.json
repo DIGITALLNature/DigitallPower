@@ -61,12 +61,12 @@
     },
     "user": {
       "type": "object",
-      "required": [
-        "tenantId"
-      ],
       "properties": {
         "tenantId": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "minLength": 1
         },
         "authenticationRecord": {

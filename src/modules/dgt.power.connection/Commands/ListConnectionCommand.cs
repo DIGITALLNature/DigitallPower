@@ -10,13 +10,13 @@ namespace dgt.power.connection.Commands;
 
 public class ListConnectionCommand(
     IConnectionStore connectionStore,
-    ConnectionInvocationOptions invocationOptions,
+    ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
     : Command<ConnectionSettings>
 {
     public override int Execute(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
-        var current = invocationOptions.ConnectionName ?? connectionStore.Current;
+        var current = invocationContext.ConnectionName ?? connectionStore.Current;
         var grid = new Grid();
         grid.AddColumn().AddColumn().AddColumn();
         grid.AddRow("Current", "Name", "Type");

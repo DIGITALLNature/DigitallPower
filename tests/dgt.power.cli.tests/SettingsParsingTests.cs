@@ -429,7 +429,7 @@ public class SettingsParsingTests
             "--url", "https://org.crm.dynamics.com",
             "--azure-devops-federated",
             "--tenant", "11111111-1111-1111-1111-111111111111",
-            "--application-id", "22222222-2222-2222-2222-222222222222",
+            "--client-id", "22222222-2222-2222-2222-222222222222",
             "--service-connection-id", "33333333-3333-3333-3333-333333333333",
             "--no-verify");
 
@@ -437,7 +437,7 @@ public class SettingsParsingTests
 
         await Assert.That(settings.AzureDevOpsFederated).IsTrue();
         await Assert.That(settings.TenantId).IsEqualTo("11111111-1111-1111-1111-111111111111");
-        await Assert.That(settings.ApplicationId).IsEqualTo("22222222-2222-2222-2222-222222222222");
+        await Assert.That(settings.ClientId).IsEqualTo("22222222-2222-2222-2222-222222222222");
         await Assert.That(settings.ServiceConnectionId).IsEqualTo("33333333-3333-3333-3333-333333333333");
     }
 
@@ -455,7 +455,7 @@ public class SettingsParsingTests
         await Assert.That(settings.AzureDevOpsFederated).IsTrue();
         await Assert.That(settings.ServiceConnectionName).IsEqualTo("MyPowerPlatformConnection");
         await Assert.That(settings.TenantId).IsNull();
-        await Assert.That(settings.ApplicationId).IsNull();
+        await Assert.That(settings.ClientId).IsNull();
         await Assert.That(settings.ServiceConnectionId).IsNull();
     }
 
@@ -467,7 +467,7 @@ public class SettingsParsingTests
             "--url", "https://org.crm.dynamics.com",
             "--adof",
             "--tenant", "11111111-1111-1111-1111-111111111111",
-            "--application-id", "22222222-2222-2222-2222-222222222222",
+            "--client-id", "22222222-2222-2222-2222-222222222222",
             "--service-connection-id", "33333333-3333-3333-3333-333333333333");
 
         var settings = (CreateConnectionSettings)result.Settings!;

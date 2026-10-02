@@ -25,12 +25,12 @@ public class CreateConnectionSettings : ConnectionSettings
 #pragma warning restore CA1056, S3996
 
     [CommandOption("--tenant")]
-    [Description("Entra ID tenant GUID or verified domain; required for user and service-principal connections")]
+    [Description("Entra ID tenant GUID or verified domain; optional for user sign-in, required for service-principal and explicit federated connections")]
     public string? TenantId { get; init; }
 
-    [CommandOption("--application-id")]
-    [Description("Application (client) ID for service-principal connections")]
-    public string? ApplicationId { get; init; }
+    [CommandOption("--client-id")]
+    [Description("Client ID for service-principal connections")]
+    public string? ClientId { get; init; }
 
     [CommandOption("--device-code")]
     [Description("Use device-code login instead of opening a browser")]
@@ -86,21 +86,21 @@ public class CreateConnectionSettings : ConnectionSettings
 
             if (!string.IsNullOrWhiteSpace(ServiceConnectionName))
             {
-                return Url is null && TenantId is null && ApplicationId is null && ServiceConnectionId is null
+                return Url is null && TenantId is null && ClientId is null && ServiceConnectionId is null
                     ? ValidationResult.Success()
                     : ValidationResult.Error(
                         "--service-connection-name resolves all Azure DevOps service connection details; " +
-                        "do not combine it with --url, --tenant, --application-id or --service-connection-id.");
+                        "do not combine it with --url, --tenant, --client-id or --service-connection-id.");
             }
 
             return !string.IsNullOrWhiteSpace(Url)
                    && !string.IsNullOrWhiteSpace(TenantId)
-                   && !string.IsNullOrWhiteSpace(ApplicationId)
+                   && !string.IsNullOrWhiteSpace(ClientId)
                    && !string.IsNullOrWhiteSpace(ServiceConnectionId)
                 ? ValidationResult.Success()
                 : ValidationResult.Error(
                     "--azure-devops-federated requires --service-connection-name or --url, --tenant, " +
-                    "--application-id and --service-connection-id.");
+                    "--client-id and --service-connection-id.");
         }
 
         if (ServiceConnectionName is not null || ServiceConnectionId is not null)
@@ -126,20 +126,20 @@ public class CreateConnectionSettings : ConnectionSettings
             return ValidationResult.Error("Specify either --certificate-thumbprint or --certificate-path, not both.");
         }
 
-        if (string.IsNullOrWhiteSpace(Url) || string.IsNullOrWhiteSpace(TenantId))
+        if (string.IsNullOrWhiteSpace(Url))
         {
-            return ValidationResult.Error("Provide --url and --tenant for every connection type.");
+            return ValidationResult.Error("Provide --url for every connection type.");
         }
 
         if (hasUserMode)
         {
-            return string.IsNullOrWhiteSpace(ApplicationId)
+            return string.IsNullOrWhiteSpace(ClientId)
                 ? ValidationResult.Success()
-                : ValidationResult.Error("--application-id is only valid with --client-secret or certificate options.");
+                : ValidationResult.Error("--client-id is only valid with --client-secret or certificate options.");
         }
 
-        return !string.IsNullOrWhiteSpace(ApplicationId)
+        return !string.IsNullOrWhiteSpace(TenantId) && !string.IsNullOrWhiteSpace(ClientId)
             ? ValidationResult.Success()
-            : ValidationResult.Error("--client-secret and certificate connections require --application-id.");
+            : ValidationResult.Error("--client-secret and certificate connections require --tenant and --client-id.");
     }
 }

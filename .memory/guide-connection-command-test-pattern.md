@@ -7,7 +7,7 @@
 the command under test. This exercises the current JSON-backed persistence without touching a
 developer's real connection data.
 
-For status and refresh command tests, use a fake `IXrmConnection` rather than invoking Azure
+For status and refresh command tests, use a fake `IDataverseConnection` rather than invoking Azure
 Identity or opening a browser. Authentication-record and credential-construction behavior should
 be tested separately with injected stores/fakes. Keep command-context helpers local to the test
 file; each test project may need its own `IRemainingArguments` stub for `CommandContext`.

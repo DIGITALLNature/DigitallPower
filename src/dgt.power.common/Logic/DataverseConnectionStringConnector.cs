@@ -10,12 +10,12 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal sealed partial class CrmConnector: IConnector
+internal sealed partial class DataverseConnectionStringConnector : IConnector
 {
     private readonly string _connectionString;
     private readonly IAnsiConsole _console;
 
-    internal CrmConnector(string connectionString, IAnsiConsole? console = null)
+    internal DataverseConnectionStringConnector(string connectionString, IAnsiConsole? console = null)
     {
         _connectionString = connectionString;
         _console = console ?? AnsiConsole.Console;
@@ -43,7 +43,7 @@ internal sealed partial class CrmConnector: IConnector
     {
         if (!serviceClient.IsReady)
         {
-            throw new DataverseConnectionException($"XRM Connection Failed: {serviceClient.LastError}", serviceClient.LastException);
+            throw new DataverseConnectionException($"Dataverse connection failed: {serviceClient.LastError}", serviceClient.LastException);
         }
 
         return serviceClient;

@@ -34,6 +34,28 @@ public class ConnectionStoreTests
     }
 
     [Test]
+    public async Task Upsert_RoundTripsUserConnectionWithoutTenant()
+    {
+        var directory = CreateTemporaryDirectory();
+        try
+        {
+            var store = new ConnectionStore(new DgtpHome(directory));
+            store.Upsert("Dev", new InteractiveConnection
+            {
+                Url = "https://contoso.crm.dynamics.com"
+            });
+
+            var reloaded = new ConnectionStore(new DgtpHome(directory));
+            var connection = (InteractiveConnection)reloaded.Find("Dev")!;
+            await Assert.That(connection.TenantId).IsNull();
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Test]
     public async Task Upsert_ConnectionWithoutSelection_DoesNotReplaceCurrentConnection()
     {
         var directory = CreateTemporaryDirectory();

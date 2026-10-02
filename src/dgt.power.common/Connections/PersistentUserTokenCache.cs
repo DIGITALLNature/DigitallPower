@@ -4,10 +4,11 @@
 using Azure.Identity;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
+using dgt.power.common.Storage;
 
 namespace dgt.power.common.Connections;
 
-public sealed class PersistentUserTokenCache : IUserTokenCache
+public sealed class PersistentUserTokenCache(StorageSecurityNotice storageSecurityNotice) : IUserTokenCache
 {
     private const string CacheName = "dgtp.nocae";
     private const string KeychainService = "Microsoft.Developer.IdentityService";
@@ -49,7 +50,7 @@ public sealed class PersistentUserTokenCache : IUserTokenCache
         return true;
     }
 
-    private static async Task<MsalCacheHelper> CreateCacheHelperAsync(bool allowUnencryptedStorage)
+    private async Task<MsalCacheHelper> CreateCacheHelperAsync(bool allowUnencryptedStorage)
     {
         try
         {
@@ -61,6 +62,7 @@ public sealed class PersistentUserTokenCache : IUserTokenCache
         {
             var helper = await MsalCacheHelper.CreateAsync(CreateFallbackStorageProperties());
             helper.VerifyPersistence();
+            storageSecurityNotice.WarnIfUnencryptedStorageIsUsed();
             return helper;
         }
     }
