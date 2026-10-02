@@ -71,11 +71,8 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
 
             foreach (var dll in Directory.GetFiles(tempPath, "*.dll"))
             {
-                var assembly = _assemblyReader.Read(dll, loadContext);
-                if (assembly is null)
-                {
-                    continue;
-                }
+                var assembly = _assemblyReader.Read(dll, loadContext) ??
+                               throw new AssemblyException($"Assembly '{Path.GetFileName(dll)}' in package '{package.Name}' could not be read; aborting to avoid a partial deployment plan.");
 
                 if (assembly.Kind == LocalAssemblyKind.None)
                 {

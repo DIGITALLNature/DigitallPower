@@ -33,4 +33,30 @@ public class LocalPluginStepValidatorTests
 
         await Assert.That(() => LocalPluginStepValidator.Validate(pluginType)).ThrowsExactly<InvalidPluginStepException>();
     }
+
+    [Test]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Asynchronous, SdkMessageProcessingStep.Options.Stage.PreValidation)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Asynchronous, SdkMessageProcessingStep.Options.Stage.PreOperation)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Asynchronous, SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Synchronous, 99)]
+    [Arguments(7, SdkMessageProcessingStep.Options.Stage.PostOperation)]
+    public async Task Validate_UnsupportedModeOrStage_Throws(int mode, int stage)
+    {
+        var pluginType = new LocalPluginType("Contoso.Plugin", "Contoso.Plugin", string.Empty, true, [new LocalPluginStep("step", mode, "Update", stage, "account", "none", null, null, [])]);
+
+        await Assert.That(() => LocalPluginStepValidator.Validate(pluginType)).ThrowsExactly<InvalidPluginStepException>();
+    }
+
+    [Test]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Synchronous, SdkMessageProcessingStep.Options.Stage.PreValidation)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Synchronous, SdkMessageProcessingStep.Options.Stage.PreOperation)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Synchronous, SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Synchronous, SdkMessageProcessingStep.Options.Stage.PostOperation)]
+    [Arguments(SdkMessageProcessingStep.Options.Mode.Asynchronous, SdkMessageProcessingStep.Options.Stage.PostOperation)]
+    public async Task Validate_SupportedModeAndStage_DoesNotThrow(int mode, int stage)
+    {
+        var pluginType = new LocalPluginType("Contoso.Plugin", "Contoso.Plugin", string.Empty, true, [new LocalPluginStep("step", mode, "Update", stage, "account", "none", null, null, [])]);
+
+        await Assert.That(() => LocalPluginStepValidator.Validate(pluginType)).ThrowsNothing();
+    }
 }

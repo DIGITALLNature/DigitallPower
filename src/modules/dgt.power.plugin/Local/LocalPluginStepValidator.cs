@@ -29,9 +29,21 @@ public static class LocalPluginStepValidator
 
     private static void ValidateStep(string typeName, LocalPluginStep step)
     {
-        if (step.Mode == SdkMessageProcessingStep.Options.Mode.Asynchronous && IsPreOperationStage(step.Stage))
+        if (step.Mode is not (SdkMessageProcessingStep.Options.Mode.Synchronous or SdkMessageProcessingStep.Options.Mode.Asynchronous))
         {
-            throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: asynchronous mode is not allowed on a " + "pre-validation/pre-operation stage.");
+            throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unknown execution mode '{step.Mode}'.");
+        }
+
+        // Stage 30 (main operation) is only produced for synthesized custom data provider steps, which are always synchronous.
+        if (step.Stage is not (SdkMessageProcessingStep.Options.Stage.PreValidation or SdkMessageProcessingStep.Options.Stage.PreOperation or
+            SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly or SdkMessageProcessingStep.Options.Stage.PostOperation))
+        {
+            throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unsupported stage '{step.Stage}'.");
+        }
+
+        if (step.Mode == SdkMessageProcessingStep.Options.Mode.Asynchronous && step.Stage != SdkMessageProcessingStep.Options.Stage.PostOperation)
+        {
+            throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: asynchronous mode is only allowed on the post-operation stage.");
         }
     }
 
