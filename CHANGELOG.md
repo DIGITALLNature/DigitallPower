@@ -1,3 +1,10 @@
+# [3.0.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.1...v3.0.0-beta.2) (2026-10-02)
+
+
+### Features
+
+* **plugin:** resource-oriented plugin push command ([#187](https://github.com/DIGITALLNature/DigitallPower/issues/187)) ([8ad9a5a](https://github.com/DIGITALLNature/DigitallPower/commit/8ad9a5adf89f5708a95ac64fb09c8715935cf740))
+
 # [3.0.0-beta.1](https://github.com/DIGITALLNature/DigitallPower/compare/v2.3.0-beta.1...v3.0.0-beta.1) (2026-09-25)
 
 
