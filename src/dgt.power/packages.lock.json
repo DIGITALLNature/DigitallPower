@@ -890,7 +890,7 @@
       "dgt.power.webresource": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.26, )",
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.55.0, )",
           "dgt.power.common": "[3.0.0-beta.3, )"
         }
