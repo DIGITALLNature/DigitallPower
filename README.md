@@ -611,7 +611,6 @@ language setting* (`usersettings.uilanguageid`), not any per-request parameter. 
 from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
 → Personalization Settings → Language) to match the `language` configured for code generation.
 
-<<<<<<< HEAD
 ### `plugin` — Manage plugin assemblies/packages
 
 Commands for deploying Dataverse plugin assemblies and packages.
