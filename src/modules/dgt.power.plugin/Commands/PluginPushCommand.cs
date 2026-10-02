@@ -173,7 +173,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         Console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
-    internal IReadOnlyList<string>? ResolveTargets(string target)
+    private List<string>? ResolveTargets(string target)
     {
         if (File.Exists(target))
         {
