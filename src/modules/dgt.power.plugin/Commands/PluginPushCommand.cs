@@ -50,7 +50,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             return Tracer.End(this, true);
         }
 
-        if (targets.Any(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
+        if (targets.Exists(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
         {
             Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
             return Tracer.End(this, false);
