@@ -11,8 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.21.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.84.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.27" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.57.2" />

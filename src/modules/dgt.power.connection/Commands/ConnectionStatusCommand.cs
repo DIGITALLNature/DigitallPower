@@ -2,39 +2,43 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Connections;
 using dgt.power.common.Commands;
-using dgt.power.common.Logic;
 using dgt.power.connection.Base;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.connection.Commands;
 
-/// <summary>
-/// Checks whether the current MSAL token is still valid without opening a browser.
-/// Exit codes:
-///   0 — token is valid (or connection uses a connection string — no MSAL token to check)
-///   2 — interactive login is required; ask the user to re-authenticate
-/// Intended for coding agents to use as a pre-flight check before any Dataverse command.
-/// </summary>
-// ReSharper disable once ClassNeverInstantiated.Global
-public class ConnectionStatusCommand(IXrmConnection xrmConnection, IProfileManager profileManager, IAnsiConsole console)
+public class ConnectionStatusCommand(
+    IXrmConnection xrmConnection,
+    IConnectionStore connectionStore,
+    ConnectionInvocationOptions invocationOptions,
+    IAnsiConsole console)
     : AsyncCommand<ConnectionSettings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
+        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
+        {
+            console.MarkupLine("[grey]AUTH_SKIP: An ad-hoc connection string is active; no stored token to check.[/]");
+            return (int)ExitCode.Success;
+        }
+
+        var name = invocationOptions.ConnectionName ?? connectionStore.Current;
+        var isFederated = name is not null && connectionStore.Find(name) is AzureDevOpsFederatedConnection;
         var isValid = await xrmConnection.CheckAuthAsync();
 
         if (isValid)
         {
-            console.MarkupLine("[green]AUTH_OK: Token is valid — no interactive login required.[/]");
+            console.MarkupLine("[green]AUTH_OK: Authentication is valid — no interactive login required.[/]");
             return (int)ExitCode.Success;
         }
 
-        if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity)
+        if (isFederated)
         {
             console.MarkupLine("[red]AUTH_REQUIRED: Failed to acquire a token via Azure DevOps workload identity federation.[/]");
-            console.MarkupLine("[red]              Verify 'SYSTEM_ACCESSTOKEN' is exposed to this pipeline step and that the service connection is authorized for this job.[/]");
+            console.MarkupLine("[red]              Verify the Azure Pipelines access token and service connection authorization.[/]");
             return (int)ExitCode.AuthRequired;
         }
 

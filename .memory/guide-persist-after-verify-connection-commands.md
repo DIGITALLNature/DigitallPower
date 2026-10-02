@@ -1,65 +1,38 @@
-# Guide: Persist-After-Verify for Connection/Profile Mutation Commands
+# Guide: Persist-After-Verify for Connection Mutation Commands
 
 ## Problem
 
-Commands that create or update a Dataverse connection/profile (`CreateConnectionCommand`,
-`CreateProfileCommand`) mutate an in-memory `IIdentities` store via `Identities.Upsert(name, identity)`.
-`Upsert` immediately sets `Current` to the new identity, in memory, as a side effect.
-
-If the command then calls `profileManager.Save()` *before* running the post-create connectivity
-check (`connection.ConnectAsync()` / `WhoAmI`), a failed check leaves the broken identity already
-persisted to disk **and** selected as the active connection — the CLI is left in a broken state
-until the user manually deletes/recreates the profile.
+Creating a named connection may stage a client secret or PFX password before its optional
+Dataverse connectivity check. Persisting the connection metadata or making it current before that
+check succeeds can leave a broken connection selected after a failed create.
 
 ## Root cause insight
 
-`XrmConnection.ConnectAsync()` reads `profileManager.CurrentIdentity`, which reflects the in-memory
-`Identities.Current` set by `Upsert()`. The connectivity check does **not** require `Save()` to have
-run first — it only needs the in-memory mutation, which already happened via `Upsert`.
-
-This means the fix is a pure **reordering**, not a rollback/snapshot mechanism:
+The current `CreateConnectionCommand` can construct its credential directly from the candidate
+definition and staged secret; the connection does not need to be inserted into `ConnectionStore`
+before it is verified. Persist only after authentication/verification succeeds:
 
 ```csharp
-identities.Upsert(name, identity);          // in-memory only; ConnectAsync can already see it
-
-if (!settings.NoVerify)
-{
-    try { await connection.ConnectAsync(); }
-    catch (FailedConnectionException fc) { console.WriteLine(fc.RootMessage()); throw; }
-}
-
-profileManager.Save();                      // only persisted after a successful check
+var credential = credentialFactory.Create(name, definition, ...);
+await credential.GetTokenAsync(scope, cancellationToken);
+connectionStore.Upsert(name, definition);
 ```
 
-If `ConnectAsync()` throws, the method returns before `Save()` runs, so nothing is ever written to
-disk — whatever was previously persisted (a known-good connection) remains untouched and active on
-next run.
+When secret material is staged before verification, restore the previous secret or remove the new
+one if the command fails. If `--no-verify` is supplied, persist the typed definition without the
+Dataverse token check, as explicitly requested by the user.
 
 ## Where this applies
 
 - `src/modules/dgt.power.connection/Commands/CreateConnectionCommand.cs`
-- `src/modules/dgt.power.profile/Commands/CreateProfileCommand.cs` (deprecated alias, same bug,
-  fixed for consistency since `dgt.power.connection` was ported from it)
 
-Any future command that upserts an identity and then verifies connectivity should follow the same
-order: **mutate in-memory → verify → persist**.
+Future create/update commands should keep the invariant **stage → verify → persist**, and treat
+metadata and separately stored secret values as one logical mutation that needs rollback on failure.
 
 ## Test pattern
 
-Regression tests assert the *persisted* state, not command-local in-memory state, to actually catch
-ordering regressions. This requires the `IProfileManager` to be registered **Transient** in the test
-DI container (see `ProfileTestsBase` / `ConnectionTestsBase`), so that a fresh `ProfileManager`
-instance is created each time the test calls `GetIdentities()` — reading from the same isolated
-storage file, but decoupled from the command's own singleton in-memory instance.
-
-Key tests added:
-- `ShouldNotPersistIdentity_WhenConnectionCheckFails` — asserts `GetIdentities().Contains(name)` is
-  `false` after a failing create.
-- `ShouldNotChangeCurrentIdentity_WhenNewIdentityCreationFails` — creates a good profile first, then
-  a failing one, and asserts `Current` still points at the good profile.
-
-Applied in:
-- `tests/dgt.power.profile.tests/CreateProfileCommandTests.cs`
-- `tests/dgt.power.connection.tests/CreateConnectionCommandTests.cs` (new test project — the
-  `dgt.power.connection` module previously had **zero** test coverage; `ConnectionTestsBase` mirrors
-  `ProfileTestsBase`)
+Use a temporary `DgtpHome` and the same `ConnectionStore` instance as the command, then assert the
+file-backed definition and current selection remain unchanged after a simulated verification
+failure. Verify secret rollback independently through the fake `ISecretStore`.
+`CreateConnectionCommandTests` covers successful persistence, existing-definition/selection
+preservation, secret restoration, and the `--no-verify` bypass.

@@ -17,7 +17,6 @@ public class TestServiceCollection : ServiceCollection
     {
         this.AddSingleton<ITracer, TestTracer>();
         this.AddSingleton<IXrmConnection, TestConnection>();
-        this.AddSingleton<IProfileManager, ProfileManager>();
         this.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
         {
             Converters =

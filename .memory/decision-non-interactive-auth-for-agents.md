@@ -2,7 +2,7 @@
 
 ## Context
 
-When MSAL token expires, `TokenConnector.GetTokenAsync()` silently falls through to `AcquireTokenInteractive`, which opens a browser window. Coding agents (Copilot, Claude, Cursor, etc.) have no visibility into this — the CLI hangs waiting for user interaction with no output or exit code change.
+When a user token expires, Azure Identity may require interactive authentication and open a browser. Coding agents (Copilot, Claude, Cursor, etc.) have no visibility into this — the CLI can wait for user interaction without a useful exit code.
 
 ## Decision
 
@@ -11,11 +11,11 @@ Implement three complementary mechanisms to make auth failures agent-friendly:
 ### 1. Non-Interactive Mode (`--non-interactive` / `DGTP_NON_INTERACTIVE`)
 
 **Activation (choose one):**
-- Pass `--non-interactive true` as a CLI flag (picked up by Spectre and by `IConfiguration.AddCommandLine`)
+- Pass `--non-interactive` as a CLI flag
 - Set env var `DGTP_NON_INTERACTIVE=true` (or `=1`) before invoking any command
 
 **Behavior:**
-- When `MsalUiRequiredException` is caught in `TokenConnector.GetTokenAsync()` and non-interactive mode is active, throw `InteractiveLoginRequiredException` instead of opening the browser.
+- Azure Identity credentials are configured with `DisableAutomaticAuthentication` in non-interactive mode, so they do not open a browser.
 - The exception handler in `Program.cs` returns exit code `2` (`ExitCode.AuthRequired`).
 - A clear `AUTH_REQUIRED: ...` message is printed to stdout.
 
@@ -48,21 +48,21 @@ For connection-string connections this is a no-op.
 dgtp connection refresh   # opens browser, user logs in, token saved → exit 0
 ```
 
-### 4. Clear Console Output Before Browser Launch (interactive mode only)
+### 4. Refresh status output
 
-When non-interactive mode is NOT active and interactive login is triggered, `TokenConnector` now emits:
+`dgtp connection refresh` prints a status marker before starting interactive authentication:
 ```
-AUTH: Silent token acquisition failed — opening browser for interactive login...
+AUTH: Starting interactive authentication...
 ```
 
-This allows any agent monitoring stdout to detect the interactive login event even without non-interactive mode.
+This lets an agent monitoring stdout identify the interactive refresh operation.
 
 ## Alternatives Considered
 
 - **Machine-readable JSON output flag:** Too invasive — would require every command to emit JSON.
 - **Retry with timeout:** Doesn't help — just delays the hang.
-- **Dedicated `auth login` command:** Less useful than `auth-check` because login is already handled by `connection create` / `connection refresh`.
-- **`profile auth-check` (original):** Renamed to `connection status` for naming consistency; `profile` kept as a deprecated alias branch.
+- **Dedicated `auth login` command:** Less useful than `connection status` because login is already handled by `connection create` / `connection refresh`.
+- **`profile auth-check` (original):** Renamed to `connection status`; the legacy `profile` branch was removed in v3.
 
 ## Exit Code Semantics
 
@@ -72,17 +72,13 @@ This allows any agent monitoring stdout to detect the interactive login event ev
 | `1`  | Error (generic) |
 | `2`  | Auth required — interactive login needed, tool was blocked from opening browser |
 
-## Files Changed
+## Current implementation mapping
 
-- `src/dgt.power.common/Commands/ExitCode.cs` — `AuthRequired = 2`
-- `src/dgt.power.common/Exceptions/InteractiveLoginRequiredException.cs` — new exception
-- `src/dgt.power.common/BaseProgramSettings.cs` — `--non-interactive` flag
-- `src/dgt.power.common/Logic/TokenConnector.cs` — non-interactive mode + `TryAcquireTokenSilentAsync` + `ForceInteractiveLoginAsync` + clear message
-- `src/dgt.power.common/IXrmConnection.cs` — `CheckAuthAsync()` + `RefreshAuthAsync()` methods
-- `src/dgt.power.common/Logic/XrmConnection.cs` — `CheckAuthAsync` + `RefreshAuthAsync` impl + `IsNonInteractive()` helper
-- `src/modules/dgt.power.connection/` — new module: `ConnectionStatusCommand`, `ConnectionRefreshCommand`, `CreateConnectionCommand`, `ListConnectionCommand`, `SelectConnectionCommand`, `DeleteConnectionCommand`
-- `src/modules/dgt.power.profile/Commands/AuthCheckCommand.cs` — kept for deprecated `profile auth-check` alias
-- `src/modules/dgt.power.profile/Base/ProfileSettings.cs` — marked `[DeprecatedCommand("connection")]` (see `decision-generic-command-deprecation.md`)
-- `src/dgt.power/Program.cs` — register `connection` (canonical) + `profile` (deprecated alias)
-- `tests/dgt.power.tests/TestConnection.cs` — stub `CheckAuthAsync` → `true`, `RefreshAuthAsync` → `CompletedTask`
-
+- `BaseProgramSettings` exposes `--non-interactive`; `ConnectionInvocationOptions` resolves it with
+  `DGTP_NON_INTERACTIVE`.
+- `CredentialFactory` constructs Azure.Identity user credentials with
+  `DisableAutomaticAuthentication` when non-interactive mode is active.
+- `IXrmConnection` / `XrmConnection` implement silent `CheckAuthAsync` and persisted
+  `RefreshAuthAsync`.
+- `ConnectionStatusCommand` returns `ExitCode.AuthRequired` (`2`) when login is required; the
+  `connection` branch is the only connection command branch in v3.

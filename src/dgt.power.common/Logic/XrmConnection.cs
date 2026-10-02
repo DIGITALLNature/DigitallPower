@@ -1,130 +1,132 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Text.RegularExpressions;
+using Azure.Core;
+using Azure.Identity;
+using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public class XrmConnection(IProfileManager profileManager, IConfiguration configuration, IAnsiConsole console)
+public sealed partial class XrmConnection(
+    IConnectionStore connectionStore,
+    CredentialFactory credentialFactory,
+    ConnectionInvocationOptions invocationOptions,
+    IAnsiConsole console)
     : IXrmConnection
 {
     public async Task<IOrganizationServiceAsync2> ConnectAsync()
     {
-        var xrmConfiguration = configuration.GetSection("xrm").GetChildren().ToList();
-
-        var profile = configuration.GetValue<string>("profile");
-
-        if (xrmConfiguration.Count != 0)
+        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
         {
-            return await ConnectWithConfigurationAsync();
+            WriteAdHocConnectionNotice(invocationOptions.ConnectionString);
+            return await ConnectUsingAsync(new CrmConnector(invocationOptions.ConnectionString, console), "ad-hoc");
         }
 
-        if (!string.IsNullOrEmpty(profile))
-        {
-            return await ConnectWithProfileNameAsync(profile);
-        }
-
-        if (profileManager.CurrentIdentity != null)
-        {
-            return await ConnectWithProfileAsync(profileManager.CurrentIdentity);
-        }
-
-        throw new MissingConnectionException();
+        var (name, definition) = ResolveConnection();
+        var credential = credentialFactory.Create(
+            name,
+            definition,
+            invocationOptions.NonInteractive,
+            invocationOptions.AllowUnencryptedStorage);
+        return await ConnectUsingAsync(
+            new CredentialConnector(definition.Url, credential, invocationOptions.NonInteractive),
+            name);
     }
 
-    /// <inheritdoc/>
     public async Task<bool> CheckAuthAsync()
     {
-        if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
+        if (!string.IsNullOrWhiteSpace(invocationOptions.ConnectionString))
         {
-            var connector = new TokenConnector(tokenIdentity, profileManager, console);
-            return await connector.TryAcquireTokenSilentAsync();
+            return true;
         }
 
-        if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity federatedIdentity)
-        {
-            return await AzurePipelinesConnector.TryAcquireTokenSilentAsync(federatedIdentity);
-        }
+        var (name, definition) = ResolveConnection();
+        var credential = credentialFactory.Create(
+            name,
+            definition,
+            nonInteractive: true,
+            allowUnencryptedStorage: invocationOptions.AllowUnencryptedStorage);
+        var scope = new TokenRequestContext([CredentialConnector.GetScope(definition.Url)]);
 
-        // Connection-string profiles do not use MSAL — no interactive login required.
-        return true;
+        try
+        {
+            await credential.GetTokenAsync(scope, CancellationToken.None);
+            return true;
+        }
+        catch (AuthenticationRequiredException)
+        {
+            return false;
+        }
+        catch (Exception exception) when (exception is AuthenticationFailedException or CredentialUnavailableException)
+        {
+            return false;
+        }
     }
 
-    /// <inheritdoc/>
     public async Task RefreshAuthAsync()
     {
-        if (profileManager.CurrentIdentity is not TokenIdentity tokenIdentity)
+        var (name, definition) = ResolveConnection();
+        if (definition is not InteractiveConnection and not DeviceCodeConnection)
         {
-            // Connection-string profiles do not use MSAL — nothing to refresh.
             return;
         }
 
-        var connector = new TokenConnector(tokenIdentity, profileManager, console);
-        await connector.ForceInteractiveLoginAsync();
+        var freshLoginDefinition = definition switch
+        {
+            InteractiveConnection interactive => interactive with { AuthenticationRecord = null },
+            DeviceCodeConnection deviceCode => deviceCode with { AuthenticationRecord = null },
+            _ => definition
+        };
+        var authenticationRecord = await credentialFactory.AuthenticateAsync(
+            freshLoginDefinition,
+            invocationOptions.AllowUnencryptedStorage,
+            CancellationToken.None);
+        ConnectionDefinition updated = definition switch
+        {
+            InteractiveConnection interactive => interactive with { AuthenticationRecord = authenticationRecord },
+            DeviceCodeConnection deviceCode => deviceCode with { AuthenticationRecord = authenticationRecord },
+            _ => throw new InvalidOperationException("Only user connections can be refreshed interactively.")
+        };
+        connectionStore.Upsert(name, updated, makeCurrent: false);
     }
 
-    private async Task<IOrganizationServiceAsync2> ConnectWithConfigurationAsync()
+    private (string Name, ConnectionDefinition Definition) ResolveConnection()
     {
-        console.MarkupLine("Connect to given configuration.");
-        var connector = new CrmConnector(configuration.GetValue<string>("xrm:connection")!, console);
-        try
+        var name = invocationOptions.ConnectionName ?? connectionStore.Current;
+        if (string.IsNullOrWhiteSpace(name))
         {
-            return await connector.CreateOrganizationServiceProxyAsync();
+            throw new MissingConnectionException(
+                "No connection is selected. Use 'dgtp connection select <name>' or 'dgtp connection create'.");
         }
-#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
-        catch (Exception e)
+
+        var definition = connectionStore.Find(name);
+        if (definition is null)
         {
-            throw new FailedConnectionException("xrm:connection", e);
+            throw new MissingConnectionException(
+                $"Connection '{name}' was not found. Create it with 'dgtp connection create'.");
         }
-#pragma warning restore CA1031
+
+        return (name, definition);
     }
 
-    public async Task<IOrganizationServiceAsync2> ConnectWithProfileNameAsync(string profileName)
+    private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(IConnector connector, string name)
     {
-        ArgumentNullException.ThrowIfNull(profileName);
-        var identities = profileManager.LoadIdentities();
-        if (!identities.Contains(profileName.ToUpperInvariant()))
-        {
-            throw new MissingConnectionException($"Profile {profileName} not found!");
-        }
-
-        identities.SetCurrent(profileName.ToUpperInvariant());
-        return await ConnectWithProfileAsync(profileManager.CurrentIdentity!);
-    }
-
-    private async Task<IOrganizationServiceAsync2> ConnectWithProfileAsync(Identity identity)
-    {
-        IConnector connector;
-        if (profileManager.CurrentIdentity is TokenIdentity tokenIdentity)
-        {
-            console.MarkupLine($"Connect to {profileManager.Current} via MSAL connection");
-            connector = new TokenConnector(tokenIdentity, profileManager, console, nonInteractive: IsNonInteractive());
-        }
-        else if (profileManager.CurrentIdentity is AzureDevOpsFederatedIdentity federatedIdentity)
-        {
-            console.MarkupLine($"Connect to {profileManager.Current} via Azure DevOps workload identity federation");
-            connector = new AzurePipelinesConnector(federatedIdentity);
-        }
-        else
-        {
-            console.MarkupLine($"Connect to {profileManager.Current} via connection string");
-            connector = new CrmConnector(identity.ConnectionString, console);
-        }
-
         try
         {
             var service = await connector.CreateOrganizationServiceProxyAsync();
             await CheckWhoAmIAsync(service);
             return service;
         }
-#pragma warning disable CA1031 // Intentional: any connector exception is wrapped into a domain exception
+#pragma warning disable CA1031 // Wrap connector failures with the selected connection context.
         catch (Exception exception)
         {
-            throw new FailedConnectionException(profileManager.Current, exception);
+            throw new FailedConnectionException(name, exception);
         }
 #pragma warning restore CA1031
     }
@@ -135,22 +137,49 @@ public class XrmConnection(IProfileManager profileManager, IConfiguration config
         console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
     }
 
-    /// <summary>
-    /// Returns <c>true</c> when the caller has requested non-interactive mode via either:
-    /// <list type="bullet">
-    ///   <item><description><c>--non-interactive true</c> CLI flag (passed through IConfiguration)</description></item>
-    ///   <item><description><c>DGTP_NON_INTERACTIVE=true</c> environment variable</description></item>
-    /// </list>
-    /// </summary>
-    private bool IsNonInteractive()
+    private void WriteAdHocConnectionNotice(string connectionString)
     {
-        if (configuration.GetValue<bool>("non-interactive"))
+        var match = ConnectionUrlRegex().Match(connectionString);
+        var url = match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri)
+            ? $" for {uri.GetLeftPart(UriPartial.Authority)}"
+            : string.Empty;
+        console.MarkupLine($"Using ad-hoc connection string (not persisted){Markup.Escape(url)}");
+    }
+
+    [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ConnectionUrlRegex();
+
+    private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IConnector
+    {
+        public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
         {
-            return true;
+            var uri = new Uri(url);
+            var scope = new TokenRequestContext([GetScope(url)]);
+            var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
+            if (!service.IsReady)
+            {
+                throw new DataverseConnectionException($"XRM Connection Failed: {service.LastError}", service.LastException);
+            }
+
+            return Task.FromResult<IOrganizationServiceAsync2>(service);
         }
 
-        var envVar = Environment.GetEnvironmentVariable("DGTP_NON_INTERACTIVE");
-        return string.Equals(envVar, "true", StringComparison.OrdinalIgnoreCase)
-               || envVar == "1";
+        private async Task<string> GetTokenAsync(TokenCredential tokenCredential, TokenRequestContext context)
+        {
+            try
+            {
+                return (await tokenCredential.GetTokenAsync(context, CancellationToken.None)).Token;
+            }
+            catch (AuthenticationRequiredException exception) when (nonInteractive)
+            {
+                throw new InteractiveLoginRequiredException(new Uri(url).Authority, exception);
+            }
+        }
+
+        public static string GetScope(string url)
+        {
+            var uri = new Uri(url);
+            return $"{uri.GetLeftPart(UriPartial.Authority)}/.default";
+        }
     }
 }

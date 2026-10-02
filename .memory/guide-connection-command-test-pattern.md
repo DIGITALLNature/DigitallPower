@@ -2,8 +2,12 @@
 
 # Connection command test pattern
 
-When testing `dgt.power.connection` commands, seed identities on the same `ProfileManager` instance passed into the command under test. `ProfileManager.Save()` must be called after seeding so the command sees the current identity state.
+`ConnectionTestsBase` creates a temporary `DgtpHome`, a file-backed `ConnectionStore`, and a fake
+`ISecretStore`. Seed connections with `ConnectionStore.Upsert` and use the same store instance as
+the command under test. This exercises the current JSON-backed persistence without touching a
+developer's real connection data.
 
-For MSAL-only branches, use a `TokenIdentity` and a fake `IXrmConnection`. That is the simplest way to exercise `ConnectionRefreshCommand` without depending on external auth.
-
-Keep command-context helpers local to the test file; each test project needs its own `IRemainingArguments` stub for `CommandContext`.
+For status and refresh command tests, use a fake `IXrmConnection` rather than invoking Azure
+Identity or opening a browser. Authentication-record and credential-construction behavior should
+be tested separately with injected stores/fakes. Keep command-context helpers local to the test
+file; each test project may need its own `IRemainingArguments` stub for `CommandContext`.

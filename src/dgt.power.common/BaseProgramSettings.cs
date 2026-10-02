@@ -20,4 +20,12 @@ public abstract class BaseProgramSettings : CommandSettings
         "Alternatively set the environment variable DGTP_NON_INTERACTIVE=true. " +
         "Recommended for coding agents and CI pipelines.")]
     public bool NonInteractive { get; init; }
+
+    [CommandOption("--connection")]
+    [Description("Name of the stored Dataverse connection to use")]
+    public string? Connection { get; init; }
+
+    [CommandOption("--connection-string")]
+    [Description("Use a Dataverse connection string for this invocation only; it is never persisted")]
+    public string? ConnectionString { get; init; }
 }

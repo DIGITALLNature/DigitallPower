@@ -7,7 +7,6 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -20,19 +19,17 @@ public sealed class BulkDeleteUtil(
     ITracer tracer,
     IOrganizationService connection,
     IConfigResolver configResolver,
-    IConfiguration configuration,
+    TimeProvider timeProvider,
     IAnsiConsole console)
-    : BaseMaintenance(tracer, connection, configResolver, console)
+    : PowerLogic<BulkDeleteSettings>(tracer, connection, configResolver, console)
 {
-    private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
-
-    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override Task<bool> InvokeAsync(BulkDeleteSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
         return InvokeCoreAsync(args, cancellationToken);
     }
 
-    private async Task<bool> InvokeCoreAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    private async Task<bool> InvokeCoreAsync(BulkDeleteSettings args, CancellationToken cancellationToken)
     {
         Tracer.Start(this);
 
@@ -49,7 +46,7 @@ public sealed class BulkDeleteUtil(
             var asyncOperationId = await ExecuteBulkDeleteJobAsync(query!, cancellationToken);
             Tracer.Log($"bulk delete job '{asyncOperationId}' started.", TraceEventType.Information);
 
-            if (await WaitAsync(asyncOperationId, cancellationToken))
+            if (await WaitAsync(asyncOperationId, args.PollInterval, cancellationToken))
             {
                 Tracer.Log($"bulk delete job '{asyncOperationId}' finished.", TraceEventType.Information);
                 return Tracer.End(this, true);
@@ -59,13 +56,16 @@ public sealed class BulkDeleteUtil(
         return Tracer.End(this, false);
     }
 
-    private async Task<bool> WaitAsync(Guid asyncOperationId, CancellationToken cancellationToken)
+    private async Task<bool> WaitAsync(
+        Guid asyncOperationId,
+        int pollIntervalSeconds,
+        CancellationToken cancellationToken)
     {
         var orgAsync = (IOrganizationServiceAsync2)Connection;
         AsyncOperation asyncOperation;
         do
         {
-            await Task.Delay(_sleepTime, cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(pollIntervalSeconds), timeProvider, cancellationToken);
             var retrieveResponse = (RetrieveResponse)await orgAsync.ExecuteAsync(new RetrieveRequest
             {
                 Target = new EntityReference(AsyncOperation.EntityLogicalName, asyncOperationId),

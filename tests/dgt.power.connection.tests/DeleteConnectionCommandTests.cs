@@ -1,51 +1,127 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common.Logic;
+using dgt.power.common.Connections;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
 using Spectre.Console.Cli;
 
 namespace dgt.power.connection.tests;
 
-[NotInParallel("Serial_Connection_Tests")]
 public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnectionCommand, DeleteConnectionSettings>
 {
     [Test]
-    public async Task ShouldDeleteSelectedConnection()
+    public async Task DeletesConnectionAndItsSecret()
     {
-        var profileManager = ProfileManager;
-        profileManager.LoadIdentities().Upsert("KEEP", new Identity { ConnectionString = "connection-1" });
-        profileManager.Save();
-        profileManager.LoadIdentities().Upsert("REMOVE", new Identity { ConnectionString = "connection-2" });
-        profileManager.Save();
-        profileManager.LoadIdentities().SetCurrent("KEEP");
-        profileManager.Save();
+        ConnectionStore.Upsert("Dev", new ClientSecretConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "contoso.onmicrosoft.com",
+            ClientId = "client-id"
+        });
+        SecretStore.WriteSecret("Dev", "clientSecret", "secret");
+        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            UserTokenCache,
+            ConnectionInvocationOptions.FromArguments([]),
+            TestConsole);
 
-        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(profileManager, TestConsole);
-        var result = await command.ExecuteAsync(CreateContext(), new DeleteConnectionSettings { Name = "REMOVE" }, CancellationToken.None);
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new DeleteConnectionSettings { Name = "Dev" },
+            CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        await Assert.That(GetIdentities().Contains("REMOVE")).IsFalse();
-        await Assert.That(GetIdentities().Current).IsEqualTo("KEEP");
-        await Assert.That(TestConsole.Output).Contains("removed");
+        await Assert.That(ConnectionStore.Find("Dev")).IsNull();
+        await Assert.That(SecretStore.ReadSecret("Dev", "clientSecret")).IsNull();
     }
 
     [Test]
-    public async Task ShouldDeleteAllConnections_WhenRequested()
+    public async Task DeletesAllConnections()
     {
-        var profileManager = ProfileManager;
-        profileManager.LoadIdentities().Upsert("FIRST", new Identity { ConnectionString = "connection-1" });
-        profileManager.Save();
-        profileManager.LoadIdentities().Upsert("SECOND", new Identity { ConnectionString = "connection-2" });
-        profileManager.Save();
+        ConnectionStore.Upsert("Dev", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "contoso.onmicrosoft.com"
+        });
+        ConnectionStore.Upsert("Prod", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "contoso.onmicrosoft.com"
+        }, makeCurrent: false);
+        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            UserTokenCache,
+            ConnectionInvocationOptions.FromArguments([]),
+            TestConsole);
 
-        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(profileManager, TestConsole);
-        var result = await command.ExecuteAsync(CreateContext(), new DeleteConnectionSettings { All = true, Yes = true }, CancellationToken.None);
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new DeleteConnectionSettings { All = true, Yes = true },
+            CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        await Assert.That(GetIdentities().Infos).IsEmpty();
-        await Assert.That(TestConsole.Output).Contains("deleted");
+        await Assert.That(ConnectionStore.GetAll()).IsEmpty();
+    }
+
+    [Test]
+    public async Task DeletingConnectionPreservesTokenUsedByAnotherConnection()
+    {
+        var authenticationRecord = CreateAuthenticationRecord("shared-home-account");
+        ConnectionStore.Upsert("Dev", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant-id",
+            AuthenticationRecord = authenticationRecord
+        });
+        ConnectionStore.Upsert("Test", new DeviceCodeConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant-id",
+            AuthenticationRecord = authenticationRecord
+        }, makeCurrent: false);
+        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            UserTokenCache,
+            ConnectionInvocationOptions.FromArguments([]),
+            TestConsole);
+
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new DeleteConnectionSettings { Name = "Dev" },
+            CancellationToken.None);
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(UserTokenCache.RemovedHomeAccountIds).IsEmpty();
+        await Assert.That(ConnectionStore.Find("Test")).IsNotNull();
+    }
+
+    [Test]
+    public async Task DeletingLastConnectionRemovesItsCachedAccount()
+    {
+        ConnectionStore.Upsert("Dev", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant-id",
+            AuthenticationRecord = CreateAuthenticationRecord("home-account")
+        });
+        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            UserTokenCache,
+            ConnectionInvocationOptions.FromArguments([]),
+            TestConsole);
+
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new DeleteConnectionSettings { Name = "Dev" },
+            CancellationToken.None);
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(UserTokenCache.RemovedHomeAccountIds).Contains("home-account");
     }
 
     private static CommandContext CreateContext() =>

@@ -8,185 +8,78 @@ namespace dgt.power.connection.tests;
 public class CreateConnectionSettingsTests
 {
     [Test]
-    public async Task ShouldBeValid_WhenOnlyUrlProvided()
+    public async Task UserConnectionRequiresTenant()
     {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings { Name = "TEST", Url = "https://contoso.crm.dynamics.com" };
-#pragma warning restore S1075
+        var settings = new CreateConnectionSettings { Name = "dev", Url = "https://contoso.crm.dynamics.com" };
 
-        await Assert.That(settings.Validate().Successful).IsTrue();
+        await Assert.That(settings.Validate().Successful).IsFalse();
     }
 
     [Test]
-    public async Task ShouldBeValid_WhenOnlyConnectionStringProvided()
+    public async Task UserConnectionRejectsWhitespaceUrl()
     {
-        var settings = new CreateConnectionSettings { Name = "TEST", ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com" };
-
-        await Assert.That(settings.Validate().Successful).IsTrue();
-    }
-
-    [Test]
-    public async Task ShouldBeValid_WhenFederatedOptionsFullyProvided()
-    {
-#pragma warning disable S1075
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
+            Name = "dev",
+            Url = " ",
+            TenantId = "contoso.onmicrosoft.com"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    public async Task UserConnectionAcceptsUrlAndTenant()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "dev",
             Url = "https://contoso.crm.dynamics.com",
-            AzureDevOpsFederated = true,
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsTrue();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenNeitherUrlNorConnectionStringProvided()
-    {
-        var settings = new CreateConnectionSettings { Name = "TEST" };
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenBothUrlAndConnectionStringProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            Url = "https://contoso.crm.dynamics.com",
-            ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedAndConnectionStringBothProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            Url = "https://contoso.crm.dynamics.com",
-            ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com",
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedWithoutUrl()
-    {
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
-        };
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedMissingRequiredOptions()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            Url = "https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedOptionsProvidedWithoutFlag()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            Url = "https://contoso.crm.dynamics.com",
-            TenantId = "tenant"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldBeValid_WhenServiceConnectionNameOnlyProvided()
-    {
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection"
+            TenantId = "contoso.onmicrosoft.com"
         };
 
         await Assert.That(settings.Validate().Successful).IsTrue();
     }
 
     [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameAndUrlBothProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection",
-            Url = "https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameAndExplicitIdsBothProvided()
+    public async Task ClientSecretRequiresApplicationId()
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection",
+            Name = "prod",
+            Url = "https://contoso.crm.dynamics.com",
             TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
+            ClientSecret = true
         };
 
         await Assert.That(settings.Validate().Successful).IsFalse();
     }
 
     [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameProvidedWithoutFederatedFlag()
+    public async Task ClientSecretAcceptsApplicationId()
     {
-#pragma warning disable S1075
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            ServiceConnectionName = "MyPowerPlatformConnection",
-            Url = "https://contoso.crm.dynamics.com"
+            Name = "prod",
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant",
+            ApplicationId = "client",
+            ClientSecret = true
         };
-#pragma warning restore S1075
 
-        await Assert.That(settings.Validate().Successful).IsFalse();
+        await Assert.That(settings.Validate().Successful).IsTrue();
+    }
+
+    [Test]
+    public async Task FederatedConnectionAcceptsServiceConnectionName()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "pipeline",
+            AzureDevOpsFederated = true,
+            ServiceConnectionName = "Power Platform"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsTrue();
     }
 }

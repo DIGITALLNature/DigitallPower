@@ -1,46 +1,51 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common.Logic;
+using dgt.power.common.Connections;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
 using Spectre.Console.Cli;
 
 namespace dgt.power.connection.tests;
 
-[NotInParallel("Serial_Connection_Tests")]
 public class SelectConnectionCommandTests : ConnectionTestsBase<SelectConnectionCommand, NamedConnectionSettings>
 {
     [Test]
-    public async Task ShouldSelectExistingConnection()
+    public async Task SelectsExistingConnectionCaseInsensitively()
     {
-        var profileManager = ProfileManager;
-        profileManager.LoadIdentities().Upsert("FIRST", new Identity { ConnectionString = "connection-1" });
-        profileManager.Save();
-        profileManager.LoadIdentities().Upsert("SECOND", new Identity { ConnectionString = "connection-2" });
-        profileManager.Save();
+        ConnectionStore.Upsert("Dev", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "contoso.onmicrosoft.com"
+        });
+        ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(ConnectionStore, TestConsole);
 
-        ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(profileManager, TestConsole);
-        var result = await command.ExecuteAsync(CreateContext(), new NamedConnectionSettings { Name = "FIRST" }, CancellationToken.None);
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new NamedConnectionSettings { Name = "dev" },
+            CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        await Assert.That(GetIdentities().Current).IsEqualTo("FIRST");
-        await Assert.That(TestConsole.Output).Contains("set.");
+        await Assert.That(ConnectionStore.Current).IsEqualTo("Dev");
     }
 
     [Test]
-    public async Task ShouldReturnError_WhenConnectionDoesNotExist()
+    public async Task MissingConnectionDoesNotChangeCurrent()
     {
-        var profileManager = ProfileManager;
-        profileManager.LoadIdentities().Upsert("EXISTING", new Identity { ConnectionString = "connection" });
-        profileManager.Save();
+        ConnectionStore.Upsert("Dev", new InteractiveConnection
+        {
+            Url = "https://contoso.crm.dynamics.com",
+            TenantId = "contoso.onmicrosoft.com"
+        });
+        ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(ConnectionStore, TestConsole);
 
-        ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(profileManager, TestConsole);
-        var result = await command.ExecuteAsync(CreateContext(), new NamedConnectionSettings { Name = "MISSING" }, CancellationToken.None);
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new NamedConnectionSettings { Name = "missing" },
+            CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(-1);
-        await Assert.That(GetIdentities().Current).IsEqualTo("EXISTING");
-        await Assert.That(TestConsole.Output).Contains("not found");
+        await Assert.That(ConnectionStore.Current).IsEqualTo("Dev");
     }
 
     private static CommandContext CreateContext() =>

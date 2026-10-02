@@ -18,7 +18,6 @@ using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -214,12 +213,7 @@ public class CodeGenerationContextBuilder
             .AddScoped<IMetadataService, MetadataService>()
             .AddScoped<IOrganizationService>(_ => service)
             .AddSingleton(_console)
-            .AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    { "pollrate", TestFixtures.FakeCallDurations.ToString() }
-                })
-                .Build())
+            .AddSingleton<TimeProvider>(ImmediateTimeProvider.Instance)
             .BuildServiceProvider();
 
         return new CodeGenerationContext(

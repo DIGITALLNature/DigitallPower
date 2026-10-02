@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/connection/v1/schema.json",
+  "title": "dgtp connections",
+  "description": "Versioned metadata for named Dataverse connections. Secrets are stored separately in the operating-system secret store.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "connections"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "current": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connections": {
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/interactive"
+          },
+          {
+            "$ref": "#/$defs/deviceCode"
+          },
+          {
+            "$ref": "#/$defs/clientSecret"
+          },
+          {
+            "$ref": "#/$defs/clientCertificate"
+          },
+          {
+            "$ref": "#/$defs/azureDevOpsFederated"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "base": {
+      "type": "object",
+      "required": [
+        "type",
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "required": [
+        "tenantId"
+      ],
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authenticationRecord": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "interactive": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "$ref": "#/$defs/user"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "interactive"
+            }
+          }
+        }
+      ]
+    },
+    "deviceCode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "$ref": "#/$defs/user"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "deviceCode"
+            }
+          }
+        }
+      ]
+    },
+    "clientSecret": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "clientSecret"
+            },
+            "tenantId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clientId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "tenantId",
+            "clientId"
+          ]
+        }
+      ]
+    },
+    "clientCertificate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "clientCertificate"
+            },
+            "tenantId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clientId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "thumbprint": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "certificatePath": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "tenantId",
+            "clientId"
+          ],
+          "oneOf": [
+            {
+              "required": [
+                "thumbprint"
+              ],
+              "not": {
+                "required": [
+                  "certificatePath"
+                ]
+              }
+            },
+            {
+              "required": [
+                "certificatePath"
+              ],
+              "not": {
+                "required": [
+                  "thumbprint"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "azureDevOpsFederated": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "azureDevOpsFederated"
+            },
+            "tenantId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clientId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "serviceConnectionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "serviceConnectionName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "tenantId",
+            "clientId",
+            "serviceConnectionId"
+          ]
+        }
+      ]
+    }
+  }
+}

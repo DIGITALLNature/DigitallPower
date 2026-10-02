@@ -14,8 +14,6 @@ using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
 using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
-using dgt.power.profile.Base;
-using dgt.power.profile.Commands;
 using dgt.power.Telemetry;
 using dgt.power.solution;
 using dgt.power.solution.Base;
@@ -44,12 +42,6 @@ internal static class CommandTree
         {
             connection.SetDescription("Manages connections to Dataverse environments");
             RegisterConnectionCommands(connection);
-        });
-
-        config.AddBranch<ProfileSettings>("profile", profile =>
-        {
-            profile.SetDescription("[[Deprecated]] Use 'connection' instead");
-            RegisterProfileCommands(profile);
         });
 
         config.AddBranch<ExportVerb>("export", export =>
@@ -83,7 +75,8 @@ internal static class CommandTree
                 maintenance.AddExample("maintenance", "bulkdelete");
                 maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
                     .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml");
+                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml")
+                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml", "--poll-interval", "10");
                 maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
                     .WithDescription("Sets the auto number format for specified columns")
                     .WithExample("maintenance", "autonumber", "--config", "./config.json");
@@ -228,8 +221,9 @@ internal static class CommandTree
     {
         branch.AddCommand<ListConnectionCommand>("list").WithDescription("List connections");
         branch.AddCommand<CreateConnectionCommand>("create").WithDescription("Create a new connection")
-            .WithExample("connection", "create", "<Name>", "--url", "<Url>")
-            .WithExample("connection", "create", "<Name>", "--connection-string", "<ConnectionString>");
+            .WithExample("connection", "create", "dev", "--url", "<Url>", "--tenant", "<Tenant>")
+            .WithExample("connection", "create", "test", "--url", "<Url>", "--tenant", "<Tenant>", "--application-id", "<ClientId>", "--client-secret")
+            .WithExample("connection", "create", "prod", "--url", "<Url>", "--tenant", "<Tenant>", "--application-id", "<ClientId>", "--certificate-thumbprint", "<Thumbprint>");
         branch.AddCommand<SelectConnectionCommand>("select").WithDescription("Select a connection");
         branch.AddCommand<DeleteConnectionCommand>("delete").WithDescription("Delete a connection. Use --all to delete all connections (prompts for confirmation unless --yes is passed).")
             .WithExample("connection", "delete", "<Name>")
@@ -242,18 +236,8 @@ internal static class CommandTree
                 "Intended as a pre-flight check for coding agents.");
         branch.AddCommand<ConnectionRefreshCommand>("refresh")
             .WithDescription("Forces an interactive MSAL browser login and saves the refreshed token.");
+        branch.AddCommand<ConnectionLogoutCommand>("logout")
+            .WithDescription("Removes a user connection's account from the persistent token cache.");
     }
 
-    private static void RegisterProfileCommands(IConfigurator<ProfileSettings> branch)
-    {
-        branch.AddCommand<ListProfileCommand>("list").WithDescription("List profiles");
-        branch.AddCommand<CreateProfileCommand>("create").WithDescription("Create a new profile")
-            .WithExample("profile", "create", "<Name>", "<Url>", "--msal");
-        branch.AddCommand<DeleteProfileCommand>("delete").WithDescription("Delete a profile");
-        branch.AddCommand<SelectProfileCommand>("select").WithDescription("Select a profile");
-        branch.AddCommand<PurgeProfileCommand>("purge").WithDescription("Purge all profiles");
-        branch.AddCommand<AuthCheckCommand>("auth-check")
-            .WithDescription("Checks whether the current MSAL token is still valid without opening a browser. " +
-                "Exit code 0 = token valid, 2 = interactive login required.");
-    }
 }

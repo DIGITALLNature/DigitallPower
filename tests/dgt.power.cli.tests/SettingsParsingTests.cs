@@ -14,7 +14,6 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
 using dgt.power.plugin;
 using dgt.power.plugin.Commands;
-using dgt.power.profile.Commands;
 using dgt.power.solution.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -238,6 +237,24 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task BulkDeleteSettings_ParsesPollIntervalAndDefault()
+    {
+        var result = Parse<BulkDeleteSettings>("--poll-interval", "10");
+        var defaults = Parse<BulkDeleteSettings>();
+
+        await Assert.That(((BulkDeleteSettings)result.Settings!).PollInterval).IsEqualTo(10);
+        await Assert.That(((BulkDeleteSettings)defaults.Settings!).PollInterval).IsEqualTo(5);
+    }
+
+    [Test]
+    public async Task BulkDeleteSettings_RejectsNonPositivePollInterval()
+    {
+        var settings = new BulkDeleteSettings { PollInterval = 0 };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
     public async Task CarrierInfoSettings_ParsesOptionsAndDefaults()
     {
         var result = Parse<CarrierInfoSettings>("--filedir", "./carriers", "--filename", "carrier.json");
@@ -374,59 +391,34 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task NamedProfileSettings_ParsesPositionalArgument()
-    {
-        var result = Parse<NamedProfileSettings>("myprofile");
-
-        await Assert.That(((NamedProfileSettings)result.Settings!).Name).IsEqualTo("myprofile");
-    }
-
-    [Test]
-    public async Task CreateProfileSettings_ParsesPositionalArgumentsAndFlags()
-    {
-        var result = Parse<CreateProfileSettings>(
-            "myprofile",
-            "https://org.crm.dynamics.com",
-            "--msal");
-
-        var settings = (CreateProfileSettings)result.Settings!;
-
-        await Assert.That(settings.Name).IsEqualTo("myprofile");
-        await Assert.That(settings.ConnectionString).IsEqualTo("https://org.crm.dynamics.com");
-        await Assert.That(settings.TokenBased).IsTrue();
-        await Assert.That(settings.SkipChecking).IsFalse();
-    }
-
-    [Test]
     public async Task CreateConnectionSettings_ParsesMsalOptions()
     {
         var result = Parse<CreateConnectionSettings>(
             "myconnection",
             "--url", "https://org.crm.dynamics.com",
+            "--tenant", "contoso.onmicrosoft.com",
             "--no-verify");
 
         var settings = (CreateConnectionSettings)result.Settings!;
 
         await Assert.That(settings.Name).IsEqualTo("myconnection");
         await Assert.That(settings.Url).IsEqualTo("https://org.crm.dynamics.com");
-        await Assert.That(settings.ConnectionString).IsNull();
+        await Assert.That(settings.TenantId).IsEqualTo("contoso.onmicrosoft.com");
         await Assert.That(settings.AzureDevOpsFederated).IsFalse();
         await Assert.That(settings.NoVerify).IsTrue();
     }
 
     [Test]
-    public async Task CreateConnectionSettings_ParsesConnectionStringOption()
+    public async Task GlobalConnectionSettings_ParsesConnectionSelectionAndAdHocString()
     {
-        var result = Parse<CreateConnectionSettings>(
-            "myconnection",
+        var result = Parse<MaintenanceVerb>(
+            "--connection", "dev",
             "--connection-string", "AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
 
-        var settings = (CreateConnectionSettings)result.Settings!;
+        var settings = (MaintenanceVerb)result.Settings!;
 
-        await Assert.That(settings.Name).IsEqualTo("myconnection");
+        await Assert.That(settings.Connection).IsEqualTo("dev");
         await Assert.That(settings.ConnectionString).IsEqualTo("AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
-        await Assert.That(settings.Url).IsNull();
-        await Assert.That(settings.NoVerify).IsFalse();
     }
 
     [Test]

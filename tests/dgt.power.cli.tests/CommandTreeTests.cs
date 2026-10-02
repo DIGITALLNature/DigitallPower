@@ -41,7 +41,6 @@ public class CommandTreeTests
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
     [Arguments("connection")]
-    [Arguments("profile")]
     [Arguments("export")]
     [Arguments("maintenance")]
     [Arguments("analyze")]
@@ -93,6 +92,17 @@ public class CommandTreeTests
         tester.Configure(CommandTree.Register);
 
         var result = tester.Run("plugin", "step", "config", "set", "--help");
+ 
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ConnectionLogout_HelpInvocation_Succeeds()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("connection", "logout", "--help");
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }

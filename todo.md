@@ -46,21 +46,9 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 
 ---
 
-## Internal Rename: profile → connection terminology
+## Connection storage
 
-The `dgt.power.connection` module is the canonical replacement for `dgt.power.profile`.
-The `profile` branch is kept as a deprecated alias until a future breaking release removes it.
-
-Once `dgt.power.profile` is removed, the following internal renames should follow:
-
-| Current | Target |
-|---------|--------|
-| `IProfileManager` | `IConnectionManager` |
-| `ProfileManager` | `ConnectionManager` |
-| `ProfileManager` constructor param names | `connectionManager` |
-| `XrmConnection.ConnectWithProfileNameAsync` | `ConnectWithConnectionNameAsync` |
-| `"Profile not found"` error messages | `"Connection not found"` |
-| `profileManager.Current` console output | use "connection" wording |
-
-**Do not rename while both modules coexist** — the `profile` commands still depend on
-the current naming and premature renaming adds churn without user-visible benefit.
+The legacy profile module and profile service layer have been removed. `dgt.power.connection` is
+the sole connection-management module; saved connections use typed definitions in the stable
+`DGTP_HOME` data directory. Existing isolated-storage connections are not migrated. See
+`CONNECTION-STORAGE-DESIGN.md`.
