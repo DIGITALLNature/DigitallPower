@@ -30,7 +30,7 @@ src/
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`)
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set` (replaces the plugin half of `push`)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`)
     └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
@@ -192,6 +192,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, validates requested solutions and package component definitions before writes, and rejects all Create pre-images |
+| `implementation-plugin-step-config-set.md` | implementation | `dgtp plugin step config set` command: resource-oriented step configuration, file/inline config support, composite key resolution |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
