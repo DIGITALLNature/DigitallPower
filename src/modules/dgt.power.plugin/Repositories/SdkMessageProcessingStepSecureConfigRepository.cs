@@ -12,7 +12,7 @@ namespace dgt.power.plugin.Repositories;
 public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganizationServiceAsync2 service)
     : ISdkMessageProcessingStepSecureConfigRepository
 {
-    public async Task<Guid?> GetIdByStepIdAsync(Guid stepId, CancellationToken cancellationToken = default)
+    private async Task<Guid?> FindSecureConfigIdByStepIdAsync(Guid stepId, CancellationToken cancellationToken = default)
     {
         var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
         {
@@ -35,7 +35,7 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
         return step?.SdkMessageProcessingStepSecureConfigId?.Id;
     }
 
-    public async Task<Guid> CreateAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
+    private async Task<Guid> CreateAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
     {
         var secureConfigEntity = new SdkMessageProcessingStepSecureConfig
         {
@@ -56,12 +56,25 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
         return secureConfigId;
     }
 
-    public async Task UpdateAsync(Guid secureConfigId, string secureConfig, CancellationToken cancellationToken = default)
+    private async Task UpdateAsync(Guid secureConfigId, string secureConfig, CancellationToken cancellationToken = default)
     {
         var secureConfigEntity = new SdkMessageProcessingStepSecureConfig(secureConfigId)
         {
             SecureConfig = secureConfig
         };
         await service.UpdateAsync(secureConfigEntity, cancellationToken);
+    }
+
+    public async Task<Guid> UpsertAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
+    {
+        var secureConfigId = await FindSecureConfigIdByStepIdAsync(stepId, cancellationToken);
+        if (!secureConfigId.HasValue)
+        {
+            return await CreateAsync(stepId, secureConfig, cancellationToken);
+        }
+
+        await UpdateAsync(secureConfigId.Value, secureConfig, cancellationToken);
+        return secureConfigId.Value;
+
     }
 }

@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ComponentModel;
+using System.IO;
 using dgt.power.plugin;
 using dgt.power.plugin.Base;
 using Spectre.Console;
@@ -34,7 +35,7 @@ public class PluginStepConfigSetSettings : PluginSettings
 
     [CommandOption("--stage")]
     [Description("Execution stage: PreValidation, PreOperation, PostOperation, PreCommitStage, PostCommitStage.")]
-    [System.ComponentModel.TypeConverter(typeof(StageTypeConverter))]
+    [TypeConverter(typeof(StageTypeConverter))]
     public int? Stage { get; set; }
 
     [CommandOption("--entity")]
@@ -57,7 +58,7 @@ public class PluginStepConfigSetSettings : PluginSettings
 
     [CommandOption("--unsecure-file")]
     [Description("Path to a UTF-8 file containing the unsecure configuration. Mutually exclusive with --unsecure.")]
-    public string? UnsecureConfigFile { get; set; }
+    public FileInfo? UnsecureConfigFile { get; set; }
 
     [CommandOption("--secure")]
     [Description("Inline secure configuration value. Use empty string to clear.")]
@@ -65,7 +66,7 @@ public class PluginStepConfigSetSettings : PluginSettings
 
     [CommandOption("--secure-file")]
     [Description("Path to a UTF-8 file containing the secure configuration. Mutually exclusive with --secure.")]
-    public string? SecureConfigFile { get; set; }
+    public FileInfo? SecureConfigFile { get; set; }
 
     // ==================== Validation ====================
 
@@ -105,14 +106,14 @@ public class PluginStepConfigSetSettings : PluginSettings
         }
 
         // File existence validation
-        if (UnsecureConfigFile != null && !File.Exists(UnsecureConfigFile))
+        if (UnsecureConfigFile is { Exists: false })
         {
-            return ValidationResult.Error($"File not found: {UnsecureConfigFile}");
+            return ValidationResult.Error($"File not found: {UnsecureConfigFile.FullName}");
         }
 
-        if (SecureConfigFile != null && !File.Exists(SecureConfigFile))
+        if (SecureConfigFile is { Exists: false })
         {
-            return ValidationResult.Error($"File not found: {SecureConfigFile}");
+            return ValidationResult.Error($"File not found: {SecureConfigFile.FullName}");
         }
 
         return ValidationResult.Success();

@@ -3,7 +3,6 @@
 
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.dataverse;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Microsoft.Xrm.Sdk;
@@ -31,16 +30,16 @@ public class PluginStepConfigSetCommand(
         Tracer.Start(this);
 
         // Read file contents if specified
-        string? unsecureValue = settings.UnsecureConfig;
+        var unsecureValue = settings.UnsecureConfig;
         if (settings.UnsecureConfigFile != null)
         {
-            unsecureValue = await File.ReadAllTextAsync(settings.UnsecureConfigFile, cancellationToken);
+            unsecureValue = await File.ReadAllTextAsync(settings.UnsecureConfigFile.FullName, cancellationToken);
         }
 
-        string? secureValue = settings.SecureConfig;
+        var secureValue = settings.SecureConfig;
         if (settings.SecureConfigFile != null)
         {
-            secureValue = await File.ReadAllTextAsync(settings.SecureConfigFile, cancellationToken);
+            secureValue = await File.ReadAllTextAsync(settings.SecureConfigFile.FullName, cancellationToken);
         }
 
         var service = (IOrganizationServiceAsync2)Connection;
@@ -66,55 +65,45 @@ public class PluginStepConfigSetCommand(
                 settings.ExecutionOrder,
                 cancellationToken);
 
-            if (matches.Count == 0)
+            switch (matches.Count)
             {
-                var criteria = new List<string>();
-                if (settings.PluginType != null) criteria.Add($"plugin-type={settings.PluginType}");
-                if (settings.Message != null) criteria.Add($"message={settings.Message}");
-                if (settings.Stage != null) criteria.Add($"stage={settings.Stage}");
-                if (settings.Entity != null) criteria.Add($"entity={settings.Entity}");
-                if (settings.SecondaryEntity != null) criteria.Add($"secondary-entity={settings.SecondaryEntity}");
-                if (settings.ExecutionOrder.HasValue) criteria.Add($"execution-order={settings.ExecutionOrder}");
+                case 0:
+                    {
+                        var criteria = new List<string>();
+                        if (settings.PluginType != null) criteria.Add($"plugin-type={settings.PluginType}");
+                        if (settings.Message != null) criteria.Add($"message={settings.Message}");
+                        if (settings.Stage != null) criteria.Add($"stage={settings.Stage}");
+                        if (settings.Entity != null) criteria.Add($"entity={settings.Entity}");
+                        if (settings.SecondaryEntity != null) criteria.Add($"secondary-entity={settings.SecondaryEntity}");
+                        if (settings.ExecutionOrder.HasValue) criteria.Add($"execution-order={settings.ExecutionOrder}");
 
-                Console.MarkupLine(CultureInfo.InvariantCulture, 
-                    "[red]No step found matching {0}. Verify the step exists, or use --step-id.[/]",
-                    string.Join(", ", criteria));
-                return Tracer.End(this, false);
+                        Console.MarkupLine(CultureInfo.InvariantCulture,
+                            "[red]No step found matching {0}. Verify the step exists, or use --step-id.[/]",
+                            string.Join(", ", criteria));
+                        return Tracer.End(this, false);
+                    }
+                case > 1:
+                    PrintMultipleMatches(matches);
+                    return Tracer.End(this, false);
+                default:
+                    stepId = matches[0].Id;
+                    break;
             }
-
-            if (matches.Count > 1)
-            {
-                PrintMultipleMatches(matches);
-                return Tracer.End(this, false);
-            }
-
-            stepId = matches[0].Id;
         }
-
-        // Update configurations
-        var success = true;
 
         if (unsecureValue is not null)
         {
             await stepRepository.UpdateConfigurationAsync(stepId, unsecureValue, cancellationToken);
-            Console.MarkupLine("[green]Updated unsecure configuration[/]");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated unsecure configuration");
         }
 
         if (secureValue is not null)
         {
-            var secureConfigId = await secureConfigRepository.GetIdByStepIdAsync(stepId, cancellationToken);
-            if (secureConfigId.HasValue)
-            {
-                await secureConfigRepository.UpdateAsync(secureConfigId.Value, secureValue, cancellationToken);
-            }
-            else
-            {
-                await secureConfigRepository.CreateAsync(stepId, secureValue, cancellationToken);
-            }
-            Console.MarkupLine("[green]Updated secure configuration[/]");
+            await secureConfigRepository.UpsertAsync(stepId, secureValue, cancellationToken);
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
         }
 
-        return Tracer.End(this, success);
+        return Tracer.End(this, true);
     }
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)
