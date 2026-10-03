@@ -32,4 +32,20 @@ public interface ISdkMessageProcessingStepRepository
     /// replacement before the outdated assembly is purged.
     /// </summary>
     Task ReassignPluginTypeAsync(Guid stepId, Guid newPluginTypeId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Finds steps matching the provided composite key criteria. Used for resolving a step
+    /// without knowing its id.
+    /// </summary>
+    Task<IReadOnlyList<RemotePluginStep>> FindByCompositeKeyAsync(
+        string? pluginTypeName,
+        string? messageName,
+        string? stageName,
+        string? primaryEntityName,
+        string? secondaryEntityName,
+        int? executionOrder,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Updates the unsecure configuration on a step.</summary>
+    Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default);
 }

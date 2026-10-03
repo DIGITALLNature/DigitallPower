@@ -6,6 +6,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using dgt.power.plugin.Remote;
+using dgt.power.plugin;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -129,5 +130,101 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         }
 
         return step;
+    }
+
+    public async Task<IReadOnlyList<RemotePluginStep>> FindByCompositeKeyAsync(
+        string? pluginTypeName,
+        string? messageName,
+        string? stageName,
+        string? primaryEntityName,
+        string? secondaryEntityName,
+        int? executionOrder,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = new FilterExpression();
+
+        if (pluginTypeName != null)
+        {
+            filter.AddCondition("plugintype.name", ConditionOperator.Equal, pluginTypeName);
+        }
+
+        if (messageName != null)
+        {
+            filter.AddCondition("message.name", ConditionOperator.Equal, messageName);
+        }
+
+        if (stageName != null)
+        {
+            var stageValue = StageMapping.GetStageValue(stageName);
+            filter.AddCondition(SdkMessageProcessingStep.LogicalNames.Stage, ConditionOperator.Equal, stageValue);
+        }
+
+        if (primaryEntityName != null)
+        {
+            filter.AddCondition("filter.primaryobjecttypecode", ConditionOperator.Equal, primaryEntityName);
+        }
+
+        if (secondaryEntityName != null)
+        {
+            filter.AddCondition("filter.secondaryobjecttypecode", ConditionOperator.Equal, secondaryEntityName);
+        }
+
+        if (executionOrder.HasValue)
+        {
+            filter.AddCondition(SdkMessageProcessingStep.LogicalNames.Rank, ConditionOperator.Equal, executionOrder.Value);
+        }
+
+        var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
+                SdkMessageProcessingStep.LogicalNames.Name,
+                SdkMessageProcessingStep.LogicalNames.Mode,
+                SdkMessageProcessingStep.LogicalNames.Stage,
+                SdkMessageProcessingStep.LogicalNames.Rank,
+                SdkMessageProcessingStep.LogicalNames.FilteringAttributes,
+                SdkMessageProcessingStep.LogicalNames.SdkMessageId,
+                SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId),
+            Criteria = filter,
+            LinkEntities =
+            {
+                new LinkEntity(
+                    SdkMessageProcessingStep.EntityLogicalName, SdkMessage.EntityLogicalName,
+                    SdkMessageProcessingStep.LogicalNames.SdkMessageId, SdkMessage.LogicalNames.SdkMessageId, JoinOperator.Inner)
+                {
+                    EntityAlias = "message",
+                    Columns = new ColumnSet(SdkMessage.LogicalNames.Name)
+                },
+                new LinkEntity(
+                    SdkMessageProcessingStep.EntityLogicalName, PluginType.EntityLogicalName,
+                    SdkMessageProcessingStep.LogicalNames.EventHandler, PluginType.LogicalNames.PluginTypeId, JoinOperator.Inner)
+                {
+                    EntityAlias = "plugintype",
+                    Columns = new ColumnSet(PluginType.LogicalNames.Name)
+                },
+                new LinkEntity(
+                    SdkMessageProcessingStep.EntityLogicalName, SdkMessageFilter.EntityLogicalName,
+                    SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId, SdkMessageFilter.LogicalNames.SdkMessageFilterId, JoinOperator.LeftOuter)
+                {
+                    EntityAlias = "filter",
+                    Columns = new ColumnSet(
+                        SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode,
+                        SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode)
+                }
+            }
+        };
+
+        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
+        return result.Entities.Select(ToRemoteStep).ToList();
+    }
+
+    public async Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            Configuration = configuration
+        };
+        await service.UpdateAsync(step, cancellationToken);
     }
 }

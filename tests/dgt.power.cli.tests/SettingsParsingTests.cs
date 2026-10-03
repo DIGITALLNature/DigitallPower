@@ -449,4 +449,57 @@ public class SettingsParsingTests
         await Assert.That(settings.Shell).IsEqualTo("bash");
         await Assert.That(settings.DryRun).IsTrue();
     }
+
+    [Test]
+    public async Task PluginStepConfigSetSettings_ParsesDirectStepIdWithConfig()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepConfigSetSettings>(
+            "--step-id", stepId.ToString(),
+            "--unsecure", "myconfig");
+
+        var settings = (PluginStepConfigSetSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.UnsecureConfig).IsEqualTo("myconfig");
+        await Assert.That(settings.PluginType).IsNull();
+        await Assert.That(settings.Message).IsNull();
+    }
+
+    [Test]
+    public async Task PluginStepConfigSetSettings_ParsesCompositeKeyWithConfig()
+    {
+        var result = Parse<PluginStepConfigSetSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", "PreOperation",
+            "--entity", "account",
+            "--secure", "mysecret");
+
+        var settings = (PluginStepConfigSetSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsNull();
+        await Assert.That(settings.PluginType).IsEqualTo("MyNamespace.MyPlugin");
+        await Assert.That(settings.Message).IsEqualTo("Create");
+        await Assert.That(settings.Stage).IsEqualTo("PreOperation");
+        await Assert.That(settings.Entity).IsEqualTo("account");
+        await Assert.That(settings.SecureConfig).IsEqualTo("mysecret");
+    }
+
+    [Test]
+    public async Task PluginStepConfigSetSettings_ParsesMultipleConfigOptions()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepConfigSetSettings>(
+            "--step-id", stepId.ToString(),
+            "--unsecure", "unsecureValue",
+            "--secure", "secureValue");
+
+        var settings = (PluginStepConfigSetSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.UnsecureConfig).IsEqualTo("unsecureValue");
+        await Assert.That(settings.SecureConfig).IsEqualTo("secureValue");
+        await Assert.That(settings.PluginType).IsNull();
+    }
 }

@@ -74,4 +74,27 @@ public class CommandTreeTests
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }
+
+    [Test]
+    [Arguments("step")]
+    public async Task PluginStepSubCommand_HelpInvocation_Succeeds(string subCommand)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("plugin", subCommand, "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task PluginStepConfigSet_HelpInvocation_Succeeds()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("plugin", "step", "config", "set", "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
 }
