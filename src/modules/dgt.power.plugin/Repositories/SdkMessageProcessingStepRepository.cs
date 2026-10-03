@@ -135,7 +135,7 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
     public async Task<IReadOnlyList<RemotePluginStep>> FindByCompositeKeyAsync(
         string? pluginTypeName,
         string? messageName,
-        string? stageName,
+        int? stageValue,
         string? primaryEntityName,
         string? secondaryEntityName,
         int? executionOrder,
@@ -153,10 +153,9 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             filter.AddCondition("message.name", ConditionOperator.Equal, messageName);
         }
 
-        if (stageName != null)
+        if (stageValue.HasValue)
         {
-            var stageValue = StageMapping.GetStageValue(stageName);
-            filter.AddCondition(SdkMessageProcessingStep.LogicalNames.Stage, ConditionOperator.Equal, stageValue);
+            filter.AddCondition(SdkMessageProcessingStep.LogicalNames.Stage, ConditionOperator.Equal, stageValue.Value);
         }
 
         if (primaryEntityName != null)

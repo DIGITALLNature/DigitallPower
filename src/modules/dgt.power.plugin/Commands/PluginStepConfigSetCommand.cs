@@ -129,24 +129,10 @@ public class PluginStepConfigSetCommand(
                 step.Id,
                 step.Name,
                 step.MessageName,
-                GetStageDisplayName(step.Stage),
+                StageTypeConverter.GetStageDisplayName(step.Stage),
                 step.PrimaryEntityName,
                 step.SecondaryEntityName,
                 step.ExecutionOrder);
         }
-    }
-
-    private static string GetStageDisplayName(int stageValue)
-    {
-        // Map OptionSet values back to display names for output
-        return stageValue switch
-        {
-            SdkMessageProcessingStep.Options.Stage.PreValidation => "PreValidation",
-            SdkMessageProcessingStep.Options.Stage.PreOperation => "PreOperation",
-            SdkMessageProcessingStep.Options.Stage.PostOperation => "PostOperation",
-            SdkMessageProcessingStep.Options.Stage.PreCommitStageFiredBeforeTransactionCommitForInternalUseOnly => "PreCommitStage",
-            SdkMessageProcessingStep.Options.Stage.PostCommitStageFiredAfterTransactionCommitForInternalUseOnly => "PostCommitStage",
-            _ => stageValue.ToString(CultureInfo.InvariantCulture)
-        };
     }
 }

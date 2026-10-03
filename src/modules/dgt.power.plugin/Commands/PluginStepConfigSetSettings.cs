@@ -34,7 +34,8 @@ public class PluginStepConfigSetSettings : PluginSettings
 
     [CommandOption("--stage")]
     [Description("Execution stage: PreValidation, PreOperation, PostOperation, PreCommitStage, PostCommitStage.")]
-    public string? Stage { get; set; }
+    [System.ComponentModel.TypeConverter(typeof(StageTypeConverter))]
+    public int? Stage { get; set; }
 
     [CommandOption("--entity")]
     [Description("Primary entity logical name (e.g., account, contact).")]
@@ -112,19 +113,6 @@ public class PluginStepConfigSetSettings : PluginSettings
         if (SecureConfigFile != null && !File.Exists(SecureConfigFile))
         {
             return ValidationResult.Error($"File not found: {SecureConfigFile}");
-        }
-
-        // Stage validation
-        if (Stage != null)
-        {
-            try
-            {
-                StageMapping.GetStageValue(Stage);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ValidationResult.Error(ex.Message);
-            }
         }
 
         return ValidationResult.Success();

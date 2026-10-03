@@ -40,7 +40,7 @@ public interface ISdkMessageProcessingStepRepository
     Task<IReadOnlyList<RemotePluginStep>> FindByCompositeKeyAsync(
         string? pluginTypeName,
         string? messageName,
-        string? stageName,
+        int? stageValue,
         string? primaryEntityName,
         string? secondaryEntityName,
         int? executionOrder,
