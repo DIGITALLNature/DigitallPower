@@ -64,7 +64,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Push** | Push plugin assemblies/packages with `plugin push` and web resources with `push` |
+| **Push** | Push plugin assemblies/packages with `plugin push`, manage plugin step configuration with `plugin step config set`, and deploy web resources with `push` |
 
 ## 🚀 Installation
 
@@ -713,6 +713,45 @@ assembly is unsupported: `plugin push` fails before writing and requires manual 
 - **Fully declarative registrations required** - a concrete `IPlugin` implementation with no
   `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
   rejected. Use legacy `push` for manually maintained registrations.
+
+#### `step config set` — Set plugin step configuration
+
+Sets the unsecure and/or secure configuration for an existing plugin step. Steps can be identified
+either by their SDK message processing step ID or by a composite key (plugin type, message, stage, entity).
+Configuration values can be provided inline or read from UTF-8 encoded files.
+
+##### Usage
+
+```bash
+dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --unsecure "{\"key\":\"value\"}"
+dgtp plugin step config set --plugin-type MyNamespace.MyPlugin --message Create --stage PreOperation --entity account --unsecure "{\"key\":\"value\"}"
+dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --secure "secret-value" --unsecure "{\"key\":\"value\"}"
+dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --unsecure-file ./config.json --secure-file ./secrets.json
+```
+
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--step-id` | No (mutually exclusive with composite key) | SDK message processing step ID |
+| `--plugin-type` | No (part of composite key) | Fully qualified plugin type name |
+| `--message` | No (part of composite key) | SDK message name (Create, Update, Delete, etc.) |
+| `--stage` | No (part of composite key) | Execution stage: 10=PreValidation, 20=PreOperation, 30=MainOperation, 40=PostOperation |
+| `--entity` | No (part of composite key) | Primary entity logical name |
+| `--secondary-entity` | No (part of composite key) | Secondary entity logical name (for Associate, Disassociate, etc.) |
+| `--execution-order` | No (part of composite key) | Rank/execution order of the step |
+| `--unsecure` | No (at least one config required) | Inline unsecure configuration value. Use empty string to clear |
+| `--unsecure-file` | No (mutually exclusive with --unsecure) | Path to UTF-8 file containing unsecure configuration |
+| `--secure` | No (at least one config required) | Inline secure configuration value. Use empty string to clear |
+| `--secure-file` | No (mutually exclusive with --secure) | Path to UTF-8 file containing secure configuration |
+
+##### Notes
+
+- Either `--step-id` or the composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`) must be provided, but not both.
+- At least one of `--unsecure`, `--unsecure-file`, `--secure`, or `--secure-file` must be provided.
+- When using file-based configuration, the file must exist and be UTF-8 encoded.
+- Composite key matching requires exactly one step to match; multiple matches or no matches will fail.
+- Secure configuration is stored in the `SdkMessageProcessingStepSecureConfig` entity.
 
 ### `push` — Deploy artifacts
 
