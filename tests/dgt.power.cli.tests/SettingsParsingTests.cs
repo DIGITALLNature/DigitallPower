@@ -481,7 +481,7 @@ public class SettingsParsingTests
         await Assert.That(settings.StepId).IsNull();
         await Assert.That(settings.PluginType).IsEqualTo("MyNamespace.MyPlugin");
         await Assert.That(settings.Message).IsEqualTo("Create");
-        await Assert.That(settings.Stage).IsEqualTo("PreOperation");
+        await Assert.That(settings.Stage).IsEqualTo(20);
         await Assert.That(settings.Entity).IsEqualTo("account");
         await Assert.That(settings.SecureConfig).IsEqualTo("mysecret");
     }
