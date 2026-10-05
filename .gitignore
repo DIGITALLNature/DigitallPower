@@ -417,10 +417,6 @@ FodyWeavers.xsd
 # private script files
 *.private.ps1
 
-# Allow
-!/samples/output/dgt.power.push.tests.sample.1.0.0.nupkg
-!/samples/output/dgt.power.push.tests.sample.dll
-
 /.junie
 /.agentwork
 qodana.sarif.json

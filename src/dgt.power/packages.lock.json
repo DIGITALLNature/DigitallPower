@@ -144,11 +144,6 @@
         "resolved": "33.1.0",
         "contentHash": "kqfTOZGrn7NarNeXgjh86JcpTHUoeQDMB8t9NVa/ZtlSYiV1rxfRnQ49WaJsob4AiGrbK0XDzpyKkBwai4F8eg=="
       },
-      "dgt.registration": {
-        "type": "Transitive",
-        "resolved": "1.0.1",
-        "contentHash": "K7+HJNbRcQ1OmSi7c9pZPM5/9daq2E03faHpNlUCV88qeFz5mv01Vuxu/FBYKZyTOpupM/r4dF0w6bYQ+AzIQA=="
-      },
       "DocumentFormat.OpenXml": {
         "type": "Transitive",
         "resolved": "3.5.1",
@@ -219,53 +214,6 @@
         "contentHash": "ZYctNuT10V9IYyCFydy63DXx0ggZQuynuzQOdLvW62dPgzjIz7f0ISEP75RGiq1jFQh8p6TmGSqxeQZQ87LCig==",
         "dependencies": {
           "System.IO.Hashing": "10.0.12"
-        }
-      },
-      "Microsoft.CodeAnalysis.Analyzers": {
-        "type": "Transitive",
-        "resolved": "3.3.2",
-        "contentHash": "7xt6zTlIEizUgEsYAIgm37EbdkiMmr6fP6J9pDoKEpiGM4pi32BCPGr/IczmSJI9Zzp0a6HOzpr9OvpMP+2veA=="
-      },
-      "Microsoft.CodeAnalysis.Common": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "SMREwaVD5SzatlWhh9aahQAtSWdb63NcE//f+bQzgHSECU6xtDtaxk0kwV+asdFfr6HtW38UeO6jvqdfzudg3w==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "3.3.2"
-        }
-      },
-      "Microsoft.CodeAnalysis.CSharp": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "Q9RxxydPpUElj/x1/qykDTUGsRoKbJG8H5XUSeMGmMu54fBiuX1xyanom9caa1oQfh5JIW1BgLxobSaWs4WyHQ==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[4.0.1]"
-        }
-      },
-      "Microsoft.CodeAnalysis.CSharp.Scripting": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "B3Mw2HYEcmN6kh0r4AYL2YRnqYzpjr9dt9t05GRRLa8SWU8y5gIh9yBwRO2VUr+U0Tqxr+mfCTduAhAm2tLIjw==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp": "[4.0.1]",
-          "Microsoft.CodeAnalysis.Common": "[4.0.1]",
-          "Microsoft.CodeAnalysis.Scripting.Common": "[4.0.1]"
-        }
-      },
-      "Microsoft.CodeAnalysis.Scripting.Common": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "4wr4dtSWoZv8p+jykG7CmiVTLlbbXnphZKQnpVer4figUTL7MMKjuuu7LDUatCvx7NOZxn4CZA6oH6rSwSU6tg==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[4.0.1]"
-        }
-      },
-      "Microsoft.CodeAnalysis.VisualBasic": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "o67w8S4zO7tQvB0EQeeo7i5uJCT/CrLwnLUWkkbxU2aUsZPGuRd35diuqk7e+vwnfhu27AvNJsr+1Z6EUT+fDA==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[4.0.1]"
         }
       },
       "Microsoft.Diagnostics.Tracing.EventRegister": {
@@ -488,27 +436,6 @@
         "resolved": "8.14.0",
         "contentHash": "iwbCpSjD3ehfTwBhtSNEtKPK0ICun6ov7Ibx6ISNA9bfwIyzI2Siwyi9eJFCJBwxowK9xcA1mj+jBWiigeqgcQ=="
       },
-      "Microsoft.PowerFx.Core": {
-        "type": "Transitive",
-        "resolved": "0.2.1-preview",
-        "contentHash": "QOkWk68OYAGYLi7GKHsg3zVaQDPpZiE5fVj60LR6Cjm63dq0iKlhjrzFIhLz4EfWtosL5HVnetRVMwl4YQlqPw==",
-        "dependencies": {
-          "Microsoft.PowerFx.Transport.Attributes": "0.2.1-preview"
-        }
-      },
-      "Microsoft.PowerFx.Interpreter": {
-        "type": "Transitive",
-        "resolved": "0.2.1-preview",
-        "contentHash": "qhDM6tXBfW2e1smcXK1TiI6jOKa96k/A9gEZpvsr3Bqnx9orxy+BcS4OsjhJV8CcHMcLdKjLmdHlhgB0+VBqlQ==",
-        "dependencies": {
-          "Microsoft.PowerFx.Core": "0.2.1-preview"
-        }
-      },
-      "Microsoft.PowerFx.Transport.Attributes": {
-        "type": "Transitive",
-        "resolved": "0.2.1-preview",
-        "contentHash": "M3kswDFvhnbW67u5IGIqglA8pUX/PPXmmCulhw1ntLsi4rzAXdXkoG7SLeWUhXP6b3k881f6tDntzp+C4w+ikA=="
-      },
       "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": {
         "type": "Transitive",
         "resolved": "1.2.27",
@@ -536,19 +463,6 @@
         "type": "Transitive",
         "resolved": "13.0.3",
         "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
-      },
-      "Nito.AsyncEx.Tasks": {
-        "type": "Transitive",
-        "resolved": "5.1.2",
-        "contentHash": "jEkCfR2/M26OK/U4G7SEN063EU/F4LiVA06TtpZILMdX/quIHCg+wn31Zerl2LC+u1cyFancjTY3cNAr2/89PA==",
-        "dependencies": {
-          "Nito.Disposables": "2.2.1"
-        }
-      },
-      "Nito.Disposables": {
-        "type": "Transitive",
-        "resolved": "2.2.1",
-        "contentHash": "6sZ5uynQeAE9dPWBQGKebNmxbY4xsvcc5VplB5WkYEESUS7oy4AwnFp0FhqxTSKm/PaFrFqLrYr696CYN8cugg=="
       },
       "NuGet.Common": {
         "type": "Transitive",
@@ -629,11 +543,6 @@
         "resolved": "1.5.2",
         "contentHash": "idEOR6WU8WvnaDhFcj9PkWv8r/Actca8KfV9kw94//QEC0iQJVB9w/Z4ZLY8LxwSVMuNPuuLB649kCcVb+HrLw=="
       },
-      "ReflectionMagic": {
-        "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "5gsbb2VLQVS//2DjyOWztkd1JaT5B4M3qFXs1n40I8E7SEVSP19CEGLT8Gf++d2YB4UkZf4gE+FZ8QWBbG3Dng=="
-      },
       "Sarif.Sdk": {
         "type": "Transitive",
         "resolved": "5.7.0",
@@ -673,11 +582,6 @@
           "System.Memory.Data": "10.0.9"
         }
       },
-      "System.CodeDom": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "CPc6tWO1LAer3IzfZufDBRL+UZQcj5uS207NHALQzP84Vp/z6wF0Aa0YZImOQY8iStY0A2zI/e3ihKNPfUm8XA=="
-      },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -712,8 +616,8 @@
       },
       "System.Reflection.MetadataLoadContext": {
         "type": "Transitive",
-        "resolved": "10.0.12",
-        "contentHash": "+DWu1fzj75I1FgdHSg3crgeZmfF2z55x1+OXF2IO2Lcq/iNgM9tL734pxAG0vo5iE82FVPHwbqUt31o8ipPBWg=="
+        "resolved": "10.0.10",
+        "contentHash": "7f8JfUA85nD2yOrTX9fhuHPp8P01qqnbGTtRiMK6rwNhS1jNLqoCJfdzLMOIZY8b9sBoAX3eOH04k1fWeCgOYQ=="
       },
       "System.Reflection.TypeExtensions": {
         "type": "Transitive",
@@ -784,30 +688,11 @@
         "resolved": "7.2.0",
         "contentHash": "4Poqu79dTmacVETqUJ53g3x4U21V/cmWPSlehdsVE4Q00akavvlRq+SRjcg/CmfO9ibOCjRl6TeUV7hkC5RC4w=="
       },
-      "UiPath.Workflow": {
-        "type": "Transitive",
-        "resolved": "6.0.3",
-        "contentHash": "G8jBUz++oMsA6H2EAsFzx/xED0Oi2MrR6q9IXy2ctlex3T0nJvyN73rbffMFI5oyfdVBLElTCBW9qjQNmXj5ew==",
-        "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp.Scripting": "4.0.1",
-          "Microsoft.CodeAnalysis.VisualBasic": "4.0.1",
-          "Microsoft.PowerFx.Interpreter": "0.2.1-preview",
-          "Nito.AsyncEx.Tasks": "5.1.2",
-          "ReflectionMagic": "4.1.0",
-          "System.CodeDom": "6.0.0",
-          "UiPath.Workflow.Runtime": "6.0.3"
-        }
-      },
-      "UiPath.Workflow.Runtime": {
-        "type": "Transitive",
-        "resolved": "6.0.3",
-        "contentHash": "ZtQirfKcf6XnO+UCNL7QuzFGEp+6UEjfiDaouqpytXxH8blfCaq2m3de+4D4kCnrpl8l1f1S0pfW/N5yAzwy/A=="
-      },
       "dgt.power.analyzer": {
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.1.0, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -817,7 +702,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.55.0, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.common": {
@@ -834,26 +719,26 @@
       "dgt.power.connection": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.5.1, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.plugin": {
@@ -861,30 +746,20 @@
         "dependencies": {
           "NuGet.Packaging": "[7.6.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.10, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.3, )"
-        }
-      },
-      "dgt.power.push": {
-        "type": "Project",
-        "dependencies": {
-          "NuGet.Packaging": "[7.9.0, )",
-          "System.Reflection.MetadataLoadContext": "[10.0.12, )",
-          "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[3.0.0-beta.3, )",
-          "dgt.registration": "[1.0.1, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.solution": {
         "type": "Project",
         "dependencies": {
           "Sarif.Sdk": "[5.7.0, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       },
       "dgt.power.webresource": {
@@ -892,7 +767,7 @@
         "dependencies": {
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.55.0, )",
-          "dgt.power.common": "[3.0.0-beta.3, )"
+          "dgt.power.common": "[3.0.0-beta.4, )"
         }
       }
     }

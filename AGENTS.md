@@ -22,17 +22,23 @@ When making changes to this codebase, **you MUST keep the documentation up to da
    - Changing build/test commands or CI/CD workflows
    - Adding new features or capabilities
 
-3. **What does NOT require a README update:**
+3. **Major-version migration guides:** Every user-affecting breaking change in a major release
+   must be documented in the corresponding `docs/migrations/<from>-to-<to>.md` guide (for example,
+   `2.x-to-3.x.md`). Keep the README focused on current behavior and add a prominent link near the
+   beginning to the migration guides directory. Internal-only breaking changes do not require
+   migration guidance.
+
+4. **What does NOT require a README update:**
    - Internal refactoring that doesn't change the public API
    - Bug fixes that don't change behavior or usage
    - Test-only changes
    - Code style / formatting changes
 
-4. **CHANGELOG.md is auto-generated** by semantic-release. Do NOT edit it manually.
+5. **CHANGELOG.md is auto-generated** by semantic-release. Do NOT edit it manually.
 
-5. **`baseline.sarif.json` is maintained by Qodana.** Do NOT edit it manually. If Qodana reports new findings, fix the code — never suppress findings by modifying the baseline file.
+6. **`baseline.sarif.json` is maintained by Qodana.** Do NOT edit it manually. If Qodana reports new findings, fix the code — never suppress findings by modifying the baseline file.
 
-6. **Keep documentation in English.** All documentation in this repository is written in English.
+7. **Keep documentation in English.** All documentation in this repository is written in English.
 
 ### Documentation Style
 
@@ -206,7 +212,6 @@ Every code change that modifies behavior **must** be accompanied by tests.
   - `tests/dgt.power.import.tests/`
   - `tests/dgt.power.analyzer.tests/`
   - `tests/dgt.power.codegeneration.tests/`
-  - `tests/dgt.power.push.tests/`
   - `tests/dgt.power.profile.tests/`
   - `tests/dgt.power.telemetry.tests/`
   - `tests/dgt.power.tests/` (shared test helpers / base classes)

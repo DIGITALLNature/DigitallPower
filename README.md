@@ -20,6 +20,9 @@
 </p>
 <br/>
 
+> **Upgrading between major versions?** Review the
+> [migration guides](docs/migrations/) for user-affecting breaking changes before upgrading.
+
 # Introduction
 
 **DIGITALLPOWER** — the .NET tool for the Microsoft Power Platform from DIGITALL. A swiss army knife for all ALM tasks where the Power Platform CLI (`pac`) still has weaknesses.
@@ -43,7 +46,6 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
-  - [push](#push--deploy-legacy-artifacts)
 - [CI/CD Integration](#-cicd-integration)
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
@@ -67,7 +69,6 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage step configuration with `plugin step config set` |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
-| **Push** | Legacy combined command for webresources and plugin assemblies; dedicated resource commands are preferred |
 
 ## 🚀 Installation
 
@@ -169,7 +170,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `push` `complete` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
@@ -617,9 +618,9 @@ Commands for deploying Dataverse plugin assemblies and packages.
 
 #### `push` — Deploy plugin assemblies/packages
 
-Resource-oriented replacement for the plugin part of the legacy `push` command. Registers a
-single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg` found directly in a
-directory (mixed content in one directory is supported; each file is processed independently).
+Registers a single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg`
+found directly in a directory (mixed content in one directory is supported; each file is processed
+independently).
 
 ##### Usage
 
@@ -640,9 +641,8 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 ##### Supported registration attributes
 
-> **v3 requirement:** `plugin push` supports `Digitall.Plugins.Registration` 2.0.0 or later.
-> Assemblies using legacy registration namespaces are not discovered. Use dgtp v2 to maintain
-> those plugins, or upgrade their registration package before deploying with v3.
+`plugin push` recognizes registration attributes from `Digitall.Plugins.Registration` 2.0.0 or
+later. Other registration namespaces are not recognized.
 
 | Attribute | Behavior |
 |-----------|----------|
@@ -653,7 +653,7 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
-with manually maintained plugin registrations must use the legacy `push` command.
+with manually maintained plugin registrations are not supported.
 
 ##### Step configuration
 
@@ -704,18 +704,6 @@ replacement, migrates matching declared plugin steps to preserve their environme
 then removes the superseded assembly and registrations. More than one same-name standalone
 assembly is unsupported: `plugin push` fails before writing and requires manual cleanup. Use
 `--dry-run` to preview the supported update or replacement outcome.
-
-##### Differences from legacy `push`
-
-- **Workflow activities (`CodeActivity`) are not supported** - `plugin push` fails fast with a clear error
-  if the assembly contains any; replace them with a Custom API.
-- **No `--publish` option** - plugin registration takes effect immediately and does not require publishing
-  customizations.
-- **Declared Custom APIs must exist** - a missing Custom API is reported as an error instead of silently
-  unlinking an existing handler.
-- **Fully declarative registrations required** - a concrete `IPlugin` implementation with no
-  `PluginRegistrationAttribute`/`CustomApiRegistrationAttribute`/`CustomDataProviderRegistrationAttribute` is
-  rejected. Use legacy `push` for manually maintained registrations.
 
 #### `step config set` — Set plugin step configuration
 
@@ -857,48 +845,6 @@ checkmarks for completed operations. With `--dry-run`, the tree, missing solutio
 and any obsolete resources to delete are rendered, then execution stops. Obsolete deletion
 requires a directory target and `--solution`. An empty directory is a no-op, including when
 `--delete-obsolete` is specified; it cannot be used to delete every webresource from a solution.
-
-### `push` — Deploy legacy artifacts
-
-Pushes a plugin assembly or web resource into a target solution.
-
-```bash
-dgtp push ./bin/Release/MyPlugin.dll --solution mysolution
-dgtp push ./bin/Release/MyPlugin.1.0.0.nupkg --solution mysolution
-```
-
-#### Supported Registration Attributes
-
-When pushing a plugin assembly, `push` evaluates the following attributes from the `Digitall.Plugins.Registration` package:
-
-| Attribute | Purpose |
-|-----------|---------|
-| `PluginRegistrationAttribute` | Registers plugin steps (message, stage, mode, entity filters, images) |
-| `CustomApiRegistrationAttribute` | Links a plugin type to a Custom API by message name |
-| `CustomDataProviderRegistrationAttribute` | Generates data provider steps (Retrieve, RetrieveMultiple, Create, Update, Delete) for virtual entities |
-| `WorkflowRegistrationAttribute` | Marks workflow activities with group/name metadata |
-| `ManagedIdentityRegistrationAttribute` | Links the assembly to an Azure Managed Identity for secure authentication |
-
-#### Managed Identity Support
-
-When a plugin assembly is decorated with `ManagedIdentityRegistrationAttribute` (assembly-level), the push module automatically:
-1. Looks up an existing `managedidentity` record by `ApplicationId` (ClientId)
-2. Creates one if not found (with `CredentialSource=ManagedIdentity`, `SubjectScope=Global`)
-3. Links the `PluginAssembly.ManagedIdentityId` to the managed identity record
-
-This enables plugins to use Azure Managed Identity for secure service-to-service authentication without manual registration steps.
-
-#### Assembly Version Upgrade
-
-When a plugin assembly's **major or minor** version changes (e.g. `1.0.0.0` → `1.1.0.0`), the push command creates a **new** assembly record in Dataverse (since a different version constitutes a different assembly identity). The tool handles reference migration:
-
-| Flag | Behavior |
-|------|----------|
-| *(default)* | New assembly is created; Custom API references are migrated to new types automatically |
-| `--delete-on-upgrade` | Migrates **plugin steps** and Custom APIs to the new assembly, then deletes the old assembly |
-| `--no-migrate-custom-apis` | Skips Custom API migration (ignored when `--delete-on-upgrade` is set, since deletion requires migration) |
-
-> **Plugin Packages (.nupkg):** No special handling needed — the platform manages assembly GUIDs within a package. Content updates preserve all references automatically.
 
 ## 🔄 CI/CD Integration
 
@@ -1043,11 +989,10 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
        │            │            │            │                │
        └──────┬─────┴────────────┴────────────┴────────────────┘
               │
-       ┌──────┴──────────────┐   ┌──────────────────────────────┐
-       │  codegeneration     │   │            push              │
-       └─────────────────────┘   └──────────────────────────────┘
-                  │                            │
-                  └────────────┬───────────────┘
+       ┌──────────┴───────────────┬──────────────────────────────┐
+       │  codegeneration          │ plugin       │ webresource   │
+       └──────────────────────────┴──────────────┴───────────────┘
+                               │
                                ▼
                   ┌──────────────────────────┐
                   │     dgt.power.common     │
@@ -1066,7 +1011,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `push`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: the `IXrmConnection`, connection management, file I/O helpers, base commands, tracing and exception types (including standard .NET exception constructor overloads for integration-safe error handling), plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection manager, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IXrmConnection.ConnectAsync()`.
 - **Configuration layering.** `dgtp.json` ⇒ `dgtp:*` environment variables ⇒ command-line arguments allow the same binary to be used locally and in CI/CD without code changes.
@@ -1087,10 +1032,9 @@ DigitallPower/
 │       ├── dgt.power.export/          # `export` commands
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
-│       ├── dgt.power.plugin/          # `plugin` commands (resource-oriented replacement for `push`, plugin-only)
+│       ├── dgt.power.plugin/          # `plugin` commands
 │       ├── dgt.power.profile/         # `profile` commands (deprecated alias for `connection`)
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
-│       ├── dgt.power.push/            # legacy combined `push` command
 │       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)

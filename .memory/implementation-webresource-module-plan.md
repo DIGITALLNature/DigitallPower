@@ -2,17 +2,17 @@
 
 ## Current starting point
 
-The legacy `dgt.power.push` module autodetects a file versus directory target. Its directory path
+The dgtp 2.x `dgt.power.push` module autodetects a file versus directory target. Its directory path
 is handled by `WebresourcesProcessor`, which currently combines configuration loading, solution
 lookup, recursive file discovery, webresource type inference, Dataverse state lookup, create/update
 operations, solution membership, publishing, obsolete-resource deletion, and console reporting.
 The relevant models are `Webresources`, `WebresourceConfig`, `WebresourcesPattern`,
 `SolutionWebresourceInfo`, and `WebresourceState`.
 
-The target architecture is the one implemented by `feat/plugin-push-v2`: a resource-specific
+The target architecture is the one implemented by `dgt.power.plugin`: a resource-specific
 command module with Local, Planning, Repositories, and Execution layers. The webresource module
-should be created independently; the legacy module remains the compatibility path until both
-plugin and webresource commands are available.
+was created independently; the combined 2.x command was removed after both resource-specific
+commands were available.
 
 ## Planned structure
 
@@ -119,17 +119,16 @@ lowercase `webresource`, matching command conventions and the module namespace.
      file. Do not add new-module usage documentation until the command is wired.
    - Add focused module tests plus command smoke tests; run the webresource, CLI, and solution
      builds.
-   - Only after parity is verified, add a proper deprecation notice/hint to legacy `dgtp push`.
-     Keep the legacy command available as a compatibility adapter during the transition, then
-     remove the duplicated webresource implementation in a separate cleanup change.
+   - After both resource-specific commands were available, remove the combined `dgtp push`
+     command and module. The 2.x-to-3.x compatibility differences are documented in
+     `docs/migrations/2.x-to-3.x.md`.
 
 ## Settled behavior decisions
 
 - `--publisher-prefix` is explicit and required for directory targets. It is the authoritative
   naming prefix and is independent of `--solution`; the solution option controls membership and
   obsolete-resource scope, not resource naming.
-- The new command calls the mapping input `--mapping-file`; the legacy `--config` name remains
-  confined to the compatibility command.
+- The new command calls the mapping input `--mapping-file`; dgtp 2.x used `--config`.
 - JSON remains the mapping-file format. JSON Schema support is standardized and broadly available
   across editors, while YAML schema/intellisense support depends more heavily on the editor and
   language service. The mapping file is small enough that YAML's readability advantage does not
