@@ -752,7 +752,7 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 - `MainOperation` is supported for custom APIs and virtual table data providers. Internal-only stages 80 and 90 are not supported.
 - At least one of `--unsecure`, `--unsecure-file`, `--secure`, or `--secure-file` must be provided.
 - When using file-based configuration, the file must exist and be UTF-8 encoded.
-- Composite key matching requires exactly one step to match; multiple matches or no matches will fail.
+- Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
 - Secure configuration is stored in the `SdkMessageProcessingStepSecureConfig` entity.
 
 ### `push` — Deploy artifacts

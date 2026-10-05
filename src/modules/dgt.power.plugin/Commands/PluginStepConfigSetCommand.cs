@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Globalization;
 using dgt.power.common;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
@@ -68,20 +67,8 @@ public class PluginStepConfigSetCommand(
             switch (matches.Count)
             {
                 case 0:
-                    {
-                        var criteria = new List<string>();
-                        if (settings.PluginType != null) criteria.Add($"plugin-type={settings.PluginType}");
-                        if (settings.Message != null) criteria.Add($"message={settings.Message}");
-                        if (settings.Stage != null) criteria.Add($"stage={settings.Stage}");
-                        if (settings.Entity != null) criteria.Add($"entity={settings.Entity}");
-                        if (settings.SecondaryEntity != null) criteria.Add($"secondary-entity={settings.SecondaryEntity}");
-                        if (settings.ExecutionOrder.HasValue) criteria.Add($"execution-order={settings.ExecutionOrder}");
-
-                        Console.MarkupLine(CultureInfo.InvariantCulture,
-                            "[red]No step found matching {0}. Verify the step exists, or use --step-id.[/]",
-                            string.Join(", ", criteria));
-                        return Tracer.End(this, false);
-                    }
+                    Console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
+                    return Tracer.End(this, false);
                 case > 1:
                     PrintMultipleMatches(matches);
                     return Tracer.End(this, false);
@@ -108,20 +95,11 @@ public class PluginStepConfigSetCommand(
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)
     {
-        Console.MarkupLine("[yellow]Multiple steps match the provided criteria. Use --step-id or refine using --execution-order/--secondary-entity:[/]");
-        Console.WriteLine();
+        Console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use --step-id.[/]");
 
         foreach (var step in matches)
         {
-            Console.MarkupLine(CultureInfo.InvariantCulture,
-                "  StepId: {0}, PluginType: {1}, Message: {2}, Stage: {3}, Entity: {4}/{5}, ExecutionOrder: {6}",
-                step.Id,
-                step.Name,
-                step.MessageName,
-                Enum.GetName((PluginStepStage)step.Stage) ?? step.Stage.ToString(CultureInfo.InvariantCulture),
-                step.PrimaryEntityName,
-                step.SecondaryEntityName,
-                step.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);
+            Console.WriteLine($"  {step.Name} ({step.Id})");
         }
     }
 }

@@ -3,7 +3,7 @@
 
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
@@ -37,22 +37,25 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
 
     private async Task CreateAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
     {
-        var secureConfigEntity = new SdkMessageProcessingStepSecureConfig
+        var secureConfigEntity = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid())
         {
             SecureConfig = secureConfig
         };
 
-        var secureConfigId = await service.CreateAsync(secureConfigEntity, cancellationToken);
-
-        // Link the step to the secure config
         var step = new SdkMessageProcessingStep(stepId)
         {
-            SdkMessageProcessingStepSecureConfigId = new EntityReference(
-                SdkMessageProcessingStepSecureConfig.EntityLogicalName,
-                secureConfigId)
+            SdkMessageProcessingStepSecureConfigId = secureConfigEntity.ToEntityReference()
         };
-        await service.UpdateAsync(step, cancellationToken);
 
+        await service.ExecuteAsync(new ExecuteTransactionRequest
+        {
+            ReturnResponses = false,
+            Requests =
+            [
+                new CreateRequest { Target = secureConfigEntity },
+                new UpdateRequest { Target = step }
+            ]
+        }, cancellationToken);
     }
 
     private async Task UpdateAsync(Guid secureConfigId, string secureConfig, CancellationToken cancellationToken = default)

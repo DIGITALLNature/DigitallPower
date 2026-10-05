@@ -103,10 +103,12 @@ When resolving via the composite key (path B):
 | Case | Behavior |
 |---|---|
 | Exactly one match | Proceed with the update. |
-| Zero matches | Exit non-zero. Message: `No step found matching {criteria}. Verify the step exists, or use --step-id.` |
-| Multiple matches | Exit non-zero. Print the candidate list with StepId, PluginType, Message, Stage, Entity, ExecutionOrder. |
+| Zero matches | Exit non-zero. Message: `No plugin step matches the supplied criteria.` |
+| Multiple matches | Exit non-zero. Ask the user to refine criteria or use `--step-id`, then list each step's display name and ID. |
 
-*Note:* The implementation does not currently show config presence (unsecure: set/empty, secure: set/empty) in the candidate list as originally designed. This could be added in a future iteration.
+Candidate names are written as plain text so brackets in Dataverse display names are not
+interpreted as console markup. IDs distinguish duplicate display names without repeating
+the full resolution criteria.
 
 Progressive narrowing: if the user supplied `--secondary-entity` and/or
 `--execution-order`, use them to narrow candidates before deciding the result is
@@ -129,6 +131,11 @@ Plugin Registration Tool does; there is no `pac` CLI command for this.
 
 ### Repository methods
 
+Composite resolution matches `PluginType.TypeName`, not the plugin display `Name`.
+Type and message predicates belong to their inner joins' `LinkCriteria`. Entity predicates
+use root conditions with `EntityName = "filter"` and unqualified attribute names so they
+filter the results of the left join instead of retaining unmatched steps.
+
 Interface-typed repository locals make the command consume repository contracts, but trigger
 CA1859 (prefer concrete types for performance). This conflicts with Qodana's
 "only implementations are used" inspection when the command constructs repositories directly.
@@ -140,6 +147,13 @@ remove these suppressions when interface-based consumers replace direct construc
 
 - `SdkMessageProcessingStepRepository.UpdateConfigurationAsync(stepId, configuration)` - Updates unsecure config
 - `SdkMessageProcessingStepSecureConfigRepository.UpsertAsync(stepId, secureConfig)` - Returns `Task`; creates/updates secure config and keeps the ID internal for linking
+
+Secure configuration creation and step linking are submitted together in one
+`ExecuteTransactionRequest`, using a client-assigned configuration GUID. A failed link rolls
+back creation in Dataverse; updating an existing linked configuration remains a normal update.
+The test service's default transaction executor does not roll back failed writes. Tests verify
+the transaction request shape and failure propagation rather than relying on that fake for
+Dataverse's atomicity guarantee.
 
 ## Files
 
@@ -157,7 +171,7 @@ remove these suppressions when interface-based consumers replace direct construc
 
 ## Differences from original design
 
-1. **Config presence in multiple matches output:** The implementation prints basic step info (StepId, PluginTypeName, Message, Stage, Entity, ExecutionOrder) but does not include configuration presence indicators as originally specified in the design.
+1. **Multiple matches output:** Only step display names and IDs are printed, keeping diagnostics concise while providing an unambiguous `--step-id` target.
 
 2. **Stage option type:** `--stage` uses the `PluginStepStage` enum so Spectre.Console.Cli parses names and numeric enum values; validation rejects undefined values and the enum's `None` sentinel.
 

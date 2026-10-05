@@ -388,6 +388,51 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         };
 
         await context.Execute(settings).Fail();
+        await Assert.That(TestConsole.Output).Contains("No plugin step matches the supplied criteria.");
+        await Assert.That(TestConsole.Output).DoesNotContain("plugin-type=");
+    }
+
+    [Test]
+    public async Task Execute_WithMultipleMatches_ListsDisplayNamesAndIdsWithoutUpdatingSteps()
+    {
+        var service = CreateFakeService();
+        var entities = CreateTestStep(service, _stepId, _messageId, _pluginTypeId, "account");
+        var firstStep = entities.OfType<SdkMessageProcessingStep>().Single();
+        firstStep.Name = "Plugin [account] step";
+        firstStep.Configuration = "original";
+        var secondStep = new SdkMessageProcessingStep(Guid.NewGuid())
+        {
+            Name = firstStep.Name,
+            EventHandler = firstStep.EventHandler,
+            SdkMessageId = firstStep.SdkMessageId,
+            SdkMessageFilterId = firstStep.SdkMessageFilterId,
+            Mode = firstStep.Mode,
+            Stage = firstStep.Stage,
+            Rank = 2,
+            Configuration = "original"
+        };
+        entities.Add(secondStep);
+        var context = GetBuilder()
+            .WithData(entities)
+            .WithAnsiConsole(TestConsole)
+            .Build();
+
+        await context.Execute(new PluginStepConfigSetSettings
+        {
+            PluginType = "TestPluginType",
+            Message = "Create",
+            Stage = PluginStepStage.PreOperation,
+            Entity = "account",
+            UnsecureConfig = "updated"
+        }).Fail();
+
+        await Assert.That(TestConsole.Output).Contains("Multiple plugin steps match.");
+        await Assert.That(TestConsole.Output).Contains("--step-id");
+        await Assert.That(TestConsole.Output).Contains($"Plugin [account] step ({firstStep.Id})");
+        await Assert.That(TestConsole.Output).Contains($"Plugin [account] step ({secondStep.Id})");
+        await Assert.That(TestConsole.Output).DoesNotContain("PluginType:");
+        await Assert.That(context.GetById<SdkMessageProcessingStep>(firstStep.Id).Configuration).IsEqualTo("original");
+        await Assert.That(context.GetById<SdkMessageProcessingStep>(secondStep.Id).Configuration).IsEqualTo("original");
     }
 
     [Test]
@@ -415,7 +460,7 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
     private static List<Entity> CreateTestStep(FakeOrganizationServiceAsync service, Guid stepId, Guid messageId, Guid pluginTypeId, string entityName)
     {
         var message = new SdkMessage(messageId) { Name = "Create" };
-        var pluginType = new PluginType(pluginTypeId) { Name = "TestPluginType" };
+        var pluginType = new PluginType(pluginTypeId) { Name = "Plugin display name", TypeName = "TestPluginType" };
         var filter = new SdkMessageFilter(Guid.NewGuid())
         {
             Attributes = { [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = entityName }

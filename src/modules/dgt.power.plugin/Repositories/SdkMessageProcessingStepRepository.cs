@@ -141,15 +141,17 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         CancellationToken cancellationToken = default)
     {
         var filter = new FilterExpression();
+        var pluginTypeFilter = new FilterExpression();
+        var messageFilter = new FilterExpression();
 
         if (pluginTypeName != null)
         {
-            filter.AddCondition("plugintype.name", ConditionOperator.Equal, pluginTypeName);
+            pluginTypeFilter.AddCondition(PluginType.LogicalNames.TypeName, ConditionOperator.Equal, pluginTypeName);
         }
 
         if (messageName != null)
         {
-            filter.AddCondition("message.name", ConditionOperator.Equal, messageName);
+            messageFilter.AddCondition(SdkMessage.LogicalNames.Name, ConditionOperator.Equal, messageName);
         }
 
         if (stageValue.HasValue)
@@ -159,12 +161,20 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
 
         if (primaryEntityName != null)
         {
-            filter.AddCondition("filter.primaryobjecttypecode", ConditionOperator.Equal, primaryEntityName);
+            filter.AddCondition(new ConditionExpression(
+                SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode, ConditionOperator.Equal, primaryEntityName)
+            {
+                EntityName = "filter"
+            });
         }
 
         if (secondaryEntityName != null)
         {
-            filter.AddCondition("filter.secondaryobjecttypecode", ConditionOperator.Equal, secondaryEntityName);
+            filter.AddCondition(new ConditionExpression(
+                SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode, ConditionOperator.Equal, secondaryEntityName)
+            {
+                EntityName = "filter"
+            });
         }
 
         if (executionOrder.HasValue)
@@ -192,6 +202,7 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
                     SdkMessageProcessingStep.LogicalNames.SdkMessageId, SdkMessage.LogicalNames.SdkMessageId, JoinOperator.Inner)
                 {
                     EntityAlias = "message",
+                    LinkCriteria = messageFilter,
                     Columns = new ColumnSet(SdkMessage.LogicalNames.Name)
                 },
                 new LinkEntity(
@@ -199,7 +210,8 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
                     SdkMessageProcessingStep.LogicalNames.EventHandler, PluginType.LogicalNames.PluginTypeId, JoinOperator.Inner)
                 {
                     EntityAlias = "plugintype",
-                    Columns = new ColumnSet(PluginType.LogicalNames.Name)
+                    LinkCriteria = pluginTypeFilter,
+                    Columns = new ColumnSet(PluginType.LogicalNames.TypeName)
                 },
                 new LinkEntity(
                     SdkMessageProcessingStep.EntityLogicalName, SdkMessageFilter.EntityLogicalName,
