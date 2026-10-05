@@ -192,6 +192,8 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
   other files use publisher-prefix-derived names. The file must contain a non-null `mappings`
   object and every mapping key must match a supported file in the target; invalid or unmatched
   mappings fail before deployment. Public plan records use one correspondingly named file each.
+  Logical names are normalized to `/` before deriving webresource display names, regardless of
+  whether an explicit or mapped name uses Windows separators.
   Command-level dry-run coverage plans create, update, membership, publish, and obsolete-delete
   operations, then verifies no writes occur. Execution uses one overall spinner and reports each
   successful operation through a progress callback, matching plugin push; see

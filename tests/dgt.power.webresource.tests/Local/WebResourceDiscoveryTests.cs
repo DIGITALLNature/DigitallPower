@@ -133,4 +133,52 @@ public class WebResourceDiscoveryTests
             root.Delete(true);
         }
     }
+
+    [Test]
+    public async Task Discover_Directory_NormalizesMappedNameBeforeDerivingDisplayName()
+    {
+        var root = Directory.CreateTempSubdirectory();
+        try
+        {
+            await File.WriteAllTextAsync(Path.Combine(root.FullName, "legacy.js"), "console.log('test');");
+
+            var resources = WebResourceDiscovery.Discover(
+                root.FullName,
+                "contoso",
+                new Dictionary<string, string>
+                {
+                    ["legacy.js"] = "contoso_\\legacy\\scripts\\main.js"
+                });
+
+            await Assert.That(resources).Count().IsEqualTo(1);
+            await Assert.That(resources[0].Name).IsEqualTo("contoso_/legacy/scripts/main.js");
+            await Assert.That(resources[0].DisplayName).IsEqualTo("main.js");
+        }
+        finally
+        {
+            root.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task Discover_SingleFile_NormalizesExplicitNameBeforeDerivingDisplayName()
+    {
+        var root = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.Combine(root.FullName, "source.js");
+            await File.WriteAllTextAsync(file, "console.log('test');");
+
+            var resources = WebResourceDiscovery.Discover(
+                file,
+                singleResourceName: "contoso_\\legacy\\scripts\\main.js");
+
+            await Assert.That(resources[0].Name).IsEqualTo("contoso_/legacy/scripts/main.js");
+            await Assert.That(resources[0].DisplayName).IsEqualTo("main.js");
+        }
+        finally
+        {
+            root.Delete(true);
+        }
+    }
 }

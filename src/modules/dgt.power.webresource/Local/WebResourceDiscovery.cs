@@ -122,11 +122,12 @@ public static class WebResourceDiscovery
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
+        var normalizedName = NormalizePath(name);
         var content = File.ReadAllBytes(path);
         return new LocalWebResource(
             type,
-            NormalizePath(name),
-            Path.GetFileName(name),
+            normalizedName,
+            Path.GetFileName(normalizedName),
             Convert.ToBase64String(content),
             Convert.ToHexString(SHA256.HashData(content)),
             relativePath);
