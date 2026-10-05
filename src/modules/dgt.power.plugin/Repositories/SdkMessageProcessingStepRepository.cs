@@ -6,7 +6,6 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using dgt.power.plugin.Remote;
-using dgt.power.plugin;
 
 namespace dgt.power.plugin.Repositories;
 

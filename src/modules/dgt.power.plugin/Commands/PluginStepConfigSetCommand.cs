@@ -121,7 +121,7 @@ public class PluginStepConfigSetCommand(
                 StageTypeConverter.GetStageDisplayName(step.Stage),
                 step.PrimaryEntityName,
                 step.SecondaryEntityName,
-                step.ExecutionOrder);
+                step.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);
         }
     }
 }

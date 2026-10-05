@@ -76,13 +76,12 @@ public class CommandTreeTests
     }
 
     [Test]
-    [Arguments("step")]
-    public async Task PluginStepSubCommand_HelpInvocation_Succeeds(string subCommand)
+    public async Task PluginStepSubCommand_HelpInvocation_Succeeds()
     {
         var tester = new CommandAppTester();
         tester.Configure(CommandTree.Register);
 
-        var result = tester.Run("plugin", subCommand, "--help");
+        var result = tester.Run("plugin", "step", "--help");
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }

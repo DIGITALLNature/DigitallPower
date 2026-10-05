@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.IO;
 using dgt.power.dataverse;
 using dgt.power.plugin.Commands;
 using Digitall.Dataverse.Testing;
@@ -308,14 +307,14 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         await context.Execute(settings).Fail();
     }
 
-    private FakeOrganizationServiceAsync CreateFakeService()
+    private static FakeOrganizationServiceAsync CreateFakeService()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddDefaultRequests();
         return service;
     }
 
-    private List<Entity> CreateTestStep(FakeOrganizationServiceAsync service, Guid stepId, Guid messageId, Guid pluginTypeId, string entityName)
+    private static List<Entity> CreateTestStep(FakeOrganizationServiceAsync service, Guid stepId, Guid messageId, Guid pluginTypeId, string entityName)
     {
         var message = new SdkMessage(messageId) { Name = "Create" };
         var pluginType = new PluginType(pluginTypeId) { Name = "TestPluginType" };

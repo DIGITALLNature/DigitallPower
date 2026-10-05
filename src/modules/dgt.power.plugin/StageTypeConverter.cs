@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
 using dgt.power.dataverse;
@@ -13,21 +12,16 @@ namespace dgt.power.plugin;
 /// </summary>
 public sealed class StageTypeConverter : TypeConverter
 {
-    private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
+    private static readonly StringComparer s_comparer = StringComparer.OrdinalIgnoreCase;
 
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
         return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     }
 
-    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object? value)
     {
-        if (value is null)
-        {
-            return null;
-        }
-
-        var stageName = value.ToString();
+        var stageName = value?.ToString();
         if (stageName is null)
         {
             return null;
@@ -60,11 +54,11 @@ public sealed class StageTypeConverter : TypeConverter
     {
         return stageName switch
         {
-            _ when Comparer.Equals(stageName, "PreValidation") => SdkMessageProcessingStep.Options.Stage.PreValidation,
-            _ when Comparer.Equals(stageName, "PreOperation") => SdkMessageProcessingStep.Options.Stage.PreOperation,
-            _ when Comparer.Equals(stageName, "PostOperation") => SdkMessageProcessingStep.Options.Stage.PostOperation,
-            _ when Comparer.Equals(stageName, "PreCommitStage") => SdkMessageProcessingStep.Options.Stage.PreCommitStageFiredBeforeTransactionCommitForInternalUseOnly,
-            _ when Comparer.Equals(stageName, "PostCommitStage") => SdkMessageProcessingStep.Options.Stage.PostCommitStageFiredAfterTransactionCommitForInternalUseOnly,
+            _ when s_comparer.Equals(stageName, "PreValidation") => SdkMessageProcessingStep.Options.Stage.PreValidation,
+            _ when s_comparer.Equals(stageName, "PreOperation") => SdkMessageProcessingStep.Options.Stage.PreOperation,
+            _ when s_comparer.Equals(stageName, "PostOperation") => SdkMessageProcessingStep.Options.Stage.PostOperation,
+            _ when s_comparer.Equals(stageName, "PreCommitStage") => SdkMessageProcessingStep.Options.Stage.PreCommitStageFiredBeforeTransactionCommitForInternalUseOnly,
+            _ when s_comparer.Equals(stageName, "PostCommitStage") => SdkMessageProcessingStep.Options.Stage.PostCommitStageFiredAfterTransactionCommitForInternalUseOnly,
             _ => throw new InvalidOperationException(
                 $"Invalid stage name: '{stageName}'. Valid values: PreValidation, PreOperation, PostOperation, PreCommitStage, PostCommitStage")
         };

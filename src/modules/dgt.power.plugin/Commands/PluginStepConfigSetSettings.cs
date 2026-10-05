@@ -2,8 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.ComponentModel;
-using System.IO;
-using dgt.power.plugin;
 using dgt.power.plugin.Base;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -23,50 +21,50 @@ public class PluginStepConfigSetSettings : PluginSettings
 
     [CommandOption("--step-id")]
     [Description("SdkMessageProcessingStep id. Mutually exclusive with composite key options.")]
-    public Guid? StepId { get; set; }
+    public Guid? StepId { get; init; }
 
     [CommandOption("--plugin-type")]
     [Description("Fully qualified type name of the plugin (e.g., MyNamespace.MyPluginClass).")]
-    public string? PluginType { get; set; }
+    public string? PluginType { get; init; }
 
     [CommandOption("--message")]
     [Description("SDK message name (e.g., Create, Update, Delete).")]
-    public string? Message { get; set; }
+    public string? Message { get; init; }
 
     [CommandOption("--stage")]
     [Description("Execution stage: PreValidation, PreOperation, PostOperation, PreCommitStage, PostCommitStage.")]
     [TypeConverter(typeof(StageTypeConverter))]
-    public int? Stage { get; set; }
+    public int? Stage { get; init; }
 
     [CommandOption("--entity")]
     [Description("Primary entity logical name (e.g., account, contact).")]
-    public string? Entity { get; set; }
+    public string? Entity { get; init; }
 
     [CommandOption("--secondary-entity")]
     [Description("Secondary entity logical name (for messages like Associate).")]
-    public string? SecondaryEntity { get; set; }
+    public string? SecondaryEntity { get; init; }
 
     [CommandOption("--execution-order")]
     [Description("Execution order / rank.")]
-    public int? ExecutionOrder { get; set; }
+    public int? ExecutionOrder { get; init; }
 
     // ==================== Configuration Values ====================
 
     [CommandOption("--unsecure")]
     [Description("Inline unsecure configuration value. Use empty string to clear.")]
-    public string? UnsecureConfig { get; set; }
+    public string? UnsecureConfig { get; init; }
 
     [CommandOption("--unsecure-file")]
     [Description("Path to a UTF-8 file containing the unsecure configuration. Mutually exclusive with --unsecure.")]
-    public FileInfo? UnsecureConfigFile { get; set; }
+    public FileInfo? UnsecureConfigFile { get; init; }
 
     [CommandOption("--secure")]
     [Description("Inline secure configuration value. Use empty string to clear.")]
-    public string? SecureConfig { get; set; }
+    public string? SecureConfig { get; init; }
 
     [CommandOption("--secure-file")]
     [Description("Path to a UTF-8 file containing the secure configuration. Mutually exclusive with --secure.")]
-    public FileInfo? SecureConfigFile { get; set; }
+    public FileInfo? SecureConfigFile { get; init; }
 
     // ==================== Validation ====================
 
