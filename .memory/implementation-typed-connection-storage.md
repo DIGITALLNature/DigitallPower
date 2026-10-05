@@ -14,6 +14,47 @@
 
 No 2.x isolated-storage migration is performed. Recreate stored connections after upgrading.
 
+## Design rationale and storage boundaries
+
+The home directory is independent of assembly identity, version, and installation path.
+Local rather than roaming application data is used because protected secrets and token caches
+are machine-bound. `DGTP_HOME` relocates connection metadata, application state, and secret
+storage; it does not relocate Azure.Identity's shared token cache. See
+`research-persistent-msal-token-cache-removal.md` for that cache's location and platform settings.
+
+`ConnectionStore` preserves name casing and uses ordinal case-insensitive lookup. Mutations
+take an exclusive `connections.lock`, reload the document, and write through a unique temporary
+file that is flushed to disk before replacement. Unsupported schema versions and invalid JSON
+raise errors rather than resetting saved state. The document uses `schemaVersion: 1` and
+polymorphic `type` discriminators; its schema is `schemas/connection/v1/schema.json`.
+
+Metadata contains URLs, tenant/client IDs, certificate references, and user authentication records,
+but no client secrets, PFX passwords, or token blobs. Authentication records contain account
+identifiers, including the username, so metadata is not anonymous. Routine token acquisition
+updates Azure.Identity's cache rather than rewriting connection metadata.
+
+`SecretStore` uses MSAL Extensions storage directly for a single protected JSON payload indexed
+by connection name and secret key, with a separate exclusive lock. Windows uses DPAPI;
+macOS uses Keychain service `dgtp` / account `secrets`; Linux uses Secret Service schema
+`com.digitall.dgtp`. Linux's explicit unencrypted-storage opt-in selects an unprotected secret
+file; user-token cache fallback follows Azure.Identity's protected-first behavior instead.
+
+Rejected alternatives:
+
+| Alternative | Reason |
+|---|---|
+| Pin assembly version and retain isolated storage | Still depends on assembly name/signing key and retains mixed metadata, secrets, and tokens |
+| Custom MSAL authentication and token persistence | Duplicates Azure.Identity's credential flows and cache management |
+| Persist arbitrary connection strings | Opaque auth/options and secret-bearing values undermine typed validation and metadata separation; ad-hoc strings cover unsupported scenarios |
+| One user-token cache per connection | Prevents account/token sharing and complicates cleanup |
+| ASP.NET DataProtection as a cross-platform secret vault | Its default non-Windows keys are stored unencrypted |
+| Additional keychain libraries | Unnecessary native interop/dependency surface when MSAL Extensions already provides platform storage |
+
+Legacy storage is neither imported nor deleted. Mapping opaque connection strings to typed
+records and supporting both old decryption schemes would add substantial one-time migration
+complexity. Historical storage scoping and recoverability are documented in
+`research-isolated-storage-major-version-scoping.md`.
+
 ## Authentication and invocation
 
 Connection definition discriminators are `interactive`, `deviceCode`, `clientSecret`,
@@ -52,7 +93,13 @@ The CLI uses the MSAL-aligned `--client-id` spelling and binds invocation option
 `IDataverseConnection` is the application-owned connection abstraction. External SDK terminology
 such as `Microsoft.Xrm.Sdk` remains unchanged.
 
-## Design reference
+## Verification boundaries
 
-`CONNECTION-STORAGE-DESIGN.md` records the rationale, JSON examples, security trade-offs, and the
-intentional lack of migration from legacy isolated storage.
+Connection-module tests cover command behavior, verification rollback, account-scoped deletion,
+selected storage round-trips, invocation capture, and a Windows protected-secret-storage check.
+CLI command-tree/settings tests live separately in `tests/dgt.power.cli.tests`.
+
+These tests are not exhaustive authentication or platform-storage coverage. Credential construction,
+connection/auth resolution, persistent cache removal, keyring availability, concurrent writers,
+and cross-platform permissions require additional targeted coverage. Live authentication and
+survival across tool updates must not be inferred solely from fake-backed command tests.

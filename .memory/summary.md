@@ -253,7 +253,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **`AddSolutionComponentRequest.DoNotIncludeSubcomponents = true` is only accepted for Entity roots (type 1)**; model-driven apps (type 80) cannot be added without Dataverse's expansion. `solution copy-components --apps skip|strip|allow` (default `skip`) controls this (app-bound AppSetting/AppModuleComponent rows follow the app, matched by `solutioncomponentdefinition` name - componenttypes >10000 differ per environment); `strip` removes platform-added subcomponents afterwards and is unverified against a real environment. See `implementation-solution-copy-components.md`.
 - Connections, telemetry identity and version-check state now use stable per-user storage rather
   than assembly-scoped isolated storage. The redesign intentionally does not import data from 2.x;
-  users recreate named connections. See `CONNECTION-STORAGE-DESIGN.md` and
+  users recreate named connections. See `implementation-typed-connection-storage.md` and
   `research-isolated-storage-major-version-scoping.md`.
 
 ## Memory Files Index
@@ -265,7 +265,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
 | `decision-package-record-refactor.md` | decision | Historical dgtp 2.x push-module package record design; equality semantics |
 | `decision-post-tsl-architecture-wave.md` | decision | Priority order for remaining quality findings |
-| `implementation-typed-connection-storage.md` | implementation | Typed connection definitions, stable home/state files, OS-protected secrets and token cache, global connection override variables, no 2.x migration |
+| `implementation-typed-connection-storage.md` | implementation | Typed connection definitions, stable home/state files, storage boundaries and design rationale, global connection override variables, no legacy migration, verification limitations |
 | `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp connection status` and `refresh` |
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |
 | `guide-sonar-rules-applied.md` | guide | Fix patterns for S3902, S3971, S2930, S3900, S4261 |

@@ -34,7 +34,7 @@ Client secrets and PFX passwords are kept outside the JSON document in the OS-pr
 provided by `Microsoft.Identity.Client.Extensions.Msal`. User-credential token caches use Azure
 Identity's persistent cache named `dgtp`. No migration is performed from 2.x isolated storage;
 users recreate named connections. The canonical implementation reference is
-`CONNECTION-STORAGE-DESIGN.md`.
+`implementation-typed-connection-storage.md`.
 
 ## Recoverability
 
@@ -49,8 +49,9 @@ Old stores remain on disk and are readable from a newer version:
 
 ## Related
 
-- Replacement design: `CONNECTION-STORAGE-DESIGN.md` (repo root). Migration from the legacy store
-  is deliberately deferred there (§10, §15); the recoverability notes above are its basis.
+- Replacement implementation and rationale: `implementation-typed-connection-storage.md`.
+  Legacy migration is not implemented; the recoverability notes above explain what a future
+  migration would need to support.
 - Pinning `<AssemblyVersion>` would stop the major-version scoping, but the store would still
   depend on the assembly name and signing key. It is not a substitute for a stable app-data
   directory.

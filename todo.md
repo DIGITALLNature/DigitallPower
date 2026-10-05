@@ -51,4 +51,4 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 The legacy profile module and profile service layer have been removed. `dgt.power.connection` is
 the sole connection-management module; saved connections use typed definitions in the stable
 `DGTP_HOME` data directory. Existing isolated-storage connections are not migrated. See
-`CONNECTION-STORAGE-DESIGN.md`.
+`.memory/implementation-typed-connection-storage.md`.
