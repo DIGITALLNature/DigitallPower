@@ -192,8 +192,9 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
   other files use publisher-prefix-derived names. The file must contain a non-null `mappings`
   object and every mapping key must match a supported file in the target; invalid or unmatched
   mappings fail before deployment. Public plan records use one correspondingly named file each.
-  Execution uses one overall spinner and reports each successful operation through a progress
-  callback, matching plugin push; see
+  Command-level dry-run coverage plans create, update, membership, publish, and obsolete-delete
+  operations, then verifies no writes occur. Execution uses one overall spinner and reports each
+  successful operation through a progress callback, matching plugin push; see
   [`research-webresource-push-v2-review.md`](research-webresource-push-v2-review.md).
 - **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
   preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.
