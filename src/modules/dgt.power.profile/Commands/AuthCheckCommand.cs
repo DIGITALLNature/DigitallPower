@@ -20,7 +20,7 @@ namespace dgt.power.profile.Commands;
 public class AuthCheckCommand(IXrmConnection xrmConnection, IAnsiConsole console)
     : AsyncCommand<ProfileSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
         var isValid = await xrmConnection.CheckAuthAsync();
 

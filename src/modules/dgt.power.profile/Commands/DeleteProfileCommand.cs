@@ -10,7 +10,7 @@ namespace dgt.power.profile.Commands;
 
 public class DeleteProfileCommand(IProfileManager profileManager, IAnsiConsole console) : Command<NamedProfileSettings>
 {
-    protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 

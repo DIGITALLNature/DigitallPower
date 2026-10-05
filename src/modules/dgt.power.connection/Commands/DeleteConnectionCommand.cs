@@ -10,7 +10,7 @@ namespace dgt.power.connection.Commands;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class DeleteConnectionCommand(IProfileManager profileManager, IAnsiConsole console) : Command<DeleteConnectionSettings>
 {
-    protected override int Execute(CommandContext context, DeleteConnectionSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, DeleteConnectionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 

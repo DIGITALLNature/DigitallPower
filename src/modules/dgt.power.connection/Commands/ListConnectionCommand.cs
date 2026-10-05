@@ -12,7 +12,7 @@ namespace dgt.power.connection.Commands;
 
 public class ListConnectionCommand(IProfileManager profileManager, IAnsiConsole console) : Command<ConnectionSettings>
 {
-    protected override int Execute(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
         var identities = profileManager.LoadIdentities();
 

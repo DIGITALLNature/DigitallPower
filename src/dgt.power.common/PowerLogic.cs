@@ -24,7 +24,7 @@ public abstract class PowerLogic<TConfig>(
     protected IOrganizationService Connection { get; } = connection;
     protected ITracer Tracer { get; } = tracer;
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, [NotNull] TConfig settings, CancellationToken cancellationToken)
     {
         // Propagate --non-interactive flag so any MSAL token refresh that occurs
         // during this command's lifetime respects the non-interactive constraint.

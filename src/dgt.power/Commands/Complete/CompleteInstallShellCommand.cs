@@ -9,7 +9,7 @@ namespace dgt.power.Commands.Complete;
 public class CompleteInstallShellCommand(IAnsiConsole console, ShellShimInstaller installer)
     : AsyncCommand<CompleteInstallShellSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, CompleteInstallShellSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, CompleteInstallShellSettings settings, CancellationToken cancellationToken)
     {
         var shell = settings.Shell is not null
             ? ShellDetector.NormalizeShellName(settings.Shell)

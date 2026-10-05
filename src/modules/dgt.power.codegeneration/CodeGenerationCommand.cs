@@ -18,7 +18,7 @@ public class CodeGenerationCommand(
     IAnsiConsole console)
     : Command<CodeGenerationVerb>, IPowerLogic
 {
-    protected override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(verb);
         tracer.Start(this);

@@ -11,7 +11,7 @@ namespace dgt.power.connection.Commands;
 
 public class SelectConnectionCommand(IProfileManager profileManager, IAnsiConsole console) : Command<NamedConnectionSettings>
 {
-    protected override int Execute(CommandContext context, NamedConnectionSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, NamedConnectionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 

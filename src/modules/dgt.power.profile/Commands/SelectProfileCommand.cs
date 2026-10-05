@@ -11,7 +11,7 @@ namespace dgt.power.profile.Commands;
 
 public class SelectProfileCommand(IProfileManager profileManager, IAnsiConsole console) : Command<NamedProfileSettings>
 {
-    protected override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, NamedProfileSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
