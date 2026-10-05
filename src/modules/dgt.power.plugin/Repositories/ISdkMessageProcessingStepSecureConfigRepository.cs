@@ -9,7 +9,9 @@ namespace dgt.power.plugin.Repositories;
 public interface ISdkMessageProcessingStepSecureConfigRepository
 {
     /// <summary>
-    /// Creates or updates the secure config for a step. Returns the secure config ID.
+    /// Creates or updates the secure config for a step.
     /// </summary>
-    Task<Guid> UpsertAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default);
+    // Retain the contract for planned constructor injection; commands currently construct repositories directly.
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task UpsertAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default);
 }

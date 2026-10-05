@@ -35,7 +35,7 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
         return step?.SdkMessageProcessingStepSecureConfigId?.Id;
     }
 
-    private async Task<Guid> CreateAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
+    private async Task CreateAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
     {
         var secureConfigEntity = new SdkMessageProcessingStepSecureConfig
         {
@@ -53,7 +53,6 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
         };
         await service.UpdateAsync(step, cancellationToken);
 
-        return secureConfigId;
     }
 
     private async Task UpdateAsync(Guid secureConfigId, string secureConfig, CancellationToken cancellationToken = default)
@@ -65,16 +64,15 @@ public sealed class SdkMessageProcessingStepSecureConfigRepository(IOrganization
         await service.UpdateAsync(secureConfigEntity, cancellationToken);
     }
 
-    public async Task<Guid> UpsertAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
+    public async Task UpsertAsync(Guid stepId, string secureConfig, CancellationToken cancellationToken = default)
     {
         var secureConfigId = await FindSecureConfigIdByStepIdAsync(stepId, cancellationToken);
         if (!secureConfigId.HasValue)
         {
-            return await CreateAsync(stepId, secureConfig, cancellationToken);
+            await CreateAsync(stepId, secureConfig, cancellationToken);
+            return;
         }
 
         await UpdateAsync(secureConfigId.Value, secureConfig, cancellationToken);
-        return secureConfigId.Value;
-
     }
 }

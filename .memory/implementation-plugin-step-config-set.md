@@ -129,8 +129,17 @@ Plugin Registration Tool does; there is no `pac` CLI command for this.
 
 ### Repository methods
 
+Interface-typed repository locals make the command consume repository contracts, but trigger
+CA1859 (prefer concrete types for performance). This conflicts with Qodana's
+"only implementations are used" inspection when the command constructs repositories directly.
+Changing the local type alone trades one analyzer finding for another; it does not establish
+a replaceable dependency boundary.
+Keep concrete-typed locals and narrowly suppress `UnusedMemberInSuper.Global` on the three
+configuration interface methods. The contracts are retained for planned constructor injection;
+remove these suppressions when interface-based consumers replace direct construction.
+
 - `SdkMessageProcessingStepRepository.UpdateConfigurationAsync(stepId, configuration)` - Updates unsecure config
-- `SdkMessageProcessingStepSecureConfigRepository.UpsertAsync(stepId, secureConfig)` - Creates/updates secure config
+- `SdkMessageProcessingStepSecureConfigRepository.UpsertAsync(stepId, secureConfig)` - Returns `Task`; creates/updates secure config and keeps the ID internal for linking
 
 ## Files
 

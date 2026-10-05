@@ -62,6 +62,12 @@ src/
 - All custom exceptions have standard constructor overloads (CA1032)
 - Public methods validate args with `ArgumentNullException.ThrowIfNull`
 
+### Plugin repository analyzer caveat
+- Interface-typed locals constructed directly trigger CA1859, while concrete-typed locals can
+  trigger Qodana's "only implementations are used" inspection. Configuration contracts use
+  narrow `UnusedMemberInSuper.Global` suppressions pending constructor injection. See
+  [plugin step configuration notes](implementation-plugin-step-config-set.md).
+
 ### CLI command tree registration
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
   source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes

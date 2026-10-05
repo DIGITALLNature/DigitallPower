@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin;
 using dgt.power.plugin.Commands;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -316,6 +315,36 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
             ?? throw new InvalidOperationException("Secure configuration was not linked to the plugin step.");
         var secureConfig = context.GetById<SdkMessageProcessingStepSecureConfig>(secureConfigId);
         await Assert.That(secureConfig.SecureConfig).IsEqualTo("secure-config-value");
+    }
+
+    [Test]
+    public async Task Execute_WithExistingSecureConfig_UpdatesValueAndPreservesLink()
+    {
+        var service = CreateFakeService();
+        var entities = CreateTestStep(service, _stepId, _messageId, _pluginTypeId, "account");
+        var secureConfig = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid())
+        {
+            SecureConfig = "original-value"
+        };
+        entities.Add(secureConfig);
+        var step = entities.OfType<SdkMessageProcessingStep>().Single();
+        step.SdkMessageProcessingStepSecureConfigId = secureConfig.ToEntityReference();
+
+        var context = GetBuilder()
+            .WithData(entities)
+            .WithAnsiConsole(TestConsole)
+            .Build();
+
+        await context.Execute(new PluginStepConfigSetSettings
+        {
+            StepId = _stepId,
+            SecureConfig = "updated-value"
+        }).Succeed();
+
+        var updatedStep = context.GetById<SdkMessageProcessingStep>(_stepId);
+        await Assert.That(updatedStep.SdkMessageProcessingStepSecureConfigId?.Id).IsEqualTo(secureConfig.Id);
+        await Assert.That(context.GetById<SdkMessageProcessingStepSecureConfig>(secureConfig.Id).SecureConfig)
+            .IsEqualTo("updated-value");
     }
 
     [Test]
