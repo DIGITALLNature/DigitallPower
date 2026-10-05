@@ -3,10 +3,8 @@
 
 using dgt.power.dataverse;
 using dgt.power.webresource.Remote;
-using dgt.power.webresource;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.webresource.Repositories;

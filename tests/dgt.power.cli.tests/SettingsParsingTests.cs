@@ -17,7 +17,6 @@ using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
 using dgt.power.solution.Base;
-using dgt.power.webresource.Execution;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;

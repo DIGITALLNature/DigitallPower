@@ -17,12 +17,7 @@ public sealed class WebResourceRepository(IOrganizationServiceAsync2 service) : 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(names);
-        if (names.Count == 0)
-        {
-            return Task.FromResult<IReadOnlyList<RemoteWebResource>>([]);
-        }
-
-        return FindByNamesCoreAsync(names, cancellationToken);
+        return names.Count == 0 ? Task.FromResult<IReadOnlyList<RemoteWebResource>>([]) : FindByNamesCoreAsync(names, cancellationToken);
     }
 
     private async Task<IReadOnlyList<RemoteWebResource>> FindByNamesCoreAsync(
@@ -42,7 +37,7 @@ public sealed class WebResourceRepository(IOrganizationServiceAsync2 service) : 
             {
                 Conditions =
                 {
-                    new ConditionExpression(WebResource.LogicalNames.Name, ConditionOperator.In, names.ToArray())
+                    new ConditionExpression(WebResource.LogicalNames.Name, ConditionOperator.In, names.ToArray<object>())
                 }
             }
         };

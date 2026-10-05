@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography;
-using dgt.power.webresource;
 
 namespace dgt.power.webresource.Local;
 

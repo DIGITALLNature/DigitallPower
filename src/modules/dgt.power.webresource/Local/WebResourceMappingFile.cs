@@ -3,7 +3,6 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using dgt.power.webresource;
 
 namespace dgt.power.webresource.Local;
 

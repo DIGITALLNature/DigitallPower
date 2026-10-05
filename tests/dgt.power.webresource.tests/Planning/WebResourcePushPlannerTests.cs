@@ -4,7 +4,6 @@
 using dgt.power.webresource.Local;
 using dgt.power.webresource.Planning;
 using dgt.power.webresource.Remote;
-using dgt.power.webresource;
 
 namespace dgt.power.webresource.tests.Planning;
 
@@ -60,11 +59,10 @@ public class WebResourcePushPlannerTests
     [Test]
     public async Task Plan_RejectsManagedResourceUpdates()
     {
-        var action = () => WebResourcePushPlanner.Plan(
-            [CreateLocal("contoso_/managed.js", "new")],
-            [new RemoteWebResource(Guid.NewGuid(), 3, "contoso_/managed.js", "old", true)]);
+        await Assert.That(Action).Throws<ManagedWebResourceException>();
+        return;
 
-        await Assert.That(action).Throws<ManagedWebResourceException>();
+        static WebResourcePushPlan Action() => WebResourcePushPlanner.Plan([CreateLocal("contoso_/managed.js", "new")], [new RemoteWebResource(Guid.NewGuid(), 3, "contoso_/managed.js", "old", true)]);
     }
 
     [Test]

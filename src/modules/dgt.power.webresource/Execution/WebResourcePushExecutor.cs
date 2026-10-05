@@ -46,7 +46,7 @@ public sealed class WebResourcePushExecutor(
             completedOperationCount++;
         }
 
-        foreach (var item in plan.Resources.Where(item => item.Action == WebResourceAction.Unchanged && item.AddToSolution))
+        foreach (var item in plan.Resources.Where(item => item is { Action: WebResourceAction.Unchanged, AddToSolution: true }))
         {
             await AddToSolutionAsync(item.Remote!.Id, plan.SolutionUniqueName!, cancellationToken);
             Report(reportProgress, "Added", "WebResource", $"{item.Local.Name} to solution {plan.SolutionUniqueName}");

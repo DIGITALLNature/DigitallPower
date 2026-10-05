@@ -12,35 +12,35 @@ public class WebResourcePushSettings : WebResourceSettings
 {
     [CommandArgument(0, "<Target>")]
     [Description("Path to a webresource directory or a single webresource file")]
-    public required string Target { get; set; }
+    public required string Target { get; init; }
 
     [CommandOption("--solution")]
     [Description("Add resources to this solution and scope obsolete-resource deletion")]
-    public string? Solution { get; set; }
+    public string? Solution { get; init; }
 
     [CommandOption("--publisher-prefix")]
     [Description("Publisher customization prefix used for directory resource names")]
-    public string? PublisherPrefix { get; set; }
+    public string? PublisherPrefix { get; init; }
 
     [CommandOption("--mapping-file")]
     [Description("JSON file containing directory-relative source-to-Dataverse name mappings")]
-    public string? MappingFile { get; set; }
+    public string? MappingFile { get; init; }
 
     [CommandOption("--name")]
     [Description("Dataverse logical name; required when Target is a single file")]
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 
     [CommandOption("--delete-obsolete")]
     [Description("Delete unmanaged webresources in the solution that are absent from the target directory")]
-    public bool DeleteObsolete { get; set; }
+    public bool DeleteObsolete { get; init; }
 
     [CommandOption("--dry-run")]
     [Description("Report planned changes without writing to Dataverse")]
-    public bool DryRun { get; set; }
+    public bool DryRun { get; init; }
 
     [CommandOption("--confirm")]
     [Description("Prompt for confirmation after rendering the deployment plan")]
-    public bool Confirm { get; set; }
+    public bool Confirm { get; init; }
 
     public override ValidationResult Validate()
     {

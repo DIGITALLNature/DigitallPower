@@ -3,7 +3,6 @@
 
 using dgt.power.webresource.Local;
 using dgt.power.webresource.Remote;
-using dgt.power.webresource;
 
 namespace dgt.power.webresource.Planning;
 

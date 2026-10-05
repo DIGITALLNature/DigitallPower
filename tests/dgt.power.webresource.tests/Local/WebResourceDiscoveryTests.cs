@@ -67,7 +67,10 @@ public class WebResourceDiscoveryTests
             await File.WriteAllTextAsync(Path.Combine(root.FullName, "one.js"), "one");
             await File.WriteAllTextAsync(Path.Combine(root.FullName, "two.js"), "two");
 
-            var action = () => WebResourceDiscovery.Discover(
+            await Assert.That(Action).Throws<ArgumentException>();
+            return;
+
+            IReadOnlyList<LocalWebResource> Action() => WebResourceDiscovery.Discover(
                 root.FullName,
                 "contoso",
                 new Dictionary<string, string>
@@ -75,8 +78,6 @@ public class WebResourceDiscoveryTests
                     ["one.js"] = "contoso_/same.js",
                     ["two.js"] = "contoso_/same.js"
                 });
-
-            await Assert.That(action).Throws<ArgumentException>();
         }
         finally
         {
