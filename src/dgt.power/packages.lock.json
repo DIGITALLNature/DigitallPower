@@ -807,7 +807,7 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.1.0, )",
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -817,7 +817,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.55.0, )",
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.common": {
@@ -834,26 +834,26 @@
       "dgt.power.connection": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.5.1, )",
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.plugin": {
@@ -861,13 +861,13 @@
         "dependencies": {
           "NuGet.Packaging": "[7.6.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.10, )",
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.profile": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       },
       "dgt.power.push": {
@@ -876,7 +876,7 @@
           "NuGet.Packaging": "[7.9.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.12, )",
           "UiPath.Workflow": "[6.0.3, )",
-          "dgt.power.common": "[3.0.0-beta.1, )",
+          "dgt.power.common": "[3.0.0-beta.3, )",
           "dgt.registration": "[1.0.1, )"
         }
       },
@@ -884,7 +884,15 @@
         "type": "Project",
         "dependencies": {
           "Sarif.Sdk": "[5.7.0, )",
-          "dgt.power.common": "[3.0.0-beta.1, )"
+          "dgt.power.common": "[3.0.0-beta.3, )"
+        }
+      },
+      "dgt.power.webresource": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
+          "Spectre.Console.Cli": "[0.55.0, )",
+          "dgt.power.common": "[3.0.0-beta.3, )"
         }
       }
     }

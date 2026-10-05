@@ -17,6 +17,7 @@ using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
 using dgt.power.solution.Base;
+using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
 
@@ -42,6 +43,53 @@ public class SettingsParsingTests
         var tester = new CommandAppTester();
         tester.Configure(config => config.AddCommand<NoOpCommand<TSettings>>("test"));
         return tester.Run(["test", .. args]);
+    }
+
+    [Test]
+    public async Task WebResourcePushSettings_ParsesOptions()
+    {
+        var result = Parse<WebResourcePushSettings>(
+            ".",
+            "--solution", "samplesolution",
+            "--publisher-prefix", "sample",
+            "--mapping-file", "mappings.json",
+            "--confirm",
+            "--delete-obsolete",
+            "--dry-run");
+
+        var settings = (WebResourcePushSettings)result.Settings!;
+
+        await Assert.That(settings.Target).IsEqualTo(".");
+        await Assert.That(settings.Solution).IsEqualTo("samplesolution");
+        await Assert.That(settings.PublisherPrefix).IsEqualTo("sample");
+        await Assert.That(settings.MappingFile).IsEqualTo("mappings.json");
+        await Assert.That(settings.Name).IsNull();
+        await Assert.That(settings.Confirm).IsTrue();
+        await Assert.That(settings.DeleteObsolete).IsTrue();
+        await Assert.That(settings.DryRun).IsTrue();
+    }
+
+    [Test]
+    public async Task WebResourcePushSettings_ParsesSingleFileName()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var target = Path.Combine(directory.FullName, "main.js");
+            await File.WriteAllTextAsync(target, "console.log('test');");
+            var result = Parse<WebResourcePushSettings>(
+                target,
+                "--name", "contoso_/scripts/main.js");
+
+            var settings = (WebResourcePushSettings)result.Settings!;
+
+            await Assert.That(settings.Target).IsEqualTo(target);
+            await Assert.That(settings.Name).IsEqualTo("contoso_/scripts/main.js");
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
     }
 
     [Test]
