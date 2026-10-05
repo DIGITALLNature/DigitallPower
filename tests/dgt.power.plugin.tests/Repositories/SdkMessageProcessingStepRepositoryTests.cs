@@ -11,6 +11,84 @@ namespace dgt.power.plugin.tests.Repositories;
 
 public class SdkMessageProcessingStepRepositoryTests
 {
+    [Test]
+    [Arguments("Namespace.Plugin", "Associate", 20, "account", "contact", 1, true)]
+    [Arguments("Display name", "Associate", 20, "account", "contact", 1, false)]
+    [Arguments("Namespace.Other", "Associate", 20, "account", "contact", 1, false)]
+    [Arguments("Namespace.Plugin", "Create", 20, "account", "contact", 1, false)]
+    [Arguments("Namespace.Plugin", "Associate", 40, "account", "contact", 1, false)]
+    [Arguments("Namespace.Plugin", "Associate", 20, "contact", "contact", 1, false)]
+    [Arguments("Namespace.Plugin", "Associate", 20, "account", "account", 1, false)]
+    [Arguments("Namespace.Plugin", "Associate", 20, "account", "contact", 2, false)]
+    [Arguments("Namespace.Plugin", "Associate", 20, null, null, null, true)]
+    public async Task FindByCompositeKeyAsync_FiltersEveryCriterion(
+        string typeName, string messageName, int stage, string? primaryEntity,
+        string? secondaryEntity, int? rank, bool expectedMatch)
+    {
+        var service = CreateService();
+        var type = new PluginType(Guid.NewGuid()) { Name = "Display name", TypeName = "Namespace.Plugin" };
+        var message = new SdkMessage(Guid.NewGuid()) { Name = "Associate" };
+        var filter = new SdkMessageFilter(Guid.NewGuid())
+        {
+            Attributes =
+            {
+                [SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode] = "account",
+                [SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode] = "contact"
+            }
+        };
+        var step = new SdkMessageProcessingStep(Guid.NewGuid())
+        {
+            Name = "step",
+            EventHandler = type.ToEntityReference(),
+            SdkMessageId = message.ToEntityReference(),
+            SdkMessageFilterId = filter.ToEntityReference(),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PreOperation),
+            Rank = 1
+        };
+        service.Create(type);
+        service.Create(message);
+        service.Create(filter);
+        service.Create(step);
+        var repository = new SdkMessageProcessingStepRepository(service);
+
+        var result = await repository.FindByCompositeKeyAsync(
+            typeName, messageName, stage, primaryEntity, secondaryEntity, rank);
+
+        await Assert.That(result.Count).IsEqualTo(expectedMatch ? 1 : 0);
+        if (expectedMatch)
+        {
+            await Assert.That(result[0].Id).IsEqualTo(step.Id);
+        }
+    }
+
+    [Test]
+    [Arguments(null, 1)]
+    [Arguments("account", 0)]
+    public async Task FindByCompositeKeyAsync_GlobalStep_PreservesLeftJoinFiltering(string? primaryEntity, int expectedCount)
+    {
+        var service = CreateService();
+        var type = new PluginType(Guid.NewGuid()) { TypeName = "Namespace.Plugin", Name = "Display name" };
+        var message = new SdkMessage(Guid.NewGuid()) { Name = "WhoAmI" };
+        service.Create(type);
+        service.Create(message);
+        service.Create(new SdkMessageProcessingStep(Guid.NewGuid())
+        {
+            Name = "global step",
+            EventHandler = type.ToEntityReference(),
+            SdkMessageId = message.ToEntityReference(),
+            Mode = new OptionSetValue(SdkMessageProcessingStep.Options.Mode.Synchronous),
+            Stage = new OptionSetValue(SdkMessageProcessingStep.Options.Stage.PreOperation),
+            Rank = 1
+        });
+        var repository = new SdkMessageProcessingStepRepository(service);
+
+        var result = await repository.FindByCompositeKeyAsync(
+            "Namespace.Plugin", "WhoAmI", 20, primaryEntity, null, null);
+
+        await Assert.That(result.Count).IsEqualTo(expectedCount);
+    }
+
     private static FakeOrganizationServiceAsync CreateService()
     {
         var service = new FakeOrganizationServiceAsync();

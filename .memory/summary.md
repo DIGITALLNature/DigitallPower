@@ -30,7 +30,7 @@ src/
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.plugin/       Resource-oriented `plugin push` (replaces the plugin half of `push`)
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set` (replaces the plugin half of `push`)
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.push/         Legacy plugin assembly + webresource deployment (`push`)
     └── dgt.power.solution/     `dgtp solution version|lint` - single-solution operations: version increment (formerly `maintenance solution-version`) and configuration-driven Dataverse quality gates (formerly dgt.power.linter)
@@ -62,15 +62,20 @@ src/
 - All custom exceptions have standard constructor overloads (CA1032)
 - Public methods validate args with `ArgumentNullException.ThrowIfNull`
 
-### CLI command tree registration (known duplication caveat)
-- `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the tree exercised by
-  `tests/dgt.power.cli.tests` (`CommandTreeTests`, `SettingsParsingTests`) - it is testable without
-  bootstrapping DI/telemetry/NuGet.
-- The **actual runtime** command tree is a separate, hand-maintained local function
-  (`RegisterCommands`) inside `src/dgt.power/Program.cs`'s top-level statements. The two have
-  already drifted apart (e.g. `Program.cs` registers a `connection` branch that `CommandTree.cs`
-  does not). When changing any branch/command, update **both** files - `CommandTreeTests`/
-  `SettingsParsingTests` passing does not guarantee the shipped CLI matches.
+### Plugin repository analyzer caveat
+- Interface-typed locals constructed directly trigger CA1859, while concrete-typed locals can
+  trigger Qodana's "only implementations are used" inspection. Configuration contracts use
+  narrow `UnusedMemberInSuper.Global` suppressions pending constructor injection. See
+  [plugin step configuration notes](implementation-plugin-step-config-set.md).
+- Secure configuration creation/linking is transactional; the default test transaction fake
+  does not emulate rollback, so atomic request construction is verified separately.
+- Composite step resolution uses plugin `TypeName` and explicit linked-entity predicates;
+  entity criteria filter after the left join, excluding unmatched steps.
+
+### CLI command tree registration
+- `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
+  source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes
+  there, and cover their paths/settings in the CLI tests.
 
 ## Key Decisions
 
@@ -192,6 +197,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, validates requested solutions and package component definitions before writes, and rejects all Create pre-images |
+| `implementation-plugin-step-config-set.md` | implementation | `dgtp plugin step config set`: enum-validated stages 10/20/30/40, file/inline config, composite resolution with concise name/ID ambiguity diagnostics |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |

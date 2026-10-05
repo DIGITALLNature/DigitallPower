@@ -157,6 +157,20 @@ internal static class CommandTree
                 .WithExample("plugin", "push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution")
                 .WithExample("plugin", "push", "c:/TargetDir/plugin.nupkg", "--publisher-prefix", "contoso", "--solution", "samplesolution")
                 .WithExample("plugin", "push", "c:/TargetDir", "--solution", "samplesolution");
+
+            plugin.AddBranch("step", step =>
+            {
+                step.AddBranch("config", cfg =>
+                {
+                    cfg.AddCommand<PluginStepConfigSetCommand>("set")
+                        .WithDescription("Sets the unsecure and/or secure configuration on an sdkmessageprocessingstep")
+                        .WithExample("plugin", "step", "config", "set", "--step-id", "<guid>", "--unsecure", "<value>")
+#pragma warning disable S103
+                        .WithExample("plugin", "step", "config", "set", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account", "--unsecure", "<value>")
+#pragma warning restore S103
+                        .WithExample("plugin", "step", "config", "set", "--step-id", "<guid>", "--unsecure-file", "config.json", "--secure-file", "secrets.json");
+                });
+            });
         });
 
         config.AddBranch<SolutionSettings>("solution", solution =>
