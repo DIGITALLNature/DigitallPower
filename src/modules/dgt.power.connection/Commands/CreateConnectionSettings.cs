@@ -37,10 +37,9 @@ public class CreateConnectionSettings : ConnectionSettings
     [DefaultValue(false)]
     public bool DeviceCode { get; init; }
 
-    [CommandOption("--client-secret")]
-    [Description("Prompt for a client secret and store it in the OS secret store")]
-    [DefaultValue(false)]
-    public bool ClientSecret { get; init; }
+    [CommandOption("--client-secret <secret>")]
+    [Description("Client secret to store in the OS secret store; protect command-line arguments and logs")]
+    public string? ClientSecret { get; init; }
 
     [CommandOption("--certificate-thumbprint")]
     [Description("Thumbprint of a certificate in the CurrentUser certificate store")]
@@ -49,6 +48,10 @@ public class CreateConnectionSettings : ConnectionSettings
     [CommandOption("--certificate-path")]
     [Description("Path to a PFX certificate file")]
     public string? CertificatePath { get; init; }
+
+    [CommandOption("--certificate-password <password>")]
+    [Description("PFX password; omit for a passwordless file. Protect command-line arguments and logs")]
+    public string? CertificatePassword { get; init; }
 
     [CommandOption("--azure-devops-federated|--adof")]
     [Description("Use Azure DevOps Workload Identity Federation (OIDC)")]
@@ -70,6 +73,16 @@ public class CreateConnectionSettings : ConnectionSettings
 
     public override ValidationResult Validate()
     {
+        if (ClientSecret is not null && string.IsNullOrWhiteSpace(ClientSecret))
+        {
+            return ValidationResult.Error("--client-secret requires a non-empty secret.");
+        }
+
+        if (CertificatePassword is not null && CertificatePath is null)
+        {
+            return ValidationResult.Error("--certificate-password requires --certificate-path.");
+        }
+
         if (ConnectionString is not null)
         {
             return ValidationResult.Error(
@@ -79,7 +92,7 @@ public class CreateConnectionSettings : ConnectionSettings
 
         if (AzureDevOpsFederated)
         {
-            if (ClientSecret || DeviceCode || CertificateThumbprint is not null || CertificatePath is not null)
+            if (ClientSecret is not null || DeviceCode || CertificateThumbprint is not null || CertificatePath is not null)
             {
                 return ValidationResult.Error("Specify only one connection authentication type.");
             }
@@ -110,13 +123,13 @@ public class CreateConnectionSettings : ConnectionSettings
         }
 
         var hasCertificate = CertificateThumbprint is not null || CertificatePath is not null;
-        var hasUserMode = !ClientSecret && !hasCertificate;
-        if (DeviceCode && (ClientSecret || hasCertificate))
+        var hasUserMode = ClientSecret is null && !hasCertificate;
+        if (DeviceCode && (ClientSecret is not null || hasCertificate))
         {
             return ValidationResult.Error("--device-code is only valid for user authentication.");
         }
 
-        if (ClientSecret && hasCertificate)
+        if (ClientSecret is not null && hasCertificate)
         {
             return ValidationResult.Error("Specify either --client-secret or certificate options, not both.");
         }

@@ -49,7 +49,7 @@ public class CreateConnectionSettingsTests
             Name = "prod",
             Url = "https://contoso.crm.dynamics.com",
             TenantId = "tenant",
-            ClientSecret = true
+            ClientSecret = "test-secret"
         };
 
         await Assert.That(settings.Validate().Successful).IsFalse();
@@ -63,7 +63,7 @@ public class CreateConnectionSettingsTests
             Name = "prod",
             Url = "https://contoso.crm.dynamics.com",
             ClientId = "client",
-            ClientSecret = true
+            ClientSecret = "test-secret"
         };
 
         await Assert.That(settings.Validate().Successful).IsFalse();
@@ -78,7 +78,7 @@ public class CreateConnectionSettingsTests
             Url = "https://contoso.crm.dynamics.com",
             TenantId = "tenant",
             ClientId = "client",
-            ClientSecret = true
+            ClientSecret = "test-secret"
         };
 
         await Assert.That(settings.Validate().Successful).IsTrue();
@@ -92,6 +92,49 @@ public class CreateConnectionSettingsTests
             Name = "pipeline",
             AzureDevOpsFederated = true,
             ServiceConnectionName = "Power Platform"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsTrue();
+    }
+
+    [Test]
+    [Arguments("")]
+    [Arguments(" ")]
+    public async Task ClientSecretRejectsEmptyValue(string secret)
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant", ClientId = "client", ClientSecret = secret
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    public async Task CertificatePasswordRequiresFile()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant", ClientId = "client",
+            CertificateThumbprint = "thumbprint", CertificatePassword = "password"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
+    [Arguments("password")]
+    public async Task CertificateFileAcceptsOptionalPassword(string? password)
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant", ClientId = "client",
+            CertificatePath = "certificate.pfx", CertificatePassword = password
         };
 
         await Assert.That(settings.Validate().Successful).IsTrue();

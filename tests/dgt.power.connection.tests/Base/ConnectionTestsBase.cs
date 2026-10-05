@@ -22,6 +22,7 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
     {
         _directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"dgtp-tests-{Guid.NewGuid():N}");
         var home = new DgtpHome(_directory);
+        Home = home;
         var store = new ConnectionStore(home);
         var secretStore = new TestSecretStore();
         var userTokenCache = new TestUserTokenCache();
@@ -40,6 +41,8 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
         base.GetBuilder().WithServiceCollection(_services);
 
     protected IConnectionStore ConnectionStore { get; }
+
+    protected DgtpHome Home { get; }
 
     protected TestSecretStore SecretStore { get; }
 

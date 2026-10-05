@@ -136,7 +136,7 @@ src/
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
-| Version-stable connection and state storage | `implementation-typed-connection-storage.md` | Typed `connections.json`, OS-protected secrets/token cache, stable `DGTP_HOME`, account-scoped cleanup when deleting connections, and no migration from 2.x |
+| Version-stable connection and state storage | `implementation-typed-connection-storage.md` | Typed `connections.json`, OS-protected secrets/token cache, stable `DGTP_HOME`, certificate key/password boundaries, token-check semantics, account-scoped cleanup, and no migration from 2.x |
 | Persistent MSAL cache account removal | `research-persistent-msal-token-cache-removal.md` | Match Azure.Identity's actual `.nocae` cache name, platform storage settings, protected-first/fallback behavior, and remove accounts individually |
 | Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh` |
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |

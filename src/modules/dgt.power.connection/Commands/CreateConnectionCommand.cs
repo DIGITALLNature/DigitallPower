@@ -112,7 +112,7 @@ public class CreateConnectionCommand(
             };
         }
 
-        if (settings.ClientSecret)
+        if (settings.ClientSecret is not null)
         {
             return new ClientSecretConnection
             {
@@ -160,23 +160,23 @@ public class CreateConnectionCommand(
         return interactiveConnection with { AuthenticationRecord = authenticationRecord };
     }
 
-    private string? GetSecret(CreateConnectionSettings settings)
+    private static string? GetSecret(CreateConnectionSettings settings)
     {
-        if (settings.ClientSecret)
+        if (settings.ClientSecret is not null)
         {
-            return console.Prompt(new TextPrompt<string>("Client secret").Secret());
+            return settings.ClientSecret;
         }
 
         if (settings.CertificatePath is not null)
         {
-            return console.Prompt(new TextPrompt<string>("PFX password (leave empty if none)").AllowEmpty().Secret());
+            return settings.CertificatePassword ?? string.Empty;
         }
 
         return null;
     }
 
     private static string? GetSecretKey(CreateConnectionSettings settings) =>
-        settings.ClientSecret ? "clientSecret"
+        settings.ClientSecret is not null ? "clientSecret"
             : settings.CertificatePath is not null ? "certificatePassword"
             : null;
 

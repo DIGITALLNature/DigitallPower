@@ -409,6 +409,44 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task CreateConnectionSettings_ParsesClientSecretValue()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "prod", "--url", "https://org.crm.dynamics.com",
+            "--tenant", "tenant", "--client-id", "client",
+            "--client-secret", "test-secret", "--non-interactive");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+        await Assert.That(settings.ClientSecret).IsEqualTo("test-secret");
+        await Assert.That(settings.NonInteractive).IsTrue();
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_ParsesCertificatePassword()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "prod", "--url", "https://org.crm.dynamics.com",
+            "--tenant", "tenant", "--client-id", "client",
+            "--certificate-path", "certificate.pfx", "--certificate-password", "pfx-password");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+        await Assert.That(settings.CertificatePath).IsEqualTo("certificate.pfx");
+        await Assert.That(settings.CertificatePassword).IsEqualTo("pfx-password");
+    }
+
+    [Test]
+    public async Task CreateConnectionSettings_PasswordlessCertificateDefaultsToNull()
+    {
+        var result = Parse<CreateConnectionSettings>(
+            "prod", "--url", "https://org.crm.dynamics.com",
+            "--tenant", "tenant", "--client-id", "client",
+            "--certificate-path", "certificate.pfx");
+
+        var settings = (CreateConnectionSettings)result.Settings!;
+        await Assert.That(settings.CertificatePassword).IsNull();
+    }
+
+    [Test]
     public async Task GlobalConnectionSettings_ParsesConnectionSelectionAndAdHocString()
     {
         var result = Parse<MaintenanceVerb>(

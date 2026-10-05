@@ -61,7 +61,6 @@ public class CreateConnectionCommandTests
             ClientId = "client"
         });
         SecretStore.WriteSecret("prod", "clientSecret", "old-secret");
-        TestConsole.Input.PushTextWithEnter("new-secret");
         var verifier = new FakeConnectionVerifier(new InvalidOperationException("verification failed"));
         var settings = new CreateConnectionSettings
         {
@@ -69,7 +68,7 @@ public class CreateConnectionCommandTests
             Url = "https://replacement.crm.dynamics.com",
             TenantId = "tenant",
             ClientId = "client",
-            ClientSecret = true
+            ClientSecret = "new-secret"
         };
 
         await RunExpectingVerificationFailureAsync(verifier, settings);
@@ -88,6 +87,45 @@ public class CreateConnectionCommandTests
         await Assert.That(result).IsEqualTo(0);
         await Assert.That(verifier.WasCalled).IsFalse();
         await Assert.That(ConnectionStore.Find("pipeline")).IsTypeOf<AzureDevOpsFederatedConnection>();
+    }
+
+    [Test]
+    public async Task SavesClientSecretWithoutPromptingOrLeakingValue()
+    {
+        var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
+        {
+            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant", ClientId = "client", ClientSecret = "test-secret",
+            NonInteractive = true
+        });
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsEqualTo("test-secret");
+        await Assert.That(File.ReadAllText(Home.ConnectionsPath)).DoesNotContain("test-secret");
+        await Assert.That(TestConsole.Output).DoesNotContain("test-secret");
+    }
+
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
+    [Arguments("pfx-password")]
+    public async Task SavesCertificatePasswordWithoutPrompting(string? password)
+    {
+        var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
+        {
+            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            TenantId = "tenant", ClientId = "client", CertificatePath = "certificate.pfx",
+            CertificatePassword = password, NonInteractive = true
+        });
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(SecretStore.ReadSecret("prod", "certificatePassword")).IsEqualTo(password ?? "");
+        await Assert.That(ConnectionStore.Find("prod")).IsTypeOf<ClientCertificateConnection>();
+        if (!string.IsNullOrEmpty(password))
+        {
+            await Assert.That(File.ReadAllText(Home.ConnectionsPath)).DoesNotContain(password);
+            await Assert.That(TestConsole.Output).DoesNotContain(password);
+        }
     }
 
     private async Task<int> RunAsync(

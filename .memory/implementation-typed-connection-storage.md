@@ -62,6 +62,26 @@ Connection definition discriminators are `interactive`, `deviceCode`, `clientSec
 Azure.Identity authentication record; client secrets and PFX passwords are stored separately.
 Certificate thumbprints refer to the CurrentUser certificate store.
 
+Certificate resolution uses the CurrentUser `My` store for thumbprints, or
+`X509CertificateLoader.LoadPkcs12FromFile` with `EphemeralKeySet` for PFX paths. The private key
+remains in the store/file; only a file's password is managed by `SecretStore`, under
+`certificatePassword` for the connection name. Thumbprint lookup does not consume a PFX password.
+`CredentialFactory` currently enables persistent token caching for certificate credentials as
+well as user credentials; client-secret credentials use the default in-memory caching behavior.
+
+`CheckAuthAsync` attempts token acquisition for every saved auth type; it is not a Dataverse
+permission/connectivity check. Ad-hoc strings skip this check. `RefreshAuthAsync` only reauthenticates
+user connections, not service-principal credentials. The user-facing explanation and creation
+examples for all auth types are in README's "Authentication types" section.
+
+Creation takes `--client-secret <secret>` directly and an optional
+`--certificate-password <password>` only with `--certificate-path`. Neither flow prompts.
+An omitted PFX password stages an empty password, replacing any previously stored password
+for that connection. Both inputs remain outside connection metadata and use the existing
+verification/rollback path. CLI values favor unattended creation; callers must protect process
+arguments, shell history, and pipeline logs. User authentication still requires sign-in during
+creation even with `--no-verify`.
+
 `--connection` / `DGTP_CONNECTION` select a named connection. `--connection-string` /
 `DGTP_CONNECTION_STRING` provide a non-persisted fallback and take precedence over a named
 connection. `--non-interactive` / `DGTP_NON_INTERACTIVE` prevent browser/device authentication.
