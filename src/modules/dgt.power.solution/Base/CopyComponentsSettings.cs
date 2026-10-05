@@ -24,4 +24,9 @@ public class CopyComponentsSettings : SolutionSettings
     [CommandOption("--raw")]
     [Description("Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter")]
     public bool Raw { get; init; }
+
+    [CommandOption("--apps <MODE>")]
+    [Description("How to handle model-driven apps: skip (default) = do not copy them; strip = copy, then remove subcomponents Dataverse added; allow = copy and keep what Dataverse adds")]
+    [DefaultValue(AppHandling.Skip)]
+    public AppHandling Apps { get; init; } = AppHandling.Skip;
 }

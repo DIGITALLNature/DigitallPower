@@ -10,4 +10,5 @@ public sealed record ComponentCopyDecision(
     string ComponentTypeName,
     bool Include,
     bool DoNotIncludeSubcomponents,
-    string Reason);
+    string Reason,
+    bool IsAppBound = false);

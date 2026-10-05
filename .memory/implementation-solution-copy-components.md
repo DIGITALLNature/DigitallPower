@@ -6,7 +6,7 @@ solution. Lives in `dgt.power.solution` alongside `version`/`lint`.
 ## CLI shape
 
 ```
-dgtp solution copy-components <Target> --source <Sol1,Sol2> [--dry-run] [--raw]
+dgtp solution copy-components <Target> --source <Sol1,Sol2> [--dry-run] [--raw] [--apps skip|strip|allow]
 ```
 
 - `<Target>` (positional) - the unmanaged solution being mutated (consistent with `solution
@@ -18,8 +18,10 @@ dgtp solution copy-components <Target> --source <Sol1,Sol2> [--dry-run] [--raw]
 - `--raw` - disables best-practice normalization (mirrors the source's own `RootComponentBehavior`,
   skips the managed/active-layer filter). Best-practice mode is the **default** (opt-out design,
   confirmed by the user) - not opt-in.
+- During execution, a Spectre spinner reports the component type, object ID, and current position
+  while each included component is added to the target.
 
-## Why `AddRequiredComponents` is always `false` (never a flag)
+## Required components and subcomponents are separate controls
 
 Research finding (Microsoft Learn, `AddSolutionComponentRequest.AddRequiredComponents`): when
 `true`, Dataverse transitively expands to every component it considers "required" - this is what
@@ -27,8 +29,45 @@ silently drags tables/forms/views/sitemaps into a solution when adding a model-d
 (`AppModule`, componenttype 80, missing from the generated `SolutionComponent.Options.ComponentType`
 enum - it's resolved generically via `solutioncomponentdefinition` instead, see below). None of
 Microsoft's own SDK samples set it `true`. Conclusion: this alone satisfies "don't let the platform
-auto-pull app dependencies" - **no app-specific code path exists**, the rule is applied uniformly to
-every componenttype, unconditionally (not gated by `--best-practices`/`--raw`).
+auto-pull required dependencies", but it does not independently prevent inclusion of subcomponents.
+The flag is applied uniformly to every componenttype, unconditionally (not gated by
+`--best-practices`/`--raw`).
+
+**Model-driven apps (componenttype 80, `CopyComponentsContext.AppModuleComponentType`):**
+`DoNotIncludeSubcomponents = true` is **rejected by Dataverse for every non-Entity root**
+(`FaultException`: "DoNotIncludeSubcomponents can not be set to true on non Entity root ..."), so it
+can only ever be set for tables - never for apps. No documented or community-known request
+parameter / alternative message exists to add an app without its subcomponents (research:
+`Gharib89/crm#941`, `AymericM78/PowerDataOps`, `microsoft/power-platform-skills`; Microsoft's
+reference pages are silent on the restriction). `AddRequiredComponents = false` alone did not stop
+the platform from adding app-related rows either.
+
+Because of that, apps are controlled by the `--apps` option (`AppHandling` enum, `Base/AppHandling.cs`),
+applied to the decisions in `CopyComponentsCommand.ApplyAppHandling` so `--dry-run` shows the outcome:
+
+- `skip` (**default**) - the app decision becomes `Include = false`; apps are never copied. App-bound
+  components follow the app: rows whose `solutioncomponentdefinition` name is `AppSetting` or starts with
+  `AppModuleComponent`/`AppElement` (or whose backing table `primaryentityname` matches) are skipped too
+  (`SolutionComponentDefinitionInfo.IsAppBound` -> `ComponentCopyDecision.IsAppBound`). **Never match these
+  by componenttype number**: types above ~10000 are assigned per environment (a hard-coded 10085/9007 did
+  not match a real environment). Under `strip`/`allow` they are copied as regular planned rows (and
+  therefore never removed by the strip cleanup). The app itself is matched by the stable type 80.
+- `strip` - adding **any app-bound component (AppElement/AppSetting/...) already makes Dataverse pull in the
+  app and its subcomponents**, even with `AddRequiredComponents = false` (observed; so a snapshot taken right
+  before the explicit app add sees nothing new). Therefore all app-bound components and apps form one "app
+  phase", added last (ordering: entities, other components, app-bound, apps). The target solution's
+  `solutioncomponent` keys (type, objectid) are snapshotted **before the first** app-phase row and compared
+  **after the last**; every new key that is not part of the plan is removed via
+  `RemoveSolutionComponentRequest` (entities last, because removing a table also drops its views/forms; a fault for a
+  row that is already gone from the solution - verified by re-reading the membership - is ignored, any other fault is
+  rethrown) and listed with its type name (from `solutioncomponentdefinition`) in the console output. For troubleshooting, a `--apps strip:`
+  line (components before/after, new, removed, kept because planned) is printed, and a final re-snapshot
+  warns about unplanned rows still present afterwards (late/async additions).
+- `allow` - the app is added as-is and Dataverse's own expansion is kept.
+
+`strip` is not yet verified against a real environment (what exactly Dataverse adds for an app is
+undocumented); removing a table or view the app references can leave the app with missing
+dependencies - check `ValidateApp`.
 
 `AddSolutionComponentRequest.DoNotIncludeSubcomponents` is a plain bool - there is no way to
 request `RootComponentBehavior.IncludeAsShellOnly` (2) through this message. Only 0

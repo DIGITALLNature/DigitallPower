@@ -35,8 +35,8 @@ src/
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
     ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set`
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
-  ├── dgt.power.solution/     `dgtp solution version|lint|copy-components` - single/multi-solution operations: version increment (formerly `maintenance solution-version`), configuration-driven Dataverse quality gates (formerly dgt.power.linter), and copying solution components between solutions with managed/active-layer-aware filtering
-  └── dgt.power.webresource/  Dedicated webresource deployment
+    ├── dgt.power.solution/     `dgtp solution version|lint|copy-components` - single/multi-solution operations: version increment (formerly `maintenance solution-version`), configuration-driven Dataverse quality gates (formerly dgt.power.linter), and copying solution components between solutions with managed/active-layer-aware filtering, per-component execution progress, and `--apps skip|strip|allow` model-driven app handling
+    └── dgt.power.webresource/  Dedicated webresource deployment
 ```
 
 ## Key Conventions
@@ -198,6 +198,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
   preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.
 - **`SolutionComponent.ComponentType`/`RootComponentBehavior` are `OptionSetValue?` (a nullable-annotated reference type), not `int?`.** `.HasValue` does not compile on them, and `component.ComponentType is not { } type` binds `type` as `OptionSetValue`, not the underlying int — always chain through `.Value` first (`component.ComponentType?.Value is not { } type`). See `implementation-solution-copy-components.md` for the full write-up; this applies to any future code touching `solutioncomponent` rows.
+- **`AddSolutionComponentRequest.DoNotIncludeSubcomponents = true` is only accepted for Entity roots (type 1)**; model-driven apps (type 80) cannot be added without Dataverse's expansion. `solution copy-components --apps skip|strip|allow` (default `skip`) controls this (app-bound AppSetting/AppModuleComponent rows follow the app, matched by `solutioncomponentdefinition` name - componenttypes >10000 differ per environment); `strip` removes platform-added subcomponents afterwards and is unverified against a real environment. See `implementation-solution-copy-components.md`.
 
 ## Memory Files Index
 
@@ -252,6 +253,6 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-azure-devops-workload-identity-federation.md` | decision | WIF/OIDC connections via `AzurePipelinesCredential`; CLI surface, architecture, why not `pac`/hand-rolled OIDC, CI REST-lookup pattern, self-constructed `SYSTEM_OIDCREQUESTURI` (no task dependency, verified live), Managed Identity out-of-scope split |
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |
 | `implementation-linter-entity-component-membership.md` | implementation | `EntityComponentMembership`/`EntityComponentMembershipResolver`: resolves attributes for entities added with `RootComponentBehavior.IncludeSubcomponents` (no per-attribute solutioncomponent rows exist for those); generic `ExplicitSubcomponentsByType` for future component types; table-level (not solution-level) `IsManaged` drives `completeness.table-root-component-behavior` (implemented) |
-| `implementation-solution-copy-components.md` | implementation | `dgtp solution copy-components`: CLI shape, why `AddRequiredComponents` is always `false` (no app-specific code path needed), unified managed/active-layer inclusion rule across all componenttypes, generic managed-state resolution via `solutioncomponentdefinition.primaryentityname`, and the `OptionSetValue?` vs `int?` gotcha on `SolutionComponent.ComponentType`/`RootComponentBehavior` |
+| `implementation-solution-copy-components.md` | implementation | `dgtp solution copy-components`: CLI shape, required dependencies vs. subcomponents (Entity-only `DoNotIncludeSubcomponents`; `--apps` modes), unified managed/active-layer inclusion rule across all componenttypes, generic managed-state resolution via `solutioncomponentdefinition.primaryentityname`, and the `OptionSetValue?` vs `int?` gotcha on `SolutionComponent.ComponentType`/`RootComponentBehavior` |
 | `decision-resource-oriented-cli-restructuring.md` | decision | Planned multi-phase CLI restructuring: `dgt.power.linter` → `dgt.power.solution`, `dgtp solution lint`/`dgtp solution version`, maintenance/analyze command-to-resource mapping tables, hard-cut deprecation policy, Sarif.Sdk adoption |
 | `research-webresource-push-v2-review.md` | research | Design and compatibility review of resource-oriented webresource deployment, including deferred publish batching and plugin-aligned execution progress |

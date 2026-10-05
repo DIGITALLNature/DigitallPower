@@ -20,6 +20,9 @@ public sealed class CopyComponentsContext
     private const int PageSize = 5000;
     private const int MaxConcurrentEntityMetadataRequests = 8;
 
+    // Not part of the generated SolutionComponent.Options.ComponentType enum.
+    public const int AppModuleComponentType = 80;
+
     private static readonly IReadOnlyDictionary<(int, Guid), bool> EmptyLookup = new Dictionary<(int, Guid), bool>();
 
     private CopyComponentsContext(IReadOnlyList<SolutionComponent> components)
@@ -102,7 +105,10 @@ public sealed class CopyComponentsContext
         IReadOnlyDictionary<int, SolutionComponentDefinitionInfo> definitionsByType) =>
         Components
             .Where(static component => component.ComponentType?.Value != null && component.ObjectId.HasValue)
-            .Select(component => BuildDecision(component, bestPractices, managedByComponent, hasActiveLayerByComponent, definitionsByType))
+            .Select(component => BuildDecision(component, bestPractices, managedByComponent, hasActiveLayerByComponent, definitionsByType) with
+            {
+                IsAppBound = definitionsByType.GetValueOrDefault(component.ComponentType!.Value).IsAppBound
+            })
             .ToList();
 
     private static ComponentCopyDecision BuildDecision(
@@ -190,7 +196,7 @@ public sealed class CopyComponentsContext
     // Fetched unfiltered (not scoped to the componenttypes actually present) - solutioncomponentdefinition
     // is a small, effectively-static system table, so a single unconditional query is cheaper and simpler
     // than building an IN(...) filter from the distinct componenttypes seen in this run.
-    private static async Task<Dictionary<int, SolutionComponentDefinitionInfo>> RetrieveComponentDefinitionsAsync(IOrganizationServiceAsync2 connection, CancellationToken cancellationToken)
+    internal static async Task<Dictionary<int, SolutionComponentDefinitionInfo>> RetrieveComponentDefinitionsAsync(IOrganizationServiceAsync2 connection, CancellationToken cancellationToken)
     {
         var query = new QueryExpression(SolutionComponentDefinition.EntityLogicalName)
         {

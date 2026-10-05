@@ -190,7 +190,8 @@ internal static class CommandTree
                 .WithDescription("Copies solution components from one or more source solutions into an unmanaged target solution")
                 .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution")
                 .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution_a,source_solution_b", "--dry-run")
-                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution", "--raw");
+                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution", "--raw")
+                .WithExample("solution", "copy-components", "target_solution", "--source", "source_solution", "--apps", "strip");
         });
 
         config.AddCommand<CodeGenerationCommand>("codegeneration")
