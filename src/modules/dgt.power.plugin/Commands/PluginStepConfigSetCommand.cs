@@ -19,10 +19,10 @@ public class PluginStepConfigSetCommand(
     IAnsiConsole console)
     : PowerLogic<PluginStepConfigSetSettings>(tracer, connection, configResolver, console)
 {
-    protected override async Task<bool> InvokeAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
+    protected override Task<bool> InvokeAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        return await InvokeCoreAsync(settings, cancellationToken);
+        return InvokeCoreAsync(settings, cancellationToken);
     }
 
     private async Task<bool> InvokeCoreAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
