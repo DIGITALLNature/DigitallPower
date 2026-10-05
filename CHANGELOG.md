@@ -1,3 +1,10 @@
+# [3.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2026-10-05)
+
+
+### Features
+
+* **plugin:** add step config set command for plugin step configuration ([#192](https://github.com/DIGITALLNature/DigitallPower/issues/192)) ([951c411](https://github.com/DIGITALLNature/DigitallPower/commit/951c4110329bdab59cdfb0dcecd91d9a95c0744d))
+
 # [3.0.0-beta.2](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.1...v3.0.0-beta.2) (2026-10-02)
 
 
