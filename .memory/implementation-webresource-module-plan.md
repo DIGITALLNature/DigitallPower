@@ -69,6 +69,10 @@ lowercase `webresource`, matching command conventions and the module namespace.
 2. **Port and harden the Local layer**
    - Read the existing mapping configuration without coupling the reader to Dataverse or
      Spectre output.
+   - Reject mapping files that omit `mappings` or set it to `null`, with an actionable
+     `WebResourceMappingException`; never silently fall back to derived names for malformed input.
+   - Reject mapping keys that do not match discovered supported files; normalize slash styles
+     before matching and report all unmatched entries before any Dataverse calls.
    - Recursively discover supported extensions and resolve Dataverse webresource types.
    - Normalize relative paths to `/`, apply explicit mappings first, and otherwise apply the
      solution publisher prefix.
@@ -94,6 +98,8 @@ lowercase `webresource`, matching command conventions and the module namespace.
      in a form reusable by both reconciliation and obsolete detection.
    - Keep repository DTOs separate from local files and plans.
    - Surface Dataverse failures; do not swallow `AddSolutionComponent` errors as successful pushes.
+   - Test solution scoping, returned webresource fields, and missing-solution failures without
+     relying on live Dataverse access.
 
 5. **Implement execution and dry-run**
    - Apply the plan in a deterministic order: create/update, solution membership, publish each
@@ -141,6 +147,13 @@ lowercase `webresource`, matching command conventions and the module namespace.
 - Expected webresource domain failures use focused `AbstractPowerException` types
   (`ManagedWebResourceException`, `WebResourceSolutionNotFoundException`, and
   `WebResourceMappingException`); CLI option validation remains `ValidationResult`.
+- Mapping files require a non-null `mappings` object; malformed input fails before deployment
+  rather than falling back to publisher-prefix-derived names.
+- Every mapping key must match a discovered supported file path relative to the target directory;
+  unmatched keys fail discovery before Dataverse access.
+- Mapping files may selectively rename only some supported files; all other supported files keep
+  the default publisher-prefix-derived naming convention.
+- Each public plan record lives in a correspondingly named source file.
 - Created and updated resources are each published in a separate request after resource writes
   and solution-membership additions complete.
 - The target accepts either a single file or a directory. Directory scanning is recursive.

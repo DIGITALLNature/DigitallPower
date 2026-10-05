@@ -819,8 +819,14 @@ complete Dataverse webresource logical names:
 }
 ```
 
-Mappings override the default `publisherPrefix_/relative/path` naming convention. The schema is
-available at [`schemas/webresource/schema.json`](schemas/webresource/schema.json).
+Mappings override the default `publisherPrefix_/relative/path` naming convention for the paths they
+specify; other supported files continue to use the default naming convention. This allows selective
+remapping, such as migrating only legacy webresources. The schema is available at
+[`schemas/webresource/schema.json`](schemas/webresource/schema.json). The file must contain a
+non-null `mappings` object; malformed mapping files stop deployment with an error. Every mapping
+key must match a supported file path relative to the target directory. Unmatched entries (including
+mappings for files that are absent or unsupported) stop deployment rather than being silently
+ignored.
 
 ##### Planning and execution
 

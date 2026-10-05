@@ -8,6 +8,7 @@ namespace dgt.power.webresource.Local;
 
 public sealed class WebResourceMappingFile
 {
+    [JsonRequired]
     [JsonPropertyName("mappings")]
     public Dictionary<string, string> Mappings { get; init; } = new(StringComparer.Ordinal);
 
@@ -24,13 +25,23 @@ public sealed class WebResourceMappingFile
         {
             using var stream = File.OpenRead(path);
             var result = JsonSerializer.Deserialize<WebResourceMappingFile>(stream);
-            return result ?? throw new WebResourceMappingException(path, "the file is empty");
+            if (result is null)
+            {
+                throw new WebResourceMappingException(path, "the file is empty");
+            }
+
+            if (result.Mappings is null)
+            {
+                throw new WebResourceMappingException(path, "'mappings' must be a JSON object and cannot be null");
+            }
+
+            return result;
         }
         catch (JsonException exception)
         {
             throw new WebResourceMappingException(
                 path,
-                "the file contains invalid JSON",
+                "the file must be valid JSON with a non-null 'mappings' object",
                 exception);
         }
     }

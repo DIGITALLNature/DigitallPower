@@ -11,8 +11,3 @@ public sealed record WebResourcePlanItem(
     WebResourceAction Action,
     RemoteWebResource? Remote,
     bool AddToSolution);
-
-public sealed record WebResourcePushPlan(
-    IReadOnlyList<WebResourcePlanItem> Resources,
-    IReadOnlyList<RemoteSolutionWebResource> Obsolete,
-    string? SolutionUniqueName);

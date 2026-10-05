@@ -84,4 +84,53 @@ public class WebResourceDiscoveryTests
             root.Delete(true);
         }
     }
+
+    [Test]
+    public async Task Discover_Directory_RejectsMappingsWithoutMatchingSupportedFiles()
+    {
+        var root = Directory.CreateTempSubdirectory();
+        try
+        {
+            await File.WriteAllTextAsync(Path.Combine(root.FullName, "main.js"), "console.log('test');");
+
+            await Assert.That(() => WebResourceDiscovery.Discover(
+                    root.FullName,
+                    "contoso",
+                    new Dictionary<string, string>
+                    {
+                        ["typo.js"] = "contoso_/main.js"
+                    }))
+                .Throws<WebResourceMappingException>();
+        }
+        finally
+        {
+            root.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task Discover_Directory_NormalizesMappingPathSeparators()
+    {
+        var root = Directory.CreateTempSubdirectory();
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(root.FullName, "app"));
+            await File.WriteAllTextAsync(Path.Combine(root.FullName, "app", "main.js"), "console.log('test');");
+
+            var resources = WebResourceDiscovery.Discover(
+                root.FullName,
+                "contoso",
+                new Dictionary<string, string>
+                {
+                    ["app\\main.js"] = "contoso_/scripts/main.js"
+                });
+
+            await Assert.That(resources).Count().IsEqualTo(1);
+            await Assert.That(resources[0].Name).IsEqualTo("contoso_/scripts/main.js");
+        }
+        finally
+        {
+            root.Delete(true);
+        }
+    }
 }

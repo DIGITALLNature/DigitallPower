@@ -40,6 +40,23 @@ public static class WebResourceDiscovery
         ArgumentException.ThrowIfNullOrWhiteSpace(publisherPrefix);
 
         var root = Path.GetFullPath(target);
+        Dictionary<string, string>? normalizedMappings = null;
+        if (mappings is not null)
+        {
+            normalizedMappings = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var (key, value) in mappings)
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(key);
+                var normalizedKey = NormalizePath(key);
+                if (!normalizedMappings.TryAdd(normalizedKey, value))
+                {
+                    throw new WebResourceMappingException(
+                        $"Multiple mapping entries resolve to the same path '{normalizedKey}'.");
+                }
+            }
+        }
+
+        var usedMappings = new HashSet<string>(StringComparer.Ordinal);
         var resources = new List<LocalWebResource>();
         foreach (var file in Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
                      .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
@@ -50,8 +67,21 @@ public static class WebResourceDiscovery
             }
 
             var relativePath = NormalizePath(Path.GetRelativePath(root, file));
-            var name = ResolveName(relativePath, publisherPrefix, mappings);
+            var name = ResolveName(relativePath, publisherPrefix, normalizedMappings, usedMappings);
             resources.Add(ReadFile(file, name, type, relativePath));
+        }
+
+        if (normalizedMappings is not null)
+        {
+            var unmatchedMappings = normalizedMappings.Keys
+                .Except(usedMappings, StringComparer.Ordinal)
+                .Order(StringComparer.Ordinal)
+                .ToArray();
+            if (unmatchedMappings.Length > 0)
+            {
+                throw new WebResourceMappingException(
+                    $"Mapping entries do not match supported files under '{root}': {string.Join(", ", unmatchedMappings)}.");
+            }
         }
 
         var duplicates = resources
@@ -72,11 +102,13 @@ public static class WebResourceDiscovery
     private static string ResolveName(
         string relativePath,
         string publisherPrefix,
-        IReadOnlyDictionary<string, string>? mappings)
+        Dictionary<string, string>? mappings,
+        HashSet<string> usedMappings)
     {
         if (mappings is not null && mappings.TryGetValue(relativePath, out var mappedName))
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(mappedName);
+            usedMappings.Add(relativePath);
             return mappedName;
         }
 
