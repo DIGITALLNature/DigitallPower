@@ -52,3 +52,17 @@ The legacy profile module and profile service layer have been removed. `dgt.powe
 the sole connection-management module; saved connections use typed definitions in the stable
 `DGTP_HOME` data directory. Existing isolated-storage connections are not migrated. See
 `.memory/implementation-typed-connection-storage.md`.
+
+### Migration guide follow-up
+
+After PR #193 (https://github.com/DIGITALLNature/DigitallPower/pull/193) is merged and the
+connection rewrite branch is rebased, extend the migration guide introduced by that PR to
+document the legacy profile removal:
+
+- Map the removed `profile` commands to the supported `connection` commands.
+- Explain that legacy isolated-storage connections are not imported; users must recreate them
+  with typed authentication options.
+- Document replacement of `--profile` with `--connection`, and the non-persisted
+  `--connection-string` / `DGTP_CONNECTION_STRING` alternative to saved connection strings.
+- Link the guide from the README and remove stale references to deleted profile types and projects
+  from contributor documentation and examples, preserving explicitly historical notes.
