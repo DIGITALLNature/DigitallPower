@@ -93,6 +93,42 @@ public class WebResourcePushExecutorTests
         await Assert.That(solutionRepository.Added).IsEmpty();
     }
 
+    [Test]
+    public async Task ExecuteAsync_AddsUnchangedResourceAndDeletesObsoleteResource()
+    {
+        var operations = new List<string>();
+        var progress = new List<WebResourceDeploymentProgress>();
+        var repository = new RecordingWebResourceRepository(operations);
+        var solutionRepository = new RecordingSolutionRepository(operations);
+        var executor = new WebResourcePushExecutor(repository, solutionRepository);
+        var local = CreateLocal("contoso_/main.js");
+        var existingId = Guid.NewGuid();
+        var obsoleteId = Guid.NewGuid();
+        var plan = new WebResourcePushPlan(
+            [
+                new WebResourcePlanItem(
+                    local,
+                    WebResourceAction.Unchanged,
+                    new RemoteWebResource(existingId, local.Type, local.Name, local.Content, false),
+                    true)
+            ],
+            [new RemoteSolutionWebResource(obsoleteId, 3, "contoso_/obsolete.js", false)],
+            "ContosoCore");
+
+        var operationCount = await executor.ExecuteAsync(plan, progress.Add);
+
+        await Assert.That(operationCount).IsEqualTo(2);
+        await Assert.That(solutionRepository.Added).IsEquivalentTo([(existingId, "ContosoCore")]);
+        await Assert.That(repository.Deleted).IsEquivalentTo([obsoleteId]);
+        await Assert.That(repository.PublishBatches).IsEmpty();
+        await Assert.That(operations).IsEquivalentTo(["Add", "Delete"]);
+        await Assert.That(progress.Select(item => (item.Operation, item.Resource, item.Name))).IsEquivalentTo(
+        [
+            ("Added", "WebResource", $"{local.Name} to solution ContosoCore"),
+            ("Deleted", "WebResource", "contoso_/obsolete.js")
+        ]);
+    }
+
     private static LocalWebResource CreateLocal(string name) =>
         new(3, name, Path.GetFileName(name), Convert.ToBase64String("content"u8.ToArray()), "hash", name);
 
@@ -101,6 +137,7 @@ public class WebResourcePushExecutorTests
         public Guid CreatedId { get; } = Guid.NewGuid();
         public List<string> Created { get; } = [];
         public List<(string Name, Guid Id)> Updated { get; } = [];
+        public List<Guid> Deleted { get; } = [];
         public List<IReadOnlyCollection<Guid>> PublishBatches { get; } = [];
 
         public Task<IReadOnlyList<RemoteWebResource>> FindByNamesAsync(
@@ -125,6 +162,7 @@ public class WebResourcePushExecutorTests
         public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
         {
             operations.Add("Delete");
+            Deleted.Add(id);
             return Task.CompletedTask;
         }
 

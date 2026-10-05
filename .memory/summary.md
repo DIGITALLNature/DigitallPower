@@ -187,8 +187,9 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Webresource push plan contract:** the command should render a complete, case-insensitive plan
   before execution. Solution membership and obsolete deletion are plan operations, each changed
   resource is published separately after individual writes, and an unchanged managed resource is a
-  valid no-op. Execution uses one overall spinner and reports each successful operation through a
-  progress callback, matching plugin push; see
+  valid no-op. An empty directory exits as a no-op even with `--delete-obsolete`; it cannot be used
+  to delete every webresource from a solution. Execution uses one overall spinner and reports each
+  successful operation through a progress callback, matching plugin push; see
   [`research-webresource-push-v2-review.md`](research-webresource-push-v2-review.md).
 - **Console encoding:** the host sets UTF-8 output only after the dotnet-suggest early-exit gate,
   preserving its stdout-only completion protocol while enabling Spectre.Console plan emojis.

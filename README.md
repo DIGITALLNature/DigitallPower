@@ -766,8 +766,8 @@ Commands for deploying Dataverse webresources.
 
 Pushes webresources from a directory or a single file. Directory targets are scanned recursively
 and require an explicit publisher prefix. A solution is used for membership and obsolete-resource
-scope; it does not determine the publisher prefix. Created and updated webresources are published
-together in one request after deployment by default.
+scope; it does not determine the publisher prefix. Created and updated webresources are each
+published in a separate request after resource writes and solution-membership additions complete.
 
 ##### Usage
 
@@ -849,7 +849,8 @@ The tree shows local directory structure; mapping files may intentionally produc
 Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
 checkmarks for completed operations. With `--dry-run`, the tree, missing solution memberships,
 and any obsolete resources to delete are rendered, then execution stops. Obsolete deletion
-requires a directory target and `--solution`.
+requires a directory target and `--solution`. An empty directory is a no-op, including when
+`--delete-obsolete` is specified; it cannot be used to delete every webresource from a solution.
 
 ### `push` — Deploy legacy artifacts
 

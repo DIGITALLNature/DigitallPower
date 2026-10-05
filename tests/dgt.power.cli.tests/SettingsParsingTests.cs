@@ -70,6 +70,29 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task WebResourcePushSettings_ParsesSingleFileName()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var target = Path.Combine(directory.FullName, "main.js");
+            await File.WriteAllTextAsync(target, "console.log('test');");
+            var result = Parse<WebResourcePushSettings>(
+                target,
+                "--name", "contoso_/scripts/main.js");
+
+            var settings = (WebResourcePushSettings)result.Settings!;
+
+            await Assert.That(settings.Target).IsEqualTo(target);
+            await Assert.That(settings.Name).IsEqualTo("contoso_/scripts/main.js");
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
     public async Task AnalyzeVerb_ParsesOptions()
     {
         var result = Parse<AnalyzeVerb>(

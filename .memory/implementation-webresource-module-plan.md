@@ -57,7 +57,8 @@ lowercase `webresource`, matching command conventions and the module namespace.
      registrations.
    - Register `webresource` → `push` in `CommandTree`; use singular resource naming.
    - Define a file-or-directory target and resource-only options: `--solution`, `--mapping-file`,
-     `--publisher-prefix`, `--name`, `--publish`, `--delete-obsolete`, and `--dry-run`.
+     `--publisher-prefix`, `--name`, `--delete-obsolete`, and `--dry-run`. Changed resources are
+     published automatically; there is no `--publish` option.
    - For a directory, resolve names relative to the directory target and apply config mappings.
      Require an explicit `--publisher-prefix`; do not derive naming from the selected solution.
      For a single file, require an explicit `--name`; do not guess a project root from the file
@@ -95,12 +96,10 @@ lowercase `webresource`, matching command conventions and the module namespace.
    - Surface Dataverse failures; do not swallow `AddSolutionComponent` errors as successful pushes.
 
 5. **Implement execution and dry-run**
-   - Apply the plan in a deterministic order: create/update, solution membership, publish changed
-     resources, then delete obsolete resources.
+   - Apply the plan in a deterministic order: create/update, solution membership, publish each
+     changed resource individually, then delete obsolete resources.
    - Add a resource to the solution only when it is not already a member, preserving the existing
      lazy-add behavior documented in `guide-webresource-solution-lazy-add.md`.
-   - Make `--publish` apply to both created and updated resources. This intentionally improves on
-     the legacy behavior, which publishes updates only.
    - Ensure dry-run performs discovery, remote reads, planning, and complete reporting but no
      create/update/delete/execute calls.
    - Return a failure result when an operation fails and include actionable resource context.
@@ -142,8 +141,11 @@ lowercase `webresource`, matching command conventions and the module namespace.
 - Expected webresource domain failures use focused `AbstractPowerException` types
   (`ManagedWebResourceException`, `WebResourceSolutionNotFoundException`, and
   `WebResourceMappingException`); CLI option validation remains `ValidationResult`.
-- `--publish` publishes both created and updated resources.
+- Created and updated resources are each published in a separate request after resource writes
+  and solution-membership additions complete.
 - The target accepts either a single file or a directory. Directory scanning is recursive.
+- An empty directory is a no-op, even with `--delete-obsolete`; the command does not support using
+  an empty target to delete every webresource from a solution.
 - Directory-relative paths and mapping-file keys are used only when the target is a directory. A
   single-file target must provide `--name`; its parent directory is not treated as an implicit
   project root.
