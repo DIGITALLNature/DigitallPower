@@ -62,15 +62,10 @@ src/
 - All custom exceptions have standard constructor overloads (CA1032)
 - Public methods validate args with `ArgumentNullException.ThrowIfNull`
 
-### CLI command tree registration (known duplication caveat)
-- `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the tree exercised by
-  `tests/dgt.power.cli.tests` (`CommandTreeTests`, `SettingsParsingTests`) - it is testable without
-  bootstrapping DI/telemetry/NuGet.
-- The **actual runtime** command tree is a separate, hand-maintained local function
-  (`RegisterCommands`) inside `src/dgt.power/Program.cs`'s top-level statements. The two have
-  already drifted apart (e.g. `Program.cs` registers a `connection` branch that `CommandTree.cs`
-  does not). When changing any branch/command, update **both** files - `CommandTreeTests`/
-  `SettingsParsingTests` passing does not guarantee the shipped CLI matches.
+### CLI command tree registration
+- `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
+  source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes
+  there, and cover their paths/settings in the CLI tests.
 
 ## Key Decisions
 
@@ -192,7 +187,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-assembly-version-upgrade-migration.md` | implementation | **Legacy `push` module only.** Migrate Steps/CustomAPIs on assembly major/minor version upgrade via `--delete-on-upgrade`/`--no-migrate-custom-apis` |
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, validates requested solutions and package component definitions before writes, and rejects all Create pre-images |
-| `implementation-plugin-step-config-set.md` | implementation | `dgtp plugin step config set` command: resource-oriented step configuration, file/inline config support, composite key resolution |
+| `implementation-plugin-step-config-set.md` | implementation | `dgtp plugin step config set`: enum-validated stages 10/20/30/40 (80/90 are internal-only), file/inline config support, composite key resolution |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |

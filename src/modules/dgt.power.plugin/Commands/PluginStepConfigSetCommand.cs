@@ -59,7 +59,7 @@ public class PluginStepConfigSetCommand(
             var matches = await stepRepository.FindByCompositeKeyAsync(
                 settings.PluginType,
                 settings.Message,
-                settings.Stage,
+                settings.Stage is { } stage ? (int)stage : null,
                 settings.Entity,
                 settings.SecondaryEntity,
                 settings.ExecutionOrder,
@@ -118,7 +118,7 @@ public class PluginStepConfigSetCommand(
                 step.Id,
                 step.Name,
                 step.MessageName,
-                StageTypeConverter.GetStageDisplayName(step.Stage),
+                Enum.GetName((PluginStepStage)step.Stage) ?? step.Stage.ToString(CultureInfo.InvariantCulture),
                 step.PrimaryEntityName,
                 step.SecondaryEntityName,
                 step.ExecutionOrder?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);

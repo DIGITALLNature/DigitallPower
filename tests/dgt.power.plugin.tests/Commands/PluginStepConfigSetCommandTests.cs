@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
+using dgt.power.plugin;
 using dgt.power.plugin.Commands;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -54,6 +55,71 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
     }
 
     [Test]
+    public async Task Validate_WithStepIdAndSecondaryEntity_ReturnsError()
+    {
+        var settings = new PluginStepConfigSetSettings
+        {
+            StepId = Guid.NewGuid(),
+            SecondaryEntity = "account",
+            UnsecureConfig = "test-value"
+        };
+
+        var result = settings.Validate();
+
+        await Assert.That(result.Message).Contains("Cannot use --step-id together with composite key options");
+    }
+
+    [Test]
+    public async Task Validate_WithStepIdAndExecutionOrder_ReturnsError()
+    {
+        var settings = new PluginStepConfigSetSettings
+        {
+            StepId = Guid.NewGuid(),
+            ExecutionOrder = 1,
+            UnsecureConfig = "test-value"
+        };
+
+        var result = settings.Validate();
+
+        await Assert.That(result.Message).Contains("Cannot use --step-id together with composite key options");
+    }
+
+    [Test]
+    public async Task Validate_WithOnlyOptionalCompositeKeyOption_ReturnsError()
+    {
+        var settings = new PluginStepConfigSetSettings
+        {
+            SecondaryEntity = "account",
+            UnsecureConfig = "test-value"
+        };
+
+        var result = settings.Validate();
+
+        await Assert.That(result.Message).Contains("all required composite key options");
+    }
+
+    [Test]
+    [Arguments(0)]
+    [Arguments(80)]
+    [Arguments(90)]
+    [Arguments(999)]
+    public async Task Validate_WithUnsupportedNumericStage_ReturnsError(int stageValue)
+    {
+        var settings = new PluginStepConfigSetSettings
+        {
+            PluginType = "TestPluginType",
+            Message = "Create",
+            Stage = (PluginStepStage)stageValue,
+            Entity = "account",
+            UnsecureConfig = "test-value"
+        };
+
+        var result = settings.Validate();
+
+        await Assert.That(result.Message).Contains($"Invalid stage value: {stageValue}");
+    }
+
+    [Test]
     public async Task Validate_WithBothUnsecureAndUnsecureFile_ReturnsError()
     {
         var settings = new PluginStepConfigSetSettings
@@ -96,7 +162,7 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result.Message).IsNotNull();
-        await Assert.That(result.Message).Contains("Either --step-id or composite key options");
+        await Assert.That(result.Message).Contains("Either --step-id or all required composite key options");
     }
 
     [Test]
@@ -134,7 +200,7 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         {
             PluginType = "TestPluginType",
             Message = "Create",
-            Stage = 20,
+            Stage = PluginStepStage.PreOperation,
             Entity = "account",
             UnsecureConfig = "test-value"
         };
@@ -215,7 +281,7 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         {
             PluginType = "TestPluginType",
             Message = "Create",
-            Stage = 20,
+            Stage = PluginStepStage.PreOperation,
             Entity = "account",
             UnsecureConfig = "updated-config-value"
         };
@@ -246,7 +312,10 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         await context.Execute(settings).Succeed();
 
         var updatedStep = context.GetById<SdkMessageProcessingStep>(_stepId);
-        await Assert.That(updatedStep.SdkMessageProcessingStepSecureConfigId).IsNotNull();
+        var secureConfigId = updatedStep.SdkMessageProcessingStepSecureConfigId?.Id
+            ?? throw new InvalidOperationException("Secure configuration was not linked to the plugin step.");
+        var secureConfig = context.GetById<SdkMessageProcessingStepSecureConfig>(secureConfigId);
+        await Assert.That(secureConfig.SecureConfig).IsEqualTo("secure-config-value");
     }
 
     [Test]
@@ -284,7 +353,7 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
         {
             PluginType = "NonExistentPluginType",
             Message = "Create",
-            Stage = 20,
+            Stage = PluginStepStage.PreOperation,
             Entity = "account",
             UnsecureConfig = "test-config-value"
         };

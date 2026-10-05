@@ -32,9 +32,8 @@ public class PluginStepConfigSetSettings : PluginSettings
     public string? Message { get; init; }
 
     [CommandOption("--stage")]
-    [Description("Execution stage: PreValidation, PreOperation, PostOperation, PreCommitStage, PostCommitStage.")]
-    [TypeConverter(typeof(StageTypeConverter))]
-    public int? Stage { get; init; }
+    [Description("Execution stage: PreValidation (10), PreOperation (20), MainOperation (30), or PostOperation (40).")]
+    public PluginStepStage? Stage { get; init; }
 
     [CommandOption("--entity")]
     [Description("Primary entity logical name (e.g., account, contact).")]
@@ -73,16 +72,24 @@ public class PluginStepConfigSetSettings : PluginSettings
     {
         // A vs B: step-id vs composite key
         var hasDirect = StepId.HasValue;
-        var hasComposite = PluginType != null || Message != null || Stage != null || Entity != null;
+        var hasCompositeKeyOptions = PluginType != null || Message != null || Stage.HasValue || Entity != null;
+        var hasCompositeDisambiguators = SecondaryEntity != null || ExecutionOrder.HasValue;
+        var hasCompositeOptions = hasCompositeKeyOptions || hasCompositeDisambiguators;
+        var hasCompositeKey = PluginType != null && Message != null && Stage.HasValue && Entity != null;
 
-        if (hasDirect && hasComposite)
+        if (Stage is { } stage && (stage == PluginStepStage.None || !Enum.IsDefined(stage)))
         {
-            return ValidationResult.Error("Cannot use --step-id together with composite key options (--plugin-type, --message, --stage, --entity).");
+            return ValidationResult.Error($"Invalid stage value: {(int)stage}.");
         }
 
-        if (!hasDirect && !hasComposite)
+        if (hasDirect && hasCompositeOptions)
         {
-            return ValidationResult.Error("Either --step-id or composite key options (--plugin-type, --message, --stage, --entity) must be provided.");
+            return ValidationResult.Error("Cannot use --step-id together with composite key options (--plugin-type, --message, --stage, --entity, --secondary-entity, --execution-order).");
+        }
+
+        if (!hasDirect && !hasCompositeKey)
+        {
+            return ValidationResult.Error("Either --step-id or all required composite key options (--plugin-type, --message, --stage, --entity) must be provided.");
         }
 
         // Unsecure: inline vs file

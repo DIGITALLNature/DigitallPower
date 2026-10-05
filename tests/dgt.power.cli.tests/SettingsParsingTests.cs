@@ -12,6 +12,7 @@ using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
+using dgt.power.plugin;
 using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
 using dgt.power.push.Base;
@@ -481,9 +482,47 @@ public class SettingsParsingTests
         await Assert.That(settings.StepId).IsNull();
         await Assert.That(settings.PluginType).IsEqualTo("MyNamespace.MyPlugin");
         await Assert.That(settings.Message).IsEqualTo("Create");
-        await Assert.That(settings.Stage).IsEqualTo(20);
+        await Assert.That(settings.Stage).IsEqualTo(PluginStepStage.PreOperation);
         await Assert.That(settings.Entity).IsEqualTo("account");
         await Assert.That(settings.SecureConfig).IsEqualTo("mysecret");
+    }
+
+    [Test]
+    [Arguments("10", PluginStepStage.PreValidation)]
+    [Arguments("20", PluginStepStage.PreOperation)]
+    [Arguments("30", PluginStepStage.MainOperation)]
+    [Arguments("40", PluginStepStage.PostOperation)]
+    [Arguments("MainOperation", PluginStepStage.MainOperation)]
+    [Arguments("PreOperation", PluginStepStage.PreOperation)]
+    public async Task PluginStepConfigSetSettings_ParsesNamedAndNumericStages(string stage, PluginStepStage expectedStage)
+    {
+        var result = Parse<PluginStepConfigSetSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account",
+            "--unsecure", "myconfig");
+
+        var settings = (PluginStepConfigSetSettings)result.Settings!;
+
+        await Assert.That(settings.Stage).IsEqualTo(expectedStage);
+    }
+
+    [Test]
+    [Arguments("80")]
+    [Arguments("90")]
+    [Arguments("PreCommitStage")]
+    [Arguments("PostCommitStage")]
+    public async Task PluginStepConfigSetSettings_RejectsInternalStages(string stage)
+    {
+        var result = Parse<PluginStepConfigSetSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account",
+            "--unsecure", "myconfig");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
     }
 
     [Test]

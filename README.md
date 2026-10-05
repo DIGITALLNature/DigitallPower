@@ -736,7 +736,7 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 | `--step-id` | No (mutually exclusive with composite key) | SDK message processing step ID |
 | `--plugin-type` | No (part of composite key) | Fully qualified plugin type name |
 | `--message` | No (part of composite key) | SDK message name (Create, Update, Delete, etc.) |
-| `--stage` | No (part of composite key) | Execution stage: 10=PreValidation, 20=PreOperation, 30=MainOperation, 40=PostOperation |
+| `--stage` | No (part of composite key) | Stage name or numeric value: PreValidation/10, PreOperation/20, MainOperation/30, PostOperation/40. Other numeric values are rejected. |
 | `--entity` | No (part of composite key) | Primary entity logical name |
 | `--secondary-entity` | No (part of composite key) | Secondary entity logical name (for Associate, Disassociate, etc.) |
 | `--execution-order` | No (part of composite key) | Rank/execution order of the step |
@@ -747,7 +747,9 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 
 ##### Notes
 
-- Either `--step-id` or the composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`) must be provided, but not both.
+- Either `--step-id` or all required composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`) must be provided, but not both. `--secondary-entity` and `--execution-order` are optional composite-key filters and cannot be used with `--step-id`.
+- `--stage` accepts the listed names (case-insensitive) or numeric Dataverse stage values.
+- `MainOperation` is supported for custom APIs and virtual table data providers. Internal-only stages 80 and 90 are not supported.
 - At least one of `--unsecure`, `--unsecure-file`, `--secure`, or `--secure-file` must be provided.
 - When using file-based configuration, the file must exist and be UTF-8 encoded.
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail.

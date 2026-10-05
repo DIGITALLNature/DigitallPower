@@ -60,7 +60,7 @@ config.AddBranch("plugin", plugin =>
 |---|---|---|---|
 | `--plugin-type` | `string` | ✅ | Fully qualified type name (namespace + class) of the plugin. |
 | `--message` | `string` | ✅ | SDK message name (e.g. `Update`). |
-| `--stage` | `int` | ✅ | Execution stage (10=PreValidation, 20=PreOperation, 30=MainOperation, 40=PostOperation). |
+| `--stage` | `PluginStepStage` enum | ✅ | Execution stage by name or numeric value: PreValidation/10, PreOperation/20, MainOperation/30, PostOperation/40. Other numeric values are rejected. |
 | `--entity` | `string` | ✅ | Primary entity logical name. |
 | `--secondary-entity` | `string` | optional | Secondary entity logical name (disambiguator, e.g. for `Associate`). |
 | `--execution-order` | `int` | optional | Execution order / rank (disambiguator). |
@@ -150,6 +150,8 @@ Plugin Registration Tool does; there is no `pac` CLI command for this.
 
 1. **Config presence in multiple matches output:** The implementation prints basic step info (StepId, PluginTypeName, Message, Stage, Entity, ExecutionOrder) but does not include configuration presence indicators as originally specified in the design.
 
-2. **Stage option type:** The design mentioned `string`/enum but the implementation uses `int` to match Dataverse option set values (10, 20, 30, 40).
+2. **Stage option type:** `--stage` uses the `PluginStepStage` enum so Spectre.Console.Cli parses names and numeric enum values; validation rejects undefined values and the enum's `None` sentinel.
+
+   Stages 80 and 90 are internal-only and are excluded. `MainOperation` remains supported for custom APIs and virtual table data providers, as documented in the [Dataverse event framework](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/event-framework#event-execution-pipeline). The [step table reference](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/sdkmessageprocessingstep#stage) includes internal stage values; their presence in metadata does not make them supported extension points.
 
 3. **Validation enforces at least one config:** The design suggested that omitting both unsecure and secure flags would leave values untouched, but the implementation enforces that at least one must be provided (which aligns with the practical use case).
