@@ -1,3 +1,10 @@
+# [3.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2026-10-05)
+
+
+### Features
+
+* **webresource:** add resource-oriented webresource push ([#191](https://github.com/DIGITALLNature/DigitallPower/issues/191)) ([adb5e29](https://github.com/DIGITALLNature/DigitallPower/commit/adb5e294951577634f91151d3b54b781009ed747))
+
 # [3.0.0-beta.3](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2026-10-05)
 
 
