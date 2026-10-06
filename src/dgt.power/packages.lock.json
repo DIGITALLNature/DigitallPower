@@ -85,6 +85,15 @@
           "Spectre.Console": "0.57.2"
         }
       },
+      "System.Security.Cryptography.Xml": {
+        "type": "Direct",
+        "requested": "[10.0.12, )",
+        "resolved": "10.0.12",
+        "contentHash": "T3snzcc04R1JDj2XmzrLyk5fHT0YroBz5o2P+YdyJKYePSMqp8JsrxEJQPvUnK6oozQBvKLki9vnI7uMuWepKQ==",
+        "dependencies": {
+          "System.Security.Cryptography.Pkcs": "10.0.12"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.62.0",
@@ -551,21 +560,13 @@
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "Transitive",
-        "resolved": "8.0.1",
-        "contentHash": "CoCRHFym33aUSf/NtWSVSZa99dkd0Hm7OCZUxORBjRB16LNhIEOf8THPqzIYlvKM0nNDAPTRBa1FxEECrgaxxA=="
+        "resolved": "10.0.12",
+        "contentHash": "W6BsawU2tB2qy6u4+3cBOSOmiTUgYWW365b5WMVA1bDxQwZZeNWD+qufKJkDQNKzAKq4b6Q04DDKhmr2SNJ1eg=="
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "+TUFINV2q2ifyXauQXRwy4CiBhqvDEDZeVJU7qfxya4aRYOKzVBpN+4acx25VcPB9ywUN6C0n8drWl110PhZEg=="
-      },
-      "System.Security.Cryptography.Xml": {
-        "type": "Transitive",
-        "resolved": "8.0.2",
-        "contentHash": "aDM/wm0ZGEZ6ZYJLzgqjp2FZdHbDHh6/OmpGfb7AdZ105zYmPn/83JRU2xLIbwgoNz9U1SLUTJN0v5th3qmvjA==",
-        "dependencies": {
-          "System.Security.Cryptography.Pkcs": "8.0.1"
-        }
       },
       "System.Security.Permissions": {
         "type": "Transitive",
@@ -619,6 +620,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.57.2, )",
+          "System.Security.Cryptography.Xml": "[10.0.12, )",
           "dgt.power.common": "[3.0.0-beta.7, )"
         }
       },
@@ -629,7 +631,8 @@
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.12, )",
           "Microsoft.Identity.Client.Extensions.Msal": "[4.84.2, )",
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
-          "Spectre.Console.Cli": "[0.57.2, )"
+          "Spectre.Console.Cli": "[0.57.2, )",
+          "System.Security.Cryptography.Xml": "[10.0.12, )"
         }
       },
       "dgt.power.connection": {
@@ -677,6 +680,7 @@
         "dependencies": {
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.57.2, )",
+          "System.Security.Cryptography.Xml": "[10.0.12, )",
           "dgt.power.common": "[3.0.0-beta.7, )"
         }
       }

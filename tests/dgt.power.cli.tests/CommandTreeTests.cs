@@ -92,7 +92,7 @@ public class CommandTreeTests
         tester.Configure(CommandTree.Register);
 
         var result = tester.Run("plugin", "step", "config", "set", "--help");
- 
+
         await Assert.That(result.ExitCode).IsEqualTo(0);
     }
 
