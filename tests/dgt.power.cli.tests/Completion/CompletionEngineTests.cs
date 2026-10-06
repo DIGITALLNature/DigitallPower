@@ -18,7 +18,7 @@ public class CompletionEngineTests
     [Arguments("dgtp export", new[] { "dgtp", "export" })]
     [Arguments("dgtp export --filedir", new[] { "dgtp", "export", "--filedir" })]
     [Arguments("dgtp export  teamtemplates", new[] { "dgtp", "export", "teamtemplates" })]
-    [Arguments("dgtp push \"c:/my path/plugin.dll\"", new[] { "dgtp", "push", "c:/my path/plugin.dll" })]
+    [Arguments("dgtp plugin push \"c:/my path/plugin.dll\"", new[] { "dgtp", "plugin", "push", "c:/my path/plugin.dll" })]
     [Arguments("", new string[0])]
     public async Task Tokenize_SplitsCorrectly(string input, string[] expected)
     {
@@ -154,11 +154,12 @@ public class CompletionEngineTests
     public async Task GetCompletions_HiddenOption_IsExcluded()
     {
         var model = BuildModel(
-            CommandWithOptions("push",
+            Branch("plugin",
+                CommandWithOptions("push",
                 Option("solution"),
-                Option("internal", isHidden: true)));
+                Option("internal", isHidden: true))));
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp push --", 12);
+        var result = CompletionEngine.GetCompletions(model, "dgtp plugin push --", 19);
 
         await Assert.That(result).Contains("--solution");
         await Assert.That(result).DoesNotContain("--internal");

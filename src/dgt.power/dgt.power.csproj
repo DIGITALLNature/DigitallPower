@@ -59,7 +59,6 @@
     <ProjectReference Include="..\modules\dgt.power.plugin\dgt.power.plugin.csproj" />
     <ProjectReference Include="..\modules\dgt.power.solution\dgt.power.solution.csproj" />
     <ProjectReference Include="..\modules\dgt.power.profile\dgt.power.profile.csproj" />
-    <ProjectReference Include="..\modules\dgt.power.push\dgt.power.push.csproj" />
     <ProjectReference Include="..\modules\dgt.power.webresource\dgt.power.webresource.csproj" />
   </ItemGroup>
 

@@ -15,7 +15,6 @@ using dgt.power.maintenance.Model.Settings;
 using dgt.power.plugin;
 using dgt.power.plugin.Commands;
 using dgt.power.profile.Commands;
-using dgt.power.push.Base;
 using dgt.power.solution.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -311,28 +310,6 @@ public class SettingsParsingTests
         await Assert.That(defaultSettings.TargetDirectory).IsEqualTo(".");
         await Assert.That(defaultSettings.Folder).IsEqualTo(Folders.Model);
         await Assert.That(defaultSettings.Config).IsEqualTo("config.json");
-    }
-
-    [Test]
-    public async Task PushVerb_ParsesRequiredPositionalArgumentAndOptions()
-    {
-        var result = Parse<PushVerb>(
-            "c:/TargetDir/plugin.dll",
-            "--solution", "samplesolution",
-            "--publish",
-            "--delete-on-upgrade",
-            "--no-migrate-custom-apis",
-            "--config", "webresources.json");
-
-        var settings = (PushVerb)result.Settings!;
-
-        await Assert.That(settings.Target).IsEqualTo("c:/TargetDir/plugin.dll");
-        await Assert.That(settings.Solution).IsEqualTo("samplesolution");
-        await Assert.That(settings.Publish).IsTrue();
-        await Assert.That(settings.DeleteOnUpgrade).IsTrue();
-        await Assert.That(settings.NoMigrateCustomApis).IsTrue();
-        await Assert.That(settings.DeleteObsolete).IsFalse();
-        await Assert.That(settings.Config).IsEqualTo("webresources.json");
     }
 
     [Test]

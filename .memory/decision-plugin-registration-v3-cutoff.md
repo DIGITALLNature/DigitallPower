@@ -21,6 +21,6 @@ attribute names and namespaces through `MetadataLoadContext` metadata.
 
 ## Compatibility
 
-The legacy `push` module retains its independent `dgt.registration` dependency and compatibility
-behavior until that command is retired. The v3 cutoff applies only to the resource-oriented
-`plugin push` command.
+The 2.x combined `push` command remains available only to users who stay on dgtp 2.x. In dgtp 3.x,
+the combined command is removed, and plugin deployments use `plugin push` with the registration
+requirements above.

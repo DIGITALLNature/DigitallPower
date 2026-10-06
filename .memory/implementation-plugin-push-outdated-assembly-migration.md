@@ -41,8 +41,8 @@ from the catch filter so they propagate to `Program.cs`'s global exception handl
 `LocalPluginType.HasRegistrationAttribute` distinguishes a type carrying one of the registration
 attributes (`PluginRegistration`/`CustomApiRegistration`/`CustomDataProviderRegistration`) from a plain
 `IPlugin`-implementing type with none (named `IsPowerPlugin` until the term was dropped as unclear -
-this mirrors the legacy `push` module's `AssemblyType.PowerPlugin` flag conceptually, but with clearer
-naming; that legacy module was left untouched). Both kinds of types get a `PluginType` record
+this mirrors the dgtp 2.x `push` module's `AssemblyType.PowerPlugin` flag conceptually, but with clearer
+naming; the combined module was later removed in dgtp 3.x). Both kinds of types get a `PluginType` record
 created/kept in Dataverse (a step can only reference a registered type, so even manually-managed types
 need the type row) - but only types with a registration attribute have their steps/images/Custom-API
 link parsed and reconciled. Types without one are intentionally left alone in
@@ -68,9 +68,8 @@ sees are never assignable to (or comparable with) any locally referenced attribu
 detection is purely by attribute type `Name`/`Namespace` string matching via `CustomAttributeData`.
 `Local/RegistrationAttributeNames.cs` recognizes only the supported
 `Digitall.Plugins.Registration` namespace. This v3 boundary deliberately drops historical aliases;
-users maintaining old registrations should use dgtp v2 or upgrade their registration package. The
-legacy `dgt.power.push` module still has its own independent
-`PackageReference` on the registration package because it actually instantiates
+users maintaining old registrations should use dgtp 2.x or upgrade their registration package. In
+dgtp 2.x, `dgt.power.push` had its own independent `PackageReference` on the registration package because it instantiated
 `WorkflowRegistrationAttribute` at runtime for code-activity support (a real type dependency); that
 module was intentionally left untouched.
 
@@ -80,7 +79,7 @@ Registering workflow activities (`CodeActivity`) only works on Windows due to Wo
 dependencies, and code activities are effectively deprecated in Dataverse in favor of Custom APIs.
 `plugin push` fails fast with `WorkflowActivityNotSupportedException` the
 moment a `CodeActivity` is detected in the assembly, instead of silently skipping or attempting
-registration. The legacy `push` command still supports them as-is.
+registration. The combined dgtp 2.x `push` command supported these workflows.
 
 ## Mixed Plugin + Code Activity Assemblies Are Rejected
 
@@ -91,7 +90,7 @@ if the assembly also contains valid plugin types.
 
 ## Outdated Assembly Migration (unconditional, no flag)
 
-Replaces the legacy `push` module's `--delete-on-upgrade`/`--no-migrate-custom-apis` flags (see
+Replaces the dgtp 2.x `push` module's `--delete-on-upgrade`/`--no-migrate-custom-apis` flags (see
 `implementation-assembly-version-upgrade-migration.md` for the old semantics). This went through two
 design iterations before landing on the final, flag-free shape:
 
@@ -162,7 +161,6 @@ it was moved to the module root as `dgt.power.plugin.AssemblyException`, alongsi
 exception types (`WorkflowActivityNotSupportedException`, `InvalidPluginStepException`,
 `UnresolvedPluginStepMessageException`).
 
-**Note:** the legacy `dgt.power.push` module (backing the still-supported `push` command) has its own,
-separate copies of `Logic/AssemblyProcessor.cs`, `Logic/AssemblyModelBuilder.cs`, `Model/*`, etc. Those
-are intentionally left in place - `push` is not yet deprecated - and are unrelated to the cleanup
-described here.
+**Historical note:** dgtp 2.x `dgt.power.push` had separate copies of
+`Logic/AssemblyProcessor.cs`, `Logic/AssemblyModelBuilder.cs`, `Model/*`, etc. That combined module
+was removed in dgtp 3.x; these files are unrelated to the plugin module's architecture.

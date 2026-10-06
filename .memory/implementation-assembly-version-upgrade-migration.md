@@ -2,7 +2,7 @@
 
 ## Problem
 
-When a standalone plugin assembly's major/minor version changes (e.g., `1.0.0.0` → `1.1.0.0`), the push command creates a **new** PluginAssembly record with a new GUID. This left references orphaned:
+In dgtp 2.x, when a standalone plugin assembly's major/minor version changed (e.g., `1.0.0.0` → `1.1.0.0`), the combined push command created a **new** PluginAssembly record with a new GUID. This left references orphaned:
 
 - **Plugin Steps** (SdkMessageProcessingStep) pointed to old PluginType GUIDs → lost on delete
 - **Custom API** references pointed to old PluginType GUIDs → broken on delete

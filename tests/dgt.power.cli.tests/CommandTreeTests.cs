@@ -49,7 +49,6 @@ public class CommandTreeTests
     [Arguments("solution")]
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
-    [Arguments("push")]
     [Arguments("plugin")]
     [Arguments("webresource")]
     [Arguments("complete")]

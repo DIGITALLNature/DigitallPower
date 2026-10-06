@@ -2,7 +2,7 @@
 
 ## Problem
 
-When pushing webresources with `--solution`, the original code called `AddSolutionComponent` for
+When deploying webresources with `webresource push --solution`, the original code called `AddSolutionComponent` for
 **every** resource (Create, Update, and Up2Date states) on every push, even if the resource was
 already part of the solution. This caused:
 

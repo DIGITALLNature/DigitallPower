@@ -1,4 +1,4 @@
-# Decision: Resource-Oriented CLI Redesign (`plugin push`, planned `webresource push`)
+# Decision: Resource-Oriented CLI Redesign (`plugin push`, `webresource push`)
 
 ## Problem
 
@@ -10,11 +10,9 @@ style also does not match the `<resource> <verb>` convention used by `az`/`pac` 
 ## Decision
 
 Reshape the CLI toward resource-oriented commands: `dgtp plugin push`, `dgtp webresource push`, etc.,
-implemented as **new, independent modules** (`dgt.power.plugin`, later `dgt.power.webresource`) built
-from scratch rather than refactored in place from `dgt.power.push`. The legacy `push` command stays
-functional (and will later get a deprecation warning, following the same `[DeprecatedCommand]` pattern
-already used for `profile`, see `decision-generic-command-deprecation.md`) until all resource commands
-have parity and the legacy module is removed.
+implemented as **new, independent modules** (`dgt.power.plugin`, `dgt.power.webresource`) built from
+scratch rather than refactored in place from `dgt.power.push`. The combined top-level `push` command
+and module are removed after both resource-specific replacements are available.
 
 ### Why rewrite instead of refactor
 - The old module's `AssemblyProcessor`/`AssemblyModelBuilder` classes couple parsing, planning, and
@@ -46,7 +44,10 @@ casting `Connection` to `(IOrganizationServiceAsync2)` once at the top of the me
 - **Register module repos in the global DI container** — rejected per the module-local convention
   above; would blur the boundary between cross-module and module-local components.
 
-## Status
+## Outcome
 
-`dgt.power.plugin` (`plugin push`) is implemented and wired into the CLI. `webresource push` and the
-deprecation warning on the legacy `push` command are not yet started.
+`dgt.power.plugin` (`plugin push`) and `dgt.power.webresource` (`webresource push`) are implemented
+as independent resource commands. The combined `push` command and its module are removed in dgtp 3.x.
+The public breaking-change guidance lives in
+[`docs/migrations/2.x-to-3.x.md`](../docs/migrations/2.x-to-3.x.md); README links to it rather than
+retaining usage documentation for the removed command.

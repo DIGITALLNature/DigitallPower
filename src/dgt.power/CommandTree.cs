@@ -16,7 +16,6 @@ using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
 using dgt.power.profile.Base;
 using dgt.power.profile.Commands;
-using dgt.power.push;
 using dgt.power.Telemetry;
 using dgt.power.solution;
 using dgt.power.solution.Base;
@@ -193,10 +192,6 @@ internal static class CommandTree
             .WithAlias("cg")
             .WithDescription("Generates .cs, .ts and metadata.xml modelfiles for Dataverse")
             .WithExample("codegeneration", "c:/TargetDir", "-c", "genconfig.json");
-
-        config.AddCommand<PushCommand>("push")
-            .WithDescription("Import specific Dataverse Artefacts")
-            .WithExample("push", "c:/TargetDir/plugin.dll", "--solution", "samplesolution");
 
         config.AddBranch<WebResourceSettings>("webresource", webresource =>
         {

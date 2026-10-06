@@ -27,7 +27,6 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.Completion;
-using dgt.power.push.Logic;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -151,7 +150,6 @@ registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
 registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().ConnectAsync().GetAwaiter().GetResult());
-registrations.AddScoped<WebresourcesProcessor>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
