@@ -64,7 +64,7 @@ internal sealed class DataProviderDeploymentPlanner(IEntityDataProviderRepositor
                 local.DataSourcePluralName != dataSource?.DisplayCollectionName?.LocalizedLabels.FirstOrDefault(label => label.LanguageCode == languageCode)?.Label;
             var updateTable = dataSource is null || singularChanged || pluralChanged;
             var metadataChanged = remote?.Name != local.ProviderName ||
-                local.Description is not null && (remote?.Description ?? string.Empty) != local.Description;
+                local.Description is not null && (remote.Description ?? string.Empty) != local.Description;
             var handlersChanged = remote is null || local.Handlers.Any(handler => !remote.Handlers.TryGetValue(handler.Key, out var id) ||
                 remoteTypes.All(type => type.TypeName != handler.Value || type.Id != id));
             var updateProvider = metadataChanged || handlersChanged;

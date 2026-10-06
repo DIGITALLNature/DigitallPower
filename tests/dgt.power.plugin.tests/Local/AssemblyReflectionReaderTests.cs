@@ -107,7 +107,7 @@ public class AssemblyReflectionReaderTests
             ? context.LoadFromAssemblyPath(pluginType.Assembly.Location).GetType(pluginType.FullName!)!
             : pluginType;
         var exception = CaptureBuildPluginTypeException(new AssemblyReflectionReader(console), type);
-        await Assert.That(exception!.Message).IsEqualTo($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
+        await Assert.That(exception.Message).IsEqualTo($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
                                                       "and ProviderName, and a supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
     }
 
@@ -117,10 +117,11 @@ public class AssemblyReflectionReaderTests
     [Arguments(typeof(EmptySchemaProviderPlugin))]
     [Arguments(typeof(EmptyNameProviderPlugin))]
     [Arguments(typeof(NullNameProviderPlugin))]
-    public async Task BuildPluginType_InvalidProviderArguments_Throws(Type pluginType)
+    public Task BuildPluginType_InvalidProviderArguments_Throws(Type pluginType)
     {
         using var console = new TestConsole();
         _ = CaptureBuildPluginTypeException(new AssemblyReflectionReader(console), pluginType);
+        return Task.CompletedTask;
     }
 
     [Test]
