@@ -140,13 +140,14 @@ src/
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
 | Version-stable connection and state storage | `implementation-typed-connection-storage.md` | Typed `connections.json`, OS-protected secrets/token cache, stable `DGTP_HOME`, certificate key/password boundaries, token-check semantics, account-scoped cleanup, and no migration from 2.x |
+| Keep certificate authentication | `decision-keep-certificate-auth.md` | Retain certificate auth as an available option; document that automated coverage is not end-to-end auth validation |
 | Persistent MSAL cache account removal | `research-persistent-msal-token-cache-removal.md` | Match Azure.Identity's actual `.nocae` cache name, platform storage settings, protected-first/fallback behavior, and remove accounts individually |
 | Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh` |
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
 | Runtime error diagnostics | `decision-runtime-error-diagnostics.md` | CLI-host/plugin failures show contextual messages and Dataverse fault codes in all builds; stack traces and arbitrary fault payloads are omitted |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand` stages secrets, verifies the candidate connection, then persists metadata with rollback on failure |
-| Major-version migration guides | `decision-major-version-migration-guides.md` | Document every user-affecting breaking change for each major release in `docs/migrations/<from>-to-<to>.md`; use a generic README link to the directory |
+| Major-version migration guides | `decision-major-version-migration-guides.md` | Document user-affecting breaks in `docs/migrations/<from>-to-<to>.md`; the 2.x-to-3.x guide covers profile removal, typed connection recreation, configuration replacements, and deployment changes |
 | Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Independent `dgtp plugin push` and `dgtp webresource push` modules replaced the combined 2.x `push`; module-local repos/executors are constructed via `new`, not registered in global DI |
 | `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` and `Remote` state / `Planning.Comparison` state models / `Planning.Deployment` executable plan models / `Repositories` / `Execution` / `Output` / `Commands` / `Base` |
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
@@ -230,7 +231,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 
 
-- **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
+- **`--insecure` / `--security-protocol`** removed as breaking changes; legacy profile storage is not imported by typed connections.
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
@@ -269,6 +270,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-package-record-refactor.md` | decision | Historical dgtp 2.x push-module package record design; equality semantics |
 | `decision-post-tsl-architecture-wave.md` | decision | Priority order for remaining quality findings |
 | `implementation-typed-connection-storage.md` | implementation | Typed connection definitions, stable home/state files, storage boundaries and design rationale, global connection override variables, no legacy migration, verification limitations |
+| `decision-keep-certificate-auth.md` | decision | Keep certificate-based authentication available; preserve the end-to-end validation caveat |
 | `guide-cli-ci-environment-test-isolation.md` | guide | Shared TUnit exclusion key for process-wide CI environment variables and race diagnosis |
 | `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp connection status` and `refresh` |
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |

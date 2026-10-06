@@ -27,9 +27,12 @@ The options gave users false confidence that they were configuring something mea
 
 ## Backward Compatibility
 
-`Identity.SecurityProtocol` and `Identity.Insecure` are **kept as nullable fields** in the JSON data model with `JsonIgnoreCondition.WhenWritingDefault`. Existing profile files that contain these fields will still deserialize without error — the values are simply ignored at runtime.
+Before the typed connection rewrite, `Identity.SecurityProtocol` and `Identity.Insecure` were
+retained as nullable fields so legacy profile data could still deserialize. The identity/profile
+model is now removed, and 2.x storage is not imported. See
+[`2.x-to-3.x.md`](../docs/migrations/2.x-to-3.x.md#profiles-and-saved-connections).
 
-## Files Changed
+## Historical Files Changed
 
 - `src/dgt.power.common/Logic/Identities.cs` — computed properties removed
 - `src/dgt.power.common/Logic/Identity.cs` — fields kept nullable + ignored on write

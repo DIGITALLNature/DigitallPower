@@ -2,7 +2,7 @@
 
 ## Context
 
-The `profile` branch is deprecated in favor of `connection` (see
+The former `profile` branch was deprecated in favor of `connection` before its removal in 3.x (see
 `decision-non-interactive-auth-for-agents.md`). The first implementation was an
 `ICommandInterceptor` that inspected `CommandContext.Arguments[0]` (the raw, unparsed argv) to guess
 which branch was invoked. That approach was fragile: any global option preceding the branch (e.g. a
@@ -15,6 +15,8 @@ Deprecation is now driven by an attribute on the command's `CommandSettings` typ
 generic interceptor - not by inspecting raw arguments.
 
 ### `DeprecatedCommandAttribute` (`dgt.power.common/Commands/DeprecatedCommandAttribute.cs`)
+
+The removed profile settings below illustrate the original usage; they are not current API types.
 
 ```csharp
 [DeprecatedCommand("connection")]   // with a replacement hint
@@ -45,8 +47,9 @@ Registered once in `Program.cs` alongside `TelemetryInterceptor` / `VersionCheck
 1. Add `[DeprecatedCommand("replacement-name")]` (or no argument if there is no replacement) to the
    branch's or command's `CommandSettings` class.
 2. Nothing else - no changes to `Execute`/`ExecuteAsync`, no per-command wiring, no test scaffolding
-   beyond an attribute-presence guard test (see `ProfileSettingsDeprecationTests` in
-   `dgt.power.profile.tests` for the pattern).
+   beyond an attribute-presence guard test. The former `ProfileSettingsDeprecationTests` illustrated
+   this pattern before the profile module was removed; current interceptor tests are in
+   `tests/dgt.power.cli.tests/DeprecationInterceptorTests.cs`.
 
 ## Caveats
 

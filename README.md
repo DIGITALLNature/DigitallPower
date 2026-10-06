@@ -184,6 +184,9 @@ The former global `dgtp.json` configuration and `dgtp:*` environment-variable bi
 
 Saved connections and application state use a stable per-user data directory instead of assembly-scoped isolated storage. Set `DGTP_HOME` to override its location. Connections are stored in `connections.json`; client secrets and PFX passwords are stored separately using the platform's protected storage (DPAPI on Windows, Keychain on macOS, and Secret Service on Linux). No 2.x connections are migrated automatically.
 
+For the removed `profile` commands and connection recreation steps, see
+[Migrating from 2.x to 3.x](docs/migrations/2.x-to-3.x.md#profiles-and-saved-connections).
+
 For interactive and device-code sign-in, `--tenant` is optional: if omitted, authentication targets the user's home tenant. Service-principal and explicitly configured Azure DevOps federated connections require a tenant ID.
 
 Global connection/authentication environment variables:
