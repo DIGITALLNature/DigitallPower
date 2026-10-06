@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Calendar used by the scheduling system to define when an appointment or activity is to occur.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("calendar")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class Calendar : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Calendar : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public Calendar() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public Calendar(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Calendar(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Calendar(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Calendar(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public Calendar() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public Calendar(Guid id) : base(EntityLogicalName, id) { }
+
+        public Calendar(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public Calendar(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 4003;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("calendarid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 CalendarId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("calendarid")]
         public Guid? CalendarId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("calendarid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("calendarid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,17 +71,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("businessunitid")]
         public EntityReference? BusinessUnitId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("businessunitid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("businessunitid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -146,7 +87,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -159,7 +99,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -172,7 +111,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -185,17 +123,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -205,17 +139,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("holidayschedulecalendarid")]
         public EntityReference? HolidayScheduleCalendarId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("holidayschedulecalendarid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("holidayschedulecalendarid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -225,17 +155,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isshared")]
         public bool? IsShared
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isshared");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isshared", value);
-                OnPropertyChanged();
             }
         }
 
@@ -245,7 +171,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -258,7 +183,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -271,7 +195,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -284,17 +207,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -304,7 +223,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -317,17 +235,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("primaryuserid")]
         public Guid? PrimaryUserId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("primaryuserid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("primaryuserid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -337,17 +251,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("type")]
         public OptionSetValue? Type
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("type");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("type", value);
-                OnPropertyChanged();
             }
         }
 
@@ -355,7 +265,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -371,17 +280,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("BusinessUnit_Calendar")]
         public IEnumerable<BusinessUnit> BusinessUnitCalendar
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<BusinessUnit>("BusinessUnit_Calendar", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("BusinessUnit_Calendar", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -391,17 +296,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("Calendar_AsyncOperations")]
         public IEnumerable<AsyncOperation> CalendarAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("Calendar_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("Calendar_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -411,17 +312,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("calendar_calendar_rules")]
         public IEnumerable<CalendarRule> CalendarCalendarRules
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("calendar_calendar_rules", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("calendar_calendar_rules", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -431,17 +328,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("calendar_customercalendar_holidaycalendar")]
         public IEnumerable<Calendar> CalendarCustomercalendarHolidaycalendar
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Calendar>("calendar_customercalendar_holidaycalendar", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("calendar_customercalendar_holidaycalendar", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -451,17 +344,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("calendar_organization")]
         public IEnumerable<Organization> CalendarOrganization
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Organization>("calendar_organization", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("calendar_organization", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -471,17 +360,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("calendar_system_users")]
         public IEnumerable<SystemUser> CalendarSystemUsers
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("calendar_system_users", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("calendar_system_users", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -491,17 +376,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("inner_calendar_calendar_rules")]
         public IEnumerable<CalendarRule> InnerCalendarCalendarRules
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("inner_calendar_calendar_rules", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("inner_calendar_calendar_rules", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -511,17 +392,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("slabase_businesshoursid")]
         public IEnumerable<SLA> SlabaseBusinesshoursid
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("slabase_businesshoursid", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("slabase_businesshoursid", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -609,31 +486,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static Calendar Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static Calendar Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("calendar", id, columnSet).ToEntity<Calendar>();
-        }
-
-        public Calendar GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new Calendar(Id) { Attributes = attr };
         }
         #endregion
     }

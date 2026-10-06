@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Output;
@@ -53,25 +52,8 @@ public class PluginTypeDeploymentExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = new PluginAssemblyRepository(service),
-            Packages = new PluginPackageRepository(service),
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-            new PluginPlanRenderer(console));
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new PluginTypeTestPipeline(factory.Planner, factory.TypeExecutor, new PluginPlanRenderer(console));
 
         return (service, executor, console);
     }
@@ -86,25 +68,8 @@ public class PluginTypeDeploymentExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = new PluginAssemblyRepository(service),
-            Packages = new PluginPackageRepository(service),
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-            new PluginPlanRenderer(console));
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new PluginTypeTestPipeline(factory.Planner, factory.TypeExecutor, new PluginPlanRenderer(console));
 
         return (service, executor);
     }
@@ -381,5 +346,32 @@ public class PluginTypeDeploymentExecutorTests
         var images = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) }).Entities;
         await Assert.That(images.Count).IsEqualTo(1);
         await Assert.That(images[0].ToEntity<SdkMessageProcessingStepImage>().Name).IsEqualTo("PreImage");
+    }
+
+    [Test]
+    public async Task ApplyAsync_ChangedImageAttributes_PreservesImageAndOtherRegistrationFields()
+    {
+        var (service, executor) = CreateExecutor();
+        SeedMessage(service, "Update", "account");
+        var assemblyId = Guid.NewGuid();
+        var image = new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "Before", "Target", ["name"]);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step(messageName: "Update", images: [image])]);
+        await executor.ApplyAsync(assemblyId, [localType], new PluginPushOptions(null, DryRun: false));
+        var existingImage = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) })
+            .Entities.Single().ToEntity<SdkMessageProcessingStepImage>();
+        service.Update(new SdkMessageProcessingStepImage(existingImage.Id) { EntityAlias = "OldAlias", MessagePropertyName = "OldProperty" });
+        var updatedType = localType with { Steps = [Step(messageName: "Update", images: [image with { Attributes = ["name", "telephone1"] }])] };
+
+        await executor.ApplyAsync(assemblyId, [updatedType], new PluginPushOptions(null, DryRun: false));
+
+        var updatedImage = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) })
+            .Entities.Single().ToEntity<SdkMessageProcessingStepImage>();
+        await Assert.That(updatedImage.Id).IsEqualTo(existingImage.Id);
+        await Assert.That(updatedImage.SdkMessageProcessingStepId!.Id).IsEqualTo(existingImage.SdkMessageProcessingStepId!.Id);
+        await Assert.That(updatedImage.Name).IsEqualTo(image.Name);
+        await Assert.That(updatedImage.EntityAlias).IsEqualTo("OldAlias");
+        await Assert.That(updatedImage.ImageType!.Value).IsEqualTo(image.ImageType);
+        await Assert.That(updatedImage.MessagePropertyName).IsEqualTo("OldProperty");
+        await Assert.That(updatedImage.AttributesField).IsEqualTo("name,telephone1");
     }
 }

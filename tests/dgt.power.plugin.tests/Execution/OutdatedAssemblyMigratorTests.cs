@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
@@ -46,31 +45,8 @@ public class OutdatedAssemblyMigratorTests
         service.AddRequests(new RetrieveDependenciesForDeleteExecutor());
         service.AddDefaultRequests();
 
-        var assemblyRepository = new PluginAssemblyRepository(service);
-        var packageRepository = new PluginPackageRepository(service);
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = assemblyRepository,
-            Packages = packageRepository,
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = new SolutionComponentRepository(service)
-        });
-        var migrator = new MigrationPipeline(
-            planner,
-            new OutdatedAssemblyMigrator(
-                assemblyRepository,
-                typeRepository,
-                stepRepository,
-                customApiRepository));
+        var factory = new PluginDeploymentTestFactory(service);
+        var migrator = new MigrationPipeline(factory.Planner, factory.Migrator);
 
         return (service, migrator);
     }

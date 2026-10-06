@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Type that inherits from the IPlugin interface and is contained within a plug-in assembly.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("plugintype")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class PluginType : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class PluginType : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public PluginType() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public PluginType(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public PluginType(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public PluginType(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public PluginType(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public PluginType() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public PluginType(Guid id) : base(EntityLogicalName, id) { }
+
+        public PluginType(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public PluginType(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 4602;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("plugintypeid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 PluginTypeId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("plugintypeid")]
         public Guid? PluginTypeId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("plugintypeid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("plugintypeid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,7 +71,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("assemblyname")]
         public string? AssemblyName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("assemblyname");
@@ -139,7 +83,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -152,7 +95,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -165,7 +107,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -178,7 +119,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -191,7 +131,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("culture")]
         public string? Culture
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("culture");
@@ -204,7 +143,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("customizationlevel");
@@ -217,7 +155,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("customworkflowactivityinfo")]
         public string? CustomWorkflowActivityInfo
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("customworkflowactivityinfo");
@@ -230,17 +167,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -250,17 +183,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("friendlyname")]
         public string? FriendlyName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("friendlyname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("friendlyname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -268,7 +197,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismanaged");
@@ -281,7 +209,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isworkflowactivity")]
         public bool? IsWorkflowActivity
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isworkflowactivity");
@@ -294,7 +221,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("major")]
         public int? Major
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("major");
@@ -307,7 +233,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("minor")]
         public int? Minor
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("minor");
@@ -320,7 +245,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -333,7 +257,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -346,7 +269,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -359,17 +281,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -379,7 +297,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -392,7 +309,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -405,17 +321,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("pluginassemblyid")]
         public EntityReference? PluginAssemblyId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("pluginassemblyid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("pluginassemblyid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -425,17 +337,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("plugintypeexportkey")]
         public string? PluginTypeExportKey
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("plugintypeexportkey");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("plugintypeexportkey", value);
-                OnPropertyChanged();
             }
         }
 
@@ -445,7 +353,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("plugintypeidunique")]
         public Guid? PluginTypeIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("plugintypeidunique");
@@ -458,7 +365,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("publickeytoken")]
         public string? PublicKeyToken
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("publickeytoken");
@@ -471,7 +377,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -484,17 +389,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("typename")]
         public string? TypeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("typename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("typename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -504,7 +405,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("version")]
         public string? Version
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("version");
@@ -515,7 +415,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -528,17 +427,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("workflowactivitygroupname")]
         public string? WorkflowActivityGroupName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("workflowactivitygroupname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("workflowactivitygroupname", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -551,17 +446,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("plugintype_customapi")]
         public IEnumerable<CustomAPI> PlugintypeCustomapi
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("plugintype_customapi", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("plugintype_customapi", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -571,17 +462,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("plugintype_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> PlugintypeSdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("plugintype_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("plugintype_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -591,17 +478,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("plugintypeid_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> PlugintypeidSdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("plugintypeid_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("plugintypeid_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -668,7 +551,7 @@ namespace dgt.power.dataverse
         #region AlternateKeys
         public static partial class AlternateKeys
         {
-            public const string PluginTypeEntityKey1 = "plugintypeentitykey";
+            public const string PluginTypeEntityKey1 = "plugintypentitykey";
         }
         #endregion
 
@@ -707,31 +590,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static PluginType Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static PluginType Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("plugintype", id, columnSet).ToEntity<PluginType>();
-        }
-
-        public PluginType GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new PluginType(Id) { Attributes = attr };
         }
         #endregion
     }

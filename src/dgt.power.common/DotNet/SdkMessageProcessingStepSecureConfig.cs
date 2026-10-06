@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Non-public custom configuration that is passed to a plug-in's constructor.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("sdkmessageprocessingstepsecureconfig")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class SdkMessageProcessingStepSecureConfig : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SdkMessageProcessingStepSecureConfig : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public SdkMessageProcessingStepSecureConfig() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public SdkMessageProcessingStepSecureConfig(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SdkMessageProcessingStepSecureConfig(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SdkMessageProcessingStepSecureConfig(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SdkMessageProcessingStepSecureConfig(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public SdkMessageProcessingStepSecureConfig() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public SdkMessageProcessingStepSecureConfig(Guid id) : base(EntityLogicalName, id) { }
+
+        public SdkMessageProcessingStepSecureConfig(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public SdkMessageProcessingStepSecureConfig(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -61,37 +32,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 4616;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("sdkmessageprocessingstepsecureconfigid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 SdkMessageProcessingStepSecureConfigId = value;
@@ -104,18 +53,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("sdkmessageprocessingstepsecureconfigid")]
         public Guid? SdkMessageProcessingStepSecureConfigId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("sdkmessageprocessingstepsecureconfigid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("sdkmessageprocessingstepsecureconfigid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -125,7 +70,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -138,7 +82,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -151,7 +94,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -164,7 +106,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("customizationlevel")]
         public int? CustomizationLevel
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("customizationlevel");
@@ -177,7 +118,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -190,7 +130,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -203,7 +142,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -216,7 +154,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -229,7 +166,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("sdkmessageprocessingstepsecureconfigidunique")]
         public Guid? SdkMessageProcessingStepSecureConfigIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("sdkmessageprocessingstepsecureconfigidunique");
@@ -242,17 +178,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("secureconfig")]
         public string? SecureConfig
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("secureconfig");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("secureconfig", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -265,17 +197,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -308,6 +236,7 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+                public const string SdkmessageprocessingstepsecureconfigDeletedItemReferences = "sdkmessageprocessingstepsecureconfig_DeletedItemReferences";
                 public const string SdkmessageprocessingstepsecureconfigidSdkmessageprocessingstep = "sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep";
                 public const string UserentityinstancedataSdkmessageprocessingstepsecureconfig = "userentityinstancedata_sdkmessageprocessingstepsecureconfig";
             }
@@ -328,31 +257,6 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Methods
-
-        public static SdkMessageProcessingStepSecureConfig Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static SdkMessageProcessingStepSecureConfig Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("sdkmessageprocessingstepsecureconfig", id, columnSet).ToEntity<SdkMessageProcessingStepSecureConfig>();
-        }
-
-        public SdkMessageProcessingStepSecureConfig GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new SdkMessageProcessingStepSecureConfig(Id) { Attributes = attr };
-        }
         #endregion
     }
 

@@ -71,7 +71,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             catch (Exception e) when (ShouldContinueAfterTargetFailure(e))
             {
                 hadFailure = true;
-                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed processing '{0}': {1}[/]", target, e.RootMessage());
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
             }
         }
 
@@ -90,6 +90,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         var stepRepository = new SdkMessageProcessingStepRepository(service);
         var imageRepository = new SdkMessageProcessingStepImageRepository(service);
         var customApiRepository = new CustomApiRepository(service);
+        var dataProviderRepository = new EntityDataProviderRepository(service);
         var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
         {
             Assemblies = assemblyRepository,
@@ -100,10 +101,11 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
             ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
+            Solutions = solutionRepository,
+            DataProviders = dataProviderRepository
         });
         var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
-            new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
+            new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository, dataProviderRepository),
             new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository));
         var renderer = new PluginPlanRenderer(Console);
 

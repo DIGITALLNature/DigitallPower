@@ -18,12 +18,14 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         {
             case AssemblyDeploymentPlan assembly:
                 console.Write(BuildAssemblyTree(assembly));
+                RenderDataProviders(assembly.PluginTypes?.DataProviders ?? []);
                 RenderOutdatedAssemblyLifecycle(assembly.OutdatedAssemblies);
                 RenderSolutionMembership(assembly.SolutionMembership, CollectSolutionLinks(assembly));
                 break;
 
             case PackageDeploymentPlan package:
                 console.Write(BuildPackageTree(package));
+                RenderDataProviders(package.DataProviders);
                 foreach (var assemblyPlan in package.Assemblies)
                 {
                     RenderOutdatedAssemblyLifecycle(assemblyPlan.OutdatedAssemblies);
@@ -137,6 +139,34 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         }
     }
 
+    // Providers are environment-level records that only reference plugin types, so they get their own tree.
+    private void RenderDataProviders(IReadOnlyList<DataProviderDeployment> providers)
+    {
+        if (providers.Count == 0)
+        {
+            return;
+        }
+
+        var tree = new Tree("[bold]Data providers[/]");
+        foreach (var provider in providers)
+        {
+            var providerStatus = ResourceStatus(provider.Remote is null, provider.UpdateProvider);
+            var providerNode = tree.AddNode($"Data provider {Markup.Escape(provider.Name)} {ActionMarkup(providerStatus)}");
+            if (provider.Local is { } local)
+            {
+                var tableStatus = ResourceStatus(provider.DataSource is null, provider.UpdateDataSource);
+                providerNode.AddNode($"Data-source table {Markup.Escape(local.DataSourceSchemaName)} {ActionMarkup(tableStatus)}");
+            }
+
+            foreach (var (operation, typeName) in provider.Handlers)
+            {
+                providerNode.AddNode($"{operation.ToString().ToLowerInvariant()} → {Markup.Escape(typeName)}");
+            }
+        }
+
+        console.Write(tree);
+    }
+
     private static void AddPluginTypes(IHasTreeNodes parent, PluginTypeDeployment plan)
     {
         foreach (var type in plan.Types)
@@ -214,7 +244,8 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
 
         foreach (var membership in memberships)
         {
-            console.MarkupLine($"  [green]{Emoji.Known.Plus}[/] {ComponentLabel(membership.ComponentType)} {Markup.Escape(membership.ComponentName)}");
+            var label = membership.Resource ?? ComponentLabel(membership.ComponentType);
+            console.MarkupLine($"  [green]{Emoji.Known.Plus}[/] {Markup.Escape(label)} {Markup.Escape(membership.ComponentName)}");
         }
     }
 
@@ -238,6 +269,11 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             yield break;
         }
 
+        foreach (var link in CollectProviderSolutionLinks(plan.PluginTypes.DataProviders))
+        {
+            yield return link;
+        }
+
         foreach (var type in plan.PluginTypes.Types)
         {
             foreach (var step in type.Steps)
@@ -257,6 +293,11 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             yield return plan.Solution;
         }
 
+        foreach (var link in CollectProviderSolutionLinks(plan.DataProviders))
+        {
+            yield return link;
+        }
+
         foreach (var assembly in plan.Assemblies)
         {
             foreach (var link in CollectSolutionLinks(assembly))
@@ -266,13 +307,40 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
         }
     }
 
+    private static IEnumerable<SolutionLink> CollectProviderSolutionLinks(IReadOnlyList<DataProviderDeployment> providers)
+    {
+        foreach (var provider in providers)
+        {
+            if (provider.ProviderSolution is not null)
+            {
+                yield return provider.ProviderSolution;
+            }
+
+            if (provider.DataSourceSolution is not null)
+            {
+                yield return provider.DataSourceSolution;
+            }
+        }
+    }
+
     private static string ComponentLabel(int componentType) =>
         componentType switch
         {
+            1 => "Table",
             IPluginAssemblyRepository.ComponentType => "Assembly",
             ISdkMessageProcessingStepRepository.ComponentType => "Step",
             _ => "Package"
         };
+
+    private static string ResourceStatus(bool create, bool update)
+    {
+        if (create)
+        {
+            return "Create";
+        }
+
+        return update ? "Update" : "Unchanged";
+    }
 
     private static string ActionMarkup(string action) =>
         action switch

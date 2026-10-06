@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// A component of a CRM solution.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("solutioncomponent")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class SolutionComponent : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SolutionComponent : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public SolutionComponent() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponent(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponent(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponent(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponent(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public SolutionComponent() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public SolutionComponent(Guid id) : base(EntityLogicalName, id) { }
+
+        public SolutionComponent(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public SolutionComponent(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -61,37 +32,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 7103;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("solutioncomponentid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 base.Id = value;
@@ -104,7 +53,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutioncomponentid")]
         public Guid? SolutionComponentId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutioncomponentid");
@@ -117,7 +65,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componenttype")]
         public OptionSetValue? ComponentType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componenttype");
@@ -130,7 +77,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -143,7 +89,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -156,7 +101,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -169,7 +113,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismetadata")]
         public bool? IsMetadata
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismetadata");
@@ -182,7 +125,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -195,7 +137,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -208,7 +149,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -221,7 +161,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("objectid")]
         public Guid? ObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("objectid");
@@ -234,7 +173,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("rootcomponentbehavior")]
         public OptionSetValue? RootComponentBehavior
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("rootcomponentbehavior");
@@ -247,7 +185,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("rootsolutioncomponentid")]
         public Guid? RootSolutionComponentId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("rootsolutioncomponentid");
@@ -260,7 +197,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public EntityReference? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("solutionid");
@@ -271,7 +207,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -287,17 +222,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("solutioncomponent_parent_solutioncomponent")]
         public IEnumerable<SolutionComponent> SolutioncomponentParentSolutioncomponent
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SolutionComponent>("solutioncomponent_parent_solutioncomponent", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("solutioncomponent_parent_solutioncomponent", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -456,31 +387,6 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Methods
-
-        public static SolutionComponent Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static SolutionComponent Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("solutioncomponent", id, columnSet).ToEntity<SolutionComponent>();
-        }
-
-        public SolutionComponent GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new SolutionComponent(Id) { Attributes = attr };
-        }
         #endregion
     }
 

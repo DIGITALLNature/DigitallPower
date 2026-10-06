@@ -11,7 +11,8 @@ public sealed class PluginTypeDeploymentExecutor(
     ISdkMessageProcessingStepRepository stepRepository,
     ISdkMessageProcessingStepImageRepository imageRepository,
     ICustomApiRepository customApiRepository,
-    ISolutionComponentRepository solutionRepository)
+    ISolutionComponentRepository solutionRepository,
+    IEntityDataProviderRepository dataProviderRepository)
 {
     public Task<IReadOnlyDictionary<string, Guid>> ApplyAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress = null,
         CancellationToken cancellationToken = default)
@@ -23,6 +24,16 @@ public sealed class PluginTypeDeploymentExecutor(
 
     private async Task<IReadOnlyDictionary<string, Guid>> ApplyCoreAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress,
         CancellationToken cancellationToken)
+    {
+        var typeIds = await ApplyTypesAsync(plan, assemblyId, reportProgress, cancellationToken);
+        await ApplyDataProvidersAsync(plan.DataProviders, typeIds, reportProgress, cancellationToken);
+        await ApplyRegistrationsAsync(plan, typeIds, reportProgress, cancellationToken);
+        await DeleteTypesAsync(plan.Deletions, reportProgress, cancellationToken);
+        return typeIds;
+    }
+
+    internal async Task<IReadOnlyDictionary<string, Guid>> ApplyTypesAsync(PluginTypeDeployment plan, Guid assemblyId,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
     {
         var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
         foreach (var item in plan.Types)
@@ -36,7 +47,17 @@ public sealed class PluginTypeDeploymentExecutor(
             }
 
             typeIds.Add(item.Comparison.Local.TypeName, typeId);
+        }
 
+        return typeIds;
+    }
+
+    internal async Task ApplyRegistrationsAsync(PluginTypeDeployment plan, IReadOnlyDictionary<string, Guid> typeIds,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var item in plan.Types)
+        {
+            var typeId = typeIds[item.Comparison.Local.TypeName];
             foreach (var step in item.Steps)
             {
                 var stepId = await ApplyStepAsync(step, typeId, reportProgress, cancellationToken);
@@ -66,8 +87,11 @@ public sealed class PluginTypeDeploymentExecutor(
                 Report(reportProgress, PluginDeploymentOperation.Linked, "Custom API", item.CustomApi.UniqueName);
             }
         }
+    }
 
-        foreach (var deletion in plan.Deletions)
+    internal async Task DeleteTypesAsync(IReadOnlyList<PluginTypeDeletion> deletions, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var deletion in deletions)
         {
             foreach (var customApiId in deletion.LinkedCustomApiIds)
             {
@@ -84,8 +108,51 @@ public sealed class PluginTypeDeploymentExecutor(
             await typeRepository.DeleteAsync(deletion.Type.Id, cancellationToken);
             Report(reportProgress, PluginDeploymentOperation.Deleted, "plugin type", deletion.Type.TypeName);
         }
+    }
 
-        return typeIds;
+    internal async Task ApplyDataProvidersAsync(IReadOnlyList<DataProviderDeployment> deployments, IReadOnlyDictionary<string, Guid> typeIds,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var deployment in deployments)
+        {
+            var tableId = deployment.DataSource?.MetadataId;
+            var tableCreated = false;
+            if (deployment is { Local: { } local, UpdateDataSource: true })
+            {
+                if (deployment.DataSource is null)
+                {
+                    tableId = await dataProviderRepository.CreateDataSourceAsync(local, deployment.DataSourceSolution?.SolutionUniqueName, cancellationToken);
+                    tableCreated = true;
+                    Report(reportProgress, PluginDeploymentOperation.Created, "data-source table", local.DataSourceLogicalName);
+                }
+                else
+                {
+                    await dataProviderRepository.UpdateDataSourceAsync(deployment.DataSource, local, cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Updated, "data-source table", local.DataSourceLogicalName);
+                }
+            }
+
+            // CreateEntityRequest already places a new table into the target solution.
+            if (deployment.DataSourceSolution is { } tableSolution && !tableCreated)
+            {
+                await solutionRepository.AddToSolutionAsync(tableSolution.ComponentType, tableId!.Value, tableSolution.SolutionUniqueName, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Added, "data-source table", $"{tableSolution.ComponentName} to solution {tableSolution.SolutionUniqueName}");
+            }
+
+            var providerId = deployment.Remote?.Id;
+            if (deployment.UpdateProvider)
+            {
+                var handlers = deployment.Handlers.ToDictionary(handler => handler.Key, handler => typeIds[handler.Value]);
+                providerId = await dataProviderRepository.ApplyAsync(providerId, deployment.Local, handlers, cancellationToken);
+                Report(reportProgress, deployment.Remote is null ? PluginDeploymentOperation.Created : PluginDeploymentOperation.Updated, "data provider", deployment.Name);
+            }
+
+            if (deployment.ProviderSolution is { } providerSolution)
+            {
+                await solutionRepository.AddToSolutionAsync(providerSolution.ComponentType, providerId!.Value, providerSolution.SolutionUniqueName, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Added, "data provider", $"{deployment.Name} to solution {providerSolution.SolutionUniqueName}");
+            }
+        }
     }
 
     private async Task<Guid> ApplyStepAsync(PluginStepDeployment deployment, Guid pluginTypeId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
@@ -142,7 +209,7 @@ public sealed class PluginTypeDeploymentExecutor(
             }
             else if (image.RequiresUpdate)
             {
-                await imageRepository.UpdateAsync(image.Remote!.Id, image.Local.Attributes, cancellationToken);
+                await imageRepository.UpdateAsync(image.Remote!.Id, stepId, image.Local.Attributes, cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Updated, "step image", image.Local.Name);
             }
         }

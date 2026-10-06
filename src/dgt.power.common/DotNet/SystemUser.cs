@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Person with access to the Microsoft CRM system and who owns objects in the Microsoft CRM database.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("systemuser")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class SystemUser : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SystemUser : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public SystemUser() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public SystemUser(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SystemUser(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SystemUser(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SystemUser(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public SystemUser() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public SystemUser(Guid id) : base(EntityLogicalName, id) { }
+
+        public SystemUser(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public SystemUser(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 8;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("systemuserid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 SystemUserId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_addressid")]
         public Guid? Address1AddressId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("address1_addressid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_addressid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,18 +71,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_addressid")]
         public Guid? Address2AddressId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("address2_addressid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_addressid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -147,18 +88,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("systemuserid")]
         public Guid? SystemUserId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("systemuserid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("systemuserid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -168,17 +105,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("accessmode")]
         public OptionSetValue? AccessMode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("accessmode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("accessmode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -188,17 +121,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_addresstypecode")]
         public OptionSetValue? Address1AddressTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("address1_addresstypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_addresstypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -208,17 +137,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_city")]
         public string? Address1City
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_city");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_city", value);
-                OnPropertyChanged();
             }
         }
 
@@ -228,7 +153,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_composite")]
         public string? Address1Composite
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_composite");
@@ -241,17 +165,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_country")]
         public string? Address1Country
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_country");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_country", value);
-                OnPropertyChanged();
             }
         }
 
@@ -261,17 +181,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_county")]
         public string? Address1County
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_county");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_county", value);
-                OnPropertyChanged();
             }
         }
 
@@ -281,17 +197,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_fax")]
         public string? Address1Fax
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_fax");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_fax", value);
-                OnPropertyChanged();
             }
         }
 
@@ -301,17 +213,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_latitude")]
         public double? Address1Latitude
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<double?>("address1_latitude");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_latitude", value);
-                OnPropertyChanged();
             }
         }
 
@@ -321,17 +229,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_line1")]
         public string? Address1Line1
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_line1");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_line1", value);
-                OnPropertyChanged();
             }
         }
 
@@ -341,17 +245,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_line2")]
         public string? Address1Line2
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_line2");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_line2", value);
-                OnPropertyChanged();
             }
         }
 
@@ -361,17 +261,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_line3")]
         public string? Address1Line3
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_line3");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_line3", value);
-                OnPropertyChanged();
             }
         }
 
@@ -381,17 +277,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_longitude")]
         public double? Address1Longitude
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<double?>("address1_longitude");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_longitude", value);
-                OnPropertyChanged();
             }
         }
 
@@ -401,17 +293,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_name")]
         public string? Address1Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -421,17 +309,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_postalcode")]
         public string? Address1PostalCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_postalcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_postalcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -441,17 +325,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_postofficebox")]
         public string? Address1PostOfficeBox
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_postofficebox");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_postofficebox", value);
-                OnPropertyChanged();
             }
         }
 
@@ -461,17 +341,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_shippingmethodcode")]
         public OptionSetValue? Address1ShippingMethodCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("address1_shippingmethodcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_shippingmethodcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -481,17 +357,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_stateorprovince")]
         public string? Address1StateOrProvince
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_stateorprovince");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_stateorprovince", value);
-                OnPropertyChanged();
             }
         }
 
@@ -501,17 +373,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_telephone1")]
         public string? Address1Telephone1
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_telephone1");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_telephone1", value);
-                OnPropertyChanged();
             }
         }
 
@@ -521,17 +389,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_telephone2")]
         public string? Address1Telephone2
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_telephone2");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_telephone2", value);
-                OnPropertyChanged();
             }
         }
 
@@ -541,17 +405,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_telephone3")]
         public string? Address1Telephone3
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_telephone3");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_telephone3", value);
-                OnPropertyChanged();
             }
         }
 
@@ -561,17 +421,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_upszone")]
         public string? Address1UPSZone
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address1_upszone");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_upszone", value);
-                OnPropertyChanged();
             }
         }
 
@@ -581,17 +437,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address1_utcoffset")]
         public int? Address1UTCOffset
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("address1_utcoffset");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address1_utcoffset", value);
-                OnPropertyChanged();
             }
         }
 
@@ -601,17 +453,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_addresstypecode")]
         public OptionSetValue? Address2AddressTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("address2_addresstypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_addresstypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -621,17 +469,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_city")]
         public string? Address2City
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_city");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_city", value);
-                OnPropertyChanged();
             }
         }
 
@@ -641,7 +485,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_composite")]
         public string? Address2Composite
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_composite");
@@ -654,17 +497,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_country")]
         public string? Address2Country
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_country");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_country", value);
-                OnPropertyChanged();
             }
         }
 
@@ -674,17 +513,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_county")]
         public string? Address2County
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_county");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_county", value);
-                OnPropertyChanged();
             }
         }
 
@@ -694,17 +529,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_fax")]
         public string? Address2Fax
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_fax");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_fax", value);
-                OnPropertyChanged();
             }
         }
 
@@ -714,17 +545,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_latitude")]
         public double? Address2Latitude
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<double?>("address2_latitude");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_latitude", value);
-                OnPropertyChanged();
             }
         }
 
@@ -734,17 +561,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_line1")]
         public string? Address2Line1
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_line1");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_line1", value);
-                OnPropertyChanged();
             }
         }
 
@@ -754,17 +577,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_line2")]
         public string? Address2Line2
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_line2");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_line2", value);
-                OnPropertyChanged();
             }
         }
 
@@ -774,17 +593,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_line3")]
         public string? Address2Line3
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_line3");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_line3", value);
-                OnPropertyChanged();
             }
         }
 
@@ -794,17 +609,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_longitude")]
         public double? Address2Longitude
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<double?>("address2_longitude");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_longitude", value);
-                OnPropertyChanged();
             }
         }
 
@@ -814,17 +625,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_name")]
         public string? Address2Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -834,17 +641,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_postalcode")]
         public string? Address2PostalCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_postalcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_postalcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -854,17 +657,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_postofficebox")]
         public string? Address2PostOfficeBox
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_postofficebox");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_postofficebox", value);
-                OnPropertyChanged();
             }
         }
 
@@ -874,17 +673,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_shippingmethodcode")]
         public OptionSetValue? Address2ShippingMethodCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("address2_shippingmethodcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_shippingmethodcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -894,17 +689,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_stateorprovince")]
         public string? Address2StateOrProvince
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_stateorprovince");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_stateorprovince", value);
-                OnPropertyChanged();
             }
         }
 
@@ -914,17 +705,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_telephone1")]
         public string? Address2Telephone1
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_telephone1");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_telephone1", value);
-                OnPropertyChanged();
             }
         }
 
@@ -934,17 +721,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_telephone2")]
         public string? Address2Telephone2
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_telephone2");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_telephone2", value);
-                OnPropertyChanged();
             }
         }
 
@@ -954,17 +737,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_telephone3")]
         public string? Address2Telephone3
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_telephone3");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_telephone3", value);
-                OnPropertyChanged();
             }
         }
 
@@ -974,17 +753,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_upszone")]
         public string? Address2UPSZone
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("address2_upszone");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_upszone", value);
-                OnPropertyChanged();
             }
         }
 
@@ -994,17 +769,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("address2_utcoffset")]
         public int? Address2UTCOffset
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("address2_utcoffset");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("address2_utcoffset", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1014,17 +785,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("applicationid")]
         public Guid? ApplicationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("applicationid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("applicationid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1034,7 +801,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("applicationiduri")]
         public string? ApplicationIdUri
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("applicationiduri");
@@ -1047,10 +813,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("azureactivedirectoryobjectid")]
         public Guid? AzureActiveDirectoryObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("azureactivedirectoryobjectid");
+            }
+            set
+            {
+                SetAttributeValue("azureactivedirectoryobjectid", value);
             }
         }
 
@@ -1060,7 +829,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("azuredeletedon")]
         public DateTime? AzureDeletedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("azuredeletedon");
@@ -1073,17 +841,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("azurestate")]
         public OptionSetValue? AzureState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("azurestate");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("azurestate", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1093,17 +857,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("businessunitid")]
         public EntityReference? BusinessUnitId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("businessunitid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("businessunitid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1113,17 +873,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("calendarid")]
         public EntityReference? CalendarId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("calendarid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("calendarid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1133,17 +889,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("caltype")]
         public OptionSetValue? CALType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("caltype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("caltype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1153,7 +905,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -1166,7 +917,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -1179,7 +929,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -1192,7 +941,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("defaultfilterspopulated")]
         public bool? DefaultFiltersPopulated
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("defaultfilterspopulated");
@@ -1205,7 +953,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("defaultmailbox")]
         public EntityReference? DefaultMailbox
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("defaultmailbox");
@@ -1218,7 +965,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("defaultodbfoldername")]
         public string? DefaultOdbFolderName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("defaultodbfoldername");
@@ -1231,7 +977,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("deletedstate")]
         public OptionSetValue? DeletedState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("deletedstate");
@@ -1244,7 +989,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("disabledreason")]
         public string? DisabledReason
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("disabledreason");
@@ -1257,17 +1001,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("displayinserviceviews")]
         public bool? DisplayInServiceViews
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("displayinserviceviews");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("displayinserviceviews", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1277,17 +1017,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("domainname")]
         public string? DomainName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("domainname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("domainname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1297,17 +1033,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailrouteraccessapproval")]
         public OptionSetValue? EmailRouterAccessApproval
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("emailrouteraccessapproval");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("emailrouteraccessapproval", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1317,17 +1049,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("employeeid")]
         public string? EmployeeId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("employeeid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("employeeid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1337,17 +1065,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage")]
         public byte[]? EntityImage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<byte[]?>("entityimage");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("entityimage", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1355,7 +1079,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage_timestamp")]
         public long? EntityImageTimestamp
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("entityimage_timestamp");
@@ -1366,7 +1089,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage_url")]
         public string? EntityImageURL
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("entityimage_url");
@@ -1379,7 +1101,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimageid")]
         public Guid? EntityImageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("entityimageid");
@@ -1392,7 +1113,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
@@ -1405,17 +1125,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("firstname")]
         public string? FirstName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("firstname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("firstname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1425,7 +1141,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("fullname")]
         public string? FullName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("fullname");
@@ -1438,17 +1153,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("governmentid")]
         public string? GovernmentId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("governmentid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("governmentid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1458,17 +1169,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("homephone")]
         public string? HomePhone
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("homephone");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("homephone", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1478,7 +1185,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("identityid")]
         public int? IdentityId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("identityid");
@@ -1491,17 +1197,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1511,17 +1213,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("incomingemaildeliverymethod")]
         public OptionSetValue? IncomingEmailDeliveryMethod
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("incomingemaildeliverymethod");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("incomingemaildeliverymethod", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1531,17 +1229,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("internalemailaddress")]
         public string? InternalEMailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("internalemailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("internalemailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1551,17 +1245,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("invitestatuscode")]
         public OptionSetValue? InviteStatusCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("invitestatuscode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("invitestatuscode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1571,17 +1261,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isallowedbyipfirewall")]
         public bool? IsAllowedByIpFirewall
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isallowedbyipfirewall");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isallowedbyipfirewall", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1591,17 +1277,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isdisabled")]
         public bool? IsDisabled
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isdisabled");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isdisabled", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1611,7 +1293,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isemailaddressapprovedbyo365admin")]
         public bool? IsEmailAddressApprovedByO365Admin
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isemailaddressapprovedbyo365admin");
@@ -1624,17 +1305,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isintegrationuser")]
         public bool? IsIntegrationUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isintegrationuser");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isintegrationuser", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1644,17 +1321,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("islicensed")]
         public bool? IsLicensed
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("islicensed");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("islicensed", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1664,17 +1337,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("issyncwithdirectory")]
         public bool? IsSyncWithDirectory
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("issyncwithdirectory");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("issyncwithdirectory", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1684,17 +1353,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("jobtitle")]
         public string? JobTitle
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("jobtitle");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("jobtitle", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1704,17 +1369,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("lastname")]
         public string? LastName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("lastname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("lastname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1724,17 +1385,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("middlename")]
         public string? MiddleName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("middlename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("middlename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1744,17 +1401,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("mobilealertemail")]
         public string? MobileAlertEMail
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("mobilealertemail");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("mobilealertemail", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1764,17 +1417,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("mobileofflineprofileid")]
         public EntityReference? MobileOfflineProfileId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("mobileofflineprofileid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("mobileofflineprofileid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1784,17 +1433,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("mobilephone")]
         public string? MobilePhone
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("mobilephone");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("mobilephone", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1804,7 +1449,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -1817,7 +1461,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -1830,7 +1473,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -1843,17 +1485,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("nickname")]
         public string? NickName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("nickname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("nickname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1863,7 +1501,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public Guid? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("organizationid");
@@ -1876,17 +1513,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("outgoingemaildeliverymethod")]
         public OptionSetValue? OutgoingEmailDeliveryMethod
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("outgoingemaildeliverymethod");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("outgoingemaildeliverymethod", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1896,17 +1529,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1916,17 +1545,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("parentsystemuserid")]
         public EntityReference? ParentSystemUserId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("parentsystemuserid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("parentsystemuserid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1936,17 +1561,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("passporthi")]
         public int? PassportHi
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("passporthi");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("passporthi", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1956,17 +1577,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("passportlo")]
         public int? PassportLo
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("passportlo");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("passportlo", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1976,17 +1593,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("personalemailaddress")]
         public string? PersonalEMailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("personalemailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("personalemailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -1996,17 +1609,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("photourl")]
         public string? PhotoUrl
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("photourl");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("photourl", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2016,17 +1625,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("positionid")]
         public EntityReference? PositionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("positionid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("positionid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2036,17 +1641,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("preferredaddresscode")]
         public OptionSetValue? PreferredAddressCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredaddresscode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("preferredaddresscode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2056,17 +1657,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("preferredemailcode")]
         public OptionSetValue? PreferredEmailCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredemailcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("preferredemailcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2076,17 +1673,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("preferredphonecode")]
         public OptionSetValue? PreferredPhoneCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("preferredphonecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("preferredphonecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2096,17 +1689,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("processid")]
         public Guid? ProcessId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("processid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("processid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2116,17 +1705,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("queueid")]
         public EntityReference? QueueId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("queueid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("queueid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2136,17 +1721,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("salutation")]
         public string? Salutation
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("salutation");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("salutation", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2156,17 +1737,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("setupuser")]
         public bool? SetupUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("setupuser");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("setupuser", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2176,17 +1753,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("sharepointemailaddress")]
         public string? SharePointEmailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("sharepointemailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("sharepointemailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2196,17 +1769,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("skills")]
         public string? Skills
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("skills");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("skills", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2216,17 +1785,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("stageid")]
         public Guid? StageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("stageid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("stageid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2236,17 +1801,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("systemmanagedusertype")]
         public OptionSetValue? SystemManagedUserType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("systemmanagedusertype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("systemmanagedusertype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2256,17 +1817,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("territoryid")]
         public EntityReference? TerritoryId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("territoryid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("territoryid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2276,17 +1833,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2296,17 +1849,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("title")]
         public string? Title
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("title");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("title", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2316,17 +1865,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("transactioncurrencyid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2336,17 +1881,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("traversedpath")]
         public string? TraversedPath
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("traversedpath");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("traversedpath", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2356,17 +1897,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("userlicensetype")]
         public int? UserLicenseType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("userlicensetype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("userlicensetype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2376,7 +1913,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("userpuid")]
         public string? UserPuid
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("userpuid");
@@ -2389,17 +1925,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2409,7 +1941,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -2422,17 +1953,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("windowsliveid")]
         public string? WindowsLiveID
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("windowsliveid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("windowsliveid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2442,17 +1969,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yammeremailaddress")]
         public string? YammerEmailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yammeremailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yammeremailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2462,17 +1985,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yammeruserid")]
         public string? YammerUserId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yammeruserid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yammeruserid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2482,17 +2001,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yomifirstname")]
         public string? YomiFirstName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yomifirstname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yomifirstname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2502,7 +2017,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yomifullname")]
         public string? YomiFullName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yomifullname");
@@ -2515,17 +2029,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yomilastname")]
         public string? YomiLastName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yomilastname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yomilastname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -2535,17 +2045,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yomimiddlename")]
         public string? YomiMiddleName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yomimiddlename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yomimiddlename", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -2558,17 +2064,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("contact_owning_user")]
         public IEnumerable<Contact> ContactOwningUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("contact_owning_user", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("contact_owning_user", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2578,17 +2080,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_pluginassembly")]
         public IEnumerable<PluginAssembly> CreatedbyPluginassembly
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginAssembly>("createdby_pluginassembly", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_pluginassembly", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2598,17 +2096,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_plugintype")]
         public IEnumerable<PluginType> CreatedbyPlugintype
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginType>("createdby_plugintype", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_plugintype", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2618,17 +2112,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_sdkmessage")]
         public IEnumerable<SdkMessage> CreatedbySdkmessage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessage>("createdby_sdkmessage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_sdkmessage", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2638,17 +2128,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_sdkmessagefilter")]
         public IEnumerable<SdkMessageFilter> CreatedbySdkmessagefilter
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageFilter>("createdby_sdkmessagefilter", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_sdkmessagefilter", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2658,17 +2144,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> CreatedbySdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("createdby_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2678,17 +2160,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_sdkmessageprocessingstepimage")]
         public IEnumerable<SdkMessageProcessingStepImage> CreatedbySdkmessageprocessingstepimage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepImage>("createdby_sdkmessageprocessingstepimage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_sdkmessageprocessingstepimage", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2698,17 +2176,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("createdby_sdkmessageprocessingstepsecureconfig")]
         public IEnumerable<SdkMessageProcessingStepSecureConfig> CreatedbySdkmessageprocessingstepsecureconfig
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("createdby_sdkmessageprocessingstepsecureconfig", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("createdby_sdkmessageprocessingstepsecureconfig", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2718,17 +2192,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("impersonatinguserid_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> ImpersonatinguseridSdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("impersonatinguserid_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("impersonatinguserid_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2738,17 +2208,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_accountbase_createdby")]
         public IEnumerable<Account> LkAccountbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("lk_accountbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_accountbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2758,17 +2224,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_accountbase_createdonbehalfby")]
         public IEnumerable<Account> LkAccountbaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("lk_accountbase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_accountbase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2778,17 +2240,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_accountbase_modifiedby")]
         public IEnumerable<Account> LkAccountbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("lk_accountbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_accountbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2798,17 +2256,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_accountbase_modifiedonbehalfby")]
         public IEnumerable<Account> LkAccountbaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("lk_accountbase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_accountbase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2818,17 +2272,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_asyncoperation_createdby")]
         public IEnumerable<AsyncOperation> LkAsyncoperationCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("lk_asyncoperation_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_asyncoperation_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2838,17 +2288,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_asyncoperation_createdonbehalfby")]
         public IEnumerable<AsyncOperation> LkAsyncoperationCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("lk_asyncoperation_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_asyncoperation_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2858,17 +2304,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_asyncoperation_modifiedby")]
         public IEnumerable<AsyncOperation> LkAsyncoperationModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("lk_asyncoperation_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_asyncoperation_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2878,17 +2320,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_asyncoperation_modifiedonbehalfby")]
         public IEnumerable<AsyncOperation> LkAsyncoperationModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("lk_asyncoperation_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_asyncoperation_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2898,17 +2336,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_businessunit_createdonbehalfby")]
         public IEnumerable<BusinessUnit> LkBusinessunitCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<BusinessUnit>("lk_businessunit_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_businessunit_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2918,17 +2352,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_businessunit_modifiedonbehalfby")]
         public IEnumerable<BusinessUnit> LkBusinessunitModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<BusinessUnit>("lk_businessunit_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_businessunit_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2938,17 +2368,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_businessunitbase_createdby")]
         public IEnumerable<BusinessUnit> LkBusinessunitbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<BusinessUnit>("lk_businessunitbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_businessunitbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2958,17 +2384,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_businessunitbase_modifiedby")]
         public IEnumerable<BusinessUnit> LkBusinessunitbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<BusinessUnit>("lk_businessunitbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_businessunitbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2978,17 +2400,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendar_createdby")]
         public IEnumerable<Calendar> LkCalendarCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Calendar>("lk_calendar_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendar_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -2998,17 +2416,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendar_createdonbehalfby")]
         public IEnumerable<Calendar> LkCalendarCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Calendar>("lk_calendar_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendar_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3018,17 +2432,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendar_modifiedby")]
         public IEnumerable<Calendar> LkCalendarModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Calendar>("lk_calendar_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendar_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3038,17 +2448,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendar_modifiedonbehalfby")]
         public IEnumerable<Calendar> LkCalendarModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Calendar>("lk_calendar_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendar_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3058,17 +2464,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendarrule_createdby")]
         public IEnumerable<CalendarRule> LkCalendarruleCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("lk_calendarrule_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendarrule_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3078,17 +2480,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendarrule_createdonbehalfby")]
         public IEnumerable<CalendarRule> LkCalendarruleCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("lk_calendarrule_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendarrule_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3098,17 +2496,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendarrule_modifiedby")]
         public IEnumerable<CalendarRule> LkCalendarruleModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("lk_calendarrule_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendarrule_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3118,17 +2512,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_calendarrule_modifiedonbehalfby")]
         public IEnumerable<CalendarRule> LkCalendarruleModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CalendarRule>("lk_calendarrule_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_calendarrule_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3138,17 +2528,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_contact_createdonbehalfby")]
         public IEnumerable<Contact> LkContactCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("lk_contact_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_contact_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3158,17 +2544,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_contact_modifiedonbehalfby")]
         public IEnumerable<Contact> LkContactModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("lk_contact_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_contact_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3178,17 +2560,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_contactbase_createdby")]
         public IEnumerable<Contact> LkContactbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("lk_contactbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_contactbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3198,17 +2576,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_contactbase_modifiedby")]
         public IEnumerable<Contact> LkContactbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("lk_contactbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_contactbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3218,17 +2592,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapi_createdby")]
         public IEnumerable<CustomAPI> LkCustomapiCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("lk_customapi_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapi_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3238,17 +2608,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapi_createdonbehalfby")]
         public IEnumerable<CustomAPI> LkCustomapiCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("lk_customapi_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapi_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3258,17 +2624,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapi_modifiedby")]
         public IEnumerable<CustomAPI> LkCustomapiModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("lk_customapi_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapi_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3278,17 +2640,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapi_modifiedonbehalfby")]
         public IEnumerable<CustomAPI> LkCustomapiModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("lk_customapi_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapi_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3298,17 +2656,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapirequestparameter_createdby")]
         public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIRequestParameter>("lk_customapirequestparameter_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapirequestparameter_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3318,17 +2672,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapirequestparameter_createdonbehalfby")]
         public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIRequestParameter>("lk_customapirequestparameter_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapirequestparameter_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3338,17 +2688,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapirequestparameter_modifiedby")]
         public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIRequestParameter>("lk_customapirequestparameter_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapirequestparameter_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3358,17 +2704,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapirequestparameter_modifiedonbehalfby")]
         public IEnumerable<CustomAPIRequestParameter> LkCustomapirequestparameterModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIRequestParameter>("lk_customapirequestparameter_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapirequestparameter_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3378,17 +2720,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapiresponseproperty_createdby")]
         public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIResponseProperty>("lk_customapiresponseproperty_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapiresponseproperty_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3398,17 +2736,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapiresponseproperty_createdonbehalfby")]
         public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIResponseProperty>("lk_customapiresponseproperty_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapiresponseproperty_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3418,17 +2752,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapiresponseproperty_modifiedby")]
         public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIResponseProperty>("lk_customapiresponseproperty_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapiresponseproperty_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3438,17 +2768,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_customapiresponseproperty_modifiedonbehalfby")]
         public IEnumerable<CustomAPIResponseProperty> LkCustomapiresponsepropertyModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPIResponseProperty>("lk_customapiresponseproperty_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_customapiresponseproperty_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3458,17 +2784,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_documenttemplatebase_createdby")]
         public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_documenttemplatebase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3478,17 +2800,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_documenttemplatebase_createdonbehalfby")]
         public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_documenttemplatebase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3498,17 +2816,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_documenttemplatebase_modifiedby")]
         public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_documenttemplatebase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3518,17 +2832,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_documenttemplatebase_modifiedonbehalfby")]
         public IEnumerable<DocumentTemplate> LkDocumenttemplatebaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DocumentTemplate>("lk_documenttemplatebase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_documenttemplatebase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3538,17 +2848,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterule_createdonbehalfby")]
         public IEnumerable<DuplicateRule> LkDuplicateruleCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("lk_duplicaterule_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterule_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3558,17 +2864,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterule_modifiedonbehalfby")]
         public IEnumerable<DuplicateRule> LkDuplicateruleModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("lk_duplicaterule_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterule_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3578,17 +2880,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterulebase_createdby")]
         public IEnumerable<DuplicateRule> LkDuplicaterulebaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("lk_duplicaterulebase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterulebase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3598,17 +2896,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterulebase_modifiedby")]
         public IEnumerable<DuplicateRule> LkDuplicaterulebaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("lk_duplicaterulebase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterulebase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3618,17 +2912,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterulecondition_createdonbehalfby")]
         public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRuleCondition>("lk_duplicaterulecondition_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterulecondition_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3638,17 +2928,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicaterulecondition_modifiedonbehalfby")]
         public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRuleCondition>("lk_duplicaterulecondition_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicaterulecondition_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3658,17 +2944,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicateruleconditionbase_createdby")]
         public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRuleCondition>("lk_duplicateruleconditionbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicateruleconditionbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3678,17 +2960,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_duplicateruleconditionbase_modifiedby")]
         public IEnumerable<DuplicateRuleCondition> LkDuplicateruleconditionbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRuleCondition>("lk_duplicateruleconditionbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_duplicateruleconditionbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3698,17 +2976,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_importjobbase_createdby")]
         public IEnumerable<ImportJob> LkImportjobbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ImportJob>("lk_importjobbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_importjobbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3718,17 +2992,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_importjobbase_createdonbehalfby")]
         public IEnumerable<ImportJob> LkImportjobbaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ImportJob>("lk_importjobbase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_importjobbase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3738,17 +3008,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_importjobbase_modifiedby")]
         public IEnumerable<ImportJob> LkImportjobbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ImportJob>("lk_importjobbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_importjobbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3758,17 +3024,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_importjobbase_modifiedonbehalfby")]
         public IEnumerable<ImportJob> LkImportjobbaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ImportJob>("lk_importjobbase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_importjobbase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3778,17 +3040,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_managedidentity_createdby")]
         public IEnumerable<ManagedIdentity> LkManagedidentityCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("lk_managedidentity_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_managedidentity_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3798,17 +3056,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_managedidentity_createdonbehalfby")]
         public IEnumerable<ManagedIdentity> LkManagedidentityCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("lk_managedidentity_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_managedidentity_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3818,17 +3072,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_managedidentity_modifiedby")]
         public IEnumerable<ManagedIdentity> LkManagedidentityModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("lk_managedidentity_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_managedidentity_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3838,17 +3088,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_managedidentity_modifiedonbehalfby")]
         public IEnumerable<ManagedIdentity> LkManagedidentityModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("lk_managedidentity_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_managedidentity_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3858,17 +3104,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_organization_createdonbehalfby")]
         public IEnumerable<Organization> LkOrganizationCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Organization>("lk_organization_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_organization_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3878,17 +3120,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_organization_modifiedonbehalfby")]
         public IEnumerable<Organization> LkOrganizationModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Organization>("lk_organization_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_organization_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3898,17 +3136,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_organizationbase_createdby")]
         public IEnumerable<Organization> LkOrganizationbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Organization>("lk_organizationbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_organizationbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3918,17 +3152,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_organizationbase_modifiedby")]
         public IEnumerable<Organization> LkOrganizationbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Organization>("lk_organizationbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_organizationbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3938,17 +3168,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginassembly_createdonbehalfby")]
         public IEnumerable<PluginAssembly> LkPluginassemblyCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginAssembly>("lk_pluginassembly_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginassembly_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3958,17 +3184,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginassembly_modifiedonbehalfby")]
         public IEnumerable<PluginAssembly> LkPluginassemblyModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginAssembly>("lk_pluginassembly_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginassembly_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3978,17 +3200,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginpackage_createdby")]
         public IEnumerable<PluginPackage> LkPluginpackageCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginPackage>("lk_pluginpackage_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginpackage_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -3998,17 +3216,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginpackage_createdonbehalfby")]
         public IEnumerable<PluginPackage> LkPluginpackageCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginPackage>("lk_pluginpackage_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginpackage_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4018,17 +3232,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginpackage_modifiedby")]
         public IEnumerable<PluginPackage> LkPluginpackageModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginpackage_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4038,17 +3248,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_pluginpackage_modifiedonbehalfby")]
         public IEnumerable<PluginPackage> LkPluginpackageModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginPackage>("lk_pluginpackage_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_pluginpackage_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4058,17 +3264,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_plugintype_createdonbehalfby")]
         public IEnumerable<PluginType> LkPlugintypeCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginType>("lk_plugintype_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_plugintype_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4078,17 +3280,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_plugintype_modifiedonbehalfby")]
         public IEnumerable<PluginType> LkPlugintypeModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginType>("lk_plugintype_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_plugintype_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4098,17 +3296,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_publisher_createdby")]
         public IEnumerable<Publisher> LkPublisherCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Publisher>("lk_publisher_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_publisher_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4118,17 +3312,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_publisher_modifiedby")]
         public IEnumerable<Publisher> LkPublisherModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Publisher>("lk_publisher_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_publisher_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4138,17 +3328,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_publisherbase_createdonbehalfby")]
         public IEnumerable<Publisher> LkPublisherbaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Publisher>("lk_publisherbase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_publisherbase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4158,17 +3344,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_publisherbase_modifiedonbehalfby")]
         public IEnumerable<Publisher> LkPublisherbaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Publisher>("lk_publisherbase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_publisherbase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4178,17 +3360,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_queue_createdonbehalfby")]
         public IEnumerable<Queue> LkQueueCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Queue>("lk_queue_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_queue_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4198,17 +3376,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_queue_modifiedonbehalfby")]
         public IEnumerable<Queue> LkQueueModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Queue>("lk_queue_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_queue_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4218,17 +3392,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_queuebase_createdby")]
         public IEnumerable<Queue> LkQueuebaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Queue>("lk_queuebase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_queuebase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4238,17 +3408,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_queuebase_modifiedby")]
         public IEnumerable<Queue> LkQueuebaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Queue>("lk_queuebase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_queuebase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4258,17 +3424,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_role_createdonbehalfby")]
         public IEnumerable<Role> LkRoleCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Role>("lk_role_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_role_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4278,17 +3440,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_role_modifiedonbehalfby")]
         public IEnumerable<Role> LkRoleModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Role>("lk_role_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_role_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4298,17 +3456,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_rolebase_createdby")]
         public IEnumerable<Role> LkRolebaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Role>("lk_rolebase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_rolebase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4318,17 +3472,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_rolebase_modifiedby")]
         public IEnumerable<Role> LkRolebaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Role>("lk_rolebase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_rolebase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4338,17 +3488,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingrule_createdby")]
         public IEnumerable<RoutingRule> LkRoutingruleCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("lk_routingrule_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingrule_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4358,17 +3504,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingrule_createdonbehalfby")]
         public IEnumerable<RoutingRule> LkRoutingruleCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("lk_routingrule_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingrule_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4378,17 +3520,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingrule_modifiedby")]
         public IEnumerable<RoutingRule> LkRoutingruleModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("lk_routingrule_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingrule_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4398,17 +3536,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingrule_modifiedonbehalfby")]
         public IEnumerable<RoutingRule> LkRoutingruleModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("lk_routingrule_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingrule_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4418,17 +3552,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_RoutingRuleItem_createdby")]
         public IEnumerable<RoutingRuleItem> LkRoutingRuleItemCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("lk_RoutingRuleItem_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_RoutingRuleItem_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4438,17 +3568,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingruleitem_createdonbehalfby")]
         public IEnumerable<RoutingRuleItem> LkRoutingruleitemCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("lk_routingruleitem_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingruleitem_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4458,17 +3584,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingruleitem_modifiedby")]
         public IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("lk_routingruleitem_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingruleitem_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4478,17 +3600,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_routingruleitem_modifiedonbehalfby")]
         public IEnumerable<RoutingRuleItem> LkRoutingruleitemModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("lk_routingruleitem_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_routingruleitem_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4498,17 +3616,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_savedquery_createdonbehalfby")]
         public IEnumerable<SavedQuery> LkSavedqueryCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SavedQuery>("lk_savedquery_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_savedquery_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4518,17 +3632,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_savedquery_modifiedonbehalfby")]
         public IEnumerable<SavedQuery> LkSavedqueryModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SavedQuery>("lk_savedquery_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_savedquery_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4538,17 +3648,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_savedquerybase_createdby")]
         public IEnumerable<SavedQuery> LkSavedquerybaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SavedQuery>("lk_savedquerybase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_savedquerybase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4558,17 +3664,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_savedquerybase_modifiedby")]
         public IEnumerable<SavedQuery> LkSavedquerybaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SavedQuery>("lk_savedquerybase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_savedquerybase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4578,17 +3680,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessage_createdonbehalfby")]
         public IEnumerable<SdkMessage> LkSdkmessageCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessage>("lk_sdkmessage_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessage_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4598,17 +3696,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessage_modifiedonbehalfby")]
         public IEnumerable<SdkMessage> LkSdkmessageModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessage>("lk_sdkmessage_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessage_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4618,17 +3712,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessagefilter_createdonbehalfby")]
         public IEnumerable<SdkMessageFilter> LkSdkmessagefilterCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageFilter>("lk_sdkmessagefilter_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessagefilter_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4638,17 +3728,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessagefilter_modifiedonbehalfby")]
         public IEnumerable<SdkMessageFilter> LkSdkmessagefilterModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageFilter>("lk_sdkmessagefilter_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessagefilter_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4658,17 +3744,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstep_createdonbehalfby")]
         public IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("lk_sdkmessageprocessingstep_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstep_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4678,17 +3760,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstep_modifiedonbehalfby")]
         public IEnumerable<SdkMessageProcessingStep> LkSdkmessageprocessingstepModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("lk_sdkmessageprocessingstep_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstep_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4698,17 +3776,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstepimage_createdonbehalfby")]
         public IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepImage>("lk_sdkmessageprocessingstepimage_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstepimage_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4718,17 +3792,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstepimage_modifiedonbehalfby")]
         public IEnumerable<SdkMessageProcessingStepImage> LkSdkmessageprocessingstepimageModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepImage>("lk_sdkmessageprocessingstepimage_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstepimage_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4738,17 +3808,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby")]
         public IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstepsecureconfig_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4758,17 +3824,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby")]
         public IEnumerable<SdkMessageProcessingStepSecureConfig> LkSdkmessageprocessingstepsecureconfigModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_sdkmessageprocessingstepsecureconfig_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4778,17 +3840,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_slabase_createdby")]
         public IEnumerable<SLA> LkSlabaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("lk_slabase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_slabase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4798,17 +3856,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_slabase_createdonbehalfby")]
         public IEnumerable<SLA> LkSlabaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("lk_slabase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_slabase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4818,17 +3872,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_slabase_modifiedby")]
         public IEnumerable<SLA> LkSlabaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("lk_slabase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_slabase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4838,17 +3888,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_slabase_modifiedonbehalfby")]
         public IEnumerable<SLA> LkSlabaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("lk_slabase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_slabase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4858,17 +3904,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solution_createdby")]
         public IEnumerable<Solution> LkSolutionCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Solution>("lk_solution_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solution_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4878,17 +3920,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solution_modifiedby")]
         public IEnumerable<Solution> LkSolutionModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Solution>("lk_solution_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solution_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4898,17 +3936,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solutionbase_createdonbehalfby")]
         public IEnumerable<Solution> LkSolutionbaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Solution>("lk_solutionbase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solutionbase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4918,17 +3952,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solutionbase_modifiedonbehalfby")]
         public IEnumerable<Solution> LkSolutionbaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Solution>("lk_solutionbase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solutionbase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4938,17 +3968,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solutioncomponentbase_createdonbehalfby")]
         public IEnumerable<SolutionComponent> LkSolutioncomponentbaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SolutionComponent>("lk_solutioncomponentbase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solutioncomponentbase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4958,17 +3984,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_solutioncomponentbase_modifiedonbehalfby")]
         public IEnumerable<SolutionComponent> LkSolutioncomponentbaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SolutionComponent>("lk_solutioncomponentbase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_solutioncomponentbase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4978,17 +4000,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_systemuser_createdonbehalfby")]
         public IEnumerable<SystemUser> LkSystemuserCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("lk_systemuser_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_systemuser_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -4998,17 +4016,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_systemuser_modifiedonbehalfby")]
         public IEnumerable<SystemUser> LkSystemuserModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("lk_systemuser_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_systemuser_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5018,17 +4032,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_systemuserbase_createdby")]
         public IEnumerable<SystemUser> LkSystemuserbaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("lk_systemuserbase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_systemuserbase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5038,17 +4048,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_systemuserbase_modifiedby")]
         public IEnumerable<SystemUser> LkSystemuserbaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("lk_systemuserbase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_systemuserbase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5058,17 +4064,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_team_createdonbehalfby")]
         public IEnumerable<Team> LkTeamCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("lk_team_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_team_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5078,17 +4080,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_team_modifiedonbehalfby")]
         public IEnumerable<Team> LkTeamModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("lk_team_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_team_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5098,17 +4096,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teambase_administratorid")]
         public IEnumerable<Team> LkTeambaseAdministratorid
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("lk_teambase_administratorid", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teambase_administratorid", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5118,17 +4112,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teambase_createdby")]
         public IEnumerable<Team> LkTeambaseCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("lk_teambase_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teambase_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5138,17 +4128,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teambase_modifiedby")]
         public IEnumerable<Team> LkTeambaseModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("lk_teambase_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teambase_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5158,17 +4144,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teamtemplate_createdby")]
         public IEnumerable<TeamTemplate> LkTeamtemplateCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<TeamTemplate>("lk_teamtemplate_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teamtemplate_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5178,17 +4160,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teamtemplate_createdonbehalfby")]
         public IEnumerable<TeamTemplate> LkTeamtemplateCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<TeamTemplate>("lk_teamtemplate_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teamtemplate_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5198,17 +4176,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teamtemplate_modifiedby")]
         public IEnumerable<TeamTemplate> LkTeamtemplateModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<TeamTemplate>("lk_teamtemplate_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teamtemplate_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5218,17 +4192,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_teamtemplate_modifiedonbehalfby")]
         public IEnumerable<TeamTemplate> LkTeamtemplateModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<TeamTemplate>("lk_teamtemplate_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_teamtemplate_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5238,17 +4208,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_webresourcebase_createdonbehalfby")]
         public IEnumerable<WebResource> LkWebresourcebaseCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<WebResource>("lk_webresourcebase_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_webresourcebase_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5258,17 +4224,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("lk_webresourcebase_modifiedonbehalfby")]
         public IEnumerable<WebResource> LkWebresourcebaseModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<WebResource>("lk_webresourcebase_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("lk_webresourcebase_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5278,17 +4240,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_pluginassembly")]
         public IEnumerable<PluginAssembly> ModifiedbyPluginassembly
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginAssembly>("modifiedby_pluginassembly", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_pluginassembly", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5298,17 +4256,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_plugintype")]
         public IEnumerable<PluginType> ModifiedbyPlugintype
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginType>("modifiedby_plugintype", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_plugintype", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5318,17 +4272,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_sdkmessage")]
         public IEnumerable<SdkMessage> ModifiedbySdkmessage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessage>("modifiedby_sdkmessage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_sdkmessage", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5338,17 +4288,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_sdkmessagefilter")]
         public IEnumerable<SdkMessageFilter> ModifiedbySdkmessagefilter
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageFilter>("modifiedby_sdkmessagefilter", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_sdkmessagefilter", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5358,17 +4304,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_sdkmessageprocessingstep")]
         public IEnumerable<SdkMessageProcessingStep> ModifiedbySdkmessageprocessingstep
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStep>("modifiedby_sdkmessageprocessingstep", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_sdkmessageprocessingstep", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5378,17 +4320,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_sdkmessageprocessingstepimage")]
         public IEnumerable<SdkMessageProcessingStepImage> ModifiedbySdkmessageprocessingstepimage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepImage>("modifiedby_sdkmessageprocessingstepimage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_sdkmessageprocessingstepimage", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5398,17 +4336,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("modifiedby_sdkmessageprocessingstepsecureconfig")]
         public IEnumerable<SdkMessageProcessingStepSecureConfig> ModifiedbySdkmessageprocessingstepsecureconfig
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SdkMessageProcessingStepSecureConfig>("modifiedby_sdkmessageprocessingstepsecureconfig", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("modifiedby_sdkmessageprocessingstepsecureconfig", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5418,17 +4352,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("queue_primary_user")]
         public IEnumerable<Queue> QueuePrimaryUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Queue>("queue_primary_user", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("queue_primary_user", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5438,17 +4368,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("system_user_accounts")]
         public IEnumerable<Account> SystemUserAccounts
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("system_user_accounts", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("system_user_accounts", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5458,17 +4384,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("system_user_asyncoperation")]
         public IEnumerable<AsyncOperation> SystemUserAsyncoperation
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("system_user_asyncoperation", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("system_user_asyncoperation", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5478,17 +4400,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("system_user_contacts")]
         public IEnumerable<Contact> SystemUserContacts
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("system_user_contacts", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("system_user_contacts", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5498,17 +4416,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("system_user_workflow")]
         public IEnumerable<Workflow> SystemUserWorkflow
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("system_user_workflow", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("system_user_workflow", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5518,17 +4432,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("SystemUser_AsyncOperations")]
         public IEnumerable<AsyncOperation> SystemUserAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("SystemUser_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("SystemUser_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5538,17 +4448,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("SystemUser_DuplicateRules")]
         public IEnumerable<DuplicateRule> SystemUserDuplicateRules
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("SystemUser_DuplicateRules", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("SystemUser_DuplicateRules", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5558,17 +4464,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_accounts")]
         public IEnumerable<Account> UserAccounts
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("user_accounts", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_accounts", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5578,17 +4480,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_customapi")]
         public IEnumerable<CustomAPI> UserCustomapi
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("user_customapi", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_customapi", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5598,17 +4496,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_managedidentity")]
         public IEnumerable<ManagedIdentity> UserManagedidentity
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("user_managedidentity", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_managedidentity", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5618,17 +4512,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_parent_user")]
         public IEnumerable<SystemUser> UserParentUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("user_parent_user", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_parent_user", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5638,17 +4528,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_routingrule")]
         public IEnumerable<RoutingRule> UserRoutingrule
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("user_routingrule", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_routingrule", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5658,17 +4544,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_routingruleitem")]
         public IEnumerable<RoutingRuleItem> UserRoutingruleitem
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("user_routingruleitem", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_routingruleitem", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5678,17 +4560,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("user_slabase")]
         public IEnumerable<SLA> UserSlabase
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("user_slabase", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("user_slabase", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5698,17 +4576,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("webresource_createdby")]
         public IEnumerable<WebResource> WebresourceCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<WebResource>("webresource_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("webresource_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5718,17 +4592,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("webresource_modifiedby")]
         public IEnumerable<WebResource> WebresourceModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<WebResource>("webresource_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("webresource_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5738,17 +4608,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("workflow_createdby")]
         public IEnumerable<Workflow> WorkflowCreatedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("workflow_createdby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("workflow_createdby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5758,17 +4624,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("workflow_createdonbehalfby")]
         public IEnumerable<Workflow> WorkflowCreatedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("workflow_createdonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("workflow_createdonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5778,17 +4640,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("Workflow_licensee")]
         public IEnumerable<Workflow> WorkflowLicensee
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("Workflow_licensee", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("Workflow_licensee", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5798,17 +4656,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("workflow_modifiedby")]
         public IEnumerable<Workflow> WorkflowModifiedby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("workflow_modifiedby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("workflow_modifiedby", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -5818,17 +4672,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("workflow_modifiedonbehalfby")]
         public IEnumerable<Workflow> WorkflowModifiedonbehalfby
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("workflow_modifiedonbehalfby", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("workflow_modifiedonbehalfby", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -5985,6 +4835,7 @@ namespace dgt.power.dataverse
                 public const int C2User = 1;
                 public const int ImpersonableStubUser = 2;
                 public const int AgenticUser = 3;
+                public const int NonLicensed = 4;
             }
         }
         #endregion
@@ -6263,6 +5114,10 @@ namespace dgt.power.dataverse
                 public const string LkAgentmemoryCreatedonbehalfby = "lk_agentmemory_createdonbehalfby";
                 public const string LkAgentmemoryModifiedby = "lk_agentmemory_modifiedby";
                 public const string LkAgentmemoryModifiedonbehalfby = "lk_agentmemory_modifiedonbehalfby";
+                public const string LkAgentpromptCreatedby = "lk_agentprompt_createdby";
+                public const string LkAgentpromptCreatedonbehalfby = "lk_agentprompt_createdonbehalfby";
+                public const string LkAgentpromptModifiedby = "lk_agentprompt_modifiedby";
+                public const string LkAgentpromptModifiedonbehalfby = "lk_agentprompt_modifiedonbehalfby";
                 public const string LkAgenttaskCreatedby = "lk_agenttask_createdby";
                 public const string LkAgenttaskCreatedonbehalfby = "lk_agenttask_createdonbehalfby";
                 public const string LkAgenttaskModifiedby = "lk_agenttask_modifiedby";
@@ -6522,6 +5377,10 @@ namespace dgt.power.dataverse
                 public const string LkBusinessprocessflowinstancebaseCreatedonbehalfby = "lk_businessprocessflowinstancebase_createdonbehalfby";
                 public const string LkBusinessprocessflowinstancebaseModifiedby = "lk_businessprocessflowinstancebase_modifiedby";
                 public const string LkBusinessprocessflowinstancebaseModifiedonbehalfby = "lk_businessprocessflowinstancebase_modifiedonbehalfby";
+                public const string LkBusinessprocesslinkedartifactCreatedby = "lk_businessprocesslinkedartifact_createdby";
+                public const string LkBusinessprocesslinkedartifactCreatedonbehalfby = "lk_businessprocesslinkedartifact_createdonbehalfby";
+                public const string LkBusinessprocesslinkedartifactModifiedby = "lk_businessprocesslinkedartifact_modifiedby";
+                public const string LkBusinessprocesslinkedartifactModifiedonbehalfby = "lk_businessprocesslinkedartifact_modifiedonbehalfby";
                 public const string LkBusinessunitCreatedonbehalfby = "lk_businessunit_createdonbehalfby";
                 public const string LkBusinessunitModifiedonbehalfby = "lk_businessunit_modifiedonbehalfby";
                 public const string LkBusinessunitbaseCreatedby = "lk_businessunitbase_createdby";
@@ -6632,6 +5491,10 @@ namespace dgt.power.dataverse
                 public const string LkContactModifiedonbehalfby = "lk_contact_modifiedonbehalfby";
                 public const string LkContactbaseCreatedby = "lk_contactbase_createdby";
                 public const string LkContactbaseModifiedby = "lk_contactbase_modifiedby";
+                public const string LkControlconfigurationCreatedby = "lk_controlconfiguration_createdby";
+                public const string LkControlconfigurationCreatedonbehalfby = "lk_controlconfiguration_createdonbehalfby";
+                public const string LkControlconfigurationModifiedby = "lk_controlconfiguration_modifiedby";
+                public const string LkControlconfigurationModifiedonbehalfby = "lk_controlconfiguration_modifiedonbehalfby";
                 public const string LkConversationtranscriptCreatedby = "lk_conversationtranscript_createdby";
                 public const string LkConversationtranscriptCreatedonbehalfby = "lk_conversationtranscript_createdonbehalfby";
                 public const string LkConversationtranscriptModifiedby = "lk_conversationtranscript_modifiedby";
@@ -6802,6 +5665,10 @@ namespace dgt.power.dataverse
                 public const string LkEntityrecordfilterCreatedonbehalfby = "lk_entityrecordfilter_createdonbehalfby";
                 public const string LkEntityrecordfilterModifiedby = "lk_entityrecordfilter_modifiedby";
                 public const string LkEntityrecordfilterModifiedonbehalfby = "lk_entityrecordfilter_modifiedonbehalfby";
+                public const string LkEntitystorageprofileCreatedby = "lk_entitystorageprofile_createdby";
+                public const string LkEntitystorageprofileCreatedonbehalfby = "lk_entitystorageprofile_createdonbehalfby";
+                public const string LkEntitystorageprofileModifiedby = "lk_entitystorageprofile_modifiedby";
+                public const string LkEntitystorageprofileModifiedonbehalfby = "lk_entitystorageprofile_modifiedonbehalfby";
                 public const string LkEnvironmentvariabledefinitionCreatedby = "lk_environmentvariabledefinition_createdby";
                 public const string LkEnvironmentvariabledefinitionCreatedonbehalfby = "lk_environmentvariabledefinition_createdonbehalfby";
                 public const string LkEnvironmentvariabledefinitionModifiedby = "lk_environmentvariabledefinition_modifiedby";
@@ -7142,11 +6009,24 @@ namespace dgt.power.dataverse
                 public const string LkMobileofflineprofileitemassociationCreatedonbehalfby = "lk_mobileofflineprofileitemassociation_createdonbehalfby";
                 public const string LkMobileofflineprofileitemassociationModifiedby = "lk_mobileofflineprofileitemassociation_modifiedby";
                 public const string LkMobileofflineprofileitemassociationModifiedonbehalfby = "lk_mobileofflineprofileitemassociation_modifiedonbehalfby";
+                public const string LkMobileofflineprofilesuggestionAcceptedby = "lk_mobileofflineprofilesuggestion_acceptedby";
+                public const string LkMobileofflineprofilesuggestionCreatedby = "lk_mobileofflineprofilesuggestion_createdby";
+                public const string LkMobileofflineprofilesuggestionCreatedonbehalfby = "lk_mobileofflineprofilesuggestion_createdonbehalfby";
+                public const string LkMobileofflineprofilesuggestionModifiedby = "lk_mobileofflineprofilesuggestion_modifiedby";
+                public const string LkMobileofflineprofilesuggestionModifiedonbehalfby = "lk_mobileofflineprofilesuggestion_modifiedonbehalfby";
+                public const string LkMobileofflineprofilesuggestionimpactedtableCreatedby = "lk_mobileofflineprofilesuggestionimpactedtable_createdby";
+                public const string LkMobileofflineprofilesuggestionimpactedtableCreatedonbehalfby = "lk_mobileofflineprofilesuggestionimpactedtable_createdonbehalfby";
+                public const string LkMobileofflineprofilesuggestionimpactedtableModifiedby = "lk_mobileofflineprofilesuggestionimpactedtable_modifiedby";
+                public const string LkMobileofflineprofilesuggestionimpactedtableModifiedonbehalfby = "lk_mobileofflineprofilesuggestionimpactedtable_modifiedonbehalfby";
                 public const string LkMonthlyfiscalcalendarCreatedby = "lk_monthlyfiscalcalendar_createdby";
                 public const string LkMonthlyfiscalcalendarCreatedonbehalfby = "lk_monthlyfiscalcalendar_createdonbehalfby";
                 public const string LkMonthlyfiscalcalendarModifiedby = "lk_monthlyfiscalcalendar_modifiedby";
                 public const string LkMonthlyfiscalcalendarModifiedonbehalfby = "lk_monthlyfiscalcalendar_modifiedonbehalfby";
                 public const string LkMonthlyfiscalcalendarSalespersonid = "lk_monthlyfiscalcalendar_salespersonid";
+                public const string LkMos3managementCreatedby = "lk_mos3management_createdby";
+                public const string LkMos3managementCreatedonbehalfby = "lk_mos3management_createdonbehalfby";
+                public const string LkMos3managementModifiedby = "lk_mos3management_modifiedby";
+                public const string LkMos3managementModifiedonbehalfby = "lk_mos3management_modifiedonbehalfby";
                 public const string LkMsdynAibdatasetCreatedby = "lk_msdyn_aibdataset_createdby";
                 public const string LkMsdynAibdatasetCreatedonbehalfby = "lk_msdyn_aibdataset_createdonbehalfby";
                 public const string LkMsdynAibdatasetModifiedby = "lk_msdyn_aibdataset_modifiedby";
@@ -7351,6 +6231,26 @@ namespace dgt.power.dataverse
                 public const string LkMsdynEntityrefreshhistoryCreatedonbehalfby = "lk_msdyn_entityrefreshhistory_createdonbehalfby";
                 public const string LkMsdynEntityrefreshhistoryModifiedby = "lk_msdyn_entityrefreshhistory_modifiedby";
                 public const string LkMsdynEntityrefreshhistoryModifiedonbehalfby = "lk_msdyn_entityrefreshhistory_modifiedonbehalfby";
+                public const string LkMsdynEvalassertionCreatedby = "lk_msdyn_evalassertion_createdby";
+                public const string LkMsdynEvalassertionCreatedonbehalfby = "lk_msdyn_evalassertion_createdonbehalfby";
+                public const string LkMsdynEvalassertionModifiedby = "lk_msdyn_evalassertion_modifiedby";
+                public const string LkMsdynEvalassertionModifiedonbehalfby = "lk_msdyn_evalassertion_modifiedonbehalfby";
+                public const string LkMsdynEvaldatasetCreatedby = "lk_msdyn_evaldataset_createdby";
+                public const string LkMsdynEvaldatasetCreatedonbehalfby = "lk_msdyn_evaldataset_createdonbehalfby";
+                public const string LkMsdynEvaldatasetModifiedby = "lk_msdyn_evaldataset_modifiedby";
+                public const string LkMsdynEvaldatasetModifiedonbehalfby = "lk_msdyn_evaldataset_modifiedonbehalfby";
+                public const string LkMsdynEvalpromptCreatedby = "lk_msdyn_evalprompt_createdby";
+                public const string LkMsdynEvalpromptCreatedonbehalfby = "lk_msdyn_evalprompt_createdonbehalfby";
+                public const string LkMsdynEvalpromptModifiedby = "lk_msdyn_evalprompt_modifiedby";
+                public const string LkMsdynEvalpromptModifiedonbehalfby = "lk_msdyn_evalprompt_modifiedonbehalfby";
+                public const string LkMsdynEvalresultCreatedby = "lk_msdyn_evalresult_createdby";
+                public const string LkMsdynEvalresultCreatedonbehalfby = "lk_msdyn_evalresult_createdonbehalfby";
+                public const string LkMsdynEvalresultModifiedby = "lk_msdyn_evalresult_modifiedby";
+                public const string LkMsdynEvalresultModifiedonbehalfby = "lk_msdyn_evalresult_modifiedonbehalfby";
+                public const string LkMsdynEvalrunCreatedby = "lk_msdyn_evalrun_createdby";
+                public const string LkMsdynEvalrunCreatedonbehalfby = "lk_msdyn_evalrun_createdonbehalfby";
+                public const string LkMsdynEvalrunModifiedby = "lk_msdyn_evalrun_modifiedby";
+                public const string LkMsdynEvalrunModifiedonbehalfby = "lk_msdyn_evalrun_modifiedonbehalfby";
                 public const string LkMsdynFavoriteknowledgearticleCreatedby = "lk_msdyn_favoriteknowledgearticle_createdby";
                 public const string LkMsdynFavoriteknowledgearticleCreatedonbehalfby = "lk_msdyn_favoriteknowledgearticle_createdonbehalfby";
                 public const string LkMsdynFavoriteknowledgearticleModifiedby = "lk_msdyn_favoriteknowledgearticle_modifiedby";
@@ -7411,6 +6311,10 @@ namespace dgt.power.dataverse
                 public const string LkMsdynFunctionCreatedonbehalfby = "lk_msdyn_function_createdonbehalfby";
                 public const string LkMsdynFunctionModifiedby = "lk_msdyn_function_modifiedby";
                 public const string LkMsdynFunctionModifiedonbehalfby = "lk_msdyn_function_modifiedonbehalfby";
+                public const string LkMsdynGeolocationrecordCreatedby = "lk_msdyn_geolocationrecord_createdby";
+                public const string LkMsdynGeolocationrecordCreatedonbehalfby = "lk_msdyn_geolocationrecord_createdonbehalfby";
+                public const string LkMsdynGeolocationrecordModifiedby = "lk_msdyn_geolocationrecord_modifiedby";
+                public const string LkMsdynGeolocationrecordModifiedonbehalfby = "lk_msdyn_geolocationrecord_modifiedonbehalfby";
                 public const string LkMsdynHarvesteligibilityconditionCreatedby = "lk_msdyn_harvesteligibilitycondition_createdby";
                 public const string LkMsdynHarvesteligibilityconditionCreatedonbehalfby = "lk_msdyn_harvesteligibilitycondition_createdonbehalfby";
                 public const string LkMsdynHarvesteligibilityconditionModifiedby = "lk_msdyn_harvesteligibilitycondition_modifiedby";
@@ -7419,10 +6323,6 @@ namespace dgt.power.dataverse
                 public const string LkMsdynHarvestworkitemCreatedonbehalfby = "lk_msdyn_harvestworkitem_createdonbehalfby";
                 public const string LkMsdynHarvestworkitemModifiedby = "lk_msdyn_harvestworkitem_modifiedby";
                 public const string LkMsdynHarvestworkitemModifiedonbehalfby = "lk_msdyn_harvestworkitem_modifiedonbehalfby";
-                public const string LkMsdynHealthcareFeedbackCreatedby = "lk_msdyn_healthcare_feedback_createdby";
-                public const string LkMsdynHealthcareFeedbackCreatedonbehalfby = "lk_msdyn_healthcare_feedback_createdonbehalfby";
-                public const string LkMsdynHealthcareFeedbackModifiedby = "lk_msdyn_healthcare_feedback_modifiedby";
-                public const string LkMsdynHealthcareFeedbackModifiedonbehalfby = "lk_msdyn_healthcare_feedback_modifiedonbehalfby";
                 public const string LkMsdynHelppageCreatedby = "lk_msdyn_helppage_createdby";
                 public const string LkMsdynHelppageCreatedonbehalfby = "lk_msdyn_helppage_createdonbehalfby";
                 public const string LkMsdynHelppageModifiedby = "lk_msdyn_helppage_modifiedby";
@@ -7435,6 +6335,10 @@ namespace dgt.power.dataverse
                 public const string LkMsdynHistoricalcaseharvestrunCreatedonbehalfby = "lk_msdyn_historicalcaseharvestrun_createdonbehalfby";
                 public const string LkMsdynHistoricalcaseharvestrunModifiedby = "lk_msdyn_historicalcaseharvestrun_modifiedby";
                 public const string LkMsdynHistoricalcaseharvestrunModifiedonbehalfby = "lk_msdyn_historicalcaseharvestrun_modifiedonbehalfby";
+                public const string LkMsdynHistoricalcaseharvestrunlogCreatedby = "lk_msdyn_historicalcaseharvestrunlog_createdby";
+                public const string LkMsdynHistoricalcaseharvestrunlogCreatedonbehalfby = "lk_msdyn_historicalcaseharvestrunlog_createdonbehalfby";
+                public const string LkMsdynHistoricalcaseharvestrunlogModifiedby = "lk_msdyn_historicalcaseharvestrunlog_modifiedby";
+                public const string LkMsdynHistoricalcaseharvestrunlogModifiedonbehalfby = "lk_msdyn_historicalcaseharvestrunlog_modifiedonbehalfby";
                 public const string LkMsdynInsightsstorevirtualentityCreatedby = "lk_msdyn_insightsstorevirtualentity_createdby";
                 public const string LkMsdynInsightsstorevirtualentityCreatedonbehalfby = "lk_msdyn_insightsstorevirtualentity_createdonbehalfby";
                 public const string LkMsdynInsightsstorevirtualentityModifiedby = "lk_msdyn_insightsstorevirtualentity_modifiedby";
@@ -7519,14 +6423,10 @@ namespace dgt.power.dataverse
                 public const string LkMsdynModulerundetailCreatedonbehalfby = "lk_msdyn_modulerundetail_createdonbehalfby";
                 public const string LkMsdynModulerundetailModifiedby = "lk_msdyn_modulerundetail_modifiedby";
                 public const string LkMsdynModulerundetailModifiedonbehalfby = "lk_msdyn_modulerundetail_modifiedonbehalfby";
-                public const string LkMsdynObjectdetectionproductCreatedby = "lk_msdyn_objectdetectionproduct_createdby";
-                public const string LkMsdynObjectdetectionproductCreatedonbehalfby = "lk_msdyn_objectdetectionproduct_createdonbehalfby";
-                public const string LkMsdynObjectdetectionproductModifiedby = "lk_msdyn_objectdetectionproduct_modifiedby";
-                public const string LkMsdynObjectdetectionproductModifiedonbehalfby = "lk_msdyn_objectdetectionproduct_modifiedonbehalfby";
-                public const string LkMsdynOnlineshopperintentionCreatedby = "lk_msdyn_onlineshopperintention_createdby";
-                public const string LkMsdynOnlineshopperintentionCreatedonbehalfby = "lk_msdyn_onlineshopperintention_createdonbehalfby";
-                public const string LkMsdynOnlineshopperintentionModifiedby = "lk_msdyn_onlineshopperintention_modifiedby";
-                public const string LkMsdynOnlineshopperintentionModifiedonbehalfby = "lk_msdyn_onlineshopperintention_modifiedonbehalfby";
+                public const string LkMsdynNativeextensionCreatedby = "lk_msdyn_nativeextension_createdby";
+                public const string LkMsdynNativeextensionCreatedonbehalfby = "lk_msdyn_nativeextension_createdonbehalfby";
+                public const string LkMsdynNativeextensionModifiedby = "lk_msdyn_nativeextension_modifiedby";
+                public const string LkMsdynNativeextensionModifiedonbehalfby = "lk_msdyn_nativeextension_modifiedonbehalfby";
                 public const string LkMsdynPlanCreatedby = "lk_msdyn_plan_createdby";
                 public const string LkMsdynPlanCreatedonbehalfby = "lk_msdyn_plan_createdonbehalfby";
                 public const string LkMsdynPlanModifiedby = "lk_msdyn_plan_modifiedby";
@@ -7794,6 +6694,10 @@ namespace dgt.power.dataverse
                 public const string LkPlugintypeModifiedonbehalfby = "lk_plugintype_modifiedonbehalfby";
                 public const string LkPlugintypestatisticbaseCreatedonbehalfby = "lk_plugintypestatisticbase_createdonbehalfby";
                 public const string LkPlugintypestatisticbaseModifiedonbehalfby = "lk_plugintypestatisticbase_modifiedonbehalfby";
+                public const string LkPolicycriterionCreatedby = "lk_policycriterion_createdby";
+                public const string LkPolicycriterionCreatedonbehalfby = "lk_policycriterion_createdonbehalfby";
+                public const string LkPolicycriterionModifiedby = "lk_policycriterion_modifiedby";
+                public const string LkPolicycriterionModifiedonbehalfby = "lk_policycriterion_modifiedonbehalfby";
                 public const string LkPositionCreatedby = "lk_position_createdby";
                 public const string LkPositionCreatedonbehalfby = "lk_position_createdonbehalfby";
                 public const string LkPositionModifiedby = "lk_position_modifiedby";
@@ -7808,6 +6712,26 @@ namespace dgt.power.dataverse
                 public const string LkPostfollowCreatedonbehalfby = "lk_postfollow_createdonbehalfby";
                 public const string LkPostlikeCreatedby = "lk_postlike_createdby";
                 public const string LkPostlikeCreatedonbehalfby = "lk_postlike_createdonbehalfby";
+                public const string LkPowerbidatasetCreatedby = "lk_powerbidataset_createdby";
+                public const string LkPowerbidatasetCreatedonbehalfby = "lk_powerbidataset_createdonbehalfby";
+                public const string LkPowerbidatasetModifiedby = "lk_powerbidataset_modifiedby";
+                public const string LkPowerbidatasetModifiedonbehalfby = "lk_powerbidataset_modifiedonbehalfby";
+                public const string LkPowerbidatasetapdxCreatedby = "lk_powerbidatasetapdx_createdby";
+                public const string LkPowerbidatasetapdxCreatedonbehalfby = "lk_powerbidatasetapdx_createdonbehalfby";
+                public const string LkPowerbidatasetapdxModifiedby = "lk_powerbidatasetapdx_modifiedby";
+                public const string LkPowerbidatasetapdxModifiedonbehalfby = "lk_powerbidatasetapdx_modifiedonbehalfby";
+                public const string LkPowerbimashupparameterCreatedby = "lk_powerbimashupparameter_createdby";
+                public const string LkPowerbimashupparameterCreatedonbehalfby = "lk_powerbimashupparameter_createdonbehalfby";
+                public const string LkPowerbimashupparameterModifiedby = "lk_powerbimashupparameter_modifiedby";
+                public const string LkPowerbimashupparameterModifiedonbehalfby = "lk_powerbimashupparameter_modifiedonbehalfby";
+                public const string LkPowerbireportCreatedby = "lk_powerbireport_createdby";
+                public const string LkPowerbireportCreatedonbehalfby = "lk_powerbireport_createdonbehalfby";
+                public const string LkPowerbireportModifiedby = "lk_powerbireport_modifiedby";
+                public const string LkPowerbireportModifiedonbehalfby = "lk_powerbireport_modifiedonbehalfby";
+                public const string LkPowerbireportapdxCreatedby = "lk_powerbireportapdx_createdby";
+                public const string LkPowerbireportapdxCreatedonbehalfby = "lk_powerbireportapdx_createdonbehalfby";
+                public const string LkPowerbireportapdxModifiedby = "lk_powerbireportapdx_modifiedby";
+                public const string LkPowerbireportapdxModifiedonbehalfby = "lk_powerbireportapdx_modifiedonbehalfby";
                 public const string LkPowerfxruleCreatedby = "lk_powerfxrule_createdby";
                 public const string LkPowerfxruleCreatedonbehalfby = "lk_powerfxrule_createdonbehalfby";
                 public const string LkPowerfxruleModifiedby = "lk_powerfxrule_modifiedby";
@@ -8196,10 +7120,30 @@ namespace dgt.power.dataverse
                 public const string LkSkillCreatedonbehalfby = "lk_skill_createdonbehalfby";
                 public const string LkSkillModifiedby = "lk_skill_modifiedby";
                 public const string LkSkillModifiedonbehalfby = "lk_skill_modifiedonbehalfby";
+                public const string LkSkillchangesethistoryCreatedby = "lk_skillchangesethistory_createdby";
+                public const string LkSkillchangesethistoryCreatedonbehalfby = "lk_skillchangesethistory_createdonbehalfby";
+                public const string LkSkillchangesethistoryModifiedby = "lk_skillchangesethistory_modifiedby";
+                public const string LkSkillchangesethistoryModifiedonbehalfby = "lk_skillchangesethistory_modifiedonbehalfby";
+                public const string LkSkillchangesetreviewerCreatedby = "lk_skillchangesetreviewer_createdby";
+                public const string LkSkillchangesetreviewerCreatedonbehalfby = "lk_skillchangesetreviewer_createdonbehalfby";
+                public const string LkSkillchangesetreviewerModifiedby = "lk_skillchangesetreviewer_modifiedby";
+                public const string LkSkillchangesetreviewerModifiedonbehalfby = "lk_skillchangesetreviewer_modifiedonbehalfby";
+                public const string LkSkillevalresultCreatedby = "lk_skillevalresult_createdby";
+                public const string LkSkillevalresultCreatedonbehalfby = "lk_skillevalresult_createdonbehalfby";
+                public const string LkSkillevalresultModifiedby = "lk_skillevalresult_modifiedby";
+                public const string LkSkillevalresultModifiedonbehalfby = "lk_skillevalresult_modifiedonbehalfby";
+                public const string LkSkillmetadataCreatedby = "lk_skillmetadata_createdby";
+                public const string LkSkillmetadataCreatedonbehalfby = "lk_skillmetadata_createdonbehalfby";
+                public const string LkSkillmetadataModifiedby = "lk_skillmetadata_modifiedby";
+                public const string LkSkillmetadataModifiedonbehalfby = "lk_skillmetadata_modifiedonbehalfby";
                 public const string LkSkillresourceCreatedby = "lk_skillresource_createdby";
                 public const string LkSkillresourceCreatedonbehalfby = "lk_skillresource_createdonbehalfby";
                 public const string LkSkillresourceModifiedby = "lk_skillresource_modifiedby";
                 public const string LkSkillresourceModifiedonbehalfby = "lk_skillresource_modifiedonbehalfby";
+                public const string LkSkillrolemappingCreatedby = "lk_skillrolemapping_createdby";
+                public const string LkSkillrolemappingCreatedonbehalfby = "lk_skillrolemapping_createdonbehalfby";
+                public const string LkSkillrolemappingModifiedby = "lk_skillrolemapping_modifiedby";
+                public const string LkSkillrolemappingModifiedonbehalfby = "lk_skillrolemapping_modifiedonbehalfby";
                 public const string LkSlabaseCreatedby = "lk_slabase_createdby";
                 public const string LkSlabaseCreatedonbehalfby = "lk_slabase_createdonbehalfby";
                 public const string LkSlabaseModifiedby = "lk_slabase_modifiedby";
@@ -8260,10 +7204,10 @@ namespace dgt.power.dataverse
                 public const string LkSourcecontrolconfigurationCreatedonbehalfby = "lk_sourcecontrolconfiguration_createdonbehalfby";
                 public const string LkSourcecontrolconfigurationModifiedby = "lk_sourcecontrolconfiguration_modifiedby";
                 public const string LkSourcecontrolconfigurationModifiedonbehalfby = "lk_sourcecontrolconfiguration_modifiedonbehalfby";
-                public const string LkSourcecontroloperationstatusCreatedby = "lk_sourcecontroloperationstatus_createdby";
-                public const string LkSourcecontroloperationstatusCreatedonbehalfby = "lk_sourcecontroloperationstatus_createdonbehalfby";
-                public const string LkSourcecontroloperationstatusModifiedby = "lk_sourcecontroloperationstatus_modifiedby";
-                public const string LkSourcecontroloperationstatusModifiedonbehalfby = "lk_sourcecontroloperationstatus_modifiedonbehalfby";
+                public const string LkSourcecontroloperationtrackingCreatedby = "lk_sourcecontroloperationtracking_createdby";
+                public const string LkSourcecontroloperationtrackingCreatedonbehalfby = "lk_sourcecontroloperationtracking_createdonbehalfby";
+                public const string LkSourcecontroloperationtrackingModifiedby = "lk_sourcecontroloperationtracking_modifiedby";
+                public const string LkSourcecontroloperationtrackingModifiedonbehalfby = "lk_sourcecontroloperationtracking_modifiedonbehalfby";
                 public const string LkStagedattributelookupvalueCreatedby = "lk_stagedattributelookupvalue_createdby";
                 public const string LkStagedattributelookupvalueCreatedonbehalfby = "lk_stagedattributelookupvalue_createdonbehalfby";
                 public const string LkStagedattributelookupvalueModifiedby = "lk_stagedattributelookupvalue_modifiedby";
@@ -8675,6 +7619,11 @@ namespace dgt.power.dataverse
                 public const string QueuePrimaryUser = "queue_primary_user";
                 public const string SaSuggestedactionCompletedBySystemuser = "sa_suggestedaction_CompletedBy_systemuser";
                 public const string SideloadedaipluginSideloadedpluginownerid = "sideloadedaiplugin_sideloadedpluginownerid";
+                public const string SkillApproverIdSystemuser = "skill_ApproverId_systemuser";
+                public const string SkillCreatorIdSystemuser = "skill_CreatorId_systemuser";
+                public const string SkillchangesethistoryApprovedBySystemuser = "skillchangesethistory_ApprovedBy_systemuser";
+                public const string SkillchangesethistorySubmittedBySystemuser = "skillchangesethistory_SubmittedBy_systemuser";
+                public const string SkillchangesetreviewerReviewerIdSystemuser = "skillchangesetreviewer_ReviewerId_systemuser";
                 public const string SocialProfileOwningUser = "socialProfile_owning_user";
                 public const string SupPrincipalidSystemuser = "sup_principalid_systemuser";
                 public const string SystemUserAccounts = "system_user_accounts";
@@ -8708,7 +7657,6 @@ namespace dgt.power.dataverse
                 public const string SystemuserPrincipalobjectattributeaccess = "systemuser_principalobjectattributeaccess";
                 public const string SystemuserPrincipalobjectattributeaccessPrincipalid = "systemuser_principalobjectattributeaccess_principalid";
                 public const string SystemUserProcessSessions = "SystemUser_ProcessSessions";
-                public const string SystemuserSourcecontroloperationstatusStartedBy = "systemuser_sourcecontroloperationstatus_StartedBy";
                 public const string SystemUserSyncError = "SystemUser_SyncError";
                 public const string SystemUserSyncErrors = "SystemUser_SyncErrors";
                 public const string SystemuserUsermobileofflineprofilemembershipSystemUserId = "systemuser_usermobileofflineprofilemembership_SystemUserId";
@@ -8728,6 +7676,7 @@ namespace dgt.power.dataverse
                 public const string UserAgenthubmetric = "user_agenthubmetric";
                 public const string UserAgenticscenario = "user_agenticscenario";
                 public const string UserAgentmemory = "user_agentmemory";
+                public const string UserAgentprompt = "user_agentprompt";
                 public const string UserAgentrule = "user_agentrule";
                 public const string UserAgenttask = "user_agenttask";
                 public const string UserAiinsightcard = "user_aiinsightcard";
@@ -8761,6 +7710,7 @@ namespace dgt.power.dataverse
                 public const string UserBulkarchivefailuredetail = "user_bulkarchivefailuredetail";
                 public const string UserBulkarchiveoperation = "user_bulkarchiveoperation";
                 public const string UserBusinessprocess = "user_businessprocess";
+                public const string UserBusinessprocesslinkedartifact = "user_businessprocesslinkedartifact";
                 public const string UserCanvasappextendedmetadata = "user_canvasappextendedmetadata";
                 public const string UserCard = "user_card";
                 public const string UserCertificatecredential = "user_certificatecredential";
@@ -8900,11 +7850,12 @@ namespace dgt.power.dataverse
                 public const string UserMsdynFlowFlowapproval = "user_msdyn_flow_flowapproval";
                 public const string UserMsdynFormmapping = "user_msdyn_formmapping";
                 public const string UserMsdynFunction = "user_msdyn_function";
+                public const string UserMsdynGeolocationrecord = "user_msdyn_geolocationrecord";
                 public const string UserMsdynHarvesteligibilitycondition = "user_msdyn_harvesteligibilitycondition";
                 public const string UserMsdynHarvestworkitem = "user_msdyn_harvestworkitem";
-                public const string UserMsdynHealthcareFeedback = "user_msdyn_healthcare_feedback";
                 public const string UserMsdynHistoricalcaseharvestbatch = "user_msdyn_historicalcaseharvestbatch";
                 public const string UserMsdynHistoricalcaseharvestrun = "user_msdyn_historicalcaseharvestrun";
+                public const string UserMsdynHistoricalcaseharvestrunlog = "user_msdyn_historicalcaseharvestrunlog";
                 public const string UserMsdynIntegratedsearchprovider = "user_msdyn_integratedsearchprovider";
                 public const string UserMsdynInterimupdateknowledgearticle = "user_msdyn_interimupdateknowledgearticle";
                 public const string UserMsdynKalanguagesetting = "user_msdyn_kalanguagesetting";
@@ -8922,8 +7873,7 @@ namespace dgt.power.dataverse
                 public const string UserMsdynKnowledgesearchfilter = "user_msdyn_knowledgesearchfilter";
                 public const string UserMsdynKnowledgesearchinsight = "user_msdyn_knowledgesearchinsight";
                 public const string UserMsdynMobileapp = "user_msdyn_mobileapp";
-                public const string UserMsdynObjectdetectionproduct = "user_msdyn_objectdetectionproduct";
-                public const string UserMsdynOnlineshopperintention = "user_msdyn_onlineshopperintention";
+                public const string UserMsdynNativeextension = "user_msdyn_nativeextension";
                 public const string UserMsdynPlan = "user_msdyn_plan";
                 public const string UserMsdynPlanartifact = "user_msdyn_planartifact";
                 public const string UserMsdynPlanattachment = "user_msdyn_planattachment";
@@ -8970,6 +7920,11 @@ namespace dgt.power.dataverse
                 public const string UserPlannerbusinessscenario = "user_plannerbusinessscenario";
                 public const string UserPlannersyncaction = "user_plannersyncaction";
                 public const string UserPlugin = "user_plugin";
+                public const string UserPowerbidataset = "user_powerbidataset";
+                public const string UserPowerbidatasetapdx = "user_powerbidatasetapdx";
+                public const string UserPowerbimashupparameter = "user_powerbimashupparameter";
+                public const string UserPowerbireport = "user_powerbireport";
+                public const string UserPowerbireportapdx = "user_powerbireportapdx";
                 public const string UserPowerfxrule = "user_powerfxrule";
                 public const string UserPowerpagecomponent = "user_powerpagecomponent";
                 public const string UserPowerpagesddosalert = "user_powerpagesddosalert";
@@ -9007,6 +7962,8 @@ namespace dgt.power.dataverse
                 public const string UserSignal = "user_signal";
                 public const string UserSignalregistration = "user_signalregistration";
                 public const string UserSkill = "user_skill";
+                public const string UserSkillchangesethistory = "user_skillchangesethistory";
+                public const string UserSkillevalresult = "user_skillevalresult";
                 public const string UserSlabase = "user_slabase";
                 public const string UserSocialactivity = "user_socialactivity";
                 public const string UserSolutioncomponentbatchconfiguration = "user_solutioncomponentbatchconfiguration";
@@ -9096,31 +8053,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static SystemUser Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static SystemUser Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("systemuser", id, columnSet).ToEntity<SystemUser>();
-        }
-
-        public SystemUser GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new SystemUser(Id) { Attributes = attr };
         }
         #endregion
     }

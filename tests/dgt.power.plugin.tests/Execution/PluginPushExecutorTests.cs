@@ -83,29 +83,8 @@ public class PluginPushExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var assemblyRepository = new PluginAssemblyRepository(service);
-        var packageRepository = new PluginPackageRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = assemblyRepository,
-            Packages = packageRepository,
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new DeploymentTestHarness(planner, new PluginPlanRenderer(console),
-            new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
-                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-                new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository)), console);
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new DeploymentTestHarness(factory.Planner, new PluginPlanRenderer(console), factory.PushExecutor, console);
 
         return (service, executor, console);
     }
@@ -120,29 +99,8 @@ public class PluginPushExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var assemblyRepository = new PluginAssemblyRepository(service);
-        var packageRepository = new PluginPackageRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = assemblyRepository,
-            Packages = packageRepository,
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new DeploymentTestHarness(planner, new PluginPlanRenderer(console),
-            new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
-                new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-                new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository)), console);
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new DeploymentTestHarness(factory.Planner, new PluginPlanRenderer(console), factory.PushExecutor, console);
 
         return (service, executor);
     }

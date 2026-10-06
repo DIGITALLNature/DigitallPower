@@ -95,34 +95,54 @@ public class SdkMessageProcessingStepImageRepositoryTests
     }
 
     [Test]
-    public async Task UpdateAsync_ReplacesAttributes()
+    public async Task UpdateAsync_ReplacesAttributesAndIncludesParentStep()
     {
         var service = CreateService();
         var id = Guid.NewGuid();
-        service.Create(new SdkMessageProcessingStepImage(id) { Name = "PreImage", AttributesField = "old" });
+        service.Create(new SdkMessageProcessingStepImage(id)
+        {
+            Name = "PreImage",
+            EntityAlias = "Before",
+            ImageType = new OptionSetValue(SdkMessageProcessingStepImage.Options.ImageType.PreImage),
+            MessagePropertyName = "Target",
+            AttributesField = "old"
+        });
         var repository = new SdkMessageProcessingStepImageRepository(service);
-
-        await repository.UpdateAsync(id, ["new1", "new2"]);
+        var stepId = Guid.NewGuid();
+        await repository.UpdateAsync(id, stepId, ["new1", "new2"]);
 
         var updated = service.Retrieve(SdkMessageProcessingStepImage.EntityLogicalName, id, new ColumnSet(true))
             .ToEntity<SdkMessageProcessingStepImage>();
         await Assert.That(updated.AttributesField).IsEqualTo("new1,new2");
+        await Assert.That(updated.Id).IsEqualTo(id);
         await Assert.That(updated.Name).IsEqualTo("PreImage");
+        await Assert.That(updated.EntityAlias).IsEqualTo("Before");
+        await Assert.That(updated.ImageType!.Value).IsEqualTo(SdkMessageProcessingStepImage.Options.ImageType.PreImage);
+        await Assert.That(updated.MessagePropertyName).IsEqualTo("Target");
+        await Assert.That(updated.SdkMessageProcessingStepId!.Id).IsEqualTo(stepId);
+        await Assert.That(updated.SdkMessageProcessingStepId.LogicalName).IsEqualTo(SdkMessageProcessingStep.EntityLogicalName);
     }
 
     [Test]
-    public async Task UpdateAsync_NullAttributes_ClearsField()
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task UpdateAsync_AllAttributes_ClearsFieldAndIncludesParentStep(bool emptyAttributes)
     {
         var service = CreateService();
         var id = Guid.NewGuid();
         service.Create(new SdkMessageProcessingStepImage(id) { AttributesField = "old" });
         var repository = new SdkMessageProcessingStepImageRepository(service);
-
-        await repository.UpdateAsync(id, null);
+        var stepId = Guid.NewGuid();
+        await repository.UpdateAsync(id, stepId, emptyAttributes ? [] : null);
 
         var updated = service.Retrieve(SdkMessageProcessingStepImage.EntityLogicalName, id, new ColumnSet(true))
             .ToEntity<SdkMessageProcessingStepImage>();
         await Assert.That(updated.AttributesField).IsNull();
+        await Assert.That(updated.SdkMessageProcessingStepId!.Id).IsEqualTo(stepId);
+        await Assert.That(updated.Name).IsNull();
+        await Assert.That(updated.EntityAlias).IsNull();
+        await Assert.That(updated.ImageType).IsNull();
+        await Assert.That(updated.MessagePropertyName).IsNull();
     }
 
     [Test]

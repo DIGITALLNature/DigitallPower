@@ -1,57 +1,28 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
     /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
     
-    [DataContract]
     [EntityLogicalName("msdyn_componentlayer")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class MsdynComponentlayer : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class MsdynComponentlayer : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public MsdynComponentlayer() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public MsdynComponentlayer(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public MsdynComponentlayer(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public MsdynComponentlayer(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public MsdynComponentlayer(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public MsdynComponentlayer() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public MsdynComponentlayer(Guid id) : base(EntityLogicalName, id) { }
+
+        public MsdynComponentlayer(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public MsdynComponentlayer(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -60,37 +31,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 10006;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("msdyn_componentlayerid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 MsdynComponentlayerId = value;
@@ -103,18 +52,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_componentlayerid")]
         public Guid? MsdynComponentlayerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("msdyn_componentlayerid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentlayerid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -122,17 +67,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_changes")]
         public string? MsdynChanges
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_changes");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_changes", value);
-                OnPropertyChanged();
             }
         }
 
@@ -140,17 +81,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_children")]
         public string? MsdynChildren
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_children");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_children", value);
-                OnPropertyChanged();
             }
         }
 
@@ -158,17 +95,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_componentid")]
         public string? MsdynComponentid
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_componentid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -176,17 +109,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_componentjson")]
         public string? MsdynComponentjson
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_componentjson");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_componentjson", value);
-                OnPropertyChanged();
             }
         }
 
@@ -196,17 +125,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_name")]
         public string? MsdynName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -214,17 +139,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_order")]
         public int? MsdynOrder
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("msdyn_order");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_order", value);
-                OnPropertyChanged();
             }
         }
 
@@ -232,17 +153,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_overwritetime")]
         public DateTime? MsdynEndtime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("msdyn_overwritetime");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_overwritetime", value);
-                OnPropertyChanged();
             }
         }
 
@@ -250,17 +167,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_publishername")]
         public string? MsdynPublishername
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_publishername");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_publishername", value);
-                OnPropertyChanged();
             }
         }
 
@@ -268,17 +181,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_solutioncomponentname")]
         public string? MsdynSolutioncomponentname
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_solutioncomponentname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_solutioncomponentname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -286,17 +195,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("msdyn_solutionname")]
         public string? MsdynSolutionname
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("msdyn_solutionname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("msdyn_solutionname", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -351,31 +256,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static MsdynComponentlayer Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static MsdynComponentlayer Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("msdyn_componentlayer", id, columnSet).ToEntity<MsdynComponentlayer>();
-        }
-
-        public MsdynComponentlayer GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new MsdynComponentlayer(Id) { Attributes = attr };
         }
         #endregion
     }

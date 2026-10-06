@@ -78,10 +78,54 @@ src/
   runtime, and leaves package-specific deployment target validation to Dataverse; see
   [package framework selection](implementation-plugin-push-outdated-assembly-migration.md#package-framework-selection).
 
+- Step-image updates include the parent step reference alongside attributes, preserving
+  the image ID and leaving other registration fields untouched. This mitigates a platform-internal update fault;
+  live confirmation is still required. See [image update payload notes](research-plugin-step-image-update-payload.md).
+
 ### CLI command tree registration
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
   source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes
   there, and cover their paths/settings in the CLI tests.
+
+### Plugin custom data provider registrations
+- `plugin push` reads the required `(dataSourceSchemaName, eventRegistration, providerName)`
+  constructor arguments on every custom data-provider declaration and groups by data-source schema name.
+  Required-value validation rejects old constructors, including in already-built assemblies, with
+  a concise required-values error, without a constructor-count guard or an `Unspecified` event sentinel. It
+  provisions/validates the specialized configuration table, and assigns handler GUIDs on
+  `EntityDataProvider` instead of SDK steps. Package handlers are registered before provider writes;
+  upgrades preserve references before cleanup. Provider/table schema solution membership is managed.
+  Instance records and business virtual tables are outside deployment scope. See
+  [custom data provider push behavior](research-plugin-custom-data-provider-push.md).
+  New configuration tables use `<publisher-prefix>_name` for the primary-name column and its
+  external mapping; existing primary-name columns are not renamed.
+- First-time configuration-table provisioning needs live-Dataverse validation; request-payload
+  tests do not establish platform acceptance. Ordinary tables cannot be converted into data-source
+  tables. Provider reconciliation supports exactly the five PRT operations via a shared enum and
+  explicit field mapping backed by the generated `EntityDataProvider.LogicalNames` constants,
+  not suffix-based handler discovery. The provider repository uses the early-bound model.
+  New providers leave undeclared handlers unset rather than assigning a hard-coded fallback plugin.
+  Configuration-table backing provider IDs are resolved by the exact `JsonConverter` name;
+  missing or ambiguous matches fail without GUID fallback.
+  Public metadata exposes no dedicated data-source-table flag; the backing-provider comparison
+  checks compatibility rather than an explicit table classification.
+  The repository owns compatibility validation and private backing-provider resolution; the
+  planner invokes `ValidateDataSourceAsync` before writes, including for new tables.
+  Incompatible existing tables raise the domain-specific `InvalidDataSourceException`.
+- Data-provider deployment is documented as experimental until provisioning and platform-owned
+  step cleanup are validated live. Execution uses explicit phases sequenced by `PluginPushExecutor`;
+  provider failure prevents obsolete type/assembly cleanup.
+- Migration-only provider handlers resolve replacement plugin types by CLR type name. Planning
+  rejects duplicate replacement names before writes; see
+  [migration handler resolution](research-plugin-migration-handler-ambiguity.md).
+- CLI-host and per-target plugin failures preserve contextual messages and Dataverse fault codes/
+  inner-fault messages in all build configurations, without dumping trace text or arbitrary fault data.
+
+### Generated model extensions
+- Vanilla `RoutingRuleItem` generation omits Customer Service's `msdyn_routeto` and the virtual
+  lookup discriminator `assignobjectidtype`. Keep the hand-written
+  `Extensions/Dataverse/RoutingRuleItem.MsdynRouteto.cs` partial: routing import/export still uses it.
+  Its setters follow generated `SetAttributeValue` behavior without property-notification hooks.
 
 ## Key Decisions
 
@@ -95,6 +139,7 @@ src/
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
 | Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh`; `profile` is deprecated alias |
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
+| Runtime error diagnostics | `decision-runtime-error-diagnostics.md` | CLI-host/plugin failures show contextual messages and Dataverse fault codes in all builds; stack traces and arbitrary fault payloads are omitted |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
 | Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
 | Major-version migration guides | `decision-major-version-migration-guides.md` | Document every user-affecting breaking change for each major release in `docs/migrations/<from>-to-<to>.md`; use a generic README link to the directory |
@@ -103,7 +148,7 @@ src/
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
 | Plugin plan output and progress | `research-plugin-plan-output-adaptation.md` | Solution membership is rendered below the plan; execution reports each completed operation, including partial progress |
 | Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
-| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` supports only `Digitall.Plugins.Registration` 2.0.0+; historical namespaces require dgtp 2.x or migration |
+| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` requires `Digitall.Plugins.Registration` 3.0.0+ for the three-argument provider contract; historical namespaces require dgtp 2.x or migration |
 | Webresource publish strategy | `research-webresource-push-v2-review.md` | Publish each changed resource separately after all individual creates/updates and membership changes; defer publish batching until deployment writes can be batched coherently |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
@@ -143,6 +188,10 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - Strategy classes live in `Generators/Strategy/`; contracts in `Generators/Contracts/`
 
 ## Qodana Baseline (693 findings)
+
+- Reflection-bound test fixtures intentionally preserve their external namespace and public
+  accessors; narrowly suppress the corresponding unused-member/namespace inspections. See
+  [Qodana test-fixture guidance](guide-qodana-telemetry-and-doc-analyzer-fixes.md).
 
 | Category | Count | Disposition |
 |----------|-------|-------------|
@@ -233,12 +282,13 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
 | `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
 | `decision-plugin-confirmation-precedence.md` | decision | Optional per-target plugin push confirmation is overridden by dry-run and non-interactive/CI execution modes |
+| `research-plugin-custom-data-provider-push.md` | research | Provider identity, grouped metadata, handler lifecycle, specialized table provisioning, solution membership, and live-validation caveats |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
 | `research-plugin-step-secure-configuration.md` | research | Both step configuration fields are environment-provisioned state; cross-train replacement preserves matching step associations by reassignment |
 | `research-metadata-load-context-resolver.md` | research | Metadata resolver deduplicates DLL filenames and prioritizes runtime, target, then module paths |
 | `research-sdk-message-filter-secondary-entity.md` | research | Entity-scoped SDK message filters require a null secondary-entity predicate for `none`/empty declarations |
-| `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command drops historical registration namespaces in favor of `Digitall.Plugins.Registration` 2.0.0+ |
+| `decision-plugin-registration-v3-cutoff.md` | decision | V3 resource-oriented plugin command requires `Digitall.Plugins.Registration` 3.0.0+ and drops historical registration namespaces |
 | `research-qodana-plugin-push-findings.md` | research | Qodana cleanup patterns for plugin push exceptions, ownership-transfer test helpers, and namespace imports |
 | `implementation-codegeneration-metadata-service-legacy-split.md` | implementation | Codegeneration metadata service split: keep shared/V2 code in main file and move V1 overloads into a legacy partial |
 | `guide-webresource-solution-lazy-add.md` | guide | `webresource push`: add resources to solutions only when not already a member; reuse one pre-fetch for upsert and obsolete checks |

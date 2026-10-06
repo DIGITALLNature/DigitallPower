@@ -8,6 +8,7 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.webresource.Commands;
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 public class WebResourcePushSettings : WebResourceSettings
 {
     [CommandArgument(0, "<Target>")]
