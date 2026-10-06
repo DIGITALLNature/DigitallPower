@@ -23,6 +23,10 @@ Plugin types are direct children of their assembly; there is no separate "plugin
 grouping node. No-op plugin type and step actions use the shared `Unchanged` terminology.
 Solution membership is rendered beneath the plan tree for both normal and dry-run output.
 
+Data providers are environment-level records that only reference plugin types, so they render as a
+separate "Data providers" tree after the package/assembly tree (before solution membership) instead
+of nested inside it. Handlers appear as `operation → TypeName`; type status stays in the assembly tree.
+
 Important behavior differences from webresources:
 
 - Plugin plans require repository lookups at every hierarchy level, so planning must be completed

@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// For internal use only.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("importjob")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class ImportJob : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class ImportJob : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public ImportJob() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public ImportJob(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ImportJob(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ImportJob(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ImportJob(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public ImportJob() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public ImportJob(Guid id) : base(EntityLogicalName, id) { }
+
+        public ImportJob(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public ImportJob(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -61,37 +32,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 9107;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("importjobid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 ImportJobId = value;
@@ -104,18 +53,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importjobid")]
         public Guid? ImportJobId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("importjobid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importjobid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -125,7 +70,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("completedon")]
         public DateTime? CompletedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("completedon");
@@ -138,7 +82,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -151,7 +94,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -164,7 +106,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -177,17 +118,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("data")]
         public string? Data
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("data");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("data", value);
-                OnPropertyChanged();
             }
         }
 
@@ -197,17 +134,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importcontext")]
         public string? ImportContext
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("importcontext");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importcontext", value);
-                OnPropertyChanged();
             }
         }
 
@@ -217,7 +150,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -230,7 +162,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -243,7 +174,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -256,17 +186,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -276,17 +202,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operationcontext")]
         public string? OperationContext
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("operationcontext");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operationcontext", value);
-                OnPropertyChanged();
             }
         }
 
@@ -296,7 +218,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -309,17 +230,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("progress")]
         public double? Progress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<double?>("progress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("progress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -329,7 +246,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -342,17 +258,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionname")]
         public string? SolutionName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("solutionname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("solutionname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -362,7 +274,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("startedon")]
         public DateTime? StartedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("startedon");
@@ -375,17 +286,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -395,17 +302,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -468,31 +371,6 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Methods
-
-        public static ImportJob Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static ImportJob Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("importjob", id, columnSet).ToEntity<ImportJob>();
-        }
-
-        public ImportJob GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new ImportJob(Id) { Attributes = attr };
-        }
         #endregion
     }
 

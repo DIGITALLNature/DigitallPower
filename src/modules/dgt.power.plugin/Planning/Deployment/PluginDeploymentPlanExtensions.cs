@@ -26,7 +26,8 @@ public static class PluginDeploymentPlanExtensions
             return true;
         }
 
-        return plan.Assemblies.Any(AssemblyHasChanges) ||
+        return plan.DataProviders.Any(provider => provider.HasChanges) ||
+               plan.Assemblies.Any(AssemblyHasChanges) ||
                plan.LinkManagedIdentity ||
                plan.Solution is not null;
     }
@@ -52,6 +53,7 @@ public static class PluginDeploymentPlanExtensions
 
     private static bool PluginTypesHaveChanges(PluginTypeDeployment plan) =>
         plan.Deletions.Count > 0 ||
+        plan.DataProviders.Any(provider => provider.HasChanges) ||
         plan.Types.Any(TypeHasChanges);
 
     private static bool TypeHasChanges(PluginTypeDeploymentItem plan)

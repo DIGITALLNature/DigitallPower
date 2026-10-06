@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,83 +10,38 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Contains data to represent an Azure Active Directory Application used to connect to secure web-hosted resources.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("managedidentity")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class ManagedIdentity : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class ManagedIdentity : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public ManagedIdentity() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public ManagedIdentity(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ManagedIdentity(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ManagedIdentity(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ManagedIdentity(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public ManagedIdentity() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public ManagedIdentity(Guid id) : base(EntityLogicalName, id) { }
+
+        public ManagedIdentity(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public ManagedIdentity(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
         public const string EntityLogicalName = "managedidentity";
         public const string PrimaryNameAttribute = "name";
-        public const int EntityTypeCode = 10034;
-        #endregion
-
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
+        public const int EntityTypeCode = 10032;
         #endregion
 
         #region Attributes
         [AttributeLogicalName("managedidentityid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 ManagedIdentityId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("managedidentityid")]
         public Guid? ManagedIdentityId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("managedidentityid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("managedidentityid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,17 +71,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("applicationid")]
         public Guid? ApplicationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("applicationid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("applicationid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -146,12 +87,9 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("clientsecret")]
         public string? ClientSecret
         {
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("clientsecret", value);
-                OnPropertyChanged();
             }
         }
 
@@ -161,7 +99,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentidunique")]
         public Guid? ComponentIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("componentidunique");
@@ -174,7 +111,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -187,7 +123,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -200,7 +135,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -213,7 +147,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -226,17 +159,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("credentialsource")]
         public OptionSetValue? CredentialSource
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("credentialsource");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("credentialsource", value);
-                OnPropertyChanged();
             }
         }
 
@@ -246,17 +175,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("identitytype")]
         public OptionSetValue? IdentityType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("identitytype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("identitytype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -266,17 +191,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -286,17 +207,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged();
             }
         }
 
@@ -306,7 +223,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismanaged");
@@ -319,17 +235,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("keyvaultreferenceid")]
         public EntityReference? KeyVaultReferenceId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("keyvaultreferenceid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("keyvaultreferenceid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -339,7 +251,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -352,7 +263,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -365,7 +275,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -378,17 +287,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -398,7 +303,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("objectid")]
         public Guid? ObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("objectid");
@@ -411,17 +315,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged();
             }
         }
 
@@ -431,7 +331,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -444,17 +343,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ownerid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -464,7 +359,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
@@ -477,7 +371,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
@@ -490,10 +383,41 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
+            }
+        }
+
+        /// <summary>
+		/// ParentAgentBlueprintId
+		/// </summary>
+        [AttributeLogicalName("parentagentblueprintid")]
+        public Guid? ParentAgentBlueprintId
+        {
+            get
+            {
+                return GetAttributeValue<Guid?>("parentagentblueprintid");
+            }
+            set
+            {
+                SetAttributeValue("parentagentblueprintid", value);
+            }
+        }
+
+        /// <summary>
+		/// ParentAgentIdentityId
+		/// </summary>
+        [AttributeLogicalName("parentagentidentityid")]
+        public Guid? ParentAgentIdentityId
+        {
+            get
+            {
+                return GetAttributeValue<Guid?>("parentagentidentityid");
+            }
+            set
+            {
+                SetAttributeValue("parentagentidentityid", value);
             }
         }
 
@@ -503,7 +427,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -516,17 +439,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statecode")]
         public OptionSetValue? Statecode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -536,17 +455,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statuscode")]
         public OptionSetValue? Statuscode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -556,17 +471,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("subjectscope")]
         public OptionSetValue? SubjectScope
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("subjectscope");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("subjectscope", value);
-                OnPropertyChanged();
             }
         }
 
@@ -576,17 +487,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("tenantid")]
         public Guid? TenantId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("tenantid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("tenantid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -596,17 +503,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("timezoneruleversionnumber")]
         public int? TimeZoneRuleVersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("timezoneruleversionnumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("timezoneruleversionnumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -616,17 +519,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("utcconversiontimezonecode")]
         public int? UTCConversionTimeZoneCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("utcconversiontimezonecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("utcconversiontimezonecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -636,17 +535,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("version")]
         public int? Version
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("version");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("version", value);
-                OnPropertyChanged();
             }
         }
 
@@ -656,7 +551,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -672,17 +566,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("managedidentity_AsyncOperations")]
         public IEnumerable<AsyncOperation> ManagedidentityAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("managedidentity_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("managedidentity_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -692,17 +582,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("managedidentity_PluginAssembly")]
         public IEnumerable<PluginAssembly> ManagedidentityPluginAssembly
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginAssembly>("managedidentity_PluginAssembly", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("managedidentity_PluginAssembly", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -712,17 +598,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("managedidentity_pluginpackage")]
         public IEnumerable<PluginPackage> ManagedidentityPluginpackage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<PluginPackage>("managedidentity_pluginpackage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("managedidentity_pluginpackage", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -803,6 +685,8 @@ namespace dgt.power.dataverse
             public const string OwningBusinessUnit = "owningbusinessunit";
             public const string OwningTeam = "owningteam";
             public const string OwningUser = "owninguser";
+            public const string ParentAgentBlueprintId = "parentagentblueprintid";
+            public const string ParentAgentIdentityId = "parentagentidentityid";
             public const string SolutionId = "solutionid";
             public const string Statecode = "statecode";
             public const string Statuscode = "statuscode";
@@ -870,31 +754,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static ManagedIdentity Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static ManagedIdentity Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("managedidentity", id, columnSet).ToEntity<ManagedIdentity>();
-        }
-
-        public ManagedIdentity GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new ManagedIdentity(Id) { Attributes = attr };
         }
         #endregion
     }

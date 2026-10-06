@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Contains information about the tracked service-level KPIs for cases that belong to different customers.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("sla")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class SLA : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SLA : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public SLA() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public SLA(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SLA(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SLA(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SLA(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public SLA() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public SLA(Guid id) : base(EntityLogicalName, id) { }
+
+        public SLA(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public SLA(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 9750;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("slaid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 SLAId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("slaid")]
         public Guid? SLAId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("slaid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("slaid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,17 +71,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("allowpauseresume")]
         public bool? AllowPauseResume
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("allowpauseresume");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("allowpauseresume", value);
-                OnPropertyChanged();
             }
         }
 
@@ -146,17 +87,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("applicablefrom")]
         public string? ApplicableFrom
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("applicablefrom");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("applicablefrom", value);
-                OnPropertyChanged();
             }
         }
 
@@ -166,17 +103,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("applicablefrompicklist")]
         public OptionSetValue? ApplicableFromPickList
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("applicablefrompicklist");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("applicablefrompicklist", value);
-                OnPropertyChanged();
             }
         }
 
@@ -186,17 +119,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("businesshoursid")]
         public EntityReference? BusinessHoursId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("businesshoursid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("businesshoursid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -206,17 +135,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("changedattributelist")]
         public string? ChangedAttributeList
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("changedattributelist");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("changedattributelist", value);
-                OnPropertyChanged();
             }
         }
 
@@ -226,7 +151,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -239,7 +163,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -252,7 +175,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -265,7 +187,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -278,17 +199,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -298,7 +215,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
@@ -311,17 +227,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isdefault")]
         public bool? IsDefault
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isdefault");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isdefault", value);
-                OnPropertyChanged();
             }
         }
 
@@ -331,7 +243,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismanaged");
@@ -344,7 +255,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -357,7 +267,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -370,7 +279,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -383,17 +291,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -403,7 +307,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("objecttypecode")]
         public OptionSetValue? ObjectTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("objecttypecode");
@@ -416,7 +319,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -429,17 +331,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ownerid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -449,17 +347,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("owningbusinessunit", value);
-                OnPropertyChanged();
             }
         }
 
@@ -469,17 +363,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("owningteam", value);
-                OnPropertyChanged();
             }
         }
 
@@ -489,17 +379,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("owninguser", value);
-                OnPropertyChanged();
             }
         }
 
@@ -509,17 +395,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("primaryentityotc")]
         public int? PrimaryEntityOTC
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("primaryentityotc");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("primaryentityotc", value);
-                OnPropertyChanged();
             }
         }
 
@@ -529,7 +411,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("slaidunique")]
         public Guid? SLAIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("slaidunique");
@@ -542,17 +423,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("slatype")]
         public OptionSetValue? SLAType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("slatype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("slatype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -560,17 +437,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("slaversion")]
         public OptionSetValue? Slaversion
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("slaversion");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("slaversion", value);
-                OnPropertyChanged();
             }
         }
 
@@ -580,7 +453,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -593,17 +465,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statecode")]
         public OptionSetValue? StateCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -613,17 +481,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statuscode")]
         public OptionSetValue? StatusCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -633,7 +497,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
@@ -646,7 +509,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -659,17 +521,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("workflowid")]
         public EntityReference? WorkflowId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("workflowid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("workflowid", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -682,17 +540,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("manualsla_account")]
         public IEnumerable<Account> ManualslaAccount
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("manualsla_account", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("manualsla_account", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -702,17 +556,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("manualsla_contact")]
         public IEnumerable<Contact> ManualslaContact
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("manualsla_contact", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("manualsla_contact", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -722,17 +572,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("sla_account")]
         public IEnumerable<Account> SlaAccount
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("sla_account", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("sla_account", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -742,17 +588,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("sla_contact")]
         public IEnumerable<Contact> SlaContact
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("sla_contact", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("sla_contact", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -762,17 +604,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("slabase_AsyncOperations")]
         public IEnumerable<AsyncOperation> SlabaseAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("slabase_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("slabase_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -1177,437 +1015,460 @@ namespace dgt.power.dataverse
                 public const int StagedRelationship = 10028;
                 public const int StagedRelationship_ = 10029;
                 public const int StagedRelationship__ = 10030;
-                public const int AttributeClusterConfig = 10031;
-                public const int EntityClusterConfiguration = 10032;
-                public const int KeyVaultReference = 10033;
-                public const int ManagedIdentity = 10034;
-                public const int Catalog = 10035;
-                public const int CatalogAssignment = 10036;
-                public const int InternalCatalogAssignment = 10037;
-                public const int CustomAPI = 10038;
-                public const int CustomAPIRequestParameter = 10039;
-                public const int CustomAPIResponseProperty = 10040;
-                public const int PluginPackage = 10041;
-                public const int SensitivityLabel = 10042;
-                public const int NonRelationalDataSource = 10043;
-                public const int ProvisionLanguageForUser = 10044;
-                public const int PurviewLabelInfo = 10045;
-                public const int PurviewLabelSyncCache = 10046;
-                public const int SensitivityLabelAttributeMapping = 10047;
-                public const int AppNotificationSignal = 10048;
-                public const int SharedObject = 10049;
-                public const int SharedWorkspace = 10050;
-                public const int SharedWorkspaceAccessToken = 10051;
-                public const int SharedWorkspacePool = 10052;
-                public const int DataLakeFolder = 10053;
-                public const int DataLakeFolderPermission = 10054;
-                public const int DataLakeWorkspace = 10055;
-                public const int DataLakeWorkspacePermission = 10056;
-                public const int DataProcessingConfiguration = 10057;
-                public const int ExportedExcel = 10058;
-                public const int RetainedDataExcel = 10059;
-                public const int SynapseDatabase = 10060;
-                public const int AthenaReconciliationInfo = 10061;
-                public const int SynapseLinkExternalTableState = 10062;
-                public const int SynapseLinkProfile = 10063;
-                public const int SynapseLinkProfileEntity = 10064;
-                public const int SynapseLinkProfileEntityState = 10065;
-                public const int SynapseLinkSchedule = 10066;
-                public const int ComponentChangesetPayload = 10067;
-                public const int ComponentChangesetVersion = 10068;
-                public const int ComponentVersion = 10069;
-                public const int ComponentVersionDataSource = 10070;
-                public const int ComponentVersionInternal = 10071;
-                public const int DataflowRefreshHistory = 10072;
-                public const int EntityRefreshHistory = 10073;
-                public const int SharedLinkSetting = 10074;
-                public const int AnyPrivilegeEntity = 10075;
-                public const int DelegatedAuthorization = 10076;
-                public const int CascadeGrantRevokeAccessRecordsTracker = 10078;
-                public const int CascadeGrantRevokeAccessVersionTracker = 10079;
-                public const int RevokeInheritedAccessRecordsTracker = 10080;
-                public const int TdsMetadata = 10081;
-                public const int ModelDrivenAppElement = 10082;
-                public const int ModelDrivenAppComponentNodeSEdge = 10083;
-                public const int ModelDrivenAppComponentNode = 10084;
-                public const int ModelDrivenAppSetting = 10085;
-                public const int ModelDrivenAppUserSetting = 10086;
-                public const int OrganizationSetting = 10087;
-                public const int SettingDefinition = 10088;
-                public const int CanvasAppExtendedMetadata = 10089;
-                public const int ServicePlanMapping = 10090;
-                public const int ServicePlanCustomControl = 10091;
-                public const int ApplicationUser = 10093;
-                public const int GitBranch = 10096;
-                public const int GitConfigurationRetrievalDataSource = 10097;
-                public const int GitHubAppConfig = 10098;
-                public const int GitOrganization = 10099;
-                public const int GitProject = 10100;
-                public const int GitRepository = 10101;
-                public const int GitSolution = 10102;
-                public const int SourceControlBranchConfiguration = 10103;
-                public const int SourceControlComponent = 10104;
-                public const int SourceControlComponentPayload = 10105;
-                public const int SourceControlConfiguration = 10106;
-                public const int SourceControlOperationStatus = 10107;
-                public const int StagedSourceControlComponent = 10108;
-                public const int ODataV4DataSource = 10109;
-                public const int WorkflowBinary = 10110;
-                public const int FlowGroup = 10111;
-                public const int BusinessProcess = 10112;
-                public const int ComputerUseAgent = 10113;
-                public const int Credential = 10114;
-                public const int DesktopFlowModule = 10115;
-                public const int FlowCapacityAssignment = 10116;
-                public const int FlowCredentialApplication = 10117;
-                public const int FlowEvent = 10118;
-                public const int FlowMachine = 10119;
-                public const int FlowMachineGroup = 10120;
-                public const int FlowMachineImage = 10121;
-                public const int FlowMachineImageVersion = 10122;
-                public const int FlowMachineNetwork = 10123;
-                public const int FlowSessionBinary = 10124;
-                public const int FlowTestSession = 10125;
-                public const int FlowTrigger = 10126;
-                public const int FlowTriggerInstance = 10127;
-                public const int ProcessStageParameter = 10128;
-                public const int SavingRule = 10129;
-                public const int Tag = 10130;
-                public const int TaggedFlowSession = 10131;
-                public const int TaggedProcess = 10132;
-                public const int WorkflowMetadata = 10133;
-                public const int WorkQueue = 10134;
-                public const int WorkQueueItem = 10135;
-                public const int DesktopFlowBinary = 10136;
-                public const int FlowAggregation = 10137;
-                public const int FlowLog = 10138;
-                public const int FlowRun = 10139;
-                public const int ApprovalProcess = 10140;
-                public const int ApprovalStageApproval = 10141;
-                public const int ApprovalStageCondition = 10142;
-                public const int ApprovalStageIntelligent = 10143;
-                public const int ApprovalStageOrder = 10144;
-                public const int ActionApprovalModel = 10145;
-                public const int Approval = 10146;
-                public const int ApprovalRequest = 10147;
-                public const int ApprovalResponse = 10148;
-                public const int ApprovalStep = 10149;
-                public const int AwaitAllActionApprovalModel = 10150;
-                public const int AwaitAllApprovalModel = 10151;
-                public const int BasicApprovalModelData = 10152;
-                public const int FlowApproval = 10153;
-                public const int ConnectionReference = 10162;
-                public const int KnowledgeSourceConsumer = 10163;
-                public const int KnowledgeSourceProfile = 10164;
-                public const int UnstructuredFileSearchEntity = 10165;
-                public const int UnstructuredFileSearchRecord = 10166;
-                public const int UnstructuredFileSearchRecordStatus = 10167;
-                public const int DVFileSearch = 10168;
-                public const int DVFileSearchAttribute = 10169;
-                public const int DVFileSearchEntity = 10170;
-                public const int DVTableSearch = 10171;
-                public const int DVTableSearchAttribute = 10172;
-                public const int DVTableSearchEntity = 10173;
-                public const int AICopilot = 10174;
-                public const int AIPluginAuth = 10175;
-                public const int AIPluginConversationStarter = 10176;
-                public const int AIPluginConversationStarterMapping = 10177;
-                public const int AIPluginGovernance = 10178;
-                public const int AIPluginGovernanceExtended = 10179;
-                public const int AIPluginOperationResponseTemplate = 10180;
-                public const int AIPluginTitle = 10181;
-                public const int SideloadedAIPlugin = 10182;
-                public const int AIPlugin = 10183;
-                public const int AIPluginExternalSchema = 10184;
-                public const int AIPluginExternalSchemaProperty = 10185;
-                public const int AIPluginInstance = 10186;
-                public const int AIPluginOperation = 10187;
-                public const int AIPluginOperationParameter = 10188;
-                public const int AIPluginUserSetting = 10189;
-                public const int AIConfigurationSearch = 10191;
-                public const int DataProcessingEvent = 10192;
-                public const int AIDocumentTemplate = 10193;
-                public const int AIEvent = 10194;
-                public const int AIModelCatalog = 10195;
-                public const int AIBuilderFeedbackLoop = 10197;
-                public const int AIFormProcessingDocument = 10198;
-                public const int AIObjectDetectionImage = 10199;
-                public const int AIObjectDetectionLabel = 10200;
-                public const int AIObjectDetectionBoundingBox = 10201;
-                public const int AIObjectDetectionImageMapping = 10202;
-                public const int AIBuilderDataset = 10204;
-                public const int AIBuilderDatasetFile = 10205;
-                public const int AIBuilderDatasetRecord = 10206;
-                public const int AIBuilderDatasetsContainer = 10207;
-                public const int AIBuilderFile = 10208;
-                public const int AIBuilderFileAttachedData = 10209;
-                public const int AIEvaluationConfiguration = 10210;
-                public const int AIEvaluationMetric = 10211;
-                public const int AIEvaluationRun = 10212;
-                public const int AIOptimization = 10213;
-                public const int AIOptimizationPrivateData = 10214;
-                public const int AITestCase = 10215;
-                public const int AITestCaseDocument = 10216;
-                public const int AITestCaseInput = 10217;
-                public const int AITestRun = 10218;
-                public const int AITestRunBatch = 10219;
-                public const int HelpPage = 10220;
-                public const int Tour = 10221;
-                public const int BotContent = 10222;
-                public const int ConversationTranscript = 10223;
-                public const int Agent = 10224;
-                public const int AgentComponent = 10225;
-                public const int AgentComponentCollection = 10226;
-                public const int Comment_ = 10237;
-                public const int GovernanceConfiguration = 10238;
-                public const int FabricAISkill = 10239;
-                public const int AppInsightsMetadata = 10240;
-                public const int DataflowConnectionReference = 10241;
-                public const int Schedule = 10242;
-                public const int DataflowTemplate = 10243;
-                public const int DataflowDatalakeFolder = 10244;
-                public const int DataMovementServiceRequest = 10245;
-                public const int DataMovementServiceRequestStatus = 10246;
-                public const int DMSSyncRequest = 10247;
-                public const int DMSSyncStatus = 10248;
-                public const int KnowledgeAssetConfiguration = 10249;
-                public const int ModuleRunDetail = 10250;
-                public const int QnA = 10251;
-                public const int SalesforceStructuredObject = 10252;
-                public const int SalesforceStructuredQnAConfig = 10253;
-                public const int WorkflowActionStatus = 10254;
-                public const int AllowedMCPClient = 10255;
-                public const int FederatedKnowledgeCitation = 10256;
-                public const int FederatedKnowledgeConfiguration = 10257;
-                public const int FederatedKnowledgeEntityConfiguration = 10258;
-                public const int FederatedKnowledgeMetadataRefresh = 10259;
-                public const int IntelligentMemory = 10260;
-                public const int KnowledgeFAQ = 10261;
-                public const int FormMapping = 10262;
-                public const int CopilotInteractions = 10263;
-                public const int PDFSetting = 10264;
-                public const int ActivityFileAttachment = 10265;
-                public const int TeamsChat = 10266;
-                public const int ServiceConfiguration = 10267;
-                public const int SLAKPI = 10268;
-                public const int IntegratedSearchProvider = 10269;
-                public const int KnowledgeManagementSetting = 10270;
-                public const int KnowledgeFederatedArticle = 10271;
-                public const int KnowledgeFederatedArticleIncident = 10272;
-                public const int SearchProvider = 10273;
-                public const int KnowledgeArticleImage = 10274;
-                public const int KnowledgeConfiguration = 10275;
-                public const int KnowledgeInteractionInsight = 10276;
-                public const int KnowledgeSearchInsight = 10277;
-                public const int FavoriteKnowledgeArticle = 10278;
-                public const int KnowledgeArticleLanguageSetting = 10279;
-                public const int KnowledgeArticleAttachment = 10280;
-                public const int KnowledgePersonalization = 10281;
-                public const int KnowledgeArticleTemplate = 10282;
-                public const int KnowledgeSearchPersonalFilterConfig = 10283;
-                public const int KnowledgeSearchFilter = 10284;
-                public const int BulkHarvestRunLog = 10286;
-                public const int HarvestEligibilityCondition = 10287;
-                public const int HarvestWorkItem = 10288;
-                public const int MsdynHistoricalcaseharvestbatch = 10289;
-                public const int MsdynHistoricalcaseharvestrun = 10290;
-                public const int InterimUpdateKnowledgeArticle = 10291;
-                public const int KnowledgeArticleCustomEntity = 10292;
-                public const int KnowledgeHarvestJobRecord = 10293;
-                public const int KnowledgeHarvestPlan = 10294;
-                public const int SupportUserTable = 10295;
-                public const int FxExpression = 10296;
-                public const int Function = 10297;
-                public const int PlugIn = 10298;
-                public const int PowerfxRule = 10299;
-                public const int PlannerBusinessScenario = 10300;
-                public const int PlannerSyncAction = 10301;
-                public const int AgentRule = 10302;
-                public const int MCPPrompt = 10303;
-                public const int MCPResource = 10304;
-                public const int MCPResourceContent = 10305;
-                public const int MCPServer = 10306;
-                public const int MCPTool = 10307;
-                public const int ToolingGateway = 10308;
-                public const int ToolingGatewayMCPServer = 10309;
-                public const int EmailAddressConfiguration = 10310;
-                public const int MsGraphResourceToSubscription = 10311;
-                public const int VirtualEntityMetadata = 10312;
-                public const int BackgroundOperation = 10313;
-                public const int ReportParameter = 10314;
-                public const int MobileOfflineProfileExtension = 10315;
-                public const int MobileOfflineProfileItemFilter = 10316;
-                public const int TeamMobileOfflineProfileMembership = 10317;
-                public const int UserMobileOfflineProfileMembership = 10318;
-                public const int OrganizationDataSyncSubscription = 10319;
-                public const int OrganizationDataSyncSubscriptionEntity = 10320;
-                public const int OrganizationDataSyncSubscriptionFnoTable = 10321;
-                public const int OrganizationDataSyncFnoState = 10322;
-                public const int OrganizationDataSyncState = 10323;
-                public const int ArchiveCleanupInfo = 10324;
-                public const int ArchiveCleanupOperation = 10325;
-                public const int BulkArchiveConfig = 10326;
-                public const int BulkArchiveFailureDetail = 10327;
-                public const int BulkArchiveOperation = 10328;
-                public const int BulkArchiveOperationDetail = 10329;
-                public const int EnableArchivalRequest = 10330;
-                public const int MetadataForArchival = 10331;
-                public const int ReconciliationEntityInfo = 10332;
-                public const int ReconciliationEntityStepInfo = 10333;
-                public const int ReconciliationInfo = 10334;
-                public const int RetentionCleanupInfo = 10335;
-                public const int RetentionCleanupOperation = 10336;
-                public const int DataLifeCycleConfig = 10337;
-                public const int RetentionFailureDetail = 10338;
-                public const int RetentionOperation = 10339;
-                public const int RetentionOperationDetail = 10340;
-                public const int RetentionSuccessDetail = 10341;
-                public const int CertificateCredential = 10342;
-                public const int Notification_ = 10343;
-                public const int UserRating = 10344;
-                public const int MobileApp = 10345;
-                public const int PowerAppsWrapBuild = 10346;
-                public const int InsightsStoreDataSource = 10347;
-                public const int InsightsStoreVirtualEntity = 10348;
-                public const int RoleEditorLayout = 10349;
-                public const int DeletedRecordReference = 10350;
-                public const int RestoreDeletedRecordsConfiguration = 10351;
-                public const int AppAction = 10352;
-                public const int AppActionMigration = 10353;
-                public const int AppActionRule = 10354;
-                public const int Card = 10357;
-                public const int CardStateItem = 10358;
-                public const int EntityLinkChatConfiguration = 10361;
-                public const int AgentFeedItem = 10362;
-                public const int AgentHubGoal = 10363;
-                public const int AgentHubInsight = 10364;
-                public const int AgentHubMetric = 10365;
-                public const int AgenticScenario = 10366;
-                public const int AgentMemory = 10367;
-                public const int AgentTask = 10368;
-                public const int SharePointManagedIdentity = 10369;
-                public const int AIInsightCard = 10370;
-                public const int AISkillConfig = 10371;
-                public const int SuggestedAction = 10372;
-                public const int SuggestedActionCriteria = 10373;
-                public const int DataWorkspace = 10374;
-                public const int Plan = 10375;
-                public const int PlanArtifact = 10376;
-                public const int PlanAttachment = 10377;
-                public const int UXAgentComponent = 10378;
-                public const int UXAgentComponentRevision = 10379;
-                public const int UXAgentProject = 10380;
-                public const int UXAgentProjectFile = 10381;
-                public const int AgentConversationMessage = 10382;
-                public const int AgentConversationMessageFile = 10383;
-                public const int RichTextAttachment = 10384;
-                public const int StructuredTemplate = 10385;
-                public const int RTEStructuredTemplateConfig = 10386;
-                public const int RTETemplateMapping = 10387;
-                public const int CustomControlExtendedSetting = 10388;
-                public const int TimelinePin = 10389;
-                public const int VirtualConnectorDataSource = 10390;
-                public const int VirtualTableColumnCandidate = 10391;
-                public const int PMAnalysisHistory = 10393;
-                public const int PMBusinessRuleAutomationConfig = 10394;
-                public const int PMCalendar = 10395;
-                public const int PMCalendarVersion = 10396;
-                public const int PMInferredTask = 10397;
-                public const int PMProcessExtendedMetadataVersion = 10398;
-                public const int PMProcessTemplate = 10399;
-                public const int PMProcessUserSettings = 10400;
-                public const int PMProcessVersion = 10401;
-                public const int PMRecording = 10402;
-                public const int PMSimulation = 10403;
-                public const int PMTab = 10404;
-                public const int PMTemplate = 10405;
-                public const int PMView = 10406;
-                public const int AnalysisComponent = 10407;
-                public const int AnalysisJob = 10408;
-                public const int AnalysisOverride = 10409;
-                public const int AnalysisResult = 10410;
-                public const int AnalysisResultDetail = 10411;
-                public const int SolutionHealthRule = 10412;
-                public const int SolutionHealthRuleArgument = 10413;
-                public const int SolutionHealthRuleSet = 10414;
-                public const int FileUpload = 10415;
-                public const int AppEntitySearchView = 10416;
-                public const int MainFewShot = 10417;
-                public const int MakerFewShot = 10418;
-                public const int SearchAttributeSettings = 10419;
-                public const int SearchCustomAnalyzer = 10420;
-                public const int SearchRelationshipSettings = 10421;
-                public const int SearchResultsCache = 10422;
-                public const int SearchTelemetry = 10423;
-                public const int TextDataRecordsIndexingStatus = 10424;
-                public const int ViewAsExampleQuestion = 10425;
-                public const int CopilotExampleQuestion = 10426;
-                public const int CopilotGlossaryTerm = 10427;
-                public const int CopilotSynonyms = 10428;
-                public const int BusinessSkill = 10429;
-                public const int BusinessSkillResource = 10430;
-                public const int SiteComponent = 10432;
-                public const int Site = 10433;
-                public const int SiteLanguage = 10434;
-                public const int PowerPagesSitePublished = 10435;
-                public const int SiteSourceFile = 10436;
-                public const int ExternalIdentity = 10439;
-                public const int Invitation = 10440;
-                public const int InviteRedemption = 10441;
-                public const int PortalComment = 10442;
-                public const int Setting = 10443;
-                public const int MultistepFormSession = 10444;
-                public const int AdPlacement = 10448;
-                public const int ColumnPermission = 10449;
-                public const int ColumnPermissionProfile = 10450;
-                public const int ContentSnippet = 10451;
-                public const int BasicForm = 10452;
-                public const int BasicFormMetadata = 10453;
-                public const int List = 10454;
-                public const int TablePermission = 10455;
-                public const int PageTemplate = 10456;
-                public const int PollPlacement = 10457;
-                public const int PowerPagesCoreEntityDS = 10458;
-                public const int PublishingState = 10459;
-                public const int PublishingStateTransitionRule = 10460;
-                public const int Redirect = 10461;
-                public const int Shortcut = 10462;
-                public const int SiteMarker = 10463;
-                public const int SiteSetting = 10464;
-                public const int WebFile = 10465;
-                public const int MultistepForm = 10466;
-                public const int MultistepFormMetadata = 10467;
-                public const int FormStep = 10468;
-                public const int WebLink = 10469;
-                public const int WebLinkSet = 10470;
-                public const int WebPage = 10471;
-                public const int WebPageAccessControlRule = 10472;
-                public const int WebRole = 10473;
-                public const int Website = 10474;
-                public const int WebsiteAccess = 10475;
-                public const int WebsiteLanguage = 10476;
-                public const int WebTemplate = 10477;
-                public const int PowerPagesScanReport = 10484;
-                public const int PowerPagesDDOSAlert = 10485;
-                public const int PowerPagesLog = 10486;
-                public const int PowerPagesManagedIdentity = 10487;
-                public const int PowerPagesSiteAIFeedback = 10488;
-                public const int CatalogSubmissionFiles = 10494;
-                public const int PackageSubmissionStore = 10495;
-                public const int Indexedtrait = 10496;
-                public const int ProcessorRegistration = 10497;
-                public const int Signal = 10498;
-                public const int SignalRegistration = 10499;
-                public const int Trait = 10500;
-                public const int TraitRegistration = 10501;
-                public const int EventAggregatorScans = 10559;
-                public const int Cleanup = 10560;
-                public const int EventAggregator = 10561;
-                public const int OnlineShopperIntention = 10562;
-                public const int GaurdianFullscan = 10563;
-                public const int GaurdianHealthchecks = 10564;
-                public const int HealthcareFeedback = 10565;
-                public const int ObjectDetectionProduct = 10566;
+                public const int KeyVaultReference = 10031;
+                public const int ManagedIdentity = 10032;
+                public const int Catalog = 10033;
+                public const int CatalogAssignment = 10034;
+                public const int InternalCatalogAssignment = 10035;
+                public const int CustomAPI = 10036;
+                public const int CustomAPIRequestParameter = 10037;
+                public const int CustomAPIResponseProperty = 10038;
+                public const int PluginPackage = 10039;
+                public const int SensitivityLabel = 10040;
+                public const int NonRelationalDataSource = 10041;
+                public const int ProvisionLanguageForUser = 10042;
+                public const int PurviewLabelInfo = 10043;
+                public const int PurviewLabelSyncCache = 10044;
+                public const int SensitivityLabelAttributeMapping = 10045;
+                public const int SharedObject = 10046;
+                public const int SharedWorkspace = 10047;
+                public const int SharedWorkspaceAccessToken = 10048;
+                public const int SharedWorkspacePool = 10049;
+                public const int DataLakeFolder = 10050;
+                public const int DataLakeFolderPermission = 10051;
+                public const int DataLakeWorkspace = 10052;
+                public const int DataLakeWorkspacePermission = 10053;
+                public const int DataProcessingConfiguration = 10054;
+                public const int ExportedExcel = 10055;
+                public const int RetainedDataExcel = 10056;
+                public const int SynapseDatabase = 10057;
+                public const int SynapseLinkExternalTableState = 10058;
+                public const int SynapseLinkProfile = 10059;
+                public const int SynapseLinkProfileEntity = 10060;
+                public const int SynapseLinkProfileEntityState = 10061;
+                public const int SynapseLinkSchedule = 10062;
+                public const int ComponentChangesetPayload = 10063;
+                public const int ComponentChangesetVersion = 10064;
+                public const int ComponentVersion = 10065;
+                public const int ComponentVersionDataSource = 10066;
+                public const int ComponentVersionInternal = 10067;
+                public const int GitBranch = 10068;
+                public const int GitConfigurationRetrievalDataSource = 10069;
+                public const int GitOrganization = 10070;
+                public const int GitProject = 10071;
+                public const int GitRepository = 10072;
+                public const int GitSolution = 10073;
+                public const int SourceControlBranchConfiguration = 10074;
+                public const int SourceControlComponent = 10075;
+                public const int SourceControlComponentPayload = 10076;
+                public const int SourceControlConfiguration = 10077;
+                public const int StagedSourceControlComponent = 10078;
+                public const int DataflowRefreshHistory = 10079;
+                public const int EntityRefreshHistory = 10080;
+                public const int SharedLinkSetting = 10081;
+                public const int DelegatedAuthorization = 10082;
+                public const int CascadeGrantRevokeAccessRecordsTracker = 10084;
+                public const int CascadeGrantRevokeAccessVersionTracker = 10085;
+                public const int RevokeInheritedAccessRecordsTracker = 10086;
+                public const int TdsMetadata = 10087;
+                public const int ModelDrivenAppElement = 10088;
+                public const int ModelDrivenAppComponentNodeSEdge = 10089;
+                public const int ModelDrivenAppComponentNode = 10090;
+                public const int ModelDrivenAppSetting = 10091;
+                public const int ModelDrivenAppUserSetting = 10092;
+                public const int OrganizationSetting = 10093;
+                public const int SettingDefinition = 10094;
+                public const int CanvasAppExtendedMetadata = 10095;
+                public const int ServicePlanMapping = 10096;
+                public const int ServicePlanCustomControl = 10097;
+                public const int ApplicationUser = 10099;
+                public const int ODataV4DataSource = 10102;
+                public const int WorkflowBinary = 10103;
+                public const int BusinessProcess = 10104;
+                public const int Credential = 10105;
+                public const int DesktopFlowModule = 10106;
+                public const int FlowCapacityAssignment = 10107;
+                public const int FlowCredentialApplication = 10108;
+                public const int FlowEvent = 10109;
+                public const int FlowMachine = 10110;
+                public const int FlowMachineGroup = 10111;
+                public const int FlowMachineImage = 10112;
+                public const int FlowMachineImageVersion = 10113;
+                public const int FlowMachineNetwork = 10114;
+                public const int FlowSessionBinary = 10115;
+                public const int ProcessStageParameter = 10116;
+                public const int SavingRule = 10117;
+                public const int Tag = 10118;
+                public const int TaggedFlowSession = 10119;
+                public const int TaggedProcess = 10120;
+                public const int WorkflowMetadata = 10121;
+                public const int WorkQueue = 10122;
+                public const int WorkQueueItem = 10123;
+                public const int DesktopFlowBinary = 10124;
+                public const int FlowAggregation = 10125;
+                public const int FlowLog = 10126;
+                public const int FlowRun = 10127;
+                public const int ApprovalProcess = 10128;
+                public const int ApprovalStageApproval = 10129;
+                public const int ApprovalStageCondition = 10130;
+                public const int ApprovalStageIntelligent = 10131;
+                public const int ApprovalStageOrder = 10132;
+                public const int ActionApprovalModel = 10133;
+                public const int Approval = 10134;
+                public const int ApprovalRequest = 10135;
+                public const int ApprovalResponse = 10136;
+                public const int ApprovalStep = 10137;
+                public const int AwaitAllActionApprovalModel = 10138;
+                public const int AwaitAllApprovalModel = 10139;
+                public const int BasicApprovalModelData = 10140;
+                public const int FlowApproval = 10141;
+                public const int ConnectionReference = 10150;
+                public const int KnowledgeSourceConsumer = 10151;
+                public const int KnowledgeSourceProfile = 10152;
+                public const int UnstructuredFileSearchEntity = 10153;
+                public const int UnstructuredFileSearchRecord = 10154;
+                public const int UnstructuredFileSearchRecordStatus = 10155;
+                public const int DVFileSearch = 10156;
+                public const int DVFileSearchAttribute = 10157;
+                public const int DVFileSearchEntity = 10158;
+                public const int DVTableSearch = 10159;
+                public const int DVTableSearchAttribute = 10160;
+                public const int DVTableSearchEntity = 10161;
+                public const int AICopilot = 10162;
+                public const int AIPluginAuth = 10163;
+                public const int AIPluginConversationStarter = 10164;
+                public const int AIPluginConversationStarterMapping = 10165;
+                public const int AIPluginGovernance = 10166;
+                public const int AIPluginGovernanceExtended = 10167;
+                public const int AIPluginOperationResponseTemplate = 10168;
+                public const int AIPluginTitle = 10169;
+                public const int SideloadedAIPlugin = 10170;
+                public const int AIPlugin = 10171;
+                public const int AIPluginExternalSchema = 10172;
+                public const int AIPluginExternalSchemaProperty = 10173;
+                public const int AIPluginInstance = 10174;
+                public const int AIPluginOperation = 10175;
+                public const int AIPluginOperationParameter = 10176;
+                public const int AIPluginUserSetting = 10177;
+                public const int AIConfigurationSearch = 10179;
+                public const int DataProcessingEvent = 10180;
+                public const int AIDocumentTemplate = 10181;
+                public const int AIEvent = 10182;
+                public const int AIModelCatalog = 10183;
+                public const int AIBuilderFeedbackLoop = 10185;
+                public const int AIFormProcessingDocument = 10186;
+                public const int AIObjectDetectionImage = 10187;
+                public const int AIObjectDetectionLabel = 10188;
+                public const int AIObjectDetectionBoundingBox = 10189;
+                public const int AIObjectDetectionImageMapping = 10190;
+                public const int AIBuilderDataset = 10192;
+                public const int AIBuilderDatasetFile = 10193;
+                public const int AIBuilderDatasetRecord = 10194;
+                public const int AIBuilderDatasetsContainer = 10195;
+                public const int AIBuilderFile = 10196;
+                public const int AIBuilderFileAttachedData = 10197;
+                public const int AIEvaluationConfiguration = 10198;
+                public const int AIEvaluationMetric = 10199;
+                public const int AIEvaluationRun = 10200;
+                public const int AIOptimization = 10201;
+                public const int AIOptimizationPrivateData = 10202;
+                public const int AITestCase = 10203;
+                public const int AITestCaseDocument = 10204;
+                public const int AITestCaseInput = 10205;
+                public const int AITestRun = 10206;
+                public const int AITestRunBatch = 10207;
+                public const int HelpPage = 10208;
+                public const int Tour = 10209;
+                public const int BotContent = 10210;
+                public const int ConversationTranscript = 10211;
+                public const int Agent = 10212;
+                public const int AgentComponent = 10213;
+                public const int AgentComponentCollection = 10214;
+                public const int Comment_ = 10225;
+                public const int GovernanceConfiguration = 10226;
+                public const int FabricAISkill = 10227;
+                public const int AppInsightsMetadata = 10228;
+                public const int DataflowConnectionReference = 10229;
+                public const int Schedule = 10230;
+                public const int DataflowTemplate = 10231;
+                public const int DataflowDatalakeFolder = 10232;
+                public const int DataMovementServiceRequest = 10233;
+                public const int DataMovementServiceRequestStatus = 10234;
+                public const int DMSSyncRequest = 10235;
+                public const int DMSSyncStatus = 10236;
+                public const int KnowledgeAssetConfiguration = 10237;
+                public const int ModuleRunDetail = 10238;
+                public const int QnA = 10239;
+                public const int SalesforceStructuredObject = 10240;
+                public const int SalesforceStructuredQnAConfig = 10241;
+                public const int WorkflowActionStatus = 10242;
+                public const int AllowedMCPClient = 10243;
+                public const int FederatedKnowledgeCitation = 10244;
+                public const int FederatedKnowledgeConfiguration = 10245;
+                public const int FederatedKnowledgeEntityConfiguration = 10246;
+                public const int FederatedKnowledgeMetadataRefresh = 10247;
+                public const int IntelligentMemory = 10248;
+                public const int KnowledgeFAQ = 10249;
+                public const int FormMapping = 10250;
+                public const int CopilotInteractions = 10251;
+                public const int PDFSetting = 10252;
+                public const int ActivityFileAttachment = 10253;
+                public const int TeamsChat = 10254;
+                public const int ServiceConfiguration = 10255;
+                public const int SLAKPI = 10256;
+                public const int IntegratedSearchProvider = 10257;
+                public const int KnowledgeManagementSetting = 10258;
+                public const int KnowledgeFederatedArticle = 10259;
+                public const int KnowledgeFederatedArticleIncident = 10260;
+                public const int SearchProvider = 10261;
+                public const int KnowledgeArticleImage = 10262;
+                public const int KnowledgeConfiguration = 10263;
+                public const int KnowledgeInteractionInsight = 10264;
+                public const int KnowledgeSearchInsight = 10265;
+                public const int FavoriteKnowledgeArticle = 10266;
+                public const int KnowledgeArticleLanguageSetting = 10267;
+                public const int KnowledgeArticleAttachment = 10268;
+                public const int KnowledgePersonalization = 10269;
+                public const int KnowledgeArticleTemplate = 10270;
+                public const int KnowledgeSearchPersonalFilterConfig = 10271;
+                public const int KnowledgeSearchFilter = 10272;
+                public const int MsdynHistoricalcaseharvestbatch = 10274;
+                public const int MsdynHistoricalcaseharvestrun = 10275;
+                public const int InterimUpdateKnowledgeArticle = 10276;
+                public const int KnowledgeArticleCustomEntity = 10277;
+                public const int KnowledgeHarvestJobRecord = 10278;
+                public const int AttributeClusterConfig = 10279;
+                public const int EntityClusterConfiguration = 10280;
+                public const int SupportUserTable = 10281;
+                public const int FxExpression = 10282;
+                public const int Function = 10283;
+                public const int PlugIn = 10284;
+                public const int PowerfxRule = 10285;
+                public const int PlannerBusinessScenario = 10286;
+                public const int PlannerSyncAction = 10287;
+                public const int MCPServer = 10288;
+                public const int MCPTool = 10289;
+                public const int ToolingGateway = 10290;
+                public const int ToolingGatewayMCPServer = 10291;
+                public const int EmailAddressConfiguration = 10292;
+                public const int MsGraphResourceToSubscription = 10293;
+                public const int VirtualEntityMetadata = 10294;
+                public const int BackgroundOperation = 10295;
+                public const int ReportParameter = 10296;
+                public const int MobileOfflineProfileExtension = 10297;
+                public const int MobileOfflineProfileItemFilter = 10298;
+                public const int TeamMobileOfflineProfileMembership = 10299;
+                public const int UserMobileOfflineProfileMembership = 10300;
+                public const int OrganizationDataSyncSubscription = 10301;
+                public const int OrganizationDataSyncSubscriptionEntity = 10302;
+                public const int OrganizationDataSyncSubscriptionFnoTable = 10303;
+                public const int OrganizationDataSyncFnoState = 10304;
+                public const int OrganizationDataSyncState = 10305;
+                public const int ArchiveCleanupInfo = 10306;
+                public const int ArchiveCleanupOperation = 10307;
+                public const int BulkArchiveConfig = 10308;
+                public const int BulkArchiveFailureDetail = 10309;
+                public const int BulkArchiveOperation = 10310;
+                public const int BulkArchiveOperationDetail = 10311;
+                public const int EnableArchivalRequest = 10312;
+                public const int MetadataForArchival = 10313;
+                public const int ReconciliationEntityInfo = 10314;
+                public const int ReconciliationEntityStepInfo = 10315;
+                public const int ReconciliationInfo = 10316;
+                public const int RetentionCleanupInfo = 10317;
+                public const int RetentionCleanupOperation = 10318;
+                public const int DataLifeCycleConfig = 10319;
+                public const int RetentionFailureDetail = 10320;
+                public const int RetentionOperation = 10321;
+                public const int RetentionOperationDetail = 10322;
+                public const int RetentionSuccessDetail = 10323;
+                public const int CertificateCredential = 10324;
+                public const int Notification_ = 10325;
+                public const int UserRating = 10326;
+                public const int MobileApp = 10327;
+                public const int InsightsStoreDataSource = 10328;
+                public const int InsightsStoreVirtualEntity = 10329;
+                public const int RoleEditorLayout = 10330;
+                public const int DeletedRecordReference = 10331;
+                public const int RestoreDeletedRecordsConfiguration = 10332;
+                public const int AppAction = 10333;
+                public const int AppActionMigration = 10334;
+                public const int AppActionRule = 10335;
+                public const int Card = 10338;
+                public const int CardStateItem = 10339;
+                public const int EntityLinkChatConfiguration = 10342;
+                public const int AgentFeedItem = 10343;
+                public const int AgentMemory = 10344;
+                public const int AgentTask = 10345;
+                public const int SharePointManagedIdentity = 10346;
+                public const int AIInsightCard = 10347;
+                public const int AISkillConfig = 10348;
+                public const int SuggestedAction = 10349;
+                public const int SuggestedActionCriteria = 10350;
+                public const int DataWorkspace = 10351;
+                public const int Plan = 10352;
+                public const int PlanArtifact = 10353;
+                public const int PlanAttachment = 10354;
+                public const int RichTextAttachment = 10355;
+                public const int CustomControlExtendedSetting = 10356;
+                public const int TimelinePin = 10357;
+                public const int VirtualConnectorDataSource = 10358;
+                public const int VirtualTableColumnCandidate = 10359;
+                public const int PMAnalysisHistory = 10361;
+                public const int PMBusinessRuleAutomationConfig = 10362;
+                public const int PMCalendar = 10363;
+                public const int PMCalendarVersion = 10364;
+                public const int PMInferredTask = 10365;
+                public const int PMProcessExtendedMetadataVersion = 10366;
+                public const int PMProcessTemplate = 10367;
+                public const int PMProcessUserSettings = 10368;
+                public const int PMProcessVersion = 10369;
+                public const int PMRecording = 10370;
+                public const int PMSimulation = 10371;
+                public const int PMTab = 10372;
+                public const int PMTemplate = 10373;
+                public const int PMView = 10374;
+                public const int AnalysisComponent = 10375;
+                public const int AnalysisJob = 10376;
+                public const int AnalysisOverride = 10377;
+                public const int AnalysisResult = 10378;
+                public const int AnalysisResultDetail = 10379;
+                public const int SolutionHealthRule = 10380;
+                public const int SolutionHealthRuleArgument = 10381;
+                public const int SolutionHealthRuleSet = 10382;
+                public const int PowerBIDataset = 10383;
+                public const int Powerbidatasetapdx = 10384;
+                public const int PowerBIMashupParameter = 10385;
+                public const int PowerBIReport = 10386;
+                public const int Powerbireportapdx = 10387;
+                public const int FileUpload = 10388;
+                public const int AppEntitySearchView = 10389;
+                public const int MainFewShot = 10390;
+                public const int MakerFewShot = 10391;
+                public const int SearchAttributeSettings = 10392;
+                public const int SearchCustomAnalyzer = 10393;
+                public const int SearchRelationshipSettings = 10394;
+                public const int SearchResultsCache = 10395;
+                public const int SearchTelemetry = 10396;
+                public const int TextDataRecordsIndexingStatus = 10397;
+                public const int ViewAsExampleQuestion = 10398;
+                public const int CopilotExampleQuestion = 10399;
+                public const int CopilotGlossaryTerm = 10400;
+                public const int CopilotSynonyms = 10401;
+                public const int SiteComponent = 10402;
+                public const int Site = 10403;
+                public const int SiteLanguage = 10404;
+                public const int PowerPagesSitePublished = 10405;
+                public const int SiteSourceFile = 10406;
+                public const int ExternalIdentity = 10409;
+                public const int Invitation = 10410;
+                public const int InviteRedemption = 10411;
+                public const int PortalComment = 10412;
+                public const int Setting = 10413;
+                public const int MultistepFormSession = 10414;
+                public const int AdPlacement = 10418;
+                public const int ColumnPermission = 10419;
+                public const int ColumnPermissionProfile = 10420;
+                public const int ContentSnippet = 10421;
+                public const int BasicForm = 10422;
+                public const int BasicFormMetadata = 10423;
+                public const int List = 10424;
+                public const int TablePermission = 10425;
+                public const int PageTemplate = 10426;
+                public const int PollPlacement = 10427;
+                public const int PowerPagesCoreEntityDS = 10428;
+                public const int PublishingState = 10429;
+                public const int PublishingStateTransitionRule = 10430;
+                public const int Redirect = 10431;
+                public const int Shortcut = 10432;
+                public const int SiteMarker = 10433;
+                public const int SiteSetting = 10434;
+                public const int WebFile = 10435;
+                public const int MultistepForm = 10436;
+                public const int MultistepFormMetadata = 10437;
+                public const int FormStep = 10438;
+                public const int WebLink = 10439;
+                public const int WebLinkSet = 10440;
+                public const int WebPage = 10441;
+                public const int WebPageAccessControlRule = 10442;
+                public const int WebRole = 10443;
+                public const int Website = 10444;
+                public const int WebsiteAccess = 10445;
+                public const int WebsiteLanguage = 10446;
+                public const int WebTemplate = 10447;
+                public const int PowerPagesScanReport = 10454;
+                public const int PowerPagesDDOSAlert = 10455;
+                public const int PowerPagesLog = 10456;
+                public const int PowerPagesManagedIdentity = 10457;
+                public const int PowerPagesSiteAIFeedback = 10458;
+                public const int CatalogSubmissionFiles = 10464;
+                public const int PackageSubmissionStore = 10465;
+                public const int Indexedtrait = 10466;
+                public const int ProcessorRegistration = 10467;
+                public const int Signal = 10468;
+                public const int SignalRegistration = 10469;
+                public const int Trait = 10470;
+                public const int TraitRegistration = 10471;
+                public const int AgentHubGoal = 10553;
+                public const int AgentHubInsight = 10554;
+                public const int AgentHubMetric = 10555;
+                public const int AgenticScenario = 10556;
+                public const int BusinessProcessLinkedArtifact = 10557;
+                public const int AnyPrivilegeEntity = 10666;
+                public const int AppNotificationSignal = 10667;
+                public const int GitHubAppConfig = 10668;
+                public const int StructuredTemplate = 10670;
+                public const int RTETemplateMapping = 10671;
+                public const int MCPPrompt = 10672;
+                public const int MCPResource = 10673;
+                public const int MCPResourceContent = 10674;
+                public const int PowerAppsWrapBuild = 10675;
+                public const int BusinessSkill = 10676;
+                public const int BulkHarvestRunLog = 10677;
+                public const int HarvestWorkItem = 10678;
+                public const int AgentPrompt = 10679;
+                public const int UXAgentComponent = 10680;
+                public const int UXAgentComponentRevision = 10681;
+                public const int UXAgentProject = 10682;
+                public const int UXAgentProjectFile = 10683;
+                public const int AgentConversationMessage = 10684;
+                public const int AgentConversationMessageFile = 10685;
+                public const int AgentRule = 10686;
+                public const int BusinessSkillResource = 10687;
+                public const int HarvestEligibilityCondition = 10689;
+                public const int ComputerUseAgent = 10690;
+                public const int FlowTestSession = 10691;
+                public const int FlowTrigger = 10692;
+                public const int FlowTriggerInstance = 10693;
+                public const int FlowGroup = 10694;
+                public const int KnowledgeHarvestPlan = 10695;
+                public const int Cleanup = 10696;
+                public const int EventAggregator = 10697;
+                public const int EventAggregatorScans = 10698;
+                public const int GaurdianFullscan = 10699;
+                public const int GaurdianHealthchecks = 10700;
+                public const int AthenaReconciliationInfo = 10701;
+                public const int RTEStructuredTemplateConfig = 10702;
+                public const int HistoricalCaseHarvestRunLog = 10717;
+                public const int SourceControlOperationTracking = 10759;
+                public const int EvalResult = 10778;
+                public const int ControlConfiguration = 10779;
+                public const int MOS3Management = 10782;
+                public const int NativeExtension = 10784;
+                public const int BusinessSkillMetadata = 10785;
+                public const int BusinessSkillRoleMapping = 10786;
+                public const int EvalAssertion = 10788;
+                public const int EvalDataset = 10789;
+                public const int EvalPrompt = 10790;
+                public const int EvalRun = 10791;
+                public const int GeolocationRecord = 10792;
+                public const int SkillChangesetHistory = 10793;
+                public const int SkillChangesetReviewer = 10794;
+                public const int SkillEvalResult = 10795;
+                public const int MobileOfflineProfileSuggestion = 10796;
+                public const int MobileOfflineProfileSuggestionImpactedTable = 10797;
+                public const int EntityStorageProfile = 10798;
+                public const int PolicyCriterion = 10799;
             }
             public struct SLAType
             {
@@ -1740,31 +1601,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static SLA Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static SLA Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("sla", id, columnSet).ToEntity<SLA>();
-        }
-
-        public SLA GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new SLA(Id) { Attributes = attr };
         }
         #endregion
     }

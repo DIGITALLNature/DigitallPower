@@ -16,14 +16,8 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.Commands.Complete;
 using dgt.power.common;
 using dgt.power.common.Commands;
-#pragma warning disable IDE0005 // Used in #if RELEASE block
-#pragma warning disable S1128
-// ReSharper disable RedundantUsingDirective
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
-// ReSharper restore RedundantUsingDirective
-#pragma warning restore S1128
-#pragma warning restore IDE0005
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.Completion;
@@ -176,12 +170,7 @@ app.Configure(config =>
             return (int)ExitCode.AuthRequired;
         }
 
-#if RELEASE
-        AnsiConsole.MarkupLineInterpolated(
-            $"[red]{(inner?.Message ?? exception.Message)}[/]");
-#elif DEBUG
-        AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
-#endif
+        AnsiConsole.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{exception.DiagnosticMessage()}[/]");
 
         return (int)ExitCode.Error;
     });

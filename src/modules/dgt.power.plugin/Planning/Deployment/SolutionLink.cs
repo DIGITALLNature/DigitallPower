@@ -3,4 +3,7 @@
 
 namespace dgt.power.plugin.Planning.Deployment;
 
-public sealed record SolutionLink(int ComponentType, string ComponentName, string SolutionUniqueName);
+public sealed record SolutionLink(int ComponentType, string ComponentName, string SolutionUniqueName)
+{
+    public string? Resource { get; init; }
+}

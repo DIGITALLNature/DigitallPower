@@ -681,19 +681,43 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 
 ##### Supported registration attributes
 
-`plugin push` recognizes registration attributes from `Digitall.Plugins.Registration` 2.0.0 or
+`plugin push` requires registration attributes from `Digitall.Plugins.Registration` 3.0.0 or
 later. Other registration namespaces are not recognized.
 
 | Attribute | Behavior |
 |-----------|----------|
 | `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
 | `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
-| `CustomDataProviderRegistrationAttribute` | Registers data-provider steps for virtual entities |
+| `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider and links its operation handlers |
 | `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
 with manually maintained plugin registrations are not supported.
+
+##### Custom data providers
+
+**Experimental:** Custom data-provider deployment is still experimental. Validate it in a
+non-production environment before production rollout.
+
+Requires `Digitall.Plugins.Registration` 3.0.0 or later. See the
+[registration library](https://github.com/DIGITALLNature/DigitallRegistrationPower) for attribute
+usage and examples.
+
+`plugin push` creates or updates the provider, creates or validates its configuration table, and
+assigns the Retrieve, RetrieveMultiple, Create, Update, and Delete handlers. Undeclared handlers and
+omitted optional metadata are preserved. With `--solution`, the provider and configuration-table
+schema are included; `--dry-run` previews the deployment.
+
+On new providers, undeclared handlers are left unset.
+New data-source tables use `<publisher-prefix>_name` as their primary-name column; existing columns are unchanged.
+Existing tables incompatible with data-source configuration are rejected before deployment writes.
+The target environment must contain exactly one data provider named `JsonConverter` to back the
+configuration table; its ID is resolved automatically.
+
+Data-source records, custom configuration columns, business virtual tables, mappings, and
+bulk-operation handlers are outside scope. Existing ordinary tables are not converted into
+data-source tables.
 
 ##### Step configuration
 
@@ -715,6 +739,8 @@ environment tenant is used.
 Before any writes, the command renders a deployment tree for plugin types, steps, images, Custom
 API links, and assembly upgrades. It then shows completed operations, or reports that no changes
 are required.
+Data providers appear in a separate tree after the package or assembly tree; handler entries
+reference plugin types rather than nesting the provider beneath them.
 `--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
 messages fail before Dataverse changes occur.
 `--confirm` prompts after each target plan in interactive sessions; declining leaves that target
@@ -722,6 +748,12 @@ unchanged. Non-interactive and CI execution suppress the prompt.
 For assembly upgrades, the tree represents the effective replacement-assembly state, including
 steps and images migrated from the superseded assembly. A separate message then states whether
 the outdated assembly will be deleted.
+
+CLI-host errors and per-target `plugin push` failures include contextual exception messages and,
+for Dataverse service faults, hexadecimal error codes and inner-fault messages. This output is
+available in release builds without a diagnostic flag. Stack traces, fault trace text, and arbitrary
+fault-detail values are not printed. Service messages may still contain environment-specific
+information; review output before sharing it.
 
 ##### Solution membership
 

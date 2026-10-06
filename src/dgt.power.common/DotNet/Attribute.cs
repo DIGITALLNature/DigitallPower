@@ -1,57 +1,28 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
 {
     /// <inheritdoc cref="Microsoft.Xrm.Sdk.Entity" />
     
-    [DataContract]
     [EntityLogicalName("attribute")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class Attribute : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Attribute : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public Attribute() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public Attribute(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Attribute(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Attribute(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Attribute(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public Attribute() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public Attribute(Guid id) : base(EntityLogicalName, id) { }
+
+        public Attribute(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public Attribute(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -60,37 +31,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 9808;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("attributeid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 AttributeId = value;
@@ -103,18 +52,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("attributeid")]
         public Guid? AttributeId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("attributeid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("attributeid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -124,7 +69,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("attributeof")]
         public Guid? AttributeOf
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("attributeof");
@@ -137,7 +81,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("attributetypeid")]
         public Guid? AttributeTypeId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("attributetypeid");
@@ -150,7 +93,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -163,17 +105,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("externalname")]
         public string? ExternalName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("externalname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("externalname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -183,17 +121,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("logicalname")]
         public string? LogicalName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("logicalname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("logicalname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -203,17 +137,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("managedpropertylogicalname")]
         public string? ManagedPropertyLogicalName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("managedpropertylogicalname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("managedpropertylogicalname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -223,17 +153,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("managedpropertyparentattributename")]
         public string? ManagedPropertyParentAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("managedpropertyparentattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("managedpropertyparentattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -243,17 +169,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -263,7 +185,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -276,17 +197,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("physicalname")]
         public string? PhysicalName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("physicalname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("physicalname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -296,7 +213,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -309,17 +225,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("tablecolumnname")]
         public string? TableColumnName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("tablecolumnname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("tablecolumnname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -329,7 +241,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("validforreadapi")]
         public bool? ValidForReadAPI
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("validforreadapi");
@@ -342,7 +253,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -403,6 +313,7 @@ namespace dgt.power.dataverse
                 public const string AttributeSensitivitylabelattributemappingAttributeId = "attribute_sensitivitylabelattributemapping_AttributeId";
                 public const string AttributeSolutioncomponentattrconfig = "attribute_solutioncomponentattrconfig";
                 public const string AttributeclusterconfigExtensionofrecordidAttribute = "attributeclusterconfig_extensionofrecordid_attribute";
+                public const string ControlconfigurationAttributeAttribute = "controlconfiguration_attribute_attribute";
                 public const string EmailaddressconfigurationAttributeAttributeId = "emailaddressconfiguration_attribute_AttributeId";
                 public const string ReferencedattributeRelationshipattribute = "referencedattribute_relationshipattribute";
                 public const string ReferencingattributeRelationshipattribute = "referencingattribute_relationshipattribute";
@@ -425,31 +336,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static Attribute Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static Attribute Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("attribute", id, columnSet).ToEntity<Attribute>();
-        }
-
-        public Attribute GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new Attribute(Id) { Attributes = attr };
         }
         #endregion
     }

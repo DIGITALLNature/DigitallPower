@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Collection of system users that routinely collaborate. Teams can be used to simplify record sharing and provide team members with common access to organization data when team members belong to different Business Units.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("team")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class Team : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Team : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public Team() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public Team(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Team(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Team(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Team(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public Team() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public Team(Guid id) : base(EntityLogicalName, id) { }
+
+        public Team(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public Team(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 9;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("teamid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 TeamId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("teamid")]
         public Guid? TeamId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("teamid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("teamid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,17 +71,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("administratorid")]
         public EntityReference? AdministratorId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("administratorid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("administratorid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -146,17 +87,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("azureactivedirectoryobjectid")]
         public Guid? AzureActiveDirectoryObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("azureactivedirectoryobjectid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("azureactivedirectoryobjectid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -166,17 +103,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("businessunitid")]
         public EntityReference? BusinessUnitId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("businessunitid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("businessunitid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -186,7 +119,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -199,7 +131,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -212,7 +143,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -225,17 +155,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("delegatedauthorizationid")]
         public EntityReference? DelegatedAuthorizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("delegatedauthorizationid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("delegatedauthorizationid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -245,17 +171,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -265,17 +187,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailaddress")]
         public string? EMailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("emailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("emailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -285,7 +203,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
@@ -298,17 +215,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -318,7 +231,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isdefault")]
         public bool? IsDefault
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isdefault");
@@ -329,7 +241,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("issastokenset")]
         public bool? IsSasTokenSet
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("issastokenset");
@@ -340,17 +251,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("membershiptype")]
         public OptionSetValue? MembershipType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("membershiptype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("membershiptype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -360,7 +267,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -373,7 +279,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -386,7 +291,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -399,17 +303,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -419,7 +319,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public Guid? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("organizationid");
@@ -432,17 +331,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged();
             }
         }
 
@@ -452,17 +347,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("processid")]
         public Guid? ProcessId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("processid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("processid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -472,17 +363,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("queueid")]
         public EntityReference? QueueId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("queueid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("queueid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -492,17 +379,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("regardingobjectid")]
         public EntityReference? RegardingObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("regardingobjectid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("regardingobjectid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -512,7 +395,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("sharelinkqualifier")]
         public string? ShareLinkQualifier
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("sharelinkqualifier");
@@ -525,17 +407,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("stageid")]
         public Guid? StageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("stageid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("stageid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -545,7 +423,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("systemmanaged")]
         public bool? SystemManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("systemmanaged");
@@ -558,17 +435,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("teamtemplateid")]
         public EntityReference? TeamTemplateId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("teamtemplateid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("teamtemplateid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -578,17 +451,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("teamtype")]
         public OptionSetValue? TeamType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("teamtype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("teamtype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -598,17 +467,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("transactioncurrencyid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -618,17 +483,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("traversedpath")]
         public string? TraversedPath
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("traversedpath");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("traversedpath", value);
-                OnPropertyChanged();
             }
         }
 
@@ -638,7 +499,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -651,17 +511,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("yominame")]
         public string? YomiName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("yominame");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("yominame", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -674,17 +530,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_accounts")]
         public IEnumerable<Account> TeamAccounts
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("team_accounts", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_accounts", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -694,17 +546,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_asyncoperation")]
         public IEnumerable<AsyncOperation> TeamAsyncoperation
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("team_asyncoperation", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_asyncoperation", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -714,17 +562,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("Team_AsyncOperations")]
         public IEnumerable<AsyncOperation> TeamAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("Team_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("Team_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -734,17 +578,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_contacts")]
         public IEnumerable<Contact> TeamContacts
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("team_contacts", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_contacts", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -754,17 +594,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_customapi")]
         public IEnumerable<CustomAPI> TeamCustomapi
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<CustomAPI>("team_customapi", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_customapi", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -774,17 +610,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_DuplicateRules")]
         public IEnumerable<DuplicateRule> TeamDuplicateRules
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<DuplicateRule>("team_DuplicateRules", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_DuplicateRules", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -794,17 +626,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_managedidentity")]
         public IEnumerable<ManagedIdentity> TeamManagedidentity
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ManagedIdentity>("team_managedidentity", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_managedidentity", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -814,17 +642,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_routingrule")]
         public IEnumerable<RoutingRule> TeamRoutingrule
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRule>("team_routingrule", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_routingrule", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -834,17 +658,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_routingruleitem")]
         public IEnumerable<RoutingRuleItem> TeamRoutingruleitem
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("team_routingruleitem", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_routingruleitem", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -854,17 +674,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_slaBase")]
         public IEnumerable<SLA> TeamSlaBase
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SLA>("team_slaBase", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_slaBase", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -874,17 +690,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("team_workflow")]
         public IEnumerable<Workflow> TeamWorkflow
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Workflow>("team_workflow", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("team_workflow", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -995,6 +807,7 @@ namespace dgt.power.dataverse
                 public const string TeamAgenthubmetric = "team_agenthubmetric";
                 public const string TeamAgenticscenario = "team_agenticscenario";
                 public const string TeamAgentmemory = "team_agentmemory";
+                public const string TeamAgentprompt = "team_agentprompt";
                 public const string TeamAgentrule = "team_agentrule";
                 public const string TeamAgenttask = "team_agenttask";
                 public const string TeamAiinsightcard = "team_aiinsightcard";
@@ -1032,6 +845,7 @@ namespace dgt.power.dataverse
                 public const string TeamBulkarchiveoperation = "team_bulkarchiveoperation";
                 public const string TeamBulkDeleteFailures = "Team_BulkDeleteFailures";
                 public const string TeamBusinessprocess = "team_businessprocess";
+                public const string TeamBusinessprocesslinkedartifact = "team_businessprocesslinkedartifact";
                 public const string TeamCanvasappextendedmetadata = "team_canvasappextendedmetadata";
                 public const string TeamCard = "team_card";
                 public const string TeamCertificatecredential = "team_certificatecredential";
@@ -1053,6 +867,7 @@ namespace dgt.power.dataverse
                 public const string TeamCustomapi = "team_customapi";
                 public const string TeamCustomerRelationship = "team_customer_relationship";
                 public const string TeamDatalakefolder = "team_datalakefolder";
+                public const string TeamDeletedItemReferences = "team_DeletedItemReferences";
                 public const string TeamDesktopflowbinary = "team_desktopflowbinary";
                 public const string TeamDesktopflowmodule = "team_desktopflowmodule";
                 public const string TeamDuplicateBaseRecord = "Team_DuplicateBaseRecord";
@@ -1187,11 +1002,12 @@ namespace dgt.power.dataverse
                 public const string TeamMsdynFlowFlowapproval = "team_msdyn_flow_flowapproval";
                 public const string TeamMsdynFormmapping = "team_msdyn_formmapping";
                 public const string TeamMsdynFunction = "team_msdyn_function";
+                public const string TeamMsdynGeolocationrecord = "team_msdyn_geolocationrecord";
                 public const string TeamMsdynHarvesteligibilitycondition = "team_msdyn_harvesteligibilitycondition";
                 public const string TeamMsdynHarvestworkitem = "team_msdyn_harvestworkitem";
-                public const string TeamMsdynHealthcareFeedback = "team_msdyn_healthcare_feedback";
                 public const string TeamMsdynHistoricalcaseharvestbatch = "team_msdyn_historicalcaseharvestbatch";
                 public const string TeamMsdynHistoricalcaseharvestrun = "team_msdyn_historicalcaseharvestrun";
+                public const string TeamMsdynHistoricalcaseharvestrunlog = "team_msdyn_historicalcaseharvestrunlog";
                 public const string TeamMsdynIntegratedsearchprovider = "team_msdyn_integratedsearchprovider";
                 public const string TeamMsdynInterimupdateknowledgearticle = "team_msdyn_interimupdateknowledgearticle";
                 public const string TeamMsdynKalanguagesetting = "team_msdyn_kalanguagesetting";
@@ -1209,8 +1025,7 @@ namespace dgt.power.dataverse
                 public const string TeamMsdynKnowledgesearchfilter = "team_msdyn_knowledgesearchfilter";
                 public const string TeamMsdynKnowledgesearchinsight = "team_msdyn_knowledgesearchinsight";
                 public const string TeamMsdynMobileapp = "team_msdyn_mobileapp";
-                public const string TeamMsdynObjectdetectionproduct = "team_msdyn_objectdetectionproduct";
-                public const string TeamMsdynOnlineshopperintention = "team_msdyn_onlineshopperintention";
+                public const string TeamMsdynNativeextension = "team_msdyn_nativeextension";
                 public const string TeamMsdynPlan = "team_msdyn_plan";
                 public const string TeamMsdynPlanartifact = "team_msdyn_planartifact";
                 public const string TeamMsdynPlanattachment = "team_msdyn_planattachment";
@@ -1257,6 +1072,11 @@ namespace dgt.power.dataverse
                 public const string TeamPlugin = "team_plugin";
                 public const string TeamPostRegardings = "team_PostRegardings";
                 public const string TeamPostRoles = "team_PostRoles";
+                public const string TeamPowerbidataset = "team_powerbidataset";
+                public const string TeamPowerbidatasetapdx = "team_powerbidatasetapdx";
+                public const string TeamPowerbimashupparameter = "team_powerbimashupparameter";
+                public const string TeamPowerbireport = "team_powerbireport";
+                public const string TeamPowerbireportapdx = "team_powerbireportapdx";
                 public const string TeamPowerfxrule = "team_powerfxrule";
                 public const string TeamPowerpagecomponent = "team_powerpagecomponent";
                 public const string TeamPowerpagesddosalert = "team_powerpagesddosalert";
@@ -1298,6 +1118,8 @@ namespace dgt.power.dataverse
                 public const string TeamSignal = "team_signal";
                 public const string TeamSignalregistration = "team_signalregistration";
                 public const string TeamSkill = "team_skill";
+                public const string TeamSkillchangesethistory = "team_skillchangesethistory";
+                public const string TeamSkillevalresult = "team_skillevalresult";
                 public const string TeamSlaBase = "team_slaBase";
                 public const string TeamSocialactivity = "team_socialactivity";
                 public const string TeamSolutioncomponentbatchconfiguration = "team_solutioncomponentbatchconfiguration";
@@ -1372,31 +1194,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static Team Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static Team Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("team", id, columnSet).ToEntity<Team>();
-        }
-
-        public Team GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new Team(Id) { Attributes = attr };
         }
         #endregion
     }

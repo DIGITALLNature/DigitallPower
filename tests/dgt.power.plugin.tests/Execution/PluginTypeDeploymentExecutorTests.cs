@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Repositories;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Output;
@@ -53,25 +52,8 @@ public class PluginTypeDeploymentExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = new PluginAssemblyRepository(service),
-            Packages = new PluginPackageRepository(service),
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-            new PluginPlanRenderer(console));
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new PluginTypeTestPipeline(factory.Planner, factory.TypeExecutor, new PluginPlanRenderer(console));
 
         return (service, executor, console);
     }
@@ -86,25 +68,8 @@ public class PluginTypeDeploymentExecutorTests
         service.Create(new Solution(Guid.NewGuid()) { UniqueName = "TestSolution" });
 
         var console = new TestConsole();
-        var typeRepository = new PluginTypeRepository(service);
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-        var imageRepository = new SdkMessageProcessingStepImageRepository(service);
-        var customApiRepository = new CustomApiRepository(service);
-        var solutionRepository = new SolutionComponentRepository(service);
-        var planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
-        {
-            Assemblies = new PluginAssemblyRepository(service),
-            Packages = new PluginPackageRepository(service),
-            Types = typeRepository,
-            Steps = stepRepository,
-            Images = imageRepository,
-            Messages = new SdkMessageRepository(service),
-            CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = solutionRepository
-        });
-        var executor = new PluginTypeTestPipeline(planner, new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository),
-            new PluginPlanRenderer(console));
+        var factory = new PluginDeploymentTestFactory(service);
+        var executor = new PluginTypeTestPipeline(factory.Planner, factory.TypeExecutor, new PluginPlanRenderer(console));
 
         return (service, executor);
     }

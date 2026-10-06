@@ -24,4 +24,6 @@ public sealed class PluginPlanningRepositories
     public required IManagedIdentityRepository ManagedIdentities { get; init; }
 
     public required ISolutionComponentRepository Solutions { get; init; }
+
+    public required IEntityDataProviderRepository DataProviders { get; init; }
 }

@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Stage associated with a process.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("processstage")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class ProcessStage : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class ProcessStage : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public ProcessStage() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public ProcessStage(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ProcessStage(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ProcessStage(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public ProcessStage(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public ProcessStage() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public ProcessStage(Guid id) : base(EntityLogicalName, id) { }
+
+        public ProcessStage(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public ProcessStage(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 4724;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("processstageid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 ProcessStageId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("processstageid")]
         public Guid? ProcessStageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("processstageid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("processstageid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,7 +71,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("clientdata")]
         public string? ClientData
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("clientdata");
@@ -139,17 +83,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("connector")]
         public string? Connector
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("connector");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("connector", value);
-                OnPropertyChanged();
             }
         }
 
@@ -159,17 +99,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("istrigger")]
         public bool? IsTrigger
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("istrigger");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("istrigger", value);
-                OnPropertyChanged();
             }
         }
 
@@ -179,17 +115,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operationid")]
         public string? OperationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("operationid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operationid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -199,17 +131,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operationkind")]
         public OptionSetValue? OperationKind
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("operationkind");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operationkind", value);
-                OnPropertyChanged();
             }
         }
 
@@ -219,17 +147,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operationtype")]
         public OptionSetValue? OperationType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("operationtype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operationtype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -239,7 +163,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
@@ -252,7 +175,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningbusinessunit")]
         public Guid? OwningBusinessUnit
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("owningbusinessunit");
@@ -265,17 +187,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("parametername")]
         public string? ParameterName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("parametername");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("parametername", value);
-                OnPropertyChanged();
             }
         }
 
@@ -285,17 +203,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("parametervalue")]
         public string? ParameterValue
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("parametervalue");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("parametervalue", value);
-                OnPropertyChanged();
             }
         }
 
@@ -305,17 +219,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("parentprocessstageid")]
         public EntityReference? ParentProcessStageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("parentprocessstageid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("parentprocessstageid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -325,17 +235,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("primaryentitytypecode")]
         public string? PrimaryEntityTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("primaryentitytypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("primaryentitytypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -345,17 +251,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("processid")]
         public EntityReference? ProcessId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("processid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("processid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -365,17 +267,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("stagecategory")]
         public OptionSetValue? StageCategory
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("stagecategory");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("stagecategory", value);
-                OnPropertyChanged();
             }
         }
 
@@ -385,17 +283,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("stagename")]
         public string? StageName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("stagename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("stagename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -405,7 +299,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -421,17 +314,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("processstage_account")]
         public IEnumerable<Account> ProcessstageAccount
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Account>("processstage_account", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("processstage_account", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -441,17 +330,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("processstage_contact")]
         public IEnumerable<Contact> ProcessstageContact
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Contact>("processstage_contact", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("processstage_contact", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -461,17 +346,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("processstage_parentprocessstage")]
         public IEnumerable<ProcessStage> ProcessstageParentprocessstage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<ProcessStage>("processstage_parentprocessstage", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("processstage_parentprocessstage", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -481,17 +362,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("processstage_systemusers")]
         public IEnumerable<SystemUser> ProcessstageSystemusers
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("processstage_systemusers", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("processstage_systemusers", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -501,17 +378,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("processstage_teams")]
         public IEnumerable<Team> ProcessstageTeams
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("processstage_teams", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("processstage_teams", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -554,6 +427,7 @@ namespace dgt.power.dataverse
                 public const int Skills = 473330025;
                 public const int PowerPages = 473330026;
                 public const int TeamsWebhook = 473330027;
+                public const int TeamsWebhookV2 = 473330028;
             }
             public struct OperationType
             {
@@ -693,31 +567,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static ProcessStage Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static ProcessStage Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("processstage", id, columnSet).ToEntity<ProcessStage>();
-        }
-
-        public ProcessStage GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new ProcessStage(Id) { Attributes = attr };
         }
         #endregion
     }

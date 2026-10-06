@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Used to store Document Templates in database in binary format.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("documenttemplate")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class DocumentTemplate : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class DocumentTemplate : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public DocumentTemplate() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public DocumentTemplate(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DocumentTemplate(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DocumentTemplate(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DocumentTemplate(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public DocumentTemplate() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public DocumentTemplate(Guid id) : base(EntityLogicalName, id) { }
+
+        public DocumentTemplate(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public DocumentTemplate(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 9940;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("documenttemplateid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 DocumentTemplateId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("documenttemplateid")]
         public Guid? DocumentTemplateId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("documenttemplateid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("documenttemplateid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,17 +71,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("associatedentitytypecode")]
         public string? AssociatedEntityTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("associatedentitytypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("associatedentitytypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -146,17 +87,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("clientdata")]
         public string? ClientData
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("clientdata");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("clientdata", value);
-                OnPropertyChanged();
             }
         }
 
@@ -166,17 +103,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("content")]
         public string? Content
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("content");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("content", value);
-                OnPropertyChanged();
             }
         }
 
@@ -186,7 +119,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -199,7 +131,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -212,7 +143,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -225,17 +155,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -245,17 +171,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("documenttype")]
         public OptionSetValue? DocumentType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("documenttype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("documenttype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -265,17 +187,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("languagecode")]
         public int? LanguageCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("languagecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("languagecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -285,7 +203,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -298,7 +215,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -311,7 +227,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -324,17 +239,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -344,7 +255,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -357,17 +267,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("status")]
         public bool? Status
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("status");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("status", value);
-                OnPropertyChanged();
             }
         }
 
@@ -375,7 +281,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -430,6 +335,7 @@ namespace dgt.power.dataverse
         {
             public static class OneToMany
             {
+                public const string DocumenttemplateDeletedItemReferences = "documenttemplate_DeletedItemReferences";
             }
 
             public static partial class ManyToOne
@@ -454,31 +360,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static DocumentTemplate Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static DocumentTemplate Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("documenttemplate", id, columnSet).ToEntity<DocumentTemplate>();
-        }
-
-        public DocumentTemplate GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new DocumentTemplate(Id) { Attributes = attr };
         }
         #endregion
     }

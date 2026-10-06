@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// A list of records that require action, such as accounts, activities, and cases.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("queue")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class Queue : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Queue : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public Queue() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public Queue(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Queue(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Queue(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public Queue(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public Queue() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public Queue(Guid id) : base(EntityLogicalName, id) { }
+
+        public Queue(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public Queue(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 2020;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("queueid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 QueueId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("queueid")]
         public Guid? QueueId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("queueid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("queueid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,7 +71,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("allowemailcredentials")]
         public bool? AllowEmailCredentials
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("allowemailcredentials");
@@ -139,17 +83,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("businessunitid")]
         public EntityReference? BusinessUnitId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("businessunitid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("businessunitid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -159,7 +99,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -172,7 +111,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -185,7 +123,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -198,7 +135,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("defaultmailbox")]
         public EntityReference? DefaultMailbox
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("defaultmailbox");
@@ -211,17 +147,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("description")]
         public string? Description
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("description");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("description", value);
-                OnPropertyChanged();
             }
         }
 
@@ -231,17 +163,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailaddress")]
         public string? EMailAddress
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("emailaddress");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("emailaddress", value);
-                OnPropertyChanged();
             }
         }
 
@@ -251,7 +179,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailpassword")]
         public string? EmailPassword
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("emailpassword");
@@ -264,17 +191,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailrouteraccessapproval")]
         public OptionSetValue? EmailRouterAccessApproval
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("emailrouteraccessapproval");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("emailrouteraccessapproval", value);
-                OnPropertyChanged();
             }
         }
 
@@ -284,7 +207,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("emailusername")]
         public string? EmailUsername
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("emailusername");
@@ -297,17 +219,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage")]
         public byte[]? EntityImage
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<byte[]?>("entityimage");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("entityimage", value);
-                OnPropertyChanged();
             }
         }
 
@@ -315,7 +233,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage_timestamp")]
         public long? EntityImageTimestamp
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("entityimage_timestamp");
@@ -326,7 +243,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimage_url")]
         public string? EntityImageURL
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("entityimage_url");
@@ -339,7 +255,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("entityimageid")]
         public Guid? EntityImageId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("entityimageid");
@@ -352,7 +267,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("exchangerate")]
         public decimal? ExchangeRate
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<decimal?>("exchangerate");
@@ -365,17 +279,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ignoreunsolicitedemail")]
         public bool? IgnoreUnsolicitedEmail
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ignoreunsolicitedemail");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ignoreunsolicitedemail", value);
-                OnPropertyChanged();
             }
         }
 
@@ -385,17 +295,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -405,17 +311,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("incomingemaildeliverymethod")]
         public OptionSetValue? IncomingEmailDeliveryMethod
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("incomingemaildeliverymethod");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("incomingemaildeliverymethod", value);
-                OnPropertyChanged();
             }
         }
 
@@ -425,17 +327,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("incomingemailfilteringmethod")]
         public OptionSetValue? IncomingEmailFilteringMethod
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("incomingemailfilteringmethod");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("incomingemailfilteringmethod", value);
-                OnPropertyChanged();
             }
         }
 
@@ -445,7 +343,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isemailaddressapprovedbyo365admin")]
         public bool? IsEmailAddressApprovedByO365Admin
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isemailaddressapprovedbyo365admin");
@@ -458,7 +355,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isfaxqueue")]
         public bool? IsFaxQueue
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isfaxqueue");
@@ -471,7 +367,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -484,7 +379,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -497,7 +391,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -510,17 +403,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -530,7 +419,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("numberofitems")]
         public int? NumberOfItems
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("numberofitems");
@@ -543,7 +431,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("numberofmembers")]
         public int? NumberOfMembers
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("numberofmembers");
@@ -556,7 +443,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("organizationid")]
         public EntityReference? OrganizationId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("organizationid");
@@ -569,17 +455,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("outgoingemaildeliverymethod")]
         public OptionSetValue? OutgoingEmailDeliveryMethod
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("outgoingemaildeliverymethod");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("outgoingemaildeliverymethod", value);
-                OnPropertyChanged();
             }
         }
 
@@ -589,17 +471,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged();
             }
         }
 
@@ -609,17 +487,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ownerid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -629,7 +503,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningbusinessunit")]
         public EntityReference? OwningBusinessUnit
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningbusinessunit");
@@ -642,7 +515,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningteam")]
         public EntityReference? OwningTeam
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owningteam");
@@ -655,7 +527,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owninguser")]
         public EntityReference? OwningUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("owninguser");
@@ -668,17 +539,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("primaryuserid")]
         public EntityReference? PrimaryUserId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("primaryuserid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("primaryuserid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -688,7 +555,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("queuetypecode")]
         public OptionSetValue? QueueTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("queuetypecode");
@@ -701,17 +567,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("queueviewtype")]
         public OptionSetValue? QueueViewType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("queueviewtype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("queueviewtype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -721,17 +583,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statecode")]
         public OptionSetValue? StateCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -741,17 +599,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("statuscode")]
         public OptionSetValue? StatusCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("statuscode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("statuscode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -761,17 +615,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("transactioncurrencyid")]
         public EntityReference? TransactionCurrencyId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("transactioncurrencyid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("transactioncurrencyid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -781,7 +631,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("versionnumber")]
         public long? VersionNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<long?>("versionnumber");
@@ -797,17 +646,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("Queue_AsyncOperations")]
         public IEnumerable<AsyncOperation> QueueAsyncOperations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<AsyncOperation>("Queue_AsyncOperations", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("Queue_AsyncOperations", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -817,17 +662,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("queue_routingruleitem")]
         public IEnumerable<RoutingRuleItem> QueueRoutingruleitem
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<RoutingRuleItem>("queue_routingruleitem", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("queue_routingruleitem", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -837,17 +678,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("queue_system_user")]
         public IEnumerable<SystemUser> QueueSystemUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<SystemUser>("queue_system_user", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("queue_system_user", null, value);
-                OnPropertyChanged();
             }
         }
 
@@ -857,17 +694,13 @@ namespace dgt.power.dataverse
         [RelationshipSchemaName("queue_team")]
         public IEnumerable<Team> QueueTeam
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetRelatedEntities<Team>("queue_team", null);
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetRelatedEntities("queue_team", null, value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -1052,31 +885,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static Queue Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static Queue Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("queue", id, columnSet).ToEntity<Queue>();
-        }
-
-        public Queue GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new Queue(Id) { Attributes = attr };
         }
         #endregion
     }

@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Condition of a duplicate detection rule.
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("duplicaterulecondition")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class DuplicateRuleCondition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class DuplicateRuleCondition : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public DuplicateRuleCondition() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public DuplicateRuleCondition(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DuplicateRuleCondition(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DuplicateRuleCondition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public DuplicateRuleCondition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public DuplicateRuleCondition() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public DuplicateRuleCondition(Guid id) : base(EntityLogicalName, id) { }
+
+        public DuplicateRuleCondition(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public DuplicateRuleCondition(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -61,37 +32,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 4416;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("duplicateruleconditionid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 DuplicateRuleConditionId = value;
@@ -104,18 +53,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("duplicateruleconditionid")]
         public Guid? DuplicateRuleConditionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("duplicateruleconditionid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("duplicateruleconditionid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -125,17 +70,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("baseattributename")]
         public string? BaseAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("baseattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("baseattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -145,7 +86,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentidunique")]
         public Guid? ComponentIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("componentidunique");
@@ -158,7 +98,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -171,7 +110,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdby")]
         public EntityReference? CreatedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdby");
@@ -184,7 +122,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdon")]
         public DateTime? CreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("createdon");
@@ -197,7 +134,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("createdonbehalfby")]
         public EntityReference? CreatedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("createdonbehalfby");
@@ -210,17 +146,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ignoreblankvalues")]
         public bool? IgnoreBlankValues
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ignoreblankvalues");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ignoreblankvalues", value);
-                OnPropertyChanged();
             }
         }
 
@@ -230,17 +162,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("iscustomizable")]
         public BooleanManagedProperty? IsCustomizable
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<BooleanManagedProperty?>("iscustomizable");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("iscustomizable", value);
-                OnPropertyChanged();
             }
         }
 
@@ -250,7 +178,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismanaged");
@@ -263,17 +190,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("matchingattributename")]
         public string? MatchingAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("matchingattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("matchingattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -283,7 +206,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedby")]
         public EntityReference? ModifiedBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedby");
@@ -296,7 +218,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedon")]
         public DateTime? ModifiedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("modifiedon");
@@ -309,7 +230,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("modifiedonbehalfby")]
         public EntityReference? ModifiedOnBehalfBy
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("modifiedonbehalfby");
@@ -322,17 +242,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operatorcode")]
         public OptionSetValue? OperatorCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("operatorcode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operatorcode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -342,17 +258,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("operatorparam")]
         public int? OperatorParam
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("operatorparam");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("operatorparam", value);
-                OnPropertyChanged();
             }
         }
 
@@ -362,7 +274,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -375,7 +286,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ownerid")]
         public EntityReference? OwnerId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("ownerid");
@@ -388,7 +298,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owningbusinessunit")]
         public Guid? OwningBusinessUnit
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("owningbusinessunit");
@@ -401,7 +310,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("owninguser")]
         public Guid? OwningUser
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("owninguser");
@@ -414,17 +322,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("regardingobjectid")]
         public EntityReference? RegardingObjectId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<EntityReference?>("regardingobjectid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("regardingobjectid", value);
-                OnPropertyChanged();
             }
         }
 
@@ -434,7 +338,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -445,17 +348,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("uniquerulename")]
         public string? UniqueRuleName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("uniquerulename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("uniquerulename", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -557,31 +456,6 @@ namespace dgt.power.dataverse
         #endregion
 
         #region Methods
-
-        public static DuplicateRuleCondition Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static DuplicateRuleCondition Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("duplicaterulecondition", id, columnSet).ToEntity<DuplicateRuleCondition>();
-        }
-
-        public DuplicateRuleCondition GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new DuplicateRuleCondition(Id) { Attributes = attr };
-        }
         #endregion
     }
 

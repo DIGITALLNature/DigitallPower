@@ -5,4 +5,7 @@ namespace dgt.power.plugin.Planning.Deployment;
 
 public sealed record PluginTypeDeployment(
     IReadOnlyList<PluginTypeDeploymentItem> Types,
-    IReadOnlyList<PluginTypeDeletion> Deletions);
+    IReadOnlyList<PluginTypeDeletion> Deletions)
+{
+    public IReadOnlyList<DataProviderDeployment> DataProviders { get; init; } = [];
+}

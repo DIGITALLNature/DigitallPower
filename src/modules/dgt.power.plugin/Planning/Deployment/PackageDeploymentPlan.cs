@@ -13,4 +13,7 @@ public sealed record PackageDeploymentPlan(
     IReadOnlyList<AssemblyDeploymentPlan> Assemblies,
     bool LinkManagedIdentity,
     SolutionMembershipPlan? SolutionMembership,
-    SolutionLink? Solution) : PluginDeploymentPlan;
+    SolutionLink? Solution) : PluginDeploymentPlan
+{
+    public IReadOnlyList<DataProviderDeployment> DataProviders { get; init; } = [];
+}

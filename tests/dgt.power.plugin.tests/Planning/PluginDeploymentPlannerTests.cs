@@ -25,7 +25,8 @@ public class PluginDeploymentPlannerTests
             Messages = new SdkMessageRepository(service),
             CustomApis = new CustomApiRepository(service),
             ManagedIdentities = new ManagedIdentityRepository(service),
-            Solutions = new SolutionComponentRepository(service)
+            Solutions = new SolutionComponentRepository(service),
+            DataProviders = new ProviderTestRepository()
         });
 
     [Test]

@@ -19,22 +19,32 @@ public sealed class PluginPushExecutor(
         ArgumentNullException.ThrowIfNull(plan);
         return plan switch
         {
-            AssemblyDeploymentPlan assembly => ExecuteAssemblyAsync(assembly, resolvedPackageAssemblyId: null, reportProgress, cancellationToken),
+            AssemblyDeploymentPlan assembly => ExecuteAssemblyAsync(assembly, reportProgress, cancellationToken),
             PackageDeploymentPlan package => ExecutePackageAsync(package, reportProgress, cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(plan), plan.GetType(), "Unknown plugin deployment plan type.")
         };
     }
 
-    private async Task<Guid> ExecuteAssemblyAsync(AssemblyDeploymentPlan plan, Guid? resolvedPackageAssemblyId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    private async Task<Guid> ExecuteAssemblyAsync(AssemblyDeploymentPlan plan, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
     {
-        var assemblyId = await ApplyAssemblyAsync(plan, resolvedPackageAssemblyId, reportProgress, cancellationToken);
+        var assemblyId = await ApplyAssemblyAsync(plan, resolvedPackageAssemblyId: null, reportProgress, cancellationToken);
         if (plan.PluginTypes is null)
         {
             return assemblyId;
         }
 
-        await typeExecutor.ApplyAsync(plan.PluginTypes, assemblyId, reportProgress, cancellationToken);
+        var typeIds = await typeExecutor.ApplyTypesAsync(plan.PluginTypes, assemblyId, reportProgress, cancellationToken);
+        await typeExecutor.ApplyDataProvidersAsync(plan.PluginTypes.DataProviders, typeIds, reportProgress, cancellationToken);
+        await typeExecutor.ApplyRegistrationsAsync(plan.PluginTypes, typeIds, reportProgress, cancellationToken);
+        await typeExecutor.DeleteTypesAsync(plan.PluginTypes.Deletions, reportProgress, cancellationToken);
+        await ApplyAssemblyManagedIdentityAsync(plan, assemblyId, reportProgress, cancellationToken);
+        await outdatedAssemblyMigrator.ApplyAsync(plan.OutdatedAssemblies, reportProgress, cancellationToken);
+        return assemblyId;
+    }
 
+    private async Task ApplyAssemblyManagedIdentityAsync(AssemblyDeploymentPlan plan, Guid assemblyId,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
         if (plan.LinkManagedIdentity)
         {
             var local = plan.Comparison.Local;
@@ -42,9 +52,6 @@ public sealed class PluginPushExecutor(
             await managedIdentityRepository.LinkToAssemblyAsync(assemblyId, managedIdentityId, cancellationToken);
             Report(reportProgress, PluginDeploymentOperation.Linked, "managed identity", local.ManagedIdentityClientId!);
         }
-
-        await outdatedAssemblyMigrator.ApplyAsync(plan.OutdatedAssemblies, reportProgress, cancellationToken);
-        return assemblyId;
     }
 
     private async Task<Guid> ApplyAssemblyAsync(AssemblyDeploymentPlan deployment, Guid? resolvedPackageAssemblyId, Action<PluginDeploymentProgress>? reportProgress,
@@ -86,6 +93,7 @@ public sealed class PluginPushExecutor(
     private async Task<Guid> ExecutePackageAsync(PackageDeploymentPlan deployment, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
     {
         var packageId = await ApplyPackageAsync(deployment, reportProgress, cancellationToken);
+        var packageTypeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
 
         foreach (var assembly in deployment.Assemblies)
         {
@@ -96,7 +104,30 @@ public sealed class PluginPushExecutor(
             }
 
             var packageAssemblyId = remoteAssembly?.PackageId == packageId ? remoteAssembly.Id : (Guid?)null;
-            await ExecuteAssemblyAsync(assembly, packageAssemblyId, reportProgress, cancellationToken);
+            var assemblyId = await ApplyAssemblyAsync(assembly, packageAssemblyId, reportProgress, cancellationToken);
+            if (assembly.PluginTypes is not { } types)
+            {
+                continue;
+            }
+
+            var typeIds = await typeExecutor.ApplyTypesAsync(types, assemblyId, reportProgress, cancellationToken);
+            await typeExecutor.ApplyRegistrationsAsync(types, typeIds, reportProgress, cancellationToken);
+            await ApplyAssemblyManagedIdentityAsync(assembly, assemblyId, reportProgress, cancellationToken);
+            foreach (var (typeName, typeId) in typeIds)
+            {
+                packageTypeIds[typeName] = typeId;
+            }
+        }
+
+        await typeExecutor.ApplyDataProvidersAsync(deployment.DataProviders, packageTypeIds, reportProgress, cancellationToken);
+        foreach (var assembly in deployment.Assemblies)
+        {
+            if (assembly.PluginTypes is { } types)
+            {
+                await typeExecutor.DeleteTypesAsync(types.Deletions, reportProgress, cancellationToken);
+            }
+
+            await outdatedAssemblyMigrator.ApplyAsync(assembly.OutdatedAssemblies, reportProgress, cancellationToken);
         }
 
         if (deployment.LinkManagedIdentity)

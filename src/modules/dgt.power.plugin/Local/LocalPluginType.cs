@@ -9,7 +9,7 @@ namespace dgt.power.plugin.Local;
 /// </summary>
 /// <param name="Name">Friendly name; defaults to the plugin's full type name.</param>
 /// <param name="TypeName">Full CLR type name.</param>
-/// <param name="CustomApi">Custom API message name, when the type is registered as a Custom API/data provider handler; otherwise empty.</param>
+/// <param name="CustomApi">Custom API message name; otherwise empty.</param>
 /// <param name="HasRegistrationAttribute">True when the type carries one of the known registration attributes (PluginRegistration/CustomApiRegistration/CustomDataProviderRegistration).</param>
 /// <param name="Steps">Steps declared for this plugin type.</param>
 public sealed record LocalPluginType(
@@ -17,4 +17,7 @@ public sealed record LocalPluginType(
     string TypeName,
     string CustomApi,
     bool HasRegistrationAttribute,
-    IReadOnlyList<LocalPluginStep> Steps);
+    IReadOnlyList<LocalPluginStep> Steps)
+{
+    public IReadOnlyList<LocalDataProviderRegistration> DataProviders { get; init; } = [];
+}

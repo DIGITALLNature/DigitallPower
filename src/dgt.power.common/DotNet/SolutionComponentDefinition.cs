@@ -1,13 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using AttributeCollection = Microsoft.Xrm.Sdk.AttributeCollection;
+using System.Runtime.Serialization;
 
 // ReSharper disable All
 namespace dgt.power.dataverse
@@ -16,44 +10,21 @@ namespace dgt.power.dataverse
     /// <summary>
 	/// Contains all the information required to process a solution aware entity
 	/// </summary>
-    [DataContract]
     [EntityLogicalName("solutioncomponentdefinition")]
     [System.CodeDom.Compiler.GeneratedCode("dgtp", "2026")]
     [ExcludeFromCodeCoverage]
     [SuppressMessage("Design", "CA1034")]
     [SuppressMessage("Performance", "CA1815")]
-    public partial class SolutionComponentDefinition : Entity, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class SolutionComponentDefinition : Entity
     {
         #region ctor
-        [DebuggerNonUserCode]
-        public SolutionComponentDefinition() : this(false)
-        {
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponentDefinition(bool trackChanges = false) : base(EntityLogicalName)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponentDefinition(Guid id, bool trackChanges = false) : base(EntityLogicalName, id)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponentDefinition(KeyAttributeCollection keyAttributes, bool trackChanges = false) : base(EntityLogicalName, keyAttributes)
-        {
-            _trackChanges = trackChanges;
-        }
-        [DebuggerNonUserCode]
-        public SolutionComponentDefinition(string keyName, object keyValue, bool trackChanges = false) : base(EntityLogicalName, keyName, keyValue)
-        {
-            _trackChanges = trackChanges;
-        }
-        #endregion
+        public SolutionComponentDefinition() : base(EntityLogicalName) { }
 
-        #region fields
-        private readonly bool _trackChanges;
-        private readonly Lazy<HashSet<string>> _changedProperties = new();
+        public SolutionComponentDefinition(Guid id) : base(EntityLogicalName, id) { }
+
+        public SolutionComponentDefinition(KeyAttributeCollection keyAttributes) : base(EntityLogicalName, keyAttributes) { }
+
+        public SolutionComponentDefinition(string keyName, object keyValue) : base(EntityLogicalName, keyName, keyValue) { }
         #endregion
 
         #region consts
@@ -62,37 +33,15 @@ namespace dgt.power.dataverse
         public const int EntityTypeCode = 7104;
         #endregion
 
-        #region Events
-        #pragma warning disable CS8612
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
-        #pragma warning restore CS8612
-        [DebuggerNonUserCode]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (_trackChanges)
-            {
-                _changedProperties.Value.Add(propertyName);
-            }
-        }
-        [DebuggerNonUserCode]
-        private void OnPropertyChanging([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanging != null) PropertyChanging.Invoke(this, new PropertyChangingEventArgs(propertyName));
-        }
-        #endregion
-
         #region Attributes
         [AttributeLogicalName("solutioncomponentdefinitionid")]
+        [IgnoreDataMember]
         public new Guid Id
         {
-            [DebuggerNonUserCode]
             get
             {
                 return base.Id;
             }
-            [DebuggerNonUserCode]
             set
             {
                 SolutionComponentDefinitionId = value;
@@ -105,18 +54,14 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutioncomponentdefinitionid")]
         public Guid? SolutionComponentDefinitionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutioncomponentdefinitionid");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("solutioncomponentdefinitionid", value);
                 base.Id = value.HasValue ? value.Value : Guid.Empty;
-                OnPropertyChanged();
             }
         }
 
@@ -126,7 +71,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutioncomponentdefinitionidunique")]
         public Guid? SolutionComponentDefinitionIdUnique
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutioncomponentdefinitionidunique");
@@ -139,17 +83,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("allowdeletebasesolutionrowandfakedelete")]
         public bool? AllowDeleteBaseSolutionRowAndFakeDelete
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("allowdeletebasesolutionrowandfakedelete");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("allowdeletebasesolutionrowandfakedelete", value);
-                OnPropertyChanged();
             }
         }
 
@@ -159,17 +99,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("allowoverwritecustomizations")]
         public bool? AllowOverwriteCustomizations
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("allowoverwritecustomizations");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("allowoverwritecustomizations", value);
-                OnPropertyChanged();
             }
         }
 
@@ -179,17 +115,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("allowrecreateforlogicallydeletedrow")]
         public bool? AllowRecreateForLogicallyDeletedRow
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("allowrecreateforlogicallydeletedrow");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("allowrecreateforlogicallydeletedrow", value);
-                OnPropertyChanged();
             }
         }
 
@@ -199,17 +131,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("alwaysremoveactivecustomizationsonuninstall")]
         public bool? AlwaysRemoveActiveCustomizationsOnUninstall
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("alwaysremoveactivecustomizationsonuninstall");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("alwaysremoveactivecustomizationsonuninstall", value);
-                OnPropertyChanged();
             }
         }
 
@@ -219,17 +147,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("canbeaddedtosolutioncomponents")]
         public bool? CanBeAddedToSolutionComponents
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("canbeaddedtosolutioncomponents");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("canbeaddedtosolutioncomponents", value);
-                OnPropertyChanged();
             }
         }
 
@@ -239,17 +163,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("canbehidden")]
         public bool? CanBeHidden
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("canbehidden");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("canbehidden", value);
-                OnPropertyChanged();
             }
         }
 
@@ -259,7 +179,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentstate")]
         public OptionSetValue? ComponentState
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("componentstate");
@@ -272,17 +191,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("componentxpath")]
         public string? ComponentXPath
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("componentxpath");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("componentxpath", value);
-                OnPropertyChanged();
             }
         }
 
@@ -292,17 +207,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("descendentisviewablecomponent")]
         public bool? DescendentIsViewableComponent
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("descendentisviewablecomponent");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("descendentisviewablecomponent", value);
-                OnPropertyChanged();
             }
         }
 
@@ -312,17 +223,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("groupparentcomponentattributename")]
         public string? GroupParentComponentAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("groupparentcomponentattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("groupparentcomponentattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -332,17 +239,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("groupparentcomponenttype")]
         public int? GroupParentComponentType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("groupparentcomponenttype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("groupparentcomponenttype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -352,17 +255,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("hasisrenameableattribute")]
         public bool? HasIsRenameableAttribute
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("hasisrenameableattribute");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("hasisrenameableattribute", value);
-                OnPropertyChanged();
             }
         }
 
@@ -372,17 +271,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("importsequencenumber")]
         public int? ImportSequenceNumber
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("importsequencenumber");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("importsequencenumber", value);
-                OnPropertyChanged();
             }
         }
 
@@ -392,17 +287,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("introducedversion")]
         public string? IntroducedVersion
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("introducedversion");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("introducedversion", value);
-                OnPropertyChanged();
             }
         }
 
@@ -412,17 +303,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isdependencydisabled")]
         public bool? IsDependencyDisabled
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isdependencydisabled");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isdependencydisabled", value);
-                OnPropertyChanged();
             }
         }
 
@@ -432,17 +319,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isdisplayable")]
         public bool? IsDisplayable
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isdisplayable");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isdisplayable", value);
-                OnPropertyChanged();
             }
         }
 
@@ -452,17 +335,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismanaged")]
         public bool? IsManaged
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismanaged");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ismanaged", value);
-                OnPropertyChanged();
             }
         }
 
@@ -472,17 +351,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismergeable")]
         public bool? IsMergeable
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismergeable");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ismergeable", value);
-                OnPropertyChanged();
             }
         }
 
@@ -492,17 +367,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("ismetadata")]
         public bool? IsMetadata
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("ismetadata");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("ismetadata", value);
-                OnPropertyChanged();
             }
         }
 
@@ -512,17 +383,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("isviewable")]
         public bool? IsViewable
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("isviewable");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("isviewable", value);
-                OnPropertyChanged();
             }
         }
 
@@ -532,17 +399,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("labeltypecode")]
         public int? LabelTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("labeltypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("labeltypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -552,17 +415,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("name")]
         public string? Name
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("name");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("name", value);
-                OnPropertyChanged();
             }
         }
 
@@ -572,17 +431,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("objecttypecode")]
         public int? ObjectTypeCode
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("objecttypecode");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("objecttypecode", value);
-                OnPropertyChanged();
             }
         }
 
@@ -592,17 +447,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overriddencreatedon")]
         public DateTime? OverriddenCreatedOn
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overriddencreatedon");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("overriddencreatedon", value);
-                OnPropertyChanged();
             }
         }
 
@@ -612,7 +463,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("overwritetime")]
         public DateTime? OverwriteTime
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<DateTime?>("overwritetime");
@@ -625,17 +475,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("parentattributename")]
         public string? ParentAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("parentattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("parentattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -645,17 +491,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("primaryentityname")]
         public string? PrimaryEntityName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("primaryentityname");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("primaryentityname", value);
-                OnPropertyChanged();
             }
         }
 
@@ -665,17 +507,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("removeactivecustomizationsbehavior")]
         public OptionSetValue? RemoveActiveCustomizationsBehavior
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<OptionSetValue?>("removeactivecustomizationsbehavior");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("removeactivecustomizationsbehavior", value);
-                OnPropertyChanged();
             }
         }
 
@@ -685,17 +523,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("rootattributename")]
         public string? RootAttributeName
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<string?>("rootattributename");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("rootattributename", value);
-                OnPropertyChanged();
             }
         }
 
@@ -705,17 +539,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("rootcomponent")]
         public int? RootComponent
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("rootcomponent");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("rootcomponent", value);
-                OnPropertyChanged();
             }
         }
 
@@ -725,17 +555,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutioncomponenttype")]
         public int? SolutionComponentType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("solutioncomponenttype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("solutioncomponenttype", value);
-                OnPropertyChanged();
             }
         }
 
@@ -745,7 +571,6 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("solutionid")]
         public Guid? SolutionId
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<Guid?>("solutionid");
@@ -758,17 +583,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("useforcedeleteforsolutionupdate")]
         public bool? UseForceDeleteForSolutionUpdate
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("useforcedeleteforsolutionupdate");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("useforcedeleteforsolutionupdate", value);
-                OnPropertyChanged();
             }
         }
 
@@ -778,17 +599,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("useforceupdatealways")]
         public bool? UseForceUpdateAlways
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("useforceupdatealways");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("useforceupdatealways", value);
-                OnPropertyChanged();
             }
         }
 
@@ -798,17 +615,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("usesentinelrowinbasesolution")]
         public bool? UseSentinelRowInBaseSolution
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<bool?>("usesentinelrowinbasesolution");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("usesentinelrowinbasesolution", value);
-                OnPropertyChanged();
             }
         }
 
@@ -818,17 +631,13 @@ namespace dgt.power.dataverse
         [AttributeLogicalName("viewabledescendentcomponenttype")]
         public int? ViewableDescendentComponentType
         {
-            [DebuggerNonUserCode]
             get
             {
                 return GetAttributeValue<int?>("viewabledescendentcomponenttype");
             }
-            [DebuggerNonUserCode]
             set
             {
-                OnPropertyChanging();
                 SetAttributeValue("viewabledescendentcomponenttype", value);
-                OnPropertyChanged();
             }
         }
         #endregion
@@ -1008,31 +817,6 @@ namespace dgt.power.dataverse
             var reference = ToEntityReference();
             reference.Name = GetAttributeValue<string?>(PrimaryNameAttribute);
             return reference;
-        }
-
-        public static SolutionComponentDefinition Retrieve(IOrganizationService service, Guid id)
-        {
-            return Retrieve(service, id, new ColumnSet(true));
-        }
-
-        public static SolutionComponentDefinition Retrieve(IOrganizationService service, Guid id, ColumnSet columnSet)
-        {
-            return service.Retrieve("solutioncomponentdefinition", id, columnSet).ToEntity<SolutionComponentDefinition>();
-        }
-
-        public SolutionComponentDefinition GetChangedEntity()
-        {
-            if (!_trackChanges)
-            {
-                return this;
-            }
-
-            var attr = new AttributeCollection();
-            foreach (var attrName in _changedProperties.Value.Select(changedProperty => GetType().GetProperty(changedProperty)!.GetCustomAttribute<AttributeLogicalNameAttribute>()!.LogicalName).Where(attrName => Contains(attrName)))
-            {
-                attr.Add(attrName, this[attrName]);
-            }
-            return new SolutionComponentDefinition(Id) { Attributes = attr };
         }
         #endregion
     }

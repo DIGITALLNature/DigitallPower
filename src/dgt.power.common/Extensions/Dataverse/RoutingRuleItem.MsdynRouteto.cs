@@ -29,9 +29,7 @@ public partial class RoutingRuleItem
         [DebuggerNonUserCode]
         set
         {
-            OnPropertyChanging();
             SetAttributeValue("msdyn_routeto", value);
-            OnPropertyChanged();
         }
     }
 
@@ -49,9 +47,7 @@ public partial class RoutingRuleItem
         [DebuggerNonUserCode]
         set
         {
-            OnPropertyChanging();
             SetAttributeValue("assignobjectidtype", value);
-            OnPropertyChanged();
         }
     }
 

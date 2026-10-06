@@ -111,6 +111,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     {
         var hasRegistrationAttribute = HasRegistrationAttribute(pluginType);
         var steps = new List<LocalPluginStep>();
+        var dataProviders = new List<LocalDataProviderRegistration>();
         var customApi = string.Empty;
 
         if (hasRegistrationAttribute)
@@ -130,18 +131,14 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
                 if (customAttribute.AttributeType.Name == RegistrationAttributeNames.CustomDataProviderRegistration)
                 {
-                    var step = BuildDataProviderStep(pluginType, customAttribute);
-                    if (step != null)
-                    {
-                        steps.Add(step);
-                    }
+                    dataProviders.Add(BuildDataProviderRegistration(pluginType, customAttribute));
                 }
             }
 
             steps.AddRange(BuildRegistrationSteps(pluginType));
         }
 
-        return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, hasRegistrationAttribute, steps);
+        return new LocalPluginType(pluginType.FullName!, pluginType.FullName!, customApi, hasRegistrationAttribute, steps) { DataProviders = dataProviders };
     }
 
     internal static void EnsureAllPluginTypesDeclared(IReadOnlyList<LocalPluginType> pluginTypes)
@@ -155,21 +152,24 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
     }
 
-    private static LocalPluginStep? BuildDataProviderStep(Type pluginType, CustomAttributeData customAttribute)
+    private static LocalDataProviderRegistration BuildDataProviderRegistration(Type pluginType, CustomAttributeData customAttribute)
     {
-        var entityName = GetValue<string>(customAttribute, "entityName");
-        if (entityName == null)
+        if (customAttribute.ConstructorArguments.Count != 0)
         {
-            return null;
+            throw new AssemblyException($"Data provider registration on '{pluginType.FullName}' uses the removed entity-name constructor. " +
+                                        "Rebuild with named DataSourceSchemaName, Event, and ProviderName properties identifying the provider's configuration table, not a virtual table.");
         }
 
-        var eventValue = GetValue<int>(customAttribute, "eventRegistration");
-        var messageName = MapDataProviderEventToMessage(eventValue);
+        var schemaName = GetValue<string>(customAttribute, "DataSourceSchemaName");
+        var eventValue = GetValue<int?>(customAttribute, "Event") ?? -1;
+        if (string.IsNullOrWhiteSpace(schemaName) || !Enum.IsDefined((DataProviderOperation)eventValue))
+        {
+            throw new AssemblyException($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
+                                        "and an explicit supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
+        }
 
-        var step = new LocalPluginStep(string.Empty, SdkMessageProcessingStep.Options.Mode.Synchronous, messageName, SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly, entityName,
-            "none", null, 1, []);
-
-        return step with { Name = GetStepName(step, pluginType.FullName!) };
+        return new LocalDataProviderRegistration(schemaName, (DataProviderOperation)eventValue, GetValue<string>(customAttribute, "ProviderName"),
+            GetValue<string>(customAttribute, "DataSourceDisplayName"), GetValue<string>(customAttribute, "DataSourcePluralName"), GetValue<string>(customAttribute, "Description"));
     }
 
     private static List<LocalPluginStep> BuildRegistrationSteps(Type pluginType)
@@ -251,17 +251,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             ? $"{parentName}|{entity}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}|{step.ExecutionOrder}"
             : $"{parentName}|{entity}|{Mode(step.Mode)}|{Stage(step.Stage)}|{step.MessageName}";
     }
-
-    internal static string MapDataProviderEventToMessage(int eventValue) =>
-        eventValue switch
-        {
-            0 => "Retrieve",
-            1 => "RetrieveMultiple",
-            2 => "Create",
-            3 => "Update",
-            4 => "Delete",
-            _ => throw new AssemblyException($"Unknown DataProviderEvent value: {eventValue}")
-        };
 
     internal static string GetMessagePropertyName(string messageName) =>
         messageName.ToLowerInvariant() switch

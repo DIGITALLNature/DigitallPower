@@ -24,6 +24,57 @@ public class AssemblyReflectionReaderTests
     [LegacyPluginRegistration]
     private sealed class LegacyRegistrationPlugin;
 
+    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source", Event = DataProviderEvent.Retrieve, ProviderName = "Provider")]
+    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source", Event = DataProviderEvent.RetrieveMultiple)]
+    private sealed class ProviderPlugin;
+
+    [CustomDataProviderRegistration("dgt_virtualtable", 0)]
+    private sealed class OldProviderPlugin;
+
+    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source")]
+    private sealed class UnspecifiedProviderPlugin;
+
+    [Test]
+    public async Task BuildPluginType_NamedProviderProperties_ProducesHandlersNotSteps()
+    {
+        using var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
+        var plugin = reader.BuildPluginType(typeof(ProviderPlugin));
+        using (Assert.Multiple())
+        {
+            await Assert.That(plugin.Steps).IsEmpty();
+            await Assert.That(plugin.DataProviders).Count().IsEqualTo(2);
+            await Assert.That(plugin.DataProviders[0].Event).IsEqualTo(DataProviderOperation.Retrieve);
+            await Assert.That(plugin.DataProviders[1].Event).IsEqualTo(DataProviderOperation.RetrieveMultiple);
+            await Assert.That(plugin.DataProviders[0].ProviderName).IsEqualTo("Provider");
+            await Assert.That(plugin.DataProviders[1].ProviderName).IsNull();
+        }
+    }
+
+    [Test]
+    public async Task BuildPluginType_MetadataOnlyProviderProperties_ProducesHandlers()
+    {
+        using var console = new TestConsole();
+        using var context = MetadataLoadContextFactory.Create(Path.GetDirectoryName(typeof(ProviderPlugin).Assembly.Location)!);
+        var type = context.LoadFromAssemblyPath(typeof(ProviderPlugin).Assembly.Location).GetType(typeof(ProviderPlugin).FullName!)!;
+        var plugin = new AssemblyReflectionReader(console).BuildPluginType(type);
+        await Assert.That(plugin.DataProviders.Select(provider => provider.Event).ToArray()).IsEquivalentTo(new[] { DataProviderOperation.Retrieve, DataProviderOperation.RetrieveMultiple });
+    }
+
+    [Test]
+    public async Task BuildPluginType_LegacyProviderConstructor_ThrowsMigrationError()
+    {
+        using var console = new TestConsole();
+        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(typeof(OldProviderPlugin))).ThrowsExactly<AssemblyException>();
+    }
+
+    [Test]
+    public async Task BuildPluginType_UnspecifiedProviderEvent_Throws()
+    {
+        using var console = new TestConsole();
+        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(typeof(UnspecifiedProviderPlugin))).ThrowsExactly<AssemblyException>();
+    }
+
     [Test]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000", Justification = "The test console remains in scope for output assertions.")]
     public async Task BuildPluginType_TypeWithoutRegistrationAttribute_HasRegistrationAttributeIsFalseAndHasNoSteps()
@@ -110,25 +161,6 @@ public class AssemblyReflectionReaderTests
         var result = new AssemblyReflectionReader(console).Read(typeof(AssemblyReflectionReaderTests).Assembly.Location, metadataLoadContext);
 
         await Assert.That(result).IsNull();
-    }
-
-    [Test]
-    [Arguments(0, "Retrieve")]
-    [Arguments(1, "RetrieveMultiple")]
-    [Arguments(2, "Create")]
-    [Arguments(3, "Update")]
-    [Arguments(4, "Delete")]
-    public async Task MapDataProviderEventToMessage_ReturnsCorrectMessage(int eventValue, string expectedMessage)
-    {
-        var result = AssemblyReflectionReader.MapDataProviderEventToMessage(eventValue);
-
-        await Assert.That(result).IsEqualTo(expectedMessage);
-    }
-
-    [Test]
-    public async Task MapDataProviderEventToMessage_ThrowsForUnknownEvent()
-    {
-        await Assert.That(() => AssemblyReflectionReader.MapDataProviderEventToMessage(99)).ThrowsExactly<AssemblyException>();
     }
 
     [Test]

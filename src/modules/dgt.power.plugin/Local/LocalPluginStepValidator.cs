@@ -34,9 +34,8 @@ public static class LocalPluginStepValidator
             throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unknown execution mode '{step.Mode}'.");
         }
 
-        // Stage 30 (main operation) is only produced for synthesized custom data provider steps, which are always synchronous.
         if (step.Stage is not (SdkMessageProcessingStep.Options.Stage.PreValidation or SdkMessageProcessingStep.Options.Stage.PreOperation or
-            SdkMessageProcessingStep.Options.Stage.MainOperationForInternalUseOnly or SdkMessageProcessingStep.Options.Stage.PostOperation))
+            SdkMessageProcessingStep.Options.Stage.PostOperation))
         {
             throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unsupported stage '{step.Stage}'.");
         }
