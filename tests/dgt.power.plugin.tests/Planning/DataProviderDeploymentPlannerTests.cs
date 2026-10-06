@@ -153,6 +153,38 @@ public class DataProviderDeploymentPlannerTests
     }
 
     [Test]
+    public async Task Build_ReplacedTypeWithoutReplacement_FailsWhenUndeclaredHandlerStillReferencesIt()
+    {
+        var typeId = Guid.NewGuid();
+        var repository = new ProviderTestRepository();
+        repository.Providers.Add(new RemoteDataProvider(Guid.NewGuid(), "dgt_source", "Provider", null,
+            new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = typeId }));
+
+        var exception = await Assert.That(async () => await Plan(repository, [], replacedTypes: [new RemotePluginType(typeId, "Old")]))
+            .ThrowsExactly<InvalidOperationException>();
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(exception!.Message).IsEqualTo("Cannot remove 'Old': data provider 'Provider' still references it.");
+            await Assert.That(repository.ProviderWrites).IsEqualTo(0);
+        }
+    }
+
+    [Test]
+    public async Task Build_ReplacedTypeWithoutMatchingReplacement_PreservesExplicitHandlerDeclaration()
+    {
+        var typeId = Guid.NewGuid();
+        var repository = new ProviderTestRepository();
+        repository.Providers.Add(new RemoteDataProvider(Guid.NewGuid(), "dgt_source", "Provider", null,
+            new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = typeId }));
+
+        var result = await Plan(repository, [Handler("Replacement")], replacedTypes: [new RemotePluginType(typeId, "Old")]);
+
+        await Assert.That(result.Single().Handlers[DataProviderOperation.Retrieve]).IsEqualTo("Replacement");
+        await Assert.That(repository.ProviderWrites).IsEqualTo(0);
+    }
+
+    [Test]
     public async Task Build_ReplacedTypeWithDuplicateReplacementNames_FailsBeforeWrites()
     {
         var typeId = Guid.NewGuid();

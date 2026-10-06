@@ -112,7 +112,13 @@ internal sealed class DataProviderDeploymentPlanner(IEntityDataProviderRepositor
                     continue;
                 }
 
-                if (replacementTypes.All(type => type.TypeName != oldType.TypeName))
+                var matchingReplacementTypes = replacementTypes.Where(type => type.TypeName == oldType.TypeName).Take(2).ToList();
+                if (matchingReplacementTypes.Count > 1)
+                {
+                    throw new InvalidOperationException($"Cannot migrate data-provider handler '{oldType.TypeName}': multiple replacement plugin types have that name.");
+                }
+
+                if (matchingReplacementTypes.Count == 0)
                 {
                     if (deployments.Any(deployment => deployment.Remote?.Id == provider.Id && deployment.Handlers.ContainsKey(field)))
                     {
@@ -122,7 +128,7 @@ internal sealed class DataProviderDeploymentPlanner(IEntityDataProviderRepositor
                     throw new InvalidOperationException($"Cannot remove '{oldType.TypeName}': data provider '{provider.Name}' still references it.");
                 }
 
-                handlers[field] = oldType.TypeName;
+                handlers[field] = matchingReplacementTypes[0].TypeName;
             }
 
             if (handlers.Count == 0)
