@@ -209,7 +209,7 @@ public sealed class PluginTypeDeploymentExecutor(
             }
             else if (image.RequiresUpdate)
             {
-                await imageRepository.UpdateAsync(image.Remote!.Id, image.Local.Attributes, cancellationToken);
+                await imageRepository.UpdateAsync(image.Remote!.Id, stepId, image.Local.Attributes, cancellationToken);
                 Report(reportProgress, PluginDeploymentOperation.Updated, "step image", image.Local.Name);
             }
         }

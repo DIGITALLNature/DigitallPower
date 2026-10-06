@@ -17,8 +17,8 @@ public interface ISdkMessageProcessingStepImageRepository
     /// <summary>Registers a new image and returns its id.</summary>
     Task<Guid> CreateAsync(PluginStepImageData data, CancellationToken cancellationToken = default);
 
-    /// <summary>Replaces the attributes of an existing image.</summary>
-    Task UpdateAsync(Guid id, IReadOnlyList<string>? attributes, CancellationToken cancellationToken = default);
+    /// <summary>Replaces the attributes of an existing image, including its parent step reference in the update.</summary>
+    Task UpdateAsync(Guid id, Guid stepId, IReadOnlyList<string>? attributes, CancellationToken cancellationToken = default);
 
     /// <summary>Deletes an image.</summary>
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);

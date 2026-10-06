@@ -62,10 +62,11 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
         return await service.CreateAsync(image, cancellationToken);
     }
 
-    public async Task UpdateAsync(Guid id, IReadOnlyList<string>? attributes, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Guid id, Guid stepId, IReadOnlyList<string>? attributes, CancellationToken cancellationToken = default)
     {
         var image = new SdkMessageProcessingStepImage(id)
         {
+            SdkMessageProcessingStepId = new EntityReference(SdkMessageProcessingStep.EntityLogicalName, stepId),
             AttributesField = attributes is { Count: > 0 } ? string.Join(",", attributes) : null
         };
 

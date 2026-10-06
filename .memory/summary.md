@@ -78,6 +78,10 @@ src/
   runtime, and leaves package-specific deployment target validation to Dataverse; see
   [package framework selection](implementation-plugin-push-outdated-assembly-migration.md#package-framework-selection).
 
+- Step-image updates include the parent step reference alongside attributes, preserving
+  the image ID and leaving other registration fields untouched. This mitigates a platform-internal update fault;
+  live confirmation is still required. See [image update payload notes](research-plugin-step-image-update-payload.md).
+
 ### CLI command tree registration
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
   source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes

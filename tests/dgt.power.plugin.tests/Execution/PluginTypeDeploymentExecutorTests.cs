@@ -347,4 +347,31 @@ public class PluginTypeDeploymentExecutorTests
         await Assert.That(images.Count).IsEqualTo(1);
         await Assert.That(images[0].ToEntity<SdkMessageProcessingStepImage>().Name).IsEqualTo("PreImage");
     }
+
+    [Test]
+    public async Task ApplyAsync_ChangedImageAttributes_PreservesImageAndOtherRegistrationFields()
+    {
+        var (service, executor) = CreateExecutor();
+        SeedMessage(service, "Update", "account");
+        var assemblyId = Guid.NewGuid();
+        var image = new LocalPluginStepImage(SdkMessageProcessingStepImage.Options.ImageType.PreImage, "PreImage", "Before", "Target", ["name"]);
+        var localType = new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [Step(messageName: "Update", images: [image])]);
+        await executor.ApplyAsync(assemblyId, [localType], new PluginPushOptions(null, DryRun: false));
+        var existingImage = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) })
+            .Entities.Single().ToEntity<SdkMessageProcessingStepImage>();
+        service.Update(new SdkMessageProcessingStepImage(existingImage.Id) { EntityAlias = "OldAlias", MessagePropertyName = "OldProperty" });
+        var updatedType = localType with { Steps = [Step(messageName: "Update", images: [image with { Attributes = ["name", "telephone1"] }])] };
+
+        await executor.ApplyAsync(assemblyId, [updatedType], new PluginPushOptions(null, DryRun: false));
+
+        var updatedImage = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStepImage.EntityLogicalName) { ColumnSet = new ColumnSet(true) })
+            .Entities.Single().ToEntity<SdkMessageProcessingStepImage>();
+        await Assert.That(updatedImage.Id).IsEqualTo(existingImage.Id);
+        await Assert.That(updatedImage.SdkMessageProcessingStepId!.Id).IsEqualTo(existingImage.SdkMessageProcessingStepId!.Id);
+        await Assert.That(updatedImage.Name).IsEqualTo(image.Name);
+        await Assert.That(updatedImage.EntityAlias).IsEqualTo("OldAlias");
+        await Assert.That(updatedImage.ImageType!.Value).IsEqualTo(image.ImageType);
+        await Assert.That(updatedImage.MessagePropertyName).IsEqualTo("OldProperty");
+        await Assert.That(updatedImage.AttributesField).IsEqualTo("name,telephone1");
+    }
 }
