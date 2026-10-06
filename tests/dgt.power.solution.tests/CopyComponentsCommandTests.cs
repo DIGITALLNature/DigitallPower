@@ -2,12 +2,15 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
 using Digitall.Dataverse.Testing;
 using dgt.power.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
+using System.Reflection;
 using System.ServiceModel;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.solution.tests;
 
@@ -20,6 +23,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
     private static readonly Guid s_unmanagedEntityMetadataId = Guid.NewGuid();
     private static readonly Guid s_managedEntityMetadataId = Guid.NewGuid();
+    private static readonly Guid s_shellOnlyEntityMetadataId = Guid.NewGuid();
     private static readonly Guid s_activeAttributeMetadataId = Guid.NewGuid();
     private static readonly Guid s_inactiveAttributeMetadataId = Guid.NewGuid();
     private static readonly Guid s_managedActiveWorkflowId = Guid.NewGuid();
@@ -68,6 +72,8 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
         // Unmanaged table: added completely.
         await Assert.That(byObjectId[s_unmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
+        // Unmanaged shell-only source: best-practice mode normalizes it to complete.
+        await Assert.That(byObjectId[s_shellOnlyEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
         // Managed table: added as skeleton only.
         await Assert.That(byObjectId[s_managedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
         // Managed attribute with an active layer: included.
@@ -83,11 +89,11 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
         await Assert.That(addedComponents.TrueForAll(request => !request.AddRequiredComponents)).IsTrue();
         await Assert.That(addedComponents.TrueForAll(request => request.SolutionUniqueName == TargetSolutionName)).IsTrue();
-        await Assert.That(addedComponents.Count).IsEqualTo(5);
+        await Assert.That(addedComponents.Count).IsEqualTo(6);
     }
 
     [Test]
-    public async Task ShouldMirrorSourceBehaviorWhenRawModeEnabled()
+    public async Task ShouldPreserveCompleteVsNonCompleteTableBehaviorWhenRawModeEnabled()
     {
         var addedComponents = new List<AddSolutionComponentRequest>();
         var context = CreateBuilder()
@@ -103,11 +109,13 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
             .Succeed();
 
         // Raw mode never filters by managed/active-layer state - every source component is copied.
-        await Assert.That(addedComponents.Count).IsEqualTo(7);
+        await Assert.That(addedComponents.Count).IsEqualTo(8);
 
         var byObjectId = addedComponents.ToDictionary(request => request.ComponentId);
         await Assert.That(byObjectId[s_unmanagedEntityMetadataId].DoNotIncludeSubcomponents).IsFalse();
         await Assert.That(byObjectId[s_managedEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
+        // The SDK request cannot preserve IncludeAsShellOnly, so raw mode maps it to non-complete.
+        await Assert.That(byObjectId[s_shellOnlyEntityMetadataId].DoNotIncludeSubcomponents).IsTrue();
     }
 
     [Test]
@@ -139,6 +147,52 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         // RootComponentBehavior must be added exactly once, using the most complete behavior seen.
         await Assert.That(addedComponents.Count).IsEqualTo(1);
         await Assert.That(addedComponents[0].DoNotIncludeSubcomponents).IsFalse();
+    }
+
+    [Test]
+    public async Task ShouldBatchLargeResolverQueries()
+    {
+        const int componentCount = 1201;
+        var connection = DispatchProxy.Create<IOrganizationServiceAsync2, QueryRecordingOrganizationService>();
+        var recorder = (QueryRecordingOrganizationService)(object)connection;
+
+        var activeLayerComponents = CreateComponents(componentCount, SolutionComponent.Options.ComponentType.Attribute);
+        var activeLayerDefinitions = new Dictionary<int, SolutionComponentDefinitionInfo>
+        {
+            [SolutionComponent.Options.ComponentType.Attribute] = new("Attribute", null)
+        };
+        await new ComponentActiveLayerResolver(connection).ResolveAsync(activeLayerComponents, activeLayerDefinitions, CancellationToken.None);
+
+        var managedComponents = CreateComponents(componentCount, SolutionComponent.Options.ComponentType.Workflow);
+        var managedDefinitions = new Dictionary<int, SolutionComponentDefinitionInfo>
+        {
+            [SolutionComponent.Options.ComponentType.Workflow] = new("Workflow", "workflow")
+        };
+        await new ComponentManagedStateResolver(connection).ResolveAsync(
+            managedComponents,
+            new Dictionary<Guid, EntityMetadata>(),
+            new Dictionary<Guid, AttributeMetadata>(),
+            managedDefinitions,
+            CancellationToken.None);
+
+        await Assert.That(recorder.InValueCounts.Count).IsEqualTo(12);
+        await Assert.That(recorder.InValueCounts.TrueForAll(static count => count <= 500)).IsTrue();
+        await Assert.That(recorder.PageNumbers.Count(static pageNumber => pageNumber == 1)).IsEqualTo(6);
+        await Assert.That(recorder.PageNumbers.Count(static pageNumber => pageNumber == 2)).IsEqualTo(6);
+    }
+
+    [Test]
+    public async Task ShouldSkipFilteringLookupsWhenRawModeEnabled()
+    {
+        var connection = DispatchProxy.Create<IOrganizationServiceAsync2, QueryRecordingOrganizationService>();
+        var recorder = (QueryRecordingOrganizationService)(object)connection;
+        var context = await CopyComponentsContext.CreateAsync(connection, [Guid.NewGuid()], CancellationToken.None);
+
+        await context.BuildDecisionsAsync(connection, bestPractices: false, CancellationToken.None);
+
+        await Assert.That(recorder.ExecuteRequests).IsEqualTo(0);
+        await Assert.That(recorder.QueryEntities.TrueForAll(static entityName =>
+            entityName != MsdynComponentlayer.EntityLogicalName && entityName != "workflow")).IsTrue();
     }
 
     [Test]
@@ -412,6 +466,67 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
             .WithData(_ => PrepareData(targetIsManaged));
     }
 
+    private static SolutionComponent[] CreateComponents(int count, int componentType) =>
+        Enumerable.Range(0, count)
+            .Select(_ => new SolutionComponent(Guid.NewGuid())
+            {
+                [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(componentType),
+                [SolutionComponent.LogicalNames.ObjectId] = Guid.NewGuid()
+            })
+            .ToArray();
+
+    public class QueryRecordingOrganizationService : DispatchProxy
+    {
+        public List<int> InValueCounts { get; } = [];
+        public List<int> PageNumbers { get; } = [];
+        public List<string> QueryEntities { get; } = [];
+        public int ExecuteRequests { get; private set; }
+
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+        {
+            ArgumentNullException.ThrowIfNull(targetMethod);
+
+            return targetMethod.Name switch
+            {
+                nameof(IOrganizationServiceAsync2.RetrieveMultipleAsync) => RecordQuery(args),
+                nameof(IOrganizationServiceAsync2.ExecuteAsync) => RecordExecute(),
+                _ => throw new NotSupportedException($"Unexpected organization service method: {targetMethod.Name}")
+            };
+        }
+
+        private Task<EntityCollection> RecordQuery(object?[]? args)
+        {
+            var query = (QueryExpression)(args?[0] ?? throw new ArgumentException("Query is required", nameof(args)));
+            QueryEntities.Add(query.EntityName);
+            var inCondition = query.Criteria.Conditions.FirstOrDefault(static condition => condition.Operator == ConditionOperator.In);
+            if (inCondition is not null)
+            {
+                InValueCounts.Add(inCondition.Values.Count);
+            }
+
+            var pageNumber = query.PageInfo?.PageNumber ?? 1;
+            PageNumbers.Add(pageNumber);
+            return Task.FromResult(new EntityCollection
+            {
+                MoreRecords = inCondition is not null && pageNumber == 1,
+                PagingCookie = "next-page"
+            });
+        }
+
+        private Task<OrganizationResponse> RecordExecute()
+        {
+            ExecuteRequests++;
+            var metadata = new EntityMetadata { LogicalName = "workflow" };
+            metadata.SetSealedPropertyValue(nameof(EntityMetadata.PrimaryIdAttribute), "workflowid");
+            metadata.SetAttributeCollection([new AttributeMetadata { LogicalName = "ismanaged" }]);
+
+            return Task.FromResult<OrganizationResponse>(new RetrieveEntityResponse
+            {
+                Results = { ["EntityMetadata"] = metadata }
+            });
+        }
+    }
+
     private static EntityMetadata[] BuildEntityMetadata()
     {
         var activeAttribute = new AttributeMetadata { LogicalName = "dgt_active", MetadataId = s_activeAttributeMetadataId };
@@ -427,6 +542,9 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         managedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), true);
         managedEntity.SetAttributeCollection([activeAttribute, inactiveAttribute]);
 
+        var shellOnlyEntity = new EntityMetadata { LogicalName = "dgt_shell_only", MetadataId = s_shellOnlyEntityMetadataId };
+        shellOnlyEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);
+
         // Backing table for the standalone (record-based) Workflow componenttype scenario - only
         // needs an "ismanaged" attribute and a primary id so ComponentManagedStateResolver can query it.
         var isManagedColumn = new AttributeMetadata { LogicalName = "ismanaged" };
@@ -434,7 +552,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         workflowEntity.SetSealedPropertyValue(nameof(EntityMetadata.PrimaryIdAttribute), "workflowid");
         workflowEntity.SetAttributeCollection([isManagedColumn]);
 
-        return [unmanagedEntity, managedEntity, workflowEntity];
+        return [unmanagedEntity, managedEntity, shellOnlyEntity, workflowEntity];
     }
 
     private static IEnumerable<Entity> PrepareData(bool targetIsManaged)
@@ -476,6 +594,14 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
             [SolutionComponent.LogicalNames.ObjectId] = s_managedEntityMetadataId,
             [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
             [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.DoNotIncludeSubcomponents)
+        };
+
+        var shellOnlyEntityComponent = new SolutionComponent(Guid.NewGuid())
+        {
+            [SolutionComponent.LogicalNames.ComponentType] = new OptionSetValue(SolutionComponent.Options.ComponentType.Entity),
+            [SolutionComponent.LogicalNames.ObjectId] = s_shellOnlyEntityMetadataId,
+            [SolutionComponent.LogicalNames.SolutionId] = source.ToEntityReference(),
+            [SolutionComponent.LogicalNames.RootComponentBehavior] = new OptionSetValue(SolutionComponent.Options.RootComponentBehavior.IncludeAsShellOnly)
         };
 
         var activeAttributeComponent = new SolutionComponent(Guid.NewGuid())
@@ -544,7 +670,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         [
             target, source,
             .. definitions,
-            unmanagedEntityComponent, managedEntityComponent,
+            unmanagedEntityComponent, managedEntityComponent, shellOnlyEntityComponent,
             activeAttributeComponent, inactiveAttributeComponent,
             managedActiveWorkflowComponent, managedInactiveWorkflowComponent, unmanagedWorkflowComponent,
             .. workflowRecords,

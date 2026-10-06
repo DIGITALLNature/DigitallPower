@@ -19,6 +19,7 @@ public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 conn
 {
     private const string ActiveLayerName = "Active";
     private const int PageSize = 5000;
+    private const int InClauseBatchSize = 500;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
         IReadOnlyCollection<SolutionComponent> components,
@@ -55,32 +56,35 @@ public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 conn
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            var query = new QueryExpression(MsdynComponentlayer.EntityLogicalName)
-            {
-                NoLock = true,
-                ColumnSet = new ColumnSet(
-                    MsdynComponentlayer.LogicalNames.MsdynComponentid,
-                    MsdynComponentlayer.LogicalNames.MsdynSolutionname,
-                    MsdynComponentlayer.LogicalNames.MsdynOrder)
-            };
-            query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname, ConditionOperator.Equal, group.Key);
-            query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynComponentid, ConditionOperator.In, componentIds.Cast<object>().ToArray());
-            query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
-            query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
             var layers = new List<MsdynComponentlayer>();
-            bool moreRecords;
-            do
+            foreach (var componentIdBatch in componentIds.Chunk(InClauseBatchSize))
             {
-                var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
-                layers.AddRange(page.Entities.Select(static entity => entity.ToEntity<MsdynComponentlayer>()));
-                moreRecords = page.MoreRecords;
-                if (moreRecords)
+                var query = new QueryExpression(MsdynComponentlayer.EntityLogicalName)
                 {
-                    query.PageInfo.PageNumber++;
-                    query.PageInfo.PagingCookie = page.PagingCookie;
-                }
-            } while (moreRecords);
+                    NoLock = true,
+                    ColumnSet = new ColumnSet(
+                        MsdynComponentlayer.LogicalNames.MsdynComponentid,
+                        MsdynComponentlayer.LogicalNames.MsdynSolutionname,
+                        MsdynComponentlayer.LogicalNames.MsdynOrder)
+                };
+                query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname, ConditionOperator.Equal, group.Key);
+                query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynComponentid, ConditionOperator.In, componentIdBatch);
+                query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
+                query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
+
+                bool moreRecords;
+                do
+                {
+                    var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
+                    layers.AddRange(page.Entities.Select(static entity => entity.ToEntity<MsdynComponentlayer>()));
+                    moreRecords = page.MoreRecords;
+                    if (moreRecords)
+                    {
+                        query.PageInfo.PageNumber++;
+                        query.PageInfo.PagingCookie = page.PagingCookie;
+                    }
+                } while (moreRecords);
+            }
 
             var topLayerByComponentId = layers
                 .Where(static layer => layer.MsdynComponentid != null)

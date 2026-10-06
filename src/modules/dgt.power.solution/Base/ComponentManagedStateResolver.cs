@@ -24,6 +24,7 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
     // Bounds concurrent RetrieveEntityRequest calls while resolving distinct backing tables.
     private const int MaxConcurrentEntityMetadataRequests = 8;
     private const int PageSize = 5000;
+    private const int InClauseBatchSize = 500;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
         IReadOnlyCollection<SolutionComponent> components,
@@ -118,27 +119,30 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
             return objectIds.ToDictionary(static id => id, static _ => false);
         }
 
-        var query = new QueryExpression(definition.PrimaryEntityName)
-        {
-            NoLock = true,
-            ColumnSet = new ColumnSet(backingEntity.PrimaryIdAttribute, "ismanaged")
-        };
-        query.Criteria.AddCondition(backingEntity.PrimaryIdAttribute, ConditionOperator.In, objectIds.Cast<object>().ToArray());
-        query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
         var rows = new List<Entity>();
-        bool moreRecords;
-        do
+        foreach (var objectIdBatch in objectIds.Chunk(InClauseBatchSize))
         {
-            var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
-            rows.AddRange(page.Entities);
-            moreRecords = page.MoreRecords;
-            if (moreRecords)
+            var query = new QueryExpression(definition.PrimaryEntityName)
             {
-                query.PageInfo.PageNumber++;
-                query.PageInfo.PagingCookie = page.PagingCookie;
-            }
-        } while (moreRecords);
+                NoLock = true,
+                ColumnSet = new ColumnSet(backingEntity.PrimaryIdAttribute, "ismanaged")
+            };
+            query.Criteria.AddCondition(backingEntity.PrimaryIdAttribute, ConditionOperator.In, objectIdBatch.Select(static objectId => (object)objectId).ToArray());
+            query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
+
+            bool moreRecords;
+            do
+            {
+                var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
+                rows.AddRange(page.Entities);
+                moreRecords = page.MoreRecords;
+                if (moreRecords)
+                {
+                    query.PageInfo.PageNumber++;
+                    query.PageInfo.PagingCookie = page.PagingCookie;
+                }
+            } while (moreRecords);
+        }
 
         var managedById = rows.ToDictionary(static entity => entity.Id, static entity => entity.GetAttributeValue<bool>("ismanaged"));
 

@@ -15,9 +15,10 @@ dgtp solution copy-components <Target> --source <Sol1,Sol2> [--dry-run] [--raw] 
 - `--source`/`-s` (required, comma-separated) - one or more source solutions. Multiple sources are
   inherent to this feature (unlike `lint`'s dropped multi-solution mode).
 - `--dry-run` - renders the plan table, never calls `AddSolutionComponentRequest`.
-- `--raw` - disables best-practice normalization (mirrors the source's own `RootComponentBehavior`,
-  skips the managed/active-layer filter). Best-practice mode is the **default** (opt-out design,
-  confirmed by the user) - not opt-in.
+- `--raw` - disables best-practice normalization and skips the managed/active-layer filter. For
+  Entity roots it preserves only complete vs. non-complete behavior; `IncludeAsShellOnly` maps to
+  non-complete because `AddSolutionComponentRequest` exposes only a boolean. Best-practice mode is
+  the **default** (opt-out design, confirmed by the user) - not opt-in.
 - During execution, a Spectre spinner reports the component type, object ID, and current position
   while each included component is added to the target.
 
@@ -96,6 +97,8 @@ Broadened during design Q&A from "tables only" to **all componenttypes** (user's
   - `solutioncomponentdefinition` is queried unconditionally (single small query, no per-type
     filter) for both `name` (matches `msdyn_componentlayer.msdyn_solutioncomponentname`) and
     `primaryentityname` (backing table) - see `SolutionComponentDefinitionInfo`.
+- Managed-state and active-layer queries split component IDs into batches of 500 and page each batch
+  through all `MoreRecords`/`PagingCookie` results before classifying components.
 
 Multiple sources containing the same component (by componenttype+objectid) are deduped; on
 conflicting `RootComponentBehavior` (relevant for `--raw` only) the most complete one wins.
