@@ -68,7 +68,10 @@ public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 conn
                         MsdynComponentlayer.LogicalNames.MsdynOrder)
                 };
                 query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynSolutioncomponentname, ConditionOperator.Equal, group.Key);
-                query.Criteria.AddCondition(MsdynComponentlayer.LogicalNames.MsdynComponentid, ConditionOperator.In, componentIdBatch);
+                query.Criteria.AddCondition(
+                    MsdynComponentlayer.LogicalNames.MsdynComponentid,
+                    ConditionOperator.In,
+                    componentIdBatch.Select(static componentId => (object)componentId).ToArray());
                 query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
                 query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
 

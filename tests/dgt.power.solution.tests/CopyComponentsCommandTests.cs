@@ -153,8 +153,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
     public async Task ShouldBatchLargeResolverQueries()
     {
         const int componentCount = 1201;
-        var connection = DispatchProxy.Create<IOrganizationServiceAsync2, QueryRecordingOrganizationService>();
-        var recorder = (QueryRecordingOrganizationService)(object)connection;
+        var (connection, recorder) = QueryRecordingOrganizationService.CreateConnection();
 
         var activeLayerComponents = CreateComponents(componentCount, SolutionComponent.Options.ComponentType.Attribute);
         var activeLayerDefinitions = new Dictionary<int, SolutionComponentDefinitionInfo>
@@ -184,8 +183,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
     [Test]
     public async Task ShouldSkipFilteringLookupsWhenRawModeEnabled()
     {
-        var connection = DispatchProxy.Create<IOrganizationServiceAsync2, QueryRecordingOrganizationService>();
-        var recorder = (QueryRecordingOrganizationService)(object)connection;
+        var (connection, recorder) = QueryRecordingOrganizationService.CreateConnection();
         var context = await CopyComponentsContext.CreateAsync(connection, [Guid.NewGuid()], CancellationToken.None);
 
         await context.BuildDecisionsAsync(connection, bestPractices: false, CancellationToken.None);
@@ -482,7 +480,15 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
         public List<string> QueryEntities { get; } = [];
         public int ExecuteRequests { get; private set; }
 
-        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+        public static (IOrganizationServiceAsync2 Connection, QueryRecordingOrganizationService Recorder) CreateConnection()
+        {
+            var connection = DispatchProxy.Create<IOrganizationServiceAsync2, QueryRecordingOrganizationService>();
+            // ReSharper disable once SuspiciousTypeConversion.Global -- DispatchProxy returns a generated subtype of its proxy base.
+            var recorder = (QueryRecordingOrganizationService)connection;
+            return (connection, recorder);
+        }
+
+        protected override object Invoke(MethodInfo? targetMethod, object?[]? args)
         {
             ArgumentNullException.ThrowIfNull(targetMethod);
 
