@@ -1,3 +1,10 @@
+# [3.0.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2026-10-06)
+
+
+### Bug Fixes
+
+* **plugin:** provision custom data providers during plugin push ([#195](https://github.com/DIGITALLNature/DigitallPower/issues/195)) ([195341b](https://github.com/DIGITALLNature/DigitallPower/commit/195341b0cffe2b4ad13a88e6d68871a30369d0a0))
+
 # [3.0.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.6...v3.0.0-beta.7) (2026-10-06)
 
 
