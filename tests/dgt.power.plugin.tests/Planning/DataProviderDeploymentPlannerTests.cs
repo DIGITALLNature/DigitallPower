@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Local;
@@ -146,5 +146,20 @@ public class DataProviderDeploymentPlannerTests
             new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = typeId, [DataProviderOperation.Update] = typeId }));
         var result = await Plan(repository, [new LocalPluginType("Retrieve", "Retrieve", string.Empty, true, [])], replacedTypes: [new RemotePluginType(typeId, "Retrieve")]);
         await Assert.That(result.Single(deployment => deployment.Local is null).Handlers[DataProviderOperation.Update]).IsEqualTo("Retrieve");
+    }
+
+    [Test]
+    public async Task Build_SolutionWithoutProviderComponentType_SkipsProviderSolutionLink()
+    {
+        var calls = new List<int>();
+        var planner = new DataProviderDeploymentPlanner(new ProviderTestRepository { DataSource = Table() }, new SolutionComponentRepository(new FakeOrganizationServiceAsync()),
+            (type, _, _, _, _) =>
+            {
+                calls.Add(type);
+                return Task.FromResult<SolutionLink?>(null);
+            });
+        var plan = (await planner.BuildAsync([Handler()], [], [], "Sol", CancellationToken.None)).Single();
+        await Assert.That(plan.ProviderSolution).IsNull();
+        await Assert.That(calls).IsEquivalentTo([1]);
     }
 }

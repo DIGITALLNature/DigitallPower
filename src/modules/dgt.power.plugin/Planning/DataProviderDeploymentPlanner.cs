@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
@@ -70,13 +70,17 @@ internal sealed class DataProviderDeploymentPlanner(IEntityDataProviderRepositor
             SolutionLink? tableSolution = null;
             if (!string.IsNullOrWhiteSpace(solution))
             {
-                var componentType = await solutions.GetComponentTypeAsync(EntityDataProvider.EntityLogicalName, cancellationToken)
-                    ?? throw new InvalidOperationException("The target environment does not define a solution component type for entitydataprovider.");
-                providerSolution = await planSolution(componentType, remote?.Id, local.ProviderName, solution, cancellationToken);
-                if (providerSolution is not null)
+                // Some environments define no solution component type for entitydataprovider; the provider is then not added to the solution.
+                var componentType = await solutions.GetComponentTypeAsync(EntityDataProvider.EntityLogicalName, cancellationToken);
+                if (componentType is not null)
                 {
-                    providerSolution = providerSolution with { Resource = "Data provider" };
+                    providerSolution = await planSolution(componentType.Value, remote?.Id, local.ProviderName, solution, cancellationToken);
+                    if (providerSolution is not null)
+                    {
+                        providerSolution = providerSolution with { Resource = "Data provider" };
+                    }
                 }
+
                 tableSolution = await planSolution(1, dataSource?.MetadataId, local.DataSourceLogicalName, solution, cancellationToken);
             }
 
