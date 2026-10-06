@@ -17,7 +17,7 @@ public class CreateConnectionCommand(
     IAnsiConsole console)
     : AsyncCommand<CreateConnectionSettings>
 {
-    protected override Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
+    public override Task<int> ExecuteAsync(CommandContext context, CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
         return ExecuteCoreAsync(settings, cancellationToken);

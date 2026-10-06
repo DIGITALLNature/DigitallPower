@@ -17,7 +17,7 @@ public class CreateProfileCommand(
     IAnsiConsole console)
     : AsyncCommand<CreateProfileSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, CreateProfileSettings settings, CancellationToken cancellationToken)
     {
         Debug.Assert(settings != null, nameof(settings) + " != null");
 

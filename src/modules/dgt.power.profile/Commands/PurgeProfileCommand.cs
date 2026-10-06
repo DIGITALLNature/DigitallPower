@@ -12,7 +12,7 @@ namespace dgt.power.profile.Commands;
 
 public class PurgeProfileCommand(IProfileManager profileManager, IAnsiConsole console) : Command<ProfileSettings>
 {
-    protected override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, ProfileSettings settings, CancellationToken cancellationToken)
     {
         profileManager.Purge();
 

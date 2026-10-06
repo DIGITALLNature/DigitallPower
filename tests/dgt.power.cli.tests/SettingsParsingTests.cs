@@ -199,6 +199,35 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task CopyComponentsSettings_ParsesPositionalArgumentAndOptions()
+    {
+        var result = Parse<CopyComponentsSettings>(
+            "target_solution",
+            "-s", "source_a,source_b",
+            "--dry-run",
+            "--raw",
+            "--apps", "strip");
+
+        var settings = (CopyComponentsSettings)result.Settings!;
+
+        await Assert.That(settings.Target).IsEqualTo("target_solution");
+        await Assert.That(settings.Source).IsEqualTo("source_a,source_b");
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Raw).IsTrue();
+        await Assert.That(settings.Apps).IsEqualTo(AppHandling.Strip);
+
+        var allow = (CopyComponentsSettings)Parse<CopyComponentsSettings>("target_solution", "--source", "source_a", "--apps", "allow").Settings!;
+        await Assert.That(allow.Apps).IsEqualTo(AppHandling.Allow);
+
+        var defaults = Parse<CopyComponentsSettings>("target_solution", "--source", "source_a");
+        var defaultSettings = (CopyComponentsSettings)defaults.Settings!;
+        await Assert.That(defaultSettings.Source).IsEqualTo("source_a");
+        await Assert.That(defaultSettings.DryRun).IsFalse();
+        await Assert.That(defaultSettings.Raw).IsFalse();
+        await Assert.That(defaultSettings.Apps).IsEqualTo(AppHandling.Skip);
+    }
+
+    [Test]
     public async Task MaintenanceVerb_ParsesConfigAliasAndDefault()
     {
         var withAlias = Parse<MaintenanceVerb>("-c", "myconfig.json");

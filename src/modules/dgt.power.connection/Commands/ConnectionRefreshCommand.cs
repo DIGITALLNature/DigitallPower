@@ -21,7 +21,7 @@ namespace dgt.power.connection.Commands;
 public class ConnectionRefreshCommand(IProfileManager profileManager, IXrmConnection xrmConnection, IAnsiConsole console)
     : AsyncCommand<ConnectionSettings>
 {
-    protected override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, ConnectionSettings settings, CancellationToken cancellationToken)
     {
         try
         {

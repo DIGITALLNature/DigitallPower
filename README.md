@@ -41,7 +41,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
   - [analyze](#analyze--solution-analysis)
-  - [solution](#solution--single-solution-operations)
+  - [solution](#solution--solution-scoped-operations)
   - [maintenance](#maintenance--operational-tasks)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
@@ -64,7 +64,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
-| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution |
+| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage step configuration with `plugin step config set` |
@@ -271,14 +271,15 @@ All export commands accept `--filedir <path>` to control the output directory.
 dgtp export bulkdeletes --filedir ./out/bulkdeletes
 ```
 
-### `solution` — single-solution operations
+### `solution` — solution-scoped operations
 
-The `solution` branch is designed for commands that act on a single Dataverse solution. Today it hosts `version`, incrementing a solution's version number, and `lint`, a solution-quality check that is configured in JSON and executed against the live Dataverse metadata for the selected solution.
+The `solution` branch hosts commands that act on Dataverse solutions: `version` and `lint` each act on a single solution, while `copy-components` copies components from one or more source solutions into a target.
 
 | Command | Description |
 |---------|-------------|
 | `solution version <Solution> [--major\|--minor\|--build\|--revision]` | Increment a solution version (default: `--revision`) |
 | `solution lint <Solution> -c ./lint.config.json` | Run the enabled lint rules against the given solution |
+| `solution copy-components <Target> --source <Sol1,Sol2>` | Copy solution components from one or more source solutions into an unmanaged target solution |
 
 ```bash
 dgtp solution version sample_solution --minor
@@ -334,6 +335,45 @@ dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.
 
 # CI: only NEW findings (not in the baseline) fail the build
 dgtp solution lint sample_solution -c lint.config.json --baseline lint-baseline.sarif.json --fail-on Error
+```
+
+#### `copy-components` — copy solution components between solutions
+
+Copies the `solutioncomponent` rows of one or more source solutions into an unmanaged target solution, using the same `AddSolutionComponentRequest` Dataverse SDK message a maker's "Add existing" action uses under the hood.
+
+| Option | Description |
+|--------|-------------|
+| `-s, --source <Sol1,Sol2>` | Comma-separated unique names of the solutions to copy components from (required) |
+| `--dry-run` | Print the planned changes without adding any component to the target solution |
+| `--raw` | Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter |
+| `--apps <skip\|strip\|allow>` | How to handle model-driven apps (default `skip`), see below |
+
+Dataverse rejects `DoNotIncludeSubcomponents` on anything but tables, so a model-driven app cannot be added without Dataverse's own expansion. `--apps` controls the trade-off:
+
+| Mode | Behavior |
+|------|----------|
+| `skip` (default) | Apps are not copied, and neither are app-bound components (app settings, app module components and app elements), which are meaningless without their app. Skipped rows are shown in the plan |
+| `strip` | Apps and their app-bound components are copied, then every subcomponent Dataverse added on its own (not part of the plan, not already in the target) is removed again and listed in the output. Verify the app afterwards (e.g. `ValidateApp`) - removing a table or view the app references leaves it with missing dependencies |
+| `allow` | Apps and their app-bound components are copied and Dataverse adds whatever it considers part of the app |
+
+By default (best-practice mode, no `--raw`), the command avoids two common causes of solution bloat:
+
+- **Managed tables are never copied completely.** An unmanaged (first-party) table is always added with `RootComponentBehavior = IncludeSubcomponents` (complete); a managed (e.g. ISV-owned) table is added as a skeleton (`DoNotIncludeSubcomponents`) - only its own delta, not the whole table.
+- **A managed component (attribute, form, view, workflow, ...) is only copied if it has its own active customization layer** (its top `msdyn_componentlayer` row is the synthetic `Active` layer). A managed component with no active layer is redundant - the managed baseline the target environment already has installed provides it - and is skipped.
+- **`AddRequiredComponents` is always `false`.** This keeps Dataverse from adding the "required" dependencies of any component - only the components explicitly present in the source solution(s) are added (model-driven apps are the exception, see `--apps`).
+
+```bash
+# Preview what would be copied, without changing the target solution
+dgtp solution copy-components target_solution --source dev_solution --dry-run
+
+# Copy with best-practice filtering (default)
+dgtp solution copy-components target_solution --source dev_solution_a,dev_solution_b
+
+# Mirror every source component as-is (no managed/active-layer filtering)
+dgtp solution copy-components target_solution --source dev_solution --raw
+
+# Also copy model-driven apps, removing the subcomponents Dataverse adds on its own
+dgtp solution copy-components target_solution --source dev_solution --apps strip
 ```
 
 ### `import` — Import Dataverse artifacts

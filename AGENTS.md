@@ -56,7 +56,7 @@ Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the m
 
 ### Workflow
 
-1. **The user provides the Qodana SARIF file** from the CI run. Do not attempt to download it yourself.
+1. **Obtain Qodana SARIF** from the user or CI; downloading the relevant CI artifact is always allowed.
 
 2. **Identify new-only findings** by filtering on `baselineState == "new"` in the SARIF — Qodana sets this authoritatively against the repo baseline. Do not diff fingerprints manually.
 

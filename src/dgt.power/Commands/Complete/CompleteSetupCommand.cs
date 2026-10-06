@@ -14,7 +14,7 @@ public class CompleteSetupCommand(IAnsiConsole console, ShellShimInstaller insta
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
         ".dotnet-suggest-registration.json");
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, CompleteSetupSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, CompleteSetupSettings settings, CancellationToken cancellationToken)
     {
         var processPath = Environment.ProcessPath;
         if (processPath is null)

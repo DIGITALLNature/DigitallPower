@@ -31,7 +31,7 @@ public class ExportCarrierInfo(
 
     public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4UCarrierEntityName}' or  '{DgtCarrierEntityName}' isn't installed in the current environment.";
 
-    protected override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
+    public override ValidationResult Validate(CommandContext context, CarrierInfoSettings settings)
     {
         var isSuccessfulDgt = Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
         {

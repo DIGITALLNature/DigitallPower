@@ -7,6 +7,7 @@ public interface ILintRule
 {
     string Id { get; }
 
+    // ReSharper disable once UnusedMemberInSuper.Global -- public rule metadata exposed through LintRuleCatalog.All
     LintSeverity DefaultSeverity { get; }
 
     bool IsEnabledByDefault { get; }
