@@ -23,7 +23,7 @@ public sealed class CopyComponentsContext
     // Not part of the generated SolutionComponent.Options.ComponentType enum.
     public const int AppModuleComponentType = 80;
 
-    private static readonly IReadOnlyDictionary<(int, Guid), bool> EmptyLookup = new Dictionary<(int, Guid), bool>();
+    private static readonly IReadOnlyDictionary<(int, Guid), bool> s_emptyLookup = new Dictionary<(int, Guid), bool>();
 
     private CopyComponentsContext(IReadOnlyList<SolutionComponent> components)
     {
@@ -62,7 +62,7 @@ public sealed class CopyComponentsContext
 
         if (!bestPractices)
         {
-            return BuildAllDecisions(bestPractices: false, EmptyLookup, EmptyLookup, definitionsByType);
+            return BuildAllDecisions(bestPractices: false, s_emptyLookup, s_emptyLookup, definitionsByType);
         }
 
         var entityObjectIds = Components
@@ -98,7 +98,7 @@ public sealed class CopyComponentsContext
         return BuildAllDecisions(bestPractices: true, managedByComponent, hasActiveLayerByComponent, definitionsByType);
     }
 
-    private IReadOnlyList<ComponentCopyDecision> BuildAllDecisions(
+    private List<ComponentCopyDecision> BuildAllDecisions(
         bool bestPractices,
         IReadOnlyDictionary<(int, Guid), bool> managedByComponent,
         IReadOnlyDictionary<(int, Guid), bool> hasActiveLayerByComponent,

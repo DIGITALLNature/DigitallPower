@@ -24,6 +24,7 @@ public class WebResourcePushSettings : WebResourceSettings
 
     [CommandOption("--mapping-file")]
     [Description("JSON file containing directory-relative source-to-Dataverse name mappings")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection
     public string? MappingFile { get; init; }
 
     [CommandOption("--name")]
@@ -40,6 +41,7 @@ public class WebResourcePushSettings : WebResourceSettings
 
     [CommandOption("--confirm")]
     [Description("Prompt for confirmation after rendering the deployment plan")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection
     public bool Confirm { get; init; }
 
     public override ValidationResult Validate()

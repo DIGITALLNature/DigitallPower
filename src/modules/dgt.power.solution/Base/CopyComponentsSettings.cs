@@ -22,7 +22,8 @@ public class CopyComponentsSettings : SolutionSettings
     public bool DryRun { get; init; }
 
     [CommandOption("--raw")]
-    [Description("Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter")]
+    [Description("Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior " +
+        "(shell-only sources are treated as non-complete) and skip the managed-active-layer filter")]
     public bool Raw { get; init; }
 
     [CommandOption("--apps <MODE>")]

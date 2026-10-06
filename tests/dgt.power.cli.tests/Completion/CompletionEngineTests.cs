@@ -302,7 +302,7 @@ public class CompletionEngineTests
         public bool IsHidden => isHidden;
         public IReadOnlyList<ICommandParameter> Parameters { get; } =
         [
-            .. (options ?? []).Cast<ICommandParameter>(),
+            .. options ?? [],
             .. positionalArgs ?? []
         ];
         public ICommandInfo? Parent => null;
