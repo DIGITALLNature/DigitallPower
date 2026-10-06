@@ -21,18 +21,23 @@ public sealed class PersistentUserTokenCache(StorageSecurityNotice storageSecuri
     private static readonly KeyValuePair<string, string> s_linuxKeyringAttribute2 =
         new(KeychainService, "1.0.0.0");
 
-    public async Task<bool> RemoveAccountAsync(
+    public Task<bool> RemoveAccountAsync(
         AuthenticationRecord authenticationRecord,
         bool allowUnencryptedStorage,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(authenticationRecord);
+        return RemoveAccountCoreAsync(authenticationRecord, allowUnencryptedStorage, cancellationToken);
+    }
+
+    private async Task<bool> RemoveAccountCoreAsync(AuthenticationRecord authenticationRecord, bool allowUnencryptedStorage, CancellationToken cancellationToken)
+    {
         cancellationToken.ThrowIfCancellationRequested();
 
         var cacheHelper = await CreateCacheHelperAsync(allowUnencryptedStorage);
         var application = PublicClientApplicationBuilder
             .Create(authenticationRecord.ClientId)
-            .WithAuthority(authenticationRecord.Authority)
+            .WithAuthority(new Uri(authenticationRecord.Authority))
             .Build();
         cacheHelper.RegisterCache(application.UserTokenCache);
 

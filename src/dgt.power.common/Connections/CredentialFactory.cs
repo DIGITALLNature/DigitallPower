@@ -38,28 +38,25 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
         };
     }
 
-    public async Task<JsonElement> AuthenticateAsync(
+    public Task<JsonElement> AuthenticateAsync(
         ConnectionDefinition connection,
         bool allowUnencryptedStorage,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        var context = new TokenRequestContext([GetScope(connection.Url)]);
-        AuthenticationRecord record;
+        return AuthenticateCoreAsync(connection, allowUnencryptedStorage, cancellationToken);
+    }
 
-        switch (connection)
+    private async Task<JsonElement> AuthenticateCoreAsync(ConnectionDefinition connection, bool allowUnencryptedStorage, CancellationToken cancellationToken)
+    {
+        var context = new TokenRequestContext([GetScope(connection.Url)]);
+
+        var record = connection switch
         {
-            case InteractiveConnection interactive:
-                record = await CreateInteractive(interactive, nonInteractive: false, allowUnencryptedStorage)
-                    .AuthenticateAsync(context, cancellationToken);
-                break;
-            case DeviceCodeConnection deviceCode:
-                record = await CreateDeviceCode(deviceCode, nonInteractive: false, allowUnencryptedStorage)
-                    .AuthenticateAsync(context, cancellationToken);
-                break;
-            default:
-                throw new ArgumentException("Only user connections can be interactively authenticated.", nameof(connection));
-        }
+            InteractiveConnection interactive => await CreateInteractive(interactive, nonInteractive: false, allowUnencryptedStorage).AuthenticateAsync(context, cancellationToken),
+            DeviceCodeConnection deviceCode => await CreateDeviceCode(deviceCode, nonInteractive: false, allowUnencryptedStorage).AuthenticateAsync(context, cancellationToken),
+            _ => throw new ArgumentException("Only user connections can be interactively authenticated.", nameof(connection))
+        };
 
         using var stream = new MemoryStream();
         await record.SerializeAsync(stream, cancellationToken);
@@ -75,7 +72,9 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
         {
             ClientId = DataverseClientId,
             TenantId = connection.TenantId,
+#pragma warning disable S1075
             RedirectUri = new Uri("http://localhost"),
+#pragma warning restore S1075
             AuthenticationRecord = DeserializeAuthenticationRecord(connection.AuthenticationRecord),
             DisableAutomaticAuthentication = nonInteractive,
             TokenCachePersistenceOptions = CreateTokenCacheOptions(allowUnencryptedStorage)
@@ -156,7 +155,7 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
             UnsafeAllowUnencryptedStorage = allowUnencryptedStorage
         };
 
-    public static AuthenticationRecord? DeserializeAuthenticationRecord(JsonElement? record)
+    private static AuthenticationRecord? DeserializeAuthenticationRecord(JsonElement? record)
     {
         if (record is not { ValueKind: JsonValueKind.Object } jsonRecord)
         {

@@ -94,7 +94,7 @@ public sealed class SecretStore : ISecretStore
         var storage = _storage.Value;
         if (values.Count == 0)
         {
-            storage.Clear(ignoreExceptions: false);
+            storage.Clear();
             return;
         }
 
