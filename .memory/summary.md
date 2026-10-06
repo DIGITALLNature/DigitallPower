@@ -129,6 +129,16 @@ src/
   `Extensions/Dataverse/RoutingRuleItem.MsdynRouteto.cs` partial: routing import/export still uses it.
   Its setters follow generated `SetAttributeValue` behavior without property-notification hooks.
 
+### Dependency ownership
+- Direct package references declare API usage; repeated references do not duplicate
+  runtime packages. Common security overrides flow through project references,
+  but private build-tool packages do not.
+- Module test dependencies can upgrade runtime packages relative to the CLI.
+  Check resolved graphs, not just manifest versions, when consolidating references.
+  Dependency policy and alignment should be reviewed as a dedicated solution-wide
+  change rather than piecemeal feature cleanup.
+  See [dependency ownership notes](research-dependency-ownership.md).
+
 ## Key Decisions
 
 | Decision | File | Summary |
@@ -264,6 +274,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 | File | Type | Content |
 |------|------|---------|
+| `research-dependency-ownership.md` | research | Direct versus transitive dependencies, private build tools, test/runtime version differences, and cleanup boundaries |
 | `decision-config-v2-redesign.md` | decision | V2 CodeGenerationConfig: typed hierarchy, Requests unification, strategy pattern, generator architecture |
 | `decision-async-suffix-s4261.md` | decision | Async suffix convention; test exemption rationale |
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
