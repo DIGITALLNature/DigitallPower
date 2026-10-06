@@ -88,7 +88,10 @@ src/
   there, and cover their paths/settings in the CLI tests.
 
 ### Plugin custom data provider registrations
-- `plugin push` groups property-based custom data-provider attributes by data-source schema name,
+- `plugin push` reads the required `(dataSourceSchemaName, eventRegistration, providerName)`
+  constructor arguments on every custom data-provider declaration and groups by data-source schema name.
+  Required-value validation rejects old constructors, including in already-built assemblies, with
+  a concise required-values error, without a constructor-count guard or an `Unspecified` event sentinel. It
   provisions/validates the specialized configuration table, and assigns handler GUIDs on
   `EntityDataProvider` instead of SDK steps. Package handlers are registered before provider writes;
   upgrades preserve references before cleanup. Provider/table schema solution membership is managed.
@@ -142,7 +145,7 @@ src/
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
 | Plugin plan output and progress | `research-plugin-plan-output-adaptation.md` | Solution membership is rendered below the plan; execution reports each completed operation, including partial progress |
 | Plugin package content idempotence | `research-plugin-package-content-idempotence.md` | Existing plugin packages compare SHA-256 hashes of Dataverse `package` file-column bytes and local package bytes; version differences alone are unchanged |
-| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` requires `Digitall.Plugins.Registration` 3.0.0+ for the property-based provider contract; historical namespaces require dgtp 2.x or migration |
+| Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` requires `Digitall.Plugins.Registration` 3.0.0+ for the three-argument provider contract; historical namespaces require dgtp 2.x or migration |
 | Webresource publish strategy | `research-webresource-push-v2-review.md` | Publish each changed resource separately after all individual creates/updates and membership changes; defer publish batching until deployment writes can be batched coherently |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
 | Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |

@@ -154,21 +154,17 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
     private static LocalDataProviderRegistration BuildDataProviderRegistration(Type pluginType, CustomAttributeData customAttribute)
     {
-        if (customAttribute.ConstructorArguments.Count != 0)
-        {
-            throw new AssemblyException($"Data provider registration on '{pluginType.FullName}' uses the removed entity-name constructor. " +
-                                        "Rebuild with named DataSourceSchemaName, Event, and ProviderName properties identifying the provider's configuration table, not a virtual table.");
-        }
-
-        var schemaName = GetValue<string>(customAttribute, "DataSourceSchemaName");
-        var eventValue = GetValue<int?>(customAttribute, "Event") ?? -1;
-        if (string.IsNullOrWhiteSpace(schemaName) || !Enum.IsDefined((DataProviderOperation)eventValue))
+        var schemaName = GetValue<string>(customAttribute, "dataSourceSchemaName");
+        var eventValue = GetValue<int?>(customAttribute, "eventRegistration");
+        var providerName = GetValue<string>(customAttribute, "providerName");
+        if (string.IsNullOrWhiteSpace(schemaName) || string.IsNullOrWhiteSpace(providerName) ||
+            !eventValue.HasValue || !Enum.IsDefined((DataProviderOperation)eventValue.Value))
         {
             throw new AssemblyException($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
-                                        "and an explicit supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
+                                        "and ProviderName, and a supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
         }
 
-        return new LocalDataProviderRegistration(schemaName, (DataProviderOperation)eventValue, GetValue<string>(customAttribute, "ProviderName"),
+        return new LocalDataProviderRegistration(schemaName, (DataProviderOperation)eventValue.Value, providerName,
             GetValue<string>(customAttribute, "DataSourceDisplayName"), GetValue<string>(customAttribute, "DataSourcePluralName"), GetValue<string>(customAttribute, "Description"));
     }
 

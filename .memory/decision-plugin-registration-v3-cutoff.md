@@ -16,8 +16,9 @@ The current registration contract includes Custom API, Custom Data Provider, and
 attributes that are not consistently available in older packages. Retaining namespace aliases would
 imply compatibility that cannot be guaranteed and would preserve a growing legacy matrix.
 
-Registration-library 3.0.0 introduces the breaking property-based custom data-provider contract:
-`DataSourceSchemaName` identifies the configuration table, replacing the entity-name constructor.
+Registration-library 3.0.0 introduces the breaking three-argument custom data-provider contract:
+`(dataSourceSchemaName, eventRegistration, providerName)` identifies the configuration table and
+requires the event and provider name on every declaration, replacing the entity-name constructor.
 The minimum supported package version must cover this contract, not just the namespace change.
 
 `plugin push` still has no compile-time reference to the registration package. It inspects supported

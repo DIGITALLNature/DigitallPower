@@ -700,7 +700,9 @@ with manually maintained plugin registrations are not supported.
 **Experimental:** Custom data-provider deployment is still experimental. Validate it in a
 non-production environment before production rollout.
 
-Requires `Digitall.Plugins.Registration` 3.0.0 or later. See the
+Requires `Digitall.Plugins.Registration` 3.0.0 or later and its three-argument constructor:
+data-source configuration-table schema name, operation, and provider name on every declaration.
+Rebuild assemblies using the old two-argument constructor before deployment. See the
 [registration library](https://github.com/DIGITALLNature/DigitallRegistrationPower) for attribute
 usage and examples.
 

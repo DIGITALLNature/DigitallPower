@@ -24,22 +24,44 @@ public class AssemblyReflectionReaderTests
     [LegacyPluginRegistration]
     private sealed class LegacyRegistrationPlugin;
 
-    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source", Event = DataProviderEvent.Retrieve, ProviderName = "Provider")]
-    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source", Event = DataProviderEvent.RetrieveMultiple)]
+    [CustomDataProviderRegistration("dgt_Source", DataProviderEvent.Retrieve, "Provider",
+        DataSourceDisplayName = "Source", DataSourcePluralName = "Sources", Description = "Provider description")]
+    [CustomDataProviderRegistration("dgt_Source", DataProviderEvent.RetrieveMultiple, "Provider")]
     private sealed class ProviderPlugin;
 
     [CustomDataProviderRegistration("dgt_virtualtable", 0)]
-    private sealed class OldProviderPlugin;
+    internal sealed class OldProviderPlugin;
 
-    [CustomDataProviderRegistration(DataSourceSchemaName = "dgt_Source")]
-    private sealed class UnspecifiedProviderPlugin;
+    [CustomDataProviderRegistration]
+    internal sealed class ParameterlessProviderPlugin;
+
+    [CustomDataProviderRegistration("dgt_Source", (DataProviderEvent)(-1), "Provider")]
+    internal sealed class NegativeEventProviderPlugin;
+
+    [CustomDataProviderRegistration("dgt_Source", (DataProviderEvent)99, "Provider")]
+    internal sealed class UnknownEventProviderPlugin;
+
+    [CustomDataProviderRegistration(" ", DataProviderEvent.Retrieve, "Provider")]
+    internal sealed class EmptySchemaProviderPlugin;
+
+    [CustomDataProviderRegistration("dgt_Source", DataProviderEvent.Retrieve, " ")]
+    internal sealed class EmptyNameProviderPlugin;
+
+    [CustomDataProviderRegistration("dgt_Source", DataProviderEvent.Retrieve, null!)]
+    internal sealed class NullNameProviderPlugin;
 
     [Test]
-    public async Task BuildPluginType_NamedProviderProperties_ProducesHandlersNotSteps()
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task BuildPluginType_ProviderConstructor_ProducesHandlersNotSteps(bool metadataOnly)
     {
         using var console = new TestConsole();
+        using var context = MetadataLoadContextFactory.Create(Path.GetDirectoryName(typeof(ProviderPlugin).Assembly.Location)!);
+        var type = metadataOnly
+            ? context.LoadFromAssemblyPath(typeof(ProviderPlugin).Assembly.Location).GetType(typeof(ProviderPlugin).FullName!)!
+            : typeof(ProviderPlugin);
         var reader = new AssemblyReflectionReader(console);
-        var plugin = reader.BuildPluginType(typeof(ProviderPlugin));
+        var plugin = reader.BuildPluginType(type);
         using (Assert.Multiple())
         {
             await Assert.That(plugin.Steps).IsEmpty();
@@ -47,32 +69,44 @@ public class AssemblyReflectionReaderTests
             await Assert.That(plugin.DataProviders[0].Event).IsEqualTo(DataProviderOperation.Retrieve);
             await Assert.That(plugin.DataProviders[1].Event).IsEqualTo(DataProviderOperation.RetrieveMultiple);
             await Assert.That(plugin.DataProviders[0].ProviderName).IsEqualTo("Provider");
-            await Assert.That(plugin.DataProviders[1].ProviderName).IsNull();
+            await Assert.That(plugin.DataProviders[1].ProviderName).IsEqualTo("Provider");
+            await Assert.That(plugin.DataProviders[0].DataSourceSchemaName).IsEqualTo("dgt_Source");
+            await Assert.That(plugin.DataProviders[0].DataSourceDisplayName).IsEqualTo("Source");
+            await Assert.That(plugin.DataProviders[0].DataSourcePluralName).IsEqualTo("Sources");
+            await Assert.That(plugin.DataProviders[0].Description).IsEqualTo("Provider description");
+            await Assert.That(plugin.DataProviders[1].DataSourceDisplayName).IsNull();
+            await Assert.That(plugin.DataProviders[1].DataSourcePluralName).IsNull();
+            await Assert.That(plugin.DataProviders[1].Description).IsNull();
         }
     }
 
     [Test]
-    public async Task BuildPluginType_MetadataOnlyProviderProperties_ProducesHandlers()
+    [Arguments(typeof(OldProviderPlugin), false)]
+    [Arguments(typeof(OldProviderPlugin), true)]
+    [Arguments(typeof(ParameterlessProviderPlugin), false)]
+    [Arguments(typeof(ParameterlessProviderPlugin), true)]
+    public async Task BuildPluginType_ObsoleteProviderConstructor_ThrowsRequiredValuesError(Type pluginType, bool metadataOnly)
     {
         using var console = new TestConsole();
-        using var context = MetadataLoadContextFactory.Create(Path.GetDirectoryName(typeof(ProviderPlugin).Assembly.Location)!);
-        var type = context.LoadFromAssemblyPath(typeof(ProviderPlugin).Assembly.Location).GetType(typeof(ProviderPlugin).FullName!)!;
-        var plugin = new AssemblyReflectionReader(console).BuildPluginType(type);
-        await Assert.That(plugin.DataProviders.Select(provider => provider.Event).ToArray()).IsEquivalentTo(new[] { DataProviderOperation.Retrieve, DataProviderOperation.RetrieveMultiple });
+        using var context = MetadataLoadContextFactory.Create(Path.GetDirectoryName(pluginType.Assembly.Location)!);
+        var type = metadataOnly
+            ? context.LoadFromAssemblyPath(pluginType.Assembly.Location).GetType(pluginType.FullName!)!
+            : pluginType;
+        var exception = await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(type)).ThrowsExactly<AssemblyException>();
+        await Assert.That(exception!.Message).IsEqualTo($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
+                                                      "and ProviderName, and a supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
     }
 
     [Test]
-    public async Task BuildPluginType_LegacyProviderConstructor_ThrowsMigrationError()
+    [Arguments(typeof(NegativeEventProviderPlugin))]
+    [Arguments(typeof(UnknownEventProviderPlugin))]
+    [Arguments(typeof(EmptySchemaProviderPlugin))]
+    [Arguments(typeof(EmptyNameProviderPlugin))]
+    [Arguments(typeof(NullNameProviderPlugin))]
+    public async Task BuildPluginType_InvalidProviderArguments_Throws(Type pluginType)
     {
         using var console = new TestConsole();
-        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(typeof(OldProviderPlugin))).ThrowsExactly<AssemblyException>();
-    }
-
-    [Test]
-    public async Task BuildPluginType_UnspecifiedProviderEvent_Throws()
-    {
-        using var console = new TestConsole();
-        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(typeof(UnspecifiedProviderPlugin))).ThrowsExactly<AssemblyException>();
+        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(pluginType)).ThrowsExactly<AssemblyException>();
     }
 
     [Test]

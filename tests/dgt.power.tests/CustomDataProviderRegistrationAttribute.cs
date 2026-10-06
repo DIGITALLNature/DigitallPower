@@ -8,6 +8,14 @@ public sealed class CustomDataProviderRegistrationAttribute : Attribute
 {
     public CustomDataProviderRegistrationAttribute() { }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1019", Justification = "Parameter and property names mirror the registration library's reflection contract.")]
+    public CustomDataProviderRegistrationAttribute(string dataSourceSchemaName, DataProviderEvent eventRegistration, string providerName)
+    {
+        DataSourceSchemaName = dataSourceSchemaName;
+        Event = eventRegistration;
+        ProviderName = providerName;
+    }
+
     public CustomDataProviderRegistrationAttribute(string entityName, int eventRegistration)
     {
         EntityName = entityName;
@@ -16,9 +24,9 @@ public sealed class CustomDataProviderRegistrationAttribute : Attribute
 
     public string? EntityName { get; }
     public int EventRegistration { get; }
-    public string? DataSourceSchemaName { get; set; }
-    public DataProviderEvent Event { get; set; } = DataProviderEvent.Unspecified;
-    public string? ProviderName { get; set; }
+    public string? DataSourceSchemaName { get; }
+    public DataProviderEvent Event { get; }
+    public string? ProviderName { get; }
     public string? DataSourceDisplayName { get; set; }
     public string? DataSourcePluralName { get; set; }
     public string? Description { get; set; }

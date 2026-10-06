@@ -2,12 +2,19 @@
 
 ## Registration contract and identity
 
-`plugin push` reads property-based `CustomDataProviderRegistrationAttribute` declarations in
+`plugin push` reads three-argument `CustomDataProviderRegistrationAttribute` declarations in
 `Digitall.Plugins.Registration` through `CustomAttributeData`, without referencing the registration
 package at runtime. The supported registration-library minimum is 3.0.0, which introduces this
-breaking contract. `DataSourceSchemaName` and an explicit `Event` are required on every declaration;
-`ProviderName` must be supplied once per provider in the deployment target. The old entity-name
-constructor is rejected with migration guidance.
+breaking contract. The constructor requires `dataSourceSchemaName`, `eventRegistration`, and
+`providerName` on every declaration; optional metadata remains in named properties.
+The reader resolves these exact constructor parameter names through `CustomAttributeData`, not
+attribute instances or read-only property getters. Required-value validation rejects both the old
+two-argument entity-name constructor and obsolete parameterless declarations with a concise
+required-values error, without constructor-specific migration instructions or a separate
+constructor-count guard. Already-built legacy assemblies retain their constructor
+metadata even though new source declarations would fail compilation against the new library.
+Only operation values 0 through 4 are accepted; no `Unspecified` enum member or default sentinel is
+needed to detect missing arguments.
 
 The lowercased configuration-table schema name identifies the provider through
 `entitydataprovider.datasourcelogicalname`. It is not a business virtual-table name. Multiple remote
