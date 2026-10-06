@@ -1,3 +1,13 @@
+# [3.0.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2026-10-06)
+
+
+* feat(push)!: remove the legacy push module ([#193](https://github.com/DIGITALLNature/DigitallPower/issues/193)) ([091336f](https://github.com/DIGITALLNature/DigitallPower/commit/091336f107046f0871ad63db2bde3da99eb45052))
+
+
+### BREAKING CHANGES
+
+* remove dgtp push; use dgtp plugin push or dgtp webresource push.
+
 # [3.0.0-beta.4](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2026-10-05)
 
 
