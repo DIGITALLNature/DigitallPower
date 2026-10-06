@@ -616,8 +616,8 @@
       },
       "System.Reflection.MetadataLoadContext": {
         "type": "Transitive",
-        "resolved": "10.0.10",
-        "contentHash": "7f8JfUA85nD2yOrTX9fhuHPp8P01qqnbGTtRiMK6rwNhS1jNLqoCJfdzLMOIZY8b9sBoAX3eOH04k1fWeCgOYQ=="
+        "resolved": "10.0.12",
+        "contentHash": "+DWu1fzj75I1FgdHSg3crgeZmfF2z55x1+OXF2IO2Lcq/iNgM9tL734pxAG0vo5iE82FVPHwbqUt31o8ipPBWg=="
       },
       "System.Reflection.TypeExtensions": {
         "type": "Transitive",
@@ -744,8 +744,8 @@
       "dgt.power.plugin": {
         "type": "Project",
         "dependencies": {
-          "NuGet.Packaging": "[7.6.0, )",
-          "System.Reflection.MetadataLoadContext": "[10.0.10, )",
+          "NuGet.Packaging": "[7.9.0, )",
+          "System.Reflection.MetadataLoadContext": "[10.0.12, )",
           "dgt.power.common": "[3.0.0-beta.5, )"
         }
       },

@@ -15,5 +15,5 @@ namespace dgt.power.cli.tests.TestDoubles;
 internal sealed class NoOpCommand<TSettings> : Command<TSettings>
     where TSettings : CommandSettings
 {
-    protected override int Execute(CommandContext context, TSettings settings, CancellationToken cancellationToken) => 0;
+    public override int Execute(CommandContext context, TSettings settings, CancellationToken cancellationToken) => 0;
 }

@@ -13,7 +13,8 @@ public class ConsoleInjectionTests
     private sealed class StubCommand : Command<StubCommand.StubSettings>
     {
         public sealed class StubSettings : CommandSettings;
-        protected override int Execute(CommandContext context, StubSettings settings, CancellationToken cancellationToken) => 0;
+
+        public override int Execute(CommandContext context, StubSettings settings, CancellationToken cancellationToken) => 0;
     }
 
     [Test]
