@@ -1,3 +1,10 @@
+# [3.0.0-beta.7](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.6...v3.0.0-beta.7) (2026-10-06)
+
+
+### Bug Fixes
+
+* **plugin:** select framework package assets for local inspection ([#196](https://github.com/DIGITALLNature/DigitallPower/issues/196)) ([aae9f21](https://github.com/DIGITALLNature/DigitallPower/commit/aae9f21b04ea10269c8ab0486633cb109e86258a))
+
 # [3.0.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2026-10-06)
 
 
