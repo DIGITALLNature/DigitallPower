@@ -7,7 +7,7 @@ using dgt.power.Telemetry;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel(nameof(TelemetryConfigTests))]
+[NotInParallel("CiEnvironmentVariables")]
 public class TelemetryConfigTests
 {
     [Test]

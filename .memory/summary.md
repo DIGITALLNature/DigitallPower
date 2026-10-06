@@ -85,6 +85,9 @@ src/
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
   source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes
   there, and cover their paths/settings in the CLI tests.
+- CI environment tests in `ExecutionEnvironmentTests` and `TelemetryConfigTests` share the
+  `CiEnvironmentVariables` exclusion key to protect process-wide variable mutations while
+  unrelated tests remain parallel. See `guide-cli-ci-environment-test-isolation.md`.
 
 ### Plugin custom data provider registrations
 - `plugin push` reads the required `(dataSourceSchemaName, eventRegistration, providerName)`
@@ -266,6 +269,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-package-record-refactor.md` | decision | Historical dgtp 2.x push-module package record design; equality semantics |
 | `decision-post-tsl-architecture-wave.md` | decision | Priority order for remaining quality findings |
 | `implementation-typed-connection-storage.md` | implementation | Typed connection definitions, stable home/state files, storage boundaries and design rationale, global connection override variables, no legacy migration, verification limitations |
+| `guide-cli-ci-environment-test-isolation.md` | guide | Shared TUnit exclusion key for process-wide CI environment variables and race diagnosis |
 | `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp connection status` and `refresh` |
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |
 | `guide-sonar-rules-applied.md` | guide | Fix patterns for S3902, S3971, S2930, S3900, S4261 |
