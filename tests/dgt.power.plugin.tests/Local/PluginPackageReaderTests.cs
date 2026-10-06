@@ -14,21 +14,60 @@ public class PluginPackageReaderTests
     [Test]
     public async Task SelectAssemblyFiles_ChoosesNearestCompatibleTargetFramework()
     {
-        var selected = PluginPackageReader.SelectAssemblyFiles(["lib/net8.0/Plugin.dll", "lib/net10.0/Plugin.dll"]);
+        var selected = PluginPackageReader.SelectAssemblyFiles([
+            "lib/net462/Plugin.dll", "lib/net472/Plugin.dll", "lib/net48/Plugin.dll",
+            "lib/netstandard2.0/Plugin.dll", "lib/net8.0/Plugin.dll", "lib/net10.0/Plugin.dll"
+        ]);
 
-        await Assert.That(selected).IsEquivalentTo(["lib/net10.0/Plugin.dll"]);
+        await Assert.That(selected).IsEquivalentTo(["lib/net48/Plugin.dll"]);
+    }
+
+    [Test]
+    [Arguments("net462")]
+    [Arguments("net471")]
+    [Arguments("net472")]
+    [Arguments("net48")]
+    public async Task SelectAssemblyFiles_FrameworkAssets_SelectsAssembliesAndDependenciesForInspection(string framework)
+    {
+        var selected = PluginPackageReader.SelectAssemblyFiles([
+            $"lib/{framework}/Plugin.dll", $"lib/{framework}/Dependency.dll",
+            $"lib/{framework}/Microsoft.Xrm.Sdk.dll", $"lib/{framework}/System.Text.Json.dll"
+        ]);
+
+        await Assert.That(selected).IsEquivalentTo([$"lib/{framework}/Plugin.dll", $"lib/{framework}/Dependency.dll"]);
+    }
+
+    [Test]
+    public async Task SelectAssemblyFiles_NetStandardAssets_SelectsCompatibleGroup()
+    {
+        var selected = PluginPackageReader.SelectAssemblyFiles(["lib/netstandard2.0/Plugin.dll", "lib/netstandard2.1/Plugin.dll"]);
+
+        await Assert.That(selected).IsEquivalentTo(["lib/netstandard2.0/Plugin.dll"]);
+    }
+
+    [Test]
+    public async Task SelectAssemblyFiles_RootAssets_PreservesLegacyPackageLayout()
+    {
+        var selected = PluginPackageReader.SelectAssemblyFiles(["Plugin.dll", "Dependency.dll", "ref/net48/Plugin.dll"]);
+
+        await Assert.That(selected).IsEquivalentTo(["Plugin.dll", "Dependency.dll"]);
     }
 
     [Test]
     public async Task SelectAssemblyFiles_DuplicateBasenamesInSelectedFramework_Throws()
     {
-        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles(["lib/net10.0/Plugin.dll", "lib/net10.0/Other/Plugin.dll"])).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles(["lib/net48/Plugin.dll", "lib/net48/Other/Plugin.dll"])).ThrowsExactly<InvalidOperationException>();
     }
 
     [Test]
-    public async Task SelectAssemblyFiles_NoCompatibleFramework_Throws()
+    [Arguments("unknown")]
+    [Arguments("net8.0")]
+    [Arguments("net10.0")]
+    [Arguments("net481")]
+    [Arguments("netstandard2.1")]
+    public async Task SelectAssemblyFiles_NoCompatibleFramework_Throws(string framework)
     {
-        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles(["lib/unknown/Plugin.dll"]))
+        await Assert.That(() => PluginPackageReader.SelectAssemblyFiles([$"lib/{framework}/Plugin.dll"]))
         .ThrowsExactly<InvalidOperationException>();
     }
 
@@ -91,7 +130,7 @@ public class PluginPackageReaderTests
 
         foreach (var dllPath in dllPaths)
         {
-            builder.Files.Add(new PhysicalPackageFile { SourcePath = dllPath, TargetPath = $"lib/net10.0/{Path.GetFileName(dllPath)}" });
+            builder.Files.Add(new PhysicalPackageFile { SourcePath = dllPath, TargetPath = $"lib/net462/{Path.GetFileName(dllPath)}" });
         }
 
         using var stream = File.Create(nupkgPath);
