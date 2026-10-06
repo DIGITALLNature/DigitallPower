@@ -59,6 +59,27 @@ forgotten. The assembly-level `LocalAssembly.Kind` flags (`LocalAssemblyKind.Plu
 `Kind == Undefined` check (does the assembly contain any plugin types at all); the `Plugin`/`DeclarativePlugin`
 distinction at the assembly level does not currently drive any different behavior.
 
+## Package Framework Selection
+
+`PluginPackageReader.SelectAssemblyFiles` uses NuGet's `FrameworkReducer.GetNearest` with a
+`net48` target to select one `lib/<tfm>/` DLL group for local metadata inspection, independently
+of the CLI runtime. Using the CLI's `net10.0` target incorrectly rejects .NET Framework packages.
+
+The inspection target is not a deployment allowlist. Microsoft support guidance reported by a
+contributor distinguishes standalone DLL targets (4.6.2 through 4.8) from package targets (4.6.2 or
+4.7.1), while the [general plugin documentation](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/supported-customizations#support-for-net-framework-versions)
+lists 4.6.2 through 4.8 without that distinction. Keep deployment validation on the Dataverse server:
+local inspection intentionally accepts `net48` assets even if package upload is rejected there.
+This avoids hard-coding a package-specific restriction that the server may later lift.
+
+Only the nearest compatible group is extracted; mixing framework groups would introduce duplicate
+DLL names and inconsistent dependencies. Compatible .NET Standard assets remain eligible under
+NuGet's compatibility rules, while modern .NET-only and unsupported groups fail explicitly before
+planning or upload. Root-level DLL packages retain their existing fallback. Metadata inspection
+uses `MetadataLoadContext`, so the CLI does not execute the selected Framework assemblies.
+Package reader tests use host-built DLLs placed under `lib/net462/` to exercise package layout and
+metadata inspection; selection tests separately cover framework compatibility.
+
 ## No Package Dependency on the Registration Attributes
 
 `dgt.power.plugin` has **no `PackageReference` on the registration attributes package**

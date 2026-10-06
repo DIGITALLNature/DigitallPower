@@ -74,6 +74,9 @@ src/
   does not emulate rollback, so atomic request construction is verified separately.
 - Composite step resolution uses plugin `TypeName` and explicit linked-entity predicates;
   entity criteria filter after the left join, excluding unmatched steps.
+- Package DLL selection uses `net48` for local metadata inspection, independently of the CLI
+  runtime, and leaves package-specific deployment target validation to Dataverse; see
+  [package framework selection](implementation-plugin-push-outdated-assembly-migration.md#package-framework-selection).
 
 ### CLI command tree registration
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration

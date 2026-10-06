@@ -102,7 +102,8 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
         List<string> selectedFiles;
         if (frameworkAssets.Count > 0)
         {
-            var targetFramework = NuGetFramework.Parse("net10.0");
+            // Select Framework assets for metadata inspection; Dataverse validates deployment support.
+            var targetFramework = NuGetFramework.Parse("net48");
             var nearestFramework = new FrameworkReducer().GetNearest(
                 targetFramework,
                 frameworkAssets
@@ -111,7 +112,7 @@ internal sealed class PluginPackageReader(IAnsiConsole console)
                     .Distinct());
             if (nearestFramework is null)
             {
-                throw new InvalidOperationException($"The package has no DLL assets compatible with '{targetFramework.GetShortFolderName()}'.");
+                throw new InvalidOperationException($"The package has no DLL assets compatible with the local inspection target '{targetFramework.GetShortFolderName()}'.");
             }
 
             selectedFiles = frameworkAssets.Where(asset => asset.Framework.Equals(nearestFramework)).Select(asset => asset.File).ToList();
