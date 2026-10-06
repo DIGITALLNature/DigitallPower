@@ -5,7 +5,6 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Execution;
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
-using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Output;
 using dgt.power.plugin.tests.Planning;

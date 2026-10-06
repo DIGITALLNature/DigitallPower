@@ -13,9 +13,8 @@ namespace dgt.power.plugin.Planning;
 public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositories)
 {
     private readonly Dictionary<(string Solution, int ComponentType), IReadOnlySet<Guid>> _solutionComponentIds = [];
-    private DataProviderDeploymentPlanner? _dataProviders;
 
-    private DataProviderDeploymentPlanner DataProviders => _dataProviders ??= new DataProviderDeploymentPlanner(repositories.DataProviders, repositories.Solutions, PlanSolutionLinkAsync);
+    private DataProviderDeploymentPlanner DataProviders => field ??= new DataProviderDeploymentPlanner(repositories.DataProviders, repositories.Solutions, PlanSolutionLinkAsync);
 
     public Task<AssemblyDeploymentPlan> BuildAssemblyAsync(LocalAssembly assembly, PluginPushOptions options, CancellationToken cancellationToken = default)
     {

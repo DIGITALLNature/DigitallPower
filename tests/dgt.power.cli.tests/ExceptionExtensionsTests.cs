@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using System.ServiceModel;
+using CommonExceptionExtensions = dgt.power.common.Extensions.ExceptionExtensions;
 using dgt.power.common.Extensions;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
@@ -34,9 +35,9 @@ public class ExceptionExtensionsTests
             ErrorCode = unchecked((int)0x8004F036),
             Message = "An unexpected error occurred",
             TraceText = "trace-data-not-for-console",
-            InnerFault = new OrganizationServiceFault { ErrorCode = unchecked((int)0x80040203), Message = "Invalid data-source table" }
+            InnerFault = new OrganizationServiceFault { ErrorCode = unchecked((int)0x80040203), Message = "Invalid data-source table" },
+            ErrorDetails = { ["Configuration"] = "configuration-data-not-for-console" }
         };
-        fault.ErrorDetails["Configuration"] = "configuration-data-not-for-console";
         var exception = new InvalidOperationException("Registering provider Source failed", new FaultException<OrganizationServiceFault>(fault, fault.Message));
         await Assert.That(exception.DiagnosticMessage()).IsEqualTo(string.Join(Environment.NewLine,
             "Registering provider Source failed",
@@ -58,6 +59,6 @@ public class ExceptionExtensionsTests
     [Test]
     public async Task DiagnosticMessage_NullException_Throws()
     {
-        await Assert.That(() => dgt.power.common.Extensions.ExceptionExtensions.DiagnosticMessage(null!)).ThrowsExactly<ArgumentNullException>();
+        await Assert.That(() => CommonExceptionExtensions.DiagnosticMessage(null!)).ThrowsExactly<ArgumentNullException>();
     }
 }

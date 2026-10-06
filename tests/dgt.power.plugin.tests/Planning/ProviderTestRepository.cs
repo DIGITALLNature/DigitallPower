@@ -10,11 +10,11 @@ namespace dgt.power.plugin.tests.Planning;
 
 internal sealed class ProviderTestRepository : IEntityDataProviderRepository
 {
-    internal static readonly Guid BackingProviderId = Guid.NewGuid();
+    internal static readonly Guid s_backingProviderId = Guid.NewGuid();
     public List<RemoteDataProvider> Providers { get; } = [];
-    public EntityMetadata? DataSource { get; set; }
+    public EntityMetadata? DataSource { get; init; }
     public int PlatformValidations { get; private set; }
-    public Action<string, EntityMetadata?>? BeforeValidate { get; set; }
+    public Action<string, EntityMetadata?>? BeforeValidate { get; init; }
     public int TableCreates { get; private set; }
     public int TableUpdates { get; private set; }
     public int ProviderWrites { get; private set; }

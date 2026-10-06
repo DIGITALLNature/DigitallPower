@@ -13,6 +13,20 @@ namespace dgt.power.plugin.tests.Local;
 
 public class AssemblyReflectionReaderTests
 {
+    private static AssemblyException CaptureBuildPluginTypeException(AssemblyReflectionReader reader, Type type)
+    {
+        try
+        {
+            reader.BuildPluginType(type);
+        }
+        catch (AssemblyException exception)
+        {
+            return exception;
+        }
+
+        throw new InvalidOperationException("Expected plugin type validation to fail.");
+    }
+
     private sealed class PlainPlugin;
 
     [PluginRegistration("Create", 0, 40, PrimaryEntityName = "account", ExecutionOrder = 25)]
@@ -92,7 +106,7 @@ public class AssemblyReflectionReaderTests
         var type = metadataOnly
             ? context.LoadFromAssemblyPath(pluginType.Assembly.Location).GetType(pluginType.FullName!)!
             : pluginType;
-        var exception = await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(type)).ThrowsExactly<AssemblyException>();
+        var exception = CaptureBuildPluginTypeException(new AssemblyReflectionReader(console), type);
         await Assert.That(exception!.Message).IsEqualTo($"Data provider registration on '{pluginType.FullName}' requires DataSourceSchemaName " +
                                                       "and ProviderName, and a supported Event (Retrieve, RetrieveMultiple, Create, Update, Delete).");
     }
@@ -106,7 +120,7 @@ public class AssemblyReflectionReaderTests
     public async Task BuildPluginType_InvalidProviderArguments_Throws(Type pluginType)
     {
         using var console = new TestConsole();
-        await Assert.That(() => new AssemblyReflectionReader(console).BuildPluginType(pluginType)).ThrowsExactly<AssemblyException>();
+        _ = CaptureBuildPluginTypeException(new AssemblyReflectionReader(console), pluginType);
     }
 
     [Test]

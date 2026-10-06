@@ -117,7 +117,7 @@ public sealed class PluginTypeDeploymentExecutor(
         {
             var tableId = deployment.DataSource?.MetadataId;
             var tableCreated = false;
-            if (deployment.Local is { } local && deployment.UpdateDataSource)
+            if (deployment is { Local: { } local, UpdateDataSource: true })
             {
                 if (deployment.DataSource is null)
                 {

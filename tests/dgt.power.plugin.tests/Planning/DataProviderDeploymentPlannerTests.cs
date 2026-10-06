@@ -3,7 +3,6 @@
 
 using dgt.power.plugin.Local;
 using dgt.power.plugin.Planning;
-using dgt.power.plugin.Planning.Deployment;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
@@ -23,7 +22,7 @@ public class DataProviderDeploymentPlannerTests
     internal static EntityMetadata Table(Guid? providerId = null) => new()
     {
         MetadataId = Guid.NewGuid(), LogicalName = "dgt_source", SchemaName = "dgt_Source",
-        DataProviderId = providerId ?? ProviderTestRepository.BackingProviderId,
+        DataProviderId = providerId ?? ProviderTestRepository.s_backingProviderId,
         OwnershipType = OwnershipTypes.OrganizationOwned
     };
 
@@ -110,22 +109,27 @@ public class DataProviderDeploymentPlannerTests
     public async Task Build_DataSourceValidationFailure_PropagatesBeforeWrites()
     {
         var table = Table(Guid.Empty);
+        string? receivedLogicalName = null;
+        EntityMetadata? receivedMetadata = null;
         var repository = new ProviderTestRepository
         {
             DataSource = table,
             BeforeValidate = (logicalName, metadata) =>
             {
-                if (logicalName != "dgt_source" || !ReferenceEquals(metadata, table))
-                {
-                    throw new ArgumentException("Unexpected validation arguments.");
-                }
+                receivedLogicalName = logicalName;
+                receivedMetadata = metadata;
                 throw new InvalidDataSourceException("Incompatible data-source table.");
             }
         };
         await Assert.That(async () => await Plan(repository)).ThrowsExactly<InvalidDataSourceException>();
-        await Assert.That(repository.PlatformValidations).IsEqualTo(1);
-        await Assert.That(repository.ProviderWrites).IsEqualTo(0);
-        await Assert.That(repository.TableUpdates).IsEqualTo(0);
+        using (Assert.Multiple())
+        {
+            await Assert.That(receivedLogicalName).IsEqualTo("dgt_source");
+            await Assert.That(ReferenceEquals(receivedMetadata, table)).IsTrue();
+            await Assert.That(repository.PlatformValidations).IsEqualTo(1);
+            await Assert.That(repository.ProviderWrites).IsEqualTo(0);
+            await Assert.That(repository.TableUpdates).IsEqualTo(0);
+        }
     }
 
     [Test]
@@ -146,6 +150,25 @@ public class DataProviderDeploymentPlannerTests
             new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = typeId, [DataProviderOperation.Update] = typeId }));
         var result = await Plan(repository, [new LocalPluginType("Retrieve", "Retrieve", string.Empty, true, [])], replacedTypes: [new RemotePluginType(typeId, "Retrieve")]);
         await Assert.That(result.Single(deployment => deployment.Local is null).Handlers[DataProviderOperation.Update]).IsEqualTo("Retrieve");
+    }
+
+    [Test]
+    public async Task Build_ReplacedTypeWithDuplicateReplacementNames_FailsBeforeWrites()
+    {
+        var typeId = Guid.NewGuid();
+        var repository = new ProviderTestRepository();
+        repository.Providers.Add(new RemoteDataProvider(Guid.NewGuid(), "dgt_source", "Provider", null,
+            new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = typeId }));
+        var replacements = new[]
+        {
+            new LocalPluginType("Retrieve A", "Retrieve", string.Empty, true, []),
+            new LocalPluginType("Retrieve B", "Retrieve", string.Empty, true, [])
+        };
+
+        var exception = await Assert.That(async () => await Plan(repository, replacements, replacedTypes: [new RemotePluginType(typeId, "Retrieve")]))
+            .ThrowsExactly<InvalidOperationException>();
+        await Assert.That(exception!.Message).IsEqualTo("Cannot migrate data-provider handler 'Retrieve': multiple replacement plugin types have that name.");
+        await Assert.That(repository.ProviderWrites).IsEqualTo(0);
     }
 
     [Test]

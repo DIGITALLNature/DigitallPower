@@ -115,6 +115,9 @@ src/
 - Data-provider deployment is documented as experimental until provisioning and platform-owned
   step cleanup are validated live. Execution uses explicit phases sequenced by `PluginPushExecutor`;
   provider failure prevents obsolete type/assembly cleanup.
+- Migration-only provider handlers resolve replacement plugin types by CLR type name. Planning
+  rejects duplicate replacement names before writes; see
+  [migration handler resolution](research-plugin-migration-handler-ambiguity.md).
 - CLI-host and per-target plugin failures preserve contextual messages and Dataverse fault codes/
   inner-fault messages in all build configurations, without dumping trace text or arbitrary fault data.
 
@@ -185,6 +188,10 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - Strategy classes live in `Generators/Strategy/`; contracts in `Generators/Contracts/`
 
 ## Qodana Baseline (693 findings)
+
+- Reflection-bound test fixtures intentionally preserve their external namespace and public
+  accessors; narrowly suppress the corresponding unused-member/namespace inspections. See
+  [Qodana test-fixture guidance](guide-qodana-telemetry-and-doc-analyzer-fixes.md).
 
 | Category | Count | Disposition |
 |----------|-------|-------------|

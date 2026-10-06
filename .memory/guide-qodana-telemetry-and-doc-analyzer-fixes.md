@@ -41,3 +41,4 @@ For static readonly regex fields, follow repository naming conventions (`s_` pre
 - Remove redundant `using` directives in tests.
 - If helper members in test bases are unused, remove them unless they are part of an intentional test API surface.
 - Prefer private/static fields for fixture exceptions and constants when values are not externally configured.
+- Test fakes that mirror externally consumed attributes or CLI settings may require public accessors and exact namespaces for reflection-based binding. Keep that contract and use narrow ReSharper suppressions for unused-accessor or namespace false positives.

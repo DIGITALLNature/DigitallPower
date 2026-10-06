@@ -219,7 +219,7 @@ public class EntityDataProviderRepositoryTests
             ["name"] = "Old", ["description"] = "Keep", ["datasourcelogicalname"] = "dgt_source", ["createplugin"] = createId
         });
         await new EntityDataProviderRepository(service).ApplyAsync(providerId, Provider(), new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = retrieveId });
-        var actual = service.Retrieve("entitydataprovider", providerId, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+        var actual = service.Retrieve("entitydataprovider", providerId, new ColumnSet(true));
         using (Assert.Multiple())
         {
             await Assert.That(actual.GetAttributeValue<string>("name")).IsEqualTo("Provider");
@@ -246,7 +246,7 @@ public class EntityDataProviderRepositoryTests
         var retrieveId = Guid.NewGuid();
         var repository = new EntityDataProviderRepository(service);
         var id = await repository.ApplyAsync(null, Provider(), new Dictionary<DataProviderOperation, Guid> { [DataProviderOperation.Retrieve] = retrieveId });
-        var actual = service.Retrieve("entitydataprovider", id, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+        var actual = service.Retrieve("entitydataprovider", id, new ColumnSet(true));
         using (Assert.Multiple())
         {
             await Assert.That(actual.GetAttributeValue<Guid>("retrieveplugin")).IsEqualTo(retrieveId);
@@ -287,7 +287,7 @@ public class EntityDataProviderRepositoryTests
 
             return new RetrieveMultipleResponse
             {
-                Results = { ["EntityCollection"] = new EntityCollection(new List<Entity> { new Entity("organization") { ["languagecode"] = 1033 } }) }
+                    Results = { ["EntityCollection"] = new EntityCollection(new List<Entity> { new("organization") { ["languagecode"] = 1033 } }) }
             };
         }));
         service.AddRequests(new ProviderRequestFake(typeof(CreateEntityRequest), request =>

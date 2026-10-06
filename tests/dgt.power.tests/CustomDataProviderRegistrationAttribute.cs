@@ -1,8 +1,10 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+// ReSharper disable once CheckNamespace
 namespace Digitall.Plugins.Registration;
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class CustomDataProviderRegistrationAttribute : Attribute
 {

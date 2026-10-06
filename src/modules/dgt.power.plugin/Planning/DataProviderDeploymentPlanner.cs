@@ -15,6 +15,8 @@ internal sealed class DataProviderDeploymentPlanner(IEntityDataProviderRepositor
     /// <param name="localTypes">All plugin types that will exist after the push.</param>
     /// <param name="remoteTypes">Remote types compared against <paramref name="localTypes"/>, including those scheduled for deletion.</param>
     /// <param name="replacedTypes">Types of outdated assemblies and deleted types whose handler references must be moved or released.</param>
+    /// <param name="solution">Optional target solution for provider and data-source table membership.</param>
+    /// <param name="cancellationToken">Token used to cancel asynchronous planning operations.</param>
     internal async Task<IReadOnlyList<DataProviderDeployment>> BuildAsync(IReadOnlyList<LocalPluginType> localTypes, IReadOnlyList<RemotePluginType> remoteTypes,
         IReadOnlyList<RemotePluginType> replacedTypes, string? solution, CancellationToken cancellationToken)
     {
