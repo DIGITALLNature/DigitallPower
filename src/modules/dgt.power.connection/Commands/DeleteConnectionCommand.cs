@@ -15,12 +15,17 @@ public class DeleteConnectionCommand(
     IAnsiConsole console)
     : AsyncCommand<DeleteConnectionSettings>
 {
-    public override async Task<int> ExecuteAsync(
+    public override Task<int> ExecuteAsync(
         CommandContext context,
         DeleteConnectionSettings settings,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        return ExecuteCoreAsync(context, settings, cancellationToken);
+    }
+
+    private async Task<int> ExecuteCoreAsync(CommandContext context, DeleteConnectionSettings settings, CancellationToken cancellationToken)
+    {
         var connections = connectionStore.GetAll();
         if (settings.All)
         {
@@ -62,7 +67,7 @@ public class DeleteConnectionCommand(
                 console.MarkupLine($"  [red]- {Markup.Escape(name)}[/]");
             }
 
-            if (!console.Confirm($"Delete all {connections.Count} connection(s)?", defaultValue: false))
+            if (!await console.ConfirmAsync($"Delete all {connections.Count} connection(s)?", defaultValue: false, cancellationToken))
             {
                 console.MarkupLine("[grey]Aborted.[/]");
                 return 0;

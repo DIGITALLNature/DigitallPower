@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common.Connections;
-using dgt.power.common.Exceptions;
 using dgt.power.common.Logic;
 using Spectre.Console;
 using Spectre.Console.Cli;

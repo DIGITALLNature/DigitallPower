@@ -31,7 +31,7 @@ public sealed class DgtpHome
         }
     }
 
-    public static string ResolveDefaultPath()
+    private static string ResolveDefaultPath()
     {
         var configuredPath = Environment.GetEnvironmentVariable("DGTP_HOME");
         if (!string.IsNullOrWhiteSpace(configuredPath))
