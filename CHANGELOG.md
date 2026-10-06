@@ -1,3 +1,10 @@
+# [3.0.0-beta.6](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2026-10-06)
+
+
+### Features
+
+* implement copy-components functionality for solution management ([#190](https://github.com/DIGITALLNature/DigitallPower/issues/190)) ([0641509](https://github.com/DIGITALLNature/DigitallPower/commit/0641509c3fd8dbc1f1002319a9c189322bf0f032))
+
 # [3.0.0-beta.5](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2026-10-06)
 
 
