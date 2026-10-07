@@ -4,7 +4,6 @@
 using System.Text;
 using dgt.power.common.Connections;
 using dgt.power.common.Storage;
-using dgt.power.connection.tests;
 
 namespace dgt.power.connection.tests.Storage;
 
